@@ -1,0 +1,471 @@
+/* Odoo UI Components Styles */
+
+/* KPI Stat Cards Widget */
+.stat-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card-accent-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: var(--odoo-teal);
+}
+
+.stat-card.purple .stat-card-accent-bar { background: var(--odoo-purple); }
+.stat-card.warning .stat-card-accent-bar { background: var(--status-warning); }
+.stat-card.danger .stat-card-accent-bar { background: var(--status-danger); }
+.stat-card.info .stat-card-accent-bar { background: var(--status-info); }
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.stat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.stat-badge.up { background: var(--status-success-bg); color: var(--status-success); }
+.stat-badge.down { background: var(--status-danger-bg); color: var(--status-danger); }
+
+/* Odoo Stage Progress Stepper Bar */
+.stage-stepper-container {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid #E5E7EB;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-xs);
+  overflow-x: auto;
+}
+
+.stage-stepper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 650px;
+}
+
+.stage-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.stage-step-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  background: var(--bg-surface);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid #E5E7EB;
+  transition: all var(--transition-fast);
+}
+
+.stage-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #E5E7EB;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-step-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.stage-step-line {
+  flex: 1;
+  height: 2px;
+  background: #E5E7EB;
+  margin: 0 4px;
+}
+
+/* Active & Completed Stages */
+.stage-step.active .stage-step-content {
+  border-color: var(--odoo-purple);
+  background: var(--status-purple-bg);
+  box-shadow: 0 2px 8px rgba(113, 75, 103, 0.15);
+}
+
+.stage-step.active .stage-step-num {
+  background: var(--odoo-purple);
+  color: white;
+}
+
+.stage-step.active .stage-step-title {
+  color: var(--odoo-purple);
+  font-weight: 800;
+}
+
+.stage-step.completed .stage-step-content {
+  border-color: var(--odoo-teal);
+}
+
+.stage-step.completed .stage-step-num {
+  background: var(--odoo-teal);
+  color: white;
+}
+
+.stage-step.completed .stage-step-title {
+  color: var(--odoo-teal-dark);
+  font-weight: 700;
+}
+
+.stage-step.completed .stage-step-line {
+  background: var(--odoo-teal);
+}
+
+/* Table Card Container */
+.table-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid #E5E7EB;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.table-card-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #E5E7EB;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.table-card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Modern Action Buttons */
+.btn-odoo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  height: 38px;
+  user-select: none;
+}
+
+.btn-odoo-primary {
+  background: var(--odoo-teal);
+  color: white;
+  border: none;
+}
+
+.btn-odoo-primary:hover {
+  background: var(--odoo-teal-dark);
+  box-shadow: 0 4px 12px rgba(0, 160, 157, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-odoo-purple {
+  background: var(--odoo-purple);
+  color: white;
+  border: none;
+}
+
+.btn-odoo-purple:hover {
+  background: var(--odoo-purple-hover);
+  box-shadow: 0 4px 12px rgba(113, 75, 103, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-odoo-secondary {
+  background: var(--bg-surface);
+  border: 1px solid #D1D5DB;
+  color: var(--text-main);
+}
+
+.btn-odoo-secondary:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+}
+
+/* Data Table Element */
+.data-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.odoo-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 13.5px;
+}
+
+.odoo-data-table th {
+  background: #F8FAFC;
+  color: #475569;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-bottom: 2px solid #E2E8F0;
+  white-space: nowrap;
+}
+
+.odoo-data-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.odoo-data-table tbody tr {
+  transition: background var(--transition-fast);
+}
+
+.odoo-data-table tbody tr:hover {
+  background: #F8FAFC;
+}
+
+/* Status Badges */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-pill.success { background: var(--status-success-bg); color: var(--status-success); border: 1px solid var(--status-success-border); }
+.badge-pill.warning { background: var(--status-warning-bg); color: var(--status-warning); border: 1px solid var(--status-warning-border); }
+.badge-pill.danger { background: var(--status-danger-bg); color: var(--status-danger); border: 1px solid var(--status-danger-border); }
+.badge-pill.info { background: var(--status-info-bg); color: var(--status-info); border: 1px solid var(--status-info-border); }
+.badge-pill.purple { background: var(--status-purple-bg); color: var(--status-purple); border: 1px solid #DDD6FE; }
+
+/* Filter Card Drawer */
+.filter-panel {
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.filter-select, .filter-input {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid #D1D5DB;
+  background: var(--bg-surface);
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.filter-select:focus, .filter-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 160, 157, 0.15);
+}
+
+/* App Launcher Portal Styles matching user design */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-stagger {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cards-container:hover .nav-card:not(:hover) {
+  opacity: 0.6;
+  filter: blur(1px) grayscale(0.2);
+  transform: scale(0.98);
+}
+
+.nav-card:hover {
+  transform: scale(1.05) !important;
+  opacity: 1 !important;
+  filter: blur(0) grayscale(0) brightness(1.05) !important;
+  z-index: 10;
+}
+
+/* Pulsing Live Dot Effect */
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.live-pulse-dot {
+  width: 9px;
+  height: 9px;
+  background-color: #10B981;
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulseDot 2s infinite ease-in-out;
+  margin-left: 6px;
+}
+
+/* Premium Card Micro-Animations */
+.table-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.table-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 81, 84, 0.08);
+  border-color: rgba(0, 81, 84, 0.2);
+}
+
+.btn-odoo {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Global Responsive Adjustments */
+@media (max-width: 768px) {
+  .stat-card-grid {
+    grid-template-columns: 1fr;
+  }
+  .filter-panel {
+    grid-template-columns: 1fr;
+  }
+  .table-card {
+    padding: 14px !important;
+  }
+}

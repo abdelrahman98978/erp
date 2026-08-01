@@ -1,0 +1,128 @@
+/* Khalid Al-Sulaim Corporate Identity Design Tokens */
+
+:root {
+  /* Corporate Identity Typography: Cairo for Headings & Tajawal for Body UI */
+  --font-family-heading: 'Cairo', sans-serif;
+  --font-family-body: 'Tajawal', sans-serif;
+  --font-family-sans: 'Tajawal', 'Cairo', sans-serif;
+  --font-family: var(--font-family-body);
+
+  /* Font Scale & Line Heights */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-base: 16px;
+  --font-md: 18px;
+  --font-lg: 24px;
+  --font-xl: 32px;
+  --font-2xl: 48px;
+
+  /* Official Brand Palette */
+  --primary: #00383b;
+  --on-primary: #ffffff;
+  --primary-container: #005154;
+  --on-primary-container: #83c2c5;
+  --inverse-primary: #92d1d4;
+
+  --secondary: #535f74;
+  --on-secondary: #ffffff;
+  --secondary-container: #d4e0f9;
+  --on-secondary-container: #576378;
+
+  --tertiary: #532504;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #6f3b18;
+  --on-tertiary-container: #f1a77b;
+
+  --surface-tint: #25686a;
+  --surface: #f7faf9;
+  --surface-dim: #d7dbda;
+  --surface-bright: #f7faf9;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f1f4f3;
+  --surface-container: #ebeeed;
+  --surface-container-high: #e6e9e8;
+  --surface-container-highest: #e0e3e2;
+  --surface-variant: #e0e3e2;
+
+  --on-surface: #181c1c;
+  --on-surface-variant: #3f4849;
+  --inverse-surface: #2d3131;
+  --inverse-on-surface: #eef1f0;
+
+  --outline: #6f7979;
+  --outline-variant: #bfc8c8;
+
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+
+  --background: #f7faf9;
+  --on-background: #181c1c;
+
+  /* Brand Accents & Gradients */
+  --gold-primary: #D4AF37;
+  --gold-gradient: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+  --odoo-purple: #714B67;
+  --odoo-teal: #005154;
+
+  /* ERP Surfaces & Backgrounds */
+  --bg-body: #f7faf9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-subtle: #f1f4f3;
+  --bg-header: rgba(247, 250, 249, 0.95);
+
+  /* Status Colors */
+  --status-success: #10B981;
+  --status-success-bg: #ECFDF5;
+  --status-success-border: #A7F3D0;
+  
+  --status-warning: #F59E0B;
+  --status-warning-bg: #FFFBEB;
+  --status-warning-border: #FDE68A;
+
+  --status-danger: #ba1a1a;
+  --status-danger-bg: #ffdad6;
+  --status-danger-border: #fca5a5;
+
+  --status-info: #535f74;
+  --status-info-bg: #d4e0f9;
+  --status-info-border: #bfc8c8;
+
+  --status-purple: #714B67;
+  --status-purple-bg: #f5f3ff;
+
+  /* Text Colors */
+  --text-main: #181c1c;
+  --text-muted: #3f4849;
+  --text-light: #6f7979;
+  --text-on-dark: #ffffff;
+  --text-link: #005154;
+
+  /* Layout Dimensions & Spacing */
+  --sidebar-width: 312px;
+  --header-height: 72px;
+  --spacing-base: 8px;
+  --spacing-gutter: 24px;
+  --spacing-container-max: 1280px;
+
+  /* Shapes & Radii */
+  --radius-xs: 0.25rem; /* 4px */
+  --radius-sm: 0.25rem; /* 4px */
+  --radius-md: 0.5rem;  /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1.5rem;  /* 24px */
+  --radius-pill: 9999px;
+
+  /* Shadows & Depth (Tonal Layering & Diffused Teal Shadow) */
+  --shadow-sm: 0 1px 3px rgba(0, 56, 59, 0.05);
+  --shadow-md: 0px 4px 20px rgba(0, 81, 84, 0.08);
+  --shadow-lg: 0px 10px 30px rgba(0, 81, 84, 0.12);
+  --shadow-card: 0px 4px 20px rgba(0, 81, 84, 0.08);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
