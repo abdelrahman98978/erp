@@ -18,18 +18,41 @@ const LanguageContext = createContext<LanguageContextType>({
   t: (key: string, defaultText?: string) => defaultText || key,
 });
 
+const STORAGE_KEYS = {
+  THEME: 'erp-preferred-theme',
+  LANGUAGE: 'erp-preferred-language'
+};
+
+const loadFromStorage = <T,>(key: string, fallback: T): T => {
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored === null) return fallback;
+    return JSON.parse(stored) as T;
+  } catch {
+    return fallback;
+  }
+};
+
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(LANGUAGES[0]);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
+    const stored = loadFromStorage<string>(STORAGE_KEYS.LANGUAGE, 'ar');
+    return LANGUAGES.find(l => l.code === stored) || LANGUAGES[0];
+  });
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    loadFromStorage<'light' | 'dark'>(STORAGE_KEYS.THEME, 'light')
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute('lang', currentLanguage.code);
     document.documentElement.setAttribute('dir', currentLanguage.dir);
     i18n.changeLanguage(currentLanguage.code);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, JSON.stringify(currentLanguage.code));
   }, [currentLanguage]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(STORAGE_KEYS.THEME, JSON.stringify(theme));
   }, [theme]);
 
   const toggleTheme = () => {

@@ -8,5 +8,21 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true
+  },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-i18next'],
+          'vendor-charts': ['chart.js', 'react-chartjs-2'],
+          'vendor-pdf': ['jspdf', 'html2canvas'],
+          'vendor-xlsx': ['xlsx'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-dates': ['date-fns'],
+          'vendor-supabase': ['@supabase/supabase-js']
+        }
+      }
+    }
   }
 })

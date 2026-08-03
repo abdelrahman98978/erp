@@ -49,7 +49,7 @@
   --inverse-surface: #2d3131;
   --inverse-on-surface: #eef1f0;
 
-  --outline: #6f7979;
+  --outline: #5a6363;
   --outline-variant: #bfc8c8;
 
   --error: #ba1a1a;
@@ -96,7 +96,7 @@
   /* Text Colors */
   --text-main: #181c1c;
   --text-muted: #3f4849;
-  --text-light: #6f7979;
+  --text-light: #5a6363;
   --text-on-dark: #ffffff;
   --text-link: #005154;
 

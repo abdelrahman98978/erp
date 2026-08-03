@@ -1,11 +1,31 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const metaEnv = (import.meta as any).env || {};
+const SUPABASE_URL: string = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY: string = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const STANDALONE_SUPABASE_URL = metaEnv.VITE_SUPABASE_URL || 'http://127.0.0.1:54421';
-export const STANDALONE_SUPABASE_ANON_KEY = metaEnv.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTEyNDgwMDAsImV4cCI6MTk2NjYwODAwMH0.S622DkdtXkQGzS_Wd-v2iHqT6n6n6S';
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  throw new Error(
+    'Missing required Supabase env vars: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set before building.'
+  );
+}
 
-export const supabase = createClient(STANDALONE_SUPABASE_URL, STANDALONE_SUPABASE_ANON_KEY);
+if (import.meta.env.PROD && (SUPABASE_URL.includes('127.0.0.1') || SUPABASE_URL.includes('localhost'))) {
+  throw new Error(
+    'Production build is pointing to a localhost Supabase instance. Set VITE_SUPABASE_URL to your hosted project URL.'
+  );
+}
+
+export const STANDALONE_SUPABASE_URL = SUPABASE_URL;
+export const STANDALONE_SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+
+export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: 'erp-supabase-auth',
+  },
+});
 
 export interface StandaloneSupabaseStatus {
   url: string;
@@ -14,21 +34,24 @@ export interface StandaloneSupabaseStatus {
   connected: boolean;
 }
 
+const isLocalHost = (url: string): boolean =>
+  url.startsWith('http://127.') || url.startsWith('http://localhost') || url.startsWith('http://0.0.0.0');
+
 export const getStandaloneSupabaseStatus = async (): Promise<StandaloneSupabaseStatus> => {
   try {
-    const { data, error } = await supabase.from('clients').select('id').limit(1);
+    const { error } = await supabase.from('clients').select('id').limit(1);
     return {
-      url: STANDALONE_SUPABASE_URL,
-      studioUrl: 'http://127.0.0.1:54423',
-      isLocal: true,
-      connected: !error
+      url: SUPABASE_URL,
+      studioUrl: isLocalHost(SUPABASE_URL) ? 'http://127.0.0.1:54423' : '',
+      isLocal: isLocalHost(SUPABASE_URL),
+      connected: !error,
     };
   } catch (err) {
     return {
-      url: STANDALONE_SUPABASE_URL,
-      studioUrl: 'http://127.0.0.1:54423',
-      isLocal: true,
-      connected: false
+      url: SUPABASE_URL,
+      studioUrl: isLocalHost(SUPABASE_URL) ? 'http://127.0.0.1:54423' : '',
+      isLocal: isLocalHost(SUPABASE_URL),
+      connected: false,
     };
   }
 };
