@@ -5,6 +5,7 @@ import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CompanyProvider } from './contexts/CompanyContext';
 import { ImpersonationProvider } from './contexts/ImpersonationContext';
+import { RBACProvider } from './contexts/RBACContext';
 
 import './styles/index.css';
 import './styles/layout.css';
@@ -341,9 +342,11 @@ export const App: React.FC = () => {
     <LanguageProvider>
       <AuthProvider>
         <CompanyProvider>
-          <ImpersonationProvider>
-            <MainContent />
-          </ImpersonationProvider>
+          <RBACProvider>
+            <ImpersonationProvider>
+              <MainContent />
+            </ImpersonationProvider>
+          </RBACProvider>
         </CompanyProvider>
       </AuthProvider>
     </LanguageProvider>

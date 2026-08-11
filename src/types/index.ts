@@ -1,9 +1,20 @@
 /* TypeScript Types for Enterprise ERP - Khalid Al-Sulaim Group */
 
-export type CompanyId = 'all' | 'masi' | 'yaqoot' | 'topaz' | 'ruwad';
+export type CompanyId = 'all' | 'SAF' | 'YAQ' | 'TOP' | 'DAR' | 'masi' | 'yaqoot' | 'topaz' | 'ruwad';
+
+export interface CompanyBranding {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  logoUrl: string;
+  headerLogoUrl: string;
+  watermarkUrl?: string;
+  reportHeaderTemplate: string;
+}
 
 export interface CompanyEntity {
   id: CompanyId;
+  code: 'SAF' | 'YAQ' | 'TOP' | 'DAR' | 'GRP';
   name: string;
   nameEn: string;
   logo: string;
@@ -16,6 +27,9 @@ export interface CompanyEntity {
   employeesCount: number;
   activeOrdersCount: number;
   revenueYTD: number;
+  branding?: CompanyBranding;
+  vatRate?: number;
+  currency?: string;
 }
 
 export interface NavItem {
@@ -248,10 +262,75 @@ export interface AuditLogItem {
   timestamp: string;
   actorId: string;
   actorName: string;
-  actionType: 'تسجيل دخول' | 'تبديل شركة' | 'محاكاة موظف' | 'تعديل راتب' | 'إصدار فاتورة' | 'حذف مستند' | 'اعتماد عرض';
+  actionType:
+    | 'تسجيل دخول'
+    | 'تبديل شركة'
+    | 'محاكاة موظف'
+    | 'تعديل راتب'
+    | 'إصدار فاتورة'
+    | 'حذف مستند'
+    | 'اعتماد عرض'
+    | 'تصدير بيانات'
+    | 'طباعة تقرير'
+    | 'تغيير إعدادات ZATCA'
+    | 'إنشاء قيد محاسبي';
   companyId: CompanyId;
   branchName: string;
   ipAddress: string;
   details: string;
   impersonatedEmployeeId?: string;
+}
+
+/* RBAC & Governance Types */
+export type RoleType =
+  | 'SUPER_ADMIN'
+  | 'GROUP_ADMIN'
+  | 'GROUP_FINANCE'
+  | 'GROUP_HR'
+  | 'COMPANY_ADMIN'
+  | 'COMPANY_MANAGER'
+  | 'BRANCH_MANAGER'
+  | 'FINANCE_MANAGER'
+  | 'ACCOUNTANT'
+  | 'HR_MANAGER'
+  | 'HR_OFFICER'
+  | 'PAYROLL'
+  | 'RECRUITMENT_MANAGER'
+  | 'RECRUITER'
+  | 'PROJECT_MANAGER'
+  | 'EMPLOYEE'
+  | 'AUDITOR'
+  | 'EXTERNAL_OFFICE'
+  | 'AGENT';
+
+export type PermissionScope = 'GROUP' | 'COMPANY' | 'BRANCH' | 'DEPARTMENT' | 'OWN';
+
+export type PermissionAction =
+  | 'view'
+  | 'create'
+  | 'edit'
+  | 'approve'
+  | 'post'
+  | 'cancel'
+  | 'export'
+  | 'print'
+  | 'download'
+  | 'share'
+  | 'delete';
+
+export interface UserPermission {
+  module: string;
+  actions: PermissionAction[];
+  scope: PermissionScope;
+  companyId?: CompanyId;
+}
+
+/* Document Numbering & Sequence Config */
+export interface DocumentSequence {
+  id: string;
+  companyId: CompanyId;
+  documentType: 'INV' | 'REC' | 'PAY' | 'JV' | 'CN' | 'DN' | 'PO' | 'PR' | 'HR' | 'EMP' | 'CONTRACT' | 'PROJECT';
+  prefix: string; // e.g. SAF-INV-
+  currentNumber: number;
+  digits: number; // e.g. 6 -> 000001
 }

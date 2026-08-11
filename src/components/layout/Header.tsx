@@ -254,7 +254,19 @@ export const Header: React.FC<HeaderProps> = ({
                     }}
                   >
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fa-solid fa-building-circle-check" style={{ color: '#059669' }}></i>
+                      <span
+                        style={{
+                          backgroundColor: '#0F172A',
+                          color: '#38BDF8',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontFamily: 'monospace',
+                          fontSize: '10px',
+                          fontWeight: '800',
+                        }}
+                      >
+                        {comp.code}
+                      </span>
                       {comp.name}
                     </span>
                     {activeCompanyId === comp.id && <i className="fa-solid fa-check text-emerald-600"></i>}

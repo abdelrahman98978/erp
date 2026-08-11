@@ -16,6 +16,7 @@ export type ListOptions = {
   offset?: number;
   filters?: Record<string, unknown>;
   select?: string;
+  companyId?: string;
 };
 
 /**
@@ -28,6 +29,10 @@ export const getTableRecords = async (
 ): Promise<{ data: any[] | null; error: string | null; count: number | null }> => {
   const selectColumns = options.select ?? '*';
   let query = supabase.from(tableName).select(selectColumns, { count: 'exact' });
+
+  if (options.companyId && options.companyId !== 'all') {
+    query = query.eq('company_id', options.companyId);
+  }
 
   if (options.filters) {
     Object.entries(options.filters).forEach(([key, value]) => {

@@ -108,7 +108,22 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
             >
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                  <CompanyLogo companyId={comp.id as CompanyId} size={54} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <CompanyLogo companyId={comp.id as CompanyId} size={54} />
+                    <span
+                      style={{
+                        backgroundColor: '#0F172A',
+                        color: '#38BDF8',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontWeight: '900',
+                        fontSize: '12px',
+                        fontFamily: 'monospace',
+                      }}
+                    >
+                      {comp.code}
+                    </span>
+                  </div>
                   <span
                     style={{
                       fontSize: '11px',

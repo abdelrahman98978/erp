@@ -162,7 +162,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         {/* 1. شركة السفير الماسي */}
         <div
           className="nav-card-landing card-masi"
-          onClick={() => handleSelect('masi')}
+          onClick={() => handleSelect('SAF')}
           style={{ background: '#0F172A' }}
         >
           <div
@@ -174,25 +174,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           />
           <div className="overlay-landing" />
           <div className="card-content-landing">
-            <div style={{ marginBottom: '16px' }}>
-              <CompanyLogo companyId="masi" size={72} />
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <CompanyLogo companyId="SAF" size={72} />
+              <span style={{ background: '#0284C7', color: '#FFFFFF', padding: '4px 12px', borderRadius: '6px', fontWeight: '900', fontSize: '14px', fontFamily: 'monospace' }}>
+                COMPANY 01 [SAF]
+              </span>
             </div>
             <h2 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '30px', fontWeight: '900', margin: '0 0 8px 0', color: '#FFFFFF' }}>
               شركة السفير الماسي
             </h2>
             <p style={{ color: '#CBD5E1', fontSize: '15px', margin: 0, fontWeight: '600' }}>
-              Al-Sfeer Al-Masi Company | تميز واستقدام حلول الكادر والعمالة المنزلية
+              Al-Sfeer Al-Masi Recruitment Company | منظومة ERP مستقلة بالكامل
             </p>
           </div>
           <div style={{ position: 'absolute', top: '30px', left: '30px', color: 'rgba(255, 255, 255, 0.1)', fontSize: '72px', fontWeight: '900' }}>
-            01
+            SAF
           </div>
         </div>
 
         {/* 2. شركة ياقوت نجد */}
         <div
           className="nav-card-landing card-yaqoot"
-          onClick={() => handleSelect('yaqoot')}
+          onClick={() => handleSelect('YAQ')}
           style={{ background: '#181C1C' }}
         >
           <div
@@ -204,25 +207,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           />
           <div className="overlay-landing" />
           <div className="card-content-landing">
-            <div style={{ marginBottom: '16px' }}>
-              <CompanyLogo companyId="yaqoot" size={72} />
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <CompanyLogo companyId="YAQ" size={72} />
+              <span style={{ background: '#B91C1C', color: '#FFFFFF', padding: '4px 12px', borderRadius: '6px', fontWeight: '900', fontSize: '14px', fontFamily: 'monospace' }}>
+                COMPANY 02 [YAQ]
+              </span>
             </div>
             <h2 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '30px', fontWeight: '900', margin: '0 0 8px 0', color: '#F59E0B' }}>
               شركة ياقوت نجد
             </h2>
             <p style={{ color: '#CBD5E1', fontSize: '15px', margin: 0, fontWeight: '600' }}>
-              Yaqoot Najd Company | الجودة والابتكار في الخدمات التشغيلية والتأجير
+              Yaqoot Najd Recruitment Company | منظومة ERP مستقلة بالكامل
             </p>
           </div>
           <div style={{ position: 'absolute', top: '30px', left: '30px', color: 'rgba(255, 255, 255, 0.1)', fontSize: '72px', fontWeight: '900' }}>
-            02
+            YAQ
           </div>
         </div>
 
         {/* 3. شركة توباز للاستقدام */}
         <div
           className="nav-card-landing card-topaz"
-          onClick={() => handleSelect('topaz')}
+          onClick={() => handleSelect('TOP')}
           style={{ background: '#0F6B6E' }}
         >
           <div
@@ -234,25 +240,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           />
           <div className="overlay-landing" />
           <div className="card-content-landing">
-            <div style={{ marginBottom: '16px' }}>
-              <CompanyLogo companyId="topaz" size={72} />
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <CompanyLogo companyId="TOP" size={72} />
+              <span style={{ background: '#0D9488', color: '#FFFFFF', padding: '4px 12px', borderRadius: '6px', fontWeight: '900', fontSize: '14px', fontFamily: 'monospace' }}>
+                COMPANY 03 [TOP]
+              </span>
             </div>
             <h2 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '30px', fontWeight: '900', margin: '0 0 8px 0', color: '#38BDF8' }}>
               شركة توباز للاستقدام
             </h2>
             <p style={{ color: '#CBD5E1', fontSize: '15px', margin: 0, fontWeight: '600' }}>
-              Topaz Recruitment Company | التوسط والاستقدام الشامل للعمالة المهنية
+              Topaz Recruitment Company | منظومة ERP مستقلة بالكامل
             </p>
           </div>
           <div style={{ position: 'absolute', top: '30px', left: '30px', color: 'rgba(255, 255, 255, 0.1)', fontSize: '72px', fontWeight: '900' }}>
-            03
+            TOP
           </div>
         </div>
 
         {/* 4. دار الرواد */}
         <div
           className="nav-card-landing card-ruwad"
-          onClick={() => handleSelect('ruwad')}
+          onClick={() => handleSelect('DAR')}
           style={{ background: '#005154' }}
         >
           <div
@@ -264,18 +273,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           />
           <div className="overlay-landing" />
           <div className="card-content-landing">
-            <div style={{ marginBottom: '16px' }}>
-              <CompanyLogo companyId="ruwad" size={72} />
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <CompanyLogo companyId="DAR" size={72} />
+              <span style={{ background: '#7C3AED', color: '#FFFFFF', padding: '4px 12px', borderRadius: '6px', fontWeight: '900', fontSize: '14px', fontFamily: 'monospace' }}>
+                COMPANY 04 [DAR]
+              </span>
             </div>
-            <h2 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '30px', fontWeight: '900', margin: '0 0 8px 0', color: '#60A5FA' }}>
+            <h2 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '30px', fontWeight: '900', margin: '0 0 8px 0', color: '#A78BFA' }}>
               دار الرواد
             </h2>
             <p style={{ color: '#CBD5E1', fontSize: '15px', margin: 0, fontWeight: '600' }}>
-              Dar Al-Ruwad Entity | الريادة في التطوير والخدمات النوعية المعتمدة
+              Dar Al-Ruwad Entity | شركة مستقلة بالكامل داخل المجموعة
             </p>
           </div>
           <div style={{ position: 'absolute', top: '30px', left: '30px', color: 'rgba(255, 255, 255, 0.1)', fontSize: '72px', fontWeight: '900' }}>
-            04
+            DAR
           </div>
         </div>
       </div>
