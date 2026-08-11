@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase, isDummySupabase } from './supabaseClient';
 
 /**
  * Central ERP Supabase Database Binding Service
@@ -27,41 +27,49 @@ export const getTableRecords = async (
   tableName: string,
   options: ListOptions = {}
 ): Promise<{ data: any[] | null; error: string | null; count: number | null }> => {
-  const selectColumns = options.select ?? '*';
-  let query = supabase.from(tableName).select(selectColumns, { count: 'exact' });
-
-  if (options.companyId && options.companyId !== 'all') {
-    query = query.eq('company_id', options.companyId);
+  if (isDummySupabase) {
+    return { data: [], error: null, count: 0 };
   }
 
-  if (options.filters) {
-    Object.entries(options.filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        query = query.eq(key, value);
-      }
-    });
-  }
+  try {
+    const selectColumns = options.select ?? '*';
+    let query = supabase.from(tableName).select(selectColumns, { count: 'exact' });
 
-  if (options.order) {
-    query = query.order(options.order.column, {
-      ascending: options.order.ascending ?? false,
-    });
-  } else {
-    query = query.order('created_at', { ascending: false });
-  }
+    if (options.companyId && options.companyId !== 'all') {
+      query = query.eq('company_id', options.companyId);
+    }
 
-  if (options.limit) {
-    const from = options.offset || 0;
-    const to = from + options.limit - 1;
-    query = query.range(from, to);
-  }
+    if (options.filters) {
+      Object.entries(options.filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          query = query.eq(key, value);
+        }
+      });
+    }
 
-  const { data, error, count } = await query;
-  if (error) {
-    console.error(`Supabase fetch error (${tableName}):`, error);
-    return { data: null, error: error.message, count: null };
+    if (options.order) {
+      query = query.order(options.order.column, {
+        ascending: options.order.ascending ?? false,
+      });
+    } else {
+      query = query.order('created_at', { ascending: false });
+    }
+
+    if (options.limit) {
+      const from = options.offset || 0;
+      const to = from + options.limit - 1;
+      query = query.range(from, to);
+    }
+
+    const { data, error, count } = await query;
+    if (error) {
+      console.warn(`Supabase fetch notice (${tableName}):`, error.message);
+      return { data: [], error: error.message, count: null };
+    }
+    return { data: (data as any[]) ?? [], error: null, count };
+  } catch (err: any) {
+    return { data: [], error: err?.message || 'Offline mode active', count: 0 };
   }
-  return { data: (data as any[]) ?? [], error: null, count };
 };
 
 /**

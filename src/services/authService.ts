@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase, isDummySupabase } from './supabaseClient';
 
 export interface UserProfile {
   id: string;
@@ -23,6 +23,24 @@ export const authService = {
    * Sign in with email/username and password
    */
   async signIn(identifier: string, password: string) {
+    // If running in demo mode without real Supabase env vars, bypass network calls
+    if (isDummySupabase) {
+      if (identifier && password) {
+        const demoUser: UserProfile = {
+          id: 'USR-ADMIN-001',
+          username: identifier,
+          full_name: 'سليمان خالد السليم',
+          email: identifier.includes('@') ? identifier : 'admin@alsulaim.com.sa',
+          role: 'رئيس المجموعة',
+          branch: 'الفرع الرئيسي',
+          status: 'نشط',
+          created_at: new Date().toISOString()
+        };
+        return { data: demoUser, error: null };
+      }
+      return { data: null, error: { message: 'يرجى إدخال اسم المستخدم وكلمة المرور' } };
+    }
+
     try {
       // First try Supabase auth
       const { data: emailData, error: emailError } = await supabase.auth.signInWithPassword({
@@ -103,18 +121,29 @@ export const authService = {
    * Get current session
    */
   async getSession() {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (session?.user) {
-      const { data: profile } = await this.getUserProfile(session.user.id);
-      return { session: { ...session, user: { ...session.user, profile } }, error };
+    if (isDummySupabase) {
+      return { session: null, error: null };
     }
-    return { session: null, error: null };
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await this.getUserProfile(session.user.id);
+        return { session: { ...session, user: { ...session.user, profile } }, error };
+      }
+      return { session: null, error: null };
+    } catch {
+      return { session: null, error: null };
+    }
   },
 
   /**
    * Subscribe to auth state changes
    */
   onAuthStateChange(callback: (event: string, session: any) => void) {
+    if (isDummySupabase) {
+      callback('INITIAL_SESSION', null);
+      return { data: { subscription: { unsubscribe: () => {} } } };
+    }
     return supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         const { data: profile } = await this.getUserProfile(session.user.id);

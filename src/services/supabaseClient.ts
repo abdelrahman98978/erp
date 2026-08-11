@@ -15,6 +15,11 @@ if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KE
 export const STANDALONE_SUPABASE_URL = SUPABASE_URL;
 export const STANDALONE_SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
 
+export const isDummySupabase =
+  !import.meta.env.VITE_SUPABASE_URL ||
+  SUPABASE_URL.includes('dummy-supabase') ||
+  SUPABASE_URL.includes('dummy');
+
 export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
