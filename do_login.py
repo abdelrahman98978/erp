@@ -6,6 +6,12 @@ import re
 cj = http.cookiejar.CookieJar()
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
 
+import os
+
+# 1. Fetch credentials securely from environment variables
+login_user = os.environ.get('ERP_LOGIN', '')
+login_pass = os.environ.get('ERP_PASS', '')
+
 # 1. Fetch token
 res = opener.open('https://clickerp.com.sa/public/index.php/dashboard').read().decode('utf-8')
 m = re.search(r'name="_token"\s+value="([^"]+)"', res)
@@ -14,8 +20,8 @@ print("Token:", token)
 
 # 2. Login
 data = urllib.parse.urlencode({
-    'login': 'abdelftah',
-    'password': '1234@$',
+    'login': login_user,
+    'password': login_pass,
     '_token': token
 }).encode('utf-8')
 

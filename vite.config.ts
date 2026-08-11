@@ -20,7 +20,8 @@ export default defineConfig({
           'vendor-xlsx': ['xlsx'],
           'vendor-icons': ['lucide-react'],
           'vendor-dates': ['date-fns'],
-          'vendor-supabase': ['@supabase/supabase-js']
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-sentry': ['@sentry/react']
         }
       }
     }

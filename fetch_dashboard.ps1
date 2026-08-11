@@ -11,8 +11,8 @@ if ($res1.Content -match 'name="_token"\s+value="([^"]+)"') {
 
 # Step 2: Perform POST login request
 $body = @{
-    login = 'abdelftah'
-    password = '1234@$'
+    login = $env:ERP_LOGIN
+    password = $env:ERP_PASS
     _token = $token
 }
 

@@ -1,4 +1,22 @@
-/* TypeScript Types for ERP KALID G GROUP SULAIM */
+/* TypeScript Types for Enterprise ERP - Khalid Al-Sulaim Group */
+
+export type CompanyId = 'all' | 'masi' | 'yaqoot' | 'topaz' | 'ruwad';
+
+export interface CompanyEntity {
+  id: CompanyId;
+  name: string;
+  nameEn: string;
+  logo: string;
+  taxNumber: string;
+  crNumber: string;
+  address: string;
+  phone: string;
+  email: string;
+  branchesCount: number;
+  employeesCount: number;
+  activeOrdersCount: number;
+  revenueYTD: number;
+}
 
 export interface NavItem {
   id: string;
@@ -26,6 +44,7 @@ export interface Client {
   created_at: string;
   added_by: string;
   branch: string;
+  companyId?: CompanyId;
 }
 
 export interface Order {
@@ -45,6 +64,7 @@ export interface Order {
   responsible_employee: string;
   branch: string;
   office_name: string;
+  companyId?: CompanyId;
 }
 
 export interface RecruitmentContract {
@@ -63,6 +83,7 @@ export interface RecruitmentContract {
   amount: number;
   created_at: string;
   branch: string;
+  companyId?: CompanyId;
 }
 
 export interface RentContract {
@@ -81,6 +102,7 @@ export interface RentContract {
   payment_status: 'معلق' | 'تم الدفع' | 'بانتظار التحويل';
   marketer: string;
   branch: string;
+  companyId?: CompanyId;
 }
 
 export interface ShelterItem {
@@ -95,6 +117,20 @@ export interface ShelterItem {
   days_in_shelter: number;
   catering_meals_count: number;
   work_willingness: 'ترغب بالعمل' | 'لا ترغب بالعمل' | 'غير محدد';
+  companyId?: CompanyId;
+}
+
+export interface EmployeeDocument {
+  id: string;
+  title: string;
+  category: 'هوية/إقامة' | 'جواز سفر' | 'عقد عمل' | 'مؤهل دراسي' | 'شهادة صحية' | 'ترخيص عمل' | 'بنكي' | 'أخرى';
+  documentNumber: string;
+  issueDate: string;
+  expiryDate: string;
+  status: 'ساري' | 'قريب الانتهاء' | 'منتهي' | 'مفقود';
+  verified: boolean;
+  version: number;
+  fileUrl?: string;
 }
 
 export interface Employee {
@@ -105,9 +141,21 @@ export interface Employee {
   hire_date: string;
   job_title: string;
   department: string;
-  status: 'نشط' | 'إجازة' | 'معطل';
+  status: 'نشط' | 'إجازة' | 'معطل' | 'نهاية خدمة';
   salary: number;
   branch: string;
+  allowances?: number;
+  basicSalary?: number;
+  companyId?: CompanyId;
+  costCenter?: string;
+  email?: string;
+  phone?: string;
+  nationality?: string;
+  bankIban?: string;
+  bankName?: string;
+  documents?: EmployeeDocument[];
+  leaveBalance?: number;
+  performanceScore?: number;
 }
 
 export interface AccountNode {
@@ -116,4 +164,94 @@ export interface AccountNode {
   type: 'أصول' | 'خصوم' | 'حقوق ملكية' | 'إيرادات' | 'مصروفات';
   balance: number;
   children_count?: number;
+  companyId?: CompanyId;
+}
+
+/* ATS & Candidate Types */
+export type CandidateStage =
+  | 'تقديم جديد'
+  | 'فرز أولى'
+  | 'مؤهل' | 'مقابلة أولى'
+  | 'اختبار تقني'
+  | 'المقابلة النهائية'
+  | 'عرض عمل'
+  | 'قبول العرض'
+  | 'ما قبل الانضمام'
+  | 'تأشيرة وتذكرة'
+  | 'وصول وانضمام'
+  | 'مرفوض';
+
+export interface Candidate {
+  id: string;
+  candidateCode: string;
+  name: string;
+  email: string;
+  phone: string;
+  nationality: string;
+  appliedPosition: string;
+  targetCompanyId: CompanyId;
+  targetBranch: string;
+  stage: CandidateStage;
+  aiScore: number; // 0 - 100
+  experienceYears: number;
+  education: string;
+  expectedSalary: number;
+  source: 'موقع الشركة' | 'مكتب خارجي' | 'وكيل' | 'معرض توظيف' | 'تطبيق جوال';
+  externalOfficeName?: string;
+  agentName?: string;
+  cvUrl?: string;
+  appliedDate: string;
+}
+
+/* International Office & Agency Types */
+export interface ExternalOffice {
+  id: string;
+  officeName: string;
+  country: 'الفلبين' | 'إثيوبيا' | 'الهند' | 'كينيا' | 'أوغندا' | 'سريلانكا';
+  countryCode: string;
+  managerName: string;
+  phone: string;
+  email: string;
+  licenseNumber: string;
+  activeCandidatesCount: number;
+  arrivedCountCount: number;
+  rating: number; // 1 - 5
+  authorizedCompanies: CompanyId[];
+}
+
+/* Microsoft Integration Types */
+export interface MsProjectTask {
+  id: string;
+  taskName: string;
+  companyId: CompanyId;
+  assignedResource: string;
+  startDate: string;
+  endDate: string;
+  progressPercent: number;
+  status: 'قيد التنفيذ' | 'مكتمل' | 'متأخر' | 'لم يبدأ';
+  milestone: boolean;
+}
+
+export interface PowerBiDashboardItem {
+  id: string;
+  title: string;
+  category: 'تنفيذي' | 'محاسبة' | 'موارد بشرية' | 'توظيف ATS' | 'عمليات';
+  reportUrl: string;
+  datasetName: string;
+  rlsApplied: boolean;
+  lastSyncTime: string;
+}
+
+/* Audit Log Type */
+export interface AuditLogItem {
+  id: string;
+  timestamp: string;
+  actorId: string;
+  actorName: string;
+  actionType: 'تسجيل دخول' | 'تبديل شركة' | 'محاكاة موظف' | 'تعديل راتب' | 'إصدار فاتورة' | 'حذف مستند' | 'اعتماد عرض';
+  companyId: CompanyId;
+  branchName: string;
+  ipAddress: string;
+  details: string;
+  impersonatedEmployeeId?: string;
 }

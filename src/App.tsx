@@ -2,13 +2,23 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AppShell } from './components/layout/AppShell';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { CompanyProvider } from './contexts/CompanyContext';
+import { ImpersonationProvider } from './contexts/ImpersonationContext';
 
 import './styles/index.css';
 import './styles/layout.css';
 import './styles/components.css';
 
-// Dynamic Lazy Imports for Optimal Bundle Code-Splitting & Instant Load Times
+// Dynamic Lazy Imports for Enterprise Modules
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const GroupCommandCenterPage = lazy(() => import('./pages/GroupCommandCenterPage').then(m => ({ default: m.GroupCommandCenterPage })));
+const CompanySelectorPortal = lazy(() => import('./components/portal/CompanySelectorPortal').then(m => ({ default: m.CompanySelectorPortal })));
+const EnterpriseATSPipelinePage = lazy(() => import('./pages/EnterpriseATSPipelinePage').then(m => ({ default: m.EnterpriseATSPipelinePage })));
+const ExternalOfficesAgentsPage = lazy(() => import('./pages/ExternalOfficesAgentsPage').then(m => ({ default: m.ExternalOfficesAgentsPage })));
+const UnifiedCommunicationCenterPage = lazy(() => import('./pages/UnifiedCommunicationCenterPage').then(m => ({ default: m.UnifiedCommunicationCenterPage })));
+const MicrosoftIntegrationCenterPage = lazy(() => import('./pages/MicrosoftIntegrationCenterPage').then(m => ({ default: m.MicrosoftIntegrationCenterPage })));
+
 const RecruitmentContractsPage = lazy(() => import('./pages/RecruitmentContractsPage').then(m => ({ default: m.RecruitmentContractsPage })));
 const RentContractsPage = lazy(() => import('./pages/RentContractsPage').then(m => ({ default: m.RentContractsPage })));
 const CreateCVPage = lazy(() => import('./pages/CreateCVPage').then(m => ({ default: m.CreateCVPage })));
@@ -49,15 +59,14 @@ const BranchDepartmentsPage = lazy(() => import('./pages/BranchDepartmentsPage')
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
     <Loader2 className="w-10 h-10 animate-spin text-emerald-600 mb-3" />
-    <span className="text-sm font-medium text-slate-500 animate-pulse">جاري تحميل الصفحة...</span>
+    <span className="text-sm font-medium text-slate-500 animate-pulse">جاري تحميل النظام المؤسسي...</span>
   </div>
 );
 
 const MainContent: React.FC = () => {
-  const { t } = useLanguage();
   const [flowState, setFlowState] = useState<'landing' | 'login' | 'launcher' | 'workspace'>('landing');
   const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [activeTabTitle, setActiveTabTitle] = useState<string>('الرئيسية والمؤشرات');
+  const [activeTabTitle, setActiveTabTitle] = useState<string>('الرئيسية والمؤشرات التشغيلية');
 
   const handleSelectTab = (href: string, title: string) => {
     if (href === 'logout') {
@@ -73,7 +82,7 @@ const MainContent: React.FC = () => {
     setFlowState('landing');
   };
 
-  // 1. Landing Page (Pre-Login Group Companies Grid Portal)
+  // 1. Landing Page (Portal Overview)
   if (flowState === 'landing') {
     return (
       <Suspense fallback={<PageFallback />}>
@@ -82,7 +91,7 @@ const MainContent: React.FC = () => {
     );
   }
 
-  // 2. 3D WebGL Login Page
+  // 2. Login Page
   if (flowState === 'login') {
     return (
       <Suspense fallback={<PageFallback />}>
@@ -100,11 +109,29 @@ const MainContent: React.FC = () => {
     );
   }
 
-  // 4. ERP Workspace Pages
+  // 4. ERP Workspace Router
   const renderPage = () => {
     switch (activeTab) {
       case 'dashboard':
         return <DashboardPage onNavigate={handleSelectTab} />;
+
+      case 'group-command-center':
+        return <GroupCommandCenterPage />;
+
+      case 'company-selector':
+        return <CompanySelectorPortal onSelectCompany={() => handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')} />;
+
+      case 'ats-pipeline':
+        return <EnterpriseATSPipelinePage />;
+
+      case 'external-offices':
+        return <ExternalOfficesAgentsPage />;
+
+      case 'unified-communication':
+        return <UnifiedCommunicationCenterPage />;
+
+      case 'microsoft-center':
+        return <MicrosoftIntegrationCenterPage />;
 
       case 'admin-dashboard':
         return <AdminDashboardPage onNavigate={handleSelectTab} />;
@@ -312,7 +339,13 @@ const MainContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <LanguageProvider>
-      <MainContent />
+      <AuthProvider>
+        <CompanyProvider>
+          <ImpersonationProvider>
+            <MainContent />
+          </ImpersonationProvider>
+        </CompanyProvider>
+      </AuthProvider>
     </LanguageProvider>
   );
 };

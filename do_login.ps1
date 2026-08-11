@@ -8,8 +8,8 @@ if ($res1.Content -match $tokenPattern) {
 }
 
 $body = @{
-    login = 'abdelftah'
-    password = '1234@$'
+    login = $env:ERP_LOGIN
+    password = $env:ERP_PASS
     _token = $token
 }
 

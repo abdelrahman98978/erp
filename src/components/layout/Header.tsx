@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { LANGUAGES, Language } from '../../i18n/languages';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useCompany } from '../../contexts/CompanyContext';
+import { useImpersonation } from '../../contexts/ImpersonationContext';
+import { CompanyId } from '../../types';
+import { CompanyLogo } from '../common/CompanyLogo';
 
 interface HeaderProps {
   activeTabTitle: string;
@@ -13,19 +17,36 @@ export const Header: React.FC<HeaderProps> = ({
   activeTabTitle,
   onToggleSidebar,
   onOpenAppLauncher,
-  onLogout
+  onLogout,
 }) => {
   const { currentLanguage, theme, setLanguage, toggleTheme, t } = useLanguage();
+  const { activeCompanyId, activeCompany, setActiveCompanyId, companies } = useCompany();
+  const { impersonatedState, stopImpersonation } = useImpersonation();
+
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
   const [showLangDropdown, setShowLangDropdown] = useState<boolean>(false);
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState<boolean>(false);
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setCurrentTime(now.toLocaleTimeString(currentLanguage.code === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-      setCurrentDate(now.toLocaleDateString(currentLanguage.code === 'ar' ? 'ar-SA' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+      setCurrentTime(
+        now.toLocaleTimeString(currentLanguage.code === 'ar' ? 'ar-SA' : 'en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+      );
+      setCurrentDate(
+        now.toLocaleDateString(currentLanguage.code === 'ar' ? 'ar-SA' : 'en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      );
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
@@ -33,212 +54,327 @@ export const Header: React.FC<HeaderProps> = ({
   }, [currentLanguage]);
 
   return (
-    <header className="app-header">
-      {/* Right Side: App Switcher, Collapse Btn, Page Title & Company Tag */}
-      <div className="header-right">
-        <button className="odoo-app-switcher" onClick={onOpenAppLauncher} title={t('appLauncherTitle', 'بوابة الأقسام')}>
-          <i className="fa-solid fa-grip"></i>
-        </button>
-
-        <button className="btn-odoo btn-odoo-secondary" style={{ padding: '6px 10px', height: '36px' }} onClick={onToggleSidebar} title="طي/توسيع القائمة">
-          <i className="fa-solid fa-bars"></i>
-        </button>
-
-        <div className="header-title-box">
-          <h1 className="page-title" style={{ fontFamily: 'var(--font-family-cairo)' }}>{activeTabTitle}</h1>
-          <span className="breadcrumb-sub" style={{ fontWeight: '700', color: 'var(--odoo-purple)', fontFamily: 'var(--font-family-tajawal)' }}>
-            <img src="/logo.png" alt="Logo" style={{ width: '18px', height: '18px', borderRadius: '50%', verticalAlign: 'middle', marginLeft: '6px', marginRight: '6px' }} />
-            {t('companyTitle', 'مجموعة خالد السليم للاستقدام والتشغيل | MAJMOAT ALKHALID ALSALIM')}
-          </span>
-        </div>
-
-        {/* Government Quick Links Ribbon */}
-        <div className="gov-links-ribbon hidden-mobile">
-          <a href="https://pros.musaned.com.sa/login" target="_blank" rel="noreferrer" className="gov-link-pill">
-            <i className="fa-solid fa-external-link"></i> مساند برو
-          </a>
-          <a href="https://tawtheeq.musaned.com.sa/" target="_blank" rel="noreferrer" className="gov-link-pill">
-            <i className="fa-solid fa-file-contract"></i> مساند توثيق
-          </a>
-          <a href="https://salesiq.zoho.sa/platinumeastern/liveview" target="_blank" rel="noreferrer" className="gov-link-pill">
-            <i className="fa-solid fa-comments"></i> اللايف شات
-          </a>
-          <a href="https://visa.mofa.gov.sa/enjaz/getvisainformation/" target="_blank" rel="noreferrer" className="gov-link-pill">
-            <i className="fa-solid fa-id-card"></i> إنجاز
-          </a>
-          <a href="https://ksavisa.sa/" target="_blank" rel="noreferrer" className="gov-link-pill">
-            <i className="fa-solid fa-plane"></i> منصة تأشير
-          </a>
-        </div>
-      </div>
-
-      {/* Left Side: Live Clock, Theme Switcher, 12-Language Selector, Profile & Logout */}
-      <div className="header-left">
-        {/* Live Clock Widget */}
-        <div className="hidden-mobile" style={{ textAlign: 'left', fontSize: '12px', color: 'var(--text-muted)' }}>
-          <div style={{ fontWeight: '700', color: 'var(--odoo-purple)', fontSize: '13px' }}>{currentTime}</div>
-          <div>{currentDate}</div>
-        </div>
-
-        {/* Theme Switcher Toggle Button (Sun / Moon) */}
-        <button
-          className="btn-odoo btn-odoo-secondary"
-          onClick={toggleTheme}
-          style={{ width: '38px', height: '38px', borderRadius: '50%', padding: 0 }}
-          title={theme === 'dark' ? t('themeLight', 'الوضع الفاتح') : t('themeDark', 'الوضع الداكن')}
+    <>
+      {/* Impersonation Banner Overlay when Super Admin acts as employee */}
+      {impersonatedState.isImpersonating && (
+        <div
+          style={{
+            background: 'linear-gradient(90deg, #991B1B 0%, #DC2626 100%)',
+            color: '#FFFFFF',
+            padding: '8px 16px',
+            fontSize: '13px',
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            zIndex: 1100,
+          }}
         >
-          <i className={`fa-solid ${theme === 'dark' ? 'fa-sun text-warning' : 'fa-moon text-purple'}`} style={{ fontSize: '16px' }}></i>
-        </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-user-secret" style={{ fontSize: '16px' }}></i>
+            <span>
+              وضع المعاينة والتدقيق الكلي: أنت تتصفح النظام بصلاحيات الموظف (
+              <strong>{impersonatedState.employeeName}</strong> - {impersonatedState.employeeTitle})
+            </span>
+            <span
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.25)',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '11px',
+              }}
+            >
+              السبب: {impersonatedState.reason}
+            </span>
+          </div>
 
-        {/* 12-Language Selector Dropdown */}
-        <div style={{ position: 'relative' }}>
           <button
-            className="btn-odoo btn-odoo-secondary"
-            onClick={() => setShowLangDropdown(!showLangDropdown)}
-            style={{ height: '38px', padding: '0 12px', gap: '6px', fontSize: '13px', fontWeight: '700' }}
-            title={t('selectLangHeader', 'اختر لغة النظام (12 لغة)')}
+            type="button"
+            onClick={stopImpersonation}
+            style={{
+              backgroundColor: '#FFFFFF',
+              color: '#991B1B',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '4px 12px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              fontSize: '12px',
+            }}
           >
-            <span>{currentLanguage.flag}</span>
-            <span>{currentLanguage.nativeName}</span>
-            <i className="fa-solid fa-chevron-down" style={{ fontSize: '10px' }}></i>
+            <i className="fa-solid fa-arrow-left-long" style={{ marginLeft: '6px' }}></i>
+            العودة لنمط الأدمن الرئيسي
+          </button>
+        </div>
+      )}
+
+      <header className="app-header">
+        {/* Right Side: App Switcher, Collapse Btn, Page Title & Company Tag */}
+        <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="odoo-app-switcher" onClick={onOpenAppLauncher} title={t('appLauncherTitle', 'بوابة الأقسام')}>
+            <i className="fa-solid fa-grip"></i>
           </button>
 
-          {showLangDropdown && (
-            <div style={{
-              position: 'absolute',
-              top: '44px',
-              left: currentLanguage.dir === 'rtl' ? 0 : 'auto',
-              right: currentLanguage.dir === 'ltr' ? 0 : 'auto',
-              background: 'var(--bg-surface)',
-              border: '1px solid #E2E8F0',
-              borderRadius: 'var(--radius-md)',
-              boxShadow: 'var(--shadow-lg)',
-              width: '210px',
-              maxHeight: '320px',
-              overflowY: 'auto',
-              zIndex: 100,
-              padding: '6px'
-            }}>
-              <div style={{ padding: '6px 10px', fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', borderBottom: '1px solid #F1F5F9' }}>
-                {t('selectLangHeader', 'اختر لغة النظام (12 لغة)')}
-              </div>
-              {LANGUAGES.map((lang: Language) => (
+          <button
+            className="btn-odoo btn-odoo-secondary"
+            style={{ padding: '6px 10px', height: '36px' }}
+            onClick={onToggleSidebar}
+            title="طي/توسيع القائمة"
+          >
+            <i className="fa-solid fa-bars"></i>
+          </button>
+
+          <div className="header-title-box">
+            <h1 className="page-title" style={{ fontFamily: 'var(--font-family-cairo)', margin: 0, fontSize: '18px' }}>
+              {activeTabTitle}
+            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+              <span
+                style={{
+                  fontWeight: '700',
+                  color: 'var(--odoo-purple)',
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <img
+                  src="/logo.png"
+                  alt="Group Logo"
+                  style={{ width: '16px', height: '16px', borderRadius: '50%' }}
+                />
+                خالد السليم للاستقدام والتشغيل
+              </span>
+              <span style={{ color: '#CBD5E1' }}>|</span>
+              <span style={{ fontWeight: '800', color: '#059669', fontSize: '12px' }}>
+                {activeCompany.name}
+              </span>
+            </div>
+          </div>
+
+          {/* Interactive Company Context Switcher Dropdown */}
+          <div style={{ position: 'relative', marginRight: '16px' }}>
+            <button
+              type="button"
+              onClick={() => setShowCompanyDropdown(!showCompanyDropdown)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+                color: '#F8FAFC',
+                border: '1px solid #334155',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                fontWeight: '700',
+                fontSize: '13px',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+              }}
+            >
+              <CompanyLogo companyId={activeCompanyId} size={22} />
+              <span>{activeCompany.name}</span>
+              <i className="fa-solid fa-chevron-down" style={{ fontSize: '10px', color: '#94A3B8' }}></i>
+            </button>
+
+            {showCompanyDropdown && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '110%',
+                  right: 0,
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '10px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                  width: '260px',
+                  zIndex: 200,
+                  padding: '6px',
+                }}
+              >
+                <div style={{ padding: '8px 12px', fontSize: '11px', fontWeight: '800', color: '#64748B', borderBottom: '1px solid #F1F5F9' }}>
+                  اختيار نطاق الشركة (Company Scope):
+                </div>
+
                 <button
-                  key={lang.code}
                   type="button"
                   onClick={() => {
-                    setLanguage(lang);
-                    setShowLangDropdown(false);
+                    setActiveCompanyId('all');
+                    setShowCompanyDropdown(false);
                   }}
                   style={{
                     width: '100%',
+                    textAlign: 'right',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
                     border: 'none',
-                    padding: '8px 12px',
-                    borderRadius: 'var(--radius-sm)',
+                    backgroundColor: activeCompanyId === 'all' ? '#EFF6FF' : 'transparent',
+                    color: activeCompanyId === 'all' ? '#1D4ED8' : '#1E293B',
+                    fontWeight: activeCompanyId === 'all' ? '800' : '600',
+                    fontSize: '13px',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    background: currentLanguage.code === lang.code ? 'var(--primary-light)' : 'transparent',
-                    color: currentLanguage.code === lang.code ? 'var(--odoo-teal-dark)' : 'var(--text-main)',
-                    fontWeight: currentLanguage.code === lang.code ? '800' : '500',
-                    fontSize: '13px',
-                    textAlign: 'right'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span>{lang.flag}</span>
-                    <span>{lang.nativeName}</span>
-                  </div>
-                  {currentLanguage.code === lang.code && (
-                    <i className="fa-solid fa-check text-primary" style={{ fontSize: '12px' }}></i>
-                  )}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <i className="fa-solid fa-globe" style={{ color: '#2563EB' }}></i>
+                    إدارة المجموعة المركزية (الكل)
+                  </span>
+                  {activeCompanyId === 'all' && <i className="fa-solid fa-check text-blue-600"></i>}
                 </button>
-              ))}
-            </div>
-          )}
+
+                <div style={{ height: '1px', backgroundColor: '#F1F5F9', margin: '4px 0' }} />
+
+                {companies.map((comp) => (
+                  <button
+                    key={comp.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveCompanyId(comp.id as CompanyId);
+                      setShowCompanyDropdown(false);
+                    }}
+                    style={{
+                      width: '100%',
+                      textAlign: 'right',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      backgroundColor: activeCompanyId === comp.id ? '#ECFDF5' : 'transparent',
+                      color: activeCompanyId === comp.id ? '#047857' : '#334155',
+                      fontWeight: activeCompanyId === comp.id ? '800' : '600',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <i className="fa-solid fa-building-circle-check" style={{ color: '#059669' }}></i>
+                      {comp.name}
+                    </span>
+                    {activeCompanyId === comp.id && <i className="fa-solid fa-check text-emerald-600"></i>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* App Launcher Button */}
-        <button className="btn-odoo btn-odoo-purple" style={{ height: '38px' }} onClick={onOpenAppLauncher} title={t('appLauncherTitle', 'بوابة الأقسام')}>
-          <i className="fa-solid fa-grip"></i>
-          <span className="hidden-mobile">الأقسام</span>
-        </button>
-
-        {/* User Profile Info with Dropdown & Logout Button */}
-        <div style={{ position: 'relative' }}>
-          <div
-            className="user-profile-btn"
-            onClick={() => setShowUserDropdown(!showUserDropdown)}
-            style={{ cursor: 'pointer' }}
-            title="حساب المستخدم والإعدادات"
-          >
-            <div className="user-avatar" style={{ background: 'linear-gradient(135deg, #D4AF37 0%, #714B67 100%)' }}>خ</div>
-            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-main)' }}>عبد الفتاح</span>
-              <span style={{ fontSize: '10px', color: 'var(--odoo-teal-dark)', fontWeight: '600' }}>مدير النظام</span>
-            </div>
-            <i className="fa-solid fa-chevron-down" style={{ fontSize: '10px', color: 'var(--text-muted)', marginRight: '4px' }}></i>
+        {/* Left Side: Time, Search, Notifications, Language & User Profile */}
+        <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div className="header-time-box hidden-mobile" style={{ textAlign: 'left', fontSize: '11px', color: '#64748B' }}>
+            <div style={{ fontWeight: '700', color: '#1E293B' }}>{currentTime}</div>
+            <div>{currentDate}</div>
           </div>
 
-          {showUserDropdown && (
-            <div style={{
-              position: 'absolute',
-              top: '44px',
-              left: currentLanguage.dir === 'rtl' ? 0 : 'auto',
-              right: currentLanguage.dir === 'ltr' ? 0 : 'auto',
-              background: 'var(--bg-surface)',
-              border: '1px solid #E2E8F0',
-              borderRadius: 'var(--radius-md)',
-              boxShadow: 'var(--shadow-lg)',
-              width: '200px',
-              zIndex: 100,
-              padding: '6px'
-            }}>
-              <div style={{ padding: '8px 10px', borderBottom: '1px solid #F1F5F9', marginBottom: '4px' }}>
-                <div style={{ fontWeight: '800', fontSize: '13px', color: 'var(--text-main)' }}>عبد الفتاح السليم</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>abdelftah@alsalim.com.sa</div>
-              </div>
+          {/* Theme & Language Controls */}
+          <button className="btn-header-icon" onClick={toggleTheme} title="تغيير الثيم">
+            <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+          </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setShowUserDropdown(false);
-                  if (onLogout) onLogout();
-                }}
+          {/* Language Selector */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="btn-header-icon"
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              title="تغيير اللغة"
+            >
+              <i className="fa-solid fa-globe"></i>
+            </button>
+            {showLangDropdown && (
+              <div className="dropdown-menu-custom">
+                {LANGUAGES.map((lang: Language) => (
+                  <button
+                    key={lang.code}
+                    className={`dropdown-item-custom ${currentLanguage.code === lang.code ? 'active' : ''}`}
+                    onClick={() => {
+                      setLanguage(lang);
+                      setShowLangDropdown(false);
+                    }}
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Notifications */}
+          <button className="btn-header-icon relative-box" title="الإشعارات">
+            <i className="fa-solid fa-bell"></i>
+            <span className="badge-count-header">5</span>
+          </button>
+
+          {/* User Profile */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="user-profile-btn"
+              onClick={() => setShowUserDropdown(!showUserDropdown)}
+            >
+              <img src="/avatar-admin.png" onError={(e)=>{ (e.target as HTMLElement).setAttribute('src', 'https://ui-avatars.com/api/?name=Admin+Sulaim&background=0D9488&color=fff'); }} alt="Admin Avatar" className="user-avatar-header" />
+              <div className="user-info-header hidden-mobile">
+                <span className="user-name-header">سليمان خالد السليم</span>
+                <span className="user-role-header">Group Super Admin</span>
+              </div>
+              <i className="fa-solid fa-chevron-down opacity-50 text-xs"></i>
+            </button>
+
+            {showUserDropdown && (
+              <div
                 style={{
-                  width: '100%',
-                  border: 'none',
-                  padding: '10px 12px',
-                  borderRadius: 'var(--radius-sm)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  cursor: 'pointer',
-                  background: 'rgba(239, 68, 68, 0.08)',
-                  color: '#EF4444',
-                  fontWeight: '700',
-                  fontSize: '13px'
+                  position: 'absolute',
+                  top: '110%',
+                  left: 0,
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '10px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                  width: '220px',
+                  zIndex: 200,
+                  padding: '6px',
                 }}
               >
-                <i className="fa-solid fa-right-from-bracket"></i>
-                <span>{t('logout', 'تسجيل الخروج')}</span>
-              </button>
-            </div>
-          )}
-        </div>
+                <div style={{ padding: '8px 10px', borderBottom: '1px solid #F1F5F9', marginBottom: '4px' }}>
+                  <div style={{ fontWeight: '800', fontSize: '13px', color: '#0F172A' }}>سليمان خالد السليم</div>
+                  <div style={{ fontSize: '11px', color: '#64748B' }}>admin@alsulaim.com.sa</div>
+                  <div style={{ fontSize: '10px', color: '#059669', marginTop: '2px', fontWeight: '700' }}>
+                    نطاق النشاط: {activeCompany.name}
+                  </div>
+                </div>
 
-        {/* Direct Red Logout Button */}
-        <button
-          className="btn-odoo btn-odoo-danger"
-          onClick={onLogout}
-          style={{ height: '38px', padding: '0 12px', gap: '6px', fontSize: '13px', fontWeight: '700' }}
-          title={t('logout', 'تسجيل الخروج')}
-        >
-          <i className="fa-solid fa-power-off"></i>
-          <span className="hidden-mobile">{t('logout', 'خروج')}</span>
-        </button>
-      </div>
-    </header>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUserDropdown(false);
+                    if (onLogout) onLogout();
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    textAlign: 'right',
+                    backgroundColor: '#FEF2F2',
+                    color: '#DC2626',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontWeight: '700',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <i className="fa-solid fa-right-from-bracket" style={{ marginLeft: '6px' }}></i>
+                  تسجيل الخروج
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+    </>
   );
 };

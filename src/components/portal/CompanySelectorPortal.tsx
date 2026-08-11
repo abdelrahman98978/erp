@@ -1,0 +1,193 @@
+import React from 'react';
+import { useCompany } from '../../contexts/CompanyContext';
+import { CompanyId } from '../../types';
+import { CompanyLogo } from '../common/CompanyLogo';
+
+interface CompanySelectorPortalProps {
+  onSelectCompany: (companyId: CompanyId) => void;
+}
+
+export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ onSelectCompany }) => {
+  const { companies, activeCompanyId, setActiveCompanyId } = useCompany();
+
+  const handleChoose = (id: CompanyId) => {
+    setActiveCompanyId(id);
+    onSelectCompany(id);
+  };
+
+  return (
+    <div style={{ padding: '24px', backgroundColor: '#F8FAFC', minHeight: '85vh' }}>
+      {/* Header Banner */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+          borderRadius: '16px',
+          padding: '32px',
+          color: '#FFFFFF',
+          marginBottom: '32px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '20px',
+        }}
+      >
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <span
+              style={{
+                backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                color: '#F59E0B',
+                border: '1px solid #D4AF37',
+                borderRadius: '20px',
+                padding: '4px 14px',
+                fontSize: '12px',
+                fontWeight: '800',
+              }}
+            >
+              Enterprise Multi-Company Scope
+            </span>
+            <span style={{ fontSize: '13px', color: '#94A3B8' }}>مجموعة شركات خالد السليم</span>
+          </div>
+          <h1 style={{ fontSize: '26px', fontWeight: '900', margin: '0 0 6px 0', fontFamily: 'Cairo, sans-serif' }}>
+            بوابة اختيار الكيانات التشغيلية والشركات المستقلة
+          </h1>
+          <p style={{ color: '#CBD5E1', fontSize: '14px', margin: 0, maxWidth: '650px' }}>
+            اختر بيئة العمل الخاصة بالشركة للوصول إلى الدفاتر المحاسبية المستقلة، سجلات الموظفين، عقود الاستقدام، والتقارير التنفيذية مع الحفاظ التام على عزل البيانات.
+          </p>
+        </div>
+
+        {/* Global Group Admin Button */}
+        <button
+          type="button"
+          onClick={() => handleChoose('all')}
+          style={{
+            backgroundColor: '#059669',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '14px 24px',
+            fontSize: '14px',
+            fontWeight: '800',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(5, 150, 105, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <i className="fa-solid fa-globe" style={{ fontSize: '18px' }}></i>
+          <span>الدخول للإدارة المركزية للمجموعة (All Companies)</span>
+        </button>
+      </div>
+
+      {/* Grid of 4 Operating Companies */}
+      <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#1E293B', marginBottom: '20px' }}>
+        الشركات والكيانات التشغيلية المعتمدة (Legal Entities):
+      </h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+        {companies.map((comp) => {
+          const isCurrent = activeCompanyId === comp.id;
+          return (
+            <div
+              key={comp.id}
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '16px',
+                border: isCurrent ? '2px solid #059669' : '1px solid #E2E8F0',
+                boxShadow: isCurrent ? '0 10px 30px rgba(5, 150, 105, 0.15)' : '0 4px 15px rgba(0,0,0,0.05)',
+                padding: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                transition: 'transform 0.2s ease, boxShadow 0.2s ease',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <CompanyLogo companyId={comp.id as CompanyId} size={54} />
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      padding: '3px 10px',
+                      borderRadius: '12px',
+                      backgroundColor: '#F1F5F9',
+                      color: '#475569',
+                    }}
+                  >
+                    CR: {comp.crNumber}
+                  </span>
+                </div>
+
+                <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0F172A', marginBottom: '4px', fontFamily: 'Cairo, sans-serif' }}>
+                  {comp.name}
+                </h3>
+                <div style={{ fontSize: '12px', color: '#64748B', marginBottom: '16px', fontWeight: '600' }}>
+                  {comp.nameEn}
+                </div>
+
+                {/* Company Stats Grid */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '10px',
+                    backgroundColor: '#F8FAFC',
+                    padding: '12px',
+                    borderRadius: '10px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>الفروع النشطة</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{comp.branchesCount} فروع</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>إجمالي الكادر</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#059669' }}>{comp.employeesCount} موظف</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>الطلبات السارية</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#2563EB' }}>{comp.activeOrdersCount} طلب</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>الرقم الضريبي</div>
+                    <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569' }}>{comp.taxNumber.slice(0, 10)}...</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                type="button"
+                onClick={() => handleChoose(comp.id as CompanyId)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  backgroundColor: isCurrent ? '#059669' : '#1E293B',
+                  color: '#FFFFFF',
+                  fontWeight: '800',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span>{isCurrent ? 'الشركة الحالية (مفعلة)' : 'ENTER COMPANY (الدخول بيئة العمل)'}</span>
+                <i className="fa-solid fa-arrow-left"></i>
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
