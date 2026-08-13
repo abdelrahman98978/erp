@@ -92,7 +92,46 @@ export const HRPage: React.FC = () => {
     setEmployees([...employees, newEmp]);
     setShowAddEmpModal(false);
     setEmpForm({ name: '', national_id: '', job_title: 'أخصائي استقدام', department: 'التشغيل والاستقدام', branch: 'فرع الرياض', salary: '' });
-    alert(`تمت إضافة الموظف الجديد (${newEmp.name}) وتوليد الملف الوظيفي والراتب بنجاح!`);
+  };
+
+  const [selectedEmpFor360, setSelectedEmpFor360] = useState<Employee | null>(null);
+
+  const handleExportWPS = () => {
+    const headers = [
+      'رقم الهوية / الإقامة',
+      'اسم الموظف',
+      'اسم البنك',
+      'رقم الحساب (IBAN)',
+      'الراتب الأساسي',
+      'بدل سكن',
+      'بدل نقل',
+      'حسميات / استقطاع',
+      'صافي المحول للبنك',
+      'رمز الحالة'
+    ];
+
+    const rows = employees.map(emp => [
+      `"${emp.national_id}"`,
+      `"${emp.name}"`,
+      `"مصرف الراجحي"`,
+      `"SA03800000000${emp.national_id}12"`,
+      emp.salary,
+      1000,
+      500,
+      500,
+      emp.salary + 1000,
+      `"PAID"`
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `WPS_Payroll_KSA_${new Date().toISOString().slice(0, 7)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -208,8 +247,9 @@ export const HRPage: React.FC = () => {
                   <td><Badge text={emp.status} type="success" /></td>
                   <td>
                     <div style={{ display: 'flex', gap: '4px' }}>
-                      <button className="btn-odoo btn-odoo-secondary" style={{ padding: '4px 8px', fontSize: '11.5px' }}>تعديل</button>
-                      <button className="btn-odoo btn-odoo-purple" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert(`توليد مفردات مرتب الموظف (${emp.name})`)}>مسير الراتب</button>
+                      <button className="btn-odoo btn-odoo-purple" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => setSelectedEmpFor360(emp)}>
+                        <i className="fa-solid fa-id-card ml-1"></i> ملف 360°
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -226,8 +266,8 @@ export const HRPage: React.FC = () => {
             <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
               💵 مسير الرواتب الشهرية والخصومات (شهر يوليو 2026)
             </h3>
-            <button className="btn-odoo btn-odoo-purple" onClick={() => alert('تصدير كشف مسير الرواتب البنكي (WPS) لجميع الموظفين')}>
-              <i className="fa-solid fa-file-export ml-1"></i> تصدير ملف البنك WPS
+            <button className="btn-odoo btn-odoo-purple" onClick={handleExportWPS}>
+              <i className="fa-solid fa-file-export ml-1"></i> تصدير ملف البنك WPS (.csv)
             </button>
           </div>
 
@@ -363,6 +403,67 @@ export const HRPage: React.FC = () => {
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button className="btn-odoo btn-odoo-secondary" onClick={() => setShowAdvanceModal(false)}>إلغاء</button>
               <button className="btn-odoo btn-odoo-purple" onClick={() => { setShowAdvanceModal(false); alert('تمت إضافة وإرسال الطلب للموارد البشرية بنجاح!'); }}>إرسال الطلب للاعتماد</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Employee 360 View Modal */}
+      {selectedEmpFor360 && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div className="table-card" style={{ width: '600px', maxWidth: '95%', padding: '24px', background: '#FFFFFF', borderRadius: '12px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px' }}>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#005154', margin: 0 }}>
+                  <i className="fa-solid fa-user-gear ml-2 text-purple"></i> الملف الوظيفي الشامل 360° ({selectedEmpFor360.name})
+                </h3>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>كود الموظف: {selectedEmpFor360.employee_code}</span>
+              </div>
+              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setSelectedEmpFor360(null)}></i>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>الهوية / الإقامة:</span>
+                <div style={{ fontWeight: '700', fontSize: '14px' }}>{selectedEmpFor360.national_id}</div>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>المسمى الوظيفي:</span>
+                <div style={{ fontWeight: '700', fontSize: '14px' }}>{selectedEmpFor360.job_title}</div>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>القسم والفرع:</span>
+                <div style={{ fontWeight: '700', fontSize: '14px' }}>{selectedEmpFor360.department} - {selectedEmpFor360.branch}</div>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>تاريخ التعيين:</span>
+                <div style={{ fontWeight: '700', fontSize: '14px' }}>{selectedEmpFor360.hire_date}</div>
+              </div>
+            </div>
+
+            <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#714B67', marginBottom: '10px' }}>
+              💵 الهيكل المالي للراتب والبدلات:
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
+              <div style={{ background: '#EFF6FF', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                <span style={{ fontSize: '11px', color: '#1E40AF' }}>الراتب الأساسي</span>
+                <div style={{ fontWeight: '800', fontSize: '15px', color: '#1E3A8A' }}>{selectedEmpFor360.salary.toLocaleString()} ر.س</div>
+              </div>
+              <div style={{ background: '#ECFDF5', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                <span style={{ fontSize: '11px', color: '#065F46' }}>إجمالي البدلات</span>
+                <div style={{ fontWeight: '800', fontSize: '15px', color: '#047857' }}>+1,500 ر.س</div>
+              </div>
+              <div style={{ background: '#FEF2F2', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                <span style={{ fontSize: '11px', color: '#991B1B' }}>الاستقطاعات السارية</span>
+                <div style={{ fontWeight: '800', fontSize: '15px', color: '#DC2626' }}>-500 ر.س</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button className="btn-odoo btn-odoo-secondary" onClick={() => setSelectedEmpFor360(null)}>إغلاق الملف</button>
+              <button className="btn-odoo btn-odoo-purple" onClick={handleExportWPS}>
+                <i className="fa-solid fa-file-invoice-dollar ml-1"></i> أصدار مفردات مرتب
+              </button>
             </div>
           </div>
         </div>
