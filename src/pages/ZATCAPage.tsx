@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface SharedInvoice {
   id: string;
@@ -23,9 +24,13 @@ const INITIAL_INVOICES: SharedInvoice[] = [
 ];
 
 export const ZATCAPage: React.FC = () => {
-  const [invoices, setInvoices] = useState<SharedInvoice[]>(INITIAL_INVOICES);
+  const [invoices, setInvoices] = useState<SharedInvoice[]>([]);
   const [showCsidModal, setShowCsidModal] = useState(false);
   const [selectedInvoiceForXml, setSelectedInvoiceForXml] = useState<SharedInvoice | null>(null);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<SharedInvoice>('zatca_invoices', INITIAL_INVOICES).then(data => setInvoices(data));
+  }, []);
 
   const [csidForm, setCsidForm] = useState({
     vatNumber: '310928374100003',

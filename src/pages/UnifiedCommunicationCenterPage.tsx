@@ -1,38 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
+import { realErpDataStore } from '../services/realErpDataStore';
+
+interface UnifiedMessage {
+  id: string;
+  sender: string;
+  receiver: string;
+  subject: string;
+  timestamp: string;
+  type: string;
+  status: string;
+}
+
+const INITIAL_MESSAGES: UnifiedMessage[] = [
+  {
+    id: 'MSG-301',
+    sender: 'شركة السفير الماسي (قسم الاستقدام)',
+    receiver: 'Manila Overseas Placement Agency',
+    subject: 'طلب استكمال إجراءات تفييز 15 عاملة لفرع المنسكية',
+    timestamp: '2026-08-11 11:30 AM',
+    type: 'خارجي',
+    status: 'تم الاستلام والرد',
+  },
+  {
+    id: 'MSG-302',
+    sender: 'شركة ياقوت نجد (جدة)',
+    receiver: 'شركة توباز للاستقدام (الدمام)',
+    subject: 'طلب تحويل 5 سير ذاتية سائقين مهنيين لعدم توفر الشاغر بفرع جدة',
+    timestamp: '2026-08-11 10:15 AM',
+    type: 'بين الشركات',
+    status: 'قيد الإجراء',
+  },
+  {
+    id: 'MSG-303',
+    sender: 'نظام الإشعارات الآلي (System Auto)',
+    receiver: 'المرشحة: مريم علي أحمد (C-2026-091)',
+    subject: 'إرسال دعوة إجراء المقابلة المرئية عبر رابط المنصة',
+    timestamp: '2026-08-11 09:00 AM',
+    type: 'آلي ATS',
+    status: 'تم الإرسال WhatsApp/Email',
+  },
+];
 
 export const UnifiedCommunicationCenterPage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const [messages, setMessages] = useState<UnifiedMessage[]>([]);
 
-  const [messages] = useState([
-    {
-      id: 'MSG-301',
-      sender: 'شركة السفير الماسي (قسم الاستقدام)',
-      receiver: 'Manila Overseas Placement Agency',
-      subject: 'طلب استكمال إجراءات تفييز 15 عاملة لفرع المنسكية',
-      timestamp: '2026-08-11 11:30 AM',
-      type: 'خارجي',
-      status: 'تم الاستلام والرد',
-    },
-    {
-      id: 'MSG-302',
-      sender: 'شركة ياقوت نجد (جدة)',
-      receiver: 'شركة توباز للاستقدام (الدمام)',
-      subject: 'طلب تحويل 5 سير ذاتية سائقين مهنيين لعدم توفر الشاغر بفرع جدة',
-      timestamp: '2026-08-11 10:15 AM',
-      type: 'بين الشركات',
-      status: 'قيد الإجراء',
-    },
-    {
-      id: 'MSG-303',
-      sender: 'نظام الإشعارات الآلي (System Auto)',
-      receiver: 'المرشحة: مريم علي أحمد (C-2026-091)',
-      subject: 'إرسال دعوة إجراء المقابلة المرئية عبر رابط المنصة',
-      timestamp: '2026-08-11 09:00 AM',
-      type: 'آلي ATS',
-      status: 'تم الإرسال WhatsApp/Email',
-    },
-  ]);
+  useEffect(() => {
+    realErpDataStore.getRecords<UnifiedMessage>('sent_messages', INITIAL_MESSAGES).then(data => setMessages(data));
+  }, []);
 
   return (
     <div style={{ padding: '24px', backgroundColor: '#F8FAFC', minHeight: '85vh' }}>

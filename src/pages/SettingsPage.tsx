@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export const SettingsPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('security-2fa');
@@ -19,6 +20,16 @@ export const SettingsPage: React.FC = () => {
     { id: 'stipulations', name: 'السياسات والشروط والضمان', icon: 'fa-file-lines' }
   ];
 
+  const handleSaveSettings = async () => {
+    await realErpDataStore.addRecord('system_settings', {
+      id: String(Date.now()),
+      setting_key: 'SECURITY_2FA_CONFIG',
+      setting_value: JSON.stringify({ require2FAAdmin, allowOptional2FA, otpExpiryMinutes }),
+      description: 'إعدادات المصادقة الثنائية 2FA'
+    });
+    alert('تم حفظ جميع إعدادات النظام وسياسة المصادقة الثنائية بنجاح!');
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -30,7 +41,7 @@ export const SettingsPage: React.FC = () => {
             ضبط سياسات أمان المصادقة الثنائية (2FA)، اسم المنصة، الروابط السريعة الحكومية، ونصوص البوابة
           </p>
         </div>
-        <button className="btn-odoo btn-odoo-primary" onClick={() => alert('تم حفظ جميع إعدادات النظام وسياسة المصادقة الثنائية بنجاح!')}>
+        <button className="btn-odoo btn-odoo-primary" onClick={handleSaveSettings}>
           <i className="fa-solid fa-floppy-disk"></i> حفظ جميع التعديلات
         </button>
       </div>

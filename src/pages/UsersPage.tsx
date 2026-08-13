@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface UserAdmin {
   id: string;
@@ -58,12 +59,16 @@ const MOCK_USERS: UserAdmin[] = [
 ];
 
 export const UsersPage: React.FC = () => {
-  const [users, setUsers] = useState<UserAdmin[]>(MOCK_USERS);
+  const [users, setUsers] = useState<UserAdmin[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserAdmin | null>(null);
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<'Google Authenticator' | 'SMS' | 'WhatsApp' | 'Email'>('Google Authenticator');
   const [otpCode, setOtpCode] = useState('');
   const [step, setStep] = useState<1 | 2>(1);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<UserAdmin>('system_users', MOCK_USERS).then(data => setUsers(data));
+  }, []);
 
   const handleOpen2FAModal = (user: UserAdmin) => {
     setSelectedUser(user);
@@ -73,21 +78,17 @@ export const UsersPage: React.FC = () => {
     setShow2FAModal(true);
   };
 
-  const handleToggle2FA = () => {
+  const handleToggle2FA = async () => {
     if (!selectedUser) return;
     const isEnabling = !selectedUser.two_factor_enabled;
 
-    setUsers(prev => prev.map(u => {
-      if (u.id === selectedUser.id) {
-        return {
-          ...u,
-          two_factor_enabled: isEnabling,
-          two_factor_method: isEnabling ? selectedMethod : undefined
-        };
-      }
-      return u;
-    }));
+    const patch = {
+      two_factor_enabled: isEnabling,
+      two_factor_method: isEnabling ? selectedMethod : undefined
+    };
 
+    const updated = await realErpDataStore.updateRecord<UserAdmin>('system_users', selectedUser.id, patch, MOCK_USERS);
+    setUsers(updated);
     setShow2FAModal(false);
     alert(isEnabling ? `تم تفعيل المصادقة الثنائية (2FA) للمستخدم ${selectedUser.name} بنجاح عبر (${selectedMethod})!` : `تم تعطيل المصادقة الثنائية للمستخدم ${selectedUser.name}.`);
   };

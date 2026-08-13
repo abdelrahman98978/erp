@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface ForeignOffice {
   id: string;
@@ -51,6 +52,12 @@ const MOCK_OFFICES: ForeignOffice[] = [
 ];
 
 export const OfficesPage: React.FC = () => {
+  const [offices, setOffices] = useState<ForeignOffice[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<ForeignOffice>('offices', MOCK_OFFICES).then(data => setOffices(data));
+  }, []);
+
   const columns: Column<ForeignOffice>[] = [
     {
       header: '#',

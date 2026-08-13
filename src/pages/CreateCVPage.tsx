@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export const CreateCVPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -26,9 +27,30 @@ export const CreateCVPage: React.FC = () => {
     cost_usd: 1000
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('تم حفظ السيرة الذاتية بنجاح بنظام ERP KALID G GROUP SULAIM!');
+    if (!formData.full_name || !formData.passport_number) {
+      alert('يرجى كتابة الاسم الكامل ورقم الجواز');
+      return;
+    }
+
+    const newCV = {
+      id: `cv-${Date.now()}`,
+      cv_code: `CV-${Math.floor(1000 + Math.random() * 9000)}`,
+      maid_name: formData.full_name,
+      nationality: formData.nationality_id,
+      job: 'عاملة منزلية',
+      passport_number: formData.passport_number,
+      age: parseInt(formData.age) || 28,
+      salary: formData.salary,
+      external_office: formData.office_id,
+      type: formData.type_id,
+      status: 'متاح'
+    };
+
+    await realErpDataStore.addRecord('cvs', newCV);
+    alert('تم حفظ ونشر السيرة الذاتية بنجاح بنظام ERP KHALID AL-SULAIM GROUP!');
+    window.history.back();
   };
 
   return (

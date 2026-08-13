@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { AccountNode } from '../types';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface JournalEntry {
   id: string;
@@ -60,8 +61,13 @@ export const FinancePage: React.FC = () => {
     'overview' | 'financial-position' | 'zatca-ksa' | 'musaned-escrow' | 'eosb-zakat' | 'tree' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'clients-balances' | 'assets-depreciation' | 'cost-centers' | 'financial-statements' | 'tax'
   >('overview');
 
-  const [journals, setJournals] = useState<JournalEntry[]>(MOCK_JOURNALS);
-  const [vouchers, setVouchers] = useState<Voucher[]>(MOCK_VOUCHERS);
+  const [journals, setJournals] = useState<JournalEntry[]>([]);
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<JournalEntry>('journals', MOCK_JOURNALS).then(data => setJournals(data));
+    realErpDataStore.getRecords<Voucher>('vouchers', MOCK_VOUCHERS).then(data => setVouchers(data));
+  }, []);
 
   // Modals state
   const [showAddVoucherModal, setShowAddVoucherModal] = useState(false);
@@ -117,7 +123,7 @@ export const FinancePage: React.FC = () => {
     amount: ''
   });
 
-  const handleCreateVoucher = (e: React.FormEvent) => {
+  const handleCreateVoucher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!voucherForm.payee_payer || !voucherForm.amount) return;
 
@@ -132,13 +138,14 @@ export const FinancePage: React.FC = () => {
       status: 'معتمد'
     };
 
-    setVouchers([newV, ...vouchers]);
+    const updated = await realErpDataStore.addRecord('vouchers', newV, MOCK_VOUCHERS);
+    setVouchers(updated);
     setShowAddVoucherModal(false);
     setVoucherForm({ type: 'قبض', payee_payer: '', treasury: 'بنك الراجحي', amount: '' });
     alert(`تمت إضافة وتثبيت سند ${newV.type} رقم (${newV.voucher_no}) بنجاح!`);
   };
 
-  const handleCreateJournal = (e: React.FormEvent) => {
+  const handleCreateJournal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!journalForm.description || !journalForm.amount) return;
 
@@ -152,7 +159,8 @@ export const FinancePage: React.FC = () => {
       branch: journalForm.branch
     };
 
-    setJournals([newJ, ...journals]);
+    const updated = await realErpDataStore.addRecord('journals', newJ, MOCK_JOURNALS);
+    setJournals(updated);
     setShowAddJournalModal(false);
     setJournalForm({ description: '', amount: '', branch: 'فرع الرياض' });
     alert(`تم إنشاء وتوجيه القيد المحاسبي (${newJ.ref_no}) وهو بانتظار الاعتماد الإداري!`);

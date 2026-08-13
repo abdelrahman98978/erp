@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface ActivityItem {
   id: string;
@@ -19,6 +20,12 @@ const MOCK_ACTIVITIES: ActivityItem[] = [
 ];
 
 export const ActivityLogPage: React.FC = () => {
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<ActivityItem>('activity_logs', MOCK_ACTIVITIES).then(data => setActivities(data));
+  }, []);
+
   const columns: Column<ActivityItem>[] = [
     { header: '#', accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.id}</span> },
     { header: 'المستخدم', accessor: (row) => <span style={{ fontWeight: '700' }}>{row.user_name}</span> },
@@ -39,7 +46,7 @@ export const ActivityLogPage: React.FC = () => {
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>تتبع كافة عمليات الحفظ، التعديل، والحذف التي قام بها مستخدمو النظام بالوقت والتاريخ</p>
         </div>
       </div>
-      <DataTable columns={columns} data={MOCK_ACTIVITIES} searchPlaceholder="ابحث باسم المستخدم، الإجراء، أو التفاصيل..." />
+      <DataTable columns={columns} data={activities.length > 0 ? activities : MOCK_ACTIVITIES} searchPlaceholder="ابحث باسم المستخدم، الإجراء، أو التفاصيل..." />
     </div>
   );
 };

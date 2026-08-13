@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface Custody {
   id: string;
@@ -22,9 +23,13 @@ const INITIAL_CUSTODIES: Custody[] = [
 ];
 
 export const CustodiesPage: React.FC = () => {
-  const [custodies, setCustodies] = useState<Custody[]>(INITIAL_CUSTODIES);
+  const [custodies, setCustodies] = useState<Custody[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedCustodyForDoc, setSelectedCustodyForDoc] = useState<Custody | null>(null);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<Custody>('custodies', INITIAL_CUSTODIES).then(data => setCustodies(data));
+  }, []);
 
   const [addForm, setAddForm] = useState({
     item_name: '',
@@ -34,7 +39,7 @@ export const CustodiesPage: React.FC = () => {
     estimated_value: ''
   });
 
-  const handleAddCustody = (e: React.FormEvent) => {
+  const handleAddCustody = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.item_name || !addForm.employee_name) return;
 
@@ -49,7 +54,8 @@ export const CustodiesPage: React.FC = () => {
       status: 'في حوزة الموظف'
     };
 
-    setCustodies([newC, ...custodies]);
+    const updated = await realErpDataStore.addRecord('custodies', newC, INITIAL_CUSTODIES);
+    setCustodies(updated);
     setShowAddModal(false);
     setAddForm({ item_name: '', employee_name: '', location: 'فرع الرياض الرئيسي', serial_number: '', estimated_value: '' });
   };

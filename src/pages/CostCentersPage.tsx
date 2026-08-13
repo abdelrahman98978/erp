@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface CostCenter {
   id: string;
@@ -22,8 +23,12 @@ const INITIAL_COST_CENTERS: CostCenter[] = [
 ];
 
 export const CostCentersPage: React.FC = () => {
-  const [costCenters, setCostCenters] = useState<CostCenter[]>(INITIAL_COST_CENTERS);
+  const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<CostCenter>('cost_centers', INITIAL_COST_CENTERS).then(data => setCostCenters(data));
+  }, []);
 
   const [addForm, setAddForm] = useState({
     name: '',
@@ -31,7 +36,7 @@ export const CostCentersPage: React.FC = () => {
     budget_limit: ''
   });
 
-  const handleAddCostCenter = (e: React.FormEvent) => {
+  const handleAddCostCenter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.name) return;
 
@@ -46,7 +51,8 @@ export const CostCentersPage: React.FC = () => {
       status: 'نشط'
     };
 
-    setCostCenters([...costCenters, newCC]);
+    const updated = await realErpDataStore.addRecord('cost_centers', newCC, INITIAL_COST_CENTERS);
+    setCostCenters(updated);
     setShowAddModal(false);
     setAddForm({ name: '', parent: 'الإدارة العامة', budget_limit: '' });
   };

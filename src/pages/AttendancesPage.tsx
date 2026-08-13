@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface AttendanceRecord {
   id: string;
@@ -23,9 +24,13 @@ const INITIAL_ATTENDANCES: AttendanceRecord[] = [
 ];
 
 export const AttendancesPage: React.FC = () => {
-  const [attendances, setAttendances] = useState<AttendanceRecord[]>(INITIAL_ATTENDANCES);
+  const [attendances, setAttendances] = useState<AttendanceRecord[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showManualModal, setShowManualModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<AttendanceRecord>('attendances', INITIAL_ATTENDANCES).then(data => setAttendances(data));
+  }, []);
 
   const [manualForm, setManualForm] = useState({
     emp_name: '',
@@ -36,7 +41,7 @@ export const AttendancesPage: React.FC = () => {
     status: 'حاضر' as 'حاضر' | 'متأخر' | 'غياب' | 'إجازة'
   });
 
-  const handleManualSubmit = (e: React.FormEvent) => {
+  const handleManualSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!manualForm.emp_name) return;
 
@@ -51,7 +56,8 @@ export const AttendancesPage: React.FC = () => {
       work_hours: 8.5
     };
 
-    setAttendances([newRec, ...attendances]);
+    const updated = await realErpDataStore.addRecord('attendances', newRec, INITIAL_ATTENDANCES);
+    setAttendances(updated);
     setShowManualModal(false);
     setManualForm({ emp_name: '', department: 'الموارد البشرية', date: new Date().toISOString().slice(0, 10), check_in: '08:00', check_out: '16:30', status: 'حاضر' });
   };

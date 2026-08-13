@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface BranchEntity {
   id: string;

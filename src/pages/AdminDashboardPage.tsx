@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface AdminDashboardPageProps {
   onNavigate?: (href: string, title: string) => void;
@@ -72,7 +73,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
   const { t } = useLanguage();
   const [currentUserRole, setCurrentUserRole] = useState<'Administrator' | 'BranchSpecialist'>('Administrator');
   const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'security' | 'devops' | 'rbac' | 'gateways' | 'ai-insights'>('overview');
-  const [sessions, setSessions] = useState<UserSession[]>(MOCK_ACTIVE_SESSIONS);
+  const [sessions, setSessions] = useState<UserSession[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<UserSession>('system_users', MOCK_ACTIVE_SESSIONS).then(data => setSessions(data));
+  }, []);
 
   // Feature Toggle States for 30 Admin Tools
   const [emergencyLockdown, setEmergencyLockdown] = useState(false);

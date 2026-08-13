@@ -1,47 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { MsProjectTask, PowerBiDashboardItem } from '../types';
+import { realErpDataStore } from '../services/realErpDataStore';
+
+const INITIAL_TASKS: MsProjectTask[] = [
+  {
+    id: 'MSP-101',
+    taskName: 'حملة الاستقدام المكثف - 500 كادر فلبيني وهندي',
+    companyId: 'masi',
+    assignedResource: 'فهد العتيبي (مسؤول التوظيف)',
+    startDate: '2026-07-01',
+    endDate: '2026-09-30',
+    progressPercent: 68,
+    status: 'قيد التنفيذ',
+    milestone: false,
+  },
+  {
+    id: 'MSP-102',
+    taskName: 'افتتاح فرع المنسكية والتجهيزات التقنية اللوجستية',
+    companyId: 'yaqoot',
+    assignedResource: 'م. خالد السليم',
+    startDate: '2026-06-15',
+    endDate: '2026-08-15',
+    progressPercent: 100,
+    status: 'مكتمل',
+    milestone: true,
+  },
+  {
+    id: 'MSP-103',
+    taskName: 'تحديث معايير الامتثال والربط الضريبي ZATCA Phase 2',
+    companyId: 'topaz',
+    assignedResource: 'أحمد المحاسب المالي',
+    startDate: '2026-08-01',
+    endDate: '2026-10-01',
+    progressPercent: 45,
+    status: 'قيد التنفيذ',
+    milestone: false,
+  }
+];
 
 export const MicrosoftIntegrationCenterPage: React.FC = () => {
   const { activeCompany } = useCompany();
   const [activeTab, setActiveTab] = useState<'project' | 'powerbi' | 'visio'>('project');
+  const [projectTasks, setProjectTasks] = useState<MsProjectTask[]>([]);
 
-  /* MS Project Tasks Sample */
-  const [projectTasks] = useState<MsProjectTask[]>([
-    {
-      id: 'MSP-101',
-      taskName: 'حملة الاستقدام المكثف - 500 كادر فلبيني وهندي',
-      companyId: 'masi',
-      assignedResource: 'فهد العتيبي (مسؤول التوظيف)',
-      startDate: '2026-07-01',
-      endDate: '2026-09-30',
-      progressPercent: 68,
-      status: 'قيد التنفيذ',
-      milestone: false,
-    },
-    {
-      id: 'MSP-102',
-      taskName: 'افتتاح فرع المنسكية والتجهيزات التقنية اللوجستية',
-      companyId: 'yaqoot',
-      assignedResource: 'م. خالد السليم',
-      startDate: '2026-06-15',
-      endDate: '2026-08-15',
-      progressPercent: 100,
-      status: 'مكتمل',
-      milestone: true,
-    },
-    {
-      id: 'MSP-103',
-      taskName: 'تحديث معايير الامتثال والربط الضريبي ZATCA Phase 2',
-      companyId: 'topaz',
-      assignedResource: 'أحمد المحاسب المالي',
-      startDate: '2026-08-01',
-      endDate: '2026-10-01',
-      progressPercent: 45,
-      status: 'قيد التنفيذ',
-      milestone: false,
-    },
-  ]);
+  useEffect(() => {
+    realErpDataStore.getRecords<MsProjectTask>('ms_project_tasks', INITIAL_TASKS).then(data => setProjectTasks(data));
+  }, []);
 
   /* Power BI Dashboards Sample */
   const [powerbiDashboards] = useState<PowerBiDashboardItem[]>([

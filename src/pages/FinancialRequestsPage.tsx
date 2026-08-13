@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface FinancialReq {
   id: string;
@@ -43,7 +44,12 @@ const MOCK_FIN_REQUESTS: FinancialReq[] = [
 ];
 
 export const FinancialRequestsPage: React.FC = () => {
+  const [requests, setRequests] = useState<FinancialReq[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<FinancialReq>('financial_requests', MOCK_FIN_REQUESTS).then(data => setRequests(data));
+  }, []);
 
   const columns: Column<FinancialReq>[] = [
     {

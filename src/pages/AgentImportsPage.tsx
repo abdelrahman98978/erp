@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface ImportBatch {
   id: string;
@@ -18,6 +19,12 @@ const MOCK_BATCHES: ImportBatch[] = [
 ];
 
 export const AgentImportsPage: React.FC = () => {
+  const [batches, setBatches] = useState<ImportBatch[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<ImportBatch>('agent_imports', MOCK_BATCHES).then(data => setBatches(data));
+  }, []);
+
   const columns: Column<ImportBatch>[] = [
     { header: 'كود الدفعة', accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.batch_code}</span> },
     { header: 'المكتب الخارجي والدولة', accessor: (row) => <div><span style={{ fontWeight: '700' }}>{row.office_name}</span><div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.country}</div></div> },
@@ -44,7 +51,7 @@ export const AgentImportsPage: React.FC = () => {
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>مراجعة السير الذاتية المرفوعة بالجملة من مكاتب الاستقدام الخارجية قبل النشر</p>
         </div>
       </div>
-      <DataTable columns={columns} data={MOCK_BATCHES} searchPlaceholder="ابحث بكود الدفعة، المكتب، أو الدولة..." addLabel="استيراد دُفعة سير ذاتية" />
+      <DataTable columns={columns} data={batches.length > 0 ? batches : MOCK_BATCHES} searchPlaceholder="ابحث بكود الدفعة، المكتب، أو الدولة..." addLabel="استيراد دُفعة سير ذاتية" />
     </div>
   );
 };

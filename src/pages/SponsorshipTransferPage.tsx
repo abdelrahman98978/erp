@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { StatCard } from '../components/ui/StatCard';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface TransferRequest {
   id: string;
@@ -51,6 +52,11 @@ const MOCK_TRANSFERS: TransferRequest[] = [
 
 export const SponsorshipTransferPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all');
+  const [transfers, setTransfers] = useState<TransferRequest[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<TransferRequest>('sponsorship_transfers', MOCK_TRANSFERS).then(data => setTransfers(data));
+  }, []);
 
   const columns: Column<TransferRequest>[] = [
     {

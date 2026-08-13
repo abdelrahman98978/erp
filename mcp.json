@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "docker": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@thelord/mcp-server-docker-npx"
+      ]
+    },
     "supabase": {
       "url": "http://127.0.0.1:54421/mcp?read_only=true&features=docs%2Cdatabase%2Cdebugging%2Cdevelopment"
     },

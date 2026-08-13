@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { StatCard } from '../components/ui/StatCard';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface Visitor {
   id: string;
@@ -20,6 +21,12 @@ const MOCK_VISITORS: Visitor[] = [
 ];
 
 export const WebsiteVisitorsPage: React.FC = () => {
+  const [visitors, setVisitors] = useState<Visitor[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<Visitor>('website_visitors', MOCK_VISITORS).then(data => setVisitors(data));
+  }, []);
+
   const columns: Column<Visitor>[] = [
     { header: '#', accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.id}</span> },
     { header: 'عنوان الـ IP', accessor: (row) => <span style={{ fontFamily: 'monospace', fontWeight: '700' }}>{row.ip_address}</span> },
@@ -46,7 +53,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
         <StatCard title="الحجوزات المباشرة" value="12" icon="fa-solid fa-cart-check" subtext="تحول 8.5% إلى طلبات" variant="info" />
       </div>
 
-      <DataTable columns={columns} data={MOCK_VISITORS} searchPlaceholder="ابحث بالـ IP، المدينة، أو الصفحة..." />
+      <DataTable columns={columns} data={visitors.length > 0 ? visitors : MOCK_VISITORS} searchPlaceholder="ابحث بالـ IP، المدينة، أو الصفحة..." />
     </div>
   );
 };

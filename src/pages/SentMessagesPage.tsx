@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface MessageLog {
   id: string;
@@ -18,6 +19,12 @@ const MOCK_MESSAGES: MessageLog[] = [
 ];
 
 export const SentMessagesPage: React.FC = () => {
+  const [messages, setMessages] = useState<MessageLog[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<MessageLog>('sent_messages', MOCK_MESSAGES).then(data => setMessages(data));
+  }, []);
+
   const columns: Column<MessageLog>[] = [
     { header: '#', accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.id}</span> },
     { header: 'المستلم والجوال', accessor: (row) => <div><span style={{ fontWeight: '700' }}>{row.recipient_name}</span><div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>{row.phone}</div></div> },
@@ -37,7 +44,7 @@ export const SentMessagesPage: React.FC = () => {
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>متابعة حالة تسليم الرسائل التلقائية والإشعارات التنفيذية</p>
         </div>
       </div>
-      <DataTable columns={columns} data={MOCK_MESSAGES} searchPlaceholder="ابحث بالمستلم، رقم الجوال، أو نوع الرسالة..." />
+      <DataTable columns={columns} data={messages.length > 0 ? messages : MOCK_MESSAGES} searchPlaceholder="ابحث بالمستلم، رقم الجوال، أو نوع الرسالة..." />
     </div>
   );
 };

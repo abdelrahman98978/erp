@@ -35,15 +35,18 @@ function saveLocalStore<T>(key: string, data: T[]): void {
 
 export const realErpDataStore = {
   /**
-   * Fetch real records for any module, merging local persistent state with seed data
+   * Fetch real records for any module, merging local persistent state with Supabase
    */
   async getRecords<T extends { id: string | number }>(
     entityKey: string,
-    initialSeed: T[]
+    initialSeed: T[] = []
   ): Promise<T[]> {
     if (!isDummySupabase) {
       try {
-        const { data, error } = await supabase.from(entityKey).select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabase
+          .from(entityKey)
+          .select('*')
+          .order('created_at', { ascending: false });
         if (!error && data && data.length > 0) {
           saveLocalStore(entityKey, data as unknown as T[]);
           return data as unknown as T[];
@@ -93,7 +96,7 @@ export const realErpDataStore = {
     initialSeed: T[] = []
   ): Promise<T[]> {
     const current = getLocalStore<T>(entityKey, initialSeed);
-    const updated = current.map(item => (item.id === id ? { ...item, ...patch } : item));
+    const updated = current.map((item) => (item.id === id ? { ...item, ...patch } : item));
     saveLocalStore(entityKey, updated);
 
     if (!isDummySupabase) {
@@ -116,7 +119,7 @@ export const realErpDataStore = {
     initialSeed: T[] = []
   ): Promise<T[]> {
     const current = getLocalStore<T>(entityKey, initialSeed);
-    const updated = current.filter(item => item.id !== id);
+    const updated = current.filter((item) => item.id !== id);
     saveLocalStore(entityKey, updated);
 
     if (!isDummySupabase) {
@@ -136,10 +139,8 @@ export const realErpDataStore = {
   triggerAccountingIntegration(entityKey: string, record: any) {
     try {
       if (entityKey === 'clients') {
-        // Auto-create Account Receivable code in Chart of Accounts
         console.log(`[ERP Accounting Engine] Account Code ${record.account_code || '11020'} created for client: ${record.name}`);
       } else if (entityKey === 'recruitment-contracts' || entityKey === 'contracts') {
-        // Auto-post Recruitment Contract Invoice to Double Entry Ledger
         journalEngine.createJournalEntry('SAF', {
           description: `إثبات عقد استقدام مساند جديد #${record.contract_number || record.id} - العميل: ${record.client_name}`,
           createdBy: 'نظام الأتمتة المحاسبية التلقائية',
@@ -150,8 +151,7 @@ export const realErpDataStore = {
             { accountCode: '21050', accountName: 'ضريبة القيمة المضافة (15%)', debit: 0, credit: (record.amount || 14500) * 0.13 }
           ]
         });
-      } else if (entityKey === 'rent-contracts') {
-        // Auto-post Rental Operations Contract Invoice
+      } else if (entityKey === 'rent-contracts' || entityKey === 'rent_contracts') {
         journalEngine.createJournalEntry('SAF', {
           description: `إثبات عقد تأجير تشغيلي #${record.contract_number || record.id} - العميل: ${record.client_name}`,
           createdBy: 'نظام الأتمتة المحاسبية التلقائية',
@@ -163,7 +163,6 @@ export const realErpDataStore = {
           ]
         });
       } else if (entityKey === 'vouchers') {
-        // Auto-post Receipt/Payment Voucher to Ledger
         const isReceipt = record.type === 'قبض';
         journalEngine.createJournalEntry('SAF', {
           description: `سند ${record.type} #${record.voucher_no || record.id} - ${record.payee_payer}`,
@@ -176,7 +175,7 @@ export const realErpDataStore = {
         });
       }
     } catch (e) {
-      console.warn('Accounting auto-posting notice:', e);
+        console.warn('Accounting auto-posting notice:', e);
     }
   }
 };

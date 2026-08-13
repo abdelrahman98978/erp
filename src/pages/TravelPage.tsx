@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface Flight {
   id: string;
@@ -44,6 +45,11 @@ const MOCK_FLIGHTS: Flight[] = [
 
 export const TravelPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'calendar' | 'table'>('calendar');
+  const [flights, setFlights] = useState<Flight[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<Flight>('travel_flights', MOCK_FLIGHTS).then(data => setFlights(data));
+  }, []);
 
   const columns: Column<Flight>[] = [
     {

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface BranchMessage {
   id: string;
@@ -84,10 +85,14 @@ const MOCK_TRANSFERS: InterBranchTransferReq[] = [
 export const BranchCommunicationPage: React.FC = () => {
   const { t } = useLanguage();
   const [activeChannel, setActiveChannel] = useState('المجموعة العامة');
-  const [messages, setMessages] = useState<BranchMessage[]>(MOCK_BRANCH_MESSAGES);
-  const [transfers, setTransfers] = useState<InterBranchTransferReq[]>(MOCK_TRANSFERS);
+  const [messages, setMessages] = useState<BranchMessage[]>([]);
+  const [transfers, setTransfers] = useState<InterBranchTransferReq[]>([]);
   const [newMessageText, setNewMessageText] = useState('');
   const [showTransferModal, setShowTransferModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<BranchMessage>('branch_communications', MOCK_BRANCH_MESSAGES).then(data => setMessages(data));
+  }, []);
 
   // New Transfer Request Form State
   const [transferForm, setTransferForm] = useState({

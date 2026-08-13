@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface RentPackage {
   id: string;
@@ -17,6 +18,12 @@ const MOCK_PACKAGES: RentPackage[] = [
 ];
 
 export const RentPackagesPage: React.FC = () => {
+  const [packages, setPackages] = useState<RentPackage[]>([]);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<RentPackage>('rent_packages', MOCK_PACKAGES).then(data => setPackages(data));
+  }, []);
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -32,7 +39,7 @@ export const RentPackagesPage: React.FC = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-        {MOCK_PACKAGES.map((pkg) => (
+        {(packages.length > 0 ? packages : MOCK_PACKAGES).map((pkg) => (
           <div key={pkg.id} className="table-card" style={{ padding: '24px', position: 'relative' }}>
             {pkg.discount_percentage > 0 && (
               <span className="badge-pill danger" style={{ position: 'absolute', top: '16px', left: '16px' }}>

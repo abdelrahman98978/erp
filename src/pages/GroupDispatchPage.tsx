@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface GroupDispatchMemo {
   id: string;
@@ -58,10 +59,10 @@ const MOCK_DISPATCHES: GroupDispatchMemo[] = [
   {
     id: 'd-3',
     dispatch_no: '#DISP-2026-0493',
-    source_entity: 'الماسي (Al-Masi Luxury)',
-    target_entity: 'مكتب داماس الإثيوبي (DAMAS Agency)',
+    source_entity: 'الماسي (Al-Masi)',
+    target_entity: 'مكتب داماس الإثيوبي (DAMAS)',
     dispatch_type: 'طلب استقدام عاجل',
-    subject: 'طلب 15 سيرة ذاتية بمواصفات عالية لـ باقات التأجير الفاخرة',
+    subject: 'حجز ومقابلة 5 طهاة منازل وطباخين بريميوم',
     details: 'يشترط الخبرة السابقة بالخليج وإتقان اللغة والطهي المتقدم.',
     priority: 'عاجل جداً',
     status: 'بانتظار الاعتماد',
@@ -72,10 +73,14 @@ const MOCK_DISPATCHES: GroupDispatchMemo[] = [
 
 export const GroupDispatchPage: React.FC = () => {
   const { t } = useLanguage();
-  const [dispatches, setDispatches] = useState<GroupDispatchMemo[]>(MOCK_DISPATCHES);
+  const [dispatches, setDispatches] = useState<GroupDispatchMemo[]>([]);
   const [selectedEntity, setSelectedEntity] = useState<string>('all');
   const [showDispatchModal, setShowDispatchModal] = useState(false);
   const [selectedMemo, setSelectedMemo] = useState<GroupDispatchMemo | null>(null);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<GroupDispatchMemo>('group_dispatches', MOCK_DISPATCHES).then(data => setDispatches(data));
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -87,7 +92,7 @@ export const GroupDispatchPage: React.FC = () => {
     priority: 'عاجل جداً' as const
   });
 
-  const handleCreateDispatch = (e: React.FormEvent) => {
+  const handleCreateDispatch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.subject || !formData.details) {
       alert('يرجى ملء كافة حقول المعاملة الرسمية');
@@ -108,7 +113,8 @@ export const GroupDispatchPage: React.FC = () => {
       assigned_officer: 'مدير المتابعة الموحدة'
     };
 
-    setDispatches([newDisp, ...dispatches]);
+    const updated = await realErpDataStore.addRecord('group_dispatches', newDisp, MOCK_DISPATCHES);
+    setDispatches(updated);
     setShowDispatchModal(false);
     setFormData({
       source_entity: 'شركة توباز (Topaz Group)',

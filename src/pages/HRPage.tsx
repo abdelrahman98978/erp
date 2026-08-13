@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { Employee } from '../types';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 const MOCK_EMPLOYEES_FULL: Employee[] = [
   {
@@ -55,8 +56,12 @@ const MOCK_EMPLOYEES_FULL: Employee[] = [
 ];
 
 export const HRPage: React.FC = () => {
-  const [employees, setEmployees] = useState<Employee[]>(MOCK_EMPLOYEES_FULL);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [activeTab, setActiveTab] = useState<'employees' | 'attendances' | 'vacations' | 'payroll' | 'custodies'>('employees');
+
+  useEffect(() => {
+    realErpDataStore.getRecords<Employee>('employees', MOCK_EMPLOYEES_FULL).then(data => setEmployees(data));
+  }, []);
 
   // Modals
   const [showAddEmpModal, setShowAddEmpModal] = useState(false);
@@ -72,7 +77,7 @@ export const HRPage: React.FC = () => {
     salary: ''
   });
 
-  const handleAddEmployee = (e: React.FormEvent) => {
+  const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!empForm.name || !empForm.national_id || !empForm.salary) return;
 
@@ -89,7 +94,8 @@ export const HRPage: React.FC = () => {
       status: 'نشط'
     };
 
-    setEmployees([...employees, newEmp]);
+    const updated = await realErpDataStore.addRecord('employees', newEmp, MOCK_EMPLOYEES_FULL);
+    setEmployees(updated);
     setShowAddEmpModal(false);
     setEmpForm({ name: '', national_id: '', job_title: 'أخصائي استقدام', department: 'التشغيل والاستقدام', branch: 'فرع الرياض', salary: '' });
   };

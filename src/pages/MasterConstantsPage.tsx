@@ -1,19 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
+
+interface NationalityItem {
+  id: string;
+  name: string;
+  code: string;
+  status: string;
+  icon: string;
+}
+
+const NATIONALITIES_SEED: NationalityItem[] = [
+  { id: '1', name: 'اثيوبيا', code: 'ETH', status: 'متاحة للاستقدام والتأجير', icon: '🇪🇹' },
+  { id: '2', name: 'الفلبين', code: 'PHL', status: 'متاحة للاستقدام والتأجير', icon: '🇵🇭' },
+  { id: '3', name: 'الهند', code: 'IND', status: 'متاحة للاستقدام', icon: '🇮🇳' },
+  { id: '4', name: 'اوغندا', code: 'UGA', status: 'متاحة للاستقدام والتأجير', icon: '🇺🇬' },
+  { id: '5', name: 'بنجلاديش', code: 'BGD', status: 'متاحة للاستقدام', icon: '🇧🇩' },
+  { id: '6', name: 'كينيا', code: 'KEN', status: 'متاحة للاستقدام والتأجير', icon: '🇰🇪' },
+  { id: '7', name: 'سيريلانكا', code: 'LKA', status: 'متاحة للاستقدام', icon: '🇱🇰' },
+  { id: '8', name: 'ألبانيا', code: 'ALB', status: 'متاحة للاستقدام والتنازل', icon: '🇦🇱' }
+];
 
 export const MasterConstantsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'nationalities' | 'professions' | 'airports'>('nationalities');
+  const [nationalities, setNationalities] = useState<NationalityItem[]>([]);
 
-  const NATIONALITIES = [
-    { name: 'اثيوبيا', code: 'ETH', status: 'متاحة للاستقدام والتأجير', icon: '🇪🇹' },
-    { name: 'الفلبين', code: 'PHL', status: 'متاحة للاستقدام والتأجير', icon: '🇵🇭' },
-    { name: 'الهند', code: 'IND', status: 'متاحة للاستقدام', icon: '🇮🇳' },
-    { name: 'اوغندا', code: 'UGA', status: 'متاحة للاستقدام والتأجير', icon: '🇺🇬' },
-    { name: 'بنجلاديش', code: 'BGD', status: 'متاحة للاستقدام', icon: '🇧🇩' },
-    { name: 'كينيا', code: 'KEN', status: 'متاحة للاستقدام والتأجير', icon: '🇰🇪' },
-    { name: 'سيريلانكا', code: 'LKA', status: 'متاحة للاستقدام', icon: '🇱🇰' },
-    { name: 'ألبانيا', code: 'ALB', status: 'متاحة للاستقدام والتنازل', icon: '🇦🇱' }
-  ];
+  useEffect(() => {
+    realErpDataStore.getRecords<NationalityItem>('master_constants', NATIONALITIES_SEED).then(data => setNationalities(data));
+  }, []);
 
   const PROFESSIONS = [
     { name: 'عاملة منزلية', category: 'عمالة منزلية أفراد' },
@@ -44,7 +58,7 @@ export const MasterConstantsPage: React.FC = () => {
 
       {activeTab === 'nationalities' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
-          {NATIONALITIES.map((nat, idx) => (
+          {(nationalities.length > 0 ? nationalities : NATIONALITIES_SEED).map((nat, idx) => (
             <div key={idx} className="table-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ fontSize: '32px' }}>{nat.icon}</span>
               <div>

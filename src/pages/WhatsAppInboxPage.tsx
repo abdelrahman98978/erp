@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface WhatsAppChat {
   id: string;
@@ -18,6 +19,7 @@ const MOCK_CHATS: WhatsAppChat[] = [
 ];
 
 export const WhatsAppInboxPage: React.FC = () => {
+  const [chats, setChats] = useState<WhatsAppChat[]>([]);
   const [activeChat, setActiveChat] = useState<WhatsAppChat>(MOCK_CHATS[0]);
   const [replyText, setReplyText] = useState('');
   const [messages, setMessages] = useState([
@@ -25,11 +27,28 @@ export const WhatsAppInboxPage: React.FC = () => {
     { sender: 'system', text: 'أهلاً بك أختي سارة! تم تفييز العقد رقم #594 ونحن بانتظار صدور التذكرة اليوم.', time: '10:47 ص' }
   ]);
 
+  useEffect(() => {
+    realErpDataStore.getRecords<WhatsAppChat>('whatsapp_messages', MOCK_CHATS).then(data => {
+      setChats(data);
+      if (data.length > 0) setActiveChat(data[0]);
+    });
+  }, []);
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim()) return;
-    setMessages(prev => [...prev, { sender: 'system', text: replyText, time: 'الآن' }]);
+    const newMsg = { sender: 'system', text: replyText, time: 'الآن' };
+    setMessages(prev => [...prev, newMsg]);
     setReplyText('');
+    realErpDataStore.addRecord<WhatsAppChat>('whatsapp_messages', {
+      id: String(Date.now()),
+      client_name: activeChat.client_name,
+      phone: activeChat.phone,
+      last_message: replyText,
+      time: 'الآن',
+      unread_count: 0,
+      status: 'نشط'
+    }, MOCK_CHATS);
   };
 
   return (

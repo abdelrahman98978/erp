@@ -1,83 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ExternalOffice } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
+
+const INITIAL_OFFICES: ExternalOffice[] = [
+  {
+    id: 'OFF-PH-01',
+    officeName: 'Manila Overseas Placement Agency',
+    country: 'الفلبين',
+    countryCode: 'PH',
+    managerName: 'Maria Santos',
+    phone: '+63281234567',
+    email: 'info@manilaagency.ph',
+    licenseNumber: 'POEA-2024-9981',
+    activeCandidatesCount: 140,
+    arrivedCountCount: 820,
+    rating: 4.9,
+    authorizedCompanies: ['masi', 'topaz'],
+  },
+  {
+    id: 'OFF-ET-02',
+    officeName: 'Addis International Recruitment Bureau',
+    country: 'إثيوبيا',
+    countryCode: 'ET',
+    managerName: 'Bekele Tadesse',
+    phone: '+251115512345',
+    email: 'contact@addisbureau.et',
+    licenseNumber: 'ETH-MOL-7741',
+    activeCandidatesCount: 95,
+    arrivedCountCount: 540,
+    rating: 4.7,
+    authorizedCompanies: ['yaqoot', 'ruwad'],
+  },
+  {
+    id: 'OFF-IN-03',
+    officeName: 'Bombay Professional Manpower Services',
+    country: 'الهند',
+    countryCode: 'IN',
+    managerName: 'Rajesh Sharma',
+    phone: '+912261234567',
+    email: 'mumbai@manpower.in',
+    licenseNumber: 'MEA-IND-3321',
+    activeCandidatesCount: 210,
+    arrivedCountCount: 1100,
+    rating: 4.8,
+    authorizedCompanies: ['masi', 'yaqoot', 'topaz', 'ruwad'],
+  }
+];
 
 export const ExternalOfficesAgentsPage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const [offices, setOffices] = useState<ExternalOffice[]>([]);
 
-  const [offices] = useState<ExternalOffice[]>([
-    {
-      id: 'OFF-PH-01',
-      officeName: 'Manila Overseas Placement Agency',
-      country: 'الفلبين',
-      countryCode: 'PH',
-      managerName: 'Maria Santos',
-      phone: '+63281234567',
-      email: 'info@manilaagency.ph',
-      licenseNumber: 'POEA-2024-9981',
-      activeCandidatesCount: 140,
-      arrivedCountCount: 820,
-      rating: 4.9,
-      authorizedCompanies: ['masi', 'topaz'],
-    },
-    {
-      id: 'OFF-ET-02',
-      officeName: 'Addis International Recruitment Bureau',
-      country: 'إثيوبيا',
-      countryCode: 'ET',
-      managerName: 'Bekele Tadesse',
-      phone: '+251115512345',
-      email: 'contact@addisbureau.et',
-      licenseNumber: 'ETH-MOL-7741',
-      activeCandidatesCount: 95,
-      arrivedCountCount: 540,
-      rating: 4.7,
-      authorizedCompanies: ['yaqoot', 'ruwad'],
-    },
-    {
-      id: 'OFF-IN-03',
-      officeName: 'Bombay Professional Manpower Services',
-      country: 'الهند',
-      countryCode: 'IN',
-      managerName: 'Rajesh Sharma',
-      phone: '+912261234567',
-      email: 'mumbai@manpower.in',
-      licenseNumber: 'MEA-IND-3321',
-      activeCandidatesCount: 210,
-      arrivedCountCount: 1100,
-      rating: 4.8,
-      authorizedCompanies: ['masi', 'yaqoot', 'topaz', 'ruwad'],
-    },
-    {
-      id: 'OFF-KE-04',
-      officeName: 'Nairobi Skilled Recruitment Agency',
-      country: 'كينيا',
-      countryCode: 'KE',
-      managerName: 'Grace Wambui',
-      phone: '+254202123456',
-      email: 'info@nairobiagency.co.ke',
-      licenseNumber: 'NEA-KEN-4412',
-      activeCandidatesCount: 80,
-      arrivedCountCount: 390,
-      rating: 4.6,
-      authorizedCompanies: ['ruwad', 'topaz'],
-    },
-    {
-      id: 'OFF-UG-05',
-      officeName: 'Kampala Manpower Supply',
-      country: 'أوغندا',
-      countryCode: 'UG',
-      managerName: 'Joseph Musisi',
-      phone: '+256414123456',
-      email: 'recruitment@kampala.ug',
-      licenseNumber: 'MGLSD-UG-8812',
-      activeCandidatesCount: 65,
-      arrivedCountCount: 280,
-      rating: 4.5,
-      authorizedCompanies: ['masi'],
-    },
-  ]);
+  useEffect(() => {
+    realErpDataStore.getRecords<ExternalOffice>('external_recruitment_offices', INITIAL_OFFICES).then(data => setOffices(data));
+  }, []);
 
   return (
     <div style={{ padding: '24px', backgroundColor: '#F8FAFC', minHeight: '85vh' }}>

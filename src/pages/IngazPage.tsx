@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface IngazDelegation {
   id: string;
@@ -61,9 +62,13 @@ const MOCK_INGAZ_DELEGATIONS: IngazDelegation[] = [
 
 export const IngazPage: React.FC = () => {
   const { t } = useLanguage();
-  const [delegations, setDelegations] = useState<IngazDelegation[]>(MOCK_INGAZ_DELEGATIONS);
+  const [delegations, setDelegations] = useState<IngazDelegation[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending'>('all');
+
+  useEffect(() => {
+    realErpDataStore.getRecords<IngazDelegation>('ingaz_delegations', MOCK_INGAZ_DELEGATIONS).then(data => setDelegations(data));
+  }, []);
 
   const [formData, setFormData] = useState({
     client_name: '',
@@ -75,7 +80,7 @@ export const IngazPage: React.FC = () => {
     fee_amount: '350'
   });
 
-  const handleCreateDelegation = (e: React.FormEvent) => {
+  const handleCreateDelegation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.client_name || !formData.visa_number) {
       alert('يرجى ملء جميع الحقول المطلوبة');
@@ -96,7 +101,8 @@ export const IngazPage: React.FC = () => {
       created_at: new Date().toISOString().split('T')[0]
     };
 
-    setDelegations([newDelegation, ...delegations]);
+    const updated = await realErpDataStore.addRecord('ingaz_delegations', newDelegation, MOCK_INGAZ_DELEGATIONS);
+    setDelegations(updated);
     setShowModal(false);
     setFormData({
       client_name: '',

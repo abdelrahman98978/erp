@@ -1,10 +1,10 @@
 -- Seed Data for ERP Group Khalid Al-Sulaim
 
 -- 1. Initial Clients
-INSERT INTO public.clients (client_no, name, phone, national_id, account_code, client_activity, branch, status) VALUES
-  ('CLI-1001', 'عبدالله محمد الغامدي', '0501234567', '1098765432', '120101', 'عقد استقدام ساري', 'فرع الرياض', 'نشط'),
-  ('CLI-1002', 'سارة خالد الدوسري', '0559876543', '1087654321', '120102', 'عقد تأجير تشغيلي', 'فرع جدة', 'نشط'),
-  ('CLI-1003', 'شركة الأمل للمقاولات', '0541122334', '7001234567', '120103', 'توريد عمالة مهنية', 'فرع الدمام', 'نشط')
+INSERT INTO public.clients (client_no, name, phone, national_id, account_code, client_activity, branch, status, type, orders_count) VALUES
+  ('CLI-1001', 'عبدالله محمد الغامدي', '0501234567', '1098765432', '120101', 'عقد استقدام ساري', 'فرع الرياض', 'نشط', 'شخص', 3),
+  ('CLI-1002', 'سارة خالد الدوسري', '0559876543', '1087654321', '120102', 'عقد تأجير تشغيلي', 'فرع جدة', 'نشط', 'شخص', 1),
+  ('CLI-1003', 'شركة الأمل للمقاولات', '0541122334', '7001234567', '120103', 'توريد عمالة مهنية', 'فرع الدمام', 'نشط', 'شركة', 12)
 ON CONFLICT (client_no) DO NOTHING;
 
 -- 2. Initial CVs
@@ -32,3 +32,17 @@ INSERT INTO public.system_settings (setting_key, setting_value, description) VAL
   ('CURRENCY', 'SAR', 'العملة الرئيسية للنظام'),
   ('TAX_RATE', '15%', 'نسبة ضريبة القيمة المضافة ZATCA')
 ON CONFLICT (setting_key) DO NOTHING;
+
+-- 6. Initial Employees
+INSERT INTO public.employees (employee_code, name, national_id, job_title, department, branch, hire_date, salary, status) VALUES
+  ('EMP-2026-001', 'عبدالفتح (مسؤول الوكلاء)', '1092837410', 'مدير شؤون المكاتب الخارجية', 'التشغيل والاستقدام', 'الإدارة العامة - الرياض', '2022-01-15', 12500.00, 'نشط'),
+  ('EMP-2026-002', 'فهد العتيبي', '1088273641', 'مشرف التشغيل والإيواء', 'إدارة الإيواء', 'فرع الرياض', '2023-03-01', 9800.00, 'نشط'),
+  ('EMP-2026-003', 'إبراهيم الشمري', '1077283940', 'محاسب عام قيد وسندات', 'الإدارة المالية', 'الإدارة العامة', '2023-06-10', 8500.00, 'نشط'),
+  ('EMP-2026-004', 'سارة خالد', '1066283910', 'أخصائية خدمة عملاء وواتساب', 'خدمة العملاء (CRM)', 'فرع جدة', '2024-01-10', 7200.00, 'نشط')
+ON CONFLICT (employee_code) DO NOTHING;
+
+-- 7. Rent Packages
+INSERT INTO public.rent_packages (package_code, package_name, duration_type, price, features, status) VALUES
+  ('PKG-MONTHLY-01', 'الباقة الشهرية المرنة', 'شهري', 3450.00, 'تأمين طبي شامل، بديل مجاني خلال 24 ساعة', 'نشط'),
+  ('PKG-YEARLY-01', 'الباقة السنوية المتميزة', 'سنوي', 36000.00, 'خصم 15%، صيانة وإشراف دوري شهري', 'نشط')
+ON CONFLICT (package_code) DO NOTHING;
