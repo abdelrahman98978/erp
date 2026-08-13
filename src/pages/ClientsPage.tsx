@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface ClientRecord {
   id: string;
@@ -77,9 +78,13 @@ const MOCK_CLIENTS: ClientRecord[] = [
 ];
 
 export const ClientsPage: React.FC = () => {
-  const [clients, setClients] = useState<ClientRecord[]>(MOCK_CLIENTS);
+  const [clients, setClients] = useState<ClientRecord[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<ClientRecord>('clients', MOCK_CLIENTS).then(data => setClients(data));
+  }, []);
 
   const [addForm, setAddForm] = useState({
     name: '',
@@ -88,7 +93,7 @@ export const ClientsPage: React.FC = () => {
     branch: 'فرع الرياض'
   });
 
-  const handleAddClient = (e: React.FormEvent) => {
+  const handleAddClient = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.name || !addForm.phone || !addForm.national_id) return;
 
@@ -107,10 +112,10 @@ export const ClientsPage: React.FC = () => {
       status: 'نشط'
     };
 
-    setClients([newC, ...clients]);
+    const updated = await realErpDataStore.addRecord('clients', newC, MOCK_CLIENTS);
+    setClients(updated);
     setShowAddModal(false);
     setAddForm({ name: '', phone: '', national_id: '', branch: 'فرع الرياض' });
-    alert(`تمت إضافة العميل الجديد (${newC.name}) وإنشاء رقم الحساب المحاسبي (${newC.account_code}) بنجاح!`);
   };
 
   const filteredClients = clients.filter(c =>

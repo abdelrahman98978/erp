@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { ShelterItem } from '../types';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 const EXTENDED_SHELTER_DATA: ShelterItem[] = [
   {
@@ -59,12 +60,16 @@ const EXTENDED_SHELTER_DATA: ShelterItem[] = [
 ];
 
 export const ShelterPage: React.FC = () => {
-  const [shelterItems, setShelterItems] = useState<ShelterItem[]>(EXTENDED_SHELTER_DATA);
-  const [activeSubTab, setActiveSubTab] = useState<'all' | 'inside' | 'outside' | 'transfer' | 'deportation' | 'deported' | 'locations'>('all');
+  const [shelterItems, setShelterItems] = useState<ShelterItem[]>([]);
+  const [activeSubTab, setActiveSubTab] = useState<string>('all');
   
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [showMealModal, setShowMealModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<ShelterItem>('shelter', EXTENDED_SHELTER_DATA).then(data => setShelterItems(data));
+  }, []);
 
   // Add Shelter Form State
   const [addForm, setAddForm] = useState({
@@ -85,7 +90,7 @@ export const ShelterPage: React.FC = () => {
     return true;
   });
 
-  const handleAddShelter = (e: React.FormEvent) => {
+  const handleAddShelter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.maid_name || !addForm.passport) return;
 
@@ -103,10 +108,10 @@ export const ShelterPage: React.FC = () => {
       status: 'داخل الإيواء'
     };
 
-    setShelterItems([newItem, ...shelterItems]);
+    const updated = await realErpDataStore.addRecord('shelter', newItem, EXTENDED_SHELTER_DATA);
+    setShelterItems(updated);
     setShowAddModal(false);
     setAddForm({ maid_name: '', nationality: 'إثيوبيا', passport: '', client_name: '', shelter_location: 'مقر الإيواء الرئيسي - الرياض', work_willingness: 'ترغب بالعمل' });
-    alert(`تم تسكين العاملة (${newItem.maid_name}) بمقر الإيواء وتوليد ملف الإعاشة تلقائياً!`);
   };
 
   return (

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface ComplaintTicket {
   id: string;
@@ -134,13 +135,17 @@ const MOCK_INTER_DISPUTES: InterCompanyDispute[] = [
 ];
 
 export const ComplaintsPage: React.FC = () => {
-  const [complaints, setComplaints] = useState<ComplaintTicket[]>(MOCK_COMPLAINTS);
+  const [complaints, setComplaints] = useState<ComplaintTicket[]>([]);
   const [interDisputes, setInterDisputes] = useState<InterCompanyDispute[]>(MOCK_INTER_DISPUTES);
 
   const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla'>('tickets');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
+
+  useEffect(() => {
+    realErpDataStore.getRecords<ComplaintTicket>('complaints', MOCK_COMPLAINTS).then(data => setComplaints(data));
+  }, []);
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -168,7 +173,7 @@ export const ComplaintsPage: React.FC = () => {
     details: ''
   });
 
-  const handleAddTicket = (e: React.FormEvent) => {
+  const handleAddTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.client_name || !addForm.client_phone || !addForm.description) return;
 
@@ -188,13 +193,13 @@ export const ComplaintsPage: React.FC = () => {
       description: addForm.description
     };
 
-    setComplaints([newTicket, ...complaints]);
+    const updated = await realErpDataStore.addRecord('complaints', newTicket, MOCK_COMPLAINTS);
+    setComplaints(updated);
     setShowAddModal(false);
     setAddForm({ client_name: '', client_phone: '', category: 'رفض عمل', contract_ref: '', priority: 'عادي', branch: 'فرع الرياض', description: '' });
-    alert(`تم تسجيل وتوجيه تذكرة الدعم والشكوى رقم (${newTicket.ticket_no}) وتفعيل عداد الـ SLA بنجاح!`);
   };
 
-  const handleAddInterDispute = (e: React.FormEvent) => {
+  const handleAddInterDispute = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!disputeForm.subject || !disputeForm.details) return;
 
@@ -211,10 +216,10 @@ export const ComplaintsPage: React.FC = () => {
       details: disputeForm.details
     };
 
-    setInterDisputes([newDispute, ...interDisputes]);
+    const updated = await realErpDataStore.addRecord('inter-disputes', newDispute, MOCK_INTER_DISPUTES);
+    setInterDisputes(updated);
     setShowAddDisputeModal(false);
     setDisputeForm({ sender_entity: '💎 شركة توباز (Topaz Group)', target_entity: '🇵🇭 مكتب بلاتينيوم الفلبيني (PLATINUM)', subject: '', amount_claimed: '', priority: 'عالي جداً VIP', details: '' });
-    alert(`تم رفع الشكوى/النزاع المالي رقم (${newDispute.dispute_no}) رسمياً لمكتب الإدارة العليا ورئاسة المجموعة!`);
   };
 
   const handleResolveTicket = (status: 'تم الحل وإغلاق الشكوى' | 'مرفوعة للمشرف') => {
