@@ -110,6 +110,7 @@ export const FinancialRequestsPage: React.FC = () => {
         data={MOCK_FIN_REQUESTS}
         searchPlaceholder="ابحث برقم الطلب المالي، نوع الطلب، اسم العميل، أو رقم العقد..."
         addLabel="طلب مالي جديد"
+        exportConfig={{ sectionKey: 'financial-requests', rawData: MOCK_FIN_REQUESTS }}
       />
 
       {showCreateModal && (

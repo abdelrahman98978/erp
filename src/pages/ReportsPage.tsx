@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import * as XLSX from 'xlsx';
-import { jsPDF } from 'jspdf';
+import { exportData, SECTION_CONFIGS } from '../services/exportService';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,25 +25,30 @@ ChartJS.register(
 
 interface ReportCard {
   id: string;
+  /** Maps to SECTION_CONFIGS key for actual export */
+  sectionKey: string;
   title: string;
   desc: string;
   icon: string;
 }
 
 const REPORTS_LIST: ReportCard[] = [
-  { id: 'maids', title: 'تقرير السير الذاتية', desc: 'تصفية السير الذاتية وتصديرها بصيغة PDF موحدة أو Excel بحسب الجنسيات والمكاتب.', icon: 'fa-address-card' },
-  { id: 'orders', title: 'تقرير طلبات الاستقدام', desc: 'تصدير الطلبات الحالية بعد الفلترة حسب الحالة والعميل والمسوق والمهلة المحددة.', icon: 'fa-cart-shopping' },
-  { id: 'clients', title: 'تقرير العملاء الشامل', desc: 'تقرير العملاء مع بيانات الاتصال والحالة ومؤشرات النشاط وآخر العمليات والطلبات.', icon: 'fa-users' },
-  { id: 'recruitment-contracts', title: 'تقرير عقود الاستقدام', desc: 'تقرير موحد لعقود الاستقدام مع فلاتر المرحلة والضمان والعميل والعاملة والمكتب الخارجي.', icon: 'fa-file-signature' },
-  { id: 'rent-contracts', title: 'تقرير عقود الإيجار والتشغيل', desc: 'تقرير عقود الإيجار مع حالة العقد والتمديد والضمان والمسوق وطرق الدفع.', icon: 'fa-handshake-simple' },
-  { id: 'shelter', title: 'تقرير عقود الإيواء والإعاشة', desc: 'تقرير الإيواء الموحّد مع الضمان والرغبة في العمل ومكان الإيواء ووجبات التغذية.', icon: 'fa-building-user' },
-  { id: 'transfer', title: 'تقرير نقل الكفالة', desc: 'تقرير معاملات نقل الكفالة مع بيانات الكفلاء والعاملة والحالة والمدفوعات وفترة التجربة.', icon: 'fa-repeat' },
-  { id: 'deportation', title: 'تقرير رحلات الترحيل', desc: 'تقرير رحلات الترحيل مع بيانات العقد والعاملة والعميل وشركة الطيران ورقم الرحلة.', icon: 'fa-plane-departure' },
-  { id: 'arrival', title: 'تقرير رحلات الاستقدام', desc: 'تقرير رحلات الاستقدام مجمعة حسب الرحلة كما تظهر في قسم السفر واللوجستيات.', icon: 'fa-plane-arrival' },
-  { id: 'complaints', title: 'تقرير الشكاوى والدعم', desc: 'تقرير الشكاوى والتذاكر مع الحالة والأولوية والتعيين والردود ومعدل سرعة الحل.', icon: 'fa-headset' },
-  { id: 'offices', title: 'تقرير المكاتب الخارجية', desc: 'تقرير المكاتب الخارجية مع الجنسية والحساب والمدير والارتباطات والتكلفة بالدولار.', icon: 'fa-globe' },
-  { id: 'financial-requests', title: 'تقرير الطلبات المالية', desc: 'تقرير الطلبات المالية التشغيلية حسب النوع والحالة والتصعيد ومقدم الطلب.', icon: 'fa-money-bill-transfer' },
-  { id: 'zatca-tax', title: 'الإقرار وتقرير الضريبة', desc: 'كشف حساب ضريبة الفواتير والمصروفات والإقرارات الضريبية المعتمدة لدى هيئة الزكاة.', icon: 'fa-qrcode' }
+  { id: 'clients', sectionKey: 'clients', title: 'تقرير العملاء الشامل', desc: 'تقرير العملاء مع بيانات الاتصال والحالة ومؤشرات النشاط وآخر العمليات والطلبات.', icon: 'fa-users' },
+  { id: 'orders', sectionKey: 'orders', title: 'تقرير طلبات الاستقدام', desc: 'تصدير الطلبات الحالية بعد الفلترة حسب الحالة والعميل والمسوق والمهلة المحددة.', icon: 'fa-cart-shopping' },
+  { id: 'recruitment-contracts', sectionKey: 'recruitment-contracts', title: 'تقرير عقود الاستقدام', desc: 'تقرير موحد لعقود الاستقدام مع فلاتر المرحلة والضمان والعميل والعاملة والمكتب الخارجي.', icon: 'fa-file-signature' },
+  { id: 'rent-contracts', sectionKey: 'rent-contracts', title: 'تقرير عقود الإيجار والتشغيل', desc: 'تقرير عقود الإيجار مع حالة العقد والتمديد والضمان والمسوق وطرق الدفع.', icon: 'fa-handshake-simple' },
+  { id: 'shelter', sectionKey: 'shelter', title: 'تقرير عقود الإيواء والإعاشة', desc: 'تقرير الإيواء الموحّد مع الضمان والرغبة في العمل ومكان الإيواء ووجبات التغذية.', icon: 'fa-building-user' },
+  { id: 'travel', sectionKey: 'travel', title: 'تقرير رحلات السفر واللوجستيات', desc: 'تقرير رحلات الاستقدام والترحيل مع بيانات شركة الطيران والمطار والعميل والعاملة.', icon: 'fa-plane-departure' },
+  { id: 'sponsorship-transfer', sectionKey: 'sponsorship-transfer', title: 'تقرير نقل الكفالة', desc: 'تقرير معاملات نقل الكفالة مع بيانات الكفلاء والعاملة والحالة والمدفوعات وفترة التجربة.', icon: 'fa-repeat' },
+  { id: 'complaints', sectionKey: 'complaints', title: 'تقرير الشكاوى والدعم', desc: 'تقرير الشكاوى والتذاكر مع الحالة والأولوية والتعيين والردود ومعدل سرعة الحل.', icon: 'fa-headset' },
+  { id: 'external-offices', sectionKey: 'external-offices', title: 'تقرير المكاتب الخارجية', desc: 'تقرير المكاتب الخارجية مع الجنسية والحساب والمدير والارتباطات والتكلفة بالدولار.', icon: 'fa-globe' },
+  { id: 'financial-requests', sectionKey: 'financial-requests', title: 'تقرير الطلبات المالية', desc: 'تقرير الطلبات المالية التشغيلية حسب النوع والحالة والتصعيد ومقدم الطلب.', icon: 'fa-money-bill-transfer' },
+  { id: 'employees', sectionKey: 'employees', title: 'تقرير الموظفين والموارد البشرية', desc: 'تقرير بيانات الموظفين الشامل مع المسمى الوظيفي والقسم والراتب وتاريخ التوظيف.', icon: 'fa-user-tie' },
+  { id: 'journals', sectionKey: 'journals', title: 'تقرير القيود المحاسبية', desc: 'تقرير القيود اليومية مع البيان والمبلغ والحالة والفرع وتاريخ التوجيه.', icon: 'fa-book' },
+  { id: 'vouchers', sectionKey: 'vouchers', title: 'تقرير السندات المالية', desc: 'تقرير سندات القبض والصرف مع البيانات المالية والخزينة والحالة.', icon: 'fa-receipt' },
+  { id: 'group-dispatch', sectionKey: 'group-dispatch', title: 'تقرير المراسلات الجماعية', desc: 'تقرير المراسلات بين شركات المجموعة مع النوع والأولوية والحالة والمسؤول.', icon: 'fa-paper-plane' },
+  { id: 'ingaz', sectionKey: 'ingaz', title: 'تقرير تفاويض الإنجاز', desc: 'تقرير تفاويض الإنجاز الإلكتروني مع بيانات التأشيرة والمكتب والرسوم والحالة.', icon: 'fa-stamp' },
+  { id: 'users', sectionKey: 'users', title: 'تقرير مستخدمي النظام', desc: 'تقرير مستخدمي النظام مع الصلاحيات والنوع والفرع وحالة المصادقة الثنائية.', icon: 'fa-shield-halved' },
 ];
 
 export const ReportsPage: React.FC = () => {
@@ -76,22 +80,22 @@ export const ReportsPage: React.FC = () => {
     ]
   };
 
-  const handleExportExcel = (reportTitle: string) => {
-    const data = [
-      { 'الرقم': '1', 'اسم التقرير': reportTitle, 'العدد': '113', 'التاريخ': '2026-07-30', 'الحالة': 'مكتمل ومعتمد' },
-      { 'الرقم': '2', 'اسم التقرير': reportTitle, 'العدد': '45', 'التاريخ': '2026-07-29', 'الحالة': 'تحت الإجراء' }
-    ];
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'تقرير');
-    XLSX.writeFile(wb, `${reportTitle}.xlsx`);
-  };
-
-  const handleExportPDF = (reportTitle: string) => {
-    const doc = new jsPDF();
-    doc.text(`MAJMOAT ALKHALID ALSALIM - ${reportTitle}`, 10, 10);
-    doc.text(`Date: 2026-07-30 | Status: Approved ERP Report`, 10, 20);
-    doc.save(`${reportTitle}.pdf`);
+  /**
+   * Export using the central export service.
+   * Since the actual data lives in each page's state, this generates a report stub
+   * using the section config's headers. In production, this would fetch from Supabase.
+   * For now it exports an empty-data report structure that matches the configured headers.
+   */
+  const handleExport = (sectionKey: string, format: 'excel' | 'pdf' | 'csv') => {
+    const config = SECTION_CONFIGS[sectionKey];
+    if (!config) {
+      console.warn(`No export config found for section: ${sectionKey}`);
+      return;
+    }
+    // Export with empty data array — the centralized service will still produce
+    // a properly formatted file with company header and Arabic column headers.
+    // In a real scenario, we'd fetch the data from the API/store first.
+    exportData(sectionKey, [], format);
   };
 
   return (
@@ -99,10 +103,10 @@ export const ReportsPage: React.FC = () => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
-            <i className="fa-solid fa-file-chart-column text-purple ml-2"></i> مركز التقارير الموحد والتحليلات (13 تقريراً)
+            <i className="fa-solid fa-file-chart-column text-purple ml-2"></i> مركز التقارير الموحد والتحليلات ({REPORTS_LIST.length} تقريراً)
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            استخراج وتصفيات الفلترة الدقيقة وتصدير البيانات بفرز XLSX وإصدار ملفات PDF
+            استخراج وتصفيات الفلترة الدقيقة وتصدير البيانات بصيغ XLSX، PDF، و CSV بترويسات عربية احترافية
           </p>
         </div>
       </div>
@@ -146,11 +150,14 @@ export const ReportsPage: React.FC = () => {
               <button className="btn-odoo btn-odoo-purple" style={{ flex: 1, fontSize: '12px' }} onClick={() => setActiveReport(rep)}>
                 <i className="fa-solid fa-filter ml-1"></i> تصفية
               </button>
-              <button className="btn-odoo btn-odoo-primary" style={{ fontSize: '12px' }} onClick={() => handleExportExcel(rep.title)} title="تصدير Excel">
+              <button className="btn-odoo btn-odoo-primary" style={{ fontSize: '12px' }} onClick={() => handleExport(rep.sectionKey, 'excel')} title="تصدير Excel">
                 <i className="fa-solid fa-file-excel"></i>
               </button>
-              <button className="btn-odoo btn-odoo-secondary" style={{ fontSize: '12px' }} onClick={() => handleExportPDF(rep.title)} title="تصدير PDF">
+              <button className="btn-odoo btn-odoo-secondary" style={{ fontSize: '12px' }} onClick={() => handleExport(rep.sectionKey, 'pdf')} title="تصدير PDF">
                 <i className="fa-solid fa-file-pdf text-danger"></i>
+              </button>
+              <button className="btn-odoo btn-odoo-secondary" style={{ fontSize: '12px' }} onClick={() => handleExport(rep.sectionKey, 'csv')} title="تصدير CSV">
+                <i className="fa-solid fa-file-csv text-primary"></i>
               </button>
             </div>
           </div>
@@ -182,8 +189,11 @@ export const ReportsPage: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button className="btn-odoo btn-odoo-primary" style={{ flex: 1 }} onClick={() => { handleExportExcel(activeReport.title); setActiveReport(null); }}>
-                <i className="fa-solid fa-download"></i> تصدير Excel فوري
+              <button className="btn-odoo btn-odoo-primary" style={{ flex: 1 }} onClick={() => { handleExport(activeReport.sectionKey, 'excel'); setActiveReport(null); }}>
+                <i className="fa-solid fa-file-excel"></i> تصدير Excel فوري
+              </button>
+              <button className="btn-odoo btn-odoo-secondary" style={{ flex: 1 }} onClick={() => { handleExport(activeReport.sectionKey, 'pdf'); setActiveReport(null); }}>
+                <i className="fa-solid fa-file-pdf"></i> تصدير PDF
               </button>
               <button className="btn-odoo btn-odoo-secondary" onClick={() => setActiveReport(null)}>إلغاء</button>
             </div>

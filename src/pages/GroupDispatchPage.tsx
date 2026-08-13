@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { exportData } from '../services/exportService';
 
 export interface GroupDispatchMemo {
   id: string;
@@ -207,9 +208,20 @@ export const GroupDispatchPage: React.FC = () => {
           </p>
         </div>
 
-        <button className="btn-odoo btn-odoo-purple" onClick={() => setShowDispatchModal(true)}>
-          <i className="fa-solid fa-plus ml-1"></i> توجيه معاملة / خطاب جديد
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowDispatchModal(true)}>
+            <i className="fa-solid fa-plus ml-1"></i> توجيه معاملة / خطاب جديد
+          </button>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('group-dispatch', filteredDispatches, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('group-dispatch', filteredDispatches, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('group-dispatch', filteredDispatches, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+        </div>
       </div>
 
       {/* Group Companies Interactive Selector Grid */}

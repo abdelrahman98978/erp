@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
+import { exportData } from '../../services/exportService';
 
 export interface Column<T> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   width?: string;
+}
+
+export interface ExportConfig {
+  /** Key matching SECTION_CONFIGS in exportService */
+  sectionKey: string;
+  /** Raw data array (not filtered) — filtered data is used when search is active */
+  rawData: any[];
 }
 
 interface DataTableProps<T> {
@@ -13,6 +21,8 @@ interface DataTableProps<T> {
   onAddClick?: () => void;
   addLabel?: string;
   filterContent?: React.ReactNode;
+  /** Export configuration — enables Excel/PDF/CSV buttons */
+  exportConfig?: ExportConfig;
 }
 
 export function DataTable<T extends { id: string | number }>({
@@ -21,11 +31,13 @@ export function DataTable<T extends { id: string | number }>({
   searchPlaceholder = 'ابحث في البيانات...',
   onAddClick,
   addLabel = 'إضافة جديد',
-  filterContent
+  filterContent,
+  exportConfig
 }: DataTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const filteredData = data.filter(row => {
     if (!searchQuery) return true;
@@ -48,6 +60,22 @@ export function DataTable<T extends { id: string | number }>({
       next.add(id);
     }
     setSelectedIds(next);
+  };
+
+  /** Get data for export: use filtered data if search is active */
+  const getExportData = (): any[] => {
+    if (!exportConfig) return [];
+    if (searchQuery) {
+      // Use the filtered view data
+      return filteredData as any[];
+    }
+    return exportConfig.rawData;
+  };
+
+  const handleExport = (format: 'excel' | 'pdf' | 'csv') => {
+    if (!exportConfig) return;
+    exportData(exportConfig.sectionKey, getExportData(), format);
+    setShowExportMenu(false);
   };
 
   return (
@@ -92,11 +120,76 @@ export function DataTable<T extends { id: string | number }>({
             </span>
           )}
 
-          <button className="btn-odoo btn-odoo-secondary" title="تصدير إكسيل">
-            <i className="fa-solid fa-file-excel text-success"></i>
-            <span>إكسيل</span>
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" title="طباعة">
+          {/* Export Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="btn-odoo btn-odoo-secondary"
+              title="تصدير البيانات"
+              onClick={() => setShowExportMenu(!showExportMenu)}
+            >
+              <i className="fa-solid fa-download"></i>
+              <span>تصدير</span>
+              <i className={`fa-solid fa-chevron-${showExportMenu ? 'up' : 'down'}`} style={{ fontSize: '10px' }}></i>
+            </button>
+
+            {showExportMenu && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: '4px',
+                background: 'white',
+                border: '1px solid #E5E7EB',
+                borderRadius: '8px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                zIndex: 50,
+                minWidth: '180px',
+                overflow: 'hidden'
+              }}>
+                <button
+                  onClick={() => handleExport('excel')}
+                  style={{
+                    width: '100%', padding: '10px 16px', border: 'none', background: 'transparent',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
+                    fontSize: '13px', fontWeight: '600', fontFamily: 'inherit', textAlign: 'right'
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <i className="fa-solid fa-file-excel" style={{ color: '#10B981', fontSize: '16px' }}></i>
+                  تصدير Excel (XLSX)
+                </button>
+                <button
+                  onClick={() => handleExport('pdf')}
+                  style={{
+                    width: '100%', padding: '10px 16px', border: 'none', background: 'transparent',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
+                    fontSize: '13px', fontWeight: '600', fontFamily: 'inherit', textAlign: 'right'
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <i className="fa-solid fa-file-pdf" style={{ color: '#EF4444', fontSize: '16px' }}></i>
+                  تصدير PDF
+                </button>
+                <button
+                  onClick={() => handleExport('csv')}
+                  style={{
+                    width: '100%', padding: '10px 16px', border: 'none', background: 'transparent',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
+                    fontSize: '13px', fontWeight: '600', fontFamily: 'inherit', textAlign: 'right'
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <i className="fa-solid fa-file-csv" style={{ color: '#3B82F6', fontSize: '16px' }}></i>
+                  تصدير CSV
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button className="btn-odoo btn-odoo-secondary" title="طباعة" onClick={() => window.print()}>
             <i className="fa-solid fa-print"></i>
             <span>طباعة</span>
           </button>

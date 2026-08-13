@@ -250,6 +250,7 @@ export const IngazPage: React.FC = () => {
         data={filteredDelegations}
         searchPlaceholder="ابحث برقم التفويض، اسم العميل، رقم التأشيرة، أو اسم المكتب الخارجي..."
         addLabel="إضافة تفويض جديد"
+        exportConfig={{ sectionKey: 'ingaz', rawData: delegations }}
       />
 
       {/* Create Delegation Modal */}

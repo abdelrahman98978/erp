@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { Employee } from '../types';
+import { exportData } from '../services/exportService';
 
 const MOCK_EMPLOYEES_FULL: Employee[] = [
   {
@@ -107,12 +108,21 @@ export const HRPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddEmpModal(true)}>
             <i className="fa-solid fa-user-plus ml-1"></i> إضافة موظف جديد
           </button>
           <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAdvanceModal(true)}>
             <i className="fa-solid fa-hand-holding-dollar ml-1"></i> طلب سلفة / إجازة
+          </button>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('employees', employees, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('employees', employees, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('employees', employees, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
           </button>
         </div>
       </div>

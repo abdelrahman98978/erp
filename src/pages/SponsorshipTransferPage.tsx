@@ -145,6 +145,7 @@ export const SponsorshipTransferPage: React.FC = () => {
         data={MOCK_TRANSFERS}
         searchPlaceholder="ابحث برقم العقد، اسم العاملة، الكفيل القديم أو الجديد..."
         addLabel="إضافة طلب نقل كفالة"
+        exportConfig={{ sectionKey: 'sponsorship-transfer', rawData: MOCK_TRANSFERS }}
       />
     </div>
   );

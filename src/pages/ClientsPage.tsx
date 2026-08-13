@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { exportData } from '../services/exportService';
 
 export interface ClientRecord {
   id: string;
@@ -136,8 +137,14 @@ export const ClientsPage: React.FC = () => {
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
             <i className="fa-solid fa-user-plus ml-1"></i> إضافة عميل جديد
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => alert('تصدير كشف العملاء الكامل بصيغة Excel')}>
-            <i className="fa-solid fa-file-excel ml-1"></i> تصدير Excel
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('clients', filteredClients, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
           </button>
         </div>
       </div>

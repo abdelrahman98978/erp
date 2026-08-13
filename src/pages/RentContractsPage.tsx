@@ -90,6 +90,7 @@ export const RentContractsPage: React.FC = () => {
         columns={columns}
         data={MOCK_RENT_CONTRACTS}
         searchPlaceholder={t('searchRentContractPlaceholder', 'ابحث برقم العقد، اسم العميل، اسم العاملة، أو رقم الجوال...')}
+        exportConfig={{ sectionKey: 'rent-contracts', rawData: MOCK_RENT_CONTRACTS }}
       />
 
       {/* Modal create contract */}

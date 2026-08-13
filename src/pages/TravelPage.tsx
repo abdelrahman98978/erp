@@ -154,6 +154,7 @@ export const TravelPage: React.FC = () => {
         data={MOCK_FLIGHTS}
         searchPlaceholder="ابحث برقم الرحلة، اسم العاملة، المطار، أو خط الطيران..."
         addLabel="إضافة رحلة سفر جديدة"
+        exportConfig={{ sectionKey: 'travel', rawData: MOCK_FLIGHTS }}
       />
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { ShelterItem } from '../types';
+import { exportData } from '../services/exportService';
 
 const EXTENDED_SHELTER_DATA: ShelterItem[] = [
   {
@@ -121,12 +122,21 @@ export const ShelterPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
             <i className="fa-solid fa-plus ml-1"></i> إضافة تسكين للإيواء
           </button>
           <button className="btn-odoo btn-odoo-primary" onClick={() => setShowMealModal(true)}>
             <i className="fa-solid fa-utensils ml-1"></i> جدول الإعاشة والوجبات
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('shelter', filteredItems, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel text-success ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('shelter', filteredItems, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('shelter', filteredItems, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
           </button>
         </div>
       </div>

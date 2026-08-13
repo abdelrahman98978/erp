@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { exportData } from '../services/exportService';
 
 export interface ComplaintTicket {
   id: string;
@@ -249,12 +250,21 @@ export const ComplaintsPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button className="btn-odoo btn-odoo-danger" onClick={() => setShowAddDisputeModal(true)}>
             <i className="fa-solid fa-building-circle-exclamation ml-1"></i> رفع شكوى للإدارة العليا
           </button>
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
             <i className="fa-solid fa-plus ml-1"></i> تسجيل شكوى عميل جديدة
+          </button>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('complaints', filteredTickets, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
           </button>
         </div>
       </div>

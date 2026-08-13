@@ -115,6 +115,7 @@ export const RecruitmentContractsPage: React.FC = () => {
         columns={columns}
         data={MOCK_RECRUITMENT_CONTRACTS}
         searchPlaceholder={t('searchContractPlaceholder', 'ابحث برقم العقد، اسم العميل، اسم العاملة، أو رقم جواز السفر...')}
+        exportConfig={{ sectionKey: 'recruitment-contracts', rawData: MOCK_RECRUITMENT_CONTRACTS }}
       />
     </div>
   );

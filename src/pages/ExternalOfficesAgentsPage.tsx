@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ExternalOffice } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
+import { exportData } from '../services/exportService';
 
 export const ExternalOfficesAgentsPage: React.FC = () => {
   const { activeCompany } = useCompany();
@@ -116,21 +117,74 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          style={{
-            backgroundColor: '#FFFFFF',
-            color: '#1E3A8A',
-            border: 'none',
-            borderRadius: '10px',
-            padding: '12px 20px',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
-        >
-          + اعتماد مكتب خارجي جديد
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            style={{
+              backgroundColor: '#FFFFFF',
+              color: '#1E3A8A',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '12px 20px',
+              fontWeight: '800',
+              fontSize: '13px',
+              cursor: 'pointer',
+            }}
+          >
+            + اعتماد مكتب خارجي جديد
+          </button>
+          <button
+            type="button"
+            onClick={() => exportData('external-offices', offices, 'excel')}
+            title="تصدير Excel"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255,255,255,0.3)',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              fontWeight: '700',
+              fontSize: '13px',
+              cursor: 'pointer',
+            }}
+          >
+            <i className="fa-solid fa-file-excel" style={{ marginLeft: '4px' }}></i> Excel
+          </button>
+          <button
+            type="button"
+            onClick={() => exportData('external-offices', offices, 'pdf')}
+            title="تصدير PDF"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255,255,255,0.3)',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              fontWeight: '700',
+              fontSize: '13px',
+              cursor: 'pointer',
+            }}
+          >
+            <i className="fa-solid fa-file-pdf" style={{ marginLeft: '4px' }}></i> PDF
+          </button>
+          <button
+            type="button"
+            onClick={() => exportData('external-offices', offices, 'csv')}
+            title="تصدير CSV"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255,255,255,0.3)',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              fontWeight: '700',
+              fontSize: '13px',
+              cursor: 'pointer',
+            }}
+          >
+            <i className="fa-solid fa-file-csv" style={{ marginLeft: '4px' }}></i> CSV
+          </button>
+        </div>
       </div>
 
       {/* Grid of External Offices */}

@@ -194,6 +194,7 @@ export const UsersPage: React.FC = () => {
         data={users}
         searchPlaceholder="ابحث بالاسم، اسم المستخدم، البريد، أو الفرع..."
         addLabel="إضافة مستخدم جديد"
+        exportConfig={{ sectionKey: 'users', rawData: users }}
       />
 
       {/* 2FA Configuration Modal */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { AccountNode } from '../types';
+import { exportData } from '../services/exportService';
 
 export interface JournalEntry {
   id: string;
@@ -178,12 +179,21 @@ export const FinancePage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddJournalModal(true)}>
             <i className="fa-solid fa-plus ml-1"></i> إضافة قيد يومية
           </button>
           <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAddVoucherModal(true)}>
             <i className="fa-solid fa-file-invoice-dollar ml-1"></i> أضف سند قبض / صرف
+          </button>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('journals', journals, 'excel')} title="تصدير القيود Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> القيود
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('vouchers', vouchers, 'excel')} title="تصدير السندات Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> السندات
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => { exportData('journals', journals, 'pdf'); exportData('vouchers', vouchers, 'pdf'); }} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
           </button>
         </div>
       </div>

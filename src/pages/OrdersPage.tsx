@@ -107,6 +107,7 @@ export const OrdersPage: React.FC = () => {
         columns={columns}
         data={MOCK_ORDERS}
         searchPlaceholder={t('searchOrderPlaceholder', 'ابحث برقم الطلب، اسم العميل، رقم الجوال، أو اسم العاملة...')}
+        exportConfig={{ sectionKey: 'orders', rawData: MOCK_ORDERS }}
       />
     </div>
   );
