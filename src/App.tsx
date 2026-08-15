@@ -9,6 +9,7 @@ import { RBACProvider } from './contexts/RBACContext';
 
 import { useAppStore } from './stores/appStore';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
+import { AICopilotWidget } from './components/common/AICopilotWidget';
 
 import './styles/index.css';
 import './styles/layout.css';
@@ -336,6 +337,7 @@ const MainContent: React.FC = () => {
         </Suspense>
       </AppShell>
       <QuickSearchModal onNavigate={handleSelectTab} />
+      <AICopilotWidget onNavigate={handleSelectTab} />
     </>
   );
 };

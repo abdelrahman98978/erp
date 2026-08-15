@@ -103,4 +103,95 @@ export const accountingAutomationEngine = {
       ],
     });
   },
+
+  /**
+   * Automatically post Musaned Escrow Release to Company Revenue after 90 days guarantee period
+   */
+  postMusanedEscrowReleaseToLedger(
+    companyId: CompanyId,
+    params: {
+      contractNumber: string;
+      clientName: string;
+      workerName: string;
+      amount: number;
+      branchName: string;
+      createdBy: string;
+    }
+  ): { entry: JournalEntry | null; error: string | null } {
+    const description = `تسوية وتحرير أمانات مساند بعد انتهاء فترة الضمان (90 يوم) - عقد #${params.contractNumber} - العامل/ة: ${params.workerName}`;
+
+    return journalEngine.createJournalEntry(companyId, {
+      entryType: 'AUTOMATIC',
+      sourceModule: 'MUSANED_ESCROW',
+      sourceReference: params.contractNumber,
+      description,
+      branchName: params.branchName,
+      createdBy: params.createdBy,
+      autoPost: true,
+      lines: [
+        {
+          accountCode: '21060',
+          accountName: 'أمانات مساند المعلقة (90 يوماً)',
+          debit: params.amount,
+          credit: 0,
+        },
+        {
+          accountCode: '41100',
+          accountName: 'إيرادات عقود الاستقدام المحققة',
+          debit: 0,
+          credit: params.amount,
+        },
+      ],
+    });
+  },
+
+  /**
+   * Automatically post Monthly Payroll to Ledger (WPS Compliant)
+   */
+  postPayrollToLedger(
+    companyId: CompanyId,
+    params: {
+      monthYear: string;
+      totalBasicSalaries: number;
+      totalAllowances: number;
+      totalDeductions: number;
+      netPayable: number;
+      bankAccountCode: string;
+      branchName: string;
+      createdBy: string;
+    }
+  ): { entry: JournalEntry | null; error: string | null } {
+    const description = `مسير الرواتب الشهري المعتمد لبرنامج حماية الأجور (WPS) - شهر: ${params.monthYear}`;
+
+    return journalEngine.createJournalEntry(companyId, {
+      entryType: 'AUTOMATIC',
+      sourceModule: 'PAYROLL',
+      sourceReference: `WPS-${params.monthYear}`,
+      description,
+      branchName: params.branchName,
+      createdBy: params.createdBy,
+      autoPost: true,
+      lines: [
+        {
+          accountCode: '51010',
+          accountName: 'مصروف رواتب وأجور الموظفين',
+          debit: params.totalBasicSalaries + params.totalAllowances,
+          credit: 0,
+        },
+        {
+          accountCode: '21040',
+          accountName: 'استقطاعات وتأمينات مستحقة',
+          debit: 0,
+          credit: params.totalDeductions,
+        },
+        {
+          accountCode: params.bankAccountCode || '11020',
+          accountName: 'بنك الراجحي - الحساب التشغيلي الرئيسي',
+          debit: 0,
+          credit: params.netPayable,
+        },
+      ],
+    });
+  },
 };
+

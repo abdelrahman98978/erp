@@ -548,6 +548,59 @@ export const ZATCAPage: React.FC = () => {
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="button"
+                  onClick={() => {
+                    const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
+  <cbc:ID>${selectedInvoiceForXml.invoice_number}</cbc:ID>
+  <cbc:IssueDate>${selectedInvoiceForXml.issue_date}</cbc:IssueDate>
+  <cbc:InvoiceTypeCode name="0111010">${selectedInvoiceForXml.invoice_type === 'STANDARD' ? '388' : '388'}</cbc:InvoiceTypeCode>
+  <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>${activeCompany.name}</cbc:RegistrationName>
+      </cac:PartyLegalEntity>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>${activeCompany.taxNumber}</cbc:CompanyID>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:PartyTaxScheme>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:LegalMonetaryTotal>
+    <cbc:TaxExclusiveAmount currencyID="SAR">${selectedInvoiceForXml.subtotal.toFixed(2)}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="SAR">${selectedInvoiceForXml.total_amount.toFixed(2)}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="SAR">${selectedInvoiceForXml.total_amount.toFixed(2)}</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+</Invoice>`;
+                    const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `${selectedInvoiceForXml.invoice_number}-ZATCA-UBL21.xml`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-200 flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-file-code"></i>
+                  تنزيل ملف XML (UBL 2.1)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(selectedInvoiceForXml.qr_code_payload || '');
+                    alert('تم نسخ كود الـ QR Base64 المشفر بنجاح');
+                  }}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-copy"></i>
+                  نسخ رمز TLV
+                </button>
+                <button
+                  type="button"
                   onClick={() => setSelectedInvoiceForXml(null)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
                 >
