@@ -45,8 +45,7 @@ export interface JournalEntry {
   createdAt: string;
 }
 
-// In-Memory Journal Repository per Company
-const COMPANY_JOURNALS_MAP: Record<string, JournalEntry[]> = {
+const INITIAL_JOURNALS_MAP: Record<string, JournalEntry[]> = {
   SAF: [
     {
       id: 'JV-SAF-001',
@@ -101,23 +100,50 @@ const COMPANY_JOURNALS_MAP: Record<string, JournalEntry[]> = {
   DAR: [],
 };
 
-const SEQUENCE_COUNTERS: Record<string, number> = {
-  SAF: 2,
-  YAQ: 2,
-  TOP: 1,
-  DAR: 1,
-};
+const STORAGE_KEY = 'ALSULAIM_ERP_DB_V1_company_journal_entries';
+
+function loadPersistedJournals(): Record<string, JournalEntry[]> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed: JournalEntry[] = JSON.parse(raw);
+      const map: Record<string, JournalEntry[]> = { SAF: [], YAQ: [], TOP: [], DAR: [] };
+      parsed.forEach(j => {
+        const c = j.companyId || 'SAF';
+        if (!map[c]) map[c] = [];
+        map[c].push(j);
+      });
+      return map;
+    }
+  } catch (e) {
+    // fallback to initial
+  }
+  return INITIAL_JOURNALS_MAP;
+}
+
+function savePersistedJournals(map: Record<string, JournalEntry[]>) {
+  try {
+    const flat = Object.values(map).flat();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(flat));
+    window.dispatchEvent(new CustomEvent('alsulaim_erp_journals_updated', { detail: flat }));
+  } catch (e) {
+    console.error('Failed to persist journals', e);
+  }
+}
+
+let CURRENT_MAP = loadPersistedJournals();
 
 export const journalEngine = {
   /**
    * Get all journal entries for a company
    */
   getJournalsByCompany(companyId: CompanyId): JournalEntry[] {
+    CURRENT_MAP = loadPersistedJournals();
     const norm = normalizeCompanyId(companyId);
     if (norm === 'all') {
-      return Object.values(COMPANY_JOURNALS_MAP).flat();
+      return Object.values(CURRENT_MAP).flat();
     }
-    return COMPANY_JOURNALS_MAP[norm] || [];
+    return CURRENT_MAP[norm] || [];
   },
 
   /**
@@ -127,8 +153,8 @@ export const journalEngine = {
     const norm = normalizeCompanyId(companyId);
     const prefix = norm === 'all' ? 'SAF' : norm;
     const currentYear = new Date().getFullYear();
-    const nextSeq = SEQUENCE_COUNTERS[prefix] || 1;
-    SEQUENCE_COUNTERS[prefix] = nextSeq + 1;
+    const existing = this.getJournalsByCompany(prefix as CompanyId);
+    const nextSeq = existing.length + 1;
     return `${prefix}-JV-${currentYear}-${String(nextSeq).padStart(4, '0')}`;
   },
 
@@ -200,11 +226,12 @@ export const journalEngine = {
       })),
     };
 
-    if (!COMPANY_JOURNALS_MAP[targetCompany]) {
-      COMPANY_JOURNALS_MAP[targetCompany] = [];
+    if (!CURRENT_MAP[targetCompany]) {
+      CURRENT_MAP[targetCompany] = [];
     }
 
-    COMPANY_JOURNALS_MAP[targetCompany].unshift(newEntry);
+    CURRENT_MAP[targetCompany].unshift(newEntry);
+    savePersistedJournals(CURRENT_MAP);
     return { entry: newEntry, error: null };
   },
 
@@ -212,7 +239,10 @@ export const journalEngine = {
    * Post a draft journal entry (Irreversible without Reversal entry)
    */
   postJournalEntry(companyId: CompanyId, entryId: string, approvedBy: string): { success: boolean; error: string | null } {
-    const journals = this.getJournalsByCompany(companyId);
+    CURRENT_MAP = loadPersistedJournals();
+    const norm = normalizeCompanyId(companyId);
+    const targetCompany = norm === 'all' ? 'SAF' : norm;
+    const journals = CURRENT_MAP[targetCompany] || [];
     const entry = journals.find((j) => j.id === entryId);
 
     if (!entry) {
@@ -227,6 +257,7 @@ export const journalEngine = {
     entry.approvedBy = approvedBy;
     entry.postedAt = new Date().toISOString();
 
+    savePersistedJournals(CURRENT_MAP);
     return { success: true, error: null };
   },
 };

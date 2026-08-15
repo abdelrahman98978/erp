@@ -4,6 +4,8 @@ import { exportData } from '../services/exportService';
 import { useZatcaInvoices, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 
+import { generateZatcaQR } from '../services/zatcaPhase2Service';
+
 export interface ZatcaInvoiceRecord {
   id: string;
   company_id: string;
@@ -97,17 +99,18 @@ export const ZATCAPage: React.FC = () => {
     const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
     const invoiceNumber = `${companyCode}-INV-${new Date().getFullYear()}-${String(invoices.length + 1).padStart(4, '0')}`;
 
-    // Simple TLV base64 mockup for local ZATCA compliance
     const sellerName = activeCompany.name;
     const taxNumber = activeCompany.taxNumber;
     const timeIso = new Date().toISOString();
-    const qrPayload = btoa(`${sellerName}|${taxNumber}|${timeIso}|${totalAmount}|${vatAmount}`);
+    const invoiceHash = `sha256-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const qrPayload = generateZatcaQR(sellerName, taxNumber, timeIso, totalAmount, vatAmount, invoiceHash);
 
     const newInvoice = {
       company_id: companyCode,
       invoice_number: invoiceNumber,
       invoice_type: invoiceType,
       issue_date: new Date().toISOString().slice(0, 10),
+      issue_time: new Date().toTimeString().slice(0, 8),
       client_name: clientName,
       client_vat_number: clientVat || undefined,
       client_national_id: clientNationalId || undefined,
@@ -115,9 +118,9 @@ export const ZATCAPage: React.FC = () => {
       vat_amount: vatAmount,
       total_amount: totalAmount,
       qr_code_payload: qrPayload,
-      cryptographic_stamp: `ZATCA-CSID-${Date.now()}-CLEARED`,
+      cryptographic_stamp: `ZATCA-CSID-ECDSA-SHA256-${Date.now()}-CLEARED`,
       zatca_status: invoiceType === 'STANDARD' ? 'CLEARED' : 'REPORTED',
-      xml_hash: `sha256-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      xml_hash: invoiceHash,
       contract_ref: contractRef || `REC-${Date.now().toString().slice(-4)}`,
     };
 

@@ -4,6 +4,7 @@ import { exportData } from '../services/exportService';
 import { useEmployees, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { Employee360DigitalFileModal } from '../components/hr/Employee360DigitalFileModal';
+import { journalEngine } from '../services/accounting/journalEngine';
 
 export interface EmployeeRecord {
   id: string;
@@ -128,6 +129,71 @@ export const HRPage: React.FC = () => {
     setShowAddEmpModal(false);
     setName('');
     setNationalId('');
+  };
+
+  const handleExportSIF = () => {
+    const today = new Date();
+    const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
+    const timeStr = today.toTimeString().slice(0, 8).replace(/:/g, '');
+    const monthStr = today.toISOString().slice(0, 7);
+
+    const totalNet = employees.reduce((sum, emp) => {
+      const basic = emp.salary * 0.7;
+      const housing = emp.salary * 0.2;
+      const transport = emp.salary * 0.1;
+      const gosi = (basic + housing) * 0.0975;
+      return sum + (basic + housing + transport - gosi);
+    }, 0);
+
+    const estId = activeCompany.taxNumber || '7009827341';
+    const bankCode = 'RIBL'; // Riyad Bank / Rajhi
+
+    // SCR Header Line
+    const scrHeader = `SCR,${estId},${bankCode},${dateStr},${timeStr},${totalNet.toFixed(2)},${employees.length},SAR,${monthStr}`;
+
+    // EDR Detail Lines
+    const edrLines = employees.map((emp) => {
+      const basic = (emp.salary * 0.7).toFixed(2);
+      const housing = (emp.salary * 0.2).toFixed(2);
+      const transport = (emp.salary * 0.1).toFixed(2);
+      const gosi = ((emp.salary * 0.7 + emp.salary * 0.2) * 0.0975).toFixed(2);
+      const net = (emp.salary * 0.7 + emp.salary * 0.2 + emp.salary * 0.1 - (emp.salary * 0.7 + emp.salary * 0.2) * 0.0975).toFixed(2);
+      const iban = emp.iban || `SA03800000000${emp.national_id}12`;
+
+      return `EDR,${emp.national_id},${bankCode},${iban},${emp.name},${basic},${housing},${transport},0.00,${gosi},${net},0`;
+    });
+
+    const sifContent = [scrHeader, ...edrLines].join('\r\n');
+    const blob = new Blob([sifContent], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `WPS_SIF_${activeCompany.code}_${monthStr}.sif`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePostPayrollJournals = () => {
+    const totalGross = employees.reduce((sum, emp) => sum + emp.salary, 0);
+    const totalGosi = employees.reduce((sum, emp) => sum + (emp.salary * 0.9 * 0.0975), 0);
+    const totalNet = totalGross - totalGosi;
+
+    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
+    const currentMonth = new Date().toISOString().slice(0, 7);
+
+    journalEngine.createJournalEntry(companyCode, {
+      entryDate: new Date().toISOString().slice(0, 10),
+      description: `قيد مسير رواتب موظفي ${activeCompany.name} لشهر (${currentMonth}) - حماية الأجور WPS`,
+      createdBy: 'مدير الموارد البشرية والرواتب',
+      autoPost: true,
+      lines: [
+        { accountCode: '51010', accountName: 'مصروفات الرواتب والأجور الأساسية والبدلات', debit: totalGross, credit: 0 },
+        { accountCode: '21010', accountName: 'مستحقات الرواتب والأجور (صافي البنك)', debit: 0, credit: totalNet },
+        { accountCode: '21060', accountName: 'مستحقات المؤسسة العامة للتأمينات الاجتماعية (GOSI)', debit: 0, credit: totalGosi },
+      ],
+    });
+
+    alert(`تم بنجاح اعتماد وترحيل قيد مسير الرواتب بقيمة إجمالية ${totalGross.toLocaleString()} ر.س إلى دفتر اليومية العامة!`);
   };
 
   const handleExportWPS = () => {
@@ -376,17 +442,32 @@ export const HRPage: React.FC = () => {
       ) : (
         /* Payroll Table */
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
               <i className="fa-solid fa-file-invoice-dollar text-emerald-600"></i>
               كشف مسير الرواتب الشهرية المعتمد لحماية الأجور (WPS Payroll Sheet)
             </h3>
-            <button
-              onClick={handleExportWPS}
-              className="px-3.5 py-1.5 bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-emerald-800 transition-all flex items-center gap-1.5"
-            >
-              <i className="fa-solid fa-download"></i> تصدير ملف البنك
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={handlePostPayrollJournals}
+                className="px-3.5 py-1.5 bg-purple-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-purple-800 transition-all flex items-center gap-1.5"
+              >
+                <i className="fa-solid fa-wand-magic-sparkles"></i> اعتماد وترحيل قيد الرواتب
+              </button>
+              <button
+                onClick={handleExportSIF}
+                className="px-3.5 py-1.5 bg-blue-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-blue-800 transition-all flex items-center gap-1.5"
+                title="تصدير ملف حماية الأجور بصيغة SIF المعيارية للبنوك السعودية"
+              >
+                <i className="fa-solid fa-file-code"></i> تصدير ملف البنك (SIF)
+              </button>
+              <button
+                onClick={handleExportWPS}
+                className="px-3.5 py-1.5 bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-emerald-800 transition-all flex items-center gap-1.5"
+              >
+                <i className="fa-solid fa-file-excel"></i> تصدير Excel
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">

@@ -24,7 +24,7 @@ export const ActivityLogPage: React.FC = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
-    realErpDataStore.getRecords<ActivityItem>('activity_logs', MOCK_ACTIVITIES).then(data => setActivities(data));
+    realErpDataStore.getRecords<ActivityItem>('activity_log', MOCK_ACTIVITIES).then(data => setActivities(data));
   }, []);
 
   const currentData = activities.length > 0 ? activities : MOCK_ACTIVITIES;
