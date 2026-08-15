@@ -3,11 +3,13 @@ import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useClients, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
+import { useAppStore } from '../stores/appStore';
 
 export const ClientsPage: React.FC = () => {
   const { data: clients = [], isLoading } = useClients();
   const { createItem } = useTableMutation('clients');
   const { activeCompanyId } = useCompany();
+  const { setActiveTab } = useAppStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -68,11 +70,15 @@ export const ClientsPage: React.FC = () => {
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
             <i className="fa-solid fa-user-plus ml-1"></i> إضافة عميل جديد
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('clients', filteredClients, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button
+            className="btn-odoo btn-odoo-primary"
+            onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
+            title="استيراد عملاء من ملف Excel / CSV"
+          >
+            <i className="fa-solid fa-file-import ml-1"></i> استيراد Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> تصدير
           </button>
           <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'pdf')} title="تصدير PDF">
             <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF

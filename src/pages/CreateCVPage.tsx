@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 
 export const CreateCVPage: React.FC = () => {
+  const { setActiveTab } = useAppStore();
   const [formData, setFormData] = useState({
     type_id: 'توسط',
     create_shelter_contract: false,
@@ -55,7 +57,7 @@ export const CreateCVPage: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 style={{ fontSize: '22px', fontWeight: '800' }}>
             <i className="fa-solid fa-address-card text-purple ml-2"></i> إضافة سيرة ذاتية جديدة (نموذج 136 حقل)
@@ -64,9 +66,18 @@ export const CreateCVPage: React.FC = () => {
             إدخال المهارات، بيانات الجواز، الفحوصات، وتفاصيل البدلات والرواتب بدقة متناهية
           </p>
         </div>
-        <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => window.history.back()}>
-          <i className="fa-solid fa-arrow-right"></i> إلغاء ورجوع
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            className="btn-odoo btn-odoo-primary"
+            onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
+          >
+            <i className="fa-solid fa-file-import ml-1"></i> استيراد سير بالجملة (Excel)
+          </button>
+          <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => window.history.back()}>
+            <i className="fa-solid fa-arrow-right"></i> إلغاء ورجوع
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>

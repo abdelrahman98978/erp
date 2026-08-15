@@ -4,6 +4,7 @@ import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
+import { useAppStore } from '../stores/appStore';
 
 export interface JournalEntry {
   id: string;
@@ -941,6 +942,13 @@ export const FinancePage: React.FC = () => {
                 className="px-4 py-2 bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-200 transition-all flex items-center gap-1.5"
               >
                 <i className="fa-solid fa-plus"></i> إضافة حساب محاسبي فرعي
+              </button>
+              <button
+                onClick={() => useAppStore.getState().setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
+                className="px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                title="استيراد دليل الحسابات من Excel / CSV"
+              >
+                <i className="fa-solid fa-file-import text-purple-600"></i> استيراد الدليل (Excel)
               </button>
               <button
                 onClick={() => exportData('trial-balance', chartOfAccountsService.getAccountsByCompany(activeCompany.id as any), 'excel', `دليل_الحسابات_${activeCompany.name}`)}

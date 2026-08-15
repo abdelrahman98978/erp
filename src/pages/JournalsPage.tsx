@@ -4,6 +4,7 @@ import { exportData } from '../services/exportService';
 import { useJournals, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { chartOfAccountsService } from '../services/accounting/chartOfAccountsService';
+import { useAppStore } from '../stores/appStore';
 
 export interface JournalLineItem {
   id: string;
@@ -75,6 +76,7 @@ const DEFAULT_MOCK_JOURNALS: JournalRecord[] = [
 
 export const JournalsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
+  const { setActiveTab } = useAppStore();
   const { data: rawJournals = [], isLoading } = useJournals();
   const { createItem, updateItem } = useTableMutation('company_journal_entries');
 
@@ -204,6 +206,14 @@ export const JournalsPage: React.FC = () => {
           >
             <i className="fa-solid fa-plus"></i>
             إنشاء قيد محاسبي متوازن
+          </button>
+          <button
+            onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
+            className="px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-200 transition-all flex items-center gap-1.5"
+            title="استيراد قيود يومية من ملف Excel / CSV"
+          >
+            <i className="fa-solid fa-file-import ml-1"></i>
+            استيراد قيود (Excel)
           </button>
           <button
             onClick={() => exportData('journals', filteredJournals, 'excel', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
