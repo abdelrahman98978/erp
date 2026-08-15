@@ -25,6 +25,24 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     this.setState({ errorInfo });
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Auto-recover from stale chunks after a new Vercel deployment
+    const isChunkError =
+      error.message?.includes('dynamically imported module') ||
+      error.message?.includes('Expected a JavaScript-or-Wasm module script') ||
+      error.message?.includes('Loading chunk') ||
+      error.name === 'ChunkLoadError';
+
+    if (isChunkError) {
+      const reloadKey = 'erp_auto_chunk_reload';
+      const lastReload = sessionStorage.getItem(reloadKey);
+      if (!lastReload || Date.now() - Number(lastReload) > 10000) {
+        sessionStorage.setItem(reloadKey, String(Date.now()));
+        window.location.reload();
+        return;
+      }
+    }
+
     Sentry.captureException(error, {
       extra: {
         componentStack: errorInfo.componentStack,

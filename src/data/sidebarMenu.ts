@@ -78,8 +78,8 @@ export const SIDEBAR_MENU: NavItem[] = [
         title: 'بنك السير الذاتية (CVs)',
         icon: 'fa-solid fa-address-card',
         children: [
-          { id: 'create-cv', title: 'إضافة سير ذاتية جديدة', href: 'create-cv' },
-          { id: 'agent-imports', title: 'استيراد سير المكاتب', href: 'agent-imports' },
+          { id: 'create-cv', title: 'إضافة سير ذاتية جديدة', icon: 'fa-solid fa-user-plus', href: 'create-cv' },
+          { id: 'agent-imports', title: 'استيراد سير المكاتب', icon: 'fa-solid fa-file-import', href: 'agent-imports' },
         ],
       },
       {
@@ -87,9 +87,9 @@ export const SIDEBAR_MENU: NavItem[] = [
         title: 'عقود الاستقدام المباشرة (مساند)',
         icon: 'fa-solid fa-file-signature',
         children: [
-          { id: 'musaned-pipeline', title: 'متابعة مراحل مساند', href: 'musaned-pipeline', badge: 113, badgeType: 'primary' },
-          { id: 'ingaz', title: 'منصة إنجاز والتأشيرات', href: 'ingaz' },
-          { id: 'travel', title: 'سجل حجز الطيران والوصول', href: 'travel' },
+          { id: 'musaned-pipeline', title: 'متابعة مراحل مساند', icon: 'fa-solid fa-bars-progress', href: 'musaned-pipeline', badge: 113, badgeType: 'primary' },
+          { id: 'ingaz', title: 'منصة إنجاز والتأشيرات', icon: 'fa-solid fa-passport', href: 'ingaz' },
+          { id: 'travel', title: 'سجل حجز الطيران والوصول', icon: 'fa-solid fa-plane-departure', href: 'travel' },
         ],
       },
       {
@@ -97,10 +97,10 @@ export const SIDEBAR_MENU: NavItem[] = [
         title: 'عقود التأجير والخدمات التشغيلية',
         icon: 'fa-solid fa-handshake',
         children: [
-          { id: 'rent-contracts-list', title: 'جميع عقود الإيجار', href: 'rent-contracts-list' },
-          { id: 'rent-packages', title: 'باقات العمالة المنزلية والمهنية', href: 'rent-packages' },
-          { id: 'shelter', title: 'إدارة مركز الإيواء والفرز', href: 'shelter' },
-          { id: 'sponsorship-transfer', title: 'نقل الخدمات وتغيير الكفالة', href: 'sponsorship-transfer' },
+          { id: 'rent-contracts-list', title: 'جميع عقود الإيجار', icon: 'fa-solid fa-file-contract', href: 'rent-contracts-list' },
+          { id: 'rent-packages', title: 'باقات العمالة المنزلية والمهنية', icon: 'fa-solid fa-box-archive', href: 'rent-packages' },
+          { id: 'shelter', title: 'إدارة مركز الإيواء والفرز', icon: 'fa-solid fa-hotel', href: 'shelter' },
+          { id: 'sponsorship-transfer', title: 'نقل الخدمات وتغيير الكفالة', icon: 'fa-solid fa-people-arrows', href: 'sponsorship-transfer' },
         ],
       },
     ],
@@ -175,9 +175,9 @@ export const SIDEBAR_MENU: NavItem[] = [
         title: 'إدارة وتتبع العملاء والزوار',
         icon: 'fa-solid fa-users',
         children: [
-          { id: 'clients', title: 'جميع العملاء المعتمدين', href: 'clients', badge: 241, badgeType: 'primary' },
-          { id: 'visitors', title: 'زوار ومسجلي الموقع', href: 'visitors' },
-          { id: 'messages', title: 'أرشيف الرسائل المرسلة', href: 'messages' },
+          { id: 'clients', title: 'جميع العملاء المعتمدين', icon: 'fa-solid fa-user-tie', href: 'clients', badge: 241, badgeType: 'primary' },
+          { id: 'visitors', title: 'زوار ومسجلي الموقع', icon: 'fa-solid fa-users-rectangle', href: 'visitors' },
+          { id: 'messages', title: 'أرشيف الرسائل المرسلة', icon: 'fa-solid fa-envelope-open-text', href: 'messages' },
         ],
       },
       {
@@ -185,9 +185,9 @@ export const SIDEBAR_MENU: NavItem[] = [
         title: 'إدارة الطلبات والعمليات',
         icon: 'fa-solid fa-cart-shopping',
         children: [
-          { id: 'orders-list', title: 'جميع الطلبات النشطة', href: 'orders-list', badge: 56, badgeType: 'danger' },
-          { id: 'offices', title: 'إدارة الفروع والمناطق', href: 'offices' },
-          { id: 'complaints', title: 'مركز الشكاوى والمقترحات', href: 'complaints' },
+          { id: 'orders-list', title: 'جميع الطلبات النشطة', icon: 'fa-solid fa-clipboard-list', href: 'orders-list', badge: 56, badgeType: 'danger' },
+          { id: 'offices', title: 'إدارة الفروع والمناطق', icon: 'fa-solid fa-building', href: 'offices' },
+          { id: 'complaints', title: 'مركز الشكاوى والمقترحات', icon: 'fa-solid fa-headset', href: 'complaints' },
         ],
       },
     ],

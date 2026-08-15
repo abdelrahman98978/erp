@@ -15,51 +15,78 @@ import './styles/index.css';
 import './styles/layout.css';
 import './styles/components.css';
 
-// Dynamic Lazy Imports for Enterprise Modules
-const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const GroupCommandCenterPage = lazy(() => import('./pages/GroupCommandCenterPage').then(m => ({ default: m.GroupCommandCenterPage })));
-const CompanySelectorPortal = lazy(() => import('./components/portal/CompanySelectorPortal').then(m => ({ default: m.CompanySelectorPortal })));
-const EnterpriseATSPipelinePage = lazy(() => import('./pages/EnterpriseATSPipelinePage').then(m => ({ default: m.EnterpriseATSPipelinePage })));
-const ExternalOfficesAgentsPage = lazy(() => import('./pages/ExternalOfficesAgentsPage').then(m => ({ default: m.ExternalOfficesAgentsPage })));
-const UnifiedCommunicationCenterPage = lazy(() => import('./pages/UnifiedCommunicationCenterPage').then(m => ({ default: m.UnifiedCommunicationCenterPage })));
-const MicrosoftIntegrationCenterPage = lazy(() => import('./pages/MicrosoftIntegrationCenterPage').then(m => ({ default: m.MicrosoftIntegrationCenterPage })));
+// Resilient Lazy Import with Auto-Recovery on Deployment Cache Mismatch
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T } | any>
+) {
+  return lazy(() =>
+    factory().catch((error: any) => {
+      console.warn('Chunk import failed, attempting self-healing reload:', error);
+      const isChunkError =
+        error?.name === 'ChunkLoadError' ||
+        error?.message?.includes('Failed to fetch dynamically imported module') ||
+        error?.message?.includes('Expected a JavaScript-or-Wasm module script') ||
+        error?.message?.includes('Importing a module script failed');
 
-const RecruitmentContractsPage = lazy(() => import('./pages/RecruitmentContractsPage').then(m => ({ default: m.RecruitmentContractsPage })));
-const RentContractsPage = lazy(() => import('./pages/RentContractsPage').then(m => ({ default: m.RentContractsPage })));
-const CreateCVPage = lazy(() => import('./pages/CreateCVPage').then(m => ({ default: m.CreateCVPage })));
-const OrdersPage = lazy(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
-const ShelterPage = lazy(() => import('./pages/ShelterPage').then(m => ({ default: m.ShelterPage })));
-const SponsorshipTransferPage = lazy(() => import('./pages/SponsorshipTransferPage').then(m => ({ default: m.SponsorshipTransferPage })));
-const TravelPage = lazy(() => import('./pages/TravelPage').then(m => ({ default: m.TravelPage })));
-const ComplaintsPage = lazy(() => import('./pages/ComplaintsPage').then(m => ({ default: m.ComplaintsPage })));
-const OfficesPage = lazy(() => import('./pages/OfficesPage').then(m => ({ default: m.OfficesPage })));
-const FinancialRequestsPage = lazy(() => import('./pages/FinancialRequestsPage').then(m => ({ default: m.FinancialRequestsPage })));
-const FinancePage = lazy(() => import('./pages/FinancePage').then(m => ({ default: m.FinancePage })));
-const ClientsPage = lazy(() => import('./pages/ClientsPage').then(m => ({ default: m.ClientsPage })));
-const HRPage = lazy(() => import('./pages/HRPage').then(m => ({ default: m.HRPage })));
-const ReportsPage = lazy(() => import('./pages/ReportsPage').then(m => ({ default: m.ReportsPage })));
-const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const UsersPage = lazy(() => import('./pages/UsersPage').then(m => ({ default: m.UsersPage })));
-const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const LandingPage = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
-const WhatsAppInboxPage = lazy(() => import('./pages/WhatsAppInboxPage').then(m => ({ default: m.WhatsAppInboxPage })));
-const AgentImportsPage = lazy(() => import('./pages/AgentImportsPage').then(m => ({ default: m.AgentImportsPage })));
-const ZATCAPage = lazy(() => import('./pages/ZATCAPage').then(m => ({ default: m.ZATCAPage })));
-const AttendancesPage = lazy(() => import('./pages/AttendancesPage').then(m => ({ default: m.AttendancesPage })));
-const RentPackagesPage = lazy(() => import('./pages/RentPackagesPage').then(m => ({ default: m.RentPackagesPage })));
-const ActivityLogPage = lazy(() => import('./pages/ActivityLogPage').then(m => ({ default: m.ActivityLogPage })));
-const WebsiteVisitorsPage = lazy(() => import('./pages/WebsiteVisitorsPage').then(m => ({ default: m.WebsiteVisitorsPage })));
-const SentMessagesPage = lazy(() => import('./pages/SentMessagesPage').then(m => ({ default: m.SentMessagesPage })));
-const CustodiesPage = lazy(() => import('./pages/CustodiesPage').then(m => ({ default: m.CustodiesPage })));
-const CostCentersPage = lazy(() => import('./pages/CostCentersPage').then(m => ({ default: m.CostCentersPage })));
-const JournalsPage = lazy(() => import('./pages/JournalsPage').then(m => ({ default: m.JournalsPage })));
-const MasterConstantsPage = lazy(() => import('./pages/MasterConstantsPage').then(m => ({ default: m.MasterConstantsPage })));
-const AppLauncherPage = lazy(() => import('./pages/AppLauncherPage').then(m => ({ default: m.AppLauncherPage })));
-const IngazPage = lazy(() => import('./pages/IngazPage').then(m => ({ default: m.IngazPage })));
-const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
-const BranchCommunicationPage = lazy(() => import('./pages/BranchCommunicationPage').then(m => ({ default: m.BranchCommunicationPage })));
-const GroupDispatchPage = lazy(() => import('./pages/GroupDispatchPage').then(m => ({ default: m.GroupDispatchPage })));
-const BranchDepartmentsPage = lazy(() => import('./pages/BranchDepartmentsPage').then(m => ({ default: m.BranchDepartmentsPage })));
+      if (isChunkError) {
+        const reloadKey = 'erp_lazy_retry_lock';
+        const last = sessionStorage.getItem(reloadKey);
+        if (!last || Date.now() - Number(last) > 10000) {
+          sessionStorage.setItem(reloadKey, String(Date.now()));
+          window.location.reload();
+          return new Promise(() => {}); // prevent further error cascade during reload
+        }
+      }
+      throw error;
+    })
+  );
+}
+
+// Dynamic Lazy Imports for Enterprise Modules
+const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const GroupCommandCenterPage = lazyWithRetry(() => import('./pages/GroupCommandCenterPage').then(m => ({ default: m.GroupCommandCenterPage })));
+const CompanySelectorPortal = lazyWithRetry(() => import('./components/portal/CompanySelectorPortal').then(m => ({ default: m.CompanySelectorPortal })));
+const EnterpriseATSPipelinePage = lazyWithRetry(() => import('./pages/EnterpriseATSPipelinePage').then(m => ({ default: m.EnterpriseATSPipelinePage })));
+const ExternalOfficesAgentsPage = lazyWithRetry(() => import('./pages/ExternalOfficesAgentsPage').then(m => ({ default: m.ExternalOfficesAgentsPage })));
+const UnifiedCommunicationCenterPage = lazyWithRetry(() => import('./pages/UnifiedCommunicationCenterPage').then(m => ({ default: m.UnifiedCommunicationCenterPage })));
+const MicrosoftIntegrationCenterPage = lazyWithRetry(() => import('./pages/MicrosoftIntegrationCenterPage').then(m => ({ default: m.MicrosoftIntegrationCenterPage })));
+
+const RecruitmentContractsPage = lazyWithRetry(() => import('./pages/RecruitmentContractsPage').then(m => ({ default: m.RecruitmentContractsPage })));
+const RentContractsPage = lazyWithRetry(() => import('./pages/RentContractsPage').then(m => ({ default: m.RentContractsPage })));
+const CreateCVPage = lazyWithRetry(() => import('./pages/CreateCVPage').then(m => ({ default: m.CreateCVPage })));
+const OrdersPage = lazyWithRetry(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
+const ShelterPage = lazyWithRetry(() => import('./pages/ShelterPage').then(m => ({ default: m.ShelterPage })));
+const SponsorshipTransferPage = lazyWithRetry(() => import('./pages/SponsorshipTransferPage').then(m => ({ default: m.SponsorshipTransferPage })));
+const TravelPage = lazyWithRetry(() => import('./pages/TravelPage').then(m => ({ default: m.TravelPage })));
+const ComplaintsPage = lazyWithRetry(() => import('./pages/ComplaintsPage').then(m => ({ default: m.ComplaintsPage })));
+const OfficesPage = lazyWithRetry(() => import('./pages/OfficesPage').then(m => ({ default: m.OfficesPage })));
+const FinancialRequestsPage = lazyWithRetry(() => import('./pages/FinancialRequestsPage').then(m => ({ default: m.FinancialRequestsPage })));
+const FinancePage = lazyWithRetry(() => import('./pages/FinancePage').then(m => ({ default: m.FinancePage })));
+const ClientsPage = lazyWithRetry(() => import('./pages/ClientsPage').then(m => ({ default: m.ClientsPage })));
+const HRPage = lazyWithRetry(() => import('./pages/HRPage').then(m => ({ default: m.HRPage })));
+const ReportsPage = lazyWithRetry(() => import('./pages/ReportsPage').then(m => ({ default: m.ReportsPage })));
+const SettingsPage = lazyWithRetry(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const UsersPage = lazyWithRetry(() => import('./pages/UsersPage').then(m => ({ default: m.UsersPage })));
+const LoginPage = lazyWithRetry(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const LandingPage = lazyWithRetry(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
+const WhatsAppInboxPage = lazyWithRetry(() => import('./pages/WhatsAppInboxPage').then(m => ({ default: m.WhatsAppInboxPage })));
+const AgentImportsPage = lazyWithRetry(() => import('./pages/AgentImportsPage').then(m => ({ default: m.AgentImportsPage })));
+const ZATCAPage = lazyWithRetry(() => import('./pages/ZATCAPage').then(m => ({ default: m.ZATCAPage })));
+const AttendancesPage = lazyWithRetry(() => import('./pages/AttendancesPage').then(m => ({ default: m.AttendancesPage })));
+const RentPackagesPage = lazyWithRetry(() => import('./pages/RentPackagesPage').then(m => ({ default: m.RentPackagesPage })));
+const ActivityLogPage = lazyWithRetry(() => import('./pages/ActivityLogPage').then(m => ({ default: m.ActivityLogPage })));
+const WebsiteVisitorsPage = lazyWithRetry(() => import('./pages/WebsiteVisitorsPage').then(m => ({ default: m.WebsiteVisitorsPage })));
+const SentMessagesPage = lazyWithRetry(() => import('./pages/SentMessagesPage').then(m => ({ default: m.SentMessagesPage })));
+const CustodiesPage = lazyWithRetry(() => import('./pages/CustodiesPage').then(m => ({ default: m.CustodiesPage })));
+const CostCentersPage = lazyWithRetry(() => import('./pages/CostCentersPage').then(m => ({ default: m.CostCentersPage })));
+const JournalsPage = lazyWithRetry(() => import('./pages/JournalsPage').then(m => ({ default: m.JournalsPage })));
+const MasterConstantsPage = lazyWithRetry(() => import('./pages/MasterConstantsPage').then(m => ({ default: m.MasterConstantsPage })));
+const AppLauncherPage = lazyWithRetry(() => import('./pages/AppLauncherPage').then(m => ({ default: m.AppLauncherPage })));
+const IngazPage = lazyWithRetry(() => import('./pages/IngazPage').then(m => ({ default: m.IngazPage })));
+const AdminDashboardPage = lazyWithRetry(() => import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+const BranchCommunicationPage = lazyWithRetry(() => import('./pages/BranchCommunicationPage').then(m => ({ default: m.BranchCommunicationPage })));
+const GroupDispatchPage = lazyWithRetry(() => import('./pages/GroupDispatchPage').then(m => ({ default: m.GroupDispatchPage })));
+const BranchDepartmentsPage = lazyWithRetry(() => import('./pages/BranchDepartmentsPage').then(m => ({ default: m.BranchDepartmentsPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
