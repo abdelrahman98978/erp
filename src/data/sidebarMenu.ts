@@ -240,6 +240,7 @@ export const SIDEBAR_MENU: NavItem[] = [
     title: 'إعدادات النظام والثوابت',
     icon: 'fa-solid fa-gears',
     children: [
+      { id: 'data-import', title: 'استيراد بيانات (Excel / CSV)', icon: 'fa-solid fa-file-import', href: 'data-import', badge: 'جديد', badgeType: 'success' },
       { id: 'users', title: 'إدارة المستخدمين والصلاحيات', icon: 'fa-solid fa-users-gear', href: 'users' },
       { id: 'master-constants', title: 'الثوابت والقواميس الموحدة', icon: 'fa-solid fa-sliders', href: 'master-constants' },
       { id: 'activity-log', title: 'سجل النشاطات والحركات', icon: 'fa-solid fa-clock-rotate-left', href: 'activity-log' },

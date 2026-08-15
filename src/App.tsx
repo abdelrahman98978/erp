@@ -87,6 +87,7 @@ const AdminDashboardPage = lazyWithRetry(() => import('./pages/AdminDashboardPag
 const BranchCommunicationPage = lazyWithRetry(() => import('./pages/BranchCommunicationPage').then(m => ({ default: m.BranchCommunicationPage })));
 const GroupDispatchPage = lazyWithRetry(() => import('./pages/GroupDispatchPage').then(m => ({ default: m.GroupDispatchPage })));
 const BranchDepartmentsPage = lazyWithRetry(() => import('./pages/BranchDepartmentsPage').then(m => ({ default: m.BranchDepartmentsPage })));
+const DataImportWizardPage = lazyWithRetry(() => import('./pages/DataImportWizardPage').then(m => ({ default: m.DataImportWizardPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -328,6 +329,10 @@ const MainContent: React.FC = () => {
 
       case 'agent-imports':
         return <AgentImportsPage />;
+
+      case 'data-import':
+      case 'import-wizard':
+        return <DataImportWizardPage />;
 
       case 'zatca':
       case 'zatca-phase2':

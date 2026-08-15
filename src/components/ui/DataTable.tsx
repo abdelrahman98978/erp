@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { exportData, ExportFormat } from '../../services/exportService';
+import { useAppStore } from '../../stores/appStore';
+import { IMPORT_TEMPLATES, downloadTemplate } from '../../services/importEngine';
 
 export interface Column<T> {
   header: string;
@@ -14,6 +16,13 @@ export interface ExportConfig {
   rawData: any[];
 }
 
+export interface TableImportConfig {
+  /** Entity key matching IMPORT_TEMPLATES in importEngine */
+  entityKey?: string;
+  /** Custom callback for import */
+  onImportClick?: () => void;
+}
+
 interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
@@ -23,6 +32,8 @@ interface DataTableProps<T> {
   filterContent?: React.ReactNode;
   /** Export configuration — enables Excel/PDF/CSV/Print buttons */
   exportConfig?: ExportConfig;
+  /** Import configuration — enables Excel/CSV/JSON import and template download */
+  importConfig?: TableImportConfig;
 }
 
 export function DataTable<T extends { id: string | number }>({
@@ -33,11 +44,20 @@ export function DataTable<T extends { id: string | number }>({
   addLabel = 'إضافة جديد',
   filterContent,
   exportConfig,
+  importConfig,
 }: DataTableProps<T>) {
+  const { setActiveTab } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [showImportMenu, setShowImportMenu] = useState(false);
+
+  // Find matching import template if entityKey provided or derived from exportConfig
+  const effectiveEntityKey = importConfig?.entityKey || exportConfig?.sectionKey;
+  const matchingTemplate = effectiveEntityKey
+    ? IMPORT_TEMPLATES.find(t => t.entityKey === effectiveEntityKey || t.entityKey === effectiveEntityKey.replace(/-/g, '_'))
+    : undefined;
 
   const filteredData = data.filter((row) => {
     if (!searchQuery) return true;
@@ -119,12 +139,109 @@ export function DataTable<T extends { id: string | number }>({
             </span>
           )}
 
+          {/* Import Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="btn-odoo btn-odoo-secondary"
+              title="استيراد البيانات من Excel / CSV"
+              onClick={() => {
+                setShowImportMenu(!showImportMenu);
+                setShowExportMenu(false);
+              }}
+            >
+              <i className="fa-solid fa-file-import text-purple-600"></i>
+              <span>استيراد</span>
+              <i className={`fa-solid fa-chevron-${showImportMenu ? 'up' : 'down'}`} style={{ fontSize: '10px' }}></i>
+            </button>
+
+            {showImportMenu && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  marginTop: '4px',
+                  background: 'white',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '10px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                  zIndex: 50,
+                  minWidth: '220px',
+                  overflow: 'hidden',
+                  fontFamily: 'Cairo, sans-serif',
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setShowImportMenu(false);
+                    if (importConfig?.onImportClick) {
+                      importConfig.onImportClick();
+                    } else {
+                      setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)');
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    textAlign: 'right',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#005154',
+                    borderBottom: '1px solid #F1F5F9',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#005154' }}>publish</span>
+                  <span>معالج الاستيراد (Excel / CSV)</span>
+                </button>
+
+                {matchingTemplate && (
+                  <button
+                    onClick={() => {
+                      downloadTemplate(matchingTemplate);
+                      setShowImportMenu(false);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      textAlign: 'right',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '700',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      color: '#7C3AED',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <i className="fa-solid fa-download text-purple-600"></i>
+                    <span>تحميل قالب Excel فارغ</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Export Dropdown */}
           <div style={{ position: 'relative' }}>
             <button
               className="btn-odoo btn-odoo-secondary"
               title="تصدير البيانات"
-              onClick={() => setShowExportMenu(!showExportMenu)}
+              onClick={() => {
+                setShowExportMenu(!showExportMenu);
+                setShowImportMenu(false);
+              }}
             >
               <i className="fa-solid fa-download"></i>
               <span>تصدير</span>
