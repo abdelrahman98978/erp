@@ -3,6 +3,7 @@ import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
+import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 
 export interface JournalEntry {
   id: string;
@@ -65,12 +66,26 @@ const SUPPLIERS_ACCOUNTS = [
 export const FinancePage: React.FC = () => {
   const { activeCompany } = useCompany();
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'tax'
+    'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'chart-of-accounts' | 'period-closing' | 'tax'
   >('overview');
 
   const [journals, setJournals] = useState<JournalEntry[]>(MOCK_JOURNALS);
   const [vouchers, setVouchers] = useState<Voucher[]>(MOCK_VOUCHERS);
   const [selectedBranch, setSelectedBranch] = useState<string>('ALL');
+  
+  // Drill-down and Chart of Accounts state
+  const [selectedAccountForDrilldown, setSelectedAccountForDrilldown] = useState<any | null>(null);
+  const [coaCategoryFilter, setCoaCategoryFilter] = useState<string>('ALL');
+  const [coaSearchQuery, setCoaSearchQuery] = useState<string>('');
+  const [closedPeriods, setClosedPeriods] = useState<number[]>([1, 2, 3, 4, 5, 6]); // Jan to Jun closed
+  const [showAddAccountModal, setShowAddAccountModal] = useState(false);
+  const [newAccountForm, setNewAccountForm] = useState({
+    code: '',
+    nameAr: '',
+    nameEn: '',
+    category: 'أصول' as const,
+    balance: '0',
+  });
 
   const { createItem: createJournalEntry } = useTableMutation('company_journal_entries');
 
@@ -236,32 +251,99 @@ export const FinancePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Sub-modules Navigation Bar */}
-      <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-1.5 overflow-x-auto">
-        {[
-          { id: 'overview', label: '🏠 اللوحة المالية العامة', icon: 'fa-chart-pie' },
-          { id: 'financial-position', label: '⚖️ المركز المالي (Balance Sheet)', icon: 'fa-scale-balanced' },
-          { id: 'trial-balance', label: '📊 ميزان المراجعة (Trial Balance)', icon: 'fa-table-list' },
-          { id: 'income-statement', label: '📈 قائمة الدخل والأرباح (P&L)', icon: 'fa-arrow-trend-up' },
-          { id: 'journals', label: '📜 القيود المحاسبية', icon: 'fa-book-journal-whills' },
-          { id: 'vouchers', label: '📑 سندات القبض والصرف', icon: 'fa-receipt' },
-          { id: 'transfers', label: '🔄 التحويلات البنكية', icon: 'fa-money-bill-transfer' },
-          { id: 'suppliers-agents', label: '🚚 حسابات الوكلاء ($/SAR)', icon: 'fa-globe' },
-          { id: 'musaned-escrow', label: '🤝 أمانات مساند (90 يوماً)', icon: 'fa-shield-halved' },
-          { id: 'eosb-zakat', label: '🕋 نهاية الخدمة والزكاة', icon: 'fa-hand-holding-dollar' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-              activeTab === tab.id
-                ? 'bg-teal-800 text-white shadow-sm'
-                : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <span>{tab.label}</span>
-          </button>
-        ))}
+      {/* 4-Category Accounting Sequence Header (SOCPA / IFRS Standard Layout) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+        {/* Category 1: القوائم والتقارير */}
+        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">📊 1. القوائم والمركز المالي</span>
+          <div className="flex flex-col gap-1">
+            {[
+              { id: 'overview', label: '🏠 اللوحة المالية العامة', icon: 'fa-chart-pie' },
+              { id: 'trial-balance', label: '📊 ميزان المراجعة (Trial Balance)', icon: 'fa-table-list' },
+              { id: 'income-statement', label: '📈 قائمة الدخل والأرباح (P&L)', icon: 'fa-arrow-trend-up' },
+              { id: 'financial-position', label: '⚖️ قائمة المركز المالي (Balance Sheet)', icon: 'fa-scale-balanced' },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
+                }`}
+              >
+                <span className="truncate">{t.label}</span>
+                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Category 2: العمليات اليومية */}
+        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">📜 2. القيود والعمليات اليومية</span>
+          <div className="flex flex-col gap-1">
+            {[
+              { id: 'journals', label: '📜 دفتر القيود المحاسبية', icon: 'fa-book' },
+              { id: 'vouchers', label: '📑 سندات القبض والصرف', icon: 'fa-receipt' },
+              { id: 'transfers', label: '🔄 التحويلات البنكية والصناديق', icon: 'fa-money-bill-transfer' },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
+                }`}
+              >
+                <span className="truncate">{t.label}</span>
+                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Category 3: الاستقدام والشركاء والزكاة */}
+        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">🤝 3. الاستقدام والشركاء والزكاة</span>
+          <div className="flex flex-col gap-1">
+            {[
+              { id: 'musaned-escrow', label: '🤝 أمانات مساند (90 يوماً)', icon: 'fa-shield-halved' },
+              { id: 'suppliers-agents', label: '🚚 حسابات الوكلاء ($/SAR)', icon: 'fa-globe' },
+              { id: 'eosb-zakat', label: '🕋 نهاية الخدمة والزكاة', icon: 'fa-hand-holding-dollar' },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
+                }`}
+              >
+                <span className="truncate">{t.label}</span>
+                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Category 4: الدليل والإقفالات */}
+        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
+          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">⚙️ 4. الهيكل المحاسبي والإقفال</span>
+          <div className="flex flex-col gap-1">
+            {[
+              { id: 'chart-of-accounts', label: '🌳 شجرة الحسابات والدليل', icon: 'fa-sitemap' },
+              { id: 'period-closing', label: '🔒 إقفال الفترات والسنوات', icon: 'fa-lock' },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
+                }`}
+              >
+                <span className="truncate">{t.label}</span>
+                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* ─── TAB 1: OVERVIEW ─── */}
@@ -351,8 +433,16 @@ export const FinancePage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                 {TRIAL_BALANCE_DATA.map((row) => (
-                  <tr key={row.code} className="hover:bg-slate-50">
-                    <td className="py-2.5 px-3 font-mono font-bold text-purple-700">{row.code}</td>
+                  <tr
+                    key={row.code}
+                    onClick={() => setSelectedAccountForDrilldown(row)}
+                    className="hover:bg-teal-50/60 cursor-pointer transition-colors"
+                    title="انقر هنا لمعاينة كشف الحساب والقيود المكونة لهذا الرصيد"
+                  >
+                    <td className="py-2.5 px-3 font-mono font-bold text-purple-700 flex items-center gap-1.5">
+                      <i className="fa-solid fa-magnifying-glass-chart text-[10px] text-teal-600 opacity-60"></i>
+                      <span>{row.code}</span>
+                    </td>
                     <td className="py-2.5 px-3 font-bold text-slate-900">{row.name}</td>
                     <td className="py-2.5 px-3">
                       <Badge text={row.type} type="purple" />
@@ -794,6 +884,307 @@ export const FinancePage: React.FC = () => {
               <p className="text-xs text-purple-200 leading-relaxed">
                 تم الاحتساب وفقاً للمادتين 84 و 85 من نظام العمل السعودي المعتمد من وزارة الموارد البشرية والتنمية الاجتماعية.
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 11: CHART OF ACCOUNTS (شجرة الحسابات والدليل المحاسبي الموحد) ─── */}
+      {activeTab === 'chart-of-accounts' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                <i className="fa-solid fa-sitemap text-teal-700"></i>
+                شجرة الحسابات والدليل المحاسبي الموحد (Chart of Accounts - COA)
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                الهيكل المحاسبي الشامل لـ ({activeCompany.name}) مقسم وفق المعايير المحاسبية (1: أصول، 2: خصوم، 3: حقوق ملكية، 4: إيرادات، 5: مصروفات)
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowAddAccountModal(true)}
+                className="px-4 py-2 bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-200 transition-all flex items-center gap-1.5"
+              >
+                <i className="fa-solid fa-plus"></i> إضافة حساب محاسبي فرعي
+              </button>
+              <button
+                onClick={() => exportData('trial-balance', chartOfAccountsService.getAccountsByCompany(activeCompany.id as any), 'excel', `دليل_الحسابات_${activeCompany.name}`)}
+                className="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> تصدير الدليل
+              </button>
+            </div>
+          </div>
+
+          {/* Filters & Search */}
+          <div className="flex items-center justify-between flex-wrap gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-1 flex-wrap">
+              {['ALL', 'أصول', 'خصوم', 'حقوق ملكية', 'إيرادات', 'مصروفات'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCoaCategoryFilter(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    coaCategoryFilter === cat
+                      ? 'bg-teal-800 text-white shadow-sm'
+                      : 'bg-white text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {cat === 'ALL' ? 'جميع الحسابات' : cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                value={coaSearchQuery}
+                onChange={(e) => setCoaSearchQuery(e.target.value)}
+                placeholder="بحث برقم الحساب أو الاسم..."
+                className="px-3 py-1.5 pr-8 bg-white border border-slate-200 rounded-lg text-xs font-medium w-64 outline-none"
+              />
+              <i className="fa-solid fa-magnifying-glass absolute right-2.5 top-2.5 text-slate-400 text-xs"></i>
+            </div>
+          </div>
+
+          {/* Accounts Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs">
+              <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-4">رقم الحساب</th>
+                  <th className="py-3 px-4">اسم الحساب (عربي)</th>
+                  <th className="py-3 px-4">Account Name (EN)</th>
+                  <th className="py-3 px-4">التصنيف المحاسبي</th>
+                  <th className="py-3 px-4">الرصيد التراكمي</th>
+                  <th className="py-3 px-4">طبيعة الحساب</th>
+                  <th className="py-3 px-4 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                {chartOfAccountsService
+                  .getAccountsByCompany(activeCompany.id as any)
+                  .filter((acc) => {
+                    const matchesCategory = coaCategoryFilter === 'ALL' || acc.category === coaCategoryFilter;
+                    const matchesSearch =
+                      acc.code.includes(coaSearchQuery) ||
+                      acc.nameAr.includes(coaSearchQuery) ||
+                      acc.nameEn.toLowerCase().includes(coaSearchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                  })
+                  .map((account) => (
+                    <tr
+                      key={account.id}
+                      className={`hover:bg-teal-50/40 transition-colors ${
+                        account.isHeader ? 'bg-slate-50 font-bold' : ''
+                      }`}
+                    >
+                      <td className="py-3 px-4 font-mono font-bold text-purple-700">
+                        {account.code}
+                      </td>
+                      <td className="py-3 px-4 font-bold text-slate-900 flex items-center gap-2">
+                        {account.isHeader ? (
+                          <i className="fa-solid fa-folder text-amber-500"></i>
+                        ) : (
+                          <i className="fa-solid fa-file-invoice text-teal-600"></i>
+                        )}
+                        <span>{account.nameAr}</span>
+                      </td>
+                      <td className="py-3 px-4 font-mono text-slate-500">{account.nameEn}</td>
+                      <td className="py-3 px-4">
+                        <Badge
+                          text={account.category}
+                          type={
+                            account.category === 'أصول'
+                              ? 'info'
+                              : account.category === 'إيرادات'
+                              ? 'success'
+                              : account.category === 'مصروفات'
+                              ? 'danger'
+                              : 'purple'
+                          }
+                        />
+                      </td>
+                      <td className="py-3 px-4 font-mono font-bold text-teal-900">
+                        {account.balance.toLocaleString()} {account.currency}
+                      </td>
+                      <td className="py-3 px-4 font-bold text-slate-600">
+                        {account.category === 'أصول' || account.category === 'مصروفات' ? 'مدين بطبيعته' : 'دائن بطبيعته'}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          onClick={() => setSelectedAccountForDrilldown({
+                            code: account.code,
+                            name: account.nameAr,
+                            type: account.category,
+                            balance: account.balance
+                          })}
+                          className="px-2.5 py-1 bg-slate-100 hover:bg-teal-100 text-teal-800 rounded-lg text-xs font-bold transition-all"
+                        >
+                          <i className="fa-solid fa-eye"></i> كشف الحساب
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 12: PERIOD CLOSING (إقفال الفترات والسنوات المالية) ─── */}
+      {activeTab === 'period-closing' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                <i className="fa-solid fa-lock text-rose-700"></i>
+                إقفال الفترات والسنوات المالية (Fiscal Year & Period Locks)
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                قفل الفترات المحاسبية يمنع إجراء أي تعديلات أو إضافة قيود جديدة بأثر رجعي لحماية التقارير المالية والضريبية.
+              </p>
+            </div>
+
+            <div className="px-3.5 py-2 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-xs font-bold flex items-center gap-2">
+              <i className="fa-solid fa-shield-check text-emerald-600 text-sm"></i>
+              السنة المالية الحالية: 2026 (نشطة)
+            </div>
+          </div>
+
+          {/* Months Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { m: 1, name: 'يناير 2026', desc: 'تم الإقفال والمطابقة الضريبية' },
+              { m: 2, name: 'فبراير 2026', desc: 'تم الإقفال والمطابقة الضريبية' },
+              { m: 3, name: 'مارس 2026', desc: 'إقفال الربع الأول (Q1)' },
+              { m: 4, name: 'أبريل 2026', desc: 'تم الإقفال والمطابقة الضريبية' },
+              { m: 5, name: 'مايو 2026', desc: 'تم الإقفال والمطابقة الضريبية' },
+              { m: 6, name: 'يونيو 2026', desc: 'إقفال الربع الثاني (Q2)' },
+              { m: 7, name: 'يوليو 2026', desc: 'فترة مفتوحة للتسويات' },
+              { m: 8, name: 'أغسطس 2026', desc: 'الشهر الحالي النشط' },
+              { m: 9, name: 'سبتمبر 2026', desc: 'فترة مستقبلية' },
+              { m: 10, name: 'أكتوبر 2026', desc: 'فترة مستقبلية' },
+              { m: 11, name: 'نوفمبر 2026', desc: 'فترة مستقبلية' },
+              { m: 12, name: 'ديسمبر 2026', desc: 'إقفال نهاية العام (FY2026)' },
+            ].map((period) => {
+              const isClosed = closedPeriods.includes(period.m);
+              return (
+                <div
+                  key={period.m}
+                  className={`p-4 rounded-2xl border transition-all ${
+                    isClosed
+                      ? 'bg-slate-50 border-slate-200'
+                      : period.m === 8
+                      ? 'bg-teal-50/60 border-teal-300 shadow-sm'
+                      : 'bg-white border-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-black text-sm text-slate-900">{period.name}</span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        isClosed ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'
+                      }`}
+                    >
+                      {isClosed ? '🔒 مغلق ومحمي' : '🟢 مفتوح ونشط'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mb-3">{period.desc}</p>
+                  <button
+                    onClick={() => {
+                      if (isClosed) {
+                        setClosedPeriods(closedPeriods.filter((p) => p !== period.m));
+                      } else {
+                        setClosedPeriods([...closedPeriods, period.m]);
+                      }
+                    }}
+                    className={`w-full py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      isClosed
+                        ? 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                        : 'bg-rose-700 hover:bg-rose-800 text-white shadow-sm'
+                    }`}
+                  >
+                    {isClosed ? 'طلب إعادة فتح الفترة' : 'قفل وإغلاق الفترة'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ─── MODAL: FINANCIAL DRILL-DOWN (كشف حساب وتحليل الحركات) ─── */}
+      {selectedAccountForDrilldown && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <i className="fa-solid fa-list-check text-emerald-400"></i>
+                <h3 className="font-bold text-base">
+                  كشف حساب تفصيلي: {selectedAccountForDrilldown.name} ({selectedAccountForDrilldown.code})
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedAccountForDrilldown(null)}
+                className="text-slate-400 hover:text-white"
+              >
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+                <div>
+                  <span className="text-slate-400 block font-bold">رمز الحساب:</span>
+                  <span className="font-mono font-bold text-purple-700">{selectedAccountForDrilldown.code}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block font-bold">النوع:</span>
+                  <span className="font-bold text-slate-800">{selectedAccountForDrilldown.type || 'أصول'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block font-bold">الرصيد التراكمي:</span>
+                  <span className="font-mono font-black text-teal-800">
+                    {Number(selectedAccountForDrilldown.balance || 0).toLocaleString()} ر.س
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-slate-700">سجل القيود المحاسبية المرتبطة بهذا الحساب:</h4>
+                <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden text-xs max-h-56 overflow-y-auto">
+                  {journals.map((j) => (
+                    <div key={j.id} className="p-3 bg-white hover:bg-slate-50 flex items-center justify-between">
+                      <div>
+                        <span className="font-bold text-slate-900">{j.ref_no}</span>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{j.description}</p>
+                      </div>
+                      <div className="text-left font-mono">
+                        <span className="font-bold text-teal-900 block">{j.amount.toLocaleString()} ر.س</span>
+                        <span className="text-[10px] text-slate-400">{j.date}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <button
+                  onClick={() => exportData('journals', journals, 'excel', `كشف_حساب_${selectedAccountForDrilldown.code}`)}
+                  className="px-4 py-2 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                >
+                  <i className="fa-solid fa-file-excel"></i> تصدير كشف الحساب
+                </button>
+                <button
+                  onClick={() => setSelectedAccountForDrilldown(null)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold"
+                >
+                  إغلاق
+                </button>
+              </div>
             </div>
           </div>
         </div>
