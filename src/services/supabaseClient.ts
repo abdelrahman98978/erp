@@ -7,9 +7,11 @@ const SUPABASE_URL: string = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABA
 const SUPABASE_ANON_KEY: string = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
 if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  console.warn(
-    'Notice: Supabase environment variables (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY) are not set. Using fallback values.'
-  );
+  if (import.meta.env.DEV) {
+    console.info(
+      'ERP Info: Supabase cloud env vars are not set. Running in fast offline-first dual storage mode.'
+    );
+  }
 }
 
 export const STANDALONE_SUPABASE_URL = SUPABASE_URL;
