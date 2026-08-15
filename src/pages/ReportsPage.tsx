@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData, SECTION_CONFIGS } from '../services/exportService';
 import {
+  MOCK_CLIENTS,
+  MOCK_ORDERS,
+  MOCK_RECRUITMENT_CONTRACTS,
+  MOCK_RENT_CONTRACTS,
+  MOCK_SHELTER_ITEMS,
+  MOCK_EMPLOYEES
+} from '../data/mockData';
+import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
@@ -80,22 +88,23 @@ export const ReportsPage: React.FC = () => {
     ]
   };
 
-  /**
-   * Export using the central export service.
-   * Since the actual data lives in each page's state, this generates a report stub
-   * using the section config's headers. In production, this would fetch from Supabase.
-   * For now it exports an empty-data report structure that matches the configured headers.
-   */
-  const handleExport = (sectionKey: string, format: 'excel' | 'pdf' | 'csv') => {
+  const DATA_MAP: Record<string, any[]> = {
+    clients: MOCK_CLIENTS,
+    orders: MOCK_ORDERS,
+    'recruitment-contracts': MOCK_RECRUITMENT_CONTRACTS,
+    'rent-contracts': MOCK_RENT_CONTRACTS,
+    shelter: MOCK_SHELTER_ITEMS,
+    employees: MOCK_EMPLOYEES,
+  };
+
+  const handleExport = (sectionKey: string, format: 'excel' | 'pdf' | 'csv' | 'print') => {
     const config = SECTION_CONFIGS[sectionKey];
     if (!config) {
       console.warn(`No export config found for section: ${sectionKey}`);
       return;
     }
-    // Export with empty data array — the centralized service will still produce
-    // a properly formatted file with company header and Arabic column headers.
-    // In a real scenario, we'd fetch the data from the API/store first.
-    exportData(sectionKey, [], format);
+    const data = DATA_MAP[sectionKey] || [];
+    exportData(sectionKey, data, format);
   };
 
   return (

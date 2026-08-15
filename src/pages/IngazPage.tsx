@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface IngazDelegation {
@@ -202,9 +203,23 @@ export const IngazPage: React.FC = () => {
           </p>
         </div>
 
-        <button className="btn-odoo btn-odoo-purple" onClick={() => setShowModal(true)}>
-          <i className="fa-solid fa-plus ml-1"></i> إضافة تفويض جديد
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowModal(true)}>
+            <i className="fa-solid fa-plus ml-1"></i> إضافة تفويض جديد
+          </button>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('ingaz', filteredDelegations, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('ingaz', filteredDelegations, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('ingaz', filteredDelegations, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('ingaz', filteredDelegations, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}

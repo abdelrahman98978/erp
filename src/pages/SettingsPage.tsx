@@ -10,6 +10,7 @@ export const SettingsPage: React.FC = () => {
 
   const SECTIONS = [
     { id: 'security-2fa', name: 'أمان المصادقة الثنائية (2FA)', icon: 'fa-shield-halved' },
+    { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: 'fa-user-lock' },
     { id: 'general', name: 'البيانات الأساسية', icon: 'fa-building' },
     { id: 'contacts', name: 'روابط التواصل والموقع', icon: 'fa-phone' },
     { id: 'media', name: 'الهوية والوسائط والشعار', icon: 'fa-image' },
@@ -138,6 +139,89 @@ export const SettingsPage: React.FC = () => {
                     <option>إشعار عبر الواتساب الرسمي</option>
                   </select>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {activeSection === 'rbac-matrix' && (
+            <div>
+              <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--odoo-purple)', borderBottom: '2px solid var(--odoo-purple)', paddingBottom: '8px' }}>
+                مصفوفة الصلاحيات والأدوار (Role-Based Access Control - RBAC Matrix)
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                تحديد دقيق لصلاحيات القراءة، الإنشاء، التعديل، الحذف، والاعتماد المالي لكل دور وظيفي.
+              </p>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'right' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
+                      <th style={{ padding: '12px' }}>الدور الوظيفي (Role)</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>عرض (Read)</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>إنشاء (Create)</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>تعديل (Edit)</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>حذف (Delete)</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>اعتماد مالي (Approve)</th>
+                      <th style={{ padding: '12px', textAlign: 'center' }}>تصدير (Export)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: '800', color: 'var(--odoo-purple)' }}>مدير النظام العام (Super Admin)</td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
+                    </tr>
+                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: '700' }}>مدير الفرع (Branch Manager)</td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                    </tr>
+                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: '700' }}>المحاسب المالي (Senior Accountant)</td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                    </tr>
+                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: '700' }}>أخصائي الموارد البشرية (HR Specialist)</td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                    </tr>
+                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: '700' }}>مشرف مركز الإيواء (Shelter Supervisor)</td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                    </tr>
+                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '12px', fontWeight: '700' }}>مسؤول المبيعات وخدمة العملاء (Sales Agent)</td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
