@@ -7,6 +7,9 @@ import { CompanyProvider } from './contexts/CompanyContext';
 import { ImpersonationProvider } from './contexts/ImpersonationContext';
 import { RBACProvider } from './contexts/RBACContext';
 
+import { useAppStore } from './stores/appStore';
+import { QuickSearchModal } from './components/common/QuickSearchModal';
+
 import './styles/index.css';
 import './styles/layout.css';
 import './styles/components.css';
@@ -65,18 +68,14 @@ const PageFallback: React.FC = () => (
 );
 
 const MainContent: React.FC = () => {
-  const [flowState, setFlowState] = useState<'landing' | 'login' | 'launcher' | 'workspace'>('landing');
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [activeTabTitle, setActiveTabTitle] = useState<string>('الرئيسية والمؤشرات التشغيلية');
+  const { flowState, setFlowState, activeTab, activeTabTitle, setActiveTab } = useAppStore();
 
   const handleSelectTab = (href: string, title: string) => {
     if (href === 'logout') {
       setFlowState('landing');
       return;
     }
-    setActiveTab(href);
-    setActiveTabTitle(title);
-    setFlowState('workspace');
+    setActiveTab(href, title);
   };
 
   const handleLogout = () => {
@@ -323,17 +322,20 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <AppShell
-      activeTab={activeTab}
-      activeTabTitle={activeTabTitle}
-      onSelectTab={handleSelectTab}
-      onOpenAppLauncher={() => setFlowState('launcher')}
-      onLogout={handleLogout}
-    >
-      <Suspense fallback={<PageFallback />}>
-        {renderPage()}
-      </Suspense>
-    </AppShell>
+    <>
+      <AppShell
+        activeTab={activeTab}
+        activeTabTitle={activeTabTitle}
+        onSelectTab={handleSelectTab}
+        onOpenAppLauncher={() => setFlowState('launcher')}
+        onLogout={handleLogout}
+      >
+        <Suspense fallback={<PageFallback />}>
+          {renderPage()}
+        </Suspense>
+      </AppShell>
+      <QuickSearchModal onNavigate={handleSelectTab} />
+    </>
   );
 };
 

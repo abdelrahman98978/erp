@@ -9,20 +9,27 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. COMPANIES TABLE
 CREATE TABLE IF NOT EXISTS public.companies (
     id VARCHAR(50) PRIMARY KEY,
-    name_ar VARCHAR(255) NOT NULL,
-    name_en VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    name_ar VARCHAR(255),
+    name_en VARCHAR(255),
     cr_number VARCHAR(100),
     vat_number VARCHAR(100),
+    tax_number VARCHAR(100),
+    address TEXT,
+    phone VARCHAR(50),
+    email VARCHAR(100),
     logo VARCHAR(255),
+    logo_url TEXT,
     color VARCHAR(20),
+    is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
 
-INSERT INTO public.companies (id, name_ar, name_en, cr_number, vat_number, color) VALUES
-  ('SAF', 'شركة السفير الماسي للاستقدام', 'Al-Saffir Al-Masi Recruitment Co.', '1010992810', '310928374100003', '#714B67'),
-  ('YAQ', 'شركة ياقوت نجد للخدمات', 'Yaqoot Najd Operations Co.', '1010882910', '310928374100004', '#00A09D'),
-  ('TOP', 'شركة توباز للتأجير والخدمات', 'Topaz Rental & Services Co.', '1010773910', '310928374100005', '#0f6b6e'),
-  ('DAR', 'شركة دار الرواد للمقاولات', 'Dar Al-Ruwad Contracting Co.', '1010664910', '310928374100006', '#005154')
+INSERT INTO public.companies (id, name, name_ar, name_en, cr_number, vat_number, tax_number, color) VALUES
+  ('SAF', 'شركة السفير الماسي للاستقدام', 'شركة السفير الماسي للاستقدام', 'Al-Saffir Al-Masi Recruitment Co.', '1010992810', '310928374100003', '310928374100003', '#714B67'),
+  ('YAQ', 'شركة ياقوت نجد للخدمات', 'شركة ياقوت نجد للخدمات', 'Yaqoot Najd Operations Co.', '1010882910', '310928374100004', '310928374100004', '#00A09D'),
+  ('TOP', 'شركة توباز للتأجير والخدمات', 'شركة توباز للتأجير والخدمات', 'Topaz Rental & Services Co.', '1010773910', '310928374100005', '310928374100005', '#0f6b6e'),
+  ('DAR', 'شركة دار الرواد للمقاولات', 'شركة دار الرواد للمقاولات', 'Dar Al-Ruwad Contracting Co.', '1010664910', '310928374100006', '310928374100006', '#005154')
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. CLIENTS TABLE
@@ -30,15 +37,22 @@ CREATE TABLE IF NOT EXISTS public.clients (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     company_id VARCHAR(50) DEFAULT 'SAF',
     client_no VARCHAR(50) UNIQUE NOT NULL,
+    client_number VARCHAR(50),
     name VARCHAR(255) NOT NULL,
     phone VARCHAR(50) NOT NULL,
-    national_id VARCHAR(50) NOT NULL,
+    national_id VARCHAR(50),
     account_code VARCHAR(50),
     client_activity VARCHAR(255),
     last_activity VARCHAR(255),
     added_by VARCHAR(150),
     branch VARCHAR(100) DEFAULT 'فرع الرياض',
+    city VARCHAR(100) DEFAULT 'الرياض',
     status VARCHAR(50) DEFAULT 'نشط',
+    type VARCHAR(50) DEFAULT 'شخص',
+    orders_count INT DEFAULT 0,
+    active_orders INT DEFAULT 0,
+    recruitment_contracts INT DEFAULT 0,
+    rent_contracts INT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
 

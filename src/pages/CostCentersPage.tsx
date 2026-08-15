@@ -1,182 +1,320 @@
-import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
-import { realErpDataStore } from '../services/realErpDataStore';
+import { useCostCenters, useTableMutation } from '../hooks/queries/useErpQueries';
+import { useCompany } from '../contexts/CompanyContext';
 
-interface CostCenter {
+export interface CostCenterRecord {
   id: string;
+  company_id: string;
   code: string;
   name: string;
-  parent: string;
-  total_expenses: number;
-  total_revenues: number;
-  budget_limit: number;
-  status: 'نشط' | 'مكتمل' | 'تجاوز الميزانية';
+  manager_name?: string;
+  budget: number;
+  actual_spent: number;
+  created_at: string;
 }
 
-const INITIAL_COST_CENTERS: CostCenter[] = [
-  { id: '1', code: 'CC-101', name: 'مركز تكلفة عقود الاستقدام - الفرع الرئيسي', parent: 'الإدارة العامة', total_expenses: 42500.00, total_revenues: 410000.00, budget_limit: 100000.00, status: 'نشط' },
-  { id: '2', code: 'CC-102', name: 'مركز تكلفة عقود التأجير والتشغيل', parent: 'إدارة التأجير', total_expenses: 18400.00, total_revenues: 115471.20, budget_limit: 50000.00, status: 'نشط' },
-  { id: '3', code: 'CC-103', name: 'مركز إيواء وتغذية حي الرمال', parent: 'إدارة الإيواء', total_expenses: 64500.00, total_revenues: 12000.00, budget_limit: 60000.00, status: 'تجاوز الميزانية' },
-  { id: '4', code: 'CC-104', name: 'مركز شحنات الطيران والخدمات اللوجستية', parent: 'إدارة السفر', total_expenses: 12800.00, total_revenues: 45000.00, budget_limit: 30000.00, status: 'نشط' }
+const DEFAULT_MOCK_COST_CENTERS: CostCenterRecord[] = [
+  {
+    id: 'cc-1',
+    company_id: 'SAF',
+    code: 'CC-OPS-01',
+    name: 'مركز تكلفة عمليات الاستقدام ومساند',
+    manager_name: 'فهد العتيبي',
+    budget: 150000.0,
+    actual_spent: 42500.0,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'cc-2',
+    company_id: 'SAF',
+    code: 'CC-RENT-02',
+    name: 'مركز تكلفة عقود التأجير والتشغيل',
+    manager_name: 'محمد مصطفى',
+    budget: 90000.0,
+    actual_spent: 18400.0,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'cc-3',
+    company_id: 'SAF',
+    code: 'CC-SHELTER-03',
+    name: 'مركز إيواء وتغذية حي الرمال',
+    manager_name: 'سهام الشاذلي',
+    budget: 80000.0,
+    actual_spent: 64500.0,
+    created_at: new Date().toISOString(),
+  },
 ];
 
 export const CostCentersPage: React.FC = () => {
-  const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
+  const { activeCompanyId, activeCompany } = useCompany();
+  const { data: rawCostCenters = [], isLoading } = useCostCenters();
+  const { createItem } = useTableMutation('cost_centers');
+
+  const costCenters: CostCenterRecord[] = rawCostCenters.length > 0 ? rawCostCenters : DEFAULT_MOCK_COST_CENTERS;
+
+  const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  useEffect(() => {
-    realErpDataStore.getRecords<CostCenter>('cost_centers', INITIAL_COST_CENTERS).then(data => setCostCenters(data));
-  }, []);
-
-  const [addForm, setAddForm] = useState({
-    name: '',
-    parent: 'الإدارة العامة',
-    budget_limit: ''
-  });
+  const [name, setName] = useState('');
+  const [managerName, setManagerName] = useState('');
+  const [budget, setBudget] = useState('50000');
 
   const handleAddCostCenter = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addForm.name) return;
+    if (!name) return;
 
-    const newCC: CostCenter = {
-      id: String(Date.now()),
-      code: `CC-10${costCenters.length + 1}`,
-      name: addForm.name,
-      parent: addForm.parent,
-      total_expenses: 0,
-      total_revenues: 0,
-      budget_limit: parseFloat(addForm.budget_limit) || 50000,
-      status: 'نشط'
+    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
+    const code = `CC-${companyCode}-${String(costCenters.length + 1).padStart(2, '0')}`;
+
+    const newRecord = {
+      company_id: companyCode,
+      code,
+      name,
+      manager_name: managerName || 'مشرف القسم',
+      budget: parseFloat(budget) || 50000,
+      actual_spent: 0,
     };
 
-    const updated = await realErpDataStore.addRecord('cost_centers', newCC, INITIAL_COST_CENTERS);
-    setCostCenters(updated);
+    await createItem.mutateAsync(newRecord);
     setShowAddModal(false);
-    setAddForm({ name: '', parent: 'الإدارة العامة', budget_limit: '' });
+    setName('');
+    setManagerName('');
+    setBudget('50000');
   };
 
-  const columns: Column<CostCenter>[] = [
-    { header: 'كود المركز', accessor: (row) => <span style={{ fontWeight: '800', fontFamily: 'monospace', color: 'var(--odoo-purple)' }}>{row.code}</span> },
-    { header: 'اسم مركز التكلفة', accessor: (row) => <span style={{ fontWeight: '700' }}>{row.name}</span> },
-    { header: 'المركز الرئيسي التابع', accessor: (row) => <Badge text={row.parent} type="purple" /> },
-    { header: 'الميزانية المعتمدة', accessor: (row) => <span style={{ fontWeight: '700' }}>{row.budget_limit.toLocaleString()} ر.س</span> },
-    { header: 'مصروفات المركز', accessor: (row) => <span style={{ color: 'var(--status-danger)', fontWeight: '700' }}>{row.total_expenses.toLocaleString()} ر.س</span> },
-    { header: 'إيرادات المركز', accessor: (row) => <span style={{ color: 'var(--odoo-teal-dark)', fontWeight: '700' }}>{row.total_revenues.toLocaleString()} ر.س</span> },
-    {
-      header: 'صافي المركز',
-      accessor: (row) => {
-        const net = row.total_revenues - row.total_expenses;
-        return <span style={{ fontWeight: '800', color: net >= 0 ? 'var(--status-success)' : 'var(--status-danger)' }}>{net.toLocaleString()} ر.س</span>;
-      }
-    },
-    { header: 'الحالة', accessor: (row) => <Badge text={row.status} type={row.status === 'نشط' ? 'success' : 'danger'} /> }
-  ];
+  const filteredCostCenters = costCenters.filter(
+    (c) =>
+      c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.name.includes(searchQuery) ||
+      (c.manager_name && c.manager_name.includes(searchQuery))
+  );
 
-  const totalRevenues = costCenters.reduce((sum, c) => sum + c.total_revenues, 0);
-  const totalExpenses = costCenters.reduce((sum, c) => sum + c.total_expenses, 0);
+  const totalBudget = costCenters.reduce((sum, c) => sum + (c.budget || 0), 0);
+  const totalSpent = costCenters.reduce((sum, c) => sum + (c.actual_spent || 0), 0);
+  const remainingBudget = totalBudget - totalSpent;
 
   return (
-    <div>
-      {/* Top Banner Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-diagram-project text-purple ml-2"></i> مراكز التكلفة وشجرة التوزيع المحاسبي (Cost Centers Engine)
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
+            <i className="fa-solid fa-diagram-project text-purple-600"></i>
+            مراكز التكلفة والمحاسبة التحليلية (Cost Centers)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            ربط وتخصيص الإيرادات والمصروفات على العقود، المشاريع، ومقرات الإيواء وحساب الربحية
+          <p className="text-sm text-slate-500 mt-1">
+            إدارة الميزانيات المعتمدة والمصروفات الفعلية per Cost Center لـ{' '}
+            <strong className="text-slate-700">{activeCompany.name}</strong>
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> إضافة مركز تكلفة جديد
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+          >
+            <i className="fa-solid fa-plus"></i>
+            إضافة مركز تكلفة جديد
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('journals', costCenters, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button
+            onClick={() => exportData('cost_centers', filteredCostCenters, 'excel', `مراكز التكلفة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير إكسيل"
+          >
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('journals', costCenters, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          <button
+            onClick={() => exportData('cost_centers', filteredCostCenters, 'csv', `مراكز التكلفة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير CSV"
+          >
+            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
+            CSV
+          </button>
+          <button
+            onClick={() => exportData('cost_centers', filteredCostCenters, 'pdf', `مراكز التكلفة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير PDF"
+          >
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            PDF
+          </button>
+          <button
+            onClick={() => exportData('cost_centers', filteredCostCenters, 'print', `تقرير مراكز التكلفة والمحاسبة التحليلية - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="طباعة التقرير المعتمد"
+          >
+            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
+            طباعة
           </button>
         </div>
       </div>
 
-      {/* Analytics KPI Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #10B981', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي إيرادات مراكز التكلفة</span>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>{totalRevenues.toLocaleString()} ر.س</div>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">إجمالي الميزانيات المخصصة</span>
+          <div className="text-2xl font-black text-slate-900 mt-1">{totalBudget.toLocaleString()} ر.س</div>
+          <span className="text-xs text-purple-600 font-bold mt-1 inline-block">{costCenters.length} مراكز نشطة</span>
         </div>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #EF4444', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي مصروفات مراكز التكلفة</span>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#EF4444', marginTop: '4px' }}>{totalExpenses.toLocaleString()} ر.س</div>
+
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">إجمالي المنصرف الفعلي</span>
+          <div className="text-2xl font-black text-rose-700 mt-1">{totalSpent.toLocaleString()} ر.س</div>
+          <span className="text-xs text-slate-400 font-medium">
+            معدل الصرف: {totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0}%
+          </span>
         </div>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #005154', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>صافي الأرباح التشغيلية</span>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>{(totalRevenues - totalExpenses).toLocaleString()} ر.س</div>
+
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">المتبقي من الميزانية المعتمدة</span>
+          <div className="text-2xl font-black text-emerald-700 mt-1">{remainingBudget.toLocaleString()} ر.س</div>
+          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">سيولة متبقية</span>
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={costCenters}
-        searchPlaceholder="ابحث بكود مركز التكلفة، الاسم، أو المركز الرئيسي..."
-        onAddClick={() => setShowAddModal(true)}
-        addLabel="إضافة مركز تكلفة"
-      />
+      {/* Table Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+        <div className="flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="ابحث بكود المركز، الاسم، أو المسؤول..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-600 transition-colors"
+          />
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-sm">
+            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+              <tr>
+                <th className="py-3.5 px-4">كود المركز</th>
+                <th className="py-3.5 px-4">اسم مركز التكلفة</th>
+                <th className="py-3.5 px-4">المسؤول</th>
+                <th className="py-3.5 px-4">الميزانية المعتمدة</th>
+                <th className="py-3.5 px-4">المنصرف الفعلي</th>
+                <th className="py-3.5 px-4">المتبقي</th>
+                <th className="py-3.5 px-4">نسبة الاستهلاك</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-slate-400">
+                    <i className="fa-solid fa-spinner fa-spin ml-2"></i> جاري استرجاع مراكز التكلفة...
+                  </td>
+                </tr>
+              ) : filteredCostCenters.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-10 text-center text-slate-400">
+                    لا توجد مراكز تكلفة مطابقة للبحث
+                  </td>
+                </tr>
+              ) : (
+                filteredCostCenters.map((cc) => {
+                  const spentPercent = cc.budget > 0 ? (cc.actual_spent / cc.budget) * 100 : 0;
+                  const remaining = cc.budget - cc.actual_spent;
+                  return (
+                    <tr key={cc.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3.5 px-4 font-mono font-black text-purple-700">{cc.code}</td>
+                      <td className="py-3.5 px-4 font-bold text-slate-900">{cc.name}</td>
+                      <td className="py-3.5 px-4 text-xs text-slate-600">{cc.manager_name || 'مشرف المركز'}</td>
+                      <td className="py-3.5 px-4 font-bold text-slate-800">{cc.budget.toLocaleString()} ر.س</td>
+                      <td className="py-3.5 px-4 font-bold text-rose-700">{cc.actual_spent.toLocaleString()} ر.س</td>
+                      <td className="py-3.5 px-4 font-bold text-emerald-700">{remaining.toLocaleString()} ر.س</td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full ${spentPercent > 90 ? 'bg-rose-500' : 'bg-purple-600'}`}
+                              style={{ width: `${Math.min(spentPercent, 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-mono font-bold">{spentPercent.toFixed(0)}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Add Cost Center Modal */}
       {showAddModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="table-card" style={{ width: '480px', padding: '24px', background: 'white', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>إضافة مركز تكلفة فرعي جديد</h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <i className="fa-solid fa-diagram-project text-purple-400"></i>
+                <h3 className="font-bold text-base">إضافة مركز تكلفة جديد</h3>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
             </div>
-            <form onSubmit={handleAddCostCenter}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">اسم مركز التكلفة *</label>
+
+            <form onSubmit={handleAddCostCenter} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم مركز التكلفة *</label>
                 <input
                   type="text"
-                  className="filter-input"
-                  placeholder="مثال: مشروع استقدام عمالة شركة توباز..."
-                  value={addForm.name}
-                  onChange={e => setAddForm({ ...addForm, name: e.target.value })}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="مثال: مركز إيواء حي الرمال / مركز شحنات الطيران..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">المركز الرئيسي التابع *</label>
-                  <select
-                    className="filter-select"
-                    value={addForm.parent}
-                    onChange={e => setAddForm({ ...addForm, parent: e.target.value })}
-                  >
-                    <option>الإدارة العامة</option>
-                    <option>إدارة التأجير والخدمات</option>
-                    <option>إدارة الإيواء والإعاشة</option>
-                    <option>إدارة السفر واللوجستيات</option>
-                  </select>
-                </div>
-                <div className="filter-group">
-                  <label className="filter-label">سقف الميزانية (ر.س)</label>
-                  <input
-                    type="number"
-                    className="filter-input"
-                    placeholder="50000"
-                    value={addForm.budget_limit}
-                    onChange={e => setAddForm({ ...addForm, budget_limit: e.target.value })}
-                  />
-                </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم المدير / المشرف المسؤول</label>
+                <input
+                  type="text"
+                  value={managerName}
+                  onChange={(e) => setManagerName(e.target.value)}
+                  placeholder="اسم مشرف المركز..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">إنشاء وحفظ مركز التكلفة</button>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">الميزانية السنوية المعتمدة (ر.س) *</label>
+                <input
+                  type="number"
+                  step="1000"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-check"></i>
+                  حفظ مركز التكلفة
+                </button>
               </div>
             </form>
           </div>

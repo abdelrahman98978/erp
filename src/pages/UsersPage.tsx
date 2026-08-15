@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface UserAdmin {
@@ -157,7 +158,7 @@ export const UsersPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
             <i className="fa-solid fa-user-shield text-purple ml-2"></i> مستخدمو النظام والتحكم بالصلاحيات والمصادقة الثنائية (2FA)
@@ -165,6 +166,20 @@ export const UsersPage: React.FC = () => {
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
             إدارة موظفي الفروع، المكاتب الخارجية، تعيين الأدوار وتفعيل حماية المصادقة الثنائية 2FA لحسابات المستخدمين
           </p>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('users', users, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('users', users, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('users', users, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('users', users, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          </button>
         </div>
       </div>
 

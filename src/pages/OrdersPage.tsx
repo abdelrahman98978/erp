@@ -1,237 +1,420 @@
-import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { MOCK_ORDERS } from '../data/mockData';
-import { Order } from '../types';
-import { useLanguage } from '../i18n/LanguageContext';
-import { realErpDataStore } from '../services/realErpDataStore';
+import { exportData } from '../services/exportService';
+import { useOrders, useTableMutation } from '../hooks/queries/useErpQueries';
+import { useCompany } from '../contexts/CompanyContext';
+
+export interface OrderRecord {
+  id: string;
+  company_id: string;
+  client_id?: string;
+  client_name: string;
+  client_phone: string;
+  maid_name?: string;
+  nationality?: string;
+  passport_number?: string;
+  request_type: 'معروفة' | 'معينة' | 'حسب المواصفات';
+  status: 'جديد' | 'تحت الإجراء' | 'تم التعاقد' | 'ملغي';
+  timer_status: 'عادي' | 'حرج' | 'منتهي';
+  deadline: string;
+  contract_status: 'بدون عقد' | 'تم التعاقد';
+  responsible_employee?: string;
+  branch: string;
+  office_name?: string;
+  created_at: string;
+}
+
+const DEFAULT_MOCK_ORDERS: OrderRecord[] = [
+  {
+    id: 'ORD-2026-001',
+    company_id: 'SAF',
+    client_name: 'بندر صالح الهويريني',
+    client_phone: '+966555774494',
+    maid_name: 'KIMBERLY (سيرة ذاتية مختارة)',
+    nationality: 'الفلبين',
+    passport_number: 'P882910',
+    request_type: 'معينة',
+    status: 'جديد',
+    timer_status: 'عادي',
+    deadline: '24 ساعة',
+    contract_status: 'بدون عقد',
+    responsible_employee: 'فهد العتيبي (مسوق)',
+    branch: 'فرع الرياض الرئيسي',
+    office_name: 'PLATINUM BROTHERS INT’L',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'ORD-2026-002',
+    company_id: 'SAF',
+    client_name: 'سارة خالد الدوسري',
+    client_phone: '+966559876543',
+    maid_name: 'سيرة ذاتية قيد الاختيار',
+    nationality: 'إندونيسيا',
+    passport_number: 'A992019',
+    request_type: 'حسب المواصفات',
+    status: 'تم التعاقد',
+    timer_status: 'عادي',
+    deadline: 'مكتمل',
+    contract_status: 'تم التعاقد',
+    responsible_employee: 'سارة خالد',
+    branch: 'فرع جدة',
+    office_name: 'JAKARTA GLOBAL AGENCY',
+    created_at: new Date().toISOString(),
+  },
+];
 
 export const OrdersPage: React.FC = () => {
-  const { t } = useLanguage();
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { activeCompanyId, activeCompany } = useCompany();
+  const { data: rawOrders = [], isLoading } = useOrders();
+  const { createItem, updateItem } = useTableMutation('orders');
+
+  const orders: OrderRecord[] = rawOrders.length > 0 ? (rawOrders as OrderRecord[]) : DEFAULT_MOCK_ORDERS;
+
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  useEffect(() => {
-    realErpDataStore.getRecords<Order>('orders', MOCK_ORDERS).then(data => setOrders(data));
-  }, []);
-
-  const [addForm, setAddForm] = useState({
-    client_name: '',
-    client_phone: '',
-    maid_name: '',
-    nationality: 'إثيوبيا',
-    passport_number: '',
-    request_type: 'حسب المواصفات' as 'معروفة' | 'معينة' | 'حسب المواصفات',
-    office_name: 'DAMAS AGENCY'
-  });
+  // Add Form State
+  const [clientName, setClientName] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+  const [maidName, setMaidName] = useState('');
+  const [nationality, setNationality] = useState('الفلبين');
+  const [requestType, setRequestType] = useState<'معروفة' | 'معينة' | 'حسب المواصفات'>('حسب المواصفات');
+  const [officeName, setOfficeName] = useState('PLATINUM BROTHERS INT’L');
+  const [branch, setBranch] = useState('فرع الرياض الرئيسي');
 
   const handleAddOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addForm.client_name || !addForm.client_phone) return;
+    if (!clientName || !clientPhone) return;
 
-    const newOrder: Order = {
-      id: `ORD-2026-${String(orders.length + 101).padStart(3, '0')}`,
-      client_name: addForm.client_name,
-      client_phone: addForm.client_phone,
-      maid_name: addForm.maid_name || 'سيرة ذاتية مختارة',
-      nationality: addForm.nationality,
-      passport_number: addForm.passport_number || 'EP-882910',
-      request_type: addForm.request_type,
+    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
+    const id = `ORD-2026-${String(orders.length + 1).padStart(3, '0')}`;
+
+    const newRecord = {
+      id,
+      company_id: companyCode,
+      client_name: clientName,
+      client_phone: clientPhone,
+      maid_name: maidName || 'حسب المواصفات المختارة',
+      nationality,
+      passport_number: 'PENDING',
+      request_type: requestType,
       status: 'جديد',
       timer_status: 'عادي',
       deadline: '24 ساعة',
       contract_status: 'بدون عقد',
-      created_at: new Date().toISOString().slice(0, 10),
-      responsible_employee: 'فهد العتيبي (مسوق)',
-      branch: 'فرع الرياض',
-      office_name: addForm.office_name
+      responsible_employee: 'المستخدم الحالي',
+      branch,
+      office_name: officeName,
     };
 
-    const updated = await realErpDataStore.addRecord('orders', newOrder, MOCK_ORDERS);
-    setOrders(updated);
+    await createItem.mutateAsync(newRecord);
     setShowAddModal(false);
-    setAddForm({ client_name: '', client_phone: '', maid_name: '', nationality: 'إثيوبيا', passport_number: '', request_type: 'حسب المواصفات', office_name: 'DAMAS AGENCY' });
+    setClientName('');
+    setClientPhone('');
+    setMaidName('');
   };
 
-  const handleConvertToContract = async (order: Order) => {
-    const updated = await realErpDataStore.updateRecord('orders', order.id, { contract_status: 'تم التعاقد', status: 'تم التعاقد' }, MOCK_ORDERS);
-    setOrders(updated);
+  const handleConvertToContract = async (order: OrderRecord) => {
+    await updateItem.mutateAsync({
+      id: order.id,
+      data: {
+        status: 'تم التعاقد',
+        contract_status: 'تم التعاقد',
+      },
+    });
   };
 
-  const filteredOrders = orders.filter(ord => {
-    if (activeFilter === 'new') return ord.status === 'جديد';
-    if (activeFilter === 'contracted') return ord.contract_status === 'تم التعاقد';
-    return true;
+  const filteredOrders = orders.filter((ord) => {
+    const matchesSearch =
+      ord.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ord.client_name.includes(searchQuery) ||
+      ord.client_phone.includes(searchQuery);
+    const matchesFilter =
+      activeFilter === 'all' ||
+      (activeFilter === 'new' && ord.status === 'جديد') ||
+      (activeFilter === 'contracted' && ord.contract_status === 'تم التعاقد');
+    return matchesSearch && matchesFilter;
   });
 
-  const columns: Column<Order>[] = [
-    {
-      header: t('orderNo', 'رقم الطلب'),
-      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>#{row.id}</span>
-    },
-    {
-      header: t('clientPhone', 'العميل والجوال'),
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700' }}>{row.client_name}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.client_phone}</div>
-        </div>
-      )
-    },
-    {
-      header: t('workerNationality', 'العاملة والجنسية'),
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700' }}>{row.maid_name}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.nationality} • {row.passport_number}</div>
-        </div>
-      )
-    },
-    {
-      header: t('agency', 'المكتب الخارجي'),
-      accessor: (row) => <span style={{ fontSize: '12px' }}>{row.office_name}</span>
-    },
-    {
-      header: t('orderType', 'نوع الطلب'),
-      accessor: (row) => <Badge text={row.request_type} type="purple" />
-    },
-    {
-      header: t('deadlineStatus', 'حالة المهلة'),
-      accessor: (row) => <Badge text={row.contract_status === 'تم التعاقد' ? 'تم التعاقد' : 'ضمن المهلة 24h'} type={row.contract_status === 'تم التعاقد' ? 'success' : 'warning'} />
-    },
-    {
-      header: t('salesperson', 'المسوق المسؤول'),
-      accessor: (row) => (
-        <div>
-          <span style={{ fontSize: '12px', fontWeight: '600' }}>{row.responsible_employee}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.created_at}</div>
-        </div>
-      )
-    },
-    {
-      header: t('actions', 'الإجراءات'),
-      accessor: (row) => (
-        <div style={{ display: 'flex', gap: '6px' }}>
-          {row.contract_status !== 'تم التعاقد' ? (
-            <button
-              className="btn-odoo btn-odoo-primary"
-              style={{ padding: '4px 8px', fontSize: '11px' }}
-              onClick={() => handleConvertToContract(row)}
-            >
-              {t('convertContract', 'تحويل لعقد')}
-            </button>
-          ) : (
-            <Badge text="عقد مساند محول" type="success" />
-          )}
-        </div>
-      )
-    }
-  ];
-
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
-            <i className="fa-solid fa-cart-shopping text-warning ml-2"></i> {t('ordersBookingsTitle', 'إدارة الطلبات والحجوزات الفورية')}
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
+            <i className="fa-solid fa-cart-flatbed-suitcase text-purple-700"></i>
+            إدارة طلبات العملاء والعمليات (Orders & Leads)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            {t('ordersBookingsSub', 'تتبع حجز السير الذاتية المؤقت ومتابعة مهلة الـ 24 ساعة والتحويل المباشر لـ مساند')}
+          <p className="text-sm text-slate-500 mt-1">
+            متابعة طلبات الاستقدام الجديدة، مؤقتات الـ SLA، والتحويل إلى عقود مساند لـ{' '}
+            <strong className="text-slate-700">{activeCompany.name}</strong>
           </p>
         </div>
 
-        <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAddModal(true)}>
-          <i className="fa-solid fa-plus ml-1"></i> {t('addNewOrder', 'إضافة طلب استقدام جديد')}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+          >
+            <i className="fa-solid fa-plus"></i>
+            تسجيل طلب عميل جديد
+          </button>
+          <button
+            onClick={() => exportData('orders', filteredOrders, 'excel', `طلبات الاستقدام - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير إكسيل"
+          >
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            Excel
+          </button>
+          <button
+            onClick={() => exportData('orders', filteredOrders, 'csv', `طلبات الاستقدام - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير CSV"
+          >
+            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
+            CSV
+          </button>
+          <button
+            onClick={() => exportData('orders', filteredOrders, 'pdf', `طلبات الاستقدام - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير PDF"
+          >
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            PDF
+          </button>
+          <button
+            onClick={() => exportData('orders', filteredOrders, 'print', `سجل طلبات العملاء والعمليات - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="طباعة التقرير المعتمد"
+          >
+            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
+            طباعة
+          </button>
+        </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="filter-tab-bar" style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        <button className={`btn-odoo ${activeFilter === 'all' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`} onClick={() => setActiveFilter('all')}>
-          {t('allOrders', `جميع الطلبات (${orders.length})`)}
+      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
+        <button
+          onClick={() => setActiveFilter('all')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeFilter === 'all' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <span>جميع الطلبات</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeFilter === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+            {orders.length}
+          </span>
         </button>
-        <button className={`btn-odoo ${activeFilter === 'new' ? 'btn-odoo-danger' : 'btn-odoo-secondary'}`} onClick={() => setActiveFilter('new')}>
-          {t('newOrders24h', `الطلبات الجديدة (${orders.filter(o => o.status === 'جديد').length})`)}
+        <button
+          onClick={() => setActiveFilter('new')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeFilter === 'new' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <span>طلبات جديدة بانتظار العقد</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeFilter === 'new' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+            {orders.filter((o) => o.status === 'جديد').length}
+          </span>
         </button>
-        <button className={`btn-odoo ${activeFilter === 'contracted' ? 'btn-odoo-success' : 'btn-odoo-secondary'}`} onClick={() => setActiveFilter('contracted')}>
-          {t('contractedOrders', `تم التعاقد (${orders.filter(o => o.contract_status === 'تم التعاقد').length})`)}
+        <button
+          onClick={() => setActiveFilter('contracted')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeFilter === 'contracted' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <span>تم التعاقد معهم</span>
+          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeFilter === 'contracted' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+            {orders.filter((o) => o.contract_status === 'تم التعاقد').length}
+          </span>
         </button>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={filteredOrders}
-        searchPlaceholder={t('searchOrderPlaceholder', 'ابحث برقم الطلب، اسم العميل، رقم الجوال، أو اسم العاملة...')}
-        exportConfig={{ sectionKey: 'orders', rawData: filteredOrders }}
-      />
+      {/* Table Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+        <div className="flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="ابحث برقم الطلب، اسم العميل، أو الجوال..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-600 transition-colors"
+          />
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-sm">
+            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+              <tr>
+                <th className="py-3.5 px-4">رقم الطلب</th>
+                <th className="py-3.5 px-4">بيانات العميل</th>
+                <th className="py-3.5 px-4">المواصفات والجنسية</th>
+                <th className="py-3.5 px-4">المكتب الخارجي</th>
+                <th className="py-3.5 px-4">نوع الطلب</th>
+                <th className="py-3.5 px-4">مهلة المعالجة</th>
+                <th className="py-3.5 px-4">حالة العقد</th>
+                <th className="py-3.5 px-4 text-center">إجراء</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-slate-400">
+                    <i className="fa-solid fa-spinner fa-spin ml-2"></i> جاري استرجاع الطلبات...
+                  </td>
+                </tr>
+              ) : filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-slate-400">
+                    لا توجد طلبات مسجلة
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map((ord) => (
+                  <tr key={ord.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-black text-purple-700">#{ord.id}</td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-slate-900">{ord.client_name}</div>
+                      <div className="text-xs text-slate-400 font-mono">{ord.client_phone}</div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-slate-900">{ord.maid_name}</div>
+                      <div className="text-xs text-slate-500">{ord.nationality}</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-xs font-bold text-slate-600">{ord.office_name || 'مكتب مانيلا'}</td>
+                    <td className="py-3.5 px-4">
+                      <Badge text={ord.request_type} type="purple" />
+                    </td>
+                    <td className="py-3.5 px-4 text-xs">
+                      <span className="font-bold text-amber-600 flex items-center gap-1">
+                        <i className="fa-regular fa-clock"></i> {ord.deadline}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <Badge
+                        text={ord.contract_status}
+                        type={ord.contract_status === 'تم التعاقد' ? 'success' : 'warning'}
+                      />
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      {ord.contract_status !== 'تم التعاقد' ? (
+                        <button
+                          onClick={() => handleConvertToContract(ord)}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1 mx-auto"
+                        >
+                          <i className="fa-solid fa-file-contract"></i>
+                          تحويل لعقد
+                        </button>
+                      ) : (
+                        <span className="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                          <i className="fa-solid fa-check-double"></i> موثق
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Add Order Modal */}
       {showAddModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="table-card" style={{ width: '500px', padding: '24px', background: 'white', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>إضافة طلب استقدام فوري جديد</h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <i className="fa-solid fa-cart-plus text-purple-400"></i>
+                <h3 className="font-bold text-base">تسجيل طلب استقدام جديد</h3>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
             </div>
-            <form onSubmit={handleAddOrder}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">اسم العميل *</label>
-                  <input
-                    type="text"
-                    className="filter-input"
-                    placeholder="الاسم..."
-                    value={addForm.client_name}
-                    onChange={e => setAddForm({ ...addForm, client_name: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="filter-group">
-                  <label className="filter-label">جوال العميل *</label>
-                  <input
-                    type="text"
-                    className="filter-input"
-                    placeholder="+9665..."
-                    value={addForm.client_phone}
-                    onChange={e => setAddForm({ ...addForm, client_phone: e.target.value })}
-                    required
-                  />
-                </div>
+
+            <form onSubmit={handleAddOrder} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم العميل *</label>
+                <input
+                  type="text"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="اسم العميل الرباعي..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  required
+                />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">الجنسية المطلوبة</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">رقم جوال العميل *</label>
+                <input
+                  type="text"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  placeholder="+9665..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">الجنسية المطلوبة</label>
                   <select
-                    className="filter-select"
-                    value={addForm.nationality}
-                    onChange={e => setAddForm({ ...addForm, nationality: e.target.value })}
+                    value={nationality}
+                    onChange={(e) => setNationality(e.target.value)}
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
                   >
-                    <option>إثيوبيا</option>
                     <option>الفلبين</option>
-                    <option>الهند</option>
-                    <option>أوغندا</option>
+                    <option>إندونيسيا</option>
+                    <option>إثيوبيا</option>
                     <option>كينيا</option>
+                    <option>أوغندا</option>
                   </select>
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">نوع الطلب</label>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">نوع الطلب</label>
                   <select
-                    className="filter-select"
-                    value={addForm.request_type}
-                    onChange={e => setAddForm({ ...addForm, request_type: e.target.value as any })}
+                    value={requestType}
+                    onChange={(e) => setRequestType(e.target.value as any)}
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
                   >
                     <option value="حسب المواصفات">حسب المواصفات</option>
                     <option value="معينة">معينة بالاسم</option>
-                    <option value="معروفة">معروفة (نقل مباشر)</option>
+                    <option value="معروفة">معروفة لدى العميل</option>
                   </select>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">حفظ الطلب الفوري</button>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم السيرة الذاتية (إن وجدت)</label>
+                <input
+                  type="text"
+                  value={maidName}
+                  onChange={(e) => setMaidName(e.target.value)}
+                  placeholder="اسم العاملة أو كود السيرة الذاتية..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-check"></i>
+                  تسجيل الطلب
+                </button>
               </div>
             </form>
           </div>

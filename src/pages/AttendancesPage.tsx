@@ -101,11 +101,17 @@ export const AttendancesPage: React.FC = () => {
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowUploadModal(true)}>
             <i className="fa-solid fa-file-excel ml-1"></i> رفع شيت بصمة الإكسيل
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('employees', attendances, 'excel')} title="تصدير Excel">
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('attendances', attendances, 'excel')} title="تصدير Excel">
             <i className="fa-solid fa-file-excel ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('employees', attendances, 'pdf')} title="تصدير PDF">
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('attendances', attendances, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('attendances', attendances, 'pdf')} title="تصدير PDF">
             <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('attendances', attendances, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
           </button>
         </div>
       </div>
@@ -132,6 +138,7 @@ export const AttendancesPage: React.FC = () => {
         searchPlaceholder="ابحث باسم الموظف، القسم، أو التاريخ..."
         onAddClick={() => setShowManualModal(true)}
         addLabel="تسجيل حضور يدوي"
+        exportConfig={{ sectionKey: 'attendances', rawData: attendances }}
       />
 
       {/* Biometric Upload Modal */}

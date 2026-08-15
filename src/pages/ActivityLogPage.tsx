@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 interface ActivityItem {
@@ -26,6 +27,8 @@ export const ActivityLogPage: React.FC = () => {
     realErpDataStore.getRecords<ActivityItem>('activity_logs', MOCK_ACTIVITIES).then(data => setActivities(data));
   }, []);
 
+  const currentData = activities.length > 0 ? activities : MOCK_ACTIVITIES;
+
   const columns: Column<ActivityItem>[] = [
     { header: '#', accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.id}</span> },
     { header: 'المستخدم', accessor: (row) => <span style={{ fontWeight: '700' }}>{row.user_name}</span> },
@@ -38,15 +41,34 @@ export const ActivityLogPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
             <i className="fa-solid fa-clock-rotate-left text-purple ml-2"></i> سجل النشاط المباشر والتدقيق (Audit Activity Log)
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>تتبع كافة عمليات الحفظ، التعديل، والحذف التي قام بها مستخدمو النظام بالوقت والتاريخ</p>
         </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('activity_log', currentData, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('activity_log', currentData, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('activity_log', currentData, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('activity_log', currentData, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          </button>
+        </div>
       </div>
-      <DataTable columns={columns} data={activities.length > 0 ? activities : MOCK_ACTIVITIES} searchPlaceholder="ابحث باسم المستخدم، الإجراء، أو التفاصيل..." />
+      <DataTable
+        columns={columns}
+        data={currentData}
+        searchPlaceholder="ابحث باسم المستخدم، الإجراء، أو التفاصيل..."
+        exportConfig={{ sectionKey: 'activity_log', rawData: currentData }}
+      />
     </div>
   );
 };

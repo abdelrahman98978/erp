@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { StatCard } from '../components/ui/StatCard';
+import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 interface TransferRequest {
@@ -129,7 +130,7 @@ export const SponsorshipTransferPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
             <i className="fa-solid fa-repeat text-purple ml-2"></i> إدارة طلبات نقل الكفالة والتنازل
@@ -137,6 +138,20 @@ export const SponsorshipTransferPage: React.FC = () => {
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
             متابعة عداد فترة التجربة (10 أيام)، تحويل المبالغ بين الكفلاء، وإعادة التخصيص
           </p>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('sponsorship-transfer', transfers, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sponsorship-transfer', transfers, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sponsorship-transfer', transfers, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sponsorship-transfer', transfers, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          </button>
         </div>
       </div>
 
@@ -148,10 +163,10 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       <DataTable
         columns={columns}
-        data={MOCK_TRANSFERS}
+        data={transfers}
         searchPlaceholder="ابحث برقم العقد، اسم العاملة، الكفيل القديم أو الجديد..."
         addLabel="إضافة طلب نقل كفالة"
-        exportConfig={{ sectionKey: 'sponsorship-transfer', rawData: MOCK_TRANSFERS }}
+        exportConfig={{ sectionKey: 'sponsorship-transfer', rawData: transfers }}
       />
     </div>
   );

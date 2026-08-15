@@ -162,6 +162,23 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           >
             <i className="fa-solid fa-file-csv" style={{ marginLeft: '4px' }}></i> CSV
           </button>
+          <button
+            type="button"
+            onClick={() => exportData('external-offices', offices, 'print')}
+            title="طباعة التقرير"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(255,255,255,0.3)',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              fontWeight: '700',
+              fontSize: '13px',
+              cursor: 'pointer',
+            }}
+          >
+            <i className="fa-solid fa-print" style={{ marginLeft: '4px' }}></i> طباعة
+          </button>
         </div>
       </div>
 

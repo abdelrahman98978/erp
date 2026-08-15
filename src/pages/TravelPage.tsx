@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
+import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 interface Flight {
@@ -111,12 +112,24 @@ export const TravelPage: React.FC = () => {
             متابعة خطوط الطيران والمطارات والتنبيهات المباشرة لسائقي الاستقبال
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button className={`btn-odoo ${viewMode === 'calendar' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`} onClick={() => setViewMode('calendar')}>
             <i className="fa-solid fa-calendar-days"></i> عرض التقويم
           </button>
           <button className={`btn-odoo ${viewMode === 'table' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`} onClick={() => setViewMode('table')}>
             <i className="fa-solid fa-list"></i> عرض الجدول
+          </button>
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('travel', flights, 'excel')} title="تصدير Excel">
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('travel', flights, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('travel', flights, 'pdf')} title="تصدير PDF">
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('travel', flights, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
           </button>
         </div>
       </div>
@@ -157,10 +170,10 @@ export const TravelPage: React.FC = () => {
 
       <DataTable
         columns={columns}
-        data={MOCK_FLIGHTS}
+        data={flights}
         searchPlaceholder="ابحث برقم الرحلة، اسم العاملة، المطار، أو خط الطيران..."
         addLabel="إضافة رحلة سفر جديدة"
-        exportConfig={{ sectionKey: 'travel', rawData: MOCK_FLIGHTS }}
+        exportConfig={{ sectionKey: 'travel', rawData: flights }}
       />
     </div>
   );

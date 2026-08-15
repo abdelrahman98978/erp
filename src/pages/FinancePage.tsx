@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { AccountNode } from '../types';
 import { exportData } from '../services/exportService';
-import { realErpDataStore } from '../services/realErpDataStore';
+import { useCompany } from '../contexts/CompanyContext';
+import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 
 export interface JournalEntry {
   id: string;
@@ -26,72 +26,90 @@ export interface Voucher {
 }
 
 const MOCK_JOURNALS: JournalEntry[] = [
-  { id: 'j-282', ref_no: ' قيد #282', date: '2026-07-31', description: 'قيد فاتورة عقد تأجير رقم RC-2026-0014 / الفاتورة #12 / العميل ابو اياد', amount: 1150.00, status: 'بانتظار الاعتماد', branch: 'فرع الرياض' },
-  { id: 'j-281', ref_no: ' قيد #281', date: '2026-07-31', description: 'سند قبض عقد تأجير رقم RC-2026-0013 / الفاتورة #11 / العميل ابو اياد / إيداع بنك الراجحي', amount: 138.00, status: 'بانتظار الاعتماد', branch: 'فرع الرياض' },
-  { id: 'j-280', ref_no: ' قيد #280', date: '2026-07-31', description: 'قيد فاتورة عقد تأجير رقم RC-2026-0013 / الفاتورة #11 / العميل ابو اياد', amount: 138.00, status: 'بانتظار الاعتماد', branch: 'فرع الرياض' },
-  { id: 'j-279', ref_no: ' قيد #279', date: '2026-07-30', description: 'إثبات مصاريف عاملة تأجير #2213 - sara / المكتب الخارجي: DAMAS FOREIGN EMPLOYMENT AGENCY', amount: 2133.00, status: 'بانتظار الاعتماد', branch: 'مركز الإيواء' },
-  { id: 'j-278', ref_no: ' قيد #278', date: '2026-07-30', description: 'تحويل بنكي لحوالة مساند بدون مرجع من الحساب البنكي الرئيسي', amount: 3700.00, status: 'معتمد', branch: 'الإدارة العامة' }
+  { id: 'j-282', ref_no: 'قيد #282', date: '2026-07-31', description: 'قيد فاتورة عقد تأجير رقم RC-2026-0014 / الفاتورة #12 / العميل ابو اياد', amount: 1150.0, status: 'معتمد', branch: 'فرع الرياض الرئيسي' },
+  { id: 'j-281', ref_no: 'قيد #281', date: '2026-07-31', description: 'سند قبض عقد تأجير رقم RC-2026-0013 / إيداع بنك الراجحي', amount: 138.0, status: 'معتمد', branch: 'فرع الرياض الرئيسي' },
+  { id: 'j-280', ref_no: 'قيد #280', date: '2026-07-31', description: 'قيد إثبات إيراد وساطة استقدام مساند - عقد رقم REC-2026-0594', amount: 14500.0, status: 'معتمد', branch: 'فرع الرياض الرئيسي' },
+  { id: 'j-279', ref_no: 'قيد #279', date: '2026-07-30', description: 'إثبات مصاريف عاملة تأجير #2213 - سارة / المكتب الخارجي DAMAS AGENCY', amount: 2133.0, status: 'معتمد', branch: 'مركز الإيواء' },
+  { id: 'j-278', ref_no: 'قيد #278', date: '2026-07-30', description: 'تحويل بنكي لحساب الضمان مساند بدون مرجع من الحساب البنكي الرئيسي', amount: 3700.0, status: 'معتمد', branch: 'الإدارة العامة' },
 ];
 
 const MOCK_VOUCHERS: Voucher[] = [
-  { id: 'v-59', voucher_no: 'قبض #59', type: 'قبض', date: '2026-07-31', payee_payer: 'العميل سارة أحمد', treasury: 'بنك الراجحي', amount: 138.00, status: 'معتمد' },
-  { id: 'v-58', voucher_no: 'قبض #58', type: 'قبض', date: '2026-07-31', payee_payer: 'عميل مساند', treasury: 'بنك مساند', amount: 3786.30, status: 'معتمد' },
-  { id: 'v-57', voucher_no: 'قبض #57', type: 'قبض', date: '2026-07-31', payee_payer: 'عميل مساند', treasury: 'بنك مساند', amount: 1590.05, status: 'معتمد' },
-  { id: 'v-1', voucher_no: 'صرف #1', type: 'صرف', date: '2026-07-30', payee_payer: 'ابو علي', treasury: 'الصندوق الرئيسي', amount: 5000.00, status: 'معتمد' }
+  { id: 'v-59', voucher_no: 'قبض #59', type: 'قبض', date: '2026-07-31', payee_payer: 'العميل بندر صالح الهويريني', treasury: 'بنك الراجحي', amount: 13800.0, status: 'معتمد' },
+  { id: 'v-58', voucher_no: 'قبض #58', type: 'قبض', date: '2026-07-31', payee_payer: 'عميل مساند (سداد إلكتروني)', treasury: 'بنك مساند الموحد', amount: 3786.3, status: 'معتمد' },
+  { id: 'v-57', voucher_no: 'قبض #57', type: 'قبض', date: '2026-07-31', payee_payer: 'شركة دار الرواد للمقاولات', treasury: 'بنك الرياض', amount: 28750.0, status: 'معتمد' },
+  { id: 'v-1', voucher_no: 'صرف #1', type: 'صرف', date: '2026-07-30', payee_payer: 'مكتب بلاتينيوم مانيلا (تأشيرات)', treasury: 'الصندوق الرئيسي', amount: 5000.0, status: 'معتمد' },
 ];
 
-const ACCOUNTS_TREE: AccountNode[] = [
-  { code: '1', name: 'الأصول (Assets)', type: 'أصول', balance: 1250000.00, children_count: 42 },
-  { code: '11', name: 'الأصول المتداولة (Current Assets)', type: 'أصول', balance: 850000.00, children_count: 18 },
-  { code: '11030', name: 'حساب أمانات مساند المعلقة (90 يوماً)', type: 'أصول', balance: 184500.00 },
-  { code: '12100', name: 'الصندوق الرئيسي (Cash)', type: 'أصول', balance: 154200.00 },
-  { code: '1220100', name: 'بنك الرياض - حساب الاستقدام', type: 'أصول', balance: 420500.00 },
-  { code: '1220200', name: 'بنك الراجحي - الحساب التشغيلي', type: 'أصول', balance: 275300.00 },
-  { code: '2', name: 'الخصوم (Liabilities)', type: 'خصوم', balance: 45000.00, children_count: 14 },
-  { code: '21040', name: 'مخصص مكافأة نهاية الخدمة (EOSB Provision)', type: 'خصوم', balance: 94200.00 },
-  { code: '3', name: 'حقوق الملكية (Equity)', type: 'حقوق ملكية', balance: 1205000.00, children_count: 8 },
-  { code: '4', name: 'الإيرادات (Revenues)', type: 'إيرادات', balance: 525471.20, children_count: 26 },
-  { code: '41100', name: 'إيرادات عقود الاستقدام التوسط', type: 'إيرادات', balance: 410000.00 },
-  { code: '41200', name: 'إيرادات عقود التأجير والتشغيل', type: 'إيرادات', balance: 115471.20 },
-  { code: '5', name: 'المصروفات (Expenses)', type: 'مصروفات', balance: 5000.00, children_count: 35 }
+const TRIAL_BALANCE_DATA = [
+  { code: '1101', name: 'الصندوق الرئيسي (Cash)', type: 'أصول', opening_debit: 150000, opening_credit: 0, period_debit: 45000, period_credit: 40800, balance: 154200 },
+  { code: '1102', name: 'بنك الرياض - حساب الاستقدام', type: 'أصول', opening_debit: 380000, opening_credit: 0, period_debit: 82000, period_credit: 41500, balance: 420500 },
+  { code: '1103', name: 'بنك الراجحي - الحساب التشغيلي', type: 'أصول', opening_debit: 220000, opening_credit: 0, period_debit: 110300, period_credit: 55000, balance: 275300 },
+  { code: '1104', name: 'أمانات مساند المعلقة (90 يوماً)', type: 'أصول', opening_debit: 160000, opening_credit: 0, period_debit: 54500, period_credit: 30000, balance: 184500 },
+  { code: '1201', name: 'الأصول الثابتة (مباني وسيارات)', type: 'أصول', opening_debit: 882500, opening_credit: 0, period_debit: 0, period_credit: 0, balance: 882500 },
+  { code: '2101', name: 'مستحقات الموردين والوكلاء الخارجيين', type: 'خصوم', opening_debit: 0, opening_credit: 175000, period_debit: 25000, period_credit: 39375, balance: -189375 },
+  { code: '2102', name: 'مخصص مكافأة نهاية الخدمة (EOSB)', type: 'خصوم', opening_debit: 0, opening_credit: 88000, period_debit: 0, period_credit: 6200, balance: -94200 },
+  { code: '2103', name: 'أمانات ضريبة القيمة المضافة (ZATCA 15%)', type: 'خصوم', opening_debit: 0, opening_credit: 110000, period_debit: 12000, period_credit: 26000, balance: -124000 },
+  { code: '3101', name: 'رأس المال المدفوع', type: 'حقوق ملكية', opening_debit: 0, opening_credit: 1205000, period_debit: 0, period_credit: 0, balance: -1205000 },
+  { code: '4101', name: 'إيرادات وساطة عقود الاستقدام', type: 'إيرادات', opening_debit: 0, opening_credit: 320000, period_debit: 0, period_credit: 90000, balance: -410000 },
+  { code: '4102', name: 'إيرادات عقود التأجير والتشغيل', type: 'إيرادات', opening_debit: 0, opening_credit: 85000, period_debit: 0, period_credit: 30471.2, balance: -115471.2 },
+  { code: '5101', name: 'مصروفات تشغيل ومراكز إيواء', type: 'مصروفات', opening_debit: 75000, opening_credit: 0, period_debit: 15000, period_credit: 0, balance: 90000 },
+  { code: '5102', name: 'رواتب وأجور الكوادر الإدارية', type: 'مصروفات', opening_debit: 110000, opening_credit: 0, period_debit: 20500, period_credit: 0, balance: 130500 },
+];
+
+const SUPPLIERS_ACCOUNTS = [
+  { id: '1', name: "🇵🇭 PLATINUM BROTHERS INT'L", country: 'الفلبين - مانيلا', cv_count: 158, balance_usd: 34500, balance_sar: 129375, status: 'مطابق وموثق' },
+  { id: '2', name: '🇪🇹 DAMAS FOREIGN EMPLOYMENT', country: 'إثيوبيا - أديس أبابا', cv_count: 42, balance_usd: 4200, balance_sar: 15750, status: 'مطابق' },
+  { id: '3', name: '🇺🇬 Supreme Link Employment Agency', country: 'أوغندا - كمبالا', cv_count: 38, balance_usd: 11800, balance_sar: 44250, status: 'مطابق وموثق' },
 ];
 
 export const FinancePage: React.FC = () => {
+  const { activeCompany } = useCompany();
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'financial-position' | 'zatca-ksa' | 'musaned-escrow' | 'eosb-zakat' | 'tree' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'clients-balances' | 'assets-depreciation' | 'cost-centers' | 'financial-statements' | 'tax'
+    'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'tax'
   >('overview');
 
-  const [journals, setJournals] = useState<JournalEntry[]>([]);
-  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+  const [journals, setJournals] = useState<JournalEntry[]>(MOCK_JOURNALS);
+  const [vouchers, setVouchers] = useState<Voucher[]>(MOCK_VOUCHERS);
+  const [selectedBranch, setSelectedBranch] = useState<string>('ALL');
 
-  useEffect(() => {
-    realErpDataStore.getRecords<JournalEntry>('journals', MOCK_JOURNALS).then(data => setJournals(data));
-    realErpDataStore.getRecords<Voucher>('vouchers', MOCK_VOUCHERS).then(data => setVouchers(data));
-  }, []);
+  const { createItem: createJournalEntry } = useTableMutation('company_journal_entries');
 
-  // Modals state
+  // Modals
   const [showAddVoucherModal, setShowAddVoucherModal] = useState(false);
   const [showAddJournalModal, setShowAddJournalModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
 
-  // EOSB Calculator State
+  // Forms
+  const [voucherForm, setVoucherForm] = useState({
+    type: 'قبض' as 'قبض' | 'صرف',
+    payee_payer: '',
+    treasury: 'بنك الراجحي',
+    amount: '',
+  });
+
+  const [journalForm, setJournalForm] = useState({
+    description: '',
+    amount: '',
+    branch: 'فرع الرياض الرئيسي',
+  });
+
+  const [transferForm, setTransferForm] = useState({
+    from_account: 'الصندوق الرئيسي (نقدي)',
+    to_account: 'بنك الراجحي - الحساب التشغيلي',
+    amount: '',
+  });
+
+  // EOSB Calculator
   const [eosbCalc, setEosbCalc] = useState({
     salary: '8500',
     years: '3.5',
-    reason: 'resignation' as 'resignation' | 'termination'
+    reason: 'resignation' as 'resignation' | 'termination',
   });
 
   const calculateEOSBResult = () => {
     const sal = parseFloat(eosbCalc.salary) || 0;
     const yrs = parseFloat(eosbCalc.years) || 0;
-
-    let base = 0;
-    if (yrs <= 5) {
-      base = yrs * (sal / 2);
-    } else {
-      base = 5 * (sal / 2) + (yrs - 5) * sal;
-    }
-
+    let base = yrs <= 5 ? yrs * (sal / 2) : 5 * (sal / 2) + (yrs - 5) * sal;
     if (eosbCalc.reason === 'resignation') {
       if (yrs < 2) return 0;
       if (yrs >= 2 && yrs < 5) return base * (1 / 3);
@@ -101,29 +119,7 @@ export const FinancePage: React.FC = () => {
     return base;
   };
 
-  // New Voucher Form
-  const [voucherForm, setVoucherForm] = useState({
-    type: 'قبض' as 'قبض' | 'صرف',
-    payee_payer: '',
-    treasury: 'بنك الراجحي',
-    amount: ''
-  });
-
-  // New Journal Form
-  const [journalForm, setJournalForm] = useState({
-    description: '',
-    amount: '',
-    branch: 'فرع الرياض'
-  });
-
-  // Transfer Form State
-  const [transferForm, setTransferForm] = useState({
-    from_account: 'الصندوق الرئيسي',
-    to_account: 'بنك الراجحي - الحساب التشغيلي',
-    amount: ''
-  });
-
-  const handleCreateVoucher = async (e: React.FormEvent) => {
+  const handleCreateVoucher = (e: React.FormEvent) => {
     e.preventDefault();
     if (!voucherForm.payee_payer || !voucherForm.amount) return;
 
@@ -135,705 +131,823 @@ export const FinancePage: React.FC = () => {
       payee_payer: voucherForm.payee_payer,
       treasury: voucherForm.treasury,
       amount: parseFloat(voucherForm.amount) || 0,
-      status: 'معتمد'
+      status: 'معتمد',
     };
 
-    const updated = await realErpDataStore.addRecord('vouchers', newV, MOCK_VOUCHERS);
-    setVouchers(updated);
+    setVouchers([newV, ...vouchers]);
     setShowAddVoucherModal(false);
     setVoucherForm({ type: 'قبض', payee_payer: '', treasury: 'بنك الراجحي', amount: '' });
-    alert(`تمت إضافة وتثبيت سند ${newV.type} رقم (${newV.voucher_no}) بنجاح!`);
   };
 
   const handleCreateJournal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!journalForm.description || !journalForm.amount) return;
 
+    const amt = parseFloat(journalForm.amount) || 0;
     const newJ: JournalEntry = {
       id: `j-${Date.now()}`,
       ref_no: `قيد #${283 + journals.length}`,
       date: new Date().toISOString().slice(0, 10),
       description: journalForm.description,
-      amount: parseFloat(journalForm.amount) || 0,
-      status: 'بانتظار الاعتماد',
-      branch: journalForm.branch
+      amount: amt,
+      status: 'معتمد',
+      branch: journalForm.branch,
     };
 
-    const updated = await realErpDataStore.addRecord('journals', newJ, MOCK_JOURNALS);
-    setJournals(updated);
+    await createJournalEntry.mutateAsync({
+      company_id: activeCompany.code || 'SAF',
+      entry_number: newJ.ref_no,
+      entry_date: newJ.date,
+      narration: newJ.description,
+      total_debit: amt,
+      total_credit: amt,
+      status: 'POSTED',
+      branch: newJ.branch,
+    });
+
+    setJournals([newJ, ...journals]);
     setShowAddJournalModal(false);
-    setJournalForm({ description: '', amount: '', branch: 'فرع الرياض' });
-    alert(`تم إنشاء وتوجيه القيد المحاسبي (${newJ.ref_no}) وهو بانتظار الاعتماد الإداري!`);
+    setJournalForm({ description: '', amount: '', branch: 'فرع الرياض الرئيسي' });
   };
 
-  const handleCreateTransfer = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!transferForm.amount) return;
-    alert(`تم تحويل مبلغ (${transferForm.amount} ر.س) من [${transferForm.from_account}] إلى [${transferForm.to_account}] وتوليد القيد المزدوج تلقائياً!`);
-    setShowTransferModal(false);
-    setTransferForm({ from_account: 'الصندوق الرئيسي', to_account: 'بنك الراجحي - الحساب التشغيلي', amount: '' });
-  };
+  const filteredJournals = selectedBranch === 'ALL' ? journals : journals.filter(j => j.branch.includes(selectedBranch));
 
   return (
-    <div>
-      {/* Top Banner Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="space-y-6">
+      {/* Top Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-scale-balanced text-purple ml-2"></i> منظومة المحاسبة وقائمة المركز المالي الشاملة (Balance Sheet & KSA Engine)
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
+            <i className="fa-solid fa-scale-balanced text-teal-700"></i>
+            الإدارة المالية والقوائم الختامية (Enterprise Financial Suite)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            مجموعة خالد السليم • قائمة المركز المالي، شجرة الحسابات (336)، ZATCA Phase 2، تسويات مساند (90 يوماً)، ومكافأة نهاية الخدمة
+          <p className="text-sm text-slate-500 mt-1">
+            المركز المالي، ميزان المراجعة، قائمة الدخل، قيود اليومية، وتسويات مساند لـ{' '}
+            <strong className="text-slate-700">{activeCompany.name}</strong>
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddJournalModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> إضافة قيد يومية
+        {/* Global Action & Export Toolbar */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowAddJournalModal(true)}
+            className="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-xs shadow-md shadow-purple-200 transition-all flex items-center gap-1.5"
+          >
+            <i className="fa-solid fa-plus"></i> قيد يومية
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAddVoucherModal(true)}>
-            <i className="fa-solid fa-file-invoice-dollar ml-1"></i> أضف سند قبض / صرف
+          <button
+            onClick={() => setShowAddVoucherModal(true)}
+            className="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold text-xs shadow-md shadow-teal-200 transition-all flex items-center gap-1.5"
+          >
+            <i className="fa-solid fa-file-invoice-dollar"></i> سند قبض / صرف
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('journals', journals, 'excel')} title="تصدير القيود Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> القيود
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('vouchers', vouchers, 'excel')} title="تصدير السندات Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> السندات
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => { exportData('journals', journals, 'pdf'); exportData('vouchers', vouchers, 'pdf'); }} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
+
+          {/* Direct Export Buttons for Current Active Section */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
+              className="p-2 hover:bg-white text-emerald-700 rounded-lg text-xs font-bold transition-all"
+              title="تصدير ميزان المراجعة إكسيل"
+            >
+              <i className="fa-solid fa-file-excel"></i>
+            </button>
+            <button
+              onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'csv', `ميزان المراجعة - ${activeCompany.name}`)}
+              className="p-2 hover:bg-white text-blue-700 rounded-lg text-xs font-bold transition-all"
+              title="تصدير CSV"
+            >
+              <i className="fa-solid fa-file-csv"></i>
+            </button>
+            <button
+              onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
+              className="p-2 hover:bg-white text-rose-700 rounded-lg text-xs font-bold transition-all"
+              title="تصدير PDF"
+            >
+              <i className="fa-solid fa-file-pdf"></i>
+            </button>
+            <button
+              onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'print', `تقرير ميزان المراجعة - ${activeCompany.name}`)}
+              className="p-2 hover:bg-white text-purple-700 rounded-lg text-xs font-bold transition-all"
+              title="طباعة التقرير المالي الرسمي"
+            >
+              <i className="fa-solid fa-print"></i>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Complete Financial Sub-modules Tabs Bar */}
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
+      {/* Sub-modules Navigation Bar */}
+      <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-1.5 overflow-x-auto">
         {[
-          { id: 'overview', label: '🏠 اللوحة المالية' },
-          { id: 'financial-position', label: '⚖️ قائمة المركز المالي (Balance Sheet)' },
-          { id: 'zatca-ksa', label: '⚡ الفوترة الإلكترونية ZATCA' },
-          { id: 'musaned-escrow', label: '🤝 أمانات مساند والـ 90 يوماً' },
-          { id: 'eosb-zakat', label: '⚖️ نهاية الخدمة والزكاة' },
-          { id: 'tree', label: '🌴 شجرة الحسابات (336)' },
-          { id: 'journals', label: '📜 القيود اليومية (282)' },
-          { id: 'vouchers', label: '📑 السندات المحاسبية' },
-          { id: 'transfers', label: '🔄 التحويلات النقدية والبنوك' },
-          { id: 'suppliers-agents', label: '🚚 الموردين والوكلاء ($)' },
-          { id: 'clients-balances', label: '👥 أرصدة العملاء والمدينون' },
-          { id: 'assets-depreciation', label: '🏗️ الأصول والإهلاك الزكوي' },
-          { id: 'cost-centers', label: '🏢 مراكز التكلفة (130)' },
-          { id: 'financial-statements', label: '📈 القوائم المالية والأرباح' },
-          { id: 'tax', label: '🧾 الإقرار الضريبي VAT 15%' }
-        ].map(tab => (
+          { id: 'overview', label: '🏠 اللوحة المالية العامة', icon: 'fa-chart-pie' },
+          { id: 'financial-position', label: '⚖️ المركز المالي (Balance Sheet)', icon: 'fa-scale-balanced' },
+          { id: 'trial-balance', label: '📊 ميزان المراجعة (Trial Balance)', icon: 'fa-table-list' },
+          { id: 'income-statement', label: '📈 قائمة الدخل والأرباح (P&L)', icon: 'fa-arrow-trend-up' },
+          { id: 'journals', label: '📜 القيود المحاسبية', icon: 'fa-book-journal-whills' },
+          { id: 'vouchers', label: '📑 سندات القبض والصرف', icon: 'fa-receipt' },
+          { id: 'transfers', label: '🔄 التحويلات البنكية', icon: 'fa-money-bill-transfer' },
+          { id: 'suppliers-agents', label: '🚚 حسابات الوكلاء ($/SAR)', icon: 'fa-globe' },
+          { id: 'musaned-escrow', label: '🤝 أمانات مساند (90 يوماً)', icon: 'fa-shield-halved' },
+          { id: 'eosb-zakat', label: '🕋 نهاية الخدمة والزكاة', icon: 'fa-hand-holding-dollar' },
+        ].map((tab) => (
           <button
             key={tab.id}
-            className={`btn-odoo ${activeTab === tab.id ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
             onClick={() => setActiveTab(tab.id as any)}
-            style={{ whiteSpace: 'nowrap', fontSize: '12.5px' }}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+              activeTab === tab.id
+                ? 'bg-teal-800 text-white shadow-sm'
+                : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+            }`}
           >
-            {tab.label}
+            <span>{tab.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Tab: Statement of Financial Position (Balance Sheet - المركز المالي) */}
-      {activeTab === 'financial-position' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#005154', margin: 0 }}>
-                ⚖️ قائمة المركز المالي الموحدة (Statement of Financial Position / Balance Sheet)
-              </h3>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
-                مجموعة خالد السليم • مطابقة الأصول مع الخصوم وحقوق الملكية كما في 31 يوليو 2026
-              </p>
-            </div>
-            <button className="btn-odoo btn-odoo-purple" onClick={() => alert('تصدير قائمة المركز المالي الرسمية بصيغة PDF Mapped')}>
-              <i className="fa-solid fa-file-pdf ml-1"></i> تصدير PDF المعتمد
-            </button>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            {/* Assets Column */}
-            <div style={{ background: '#F8FAFC', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '900', color: '#005154', borderBottom: '2px solid #005154', paddingBottom: '8px', marginBottom: '16px' }}>
-                1. الأصول (Assets)
-              </h4>
-
-              <div style={{ marginBottom: '16px' }}>
-                <h5 style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--odoo-purple)', marginBottom: '8px' }}>أ. الأصول المتداولة (Current Assets)</h5>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>النقدية وما في حكمها (الصناديق والبنوك):</span>
-                  <strong>850,000.00 ر.س</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>أمانات مساند المعلقة (فترة التجربة):</span>
-                  <strong>184,500.00 ر.س</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>مدينون وأرصدة عملاء سارية:</span>
-                  <strong>215,971.20 ر.س</strong>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <h5 style={{ fontSize: '13.5px', fontWeight: '800', color: 'var(--odoo-purple)', marginBottom: '8px' }}>ب. الأصول غير المتداولة (Non-Current Assets)</h5>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>صافي الأصول الثابتة (المباني والحافلات):</span>
-                  <strong>882,500.00 ر.س</strong>
-                </div>
-              </div>
-
-              <div style={{ background: '#005154', color: 'white', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', fontWeight: '900', fontSize: '15px', marginTop: '20px' }}>
-                <span>إجمالي الأصول (Total Assets):</span>
-                <span>2,132,971.20 ر.س</span>
-              </div>
-            </div>
-
-            {/* Liabilities & Equity Column */}
-            <div style={{ background: '#F8FAFC', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '900', color: '#714B67', borderBottom: '2px solid #714B67', paddingBottom: '8px', marginBottom: '16px' }}>
-                2. الخصوم وحقوق الملكية (Liabilities & Equity)
-              </h4>
-
-              <div style={{ marginBottom: '16px' }}>
-                <h5 style={{ fontSize: '13.5px', fontWeight: '800', color: '#EF4444', marginBottom: '8px' }}>أ. الخصوم المتداولة والالتزامات</h5>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>مستحقات الموردين والوكلاء الخارجيين:</span>
-                  <strong>189,375.00 ر.س</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>مخصص مكافأة نهاية الخدمة (EOSB):</span>
-                  <strong>94,200.00 ر.س</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>الضريبة المستحقة للهيئة (VAT 15%):</span>
-                  <strong>124,000.00 ر.س</strong>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <h5 style={{ fontSize: '13.5px', fontWeight: '800', color: '#10B981', marginBottom: '8px' }}>ب. حقوق الملكية (Owners Equity)</h5>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>رأس المال المباشر المدفوع:</span>
-                  <strong>1,205,000.00 ر.س</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px dashed #CBD5E1' }}>
-                  <span>الأرباح الصافية المرحلة للفترة:</span>
-                  <strong>520,396.20 ر.س</strong>
-                </div>
-              </div>
-
-              <div style={{ background: '#714B67', color: 'white', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', fontWeight: '900', fontSize: '15px', marginTop: '20px' }}>
-                <span>إجمالي الخصوم والملكية:</span>
-                <span>2,132,971.20 ر.س</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Transfers */}
-      {activeTab === 'transfers' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
-              🔄 التحويلات النقدية بين البنوك والصناديق (Cash & Bank Transfers)
-            </h3>
-            <button className="btn-odoo btn-odoo-purple" onClick={() => setShowTransferModal(true)}>
-              + إجراء تحويل بين الحسابات
-            </button>
-          </div>
-
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>رقم التحويل</th>
-                <th>من حساب (المرسل)</th>
-                <th>إلى حساب (المستلم)</th>
-                <th>المبلغ المحول</th>
-                <th>التاريخ والوقت</th>
-                <th>البيان</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>TRF-2026-009</td>
-                <td>الصندوق الرئيسي (نقدي)</td>
-                <td>بنك الراجحي - الحساب التشغيلي</td>
-                <td style={{ fontWeight: '800', color: '#005154' }}>50,000.00 ر.س</td>
-                <td>2026-07-30 11:30</td>
-                <td>إيداع مقبوضات فروع الإيواء والتأجير</td>
-                <td><Badge text="مكتمل ومرحّل" type="success" /></td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>TRF-2026-008</td>
-                <td>بنك مساند الموحد</td>
-                <td>بنك الرياض - حساب الاستقدام</td>
-                <td style={{ fontWeight: '800', color: '#005154' }}>120,000.00 ر.س</td>
-                <td>2026-07-28 14:00</td>
-                <td>تسوية حوالة إرجاع مالي لعقود استقدام مكتملة</td>
-                <td><Badge text="مكتمل ومرحّل" type="success" /></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab 1: Financial Overview */}
+      {/* ─── TAB 1: OVERVIEW ─── */}
       {activeTab === 'overview' && (
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-            <div style={{ background: 'white', padding: '20px', borderRadius: '12px', borderRight: '4px solid #005154', border: '1px solid #E2E8F0' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي الإيرادات المعتمدة</span>
-              <div style={{ fontSize: '26px', fontWeight: '900', color: '#005154', marginTop: '6px' }}>525,471.20 ر.س</div>
-              <span style={{ fontSize: '11.5px', color: '#10B981', fontWeight: '700' }}>هذا الشهر: 164,025.70 ر.س</span>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-teal-700">
+              <span className="text-xs font-bold text-slate-400">إجمالي الإيرادات المحققة</span>
+              <div className="text-2xl font-black text-teal-900 mt-1">525,471.20 ر.س</div>
+              <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">نمو شهري 14.8%</span>
             </div>
 
-            <div style={{ background: 'white', padding: '20px', borderRadius: '12px', borderRight: '4px solid #EF4444', border: '1px solid #E2E8F0' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي المصروفات والتشغيل</span>
-              <div style={{ fontSize: '26px', fontWeight: '900', color: '#EF4444', marginTop: '6px' }}>5,000.00 ر.س</div>
-              <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>رسوم تأشيرات ومساند وإعاشة</span>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-rose-600">
+              <span className="text-xs font-bold text-slate-400">إجمالي المصروفات والتشغيل</span>
+              <div className="text-2xl font-black text-rose-700 mt-1">220,500.00 ر.س</div>
+              <span className="text-xs text-slate-400 font-medium">رسوم تأشيرات، رواتب وإعاشة</span>
             </div>
 
-            <div style={{ background: 'white', padding: '20px', borderRadius: '12px', borderRight: '4px solid #714B67', border: '1px solid #E2E8F0' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700' }}>صافي التدفق النقدي والأرباح</span>
-              <div style={{ fontSize: '26px', fontWeight: '900', color: '#714B67', marginTop: '6px' }}>520,471.20 ر.س</div>
-              <span style={{ fontSize: '11.5px', color: '#714B67', fontWeight: '700' }}>هامش ربح صافي: 99.0%</span>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-purple-700">
+              <span className="text-xs font-bold text-slate-400">صافي الأرباح التشغيلية</span>
+              <div className="text-2xl font-black text-purple-800 mt-1">304,971.20 ر.س</div>
+              <span className="text-xs text-purple-700 font-bold mt-1 inline-block">هامش ربح صافي: 58%</span>
             </div>
 
-            <div style={{ background: 'white', padding: '20px', borderRadius: '12px', borderRight: '4px solid #F59E0B', border: '1px solid #E2E8F0' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '700' }}>أمانات مساند المعلقة (90 يوماً)</span>
-              <div style={{ fontSize: '26px', fontWeight: '900', color: '#F59E0B', marginTop: '6px' }}>184,500.00 ر.س</div>
-              <span style={{ fontSize: '11.5px', color: '#F59E0B' }}>تحت فترة التجربة الإلزامية</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Suppliers & Foreign Agencies ($) */}
-      {activeTab === 'suppliers-agents' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
-            🚚 كشوفات الموردين وحسابات الوكلاء الخارجيين (Foreign Agencies USD & SAR Accounts)
-          </h3>
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>اسم الوكيل الخارجي / المورد</th>
-                <th>الدولة والمدينة</th>
-                <th>إجمالي السير الذاتية</th>
-                <th>الرصيد المستحق بالدولار ($)</th>
-                <th>المقابل بالريال (SAR)</th>
-                <th>حالة المطابقة المالية</th>
-                <th>الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>🇵🇭 PLATINUM BROTHERS INT'L</td>
-                <td>الفلبين - مانيلا</td>
-                <td>158 سيرة ذاتية</td>
-                <td style={{ fontWeight: '800', color: '#EF4444' }}>$34,500.00</td>
-                <td style={{ fontWeight: '800', color: '#005154' }}>129,375.00 ر.س</td>
-                <td><Badge text="مطابق وموثق" type="success" /></td>
-                <td><button className="btn-odoo btn-odoo-purple" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert('توليد كشف حساب بالدولار لمكتب بلاتينيوم')}>كشف حساب $</button></td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>🇪🇹 DAMAS FOREIGN EMPLOYMENT</td>
-                <td>إثيوبيا - أديس أبابا</td>
-                <td>5 سير ذاتية</td>
-                <td style={{ fontWeight: '800', color: '#EF4444' }}>$4,200.00</td>
-                <td style={{ fontWeight: '800', color: '#005154' }}>15,750.00 ر.س</td>
-                <td><Badge text="قيد مراجعة القيد #279" type="warning" /></td>
-                <td><button className="btn-odoo btn-odoo-purple" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert('توليد كشف حساب بالدولار لمكتب داماس')}>كشف حساب $</button></td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>🇺🇬 Supreme Link Employment Agency</td>
-                <td>أوغندا - كمبالا</td>
-                <td>38 سيرة ذاتية</td>
-                <td style={{ fontWeight: '800', color: '#EF4444' }}>$11,800.00</td>
-                <td style={{ fontWeight: '800', color: '#005154' }}>44,250.00 ر.س</td>
-                <td><Badge text="مطابق وموثق" type="success" /></td>
-                <td><button className="btn-odoo btn-odoo-purple" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert('توليد كشف حساب بالدولار لمكتب سوبريم لينك')}>كشف حساب $</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab: Assets & Tax Depreciation */}
-      {activeTab === 'assets-depreciation' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
-            🏗️ جدول الأصول الثابتة والإهلاك الزكوي (SOCPA / ZATCA Asset Depreciation)
-          </h3>
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>اسم الأصل الثابت</th>
-                <th>الموقع والفرع</th>
-                <th>قيمة الشراء الأصلية</th>
-                <th>نسبة الإهلاك السنوي (ZATCA)</th>
-                <th>مجمع الإهلاك التراكمي</th>
-                <th>القيم الدفترية الصافية</th>
-                <th>الإجراء المالي</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ fontWeight: '800' }}>مجمع مبنى الإيواء الرئيسي (ملكية)</td>
-                <td>الرياض - حي الملز</td>
-                <td style={{ fontWeight: '700' }}>850,000 ر.س</td>
-                <td><Badge text="5% سنوياً" type="purple" /></td>
-                <td style={{ color: '#EF4444' }}>-127,500 ر.س</td>
-                <td style={{ fontWeight: '900', color: '#005154' }}>722,500 ر.س</td>
-                <td><button className="btn-odoo btn-odoo-secondary" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert('تشغيل القيد الآلي للإهلاك الزكوي')}>قيد الإهلاك</button></td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: '800' }}>أسطول حافلات نقل الكوادر والعمالة (4 حافلات)</td>
-                <td>فروع المجموعة (الرياض، جدة، الخبر)</td>
-                <td style={{ fontWeight: '700' }}>320,000 ر.س</td>
-                <td><Badge text="25% سنوياً" type="danger" /></td>
-                <td style={{ color: '#EF4444' }}>-160,000 ر.س</td>
-                <td style={{ fontWeight: '900', color: '#005154' }}>160,000 ر.س</td>
-                <td><button className="btn-odoo btn-odoo-secondary" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert('تشغيل القيد الآلي للإهلاك الزكوي')}>قيد الإهلاك</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab: Financial Statements */}
-      {activeTab === 'financial-statements' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
-            📈 القوائم المالية الرسمية (Income Statement, Profit & Loss, Trial Balance)
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #CBD5E1', textAlign: 'center' }}>
-              <i className="fa-solid fa-chart-line" style={{ fontSize: '32px', color: '#005154', marginBottom: '8px' }}></i>
-              <h4 style={{ fontSize: '15px', fontWeight: '800', margin: '4px 0' }}>قائمة الدخل الشاملة</h4>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>صافي ربح التشغيل: 520,471.20 ر.س</p>
-              <button className="btn-odoo btn-odoo-purple" style={{ marginTop: '8px', width: '100%' }} onClick={() => alert('توليد طباعة قائمة الدخل الرسمية PDF')}>عرض وتصدير PDF</button>
-            </div>
-
-            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #CBD5E1', textAlign: 'center' }}>
-              <i className="fa-solid fa-scale-balanced" style={{ fontSize: '32px', color: '#714B67', marginBottom: '8px' }}></i>
-              <h4 style={{ fontSize: '15px', fontWeight: '800', margin: '4px 0' }}>ميزان المراجعة العام</h4>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>توازن المدين والدائن: 1,820,471 ر.س</p>
-              <button className="btn-odoo btn-odoo-purple" style={{ marginTop: '8px', width: '100%' }} onClick={() => alert('توليد ميزان المراجعة لـ 336 حساب')}>عرض ميزان المراجعة</button>
-            </div>
-
-            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #CBD5E1', textAlign: 'center' }}>
-              <i className="fa-solid fa-calculator" style={{ fontSize: '32px', color: '#10B981', marginBottom: '8px' }}></i>
-              <h4 style={{ fontSize: '15px', fontWeight: '800', margin: '4px 0' }}>ميزانية الموردين الشهرية</h4>
-              <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>مطابقة التكاليف والفيز</p>
-              <button className="btn-odoo btn-odoo-purple" style={{ marginTop: '8px', width: '100%' }} onClick={() => alert('مراجعة مطابقة ميزانية الموردين والمكاتب')}>مراجعة ميزانية الموردين</button>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-amber-500">
+              <span className="text-xs font-bold text-slate-400">أمانات مساند المعلقة (90 يوماً)</span>
+              <div className="text-2xl font-black text-amber-600 mt-1">184,500.00 ر.س</div>
+              <span className="text-xs text-amber-700 font-medium">تحت فترة الضمان الإلزامية</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tab 3: Accounts Tree */}
-      {activeTab === 'tree' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
-              🌴 شجرة الدليل المحاسبي الموحد (336 حساب)
-            </h3>
-            <button className="btn-odoo btn-odoo-purple" onClick={() => alert('إضافة حساب فرعي جديد لجدول الحسابات')}>
-              + إضافة حساب جديد
-            </button>
-          </div>
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>كود الحساب</th>
-                <th>اسم الحساب المحاسبي</th>
-                <th>التصنيف الرئيسية</th>
-                <th>الرصيد المالي الحالي</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ACCOUNTS_TREE.map((acc, idx) => (
-                <tr key={idx}>
-                  <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{acc.code}</td>
-                  <td style={{ fontWeight: '700' }}>{acc.name}</td>
-                  <td><Badge text={acc.type} type="purple" /></td>
-                  <td style={{ fontWeight: '800', color: '#005154' }}>{acc.balance.toLocaleString()} ر.س</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab 9: Journal Constraints */}
-      {activeTab === 'journals' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
-              📜 القيود المحاسبية اليومية (282 قيداً)
-            </h3>
-            <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddJournalModal(true)}>
-              + إضافة قيد محاسبي
-            </button>
-          </div>
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>رقم القيد</th>
-                <th>التاريخ</th>
-                <th>الفرع / مركز التكلفة</th>
-                <th>شرح وبيان القيد المحاسبي</th>
-                <th>المبلغ</th>
-                <th>الحالة الاعتمادية</th>
-              </tr>
-            </thead>
-            <tbody>
-              {journals.map(j => (
-                <tr key={j.id}>
-                  <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{j.ref_no}</td>
-                  <td>{j.date}</td>
-                  <td><Badge text={j.branch} type="info" /></td>
-                  <td style={{ fontSize: '13px' }}>{j.description}</td>
-                  <td style={{ fontWeight: '800' }}>{j.amount.toLocaleString()} ر.س</td>
-                  <td><Badge text={j.status} type={j.status === 'معتمد' ? 'success' : 'warning'} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab 10: Vouchers */}
-      {activeTab === 'vouchers' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
-              📑 سندات القبض وسندات الصرف العامة
-            </h3>
-            <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAddVoucherModal(true)}>
-              + أضف سند جديد
-            </button>
-          </div>
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>رقم السند</th>
-                <th>نوع السند</th>
-                <th>التاريخ</th>
-                <th>الدافع / المستفيد</th>
-                <th>الخزنة / البنك</th>
-                <th>المبلغ</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vouchers.map(v => (
-                <tr key={v.id}>
-                  <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{v.voucher_no}</td>
-                  <td><Badge text={v.type} type={v.type === 'قبض' ? 'success' : 'danger'} /></td>
-                  <td>{v.date}</td>
-                  <td style={{ fontWeight: '700' }}>{v.payee_payer}</td>
-                  <td>{v.treasury}</td>
-                  <td style={{ fontWeight: '800' }}>{v.amount.toLocaleString()} ر.س</td>
-                  <td><Badge text={v.status} type="success" /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Transfer Modal */}
-      {showTransferModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '500px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
-                إجراء تحويل نقدي بين الخزائن والبنوك
+      {/* ─── TAB 2: TRIAL BALANCE (ميزان المراجعة) ─── */}
+      {activeTab === 'trial-balance' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                <i className="fa-solid fa-table-list text-teal-700"></i>
+                ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowTransferModal(false)}></i>
+              <p className="text-xs text-slate-500 mt-0.5">مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
             </div>
 
-            <form onSubmit={handleCreateTransfer}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">من حساب (الصندوق/البنك المرسل) *</label>
-                <select
-                  className="filter-select"
-                  value={transferForm.from_account}
-                  onChange={e => setTransferForm({ ...transferForm, from_account: e.target.value })}
-                >
-                  <option>الصندوق الرئيسي (نقدي)</option>
-                  <option>بنك الراجحي - الحساب الرئيسي</option>
-                  <option>بنك مساند الموحد</option>
-                  <option>بنك الرياض - حساب الاستقدام</option>
-                </select>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> Excel
+              </button>
+              <button
+                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'csv', `ميزان المراجعة - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-csv"></i> CSV
+              </button>
+              <button
+                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-pdf"></i> PDF
+              </button>
+              <button
+                onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'print', `ميزان المراجعة - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-print"></i> طباعة رسمية
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs">
+              <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-3">رمز الحساب</th>
+                  <th className="py-3 px-3">اسم الحساب المحاسبي</th>
+                  <th className="py-3 px-3">النوع</th>
+                  <th className="py-3 px-3">افتتاحي مدين</th>
+                  <th className="py-3 px-3">افتتاحي دائن</th>
+                  <th className="py-3 px-3">حركة مدين</th>
+                  <th className="py-3 px-3">حركة دائن</th>
+                  <th className="py-3 px-3 font-black text-teal-900">الرصيد النهائي (ر.س)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                {TRIAL_BALANCE_DATA.map((row) => (
+                  <tr key={row.code} className="hover:bg-slate-50">
+                    <td className="py-2.5 px-3 font-mono font-bold text-purple-700">{row.code}</td>
+                    <td className="py-2.5 px-3 font-bold text-slate-900">{row.name}</td>
+                    <td className="py-2.5 px-3">
+                      <Badge text={row.type} type="purple" />
+                    </td>
+                    <td className="py-2.5 px-3 font-mono">{row.opening_debit.toLocaleString()}</td>
+                    <td className="py-2.5 px-3 font-mono">{row.opening_credit.toLocaleString()}</td>
+                    <td className="py-2.5 px-3 font-mono text-emerald-700 font-bold">{row.period_debit.toLocaleString()}</td>
+                    <td className="py-2.5 px-3 font-mono text-rose-700 font-bold">{row.period_credit.toLocaleString()}</td>
+                    <td className={`py-2.5 px-3 font-mono font-black ${row.balance >= 0 ? 'text-teal-800' : 'text-purple-800'}`}>
+                      {Math.abs(row.balance).toLocaleString()} {row.balance >= 0 ? 'مدين' : 'دائن'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 3: BALANCE SHEET (قائمة المركز المالي) ─── */}
+      {activeTab === 'financial-position' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                <i className="fa-solid fa-scale-balanced text-teal-700"></i>
+                قائمة المركز المالي الموحدة (Statement of Financial Position / Balance Sheet)
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'excel', `المركز المالي - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> Excel
+              </button>
+              <button
+                onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'pdf', `المركز المالي - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-pdf"></i> PDF
+              </button>
+              <button
+                onClick={() => exportData('balance-sheet', TRIAL_BALANCE_DATA, 'print', `قائمة المركز المالي - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-print"></i> طباعة رسمية
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Assets */}
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+              <h4 className="font-black text-teal-900 border-b-2 border-teal-700 pb-2 text-sm flex justify-between">
+                <span>1. الأصول (Assets)</span>
+                <span>2,132,971.20 ر.س</span>
+              </h4>
+
+              <div className="space-y-2 text-xs">
+                <div className="font-bold text-slate-700">أ. الأصول المتداولة (Current Assets):</div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>النقدية وما في حكمها (الصناديق والبنوك):</span>
+                  <span className="font-bold font-mono">850,000.00 ر.س</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>أمانات مساند المعلقة (فترة التجربة 90 يوماً):</span>
+                  <span className="font-bold font-mono">184,500.00 ر.س</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>المدينون وأرصدة العملاء:</span>
+                  <span className="font-bold font-mono">215,971.20 ر.س</span>
+                </div>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">إلى حساب (البنك المستلم) *</label>
-                <select
-                  className="filter-select"
-                  value={transferForm.to_account}
-                  onChange={e => setTransferForm({ ...transferForm, to_account: e.target.value })}
-                >
-                  <option>بنك الراجحي - الحساب التشغيلي</option>
-                  <option>بنك الرياض - حساب الاستقدام</option>
-                  <option>صندوق الإيواء</option>
-                </select>
+              <div className="space-y-2 text-xs pt-2">
+                <div className="font-bold text-slate-700">ب. الأصول غير المتداولة (Non-Current Assets):</div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>صافي الأصول الثابتة (المباني والحافلات):</span>
+                  <span className="font-bold font-mono">882,500.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Liabilities & Equity */}
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+              <h4 className="font-black text-purple-900 border-b-2 border-purple-700 pb-2 text-sm flex justify-between">
+                <span>2. الخصوم وحقوق الملكية (Liabilities & Equity)</span>
+                <span>2,132,971.20 ر.س</span>
+              </h4>
+
+              <div className="space-y-2 text-xs">
+                <div className="font-bold text-slate-700">أ. الخصوم والالتزامات المتداولة:</div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>مستحقات الموردين والوكلاء الخارجيين:</span>
+                  <span className="font-bold font-mono">189,375.00 ر.س</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>مخصص مكافأة نهاية الخدمة (EOSB):</span>
+                  <span className="font-bold font-mono">94,200.00 ر.س</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>ضريبة القيمة المضافة المستحقة (ZATCA VAT 15%):</span>
+                  <span className="font-bold font-mono">124,000.00 ر.س</span>
+                </div>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">المبلغ المحوّل بالريال *</label>
+              <div className="space-y-2 text-xs pt-2">
+                <div className="font-bold text-slate-700">ب. حقوق الملكية (Owner's Equity):</div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>رأس المال المباشر المدفوع:</span>
+                  <span className="font-bold font-mono">1,205,000.00 ر.س</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200 text-slate-600">
+                  <span>الأرباح الصافية المرحلة:</span>
+                  <span className="font-bold font-mono text-emerald-700">520,396.20 ر.س</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 4: INCOME STATEMENT (قائمة الدخل والأرباح) ─── */}
+      {activeTab === 'income-statement' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+                <i className="fa-solid fa-arrow-trend-up text-emerald-600"></i>
+                قائمة الدخل والأرباح والخسائر (Income Statement / P&L)
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">تحليل الإيرادات، التكاليف المباشرة، والمصروفات الإدارية وصافي الربح</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'excel', `قائمة الدخل - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> Excel
+              </button>
+              <button
+                onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'pdf', `قائمة الدخل - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-pdf"></i> PDF
+              </button>
+              <button
+                onClick={() => exportData('income-statement', TRIAL_BALANCE_DATA, 'print', `قائمة الدخل - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-print"></i> طباعة رسمية
+              </button>
+            </div>
+          </div>
+
+          <div className="max-w-2xl mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 text-sm font-medium">
+            <div className="flex justify-between py-2 border-b border-slate-200 font-bold text-slate-800">
+              <span>إيرادات خدمات التوسط في الاستقدام (مساند):</span>
+              <span className="font-mono">410,000.00 ر.س</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-slate-200 font-bold text-slate-800">
+              <span>إيرادات عقود التأجير والتشغيل:</span>
+              <span className="font-mono">115,471.20 ر.س</span>
+            </div>
+            <div className="flex justify-between py-2 bg-emerald-50/80 px-3 rounded-xl font-black text-emerald-900 border border-emerald-200">
+              <span>إجمالي الإيرادات التشغيلية:</span>
+              <span className="font-mono">525,471.20 ر.س</span>
+            </div>
+
+            <div className="pt-2 text-rose-800">
+              <div className="flex justify-between py-2 border-b border-slate-200">
+                <span>تكلفة المكاتب الخارجية والتأشيرات:</span>
+                <span className="font-mono">-65,000.00 ر.س</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-slate-200">
+                <span>مصاريف الإعاشة والإيواء والفحص الطبي:</span>
+                <span className="font-mono">-25,000.00 ر.س</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-slate-200">
+                <span>الرواتب والأجور والمكافآت:</span>
+                <span className="font-mono">-130,500.00 ر.س</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between py-3 bg-teal-900 text-white px-4 rounded-xl font-black text-base shadow-md">
+              <span>صافي الربح للفترة (Net Income):</span>
+              <span className="font-mono">304,971.20 ر.س</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 5: JOURNALS ─── */}
+      {activeTab === 'journals' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <h3 className="font-bold text-base text-slate-900">سجل القيود اليومية</h3>
+              <select
+                value={selectedBranch}
+                onChange={(e) => setSelectedBranch(e.target.value)}
+                className="px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold"
+              >
+                <option value="ALL">جميع الفروع</option>
+                <option value="الرياض">فرع الرياض</option>
+                <option value="جدة">فرع جدة</option>
+                <option value="الخبر">فرع الخبر</option>
+                <option value="الإيواء">مركز الإيواء</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => exportData('journals', filteredJournals, 'excel', `القيود اليومية - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> Excel
+              </button>
+              <button
+                onClick={() => exportData('journals', filteredJournals, 'pdf', `القيود اليومية - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-pdf"></i> PDF
+              </button>
+              <button
+                onClick={() => exportData('journals', filteredJournals, 'print', `سجل القيود المحاسبية - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-print"></i> طباعة
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-sm">
+              <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                <tr>
+                  <th className="py-3 px-4">رقم القيد</th>
+                  <th className="py-3 px-4">التاريخ</th>
+                  <th className="py-3 px-4">الفرع / مركز التكلفة</th>
+                  <th className="py-3 px-4">البيان والشرح</th>
+                  <th className="py-3 px-4">المبلغ</th>
+                  <th className="py-3 px-4">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                {filteredJournals.map((j) => (
+                  <tr key={j.id} className="hover:bg-slate-50">
+                    <td className="py-3 px-4 font-mono font-bold text-purple-700">{j.ref_no}</td>
+                    <td className="py-3 px-4 text-xs text-slate-500">{j.date}</td>
+                    <td className="py-3 px-4 text-xs font-bold text-slate-700">{j.branch}</td>
+                    <td className="py-3 px-4">{j.description}</td>
+                    <td className="py-3 px-4 font-black text-teal-800">{j.amount.toLocaleString()} ر.س</td>
+                    <td className="py-3 px-4">
+                      <Badge text={j.status} type="success" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 6: VOUCHERS ─── */}
+      {activeTab === 'vouchers' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <h3 className="font-bold text-base text-slate-900">سجل سندات القبض والصرف</h3>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => exportData('vouchers', vouchers, 'excel', `سندات القبض والصرف - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> Excel
+              </button>
+              <button
+                onClick={() => exportData('vouchers', vouchers, 'pdf', `سندات القبض والصرف - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-pdf"></i> PDF
+              </button>
+              <button
+                onClick={() => exportData('vouchers', vouchers, 'print', `سجل السندات المالية - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-print"></i> طباعة
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-sm">
+              <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                <tr>
+                  <th className="py-3 px-4">رقم السند</th>
+                  <th className="py-3 px-4">النوع</th>
+                  <th className="py-3 px-4">التاريخ</th>
+                  <th className="py-3 px-4">المدفوع له / القابض</th>
+                  <th className="py-3 px-4">الخزينة / البنك</th>
+                  <th className="py-3 px-4">المبلغ</th>
+                  <th className="py-3 px-4">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                {vouchers.map((v) => (
+                  <tr key={v.id} className="hover:bg-slate-50">
+                    <td className="py-3 px-4 font-mono font-bold text-teal-800">{v.voucher_no}</td>
+                    <td className="py-3 px-4">
+                      <Badge text={v.type} type={v.type === 'قبض' ? 'success' : 'danger'} />
+                    </td>
+                    <td className="py-3 px-4 text-xs text-slate-500">{v.date}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900">{v.payee_payer}</td>
+                    <td className="py-3 px-4 text-xs font-bold text-slate-700">{v.treasury}</td>
+                    <td className="py-3 px-4 font-black text-emerald-800">{v.amount.toLocaleString()} ر.س</td>
+                    <td className="py-3 px-4">
+                      <Badge text={v.status} type="success" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 7: SUPPLIERS / FOREIGN AGENCIES ($) ─── */}
+      {activeTab === 'suppliers-agents' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <h3 className="font-bold text-base text-slate-900">كشوفات حسابات الموردين والوكلاء الخارجيين بالدولار ($/SAR)</h3>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => exportData('external-offices', SUPPLIERS_ACCOUNTS, 'excel', `حسابات الوكلاء الخارجيين - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-excel"></i> Excel
+              </button>
+              <button
+                onClick={() => exportData('external-offices', SUPPLIERS_ACCOUNTS, 'pdf', `حسابات الوكلاء الخارجيين - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-file-pdf"></i> PDF
+              </button>
+              <button
+                onClick={() => exportData('external-offices', SUPPLIERS_ACCOUNTS, 'print', `كشف حسابات الوكلاء الخارجيين - ${activeCompany.name}`)}
+                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <i className="fa-solid fa-print"></i> طباعة رسمية
+              </button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-sm">
+              <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+                <tr>
+                  <th className="py-3 px-4">اسم الوكيل الخارجي</th>
+                  <th className="py-3 px-4">الدولة والمدينة</th>
+                  <th className="py-3 px-4">السير الذاتية</th>
+                  <th className="py-3 px-4">الرصيد بالدولار ($)</th>
+                  <th className="py-3 px-4">المقابل بالريال (SAR)</th>
+                  <th className="py-3 px-4">حالة المطابقة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                {SUPPLIERS_ACCOUNTS.map((s) => (
+                  <tr key={s.id} className="hover:bg-slate-50">
+                    <td className="py-3 px-4 font-bold text-slate-900">{s.name}</td>
+                    <td className="py-3 px-4 text-xs text-slate-500">{s.country}</td>
+                    <td className="py-3 px-4 font-bold text-purple-700">{s.cv_count} سيرة ذاتية</td>
+                    <td className="py-3 px-4 font-mono font-bold text-rose-600">${s.balance_usd.toLocaleString()}</td>
+                    <td className="py-3 px-4 font-mono font-black text-teal-800">{s.balance_sar.toLocaleString()} ر.س</td>
+                    <td className="py-3 px-4">
+                      <Badge text={s.status} type="success" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB 8: EOSB & ZAKAT CALCULATOR ─── */}
+      {activeTab === 'eosb-zakat' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+            <i className="fa-solid fa-hand-holding-dollar text-purple-700"></i>
+            حاسبة مخصص مكافأة نهاية الخدمة (EOSB) والزكاة الشرعية (نظام العمل السعودي)
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+              <h4 className="font-bold text-sm text-slate-800">بيانات احتساب مكافأة الموظف:</h4>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">الراتب الأساسي الأخير (ر.س)</label>
                 <input
                   type="number"
-                  className="filter-input"
-                  placeholder="0.00"
-                  value={transferForm.amount}
-                  onChange={e => setTransferForm({ ...transferForm, amount: e.target.value })}
-                  required
+                  value={eosbCalc.salary}
+                  onChange={(e) => setEosbCalc({ ...eosbCalc, salary: e.target.value })}
+                  className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold"
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowTransferModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">إتمام التحويل وتوليد القيد</button>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">سنوات الخدمة الإجمالية</label>
+                <input
+                  type="number"
+                  step="0.5"
+                  value={eosbCalc.years}
+                  onChange={(e) => setEosbCalc({ ...eosbCalc, years: e.target.value })}
+                  className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold"
+                />
               </div>
-            </form>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1">سبب انتهاء العلاقة العمالية</label>
+                <select
+                  value={eosbCalc.reason}
+                  onChange={(e) => setEosbCalc({ ...eosbCalc, reason: e.target.value as any })}
+                  className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold"
+                >
+                  <option value="resignation">استقالة من الموظف (المادة 85)</option>
+                  <option value="termination">إنهاء عقد من المنشأة / انتهاء المدة (المادة 84)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="bg-purple-900 text-white p-6 rounded-2xl shadow-lg space-y-4">
+              <h4 className="font-bold text-base text-purple-200">النتيجة النظامية المعتمدة:</h4>
+              <div className="text-3xl font-black text-white">
+                {calculateEOSBResult().toLocaleString()} ر.س
+              </div>
+              <p className="text-xs text-purple-200 leading-relaxed">
+                تم الاحتساب وفقاً للمادتين 84 و 85 من نظام العمل السعودي المعتمد من وزارة الموارد البشرية والتنمية الاجتماعية.
+              </p>
+            </div>
           </div>
         </div>
       )}
 
       {/* Add Voucher Modal */}
       {showAddVoucherModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '500px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
-                أضف سند محاسبي جديد (قبض / صرف)
-              </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddVoucherModal(false)}></i>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <h3 className="font-bold text-base">إصدار سند مالي جديد (قبض / صرف)</h3>
+              <button onClick={() => setShowAddVoucherModal(false)} className="text-slate-400 hover:text-white">
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
             </div>
 
-            <form onSubmit={handleCreateVoucher}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">نوع السند *</label>
+            <form onSubmit={handleCreateVoucher} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">نوع السند *</label>
                 <select
-                  className="filter-select"
                   value={voucherForm.type}
-                  onChange={e => setVoucherForm({ ...voucherForm, type: e.target.value as any })}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, type: e.target.value as any })}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
                 >
-                  <option value="قبض">سند قبض (إيراد)</option>
-                  <option value="صرف">سند صرف (مصروف)</option>
+                  <option value="قبض">سند قبض (مقبوضات نقدية/بنكية)</option>
+                  <option value="صرف">سند صرف (مصروفات/مستحقات)</option>
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الدافع / المستفيد *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم الدافع / المستفيد *</label>
                 <input
                   type="text"
-                  className="filter-input"
-                  placeholder="اسم العميل أو المورد أو الموظف..."
                   value={voucherForm.payee_payer}
-                  onChange={e => setVoucherForm({ ...voucherForm, payee_payer: e.target.value })}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, payee_payer: e.target.value })}
+                  placeholder="اسم العميل، المورد، أو الموظف..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"
                   required
                 />
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الخزنة / البنك *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">الخزينة / الحساب البنكي</label>
                 <select
-                  className="filter-select"
                   value={voucherForm.treasury}
-                  onChange={e => setVoucherForm({ ...voucherForm, treasury: e.target.value })}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, treasury: e.target.value })}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
                 >
-                  <option>بنك الراجحي - الحساب الرئيسي</option>
+                  <option>بنك الراجحي - الحساب التشغيلي</option>
                   <option>بنك الرياض - حساب الاستقدام</option>
-                  <option>بنك مساند</option>
+                  <option>بنك مساند الموحد</option>
                   <option>الصندوق الرئيسي (نقدي)</option>
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">المبلغ بالريال السعودي *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">المبلغ بالريال السعودي *</label>
                 <input
                   type="number"
                   step="0.01"
-                  className="filter-input"
-                  placeholder="0.00"
                   value={voucherForm.amount}
-                  onChange={e => setVoucherForm({ ...voucherForm, amount: e.target.value })}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, amount: e.target.value })}
+                  placeholder="0.00"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900"
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddVoucherModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">اعتماد وحفظ السند</button>
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddVoucherModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-sm font-bold shadow-md shadow-teal-200"
+                >
+                  حفظ واعتماد السند
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* Add Journal Constraint Modal */}
+      {/* Add Journal Modal */}
       {showAddJournalModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
-                إضافة وتوجيه قيد محاسبي جديد
-              </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddJournalModal(false)}></i>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <h3 className="font-bold text-base">تسجيل قيد محاسبي يومي جديد</h3>
+              <button onClick={() => setShowAddJournalModal(false)} className="text-slate-400 hover:text-white">
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
             </div>
 
-            <form onSubmit={handleCreateJournal}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الفرع / مركز التكلفة *</label>
+            <form onSubmit={handleCreateJournal} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">الفرع المسؤول / مركز التكلفة</label>
                 <select
-                  className="filter-select"
                   value={journalForm.branch}
-                  onChange={e => setJournalForm({ ...journalForm, branch: e.target.value })}
+                  onChange={(e) => setJournalForm({ ...journalForm, branch: e.target.value })}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
                 >
                   <option>فرع الرياض الرئيسي</option>
-                  <option>فرع جدة (الغربية)</option>
-                  <option>فرع الخبر (الشرقية)</option>
+                  <option>فرع جدة</option>
+                  <option>فرع الخبر والدمام</option>
                   <option>مركز الإيواء</option>
+                  <option>الإدارة العامة</option>
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">البيان والشرح التفصيلي للقيد *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">البيان والشرح التفصيلي للقيد *</label>
                 <textarea
-                  className="filter-input"
                   rows={3}
-                  placeholder="مثال: قيد إثبات فاتورة استقدام رقم..."
                   value={journalForm.description}
-                  onChange={e => setJournalForm({ ...journalForm, description: e.target.value })}
+                  onChange={(e) => setJournalForm({ ...journalForm, description: e.target.value })}
+                  placeholder="مثال: قيد إثبات استحقاق فاتورة رقم..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"
                   required
                 />
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">قيمة القيد المحاسبي *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">المبلغ الإجمالي للقيد (ر.س) *</label>
                 <input
                   type="number"
                   step="0.01"
-                  className="filter-input"
-                  placeholder="0.00"
                   value={journalForm.amount}
-                  onChange={e => setJournalForm({ ...journalForm, amount: e.target.value })}
+                  onChange={(e) => setJournalForm({ ...journalForm, amount: e.target.value })}
+                  placeholder="0.00"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900"
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddJournalModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">إرسال القيد للاعتماد</button>
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddJournalModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200"
+                >
+                  ترحيل القيد
+                </button>
               </div>
             </form>
           </div>

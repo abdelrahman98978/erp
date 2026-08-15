@@ -113,10 +113,10 @@ export const FinancialRequestsPage: React.FC = () => {
 
       <DataTable
         columns={columns}
-        data={MOCK_FIN_REQUESTS}
+        data={requests}
         searchPlaceholder="ابحث برقم الطلب المالي، نوع الطلب، اسم العميل، أو رقم العقد..."
         addLabel="طلب مالي جديد"
-        exportConfig={{ sectionKey: 'financial-requests', rawData: MOCK_FIN_REQUESTS }}
+        exportConfig={{ sectionKey: 'financial-requests', rawData: requests }}
       />
 
       {showCreateModal && (

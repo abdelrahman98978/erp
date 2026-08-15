@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { exportData } from '../../services/exportService';
+import { exportData, ExportFormat } from '../../services/exportService';
 
 export interface Column<T> {
   header: string;
@@ -21,7 +21,7 @@ interface DataTableProps<T> {
   onAddClick?: () => void;
   addLabel?: string;
   filterContent?: React.ReactNode;
-  /** Export configuration — enables Excel/PDF/CSV buttons */
+  /** Export configuration — enables Excel/PDF/CSV/Print buttons */
   exportConfig?: ExportConfig;
 }
 
@@ -32,14 +32,14 @@ export function DataTable<T extends { id: string | number }>({
   onAddClick,
   addLabel = 'إضافة جديد',
   filterContent,
-  exportConfig
+  exportConfig,
 }: DataTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [showExportMenu, setShowExportMenu] = useState(false);
 
-  const filteredData = data.filter(row => {
+  const filteredData = data.filter((row) => {
     if (!searchQuery) return true;
     return JSON.stringify(row).toLowerCase().includes(searchQuery.toLowerCase());
   });
@@ -48,7 +48,7 @@ export function DataTable<T extends { id: string | number }>({
     if (selectedIds.size === filteredData.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredData.map(r => r.id)));
+      setSelectedIds(new Set(filteredData.map((r) => r.id)));
     }
   };
 
@@ -62,19 +62,18 @@ export function DataTable<T extends { id: string | number }>({
     setSelectedIds(next);
   };
 
-  /** Get data for export: use filtered data if search is active */
+  /** Get data for export: use filtered data or raw data */
   const getExportData = (): any[] => {
-    if (!exportConfig) return [];
-    if (searchQuery) {
-      // Use the filtered view data
-      return filteredData as any[];
+    if (exportConfig) {
+      return searchQuery ? (filteredData as any[]) : exportConfig.rawData;
     }
-    return exportConfig.rawData;
+    return filteredData as any[];
   };
 
-  const handleExport = (format: 'excel' | 'pdf' | 'csv') => {
-    if (!exportConfig) return;
-    exportData(exportConfig.sectionKey, getExportData(), format);
+  const handleExport = (format: ExportFormat) => {
+    const sectionKey = exportConfig ? exportConfig.sectionKey : 'general_data';
+    const exportRows = getExportData();
+    exportData(sectionKey, exportRows, format);
     setShowExportMenu(false);
   };
 
@@ -90,7 +89,7 @@ export function DataTable<T extends { id: string | number }>({
               className="table-search-input"
               placeholder={searchPlaceholder}
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
               <i
@@ -133,69 +132,122 @@ export function DataTable<T extends { id: string | number }>({
             </button>
 
             {showExportMenu && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                marginTop: '4px',
-                background: 'white',
-                border: '1px solid #E5E7EB',
-                borderRadius: '8px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                zIndex: 50,
-                minWidth: '180px',
-                overflow: 'hidden'
-              }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  marginTop: '4px',
+                  background: 'white',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '10px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
+                  zIndex: 50,
+                  minWidth: '200px',
+                  overflow: 'hidden',
+                  fontFamily: 'Cairo, sans-serif',
+                }}
+              >
                 <button
                   onClick={() => handleExport('excel')}
                   style={{
-                    width: '100%', padding: '10px 16px', border: 'none', background: 'transparent',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
-                    fontSize: '13px', fontWeight: '600', fontFamily: 'inherit', textAlign: 'right'
+                    width: '100%',
+                    padding: '10px 14px',
+                    textAlign: 'right',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#005154',
+                    borderBottom: '1px solid #F1F5F9',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <i className="fa-solid fa-file-excel" style={{ color: '#10B981', fontSize: '16px' }}></i>
-                  تصدير Excel (XLSX)
+                  <i className="fa-solid fa-file-excel text-emerald-600"></i>
+                  <span>تصدير إكسيل (Excel .xlsx)</span>
                 </button>
-                <button
-                  onClick={() => handleExport('pdf')}
-                  style={{
-                    width: '100%', padding: '10px 16px', border: 'none', background: 'transparent',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
-                    fontSize: '13px', fontWeight: '600', fontFamily: 'inherit', textAlign: 'right'
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <i className="fa-solid fa-file-pdf" style={{ color: '#EF4444', fontSize: '16px' }}></i>
-                  تصدير PDF
-                </button>
+
                 <button
                   onClick={() => handleExport('csv')}
                   style={{
-                    width: '100%', padding: '10px 16px', border: 'none', background: 'transparent',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px',
-                    fontSize: '13px', fontWeight: '600', fontFamily: 'inherit', textAlign: 'right'
+                    width: '100%',
+                    padding: '10px 14px',
+                    textAlign: 'right',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#334155',
+                    borderBottom: '1px solid #F1F5F9',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <i className="fa-solid fa-file-csv" style={{ color: '#3B82F6', fontSize: '16px' }}></i>
-                  تصدير CSV
+                  <i className="fa-solid fa-file-csv text-blue-600"></i>
+                  <span>تصدير نصي (CSV UTF-8)</span>
+                </button>
+
+                <button
+                  onClick={() => handleExport('pdf')}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    textAlign: 'right',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#991B1B',
+                    borderBottom: '1px solid #F1F5F9',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <i className="fa-solid fa-file-pdf text-rose-600"></i>
+                  <span>تصدير بي دي إف (PDF Doc)</span>
+                </button>
+
+                <button
+                  onClick={() => handleExport('print')}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    textAlign: 'right',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#714B67',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <i className="fa-solid fa-print text-purple-700"></i>
+                  <span>معاينة وطباعة تقرير رسمي</span>
                 </button>
               </div>
             )}
           </div>
 
-          <button className="btn-odoo btn-odoo-secondary" title="طباعة" onClick={() => window.print()}>
-            <i className="fa-solid fa-print"></i>
-            <span>طباعة</span>
-          </button>
-
           {onAddClick && (
-            <button className="btn-odoo btn-odoo-primary" onClick={onAddClick}>
+            <button className="btn-odoo btn-odoo-purple" onClick={onAddClick}>
               <i className="fa-solid fa-plus"></i>
               <span>{addLabel}</span>
             </button>
@@ -203,27 +255,28 @@ export function DataTable<T extends { id: string | number }>({
         </div>
       </div>
 
-      {/* Filter Drawer Panel */}
+      {/* Advanced Filter Content */}
       {showFilters && filterContent && (
-        <div className="filter-panel">
+        <div style={{ padding: '16px 20px', background: '#F8FAFC', borderBottom: '1px solid #E5E7EB' }}>
           {filterContent}
         </div>
       )}
 
       {/* Main Table */}
-      <div className="data-table-wrapper">
+      <div className="table-responsive">
         <table className="odoo-data-table">
           <thead>
             <tr>
-              <th style={{ width: '40px' }}>
+              <th style={{ width: '40px', textAlign: 'center' }}>
                 <input
                   type="checkbox"
-                  checked={selectedIds.size > 0 && selectedIds.size === filteredData.length}
+                  checked={filteredData.length > 0 && selectedIds.size === filteredData.length}
                   onChange={toggleSelectAll}
+                  style={{ cursor: 'pointer', accentColor: 'var(--odoo-purple)' }}
                 />
               </th>
-              {columns.map((col, idx) => (
-                <th key={idx} style={{ width: col.width }}>
+              {columns.map((col, index) => (
+                <th key={index} style={{ width: col.width }}>
                   {col.header}
                 </th>
               ))}
@@ -232,44 +285,53 @@ export function DataTable<T extends { id: string | number }>({
           <tbody>
             {filteredData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                  <i className="fa-solid fa-folder-open" style={{ fontSize: '32px', marginBottom: '12px', display: 'block' }}></i>
-                  لا توجد بيانات مطابقة للبحث الحركي
+                <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>
+                  <i className="fa-solid fa-inbox" style={{ fontSize: '32px', marginBottom: '8px', display: 'block', opacity: 0.5 }}></i>
+                  لا توجد نتائج مطابقة لخيارات البحث أو التصفية
                 </td>
               </tr>
             ) : (
-              filteredData.map(row => {
-                const isSelected = selectedIds.has(row.id);
-                return (
-                  <tr key={row.id} style={{ background: isSelected ? 'rgba(0, 160, 157, 0.05)' : undefined }}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleSelectRow(row.id)}
-                      />
+              filteredData.map((row) => (
+                <tr
+                  key={row.id}
+                  style={{
+                    backgroundColor: selectedIds.has(row.id) ? 'rgba(113, 75, 103, 0.05)' : undefined,
+                  }}
+                >
+                  <td style={{ textAlign: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(row.id)}
+                      onChange={() => toggleSelectRow(row.id)}
+                      style={{ cursor: 'pointer', accentColor: 'var(--odoo-purple)' }}
+                    />
+                  </td>
+                  {columns.map((col, colIdx) => (
+                    <td key={colIdx}>
+                      {typeof col.accessor === 'function'
+                        ? col.accessor(row)
+                        : (row[col.accessor] as React.ReactNode)}
                     </td>
-                    {columns.map((col, cIdx) => {
-                      const cellValue = typeof col.accessor === 'function' ? col.accessor(row) : (row[col.accessor] as any);
-                      return <td key={cIdx}>{cellValue}</td>;
-                    })}
-                  </tr>
-                );
-              })
+                  ))}
+                </tr>
+              ))
             )}
           </tbody>
         </table>
       </div>
 
-      {/* Table Footer Pagination */}
-      <div style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #E5E7EB', fontSize: '13px', color: 'var(--text-muted)' }}>
-        <span>عرض {filteredData.length} من إجمالي {data.length} عنصر</span>
-        <div style={{ display: 'flex', gap: '4px' }}>
-          <button className="btn-odoo btn-odoo-secondary" style={{ padding: '4px 10px', height: '30px' }} disabled>السابق</button>
-          <button className="btn-odoo btn-odoo-primary" style={{ padding: '4px 10px', height: '30px' }}>1</button>
-          <button className="btn-odoo btn-odoo-secondary" style={{ padding: '4px 10px', height: '30px' }}>التالي</button>
+      {/* Table Footer Stats */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#F8FAFC', borderTop: '1px solid #E5E7EB', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+        <div>
+          إجمالي العناصر المعروضة: <strong>{filteredData.length}</strong> من أصل <strong>{data.length}</strong>
+        </div>
+        <div>
+          {searchQuery && <span className="badge badge-purple" style={{ marginLeft: '6px' }}>نتائج مصفاة</span>}
+          <span>نظام خالد السليم ERP</span>
         </div>
       </div>
     </div>
   );
 }
+
+export default DataTable;

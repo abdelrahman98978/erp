@@ -1,13 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { ShelterItem } from '../types';
 import { exportData } from '../services/exportService';
-import { realErpDataStore } from '../services/realErpDataStore';
+import { useShelterRecords, useTableMutation } from '../hooks/queries/useErpQueries';
+import { useCompany } from '../contexts/CompanyContext';
 
-const EXTENDED_SHELTER_DATA: ShelterItem[] = [
+export interface ShelterRecordItem {
+  id: string;
+  company_id: string;
+  maid_name: string;
+  nationality: string;
+  passport: string;
+  client_name?: string;
+  contract_ref?: string;
+  shelter_location: string;
+  days_in_shelter: number;
+  catering_meals_count: number;
+  work_willingness: 'ترغب بالعمل' | 'لا ترغب بالعمل' | 'غير محدد';
+  status: 'داخل الإيواء' | 'متاح للنقل' | 'مرحلة الترحيل' | 'خارج الإيواء' | 'تم الترحيل';
+  created_at: string;
+}
+
+const DEFAULT_MOCK_SHELTER: ShelterRecordItem[] = [
   {
     id: 'SH-2026-001',
-    maid_name: 'Sara Ethiopian Maid',
+    company_id: 'SAF',
+    maid_name: 'سارة أديسي (Sara Ethiopian)',
     nationality: 'إثيوبيا',
     passport: 'EP9827341',
     client_name: 'شركة توباز للتأجير',
@@ -16,11 +33,13 @@ const EXTENDED_SHELTER_DATA: ShelterItem[] = [
     days_in_shelter: 12,
     catering_meals_count: 36,
     work_willingness: 'ترغب بالعمل',
-    status: 'داخل الإيواء'
+    status: 'داخل الإيواء',
+    created_at: new Date().toISOString(),
   },
   {
     id: 'SH-2026-002',
-    maid_name: 'Mary Jane Santos',
+    company_id: 'SAF',
+    maid_name: 'ماري جين سانتوس (Mary Jane Santos)',
     nationality: 'الفلبين',
     passport: 'PH8849201',
     client_name: 'دار الرواد للمقاولات',
@@ -29,11 +48,13 @@ const EXTENDED_SHELTER_DATA: ShelterItem[] = [
     days_in_shelter: 4,
     catering_meals_count: 12,
     work_willingness: 'ترغب بالعمل',
-    status: 'متاح للنقل'
+    status: 'متاح للنقل',
+    created_at: new Date().toISOString(),
   },
   {
     id: 'SH-2026-003',
-    maid_name: 'Florence Nabatanzi',
+    company_id: 'SAF',
+    maid_name: 'فلورنس ناباتانزي (Florence Nabatanzi)',
     nationality: 'أوغندا',
     passport: 'UG1102938',
     client_name: 'السفير للخدمات',
@@ -42,323 +63,403 @@ const EXTENDED_SHELTER_DATA: ShelterItem[] = [
     days_in_shelter: 28,
     catering_meals_count: 84,
     work_willingness: 'لا ترغب بالعمل',
-    status: 'مرحلة الترحيل'
+    status: 'مرحلة الترحيل',
+    created_at: new Date().toISOString(),
   },
-  {
-    id: 'SH-2026-004',
-    maid_name: 'Kavitha Rani',
-    nationality: 'الهند',
-    passport: 'IN9928374',
-    client_name: 'شركة الماسي الفاخرة',
-    contract_ref: 'RC-2026-0005',
-    shelter_location: 'مقر الإيواء الرئيسي - الرياض',
-    days_in_shelter: 2,
-    catering_meals_count: 6,
-    work_willingness: 'ترغب بالعمل',
-    status: 'خارج الإيواء'
-  }
 ];
 
 export const ShelterPage: React.FC = () => {
-  const [shelterItems, setShelterItems] = useState<ShelterItem[]>([]);
+  const { activeCompanyId, activeCompany } = useCompany();
+  const { data: rawShelter = [], isLoading } = useShelterRecords();
+  const { createItem, updateItem } = useTableMutation('shelter_records');
+
+  const shelterItems: ShelterRecordItem[] = rawShelter.length > 0 ? (rawShelter as ShelterRecordItem[]) : DEFAULT_MOCK_SHELTER;
+
   const [activeSubTab, setActiveSubTab] = useState<string>('all');
-  
-  // Modals
+  const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showMealModal, setShowMealModal] = useState(false);
 
-  useEffect(() => {
-    realErpDataStore.getRecords<ShelterItem>('shelter', EXTENDED_SHELTER_DATA).then(data => setShelterItems(data));
-  }, []);
-
-  // Add Shelter Form State
-  const [addForm, setAddForm] = useState({
-    maid_name: '',
-    nationality: 'إثيوبيا',
-    passport: '',
-    client_name: '',
-    shelter_location: 'مقر الإيواء الرئيسي - الرياض',
-    work_willingness: 'ترغب بالعمل' as 'ترغب بالعمل' | 'لا ترغب بالعمل' | 'غير محدد'
-  });
-
-  const filteredItems = shelterItems.filter(item => {
-    if (activeSubTab === 'inside') return item.status === 'داخل الإيواء';
-    if (activeSubTab === 'outside') return item.status === 'خارج الإيواء';
-    if (activeSubTab === 'transfer') return item.status === 'متاح للنقل';
-    if (activeSubTab === 'deportation') return item.status === 'مرحلة الترحيل';
-    if (activeSubTab === 'deported') return item.status === 'تم الترحيل';
-    return true;
-  });
+  // Add Form State
+  const [maidName, setMaidName] = useState('');
+  const [nationality, setNationality] = useState('إثيوبيا');
+  const [passport, setPassport] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [shelterLocation, setShelterLocation] = useState('مقر الإيواء الرئيسي - الرياض');
+  const [workWillingness, setWorkWillingness] = useState<'ترغب بالعمل' | 'لا ترغب بالعمل' | 'غير محدد'>('ترغب بالعمل');
 
   const handleAddShelter = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addForm.maid_name || !addForm.passport) return;
+    if (!maidName || !passport) return;
 
-    const newItem: ShelterItem = {
-      id: `SH-2026-00${shelterItems.length + 1}`,
-      maid_name: addForm.maid_name,
-      nationality: addForm.nationality,
-      passport: addForm.passport,
-      client_name: addForm.client_name || 'تسكين مباشر للشركة',
-      contract_ref: `RC-2026-00${20 + shelterItems.length}`,
-      shelter_location: addForm.shelter_location,
+    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
+    const id = `SH-${Date.now().toString().slice(-6)}`;
+
+    const newRecord = {
+      id,
+      company_id: companyCode,
+      maid_name: maidName,
+      nationality,
+      passport,
+      client_name: clientName || 'تحت التسكين المؤقت',
+      shelter_location: shelterLocation,
       days_in_shelter: 1,
       catering_meals_count: 3,
-      work_willingness: addForm.work_willingness,
-      status: 'داخل الإيواء'
+      work_willingness: workWillingness,
+      status: 'داخل الإيواء',
     };
 
-    const updated = await realErpDataStore.addRecord('shelter', newItem, EXTENDED_SHELTER_DATA);
-    setShelterItems(updated);
+    await createItem.mutateAsync(newRecord);
     setShowAddModal(false);
-    setAddForm({ maid_name: '', nationality: 'إثيوبيا', passport: '', client_name: '', shelter_location: 'مقر الإيواء الرئيسي - الرياض', work_willingness: 'ترغب بالعمل' });
+    setMaidName('');
+    setPassport('');
+    setClientName('');
   };
 
+  const handleUpdateStatus = async (item: ShelterRecordItem, newStatus: ShelterRecordItem['status']) => {
+    await updateItem.mutateAsync({
+      id: item.id,
+      data: { status: newStatus },
+    });
+  };
+
+  const handleAddMeal = async (item: ShelterRecordItem) => {
+    await updateItem.mutateAsync({
+      id: item.id,
+      data: { catering_meals_count: (item.catering_meals_count || 0) + 1 },
+    });
+  };
+
+  const filteredItems = shelterItems.filter((item) => {
+    const matchesSearch =
+      item.maid_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.passport.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.client_name && item.client_name.includes(searchQuery));
+    const matchesTab =
+      activeSubTab === 'all' ||
+      (activeSubTab === 'inside' && item.status === 'داخل الإيواء') ||
+      (activeSubTab === 'transfer' && item.status === 'متاح للنقل') ||
+      (activeSubTab === 'deportation' && item.status === 'مرحلة الترحيل') ||
+      (activeSubTab === 'outside' && item.status === 'خارج الإيواء');
+    return matchesSearch && matchesTab;
+  });
+
+  const insideCount = shelterItems.filter((i) => i.status === 'داخل الإيواء').length;
+  const transferCount = shelterItems.filter((i) => i.status === 'متاح للنقل').length;
+  const deportationCount = shelterItems.filter((i) => i.status === 'مرحلة الترحيل').length;
+  const totalMeals = shelterItems.reduce((acc, i) => acc + (i.catering_meals_count || 0), 0);
+
   return (
-    <div>
-      {/* Top Banner Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-building-user text-purple ml-2"></i> منظومة إدارة الإيواء والإعاشة الموحدة (Shelter Management)
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
+            <i className="fa-solid fa-hotel text-emerald-600"></i>
+            مركز الإيواء، الإعاشة، والرعاية (Shelter Hub)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            متابعة العمالة بالإيواء (61 داخل المقر، 10 متاح للنقل، 8 بمرحلة الترحيل، 5 خارج الإيواء) والوجبات اليومية
+          <p className="text-sm text-slate-500 mt-1">
+            إدارة تسكين العمالة، تتبع الإعاشة والوجبات اليومية، وطلبات نقل الكفالة والترحيل لـ{' '}
+            <strong className="text-slate-700">{activeCompany.name}</strong>
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> إضافة تسكين للإيواء
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-200 transition-all flex items-center gap-2"
+          >
+            <i className="fa-solid fa-plus"></i>
+            تسكين عاملة جديدة بالإيواء
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => setShowMealModal(true)}>
-            <i className="fa-solid fa-utensils ml-1"></i> جدول الإعاشة والوجبات
+          <button
+            onClick={() => exportData('shelter', filteredItems, 'excel', `سجل الإيواء والإعاشة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير إكسيل"
+          >
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('shelter', filteredItems, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel text-success ml-1"></i> Excel
+          <button
+            onClick={() => exportData('shelter', filteredItems, 'csv', `سجل الإيواء والإعاشة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير CSV"
+          >
+            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
+            CSV
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('shelter', filteredItems, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          <button
+            onClick={() => exportData('shelter', filteredItems, 'pdf', `سجل الإيواء والإعاشة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="تصدير PDF"
+          >
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            PDF
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('shelter', filteredItems, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          <button
+            onClick={() => exportData('shelter', filteredItems, 'print', `سجل مركز الإيواء والإعاشة - ${activeCompany.name}`)}
+            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            title="طباعة التقرير المعتمد"
+          >
+            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
+            طباعة
           </button>
         </div>
       </div>
 
-      {/* Stats Metric Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #005154', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>داخل الإيواء حالياً</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>61 عاملة</div>
-          <span style={{ fontSize: '11px', color: 'var(--status-success)' }}>تغطية إعاشة 100%</span>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">إجمالي النزيلات حالياً</span>
+          <div className="text-2xl font-black text-emerald-800 mt-1">{insideCount} عاملة</div>
+          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">تسكين وإعاشة نشطة</span>
         </div>
 
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #10B981', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>متاحة للنقل والتأجير</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>10 عاملات</div>
-          <span style={{ fontSize: '11px', color: '#10B981' }}>جاهزات للتسليم الفوري</span>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">متاحات لنقل الكفالة / التأجير</span>
+          <div className="text-2xl font-black text-purple-700 mt-1">{transferCount} عاملة</div>
+          <span className="text-xs text-purple-600 font-bold mt-1 inline-block">جاهزات للعمل الفوري</span>
         </div>
 
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #F59E0B', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>مرحلة الترحيل والمغادرة</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#F59E0B', marginTop: '4px' }}>8 عاملات</div>
-          <span style={{ fontSize: '11px', color: '#F59E0B' }}>بانتظار تذاكر الطيران</span>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">في مرحلة المغادرة / الترحيل</span>
+          <div className="text-2xl font-black text-rose-700 mt-1">{deportationCount} عاملة</div>
+          <span className="text-xs text-slate-400 font-medium">بانتظار إصدار تذاكر السفر</span>
         </div>
 
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #6B7280', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>خارج مقرات الإيواء</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#6B7280', marginTop: '4px' }}>5 عاملات</div>
-          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>مستضافات لدى العملاء</span>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span className="text-xs font-bold text-slate-400">إجمالي الوجبات الموثقة</span>
+          <div className="text-2xl font-black text-slate-900 mt-1">{totalMeals} وجبة</div>
+          <span className="text-xs text-slate-400 font-medium">سجل التموين والإعاشة</span>
         </div>
       </div>
 
-      {/* Sub-Tabs Bar */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px', overflowX: 'auto' }}>
+      {/* Filter Tabs */}
+      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2 overflow-x-auto">
         {[
-          { id: 'all', label: 'جميع العمالة بالإيواء' },
-          { id: 'inside', label: 'داخل الإيواء (61)' },
-          { id: 'transfer', label: 'متاح للنقل والتأجير (10)' },
-          { id: 'deportation', label: 'مرحلة الترحيل (8)' },
-          { id: 'outside', label: 'خارج الإيواء (5)' },
-          { id: 'deported', label: 'تم الترحيل النهائي' },
-          { id: 'locations', label: '📍 مقرات ومجمعات الإيواء' }
-        ].map(tab => (
+          { id: 'all', label: 'جميع النزيلات', count: shelterItems.length },
+          { id: 'inside', label: 'داخل الإيواء', count: insideCount },
+          { id: 'transfer', label: 'متاح للنقل والتأجير', count: transferCount },
+          { id: 'deportation', label: 'مرحلة الترحيل', count: deportationCount },
+        ].map((tab) => (
           <button
             key={tab.id}
-            className={`btn-odoo ${activeSubTab === tab.id ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-            onClick={() => setActiveSubTab(tab.id as any)}
-            style={{ whiteSpace: 'nowrap', fontSize: '12.5px' }}
+            onClick={() => setActiveSubTab(tab.id)}
+            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeSubTab === tab.id
+                ? 'bg-emerald-700 text-white shadow-sm'
+                : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+            }`}
           >
-            {tab.label}
+            <span>{tab.label}</span>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeSubTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
+              {tab.count}
+            </span>
           </button>
         ))}
       </div>
 
-      {/* Shelter Table */}
-      <div className="table-card" style={{ padding: '20px' }}>
-        <table className="odoo-data-table">
-          <thead>
-            <tr>
-              <th>معرف الإيواء</th>
-              <th>اسم العاملة والجواز</th>
-              <th>العميل والعقد</th>
-              <th>مقر الإيواء التابع</th>
-              <th>أيام الإيواء والوجبات</th>
-              <th>الرغبة بالعمل</th>
-              <th>الحالة التشغيلية</th>
-              <th>الإجراءات المتاحة</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.map(item => (
-              <tr key={item.id}>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{item.id}</td>
-                <td>
-                  <div style={{ fontWeight: '700' }}>{item.maid_name}</div>
-                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{item.nationality} • {item.passport}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: '700' }}>{item.client_name}</div>
-                  <div style={{ fontSize: '11.5px', color: 'var(--odoo-teal-dark)' }}>{item.contract_ref}</div>
-                </td>
-                <td><Badge text={item.shelter_location} type="purple" icon="fa-solid fa-location-dot" /></td>
-                <td>
-                  <span style={{ fontWeight: '800', color: '#F59E0B' }}>{item.days_in_shelter} يوم</span>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{item.catering_meals_count} وجبة مسجلة</div>
-                </td>
-                <td>
-                  <Badge
-                    text={item.work_willingness}
-                    type={item.work_willingness === 'ترغب بالعمل' ? 'success' : 'danger'}
-                  />
-                </td>
-                <td>
-                  <Badge
-                    text={item.status}
-                    type={item.status === 'متاح للنقل' ? 'success' : item.status === 'مرحلة الترحيل' ? 'warning' : 'info'}
-                  />
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <button className="btn-odoo btn-odoo-primary" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert(`تجهيز تحويل العاملة ${item.maid_name} لعقد نقل كفالة أو تأجير`)}>
-                      نقل كفالة / تأجير
-                    </button>
-                    <button className="btn-odoo btn-odoo-secondary" style={{ padding: '4px 8px', fontSize: '11.5px' }} onClick={() => alert(`طباعة سند الإعاشة الخاص بالعاملة ${item.maid_name}`)}>
-                      سند إعاشة
-                    </button>
-                  </div>
-                </td>
+      {/* Table Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+        <div className="flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="ابحث باسم العاملة، رقم الجواز، أو اسم العميل..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-600 transition-colors"
+          />
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-sm">
+            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+              <tr>
+                <th className="py-3.5 px-4">كود النزيلة / الجواز</th>
+                <th className="py-3.5 px-4">اسم العاملة والجنسية</th>
+                <th className="py-3.5 px-4">العميل / مرجع العقد</th>
+                <th className="py-3.5 px-4">مقر الإيواء</th>
+                <th className="py-3.5 px-4">أيام الإقامة والوجبات</th>
+                <th className="py-3.5 px-4">الرغبة في العمل</th>
+                <th className="py-3.5 px-4">الحالة الحالية</th>
+                <th className="py-3.5 px-4 text-center">إجراءات</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-slate-400">
+                    <i className="fa-solid fa-spinner fa-spin ml-2"></i> جاري استرجاع سجلات الإيواء...
+                  </td>
+                </tr>
+              ) : filteredItems.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-10 text-center text-slate-400">
+                    لا توجد سجلات مطابقة للبحث
+                  </td>
+                </tr>
+              ) : (
+                filteredItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-3.5 px-4">
+                      <div className="font-mono font-black text-emerald-800">{item.id}</div>
+                      <div className="text-[11px] font-mono text-slate-400">{item.passport}</div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-slate-900">{item.maid_name}</div>
+                      <div className="text-xs text-slate-500">{item.nationality}</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-xs">
+                      <div className="font-bold text-slate-800">{item.client_name || 'تسكين عام'}</div>
+                      <div className="text-slate-400">{item.contract_ref || 'بدون عقد'}</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-xs font-bold text-slate-700">
+                      {item.shelter_location}
+                    </td>
+                    <td className="py-3.5 px-4 text-xs">
+                      <div className="font-bold text-slate-900">{item.days_in_shelter} يوم</div>
+                      <div className="text-emerald-700 font-medium flex items-center gap-1.5 mt-0.5">
+                        <span>{item.catering_meals_count} وجبة</span>
+                        <button
+                          onClick={() => handleAddMeal(item)}
+                          className="px-1.5 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded font-bold text-[10px]"
+                          title="تسجيل وجبة إضافية"
+                        >
+                          + وجبة
+                        </button>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        item.work_willingness === 'ترغب بالعمل' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'
+                      }`}>
+                        {item.work_willingness}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <Badge
+                        text={item.status}
+                        type={item.status === 'داخل الإيواء' ? 'purple' : item.status === 'متاح للنقل' ? 'success' : 'danger'}
+                      />
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <select
+                        value={item.status}
+                        onChange={(e) => handleUpdateStatus(item, e.target.value as any)}
+                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 outline-none"
+                      >
+                        <option value="داخل الإيواء">داخل الإيواء</option>
+                        <option value="متاح للنقل">متاح للنقل</option>
+                        <option value="مرحلة الترحيل">مرحلة الترحيل</option>
+                        <option value="خارج الإيواء">خارج الإيواء (تسليم)</option>
+                        <option value="تم الترحيل">تم الترحيل</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Add Shelter Modal */}
+      {/* Add Inmate Modal */}
       {showAddModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
-                تسكين عاملة جديدة بالإيواء
-              </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <i className="fa-solid fa-hotel text-emerald-400"></i>
+                <h3 className="font-bold text-base">تسكين عاملة جديدة بمركز الإيواء</h3>
+              </div>
+              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
             </div>
 
-            <form onSubmit={handleAddShelter}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">اسم العاملة بالكامل *</label>
+            <form onSubmit={handleAddShelter} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم العاملة بالكامل *</label>
                 <input
                   type="text"
-                  className="filter-input"
-                  placeholder="اسم العاملة كما في الجواز..."
-                  value={addForm.maid_name}
-                  onChange={e => setAddForm({ ...addForm, maid_name: e.target.value })}
+                  value={maidName}
+                  onChange={(e) => setMaidName(e.target.value)}
+                  placeholder="اسم العاملة حسب الجواز..."
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">الجنسية *</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">الجنسية *</label>
                   <select
-                    className="filter-select"
-                    value={addForm.nationality}
-                    onChange={e => setAddForm({ ...addForm, nationality: e.target.value })}
+                    value={nationality}
+                    onChange={(e) => setNationality(e.target.value)}
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
                   >
-                    <option>الفلبين</option>
                     <option>إثيوبيا</option>
+                    <option>الفلبين</option>
+                    <option>إندونيسيا</option>
                     <option>أوغندا</option>
-                    <option>الهند</option>
-                    <option>بنغلاديش</option>
                     <option>كينيا</option>
                   </select>
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">رقم جواز السفر *</label>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">رقم جواز السفر *</label>
                   <input
                     type="text"
-                    className="filter-input"
-                    placeholder="رقم الجواز..."
-                    value={addForm.passport}
-                    onChange={e => setAddForm({ ...addForm, passport: e.target.value })}
+                    value={passport}
+                    onChange={(e) => setPassport(e.target.value)}
+                    placeholder="Passport..."
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-bold outline-none"
                     required
                   />
                 </div>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">مقر الإيواء المخصص *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">مقر مركز الإيواء *</label>
                 <select
-                  className="filter-select"
-                  value={addForm.shelter_location}
-                  onChange={e => setAddForm({ ...addForm, shelter_location: e.target.value })}
+                  value={shelterLocation}
+                  onChange={(e) => setShelterLocation(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
                 >
-                  <option>مقر الإيواء الرئيسي - الرياض (حي الملز)</option>
-                  <option>مقر الإيواء - جدة (حي السلامة)</option>
-                  <option>مقر الإيواء - الخبر (حي الحزام)</option>
+                  <option>مقر الإيواء الرئيسي - الرياض</option>
+                  <option>مقر الإيواء - جدة</option>
+                  <option>مقر الإيواء - الخبر والدمام</option>
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">رغبة العاملة بالعمل *</label>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">الرغبة في العمل</label>
                 <select
-                  className="filter-select"
-                  value={addForm.work_willingness}
-                  onChange={e => setAddForm({ ...addForm, work_willingness: e.target.value as any })}
+                  value={workWillingness}
+                  onChange={(e) => setWorkWillingness(e.target.value as any)}
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
                 >
-                  <option value="ترغب بالعمل">ترغب بالعمل (متاحة للتأجير أو التنازل)</option>
+                  <option value="ترغب بالعمل">ترغب بالعمل (متاحة لنقل الكفالة والتأجير)</option>
                   <option value="لا ترغب بالعمل">لا ترغب بالعمل (مرحلة الترحيل)</option>
+                  <option value="غير محدد">غير محدد (تحت الفحص)</option>
                 </select>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">إتمام التسكين بالإيواء</button>
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-200 transition-all flex items-center gap-2"
+                >
+                  <i className="fa-solid fa-check"></i>
+                  تأكيد التسكين
+                </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* Catering Meal Distribution Modal */}
-      {showMealModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '480px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
-                تسجيل وجبات وجدول الإعاشة اليومي
-              </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowMealModal(false)}></i>
-            </div>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-              تأكيد صرف 183 وجبة غذائية لجميع المقيمات بالإيواء (61 عاملة × 3 وجبات يومية)
-            </p>
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => setShowMealModal(false)}>إغلاق</button>
-              <button className="btn-odoo btn-odoo-purple" onClick={() => { setShowMealModal(false); alert('تم اعتماد وتسجيل كشف وجبات الإعاشة اليومي بنجاح!'); }}>تأكيد وصرف الوجبات اليومية</button>
-            </div>
           </div>
         </div>
       )}

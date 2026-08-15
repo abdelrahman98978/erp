@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
-import { realErpDataStore } from '../services/realErpDataStore';
+import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
+import { useCompany } from '../contexts/CompanyContext';
 
 export interface ComplaintTicket {
   id: string;
@@ -77,21 +78,6 @@ const MOCK_COMPLAINTS: ComplaintTicket[] = [
     branch: 'الإدارة المالية',
     created_at: '2026-07-31 11:00',
     description: 'طلب استرجاع المبلغ المتبقي من تأمين السكن لعقد تأجير منتهي.'
-  },
-  {
-    id: 'c-104',
-    ticket_no: 'TK-2026-0038',
-    client_name: 'ابو اياد',
-    client_phone: '+966562404213',
-    category: 'جودة وسلوك',
-    contract_ref: 'RC-2026-0013',
-    priority: 'عادي',
-    status: 'تم الحل وإغلاق الشكوى',
-    sla_hours_left: 0,
-    assigned_agent: 'سارة خالد (خدمة العملاء)',
-    branch: 'فرع جدة',
-    created_at: '2026-07-28 16:40',
-    description: 'استفسار عن طريقة سداد فاتورة الإيجار عبر مدى، تم إرسال الرابط بنجاح.'
   }
 ];
 
@@ -107,45 +93,21 @@ const MOCK_INTER_DISPUTES: InterCompanyDispute[] = [
     priority: 'عالي جداً VIP',
     date: '2026-07-30',
     details: 'عدم الالتزام بجدول وصول العمالة حسب العقد الإطاري المبرم مع مكتب بلاتينيوم مانيلا.'
-  },
-  {
-    id: 'disp-2',
-    dispute_no: 'EXEC-2026-002',
-    sender_entity: '🏗️ دار الرواد (Dar Al-Ruwad)',
-    target_entity: '🇪🇹 مكتب داماس الإثيوبي (DAMAS)',
-    subject: 'فروقات رسوم تذاكر طيران وفحوصات إيواء معلقة',
-    amount_claimed: 12800,
-    executive_status: 'تحت مراجعة رئيس المجموعة',
-    priority: 'عاجل',
-    date: '2026-07-29',
-    details: 'مطالبة بتسوية الفروقات المالية المسجلة على القيد رقم 279 بمبلغ 2,133 ر.س لكل عاملة.'
-  },
-  {
-    id: 'disp-3',
-    dispute_no: 'EXEC-2026-003',
-    sender_entity: '🤝 شركة السفير (Al-Saffir)',
-    target_entity: '🏢 قسم الإيواء الرئيسي (الرياض)',
-    subject: 'تأخير تسليم 5 عاملات مخصصات لعقود التأجير التشغيلي',
-    amount_claimed: 0,
-    executive_status: 'تم التسوية والاعتماد',
-    priority: 'عادي',
-    date: '2026-07-25',
-    details: 'تم إجراء الفحص الطبي الشامل وتسليم الكوادر لشركة السفير وتحديث السجل.'
   }
 ];
 
 export const ComplaintsPage: React.FC = () => {
-  const [complaints, setComplaints] = useState<ComplaintTicket[]>([]);
+  const { activeCompanyId } = useCompany();
+  const { data: rawComplaints = [], isLoading } = useComplaints();
+  const { createItem, updateItem } = useTableMutation('complaints');
+
+  const complaints: ComplaintTicket[] = rawComplaints.length > 0 ? (rawComplaints as any[]) : MOCK_COMPLAINTS;
   const [interDisputes, setInterDisputes] = useState<InterCompanyDispute[]>(MOCK_INTER_DISPUTES);
 
   const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla'>('tickets');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-
-  useEffect(() => {
-    realErpDataStore.getRecords<ComplaintTicket>('complaints', MOCK_COMPLAINTS).then(data => setComplaints(data));
-  }, []);
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
@@ -177,8 +139,9 @@ export const ComplaintsPage: React.FC = () => {
     e.preventDefault();
     if (!addForm.client_name || !addForm.client_phone || !addForm.description) return;
 
-    const newTicket: ComplaintTicket = {
+    const newTicket = {
       id: `c-${Date.now()}`,
+      company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
       ticket_no: `TK-2026-00${42 + complaints.length}`,
       client_name: addForm.client_name,
       client_phone: addForm.client_phone,
@@ -187,14 +150,12 @@ export const ComplaintsPage: React.FC = () => {
       priority: addForm.priority,
       status: 'جديدة',
       sla_hours_left: addForm.priority === 'عاجل طارئ' ? 4 : addForm.priority === 'مهم' ? 12 : 24,
-      assigned_agent: 'فريق الدعم الفني',
+      assigned_agent: 'فريق الدعم الفني المعتمد',
       branch: addForm.branch,
-      created_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
-      description: addForm.description
+      description: addForm.description,
     };
 
-    const updated = await realErpDataStore.addRecord('complaints', newTicket, MOCK_COMPLAINTS);
-    setComplaints(updated);
+    await createItem.mutateAsync(newTicket);
     setShowAddModal(false);
     setAddForm({ client_name: '', client_phone: '', category: 'رفض عمل', contract_ref: '', priority: 'عادي', branch: 'فرع الرياض', description: '' });
   };
@@ -216,16 +177,17 @@ export const ComplaintsPage: React.FC = () => {
       details: disputeForm.details
     };
 
-    const updated = await realErpDataStore.addRecord('inter-disputes', newDispute, MOCK_INTER_DISPUTES);
-    setInterDisputes(updated);
+    setInterDisputes([newDispute, ...interDisputes]);
     setShowAddDisputeModal(false);
     setDisputeForm({ sender_entity: '💎 شركة توباز (Topaz Group)', target_entity: '🇵🇭 مكتب بلاتينيوم الفلبيني (PLATINUM)', subject: '', amount_claimed: '', priority: 'عالي جداً VIP', details: '' });
   };
 
-  const handleResolveTicket = (status: 'تم الحل وإغلاق الشكوى' | 'مرفوعة للمشرف') => {
+  const handleResolveTicket = async (status: 'تم الحل وإغلاق الشكوى' | 'مرفوعة للمشرف') => {
     if (!selectedTicket) return;
-    setComplaints(complaints.map(c => c.id === selectedTicket.id ? { ...c, status } : c));
-    alert(`تم تحديث حالة التذكرة (${selectedTicket.ticket_no}) إلى: [${status}] بنجاح!`);
+    await updateItem.mutateAsync({
+      id: selectedTicket.id,
+      data: { status },
+    });
     setSelectedTicket(null);
   };
 
@@ -265,11 +227,14 @@ export const ComplaintsPage: React.FC = () => {
           <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('complaints', filteredTickets, 'excel')} title="تصدير Excel">
             <i className="fa-solid fa-file-excel ml-1"></i> Excel
           </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
           <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'pdf')} title="تصدير PDF">
             <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
           </button>
         </div>
       </div>

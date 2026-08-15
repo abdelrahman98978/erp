@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface BranchEntity {
@@ -264,9 +265,103 @@ export const BranchDepartmentsPage: React.FC = () => {
           </p>
         </div>
 
-        <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddDeptModal(true)}>
-          <i className="fa-solid fa-plus ml-1"></i> إضافة قسم تخصصي لـ ({selectedEntity.code})
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddDeptModal(true)}>
+            <i className="fa-solid fa-plus ml-1"></i> إضافة قسم تخصصي لـ ({selectedEntity.code})
+          </button>
+          <button
+            className="btn-odoo btn-odoo-primary"
+            onClick={() => {
+              const exportRows = entities.flatMap(ent =>
+                ent.departments.map(d => ({
+                  entity_code: ent.code,
+                  entity_name: ent.name,
+                  category: ent.category,
+                  location: ent.location,
+                  manager: ent.manager,
+                  dept_name: d.name,
+                  head: d.head,
+                  staff_count: d.staff_count,
+                  kpi: d.kpi,
+                  status: d.status,
+                }))
+              );
+              exportData('branches', exportRows, 'excel', 'الهيكل التنظيمي وأقسام المجموعة');
+            }}
+            title="تصدير Excel"
+          >
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button
+            className="btn-odoo btn-odoo-secondary"
+            onClick={() => {
+              const exportRows = entities.flatMap(ent =>
+                ent.departments.map(d => ({
+                  entity_code: ent.code,
+                  entity_name: ent.name,
+                  category: ent.category,
+                  location: ent.location,
+                  manager: ent.manager,
+                  dept_name: d.name,
+                  head: d.head,
+                  staff_count: d.staff_count,
+                  kpi: d.kpi,
+                  status: d.status,
+                }))
+              );
+              exportData('branches', exportRows, 'csv', 'الهيكل التنظيمي وأقسام المجموعة');
+            }}
+            title="تصدير CSV"
+          >
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button
+            className="btn-odoo btn-odoo-secondary"
+            onClick={() => {
+              const exportRows = entities.flatMap(ent =>
+                ent.departments.map(d => ({
+                  entity_code: ent.code,
+                  entity_name: ent.name,
+                  category: ent.category,
+                  location: ent.location,
+                  manager: ent.manager,
+                  dept_name: d.name,
+                  head: d.head,
+                  staff_count: d.staff_count,
+                  kpi: d.kpi,
+                  status: d.status,
+                }))
+              );
+              exportData('branches', exportRows, 'pdf', 'الهيكل التنظيمي وأقسام المجموعة');
+            }}
+            title="تصدير PDF"
+          >
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button
+            className="btn-odoo btn-odoo-secondary"
+            onClick={() => {
+              const exportRows = entities.flatMap(ent =>
+                ent.departments.map(d => ({
+                  entity_code: ent.code,
+                  entity_name: ent.name,
+                  category: ent.category,
+                  location: ent.location,
+                  manager: ent.manager,
+                  dept_name: d.name,
+                  head: d.head,
+                  staff_count: d.staff_count,
+                  kpi: d.kpi,
+                  status: d.status,
+                }))
+              );
+              exportData('branches', exportRows, 'print', 'الهيكل التنظيمي وأقسام المجموعة');
+            }}
+            title="طباعة التقرير"
+          >
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          </button>
+        </div>
       </div>
 
       {/* Category Filter Tabs */}

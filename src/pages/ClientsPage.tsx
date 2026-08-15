@@ -1,105 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
-import { realErpDataStore } from '../services/realErpDataStore';
-
-export interface ClientRecord {
-  id: string;
-  client_no: string;
-  name: string;
-  phone: string;
-  national_id: string;
-  account_code: string;
-  client_activity: string;
-  last_activity: string;
-  added_by: string;
-  branch: string;
-  created_at: string;
-  status: 'نشط' | 'موقوف' | 'جديد';
-}
-
-const MOCK_CLIENTS: ClientRecord[] = [
-  {
-    id: 'c-1',
-    client_no: 'CLI-2026-0241',
-    name: 'بندر صالح الهويريني',
-    phone: '+966555774494',
-    national_id: '1092837410',
-    account_code: '1102001',
-    client_activity: 'عقد استقدام ساري',
-    last_activity: 'سدد سند قبض #59 بقيمة 138 ر.س',
-    added_by: 'سارة خالد (فرع الرياض)',
-    branch: 'فرع الرياض',
-    created_at: '2026-07-28',
-    status: 'نشط'
-  },
-  {
-    id: 'c-2',
-    client_no: 'CLI-2026-0240',
-    name: 'سارة أحمد محمد',
-    phone: '+966558025628',
-    national_id: '1088273641',
-    account_code: '1102002',
-    client_activity: 'عقد تأجير تشغيلي',
-    last_activity: 'إصدار فاتورة إيجار #12',
-    added_by: 'فهد العتيبي (فرع جدة)',
-    branch: 'فرع جدة',
-    created_at: '2026-07-25',
-    status: 'نشط'
-  },
-  {
-    id: 'c-3',
-    client_no: 'CLI-2026-0239',
-    name: 'شركة دار الرواد للمقاولات',
-    phone: '+966114889200',
-    national_id: '7001234567',
-    account_code: '1102003',
-    client_activity: 'حجز 5 عمالة مهنية',
-    last_activity: 'تقديم طلب استرجاع تأمين سكن',
-    added_by: 'عبدالفتح (الإدارة العامة)',
-    branch: 'الإدارة العامة',
-    created_at: '2026-07-15',
-    status: 'نشط'
-  },
-  {
-    id: 'c-4',
-    client_no: 'CLI-2026-0238',
-    name: 'ابو اياد',
-    phone: '+966562404213',
-    national_id: '1055273940',
-    account_code: '1102004',
-    client_activity: 'عقد نقل كفالة',
-    last_activity: 'تأكيد فترة التجربة 7 أيام',
-    added_by: 'سارة خالد (فرع الرياض)',
-    branch: 'فرع الرياض',
-    created_at: '2026-07-10',
-    status: 'نشط'
-  }
-];
+import { useClients, useTableMutation } from '../hooks/queries/useErpQueries';
+import { useCompany } from '../contexts/CompanyContext';
 
 export const ClientsPage: React.FC = () => {
-  const [clients, setClients] = useState<ClientRecord[]>([]);
+  const { data: clients = [], isLoading } = useClients();
+  const { createItem } = useTableMutation('clients');
+  const { activeCompanyId } = useCompany();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-
-  useEffect(() => {
-    realErpDataStore.getRecords<ClientRecord>('clients', MOCK_CLIENTS).then(data => setClients(data));
-  }, []);
 
   const [addForm, setAddForm] = useState({
     name: '',
     phone: '',
     national_id: '',
-    branch: 'فرع الرياض'
+    branch: 'فرع الرياض',
+    type: 'شخص',
   });
 
   const handleAddClient = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.name || !addForm.phone || !addForm.national_id) return;
 
-    const newC: ClientRecord = {
-      id: `c-${Date.now()}`,
-      client_no: `CLI-2026-0${242 + clients.length}`,
+    const newRecord = {
+      company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
+      client_no: `CLI-2026-${String(242 + clients.length).padStart(4, '0')}`,
       name: addForm.name,
       phone: addForm.phone,
       national_id: addForm.national_id,
@@ -108,21 +35,20 @@ export const ClientsPage: React.FC = () => {
       last_activity: 'إنشاء ملف العميل بالنظام',
       added_by: 'المستخدم الحالي',
       branch: addForm.branch,
-      created_at: new Date().toISOString().slice(0, 10),
-      status: 'نشط'
+      type: addForm.type,
+      status: 'نشط',
     };
 
-    const updated = await realErpDataStore.addRecord('clients', newC, MOCK_CLIENTS);
-    setClients(updated);
+    await createItem.mutateAsync(newRecord);
     setShowAddModal(false);
-    setAddForm({ name: '', phone: '', national_id: '', branch: 'فرع الرياض' });
+    setAddForm({ name: '', phone: '', national_id: '', branch: 'فرع الرياض', type: 'شخص' });
   };
 
-  const filteredClients = clients.filter(c =>
-    c.client_no.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.name.includes(searchQuery) ||
-    c.phone.includes(searchQuery) ||
-    c.national_id.includes(searchQuery)
+  const filteredClients = clients.filter((c: any) =>
+    (c.client_no && c.client_no.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (c.name && c.name.includes(searchQuery)) ||
+    (c.phone && c.phone.includes(searchQuery)) ||
+    (c.national_id && c.national_id.includes(searchQuery))
   );
 
   return (
@@ -138,18 +64,21 @@ export const ClientsPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
             <i className="fa-solid fa-user-plus ml-1"></i> إضافة عميل جديد
           </button>
           <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('clients', filteredClients, 'excel')} title="تصدير Excel">
             <i className="fa-solid fa-file-excel ml-1"></i> Excel
           </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
           <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'pdf')} title="تصدير PDF">
             <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('clients', filteredClients, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
           </button>
         </div>
       </div>
@@ -202,22 +131,36 @@ export const ClientsPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredClients.map(c => (
-              <tr key={c.id}>
-                <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{c.client_no}</td>
-                <td>
-                  <div style={{ fontWeight: '700' }}>{c.name}</div>
-                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{c.phone} • هوية: {c.national_id}</div>
+            {isLoading ? (
+              <tr>
+                <td colSpan={9} style={{ textAlign: 'center', padding: '36px', color: '#64748B' }}>
+                  <i className="fa-solid fa-spinner fa-spin ml-2 text-primary"></i> جاري استرجاع سجلات العملاء من قاعدة بيانات سوبابيس المباشرة...
                 </td>
-                <td style={{ fontWeight: '800', color: '#005154' }}>{c.account_code}</td>
-                <td style={{ fontWeight: '700', fontSize: '12.5px' }}>{c.client_activity}</td>
-                <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{c.last_activity}</td>
-                <td style={{ fontSize: '12px' }}>{c.added_by}</td>
-                <td><Badge text={c.branch} type="purple" /></td>
-                <td style={{ fontSize: '12px' }}>{c.created_at}</td>
-                <td><Badge text={c.status} type="success" /></td>
               </tr>
-            ))}
+            ) : filteredClients.length === 0 ? (
+              <tr>
+                <td colSpan={9} style={{ textAlign: 'center', padding: '36px', color: '#64748B' }}>
+                  <i className="fa-regular fa-folder-open ml-2"></i> لا يوجد عملاء مطابقين للبحث
+                </td>
+              </tr>
+            ) : (
+              filteredClients.map((c: any) => (
+                <tr key={c.id}>
+                  <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{c.client_no || c.client_number || `#${c.id.slice(0, 6)}`}</td>
+                  <td>
+                    <div style={{ fontWeight: '700' }}>{c.name}</div>
+                    <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{c.phone} • هوية: {c.national_id || 'غير مسجلة'}</div>
+                  </td>
+                  <td style={{ fontWeight: '800', color: '#005154' }}>{c.account_code || '110201'}</td>
+                  <td style={{ fontWeight: '700', fontSize: '12.5px' }}>{c.client_activity || 'عميل مسجل'}</td>
+                  <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{c.last_activity || 'نشاط حديث'}</td>
+                  <td style={{ fontSize: '12px' }}>{c.added_by || 'النظام'}</td>
+                  <td><Badge text={c.branch || 'الفرع الرئيسي'} type="purple" /></td>
+                  <td style={{ fontSize: '12px' }}>{c.created_at ? new Date(c.created_at).toLocaleDateString('ar-SA') : 'اليوم'}</td>
+                  <td><Badge text={c.status || 'نشط'} type="success" /></td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

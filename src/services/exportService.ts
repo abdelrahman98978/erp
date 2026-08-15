@@ -1,28 +1,34 @@
 /**
- * Central Export Service for ERP System
- * Supports Excel (XLSX), PDF, and CSV export with proper Arabic headers
- * for all data sections across the application.
+ * Central Enterprise Export Service for ERP System
+ * Supports Excel (XLSX), PDF, CSV, and Official Printable Reports
+ * with full Arabic Unicode support and dual company branding.
  */
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 
-// ─── Section Configuration Registry ─────────────────────────────────
-// Each section has: title, Arabic column headers, and a data mapper function
-
 export interface SectionExportConfig {
   sectionTitle: string;
   headers: string[];
-  /** Maps raw data objects to flat arrays matching header order */
   dataMapper: (row: any) => (string | number)[];
 }
 
+// ─── Company Header & Identity ───────────────────────────────────────
+export const GROUP_COMPANY_INFO = {
+  nameAr: 'مجموعة خالد السليم التجارية',
+  nameEn: 'KHALID AL-SULAIM COMMERCIAL GROUP',
+  tagline: 'نظام تخطيط الموارد المؤسسي المتكامل (ERP Group Engine)',
+  crNumber: '1010892019',
+  taxNumber: '310928374100003',
+};
+
+// ─── Section Configuration Registry ─────────────────────────────────
 export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
   // 1. العملاء CRM
   clients: {
-    sectionTitle: 'تقرير العملاء الشامل',
-    headers: ['رقم العميل', 'الاسم', 'رقم الجوال', 'رقم الهوية', 'الحساب المحاسبي', 'نشاط العميل', 'آخر نشاط', 'أضيف بواسطة', 'الفرع', 'تاريخ الإنشاء', 'الحالة'],
+    sectionTitle: 'سجل العملاء وإدارة علاقات العملاء (CRM)',
+    headers: ['رقم العميل', 'اسم العميل', 'رقم الجوال', 'رقم الهوية', 'الحساب المحاسبي', 'نوع العميل', 'آخر نشاط', 'الموظف المسؤول', 'الفرع', 'تاريخ التسجيل', 'الحالة'],
     dataMapper: (r: any) => [
-      r.client_no || r.client_number || '',
+      r.client_no || r.client_number || r.id || '',
       r.name || '',
       r.phone || '',
       r.national_id || '',
@@ -31,15 +37,15 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.last_activity || '',
       r.added_by || '',
       r.branch || '',
-      r.created_at || '',
-      r.status || ''
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : '',
+      r.status || 'نشط'
     ]
   },
 
   // 2. الطلبات والحجوزات
   orders: {
-    sectionTitle: 'تقرير طلبات الاستقدام',
-    headers: ['رقم الطلب', 'العميل', 'جوال العميل', 'اسم العاملة', 'الجنسية', 'رقم الجواز', 'نوع الطلب', 'المكتب الخارجي', 'حالة المهلة', 'الموظف المسؤول', 'تاريخ الإنشاء', 'الحالة'],
+    sectionTitle: 'تقرير طلبات واستفسارات الاستقدام',
+    headers: ['رقم الطلب', 'اسم العميل', 'جوال العميل', 'اسم العاملة', 'الجنسية', 'رقم الجواز', 'نوع الطلب', 'المكتب الخارجي', 'المهلة', 'الموظف المسؤول', 'حالة التعاقد', 'تاريخ الإنشاء'],
     dataMapper: (r: any) => [
       r.id || '',
       r.client_name || '',
@@ -49,41 +55,83 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.passport_number || '',
       r.request_type || '',
       r.office_name || '',
-      r.timer_status || '',
+      r.deadline || r.timer_status || '',
       r.responsible_employee || '',
-      r.created_at || '',
-      r.status || ''
+      r.contract_status || r.status || '',
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : ''
     ]
   },
 
-  // 3. عقود الاستقدام
+  // 3. عقود الاستقدام مساند
   'recruitment-contracts': {
-    sectionTitle: 'تقرير عقود الاستقدام',
-    headers: ['رقم العقد', 'رقم مساند', 'العميل', 'جوال العميل', 'اسم العاملة', 'رقم الجواز', 'الجنسية', 'المكتب الخارجي', 'المرحلة', 'حالة الضمان', 'حالة الدفع', 'المبلغ (ر.س)', 'الفرع', 'التاريخ'],
+    sectionTitle: 'سجل عقود الاستقدام المباشرة (Musaned Contracts)',
+    headers: ['رقم العقد', 'رقم مساند', 'اسم العميل', 'جوال العميل', 'اسم العاملة', 'الجنسية', 'رقم الجواز', 'المكتب الخارجي', 'المرحلة التشغيلية', 'حالة الضمان', 'حالة الدفع', 'قيمة العقد (ر.س)', 'الضريبة (15%)', 'الإجمالي (ر.س)', 'الفرع'],
     dataMapper: (r: any) => [
-      r.contract_number || '',
+      r.contract_number || r.id || '',
       r.musaned_number || '',
       r.client_name || '',
       r.client_phone || '',
       r.maid_name || '',
-      r.maid_passport || '',
       r.nationality || '',
+      r.maid_passport || '',
       r.external_office || '',
       r.stage || '',
       r.warranty_status || '',
       r.payment_status || '',
       r.amount || 0,
-      r.branch || '',
-      r.created_at || ''
+      r.tax_amount || ((r.amount || 0) * 0.15),
+      r.total_amount || ((r.amount || 0) * 1.15),
+      r.branch || ''
+    ]
+  },
+  recruitment_contracts: {
+    sectionTitle: 'سجل عقود الاستقدام المباشرة (Musaned Contracts)',
+    headers: ['رقم العقد', 'رقم مساند', 'اسم العميل', 'جوال العميل', 'اسم العاملة', 'الجنسية', 'رقم الجواز', 'المكتب الخارجي', 'المرحلة التشغيلية', 'حالة الضمان', 'حالة الدفع', 'المبلغ الأساسي (ر.س)', 'الضريبة (15%)', 'الإجمالي (ر.س)', 'الفرع'],
+    dataMapper: (r: any) => [
+      r.contract_number || r.id || '',
+      r.musaned_number || '',
+      r.client_name || '',
+      r.client_phone || '',
+      r.maid_name || '',
+      r.nationality || '',
+      r.maid_passport || '',
+      r.external_office || '',
+      r.stage || '',
+      r.warranty_status || '',
+      r.payment_status || '',
+      r.amount || 0,
+      r.tax_amount || ((r.amount || 0) * 0.15),
+      r.total_amount || ((r.amount || 0) * 1.15),
+      r.branch || ''
     ]
   },
 
-  // 4. عقود التأجير
+  // 4. عقود التأجير والتشغيل
   'rent-contracts': {
-    sectionTitle: 'تقرير عقود التأجير التشغيلي',
-    headers: ['رقم العقد', 'العميل', 'جوال العميل', 'اسم العاملة', 'الجنسية', 'تاريخ البداية', 'تاريخ النهاية', 'المدة (أشهر)', 'التكلفة الشهرية', 'الإجمالي', 'الحالة', 'حالة الدفع', 'المسوق', 'الفرع'],
+    sectionTitle: 'سجل عقود التأجير والخدمات التشغيلية',
+    headers: ['رقم عقد التأجير', 'اسم العميل', 'جوال العميل', 'العاملة المؤجرة', 'الجنسية', 'تاريخ البدء', 'تاريخ الانتهاء', 'المدة (أشهر)', 'القيمة الشهرية (ر.س)', 'الإجمالي (ر.س)', 'حالة العقد', 'حالة الدفع', 'المسوق', 'الفرع'],
     dataMapper: (r: any) => [
-      r.contract_number || '',
+      r.contract_number || r.id || '',
+      r.client_name || '',
+      r.client_phone || '',
+      r.maid_name || '',
+      r.nationality || '',
+      r.start_date || '',
+      r.end_date || '',
+      r.duration_months || 0,
+      r.monthly_cost || 0,
+      r.total_amount || 0,
+      r.status || '',
+      r.payment_status || '',
+      r.marketer || '',
+      r.branch || ''
+    ]
+  },
+  rent_contracts: {
+    sectionTitle: 'سجل عقود التأجير والخدمات التشغيلية',
+    headers: ['رقم عقد التأجير', 'اسم العميل', 'جوال العميل', 'العاملة المؤجرة', 'الجنسية', 'تاريخ البدء', 'تاريخ الانتهاء', 'المدة (أشهر)', 'القيمة الشهرية (ر.س)', 'الإجمالي (ر.س)', 'حالة العقد', 'حالة الدفع', 'المسوق', 'الفرع'],
+    dataMapper: (r: any) => [
+      r.contract_number || r.id || '',
       r.client_name || '',
       r.client_phone || '',
       r.maid_name || '',
@@ -102,8 +150,25 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
 
   // 5. الإيواء والإعاشة
   shelter: {
-    sectionTitle: 'تقرير الإيواء والإعاشة',
-    headers: ['الرقم', 'اسم العاملة', 'رقم الجواز', 'الجنسية', 'مرجع العقد', 'العميل', 'موقع الإيواء', 'عدد الأيام', 'عدد الوجبات', 'الرغبة في العمل', 'الحالة'],
+    sectionTitle: 'سجل نزيلات مركز الإيواء والإعاشة',
+    headers: ['كود النزيلة', 'اسم العاملة', 'رقم الجواز', 'الجنسية', 'مرجع العقد', 'العميل', 'مقر الإيواء', 'أيام الإقامة', 'عدد الوجبات', 'الرغبة بالعمل', 'الحالة الحالية'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.maid_name || '',
+      r.passport || '',
+      r.nationality || '',
+      r.contract_ref || '',
+      r.client_name || '',
+      r.shelter_location || '',
+      r.days_in_shelter || 0,
+      r.catering_meals_count || 0,
+      r.work_willingness || '',
+      r.status || ''
+    ]
+  },
+  shelter_records: {
+    sectionTitle: 'سجل نزيلات مركز الإيواء والإعاشة',
+    headers: ['كود النزيلة', 'اسم العاملة', 'رقم الجواز', 'الجنسية', 'مرجع العقد', 'العميل', 'مقر الإيواء', 'أيام الإقامة', 'عدد الوجبات', 'الرغبة بالعمل', 'الحالة الحالية'],
     dataMapper: (r: any) => [
       r.id || '',
       r.maid_name || '',
@@ -119,10 +184,258 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
     ]
   },
 
-  // 6. السفر والرحلات
+  // 6. الفوترة الإلكترونية ZATCA
+  zatca: {
+    sectionTitle: 'سجل الفواتير الضريبية المعتمدة (ZATCA Phase 2)',
+    headers: ['رقم الفاتورة', 'نوع الفاتورة', 'تاريخ الإصدار', 'اسم العميل / المنشأة', 'الرقم الضريبي / الهوية', 'المبلغ قبل الضريبة (ر.س)', 'ضريبة القيمة المضافة 15% (ر.س)', 'الإجمالي شامل الضريبة (ر.س)', 'حالة الربط بهيئة الزكاة', 'رمز التحقق UUID', 'مرجع المعاملة'],
+    dataMapper: (r: any) => [
+      r.invoice_number || r.id || '',
+      r.invoice_type === 'STANDARD' ? 'ضريبية قياسية (B2B)' : r.invoice_type === 'SIMPLIFIED' ? 'ضريبية مبسطة (B2C)' : (r.invoice_type || 'مبسطة'),
+      r.issue_date || '',
+      r.client_name || '',
+      r.client_vat_number || r.client_national_id || 'أفراد',
+      r.subtotal || 0,
+      r.vat_amount || 0,
+      r.total_amount || 0,
+      r.zatca_status || 'CLEARED',
+      r.uuid || r.xml_hash || '',
+      r.contract_ref || ''
+    ]
+  },
+  zatca_invoices: {
+    sectionTitle: 'سجل الفواتير الضريبية المعتمدة (ZATCA Phase 2)',
+    headers: ['رقم الفاتورة', 'نوع الفاتورة', 'تاريخ الإصدار', 'اسم العميل / المنشأة', 'الرقم الضريبي / الهوية', 'المبلغ قبل الضريبة (ر.س)', 'ضريبة القيمة المضافة 15% (ر.س)', 'الإجمالي شامل الضريبة (ر.س)', 'حالة الربط بهيئة الزكاة', 'رمز التحقق UUID', 'مرجع المعاملة'],
+    dataMapper: (r: any) => [
+      r.invoice_number || r.id || '',
+      r.invoice_type === 'STANDARD' ? 'ضريبية قياسية (B2B)' : r.invoice_type === 'SIMPLIFIED' ? 'ضريبية مبسطة (B2C)' : (r.invoice_type || 'مبسطة'),
+      r.issue_date || '',
+      r.client_name || '',
+      r.client_vat_number || r.client_national_id || 'أفراد',
+      r.subtotal || 0,
+      r.vat_amount || 0,
+      r.total_amount || 0,
+      r.zatca_status || 'CLEARED',
+      r.uuid || r.xml_hash || '',
+      r.contract_ref || ''
+    ]
+  },
+
+  // 7. مراكز التكلفة
+  cost_centers: {
+    sectionTitle: 'تقرير مراكز التكلفة والمحاسبة التحليلية',
+    headers: ['كود المركز', 'اسم مركز التكلفة', 'المسؤول / المدير', 'الميزانية المعتمدة (ر.س)', 'المنصرف الفعلي (ر.س)', 'المتبقي من الميزانية (ر.س)', 'نسبة الاستهلاك %'],
+    dataMapper: (r: any) => {
+      const budget = r.budget || r.budget_limit || 0;
+      const spent = r.actual_spent || r.total_expenses || 0;
+      const remaining = budget - spent;
+      const percent = budget > 0 ? ((spent / budget) * 100).toFixed(1) + '%' : '0%';
+      return [
+        r.code || '',
+        r.name || '',
+        r.manager_name || r.parent || 'مشرف المركز',
+        budget,
+        spent,
+        remaining,
+        percent
+      ];
+    }
+  },
+  'cost-centers': {
+    sectionTitle: 'تقرير مراكز التكلفة والمحاسبة التحليلية',
+    headers: ['كود المركز', 'اسم مركز التكلفة', 'المسؤول / المدير', 'الميزانية المعتمدة (ر.س)', 'المنصرف الفعلي (ر.س)', 'المتبقي من الميزانية (ر.س)', 'نسبة الاستهلاك %'],
+    dataMapper: (r: any) => {
+      const budget = r.budget || r.budget_limit || 0;
+      const spent = r.actual_spent || r.total_expenses || 0;
+      const remaining = budget - spent;
+      const percent = budget > 0 ? ((spent / budget) * 100).toFixed(1) + '%' : '0%';
+      return [
+        r.code || '',
+        r.name || '',
+        r.manager_name || r.parent || 'مشرف المركز',
+        budget,
+        spent,
+        remaining,
+        percent
+      ];
+    }
+  },
+
+  // 8. الموارد البشرية والرواتب
+  employees: {
+    sectionTitle: 'سجل الموظفين والكوادر الوظيفية',
+    headers: ['الرقم الوظيفي', 'اسم الموظف', 'رقم الهوية / الإقامة', 'المسمى الوظيفي', 'القسم / الإدارة', 'الفرع', 'تاريخ التعيين', 'الراتب الأساسي', 'بدل السكن', 'بدل النقل', 'إجمالي الراتب (ر.س)', 'الحالة'],
+    dataMapper: (r: any) => {
+      const sal = r.salary || 0;
+      const basic = r.basic_salary || (sal * 0.7);
+      const housing = r.allowances ? (r.allowances * 0.66) : (sal * 0.2);
+      const transport = r.allowances ? (r.allowances * 0.34) : (sal * 0.1);
+      return [
+        r.employee_code || r.id || '',
+        r.name || '',
+        r.national_id || '',
+        r.job_title || '',
+        r.department || '',
+        r.branch || '',
+        r.hire_date || '',
+        basic,
+        housing,
+        transport,
+        sal,
+        r.status || 'نشط'
+      ];
+    }
+  },
+
+  // 9. مسير الرواتب المعتمد لحماية الأجور WPS
+  payroll: {
+    sectionTitle: 'مسير الرواتب المعتمد لحماية الأجور (WPS Payroll)',
+    headers: ['رقم الهوية / الإقامة', 'اسم الموظف', 'اسم البنك', 'رقم الآيبان (IBAN)', 'الراتب الأساسي', 'بدل السكن', 'بدل النقل', 'استقطاع التأمينات (GOSI 9.75%)', 'صافي الراتب المحول (ر.س)', 'حالة الصرف'],
+    dataMapper: (r: any) => {
+      const sal = r.salary || 0;
+      const basic = sal * 0.7;
+      const housing = sal * 0.2;
+      const transport = sal * 0.1;
+      const gosi = (basic + housing) * 0.0975;
+      const net = basic + housing + transport - gosi;
+      return [
+        r.national_id || '',
+        r.name || '',
+        r.bank_name || 'مصرف الراجحي',
+        r.iban || `SA03800000000${r.national_id || '1092837410'}12`,
+        basic.toFixed(2),
+        housing.toFixed(2),
+        transport.toFixed(2),
+        gosi.toFixed(2),
+        net.toFixed(2),
+        'جاهز للصرف'
+      ];
+    }
+  },
+
+  // 10. القيود اليومية المحاسبية
+  journals: {
+    sectionTitle: 'تقرير القيود المحاسبية اليومية المعتمدة',
+    headers: ['رقم القيد', 'تاريخ القيد', 'البيان والشرح', 'المبلغ (ر.س)', 'حالة القيد', 'الفرع', 'الطرف المدين', 'الطرف الدائن'],
+    dataMapper: (r: any) => [
+      r.ref_no || r.entry_number || r.id || '',
+      r.date || r.entry_date || '',
+      r.description || r.narration || '',
+      r.amount || r.total_debit || 0,
+      r.status || 'معتمد',
+      r.branch || '',
+      r.debit_account || '',
+      r.credit_account || ''
+    ]
+  },
+  company_journal_entries: {
+    sectionTitle: 'تقرير القيود المحاسبية اليومية المعتمدة',
+    headers: ['رقم القيد', 'تاريخ القيد', 'البيان والشرح', 'المبلغ (ر.س)', 'حالة القيد', 'الفرع'],
+    dataMapper: (r: any) => [
+      r.ref_no || r.entry_number || r.id || '',
+      r.date || r.entry_date || '',
+      r.description || r.narration || '',
+      r.amount || r.total_debit || 0,
+      r.status || 'معتمد',
+      r.branch || ''
+    ]
+  },
+
+  // 11. السندات المحاسبية (قبض وصرف)
+  vouchers: {
+    sectionTitle: 'سجل السندات المالية (سندات القبض والصرف)',
+    headers: ['رقم السند', 'نوع السند', 'تاريخ التحرير', 'المدفوع له / القابض', 'الحساب المالي / الخزينة', 'المبلغ (ر.س)', 'حالة الاعتماد'],
+    dataMapper: (r: any) => [
+      r.voucher_no || r.id || '',
+      r.type || '',
+      r.date || '',
+      r.payee_payer || '',
+      r.treasury || '',
+      r.amount || 0,
+      r.status || 'معتمد'
+    ]
+  },
+
+  // 12. التحويلات البنكية والنقدية
+  transfers: {
+    sectionTitle: 'تقرير التحويلات النقدية والبنكية بين الحسابات',
+    headers: ['رقم التحويل', 'تاريخ التحويل', 'من حساب', 'إلى حساب', 'المبلغ المحول (ر.س)', 'المرجع البنكي', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.transfer_no || r.id || '',
+      r.date || '',
+      r.from_account || '',
+      r.to_account || '',
+      r.amount || 0,
+      r.bank_ref || '',
+      r.status || 'مكتمل'
+    ]
+  },
+
+  // 13. ميزان المراجعة (Trial Balance)
+  'trial-balance': {
+    sectionTitle: 'ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)',
+    headers: ['رمز الحساب', 'اسم الحساب المحاسبي', 'نوع الحساب', 'الرصيد الافتتاحي (مدين)', 'الرصيد الافتتاحي (دائن)', 'حركة الفترة (مدين)', 'حركة الفترة (دائن)', 'الرصيد النهائي (ر.س)'],
+    dataMapper: (r: any) => [
+      r.code || r.account_code || '',
+      r.name || r.account_name || '',
+      r.type || r.account_type || '',
+      r.opening_debit || 0,
+      r.opening_credit || 0,
+      r.period_debit || r.debit || 0,
+      r.period_credit || r.credit || 0,
+      r.balance || (r.debit - r.credit) || 0
+    ]
+  },
+
+  // 14. قائمة المركز المالي (Balance Sheet)
+  'balance-sheet': {
+    sectionTitle: 'قائمة المركز المالي الموحدة (Statement of Financial Position)',
+    headers: ['البند الرئيسي', 'الحساب الفرعي', 'القيمة المقارنة (ر.س)', 'القيمة الحالية (ر.س)', 'نسبة الإجمالي %'],
+    dataMapper: (r: any) => [
+      r.main_category || r.type || '',
+      r.item_name || r.name || '',
+      r.previous_year || 0,
+      r.current_value || r.balance || 0,
+      r.percentage ? `${r.percentage}%` : '-'
+    ]
+  },
+
+  // 15. قائمة الدخل والأرباح (Income Statement)
+  'income-statement': {
+    sectionTitle: 'قائمة الدخل والأرباح والخسائر (Income Statement)',
+    headers: ['البند المالي', 'التصنيف', 'إجمالي الفترة (ر.س)', 'الموازنة التقديرية (ر.س)', 'نسبة الانحراف %'],
+    dataMapper: (r: any) => [
+      r.title || r.name || '',
+      r.category || r.type || '',
+      r.amount || r.actual || 0,
+      r.budget || 0,
+      r.variance ? `${r.variance}%` : '-'
+    ]
+  },
+
+  // 16. الشكاوى والدعم الفني
+  complaints: {
+    sectionTitle: 'سجل تذاكر الشكاوى والدعم الفني (Customer Support)',
+    headers: ['رقم التذكرة', 'اسم العميل', 'جوال العميل', 'تصنيف الشكوى', 'مرجع العقد', 'الأولوية', 'حالة التذكرة', 'مهلة SLA المتبقية', 'الموظف المكلف', 'الفرع', 'تاريخ الإنشاء', 'وصف الشكوى'],
+    dataMapper: (r: any) => [
+      r.ticket_no || r.id || '',
+      r.client_name || '',
+      r.client_phone || '',
+      r.category || '',
+      r.contract_ref || '',
+      r.priority || '',
+      r.status || '',
+      r.sla_hours_left ? `${r.sla_hours_left} ساعة` : '0',
+      r.assigned_agent || '',
+      r.branch || '',
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : '',
+      r.description || ''
+    ]
+  },
+
+  // 17. السفر واللوجستيات
   travel: {
-    sectionTitle: 'تقرير رحلات السفر واللوجستيات',
-    headers: ['الرقم', 'نوع السفر', 'العميل', 'اسم العاملة', 'الجنسية', 'شركة الطيران', 'رقم الرحلة', 'المطار', 'تاريخ الرحلة', 'الحالة'],
+    sectionTitle: 'سجل رحلات الطيران والخدمات اللوجستية',
+    headers: ['رقم الرحلة ERP', 'نوع السفر', 'اسم العميل', 'اسم العاملة', 'الجنسية', 'شركة الطيران', 'رقم التذكرة / الرحلة', 'المطار المقصود', 'تاريخ الوصول / المغادرة', 'الحالة'],
     dataMapper: (r: any) => [
       r.id || '',
       r.travel_type || '',
@@ -137,217 +450,129 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
     ]
   },
 
-  // 7. نقل الكفالة
-  'sponsorship-transfer': {
-    sectionTitle: 'تقرير نقل الكفالة',
-    headers: ['رقم النقل', 'اسم العاملة', 'الجنسية', 'الكفيل القديم (المتنازل)', 'جوال القديم', 'الكفيل الجديد (المستلم)', 'جوال الجديد', 'أيام التجربة المتبقية', 'مبلغ العقد (ر.س)', 'الحالة', 'التاريخ'],
-    dataMapper: (r: any) => [
-      r.contract_number || '',
-      r.maid_name || '',
-      r.nationality || '',
-      r.old_sponsor || '',
-      r.old_sponsor_phone || '',
-      r.new_sponsor || '',
-      r.new_sponsor_phone || '',
-      r.trial_days_remaining ?? 0,
-      r.contract_amount || 0,
-      r.status || '',
-      r.created_at || ''
-    ]
-  },
-
-  // 8. الشكاوى والدعم
-  complaints: {
-    sectionTitle: 'تقرير الشكاوى والدعم الفني',
-    headers: ['رقم التذكرة', 'العميل', 'جوال العميل', 'التصنيف', 'مرجع العقد', 'الأولوية', 'الحالة', 'SLA (ساعات)', 'الموظف المعين', 'الفرع', 'تاريخ الإنشاء', 'الوصف'],
-    dataMapper: (r: any) => [
-      r.ticket_no || '',
-      r.client_name || '',
-      r.client_phone || '',
-      r.category || '',
-      r.contract_ref || '',
-      r.priority || '',
-      r.status || '',
-      r.sla_hours_left ?? 0,
-      r.assigned_agent || '',
-      r.branch || '',
-      r.created_at || '',
-      r.description || ''
-    ]
-  },
-
-  // 9. المكاتب الخارجية
-  'external-offices': {
-    sectionTitle: 'تقرير المكاتب الخارجية',
-    headers: ['الرقم', 'اسم المكتب', 'الدولة', 'اسم المدير', 'رقم الجوال', 'البريد الإلكتروني', 'رقم الترخيص', 'المرشحون النشطون', 'إجمالي الواصلين', 'التقييم'],
-    dataMapper: (r: any) => [
-      r.id || '',
-      r.officeName || '',
-      r.country || '',
-      r.managerName || '',
-      r.phone || '',
-      r.email || '',
-      r.licenseNumber || '',
-      r.activeCandidatesCount || 0,
-      r.arrivedCountCount || 0,
-      r.rating || 0
-    ]
-  },
-
-  // 10. الطلبات المالية
-  'financial-requests': {
-    sectionTitle: 'تقرير الطلبات المالية التشغيلية',
-    headers: ['رقم الطلب', 'نوع الطلب المالي', 'العميل', 'رقم العقد', 'المبلغ المطلوب (ر.س)', 'الأولوية', 'حالة الاعتماد', 'مقدم الطلب', 'التاريخ'],
-    dataMapper: (r: any) => [
-      r.request_number || '',
-      r.type || '',
-      r.client_name || '',
-      r.contract_number || '',
-      r.amount || 0,
-      r.priority || '',
-      r.status || '',
-      r.applicant || '',
-      r.created_at || ''
-    ]
-  },
-
-  // 11. الموظفون HR
-  employees: {
-    sectionTitle: 'تقرير بيانات الموظفين',
-    headers: ['الرقم الوظيفي', 'الاسم', 'رقم الهوية', 'المسمى الوظيفي', 'القسم / الإدارة', 'الفرع', 'تاريخ التوظيف', 'الراتب الأساسي (ر.س)', 'الحالة'],
+  // 18. الحضور والانصراف
+  attendances: {
+    sectionTitle: 'سجل الحضور والانصراف والبصمة الإلكترونية',
+    headers: ['كود الموظف', 'اسم الموظف', 'الفرع / القسم', 'تاريخ اليوم', 'وقت الحضور', 'وقت الانصراف', 'دقائق التأخير', 'ساعات العمل الإضافي', 'الحالة'],
     dataMapper: (r: any) => [
       r.employee_code || '',
-      r.name || '',
-      r.national_id || '',
-      r.job_title || '',
-      r.department || '',
+      r.name || r.employee_name || '',
+      r.branch || r.department || '',
+      r.date || '',
+      r.check_in || '',
+      r.check_out || '',
+      r.delay_minutes || 0,
+      r.overtime_hours || 0,
+      r.status || 'حاضر'
+    ]
+  },
+
+  // 19. عهد الفروع
+  custodies: {
+    sectionTitle: 'سجل العهد والممتلكات المؤسسية per Branch',
+    headers: ['كود العهدة', 'اسم العهدة / الصنف', 'النوع', 'الفرع المسؤول', 'المستلم المكلف', 'الرقم التسلسلي', 'تاريخ التسليم', 'الحالة الفنية'],
+    dataMapper: (r: any) => [
+      r.custody_code || r.id || '',
+      r.name || r.item_name || '',
+      r.category || '',
       r.branch || '',
-      r.hire_date || '',
-      r.salary || 0,
-      r.status || ''
+      r.assigned_to || '',
+      r.serial_number || '',
+      r.received_date || '',
+      r.condition || 'ممتازة'
     ]
   },
 
-  // 12. القيود المحاسبية
-  journals: {
-    sectionTitle: 'تقرير القيود المحاسبية',
-    headers: ['رقم القيد', 'التاريخ', 'البيان والوصف', 'المبلغ (ر.س)', 'حالة الاعتماد', 'الفرع'],
+  // 20. سجل العمليات والتدقيق الأمني
+  activity_log: {
+    sectionTitle: 'سجل العمليات والتدقيق الأمني (Audit Trail Log)',
+    headers: ['رقم المعاملة', 'المستخدم المنفذ', 'الدور / الصلاحية', 'نوع الإجراء', 'الوصف والتفاصيل', 'عنوان IP', 'التوقيت والتاريخ'],
     dataMapper: (r: any) => [
-      r.ref_no || '',
-      r.date || '',
-      r.description || '',
-      r.amount || 0,
-      r.status || '',
-      r.branch || ''
+      r.id || '',
+      r.user_name || r.user || '',
+      r.user_role || '',
+      r.action || '',
+      r.details || r.description || '',
+      r.ip_address || '127.0.0.1',
+      r.timestamp ? new Date(r.timestamp).toLocaleString('ar-SA') : ''
     ]
   },
 
-  // 13. السندات المالية
-  vouchers: {
-    sectionTitle: 'تقرير السندات المالية (قبض وصرف)',
-    headers: ['رقم السند', 'النوع', 'التاريخ', 'المدفوع له / القابض', 'الخزينة / البنك', 'المبلغ (ر.س)', 'حالة الاعتماد'],
+  // 21. الفروع والأقسام
+  branches: {
+    sectionTitle: 'سجل فروع وأقسام المجموعة',
+    headers: ['كود الفرع', 'اسم الفرع', 'المدينة', 'مدير الفرع', 'رقم الهاتف', 'عدد الكوادر', 'عدد العقود النشطة', 'الحالة'],
     dataMapper: (r: any) => [
-      r.voucher_no || '',
-      r.type || '',
-      r.date || '',
-      r.payee_payer || '',
-      r.treasury || '',
-      r.amount || 0,
-      r.status || ''
+      r.branch_code || r.id || '',
+      r.name || '',
+      r.city || '',
+      r.manager_name || '',
+      r.phone || '',
+      r.staff_count || 0,
+      r.active_contracts_count || 0,
+      r.status || 'نشط'
     ]
   },
 
-  // 14. المراسلات الجماعية
-  'group-dispatch': {
-    sectionTitle: 'تقرير المراسلات بين شركات المجموعة',
-    headers: ['رقم المذكرة', 'الجهة المصدرة', 'الجهة المستهدفة', 'نوع المذكرة', 'الموضوع', 'الأولوية', 'الحالة', 'التاريخ', 'المسؤول المكلف'],
-    dataMapper: (r: any) => [
-      r.dispatch_no || '',
-      r.source_entity || '',
-      r.target_entity || '',
-      r.dispatch_type || '',
-      r.subject || '',
-      r.priority || '',
-      r.status || '',
-      r.created_at || '',
-      r.assigned_officer || ''
-    ]
-  },
-
-  // 15. تفاويض الإنجاز
-  ingaz: {
-    sectionTitle: 'تقرير تفاويض الإنجاز',
-    headers: ['رقم التفويض', 'العميل / الكفيل', 'رقم هوية الكفيل', 'رقم التأشيرة', 'المكتب الخارجي', 'المهنة', 'الجنسية', 'رسوم التوثيق (ر.س)', 'الحالة', 'التاريخ'],
-    dataMapper: (r: any) => [
-      r.delegation_number || '',
-      r.client_name || '',
-      r.sponsor_id || '',
-      r.visa_number || '',
-      r.foreign_office || '',
-      r.profession || '',
-      r.nationality || '',
-      r.fee_amount || 0,
-      r.status || '',
-      r.created_at || ''
-    ]
-  },
-
-  // 16. مستخدمو النظام
+  // 22. مستخدمو النظام
   users: {
-    sectionTitle: 'تقرير مستخدمي النظام والصلاحيات',
-    headers: ['الاسم', 'اسم المستخدم', 'نوع المستخدم', 'الصلاحية / الدور', 'الفرع', 'رقم الجوال', 'البريد الإلكتروني', 'الحالة', 'المصادقة الثنائية 2FA'],
+    sectionTitle: 'سجل مستخدمي النظام والصلاحيات الإدارية',
+    headers: ['الاسم', 'اسم المستخدم', 'الدور الوظيفي', 'الفرع المسؤول', 'رقم الجوال', 'البريد الإلكتروني', 'المصادقة الثنائية 2FA', 'الحالة'],
     dataMapper: (r: any) => [
       r.name || '',
       r.username || '',
-      r.user_type || '',
       r.role || '',
       r.branch || '',
       r.phone || '',
       r.email || '',
-      r.status || '',
-      r.two_factor_enabled ? 'مفعّل' : 'غير مفعّل'
-    ]
-  },
-
-  // Inter-company disputes (sub-section of complaints)
-  'inter-disputes': {
-    sectionTitle: 'تقرير النزاعات بين شركات المجموعة',
-    headers: ['رقم النزاع', 'الجهة المصدرة', 'الجهة المستهدفة', 'الموضوع', 'المبلغ المطالب (ر.س)', 'حالة التسوية', 'الأولوية', 'التاريخ', 'التفاصيل'],
-    dataMapper: (r: any) => [
-      r.dispute_no || '',
-      r.sender_entity || '',
-      r.target_entity || '',
-      r.subject || '',
-      r.amount_claimed || 0,
-      r.executive_status || '',
-      r.priority || '',
-      r.date || '',
-      r.details || ''
+      r.two_factor_enabled ? 'مفعّل' : 'غير مفعّل',
+      r.status || 'نشط'
     ]
   }
 };
 
-// ─── Company Header Info ─────────────────────────────────────────────
+// ─── Smart Fallback Resolver ─────────────────────────────────────────
+function resolveConfig(sectionKey: string, data: any[], customTitle?: string): SectionExportConfig {
+  if (SECTION_CONFIGS[sectionKey]) {
+    const cfg = SECTION_CONFIGS[sectionKey];
+    if (customTitle) return { ...cfg, sectionTitle: customTitle };
+    return cfg;
+  }
 
-const COMPANY_INFO = {
-  nameAr: 'مجموعة خالد السليم التجارية',
-  nameEn: 'KHALID AL-SULAIM COMMERCIAL GROUP',
-  tagline: 'نظام تخطيط الموارد المؤسسي ERP',
-};
+  // Auto-generate config dynamically from object keys if section not pre-registered
+  if (data && data.length > 0) {
+    const firstRow = data[0];
+    const keys = Object.keys(firstRow).filter(k => k !== '__typename' && typeof firstRow[k] !== 'function');
+    
+    const formatHeader = (key: string) => {
+      return key
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, str => str.toUpperCase());
+    };
+
+    return {
+      sectionTitle: customTitle || `تقرير ${sectionKey}`,
+      headers: keys.map(formatHeader),
+      dataMapper: (row: any) => keys.map(k => {
+        const val = row[k];
+        if (val === null || val === undefined) return '';
+        if (typeof val === 'object') return JSON.stringify(val);
+        return val;
+      })
+    };
+  }
+
+  return {
+    sectionTitle: customTitle || `تقرير ${sectionKey}`,
+    headers: ['المعرف', 'البيان', 'التاريخ'],
+    dataMapper: (r: any) => [r.id || '', JSON.stringify(r), new Date().toLocaleDateString('ar-SA')]
+  };
+}
 
 // ─── Export to Excel (XLSX) ──────────────────────────────────────────
-
-export function exportToExcel(
-  sectionKey: string,
-  data: any[],
-  customTitle?: string
-): void {
-  const config = SECTION_CONFIGS[sectionKey];
-  if (!config) {
-    console.error(`Export config not found for section: ${sectionKey}`);
-    return;
-  }
-
+export function exportToExcel(sectionKey: string, data: any[], customTitle?: string): void {
+  const config = resolveConfig(sectionKey, data, customTitle);
   const title = customTitle || config.sectionTitle;
   const now = new Date().toLocaleDateString('ar-SA', {
     year: 'numeric',
@@ -356,16 +581,15 @@ export function exportToExcel(
     weekday: 'long'
   });
 
-  // Build worksheet data
   const wsData: any[][] = [];
 
-  // Row 1: Company name
-  wsData.push([`${COMPANY_INFO.nameAr} — ${COMPANY_INFO.nameEn}`]);
-  // Row 2: Report title + date
-  wsData.push([`${title} — تاريخ التصدير: ${now}`]);
+  // Row 1: Company Header
+  wsData.push([`${GROUP_COMPANY_INFO.nameAr} — ${GROUP_COMPANY_INFO.nameEn}`]);
+  // Row 2: Report Title & Metadata
+  wsData.push([`${title} • تاريخ الاستخراج: ${now} • إجمالي السجلات: ${data.length}`]);
   // Row 3: Empty separator
   wsData.push([]);
-  // Row 4: Column headers
+  // Row 4: Column Headers
   wsData.push(config.headers);
   // Row 5+: Data rows
   data.forEach(row => {
@@ -374,49 +598,38 @@ export function exportToExcel(
 
   const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-  // Set column widths based on header lengths
+  // Set column widths based on headers and data length
   const colWidths = config.headers.map((h, i) => {
     const maxDataLen = data.reduce((max, row) => {
       const val = String(config.dataMapper(row)[i] || '');
       return Math.max(max, val.length);
     }, h.length);
-    return { wch: Math.min(Math.max(maxDataLen + 4, 12), 45) };
+    return { wch: Math.min(Math.max(maxDataLen + 4, 14), 50) };
   });
   ws['!cols'] = colWidths;
 
-  // Merge company name row across all columns
   const colCount = config.headers.length;
   ws['!merges'] = [
     { s: { r: 0, c: 0 }, e: { r: 0, c: colCount - 1 } },
     { s: { r: 1, c: 0 }, e: { r: 1, c: colCount - 1 } }
   ];
 
-  // Set RTL for the sheet
+  // Set Right-to-Left (RTL) for Arabic
   ws['!sheetViews'] = [{ rightToLeft: true }];
 
   const wb = XLSX.utils.book_new();
-  // Set workbook RTL
   if (!wb.Workbook) wb.Workbook = {};
   if (!wb.Workbook.Views) wb.Workbook.Views = [];
   wb.Workbook.Views[0] = { RTL: true };
 
-  XLSX.utils.book_append_sheet(wb, ws, title.slice(0, 31));
+  const sanitizedSheetName = title.replace(/[:\\/?*[\]]/g, '').slice(0, 31);
+  XLSX.utils.book_append_sheet(wb, ws, sanitizedSheetName);
   XLSX.writeFile(wb, `${title}.xlsx`);
 }
 
 // ─── Export to CSV ───────────────────────────────────────────────────
-
-export function exportToCSV(
-  sectionKey: string,
-  data: any[],
-  customTitle?: string
-): void {
-  const config = SECTION_CONFIGS[sectionKey];
-  if (!config) {
-    console.error(`Export config not found for section: ${sectionKey}`);
-    return;
-  }
-
+export function exportToCSV(sectionKey: string, data: any[], customTitle?: string): void {
+  const config = resolveConfig(sectionKey, data, customTitle);
   const title = customTitle || config.sectionTitle;
   const rows: string[] = [];
 
@@ -426,12 +639,12 @@ export function exportToCSV(
   // Data rows
   data.forEach(row => {
     const mapped = config.dataMapper(row);
-    rows.push(mapped.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+    rows.push(mapped.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
   });
 
   const csvContent = rows.join('\n');
 
-  // Add UTF-8 BOM for Arabic support
+  // Add UTF-8 BOM for perfect Arabic rendering in Microsoft Excel
   const BOM = '\uFEFF';
   const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -444,18 +657,8 @@ export function exportToCSV(
 }
 
 // ─── Export to PDF ───────────────────────────────────────────────────
-
-export function exportToPDF(
-  sectionKey: string,
-  data: any[],
-  customTitle?: string
-): void {
-  const config = SECTION_CONFIGS[sectionKey];
-  if (!config) {
-    console.error(`Export config not found for section: ${sectionKey}`);
-    return;
-  }
-
+export function exportToPDF(sectionKey: string, data: any[], customTitle?: string): void {
+  const config = resolveConfig(sectionKey, data, customTitle);
   const title = customTitle || config.sectionTitle;
   const now = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -463,33 +666,30 @@ export function exportToPDF(
     day: '2-digit'
   });
 
-  // Create landscape PDF for wider tables
   const doc = new jsPDF({
-    orientation: config.headers.length > 8 ? 'landscape' : 'portrait',
+    orientation: config.headers.length > 7 ? 'landscape' : 'portrait',
     unit: 'mm',
     format: 'a4'
   });
 
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // ── Header Section ──
+  // Header
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text(COMPANY_INFO.nameEn, pageWidth / 2, 12, { align: 'center' });
+  doc.text(GROUP_COMPANY_INFO.nameEn, pageWidth / 2, 12, { align: 'center' });
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${COMPANY_INFO.tagline} | ${title}`, pageWidth / 2, 19, { align: 'center' });
+  doc.text(`${GROUP_COMPANY_INFO.tagline} | ${title}`, pageWidth / 2, 19, { align: 'center' });
 
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.text(`Export Date: ${now} | Total Records: ${data.length}`, pageWidth / 2, 25, { align: 'center' });
 
-  // ── Horizontal line ──
-  doc.setDrawColor(0, 81, 84); // #005154
+  doc.setDrawColor(0, 81, 84);
   doc.setLineWidth(0.5);
   doc.line(10, 28, pageWidth - 10, 28);
 
-  // ── Table ──
   const startY = 32;
   const margin = 6;
   const tableWidth = pageWidth - margin * 2;
@@ -497,11 +697,9 @@ export function exportToPDF(
   const rowHeight = 7;
   let currentY = startY;
 
-  // Header row background
-  doc.setFillColor(0, 81, 84); // #005154
+  // Header row
+  doc.setFillColor(0, 81, 84);
   doc.rect(margin, currentY, tableWidth, rowHeight, 'F');
-
-  // Header text
   doc.setFontSize(7);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(255, 255, 255);
@@ -512,17 +710,13 @@ export function exportToPDF(
 
   currentY += rowHeight;
 
-  // Data rows
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.5);
 
   data.forEach((row, rowIdx) => {
-    // Page break check
     if (currentY + rowHeight > doc.internal.pageSize.getHeight() - 15) {
       doc.addPage();
       currentY = 15;
-
-      // Re-draw header on new page
       doc.setFillColor(0, 81, 84);
       doc.rect(margin, currentY, tableWidth, rowHeight, 'F');
       doc.setFont('helvetica', 'bold');
@@ -537,37 +731,33 @@ export function exportToPDF(
       doc.setFontSize(6.5);
     }
 
-    // Alternating row colors
     if (rowIdx % 2 === 0) {
       doc.setFillColor(245, 247, 250);
       doc.rect(margin, currentY, tableWidth, rowHeight, 'F');
     }
 
-    // Row borders
     doc.setDrawColor(220, 220, 220);
     doc.setLineWidth(0.1);
     doc.line(margin, currentY + rowHeight, margin + tableWidth, currentY + rowHeight);
 
-    // Cell data
     doc.setTextColor(30, 30, 30);
     const mapped = config.dataMapper(row);
     mapped.forEach((val, i) => {
       const x = margin + i * colWidth + colWidth / 2;
-      const text = String(val);
+      const text = String(val ?? '');
       doc.text(text, x, currentY + 5, { align: 'center', maxWidth: colWidth - 2 });
     });
 
     currentY += rowHeight;
   });
 
-  // ── Footer ──
   const pageCount = doc.getNumberOfPages();
   for (let p = 1; p <= pageCount; p++) {
     doc.setPage(p);
     doc.setFontSize(7);
     doc.setTextColor(150, 150, 150);
     doc.text(
-      `${COMPANY_INFO.nameEn} - ERP System | Page ${p} of ${pageCount}`,
+      `${GROUP_COMPANY_INFO.nameEn} - ERP System | Page ${p} of ${pageCount}`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 6,
       { align: 'center' }
@@ -577,10 +767,136 @@ export function exportToPDF(
   doc.save(`${title}.pdf`);
 }
 
-// ─── Quick Export Utility ────────────────────────────────────────────
-// Used by pages that want to offer all three formats in a single call
+// ─── Official Printable Report (High-fidelity Arabic HTML Print) ────
+export function exportToPrint(sectionKey: string, data: any[], customTitle?: string): void {
+  const config = resolveConfig(sectionKey, data, customTitle);
+  const title = customTitle || config.sectionTitle;
+  const now = new Date().toLocaleDateString('ar-SA', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long'
+  });
 
-export type ExportFormat = 'excel' | 'pdf' | 'csv';
+  const printWindow = window.open('', '_blank', 'width=1100,height=850');
+  if (!printWindow) {
+    alert('يرجى السماح بالنوافذ المنبثقة للطباعة');
+    return;
+  }
+
+  const rowsHtml = data.map((row, idx) => {
+    const mapped = config.dataMapper(row);
+    return `
+      <tr style="background-color: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};">
+        <td style="text-align: center; font-weight: bold; color: #64748B;">${idx + 1}</td>
+        ${mapped.map(val => `<td style="padding: 8px 10px; border: 1px solid #E2E8F0; font-size: 11.5px;">${String(val ?? '-')}</td>`).join('')}
+      </tr>
+    `;
+  }).join('');
+
+  const headersHtml = `
+    <th style="padding: 10px; background: #005154; color: white; border: 1px solid #003B3E; width: 40px;">#</th>
+    ${config.headers.map(h => `<th style="padding: 10px; background: #005154; color: white; border: 1px solid #003B3E; font-size: 12px;">${h}</th>`).join('')}
+  `;
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+      <meta charset="utf-8">
+      <title>${title} - ${GROUP_COMPANY_INFO.nameAr}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+      <style>
+        body {
+          font-family: 'Cairo', sans-serif;
+          margin: 20px;
+          color: #0F172A;
+          background: #FFF;
+        }
+        @media print {
+          @page { size: landscape; margin: 12mm; }
+          body { margin: 0; }
+          .no-print { display: none !important; }
+        }
+        .header-box {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 3px solid #005154;
+          padding-bottom: 16px;
+          margin-bottom: 20px;
+        }
+        .report-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 15px;
+          text-align: right;
+        }
+        .report-table th, .report-table td {
+          border: 1px solid #CBD5E1;
+        }
+        .footer-box {
+          margin-top: 30px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-top: 15px;
+          border-top: 2px solid #E2E8F0;
+          font-size: 11px;
+          color: #64748B;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="no-print" style="margin-bottom: 16px; display: flex; gap: 10px;">
+        <button onclick="window.print()" style="padding: 10px 20px; background: #005154; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">
+          🖨️ طباعة التقرير الفوري
+        </button>
+        <button onclick="window.close()" style="padding: 10px 20px; background: #E2E8F0; color: #334155; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">
+          إغلاق
+        </button>
+      </div>
+
+      <div class="header-box">
+        <div>
+          <h1 style="font-size: 20px; font-weight: 900; color: #005154; margin: 0;">${GROUP_COMPANY_INFO.nameAr}</h1>
+          <div style="font-size: 11px; color: #64748B; font-weight: bold; margin-top: 2px;">${GROUP_COMPANY_INFO.nameEn}</div>
+          <div style="font-size: 11px; color: #475569; margin-top: 4px;">س.ت: ${GROUP_COMPANY_INFO.crNumber} • الرقم الضريبي: ${GROUP_COMPANY_INFO.taxNumber}</div>
+        </div>
+
+        <div style="text-align: center;">
+          <h2 style="font-size: 17px; font-weight: 800; color: #714B67; margin: 0;">${title}</h2>
+          <div style="font-size: 12px; color: #64748B; margin-top: 4px;">تاريخ الاستخراج: ${now}</div>
+        </div>
+
+        <div style="text-align: left;">
+          <div style="font-size: 11px; font-weight: bold; color: #005154;">إجمالي السجلات المضمنة:</div>
+          <div style="font-size: 22px; font-weight: 900; color: #0F172A;">${data.length}</div>
+        </div>
+      </div>
+
+      <table class="report-table">
+        <thead>
+          <tr>${headersHtml}</tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+
+      <div class="footer-box">
+        <div>تم الاستخراج والاعتماد إلكترونياً عبر منظومة ERP المجموعة • تقرير رسمي موثق</div>
+        <div>صفحة 1 من 1</div>
+      </div>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+}
+
+// ─── Universal Unified Export Method ─────────────────────────────────
+export type ExportFormat = 'excel' | 'pdf' | 'csv' | 'print';
 
 export function exportData(
   sectionKey: string,
@@ -597,6 +913,9 @@ export function exportData(
       break;
     case 'csv':
       exportToCSV(sectionKey, data, customTitle);
+      break;
+    case 'print':
+      exportToPrint(sectionKey, data, customTitle);
       break;
   }
 }

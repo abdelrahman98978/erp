@@ -126,11 +126,17 @@ export const CustodiesPage: React.FC = () => {
           <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
             <i className="fa-solid fa-plus ml-1"></i> تسليم عُهدة جديدة
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('employees', custodies, 'excel')} title="تصدير Excel">
+          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('custodies', custodies, 'excel')} title="تصدير Excel">
             <i className="fa-solid fa-file-excel ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('employees', custodies, 'pdf')} title="تصدير PDF">
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('custodies', custodies, 'csv')} title="تصدير CSV">
+            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('custodies', custodies, 'pdf')} title="تصدير PDF">
             <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('custodies', custodies, 'print')} title="طباعة التقرير">
+            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
           </button>
         </div>
       </div>
@@ -141,6 +147,7 @@ export const CustodiesPage: React.FC = () => {
         searchPlaceholder="ابحث باسم العُهدة، الموظف، أو الرقم التسلسلي..."
         onAddClick={() => setShowAddModal(true)}
         addLabel="إضافة عُهدة جديدة"
+        exportConfig={{ sectionKey: 'custodies', rawData: custodies }}
       />
 
       {/* Add Custody Modal */}

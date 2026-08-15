@@ -5,6 +5,8 @@ import { useCompany } from '../../contexts/CompanyContext';
 import { useImpersonation } from '../../contexts/ImpersonationContext';
 import { CompanyId } from '../../types';
 import { CompanyLogo } from '../common/CompanyLogo';
+import { useAppStore } from '../../stores/appStore';
+import { NotificationDropdown } from '../common/NotificationDropdown';
 
 interface HeaderProps {
   activeTabTitle: string;
@@ -22,12 +24,14 @@ export const Header: React.FC<HeaderProps> = ({
   const { currentLanguage, theme, setLanguage, toggleTheme, t } = useLanguage();
   const { activeCompanyId, activeCompany, setActiveCompanyId, companies } = useCompany();
   const { impersonatedState, stopImpersonation } = useImpersonation();
+  const { unreadCount, setQuickSearchOpen } = useAppStore();
 
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
   const [showLangDropdown, setShowLangDropdown] = useState<boolean>(false);
   const [showCompanyDropdown, setShowCompanyDropdown] = useState<boolean>(false);
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
+  const [showNotifDropdown, setShowNotifDropdown] = useState<boolean>(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -284,6 +288,15 @@ export const Header: React.FC<HeaderProps> = ({
             <div>{currentDate}</div>
           </div>
 
+          {/* Quick Search Button (Ctrl+K) */}
+          <button
+            className="btn-header-icon"
+            onClick={() => setQuickSearchOpen(true)}
+            title="البحث السريع في النظام (Ctrl + K)"
+          >
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </button>
+
           {/* Theme & Language Controls */}
           <button className="btn-header-icon" onClick={toggleTheme} title="تغيير الثيم">
             <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
@@ -317,11 +330,23 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Notifications */}
-          <button className="btn-header-icon relative-box" title="الإشعارات">
-            <i className="fa-solid fa-bell"></i>
-            <span className="badge-count-header">5</span>
-          </button>
+          {/* Real-time Notifications */}
+          <div style={{ position: 'relative' }}>
+            <button
+              className="btn-header-icon relative-box"
+              onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+              title="الإشعارات والتنبيهات"
+            >
+              <i className="fa-solid fa-bell"></i>
+              {unreadCount > 0 && (
+                <span className="badge-count-header">{unreadCount}</span>
+              )}
+            </button>
+            <NotificationDropdown
+              isOpen={showNotifDropdown}
+              onClose={() => setShowNotifDropdown(false)}
+            />
+          </div>
 
           {/* User Profile */}
           <div style={{ position: 'relative' }}>
