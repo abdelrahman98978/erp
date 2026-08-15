@@ -532,10 +532,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       <input
                         id="login-username"
                         type="text"
-                        required
                         value={username}
                         onChange={e => setUsername(e.target.value)}
-                        placeholder={t('usernamePlaceholder', 'أدخل اسم المستخدم...')}
+                        placeholder={t('usernamePlaceholder', 'أدخل اسم المستخدم... (الافتراضي: admin@alsulaim.sa)')}
                         style={{
                           width: '100%',
                           height: '52px',
@@ -564,10 +563,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       <input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
-                        required
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        placeholder="••••••••"
+                        placeholder="•••••••• (الافتراضي: Alsulaim@2026)"
                         style={{
                           width: '100%',
                           height: '52px',
