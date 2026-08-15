@@ -422,7 +422,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           {/* Top Brand & Language Switcher */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '36px', position: 'relative' }}>
-              <img src="./logo.png" alt="شعار المكاتب" style={{ height: '48px', width: 'auto' }} />
+              <img src="/logo.png" alt="شعار المكاتب" style={{ height: '48px', width: 'auto' }} />
 
               <div style={{ position: 'relative' }}>
                 <button
