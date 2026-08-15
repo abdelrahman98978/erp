@@ -75,6 +75,7 @@ const MainContent: React.FC = () => {
       setFlowState('landing');
       return;
     }
+    setFlowState('workspace');
     setActiveTab(href, title);
   };
 
