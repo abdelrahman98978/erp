@@ -252,11 +252,11 @@ export const FinancePage: React.FC = () => {
       </div>
 
       {/* 4-Category Accounting Sequence Header (SOCPA / IFRS Standard Layout) */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="finance-nav-grid">
         {/* Category 1: القوائم والتقارير */}
-        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">📊 1. القوائم والمركز المالي</span>
-          <div className="flex flex-col gap-1">
+        <div className="finance-category-box">
+          <span className="finance-category-title">📊 1. القوائم والمركز المالي</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'overview', label: '🏠 اللوحة المالية العامة', icon: 'fa-chart-pie' },
               { id: 'trial-balance', label: '📊 ميزان المراجعة (Trial Balance)', icon: 'fa-table-list' },
@@ -266,21 +266,19 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
-                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
-                }`}
+                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
               >
-                <span className="truncate">{t.label}</span>
-                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+                <span>{t.label}</span>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
         </div>
 
         {/* Category 2: العمليات اليومية */}
-        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">📜 2. القيود والعمليات اليومية</span>
-          <div className="flex flex-col gap-1">
+        <div className="finance-category-box">
+          <span className="finance-category-title">📜 2. القيود والعمليات اليومية</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'journals', label: '📜 دفتر القيود المحاسبية', icon: 'fa-book' },
               { id: 'vouchers', label: '📑 سندات القبض والصرف', icon: 'fa-receipt' },
@@ -289,21 +287,19 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
-                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
-                }`}
+                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
               >
-                <span className="truncate">{t.label}</span>
-                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+                <span>{t.label}</span>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
         </div>
 
         {/* Category 3: الاستقدام والشركاء والزكاة */}
-        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">🤝 3. الاستقدام والشركاء والزكاة</span>
-          <div className="flex flex-col gap-1">
+        <div className="finance-category-box">
+          <span className="finance-category-title">🤝 3. الاستقدام والشركاء والزكاة</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'musaned-escrow', label: '🤝 أمانات مساند (90 يوماً)', icon: 'fa-shield-halved' },
               { id: 'suppliers-agents', label: '🚚 حسابات الوكلاء ($/SAR)', icon: 'fa-globe' },
@@ -312,21 +308,19 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
-                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
-                }`}
+                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
               >
-                <span className="truncate">{t.label}</span>
-                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+                <span>{t.label}</span>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
         </div>
 
         {/* Category 4: الدليل والإقفالات */}
-        <div className="space-y-1 bg-slate-50/70 p-2 rounded-xl border border-slate-100">
-          <span className="text-[11px] font-black text-slate-500 block px-2 mb-1">⚙️ 4. الهيكل المحاسبي والإقفال</span>
-          <div className="flex flex-col gap-1">
+        <div className="finance-category-box">
+          <span className="finance-category-title">⚙️ 4. الهيكل المحاسبي والإقفال</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'chart-of-accounts', label: '🌳 شجرة الحسابات والدليل', icon: 'fa-sitemap' },
               { id: 'period-closing', label: '🔒 إقفال الفترات والسنوات', icon: 'fa-lock' },
@@ -334,12 +328,10 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`w-full text-right px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
-                  activeTab === t.id ? 'bg-teal-800 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-100'
-                }`}
+                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
               >
-                <span className="truncate">{t.label}</span>
-                <i className={`fa-solid ${t.icon} text-[10px] opacity-70 ml-1`}></i>
+                <span>{t.label}</span>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
@@ -349,29 +341,69 @@ export const FinancePage: React.FC = () => {
       {/* ─── TAB 1: OVERVIEW ─── */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-teal-700">
-              <span className="text-xs font-bold text-slate-400">إجمالي الإيرادات المحققة</span>
-              <div className="text-2xl font-black text-teal-900 mt-1">525,471.20 ر.س</div>
-              <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">نمو شهري 14.8%</span>
+          <div className="stat-card-grid">
+            <div className="stat-card" style={{ borderRight: '4px solid #005154' }}>
+              <div className="stat-header">
+                <span className="stat-title">إجمالي الإيرادات المحققة</span>
+                <div className="stat-icon" style={{ background: '#E6F4F1', color: '#005154' }}>
+                  <i className="fa-solid fa-arrow-trend-up"></i>
+                </div>
+              </div>
+              <div className="stat-value" style={{ color: '#005154' }}>525,471.20 ر.س</div>
+              <div className="stat-footer">
+                <span className="stat-badge up">
+                  <i className="fa-solid fa-arrow-up"></i> نمو شهري 14.8%
+                </span>
+                <span>عقود استقدام وتأجير</span>
+              </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-rose-600">
-              <span className="text-xs font-bold text-slate-400">إجمالي المصروفات والتشغيل</span>
-              <div className="text-2xl font-black text-rose-700 mt-1">220,500.00 ر.س</div>
-              <span className="text-xs text-slate-400 font-medium">رسوم تأشيرات، رواتب وإعاشة</span>
+            <div className="stat-card" style={{ borderRight: '4px solid #EF4444' }}>
+              <div className="stat-header">
+                <span className="stat-title">إجمالي المصروفات والتشغيل</span>
+                <div className="stat-icon" style={{ background: '#FEE2E2', color: '#DC2626' }}>
+                  <i className="fa-solid fa-arrow-trend-down"></i>
+                </div>
+              </div>
+              <div className="stat-value" style={{ color: '#DC2626' }}>220,500.00 ر.س</div>
+              <div className="stat-footer">
+                <span className="stat-badge down">
+                  <i className="fa-solid fa-clock"></i> مصاريف الفترة
+                </span>
+                <span>تأشيرات، رواتب، إعاشة</span>
+              </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-purple-700">
-              <span className="text-xs font-bold text-slate-400">صافي الأرباح التشغيلية</span>
-              <div className="text-2xl font-black text-purple-800 mt-1">304,971.20 ر.س</div>
-              <span className="text-xs text-purple-700 font-bold mt-1 inline-block">هامش ربح صافي: 58%</span>
+            <div className="stat-card purple" style={{ borderRight: '4px solid #714B67' }}>
+              <div className="stat-header">
+                <span className="stat-title">صافي الأرباح التشغيلية</span>
+                <div className="stat-icon" style={{ background: '#F3E8EE', color: '#714B67' }}>
+                  <i className="fa-solid fa-vault"></i>
+                </div>
+              </div>
+              <div className="stat-value" style={{ color: '#714B67' }}>304,971.20 ر.س</div>
+              <div className="stat-footer">
+                <span className="stat-badge up">
+                  <i className="fa-solid fa-check"></i> هامش ربح 58%
+                </span>
+                <span>أداء مالي قياسي</span>
+              </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-r-4 border-r-amber-500">
-              <span className="text-xs font-bold text-slate-400">أمانات مساند المعلقة (90 يوماً)</span>
-              <div className="text-2xl font-black text-amber-600 mt-1">184,500.00 ر.س</div>
-              <span className="text-xs text-amber-700 font-medium">تحت فترة الضمان الإلزامية</span>
+            <div className="stat-card warning" style={{ borderRight: '4px solid #F59E0B' }}>
+              <div className="stat-header">
+                <span className="stat-title">أمانات مساند المعلقة (90 يوماً)</span>
+                <div className="stat-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
+                  <i className="fa-solid fa-shield-halved"></i>
+                </div>
+              </div>
+              <div className="stat-value" style={{ color: '#D97706' }}>184,500.00 ر.س</div>
+              <div className="stat-footer">
+                <span className="stat-badge" style={{ background: '#FEF3C7', color: '#B45309' }}>
+                  <i className="fa-solid fa-hourglass-half"></i> فترة الضمان
+                </span>
+                <span>حساب وسيط محمي</span>
+              </div>
             </div>
           </div>
         </div>
