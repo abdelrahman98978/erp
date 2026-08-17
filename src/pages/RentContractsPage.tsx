@@ -523,7 +523,7 @@ export const RentContractsPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
                   <span style={{ color: '#64748B', fontWeight: '700' }}>الإجمالي شامل الضريبة:</span>
-                  <strong style={{ color: '#047857' }}>{selectedContractForPrint.total_amount.toLocaleString()} ر.س</strong>
+                  <strong style={{ color: '#047857' }}>{(selectedContractForPrint.total_amount ?? 0).toLocaleString()} ر.س</strong>
                 </div>
               </div>
             </DualBrandingDocumentGenerator>

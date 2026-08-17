@@ -226,8 +226,8 @@ export const OfficesPage: React.FC = () => {
       header: 'السير والعقود',
       accessor: (row) => (
         <div>
-          <span style={{ fontWeight: '800', color: '#0F172A' }}>سير: {row.cvs_count}</span>
-          <div style={{ fontSize: '11px', color: '#059669', fontWeight: '700' }}>عقود نشطة: {row.contracts_count}</div>
+          <span style={{ fontWeight: '800', color: '#0F172A' }}>سير: {row.cvs_count ?? 0}</span>
+          <div style={{ fontSize: '11px', color: '#059669', fontWeight: '700' }}>عقود نشطة: {row.contracts_count ?? 0}</div>
         </div>
       )
     },
@@ -236,10 +236,10 @@ export const OfficesPage: React.FC = () => {
       accessor: (row) => (
         <div>
           <span style={{ fontWeight: '800', color: '#D97706', fontSize: '13px' }}>
-            ${row.cost_usd.toLocaleString()}
+            ${(row.cost_usd ?? 0).toLocaleString()}
           </span>
           <div style={{ fontSize: '10.5px', color: '#64748B' }}>
-            (~{row.commission_sar.toLocaleString()} ر.س)
+            (~{(row.commission_sar ?? 0).toLocaleString()} ر.س)
           </div>
         </div>
       )
@@ -248,7 +248,7 @@ export const OfficesPage: React.FC = () => {
       header: 'رصيد المحفظة ($)',
       accessor: (row) => (
         <span style={{ fontWeight: '800', color: '#059669', fontFamily: 'monospace', fontSize: '13px' }}>
-          ${row.balance_usd.toLocaleString()}
+          ${(row.balance_usd ?? 0).toLocaleString()}
         </span>
       )
     },
@@ -569,15 +569,15 @@ export const OfficesPage: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', textAlign: 'center' }}>
                 <div>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>الرصيد الدائن المستحق</div>
-                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#059669' }}>${selectedOfficeStatement.balance_usd.toLocaleString()}</div>
+                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#059669' }}>${(selectedOfficeStatement.balance_usd ?? 0).toLocaleString()}</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>إجمالي العقود المنجزة</div>
-                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#2563EB' }}>{selectedOfficeStatement.contracts_count} عقود</div>
+                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#2563EB' }}>{selectedOfficeStatement.contracts_count ?? 0} عقود</div>
                 </div>
                 <div>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>متوسط العمولة للعقد</div>
-                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#D97706' }}>${selectedOfficeStatement.cost_usd}</div>
+                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#D97706' }}>${(selectedOfficeStatement.cost_usd ?? 0).toLocaleString()}</div>
                 </div>
               </div>
             </div>

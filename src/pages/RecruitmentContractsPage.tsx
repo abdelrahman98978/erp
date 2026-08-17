@@ -432,7 +432,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                       <div>{c.nationality}</div>
                       <div style={{ fontSize: '10px', color: '#64748B' }}>{c.external_office || 'مكتب خارجي معتمد'}</div>
                     </td>
-                    <td><strong style={{ color: '#047857' }}>{c.amount.toLocaleString()} ر.س</strong></td>
+                    <td><strong style={{ color: '#047857' }}>{(c.amount ?? 0).toLocaleString()} ر.س</strong></td>
                     <td><Badge text={c.stage} type="primary" /></td>
                     <td><Badge text={c.warranty_status} type="success" /></td>
                     <td>
@@ -470,7 +470,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <div style={{ fontSize: '11px', color: '#64748B' }}>العاملة: {c.maid_name} ({c.nationality})</div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #E2E8F0', paddingTop: '10px' }}>
-                    <strong style={{ color: '#047857', fontSize: '13px' }}>{c.amount.toLocaleString()} ر.س</strong>
+                    <strong style={{ color: '#047857', fontSize: '13px' }}>{(c.amount ?? 0).toLocaleString()} ر.س</strong>
                     <button
                       onClick={() => setSelectedContractForPrint(c)}
                       style={{ backgroundColor: '#005154', color: '#FFFFFF', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
@@ -809,7 +809,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
                   <span style={{ color: '#64748B', fontWeight: '700' }}>إجمالي المبلغ:</span>
-                  <strong style={{ color: '#047857' }}>{selectedContractForPrint.amount.toLocaleString()} ر.س</strong>
+                  <strong style={{ color: '#047857' }}>{(selectedContractForPrint.amount ?? 0).toLocaleString()} ر.س</strong>
                 </div>
               </div>
             </DualBrandingDocumentGenerator>

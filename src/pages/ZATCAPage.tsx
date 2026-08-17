@@ -333,9 +333,9 @@ export const ZATCAPage: React.FC = () => {
                         type="purple"
                       />
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-slate-700">{inv.subtotal.toLocaleString()} ر.س</td>
-                    <td className="py-3.5 px-4 font-bold text-amber-600">{inv.vat_amount.toLocaleString()} ر.س</td>
-                    <td className="py-3.5 px-4 font-black text-emerald-800">{inv.total_amount.toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-bold text-slate-700">{(inv.subtotal ?? 0).toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-bold text-amber-600">{(inv.vat_amount ?? 0).toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-black text-emerald-800">{(inv.total_amount ?? 0).toLocaleString()} ر.س</td>
                     <td className="py-3.5 px-4">
                       <Badge
                         text={inv.zatca_status === 'CLEARED' ? 'تمت المصادقة (Clearance)' : 'تم الإبلاغ (Reported)'}
@@ -506,7 +506,7 @@ export const ZATCAPage: React.FC = () => {
                   <div className="text-xs font-bold text-slate-400">بيانات الفاتورة المعتمدة</div>
                   <div className="text-base font-black text-slate-900">{selectedInvoiceForXml.client_name}</div>
                   <div className="text-sm font-bold text-emerald-700">
-                    الإجمالي: {selectedInvoiceForXml.total_amount.toLocaleString()} ر.س (شامل ضريبة {selectedInvoiceForXml.vat_amount.toLocaleString()} ر.س)
+                    الإجمالي: {(selectedInvoiceForXml.total_amount ?? 0).toLocaleString()} ر.س (شامل ضريبة {(selectedInvoiceForXml.vat_amount ?? 0).toLocaleString()} ر.س)
                   </div>
                   <div className="text-[11px] text-slate-500 font-mono">
                     Hash: {selectedInvoiceForXml.xml_hash}
@@ -539,10 +539,10 @@ export const ZATCAPage: React.FC = () => {
     <PartyName>${selectedInvoiceForXml.client_name}</PartyName>
   </AccountingCustomerParty>
   <TaxTotal>
-    <TaxAmount currencyID="SAR">${selectedInvoiceForXml.vat_amount.toFixed(2)}</TaxAmount>
+    <TaxAmount currencyID="SAR">${(selectedInvoiceForXml.vat_amount ?? 0).toFixed(2)}</TaxAmount>
   </TaxTotal>
   <LegalMonetaryTotal>
-    <PayableAmount currencyID="SAR">${selectedInvoiceForXml.total_amount.toFixed(2)}</PayableAmount>
+    <PayableAmount currencyID="SAR">${(selectedInvoiceForXml.total_amount ?? 0).toFixed(2)}</PayableAmount>
   </LegalMonetaryTotal>
 </Invoice>`}
                 </pre>
@@ -573,9 +573,9 @@ export const ZATCAPage: React.FC = () => {
     </cac:Party>
   </cac:AccountingSupplierParty>
   <cac:LegalMonetaryTotal>
-    <cbc:TaxExclusiveAmount currencyID="SAR">${selectedInvoiceForXml.subtotal.toFixed(2)}</cbc:TaxExclusiveAmount>
-    <cbc:TaxInclusiveAmount currencyID="SAR">${selectedInvoiceForXml.total_amount.toFixed(2)}</cbc:TaxInclusiveAmount>
-    <cbc:PayableAmount currencyID="SAR">${selectedInvoiceForXml.total_amount.toFixed(2)}</cbc:PayableAmount>
+    <cbc:TaxExclusiveAmount currencyID="SAR">${(selectedInvoiceForXml.subtotal ?? 0).toFixed(2)}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="SAR">${(selectedInvoiceForXml.total_amount ?? 0).toFixed(2)}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="SAR">${(selectedInvoiceForXml.total_amount ?? 0).toFixed(2)}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
 </Invoice>`;
                     const blob = new Blob([xmlContent], { type: 'application/xml;charset=utf-8' });

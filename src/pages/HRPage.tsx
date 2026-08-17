@@ -499,7 +499,7 @@ export const HRPage: React.FC = () => {
                   <td>{emp.job_title}</td>
                   <td><span className="badge-odoo badge-secondary">{emp.department}</span></td>
                   <td>{emp.hire_date}</td>
-                  <td><strong style={{ color: '#047857' }}>{emp.salary.toLocaleString()} ر.س</strong></td>
+                  <td><strong style={{ color: '#047857' }}>{(emp.salary ?? 0).toLocaleString()} ر.س</strong></td>
                   <td><Badge text={emp.status} type="success" /></td>
                   <td>
                     <button
@@ -584,7 +584,7 @@ export const HRPage: React.FC = () => {
                   <td><strong>{adv.id}</strong></td>
                   <td style={{ fontWeight: '800' }}>{adv.employee_name}</td>
                   <td>{adv.payment_method}</td>
-                  <td><strong style={{ color: '#047857' }}>{adv.amount.toLocaleString()} ر.س</strong></td>
+                  <td><strong style={{ color: '#047857' }}>{(adv.amount ?? 0).toLocaleString()} ر.س</strong></td>
                   <td>{adv.date}</td>
                   <td>{adv.installments_count} أشهر</td>
                   <td><Badge text={adv.status} type="success" /></td>

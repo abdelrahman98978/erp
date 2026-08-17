@@ -171,9 +171,9 @@ export const ReportsPage: React.FC = () => {
                   <td style={{ padding: '14px 12px', fontWeight: '800', color: '#0F172A' }}>{row.name}</td>
                   <td style={{ padding: '14px 12px', fontWeight: '700', color: '#2563EB' }}>{row.recruitment_contracts} عقد</td>
                   <td style={{ padding: '14px 12px', fontWeight: '700', color: '#059669' }}>{row.rent_contracts} عقد</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '800', color: '#0F172A' }}>{row.total_revenue.toLocaleString()} ر.س</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '700', color: '#DC2626' }}>{row.expenses.toLocaleString()} ر.س</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '900', color: '#047857' }}>{row.net_profit.toLocaleString()} ر.س</td>
+                  <td style={{ padding: '14px 12px', fontWeight: '800', color: '#0F172A' }}>{(row.total_revenue ?? 0).toLocaleString()} ر.س</td>
+                  <td style={{ padding: '14px 12px', fontWeight: '700', color: '#DC2626' }}>{(row.expenses ?? 0).toLocaleString()} ر.س</td>
+                  <td style={{ padding: '14px 12px', fontWeight: '900', color: '#047857' }}>{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
                   <td style={{ padding: '14px 12px' }}>
                     <Badge text={row.margin} type="success" />
                   </td>
@@ -185,9 +185,9 @@ export const ReportsPage: React.FC = () => {
                 <td style={{ padding: '14px 12px' }}>الإجمالي المجمع للمجموعة</td>
                 <td style={{ padding: '14px 12px', color: '#2563EB' }}>{totalRecruitment} عقد</td>
                 <td style={{ padding: '14px 12px', color: '#059669' }}>{totalRent} عقد</td>
-                <td style={{ padding: '14px 12px' }}>{totalRevenue.toLocaleString()} ر.س</td>
-                <td style={{ padding: '14px 12px', color: '#DC2626' }}>{totalExpenses.toLocaleString()} ر.س</td>
-                <td style={{ padding: '14px 12px', color: '#047857', fontSize: '15px' }}>{totalNetProfit.toLocaleString()} ر.س</td>
+                <td style={{ padding: '14px 12px' }}>{(totalRevenue ?? 0).toLocaleString()} ر.س</td>
+                <td style={{ padding: '14px 12px', color: '#DC2626' }}>{(totalExpenses ?? 0).toLocaleString()} ر.س</td>
+                <td style={{ padding: '14px 12px', color: '#047857', fontSize: '15px' }}>{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
                 <td style={{ padding: '14px 12px' }}><Badge text="57.6%" type="purple" /></td>
               </tr>
             </tfoot>

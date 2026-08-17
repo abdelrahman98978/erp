@@ -164,7 +164,7 @@ export const SponsorshipTransferPage: React.FC = () => {
     },
     {
       header: 'رسوم التنازل',
-      accessor: (row) => <span style={{ fontWeight: '800', color: '#005154' }}>{row.contract_amount.toLocaleString()} ر.س</span>
+      accessor: (row) => <span style={{ fontWeight: '800', color: '#005154' }}>{(row.contract_amount ?? 0).toLocaleString()} ر.س</span>
     },
     {
       header: 'الحالة',
