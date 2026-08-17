@@ -43,11 +43,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       }
     }
 
-    Sentry.captureException(error, {
-      extra: {
-        componentStack: errorInfo.componentStack,
-      },
-    });
+    try {
+      Sentry.captureException(error, {
+        extra: {
+          componentStack: errorInfo.componentStack,
+        },
+      });
+    } catch (sentryErr) {
+      console.warn('Sentry report failed silently:', sentryErr);
+    }
   }
 
   handleReset = (): void => {

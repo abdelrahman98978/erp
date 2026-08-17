@@ -13,12 +13,35 @@ const sentryDsn =
   'https://b69e19d51630b496bddff0b2a6941225@o4511880996323328.ingest.de.sentry.io/4511891719127120';
 
 if (sentryDsn) {
-  Sentry.init({
-    dsn: sentryDsn,
-    integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: 1.0,
-    environment: import.meta.env.MODE || 'production',
-  });
+  try {
+    Sentry.init({
+      dsn: sentryDsn,
+      integrations: [Sentry.browserTracingIntegration()],
+      tracesSampleRate: import.meta.env.PROD ? 0.2 : 1.0,
+      environment: import.meta.env.MODE || 'production',
+      ignoreErrors: [
+        'ResizeObserver loop limit exceeded',
+        'ResizeObserver loop completed with undelivered notifications',
+        'NetworkError when attempting to fetch resource',
+        'Failed to fetch',
+        'Load failed',
+        'Loading chunk',
+        'dynamically imported module',
+        'WebSocket connection',
+        'ChunkLoadError',
+        'The operation was aborted',
+      ],
+      beforeSend(event) {
+        // Filter noise from browser extensions or benign network reconnects
+        if (event.exception?.values?.some(v => v.value?.includes('WebSocket') || v.value?.includes('extension'))) {
+          return null;
+        }
+        return event;
+      },
+    });
+  } catch (err) {
+    console.warn('Sentry initialization skipped or failed gracefully:', err);
+  }
 }
 
 const rootElement = document.getElementById('root');
