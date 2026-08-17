@@ -6,10 +6,12 @@ export const SettingsPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('security-2fa');
   const [require2FAAdmin, setRequire2FAAdmin] = useState(true);
   const [allowOptional2FA, setAllowOptional2FA] = useState(true);
+  const [allowBiometrics, setAllowBiometrics] = useState(true);
+  const [allowFaceId, setAllowFaceId] = useState(true);
   const [otpExpiryMinutes, setOtpExpiryMinutes] = useState(5);
 
   const SECTIONS = [
-    { id: 'security-2fa', name: 'أمان المصادقة الثنائية (2FA)', icon: 'fa-shield-halved' },
+    { id: 'security-2fa', name: 'أمان المصادقة والبصمة البيومترية', icon: 'fa-fingerprint' },
     { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: 'fa-user-lock' },
     { id: 'general', name: 'البيانات الأساسية', icon: 'fa-building' },
     { id: 'contacts', name: 'روابط التواصل والموقع', icon: 'fa-phone' },
@@ -25,10 +27,10 @@ export const SettingsPage: React.FC = () => {
     await realErpDataStore.addRecord('system_settings', {
       id: String(Date.now()),
       setting_key: 'SECURITY_2FA_CONFIG',
-      setting_value: JSON.stringify({ require2FAAdmin, allowOptional2FA, otpExpiryMinutes }),
-      description: 'إعدادات المصادقة الثنائية 2FA'
+      setting_value: JSON.stringify({ require2FAAdmin, allowOptional2FA, allowBiometrics, allowFaceId, otpExpiryMinutes }),
+      description: 'إعدادات المصادقة الثنائية والبصمة البيومترية'
     });
-    alert('تم حفظ جميع إعدادات النظام وسياسة المصادقة الثنائية بنجاح!');
+    alert('تم حفظ جميع إعدادات النظام وسياسات البصمة والمصادقة الثنائية بنجاح!');
   };
 
   return (
@@ -116,6 +118,42 @@ export const SettingsPage: React.FC = () => {
                     </span>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                       تمكين موظفي الفروع والمكاتب من اختيار وتفعيل تطبيق المصادقة (Google Authenticator) للحفاظ على أمان حساباتهم.
+                    </span>
+                  </div>
+                </label>
+
+                {/* Biometric Fingerprint Toggle */}
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#ECFDF5', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #A7F3D0' }}>
+                  <input
+                    type="checkbox"
+                    checked={allowBiometrics}
+                    onChange={e => setAllowBiometrics(e.target.checked)}
+                    style={{ accentColor: '#059669', width: '18px', height: '18px' }}
+                  />
+                  <div>
+                    <span style={{ fontWeight: '800', fontSize: '14px', color: '#065F46', display: 'block' }}>
+                      <i className="fa-solid fa-fingerprint me-1"></i> تفعيل الدخول ببصمة الإصبع (Touch ID / Windows Hello / WebAuthn)
+                    </span>
+                    <span style={{ fontSize: '12px', color: '#047857' }}>
+                      السماح للمستخدمين بالدخول الفوري المشفر للمنظومة عبر مستشعر البصمة الحيوي للأجهزة المعتمدة.
+                    </span>
+                  </div>
+                </label>
+
+                {/* Biometric Face ID Toggle */}
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F5F3FF', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #DDD6FE' }}>
+                  <input
+                    type="checkbox"
+                    checked={allowFaceId}
+                    onChange={e => setAllowFaceId(e.target.checked)}
+                    style={{ accentColor: '#7C3AED', width: '18px', height: '18px' }}
+                  />
+                  <div>
+                    <span style={{ fontWeight: '800', fontSize: '14px', color: '#5B21B6', display: 'block' }}>
+                      <i className="fa-solid fa-face-viewfinder me-1"></i> تفعيل الدخول ببصمة الوجه ثلاثية الأبعاد (Face ID)
+                    </span>
+                    <span style={{ fontSize: '12px', color: '#6D28D9' }}>
+                      تمكين تقنية التعرف على الوجه وفحص الحيوية (Liveness Detection) لتسجيل الدخول السريع والآمن.
                     </span>
                   </div>
                 </label>

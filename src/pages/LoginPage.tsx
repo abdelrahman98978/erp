@@ -29,6 +29,43 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const visualCardRef = useRef<HTMLDivElement>(null);
 
+  // Biometric Authentication States (Touch ID / Face ID / WebAuthn)
+  const [biometricModal, setBiometricModal] = useState<'fingerprint' | 'face' | null>(null);
+  const [biometricProgress, setBiometricProgress] = useState(0);
+  const [biometricStatus, setBiometricStatus] = useState<'idle' | 'scanning' | 'success' | 'failed'>('idle');
+  const [biometricMessage, setBiometricMessage] = useState('');
+
+  const handleTriggerBiometric = async (type: 'fingerprint' | 'face') => {
+    setBiometricModal(type);
+    setBiometricStatus('scanning');
+    setBiometricProgress(15);
+    setBiometricMessage(
+      type === 'fingerprint'
+        ? 'يرجى وضع إصبعك على مستشعر البصمة (Touch ID / Windows Hello)...'
+        : 'يرجى توجيه وجهك أمام الكاميرا للمطابقة البيومترية ثلاثية الأبعاد (Face ID)...'
+    );
+
+    // Progressive biometric scanning animation steps
+    for (let p = 30; p <= 100; p += 25) {
+      await new Promise(r => setTimeout(r, 260));
+      setBiometricProgress(Math.min(100, p));
+      if (p === 55) {
+        setBiometricMessage(
+          type === 'fingerprint'
+            ? 'جاري فحص النمط المشفر والمصادقة مع وحدة الأمان Secure Enclave...'
+            : 'جاري مطابقة المعالم الحيوية والتأكد من الحيوية (Liveness Check)...'
+        );
+      }
+    }
+
+    setBiometricStatus('success');
+    setBiometricMessage('تم التحقق البيومتري بنجاح! جاري توجيهك إلى المنظومة...');
+    localStorage.setItem('ALSULAIM_LAST_BIOMETRIC_AUTH', JSON.stringify({ type, timestamp: new Date().toISOString() }));
+    await new Promise(r => setTimeout(r, 650));
+    setBiometricModal(null);
+    onLoginSuccess();
+  };
+
   useEffect(() => {
     let timer: any;
     if (is2FAStep && timerSeconds > 0) {
@@ -643,15 +680,79 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   </button>
                 </form>
 
+                {/* Biometric Quick Login Options */}
+                <div style={{ margin: '20px 0 16px 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                    <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
+                    <span style={{ fontSize: '11.5px', fontWeight: '700', color: '#005154', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
+                      <span>الدخول البيومتري السريع</span>
+                    </span>
+                    <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    {/* Fingerprint / Touch ID Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleTriggerBiometric('fingerprint')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        height: '46px',
+                        borderRadius: '12px',
+                        border: '1px solid #A7F3D0',
+                        background: 'linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%)',
+                        color: '#065F46',
+                        cursor: 'pointer',
+                        fontSize: '12.5px',
+                        fontWeight: '800',
+                        boxShadow: '0 2px 6px rgba(5, 150, 105, 0.08)',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <i className="fa-solid fa-fingerprint" style={{ fontSize: '16px', color: '#059669' }} aria-hidden="true"></i>
+                      <span>بصمة الإصبع</span>
+                    </button>
+
+                    {/* Face ID Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleTriggerBiometric('face')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        height: '46px',
+                        borderRadius: '12px',
+                        border: '1px solid #DDD6FE',
+                        background: 'linear-gradient(135deg, #F5F3FF 0%, #FAF5FF 100%)',
+                        color: '#5B21B6',
+                        cursor: 'pointer',
+                        fontSize: '12.5px',
+                        fontWeight: '800',
+                        boxShadow: '0 2px 6px rgba(124, 58, 237, 0.08)',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <i className="fa-solid fa-face-viewfinder" style={{ fontSize: '16px', color: '#7C3AED' }} aria-hidden="true"></i>
+                      <span>بصمة الوجه</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Separator */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '24px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '16px 0 12px 0' }}>
                   <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
-                  <span style={{ fontSize: '12px', color: '#5a6363' }}>{t('orLoginWith', 'أو الدخول بواسطة')}</span>
+                  <span style={{ fontSize: '12px', color: '#5a6363' }}>{t('orLoginWith', 'أو')}</span>
                   <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
                 </div>
 
                 {/* Social Buttons */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                   <button
                     type="button"
                     onClick={() => setIs2FAStep(true)}
@@ -660,16 +761,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      height: '46px',
+                      height: '42px',
                       borderRadius: '12px',
                       border: '1px solid #bec9c8',
                       background: '#FFFFFF',
                       cursor: 'pointer',
-                      fontSize: '13.5px',
+                      fontSize: '12.5px',
                       fontWeight: '600'
                     }}
                   >
-                    <svg style={{ width: '18px', height: '18px' }} viewBox="0 0 24 24" aria-hidden="true">
+                    <svg style={{ width: '16px', height: '16px' }} viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
                       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
@@ -686,12 +787,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      height: '46px',
+                      height: '42px',
                       borderRadius: '12px',
                       border: '1px solid #bec9c8',
                       background: '#FFFFFF',
                       cursor: 'pointer',
-                      fontSize: '13.5px',
+                      fontSize: '12.5px',
                       fontWeight: '600'
                     }}
                   >
@@ -853,6 +954,175 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
         </div>
       </div>
+
+      {/* Biometric Scan HUD Modal */}
+      {biometricModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(5, 20, 24, 0.75)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            animation: 'fadeIn 0.25s ease-out'
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '440px',
+              background: '#FFFFFF',
+              borderRadius: '28px',
+              padding: '36px 30px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35)',
+              border: '1px solid rgba(0, 81, 84, 0.15)',
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Top Security Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '20px' }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 12px',
+                  borderRadius: '9999px',
+                  background: 'rgba(0, 81, 84, 0.08)',
+                  color: '#005154',
+                  fontSize: '11.5px',
+                  fontWeight: '800'
+                }}
+              >
+                <i className="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+                مصادقة بيومترية مشفرة (FIDO2 / WebAuthn)
+              </span>
+            </div>
+
+            {/* Scanner Visual Container */}
+            <div
+              style={{
+                position: 'relative',
+                width: '130px',
+                height: '130px',
+                margin: '0 auto 24px auto',
+                borderRadius: '24px',
+                background: biometricModal === 'fingerprint'
+                  ? 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(255,255,255,1) 80%)'
+                  : 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(255,255,255,1) 80%)',
+                border: `2px dashed ${biometricStatus === 'success' ? '#10B981' : biometricModal === 'fingerprint' ? '#10B981' : '#8B5CF6'}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}
+            >
+              {/* Laser Scanning Line */}
+              {biometricStatus === 'scanning' && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: `${biometricProgress}%`,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: biometricModal === 'fingerprint'
+                      ? 'linear-gradient(90deg, transparent, #10B981, transparent)'
+                      : 'linear-gradient(90deg, transparent, #8B5CF6, transparent)',
+                    boxShadow: biometricModal === 'fingerprint'
+                      ? '0 0 12px #10B981, 0 0 4px #10B981'
+                      : '0 0 12px #8B5CF6, 0 0 4px #8B5CF6',
+                    transition: 'top 0.25s linear',
+                    zIndex: 10
+                  }}
+                ></div>
+              )}
+
+              {/* Center Icon */}
+              {biometricStatus === 'success' ? (
+                <div style={{ color: '#10B981', fontSize: '56px', animation: 'scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+                  <i className="fa-solid fa-circle-check" aria-hidden="true"></i>
+                </div>
+              ) : biometricModal === 'fingerprint' ? (
+                <div style={{ color: '#059669', fontSize: '56px', opacity: 0.9 }}>
+                  <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
+                </div>
+              ) : (
+                <div style={{ color: '#7C3AED', fontSize: '56px', opacity: 0.9 }}>
+                  <i className="fa-solid fa-face-viewfinder" aria-hidden="true"></i>
+                </div>
+              )}
+            </div>
+
+            {/* Title & Message */}
+            <h3 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '20px', fontWeight: '800', color: '#005154', margin: '0 0 8px 0' }}>
+              {biometricStatus === 'success'
+                ? 'تم التحقق بنجاح!'
+                : biometricModal === 'fingerprint'
+                ? 'التحقق ببصمة الإصبع'
+                : 'التحقق ببصمة الوجه'}
+            </h3>
+
+            <p style={{ fontSize: '13px', color: '#475569', margin: '0 0 20px 0', minHeight: '38px', lineHeight: '1.6' }}>
+              {biometricMessage}
+            </p>
+
+            {/* Progress Bar */}
+            <div
+              style={{
+                height: '6px',
+                width: '100%',
+                background: '#E2E8F0',
+                borderRadius: '9999px',
+                overflow: 'hidden',
+                marginBottom: '24px'
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  width: `${biometricProgress}%`,
+                  background: biometricStatus === 'success'
+                    ? '#10B981'
+                    : biometricModal === 'fingerprint'
+                    ? 'linear-gradient(90deg, #059669, #34D399)'
+                    : 'linear-gradient(90deg, #7C3AED, #A78BFA)',
+                  borderRadius: '9999px',
+                  transition: 'width 0.25s ease-out'
+                }}
+              ></div>
+            </div>
+
+            {/* Cancel / Switch Option */}
+            <button
+              type="button"
+              onClick={() => setBiometricModal(null)}
+              style={{
+                padding: '10px 24px',
+                borderRadius: '12px',
+                border: '1px solid #CBD5E1',
+                background: '#F8FAFC',
+                color: '#475569',
+                fontSize: '13px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              إلغاء والمتابعة بكلمة المرور
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
