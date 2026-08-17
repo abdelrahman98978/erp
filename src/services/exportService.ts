@@ -628,6 +628,14 @@ export function exportToExcel(sectionKey: string, data: any[], customTitle?: str
 }
 
 // ─── Export to CSV ───────────────────────────────────────────────────
+export function sanitizeCSVField(val: any): string {
+  const str = String(val ?? '');
+  if (/^[=+@-]/.test(str)) {
+    return `'${str}`;
+  }
+  return str;
+}
+
 export function exportToCSV(sectionKey: string, data: any[], customTitle?: string): void {
   const config = resolveConfig(sectionKey, data, customTitle);
   const title = customTitle || config.sectionTitle;
@@ -639,7 +647,7 @@ export function exportToCSV(sectionKey: string, data: any[], customTitle?: strin
   // Data rows
   data.forEach(row => {
     const mapped = config.dataMapper(row);
-    rows.push(mapped.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
+    rows.push(mapped.map(v => `"${sanitizeCSVField(v).replace(/"/g, '""')}"`).join(','));
   });
 
   const csvContent = rows.join('\n');
