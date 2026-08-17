@@ -38,7 +38,7 @@ export interface NavItem {
   icon?: string;
   href?: string;
   badge?: string | number;
-  badgeType?: 'primary' | 'success' | 'warning' | 'danger' | 'purple';
+  badgeType?: 'primary' | 'success' | 'warning' | 'danger' | 'purple' | 'info';
   children?: NavItem[];
 }
 

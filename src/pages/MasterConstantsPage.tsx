@@ -1,95 +1,321 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { realErpDataStore } from '../services/realErpDataStore';
 
-interface NationalityItem {
+interface ConstantItem {
   id: string;
-  name: string;
-  code: string;
-  status: string;
-  icon: string;
+  title: string;
+  code?: string;
+  subtext?: string;
+  status: 'نشط' | 'معطل';
+  icon?: string;
 }
 
-const NATIONALITIES_SEED: NationalityItem[] = [
-  { id: '1', name: 'اثيوبيا', code: 'ETH', status: 'متاحة للاستقدام والتأجير', icon: '🇪🇹' },
-  { id: '2', name: 'الفلبين', code: 'PHL', status: 'متاحة للاستقدام والتأجير', icon: '🇵🇭' },
-  { id: '3', name: 'الهند', code: 'IND', status: 'متاحة للاستقدام', icon: '🇮🇳' },
-  { id: '4', name: 'اوغندا', code: 'UGA', status: 'متاحة للاستقدام والتأجير', icon: '🇺🇬' },
-  { id: '5', name: 'بنجلاديش', code: 'BGD', status: 'متاحة للاستقدام', icon: '🇧🇩' },
-  { id: '6', name: 'كينيا', code: 'KEN', status: 'متاحة للاستقدام والتأجير', icon: '🇰🇪' },
-  { id: '7', name: 'سيريلانكا', code: 'LKA', status: 'متاحة للاستقدام', icon: '🇱🇰' },
-  { id: '8', name: 'ألبانيا', code: 'ALB', status: 'متاحة للاستقدام والتنازل', icon: '🇦🇱' }
-];
-
 export const MasterConstantsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'nationalities' | 'professions' | 'airports'>('nationalities');
-  const [nationalities, setNationalities] = useState<NationalityItem[]>([]);
+  const [activeTab, setActiveTab] = useState<
+    'nationalities' | 'professions' | 'religions' | 'skills' | 'airports' | 'social_statuses' | 'stages'
+  >('nationalities');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newCode, setNewCode] = useState('');
 
-  useEffect(() => {
-    realErpDataStore.getRecords<NationalityItem>('master_constants', NATIONALITIES_SEED).then(data => setNationalities(data));
-  }, []);
+  const [nationalities, setNationalities] = useState<ConstantItem[]>([
+    { id: '1', title: 'إثيوبيا', code: 'ETH', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇪🇹' },
+    { id: '2', title: 'الفلبين', code: 'PHL', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇵🇭' },
+    { id: '3', title: 'الهند', code: 'IND', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇮🇳' },
+    { id: '4', title: 'أوغندا', code: 'UGA', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇺🇬' },
+    { id: '5', title: 'بنغلاديش', code: 'BGD', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇧🇩' },
+    { id: '6', title: 'كينيا', code: 'KEN', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇰🇪' },
+    { id: '7', title: 'سيريلانكا', code: 'LKA', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇱🇰' },
+    { id: '8', title: 'ألبانيا', code: 'ALB', subtext: 'متاحة للاستقدام والتنازل', status: 'نشط', icon: '🇦🇱' },
+  ]);
 
-  const PROFESSIONS = [
-    { name: 'عاملة منزلية', category: 'عمالة منزلية أفراد' },
-    { name: 'سائق خاص', category: 'عمالة منزلية أفراد' },
-    { name: 'طباخ منزلية', category: 'عمالة منزلية أفراد' },
-    { name: 'عامل مهني', category: 'عمالة مهنية مؤسسات' }
-  ];
+  const [professions, setProfessions] = useState<ConstantItem[]>([
+    { id: 'p1', title: 'عاملة منزلية', code: 'DOMESTIC', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
+    { id: 'p2', title: 'سائق خاص', code: 'DRIVER', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
+    { id: 'p3', title: 'طباخ منزلي / طباخة', code: 'COOK', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
+    { id: 'p4', title: 'مربية أطفال', code: 'NANNY', subtext: 'رعاية أطفال', status: 'نشط' },
+    { id: 'p5', title: 'ممرض منزلي / ممرضة', code: 'NURSE', subtext: 'رعاية طبية', status: 'نشط' },
+    { id: 'p6', title: 'حارس منزلي', code: 'GUARD', subtext: 'أمن وحراسة', status: 'نشط' },
+    { id: 'p7', title: 'عامل مهني', code: 'PROFESSIONAL', subtext: 'عمالة مهنية مؤسسات', status: 'نشط' },
+  ]);
+
+  const [religions, setReligions] = useState<ConstantItem[]>([
+    { id: 'r1', title: 'الإسلام', code: 'MUSLIM', subtext: 'مسلم / مسلمة', status: 'نشط' },
+    { id: 'r2', title: 'المسيحية', code: 'CHRISTIAN', subtext: 'مسيحي / مسيحية', status: 'نشط' },
+    { id: 'r3', title: 'أخرى / غير محدد', code: 'OTHER', subtext: 'ديانات أخرى', status: 'نشط' },
+  ]);
+
+  const [skills, setSkills] = useState<ConstantItem[]>([
+    { id: 's1', title: 'رعاية الأطفال والرضع', code: 'CHILD_CARE', subtext: 'خبرة متقدمة', status: 'نشط' },
+    { id: 's2', title: 'رعاية كبار السن وذوي الاحتياجات', code: 'ELDER_CARE', subtext: 'مهارة معتمدة', status: 'نشط' },
+    { id: 's3', title: 'الطبخ الخليجي والعربي', code: 'COOKING_ARABIC', subtext: 'إجادة الأكلات الشعبية', status: 'نشط' },
+    { id: 's4', title: 'التنظيف والترتيب الفندقي', code: 'CLEANING', subtext: 'إتقان عالي', status: 'نشط' },
+    { id: 's5', title: 'الغسيل وكي الملابس الدقيقة', code: 'LAUNDRY', subtext: 'إتقان', status: 'نشط' },
+    { id: 's6', title: 'التحدث باللغة العربية', code: 'ARABIC_LANG', subtext: 'مستوى جيد فما فوق', status: 'نشط' },
+    { id: 's7', title: 'التحدث باللغة الإنجليزية', code: 'ENGLISH_LANG', subtext: 'مستوى محادثة', status: 'نشط' },
+    { id: 's8', title: 'قيادة السيارات (رخصة سارية)', code: 'DRIVING', subtext: 'رخصة سعودية / دولية', status: 'نشط' },
+  ]);
+
+  const [airports, setAirports] = useState<ConstantItem[]>([
+    { id: 'a1', title: 'مطار الملك خالد الدولي (RUH)', code: 'RUH', subtext: 'السعودية - الرياض', status: 'نشط' },
+    { id: 'a2', title: 'مطار الملك عبدالعزيز الدولي (JED)', code: 'JED', subtext: 'السعودية - جدة', status: 'نشط' },
+    { id: 'a3', title: 'مطار الملك فهد الدولي (DMM)', code: 'DMM', subtext: 'السعودية - الدمام', status: 'نشط' },
+    { id: 'a4', title: 'مطار الأمير محمد بن عبدالعزيز (MED)', code: 'MED', subtext: 'السعودية - المدينة المنورة', status: 'نشط' },
+    { id: 'a5', title: 'مطار أبها الإقليمي (AHB)', code: 'AHB', subtext: 'السعودية - أبها / خميس مشيط', status: 'نشط' },
+    { id: 'a6', title: 'مطار نينوي أكينو الدولي - مانيلا (MNL)', code: 'MNL', subtext: 'الفلبين - مانيلا', status: 'نشط' },
+    { id: 'a7', title: 'مطار بولي الدولي - أديس أبابا (ADD)', code: 'ADD', subtext: 'إثيوبيا - أديس أبابا', status: 'نشط' },
+    { id: 'a8', title: 'مطار باندارانايكي - كولمبو (CMB)', code: 'CMB', subtext: 'سريلانكا - كولمبو', status: 'نشط' },
+    { id: 'a9', title: 'مطار جومو كينياتا - نيروبي (NBO)', code: 'NBO', subtext: 'كينيا - نيروبي', status: 'نشط' },
+    { id: 'a10', title: 'مطار عنتيبي الدولي (EBB)', code: 'EBB', subtext: 'أوغندا - كامبالا', status: 'نشط' },
+    { id: 'a11', title: 'مطار حضرة شاه جلال - دكا (DAC)', code: 'DAC', subtext: 'بنغلاديش - دكا', status: 'نشط' },
+  ]);
+
+  const [socialStatuses, setSocialStatuses] = useState<ConstantItem[]>([
+    { id: 'soc1', title: 'عزباء / أعزب', code: 'SINGLE', subtext: 'غير متزوج/ة', status: 'نشط' },
+    { id: 'soc2', title: 'متزوجة / متزوج', code: 'MARRIED', subtext: 'لديه/ا عائلة', status: 'نشط' },
+    { id: 'soc3', title: 'مطلقة / مطلق', code: 'DIVORCED', subtext: 'منفصل/ة', status: 'نشط' },
+    { id: 'soc4', title: 'أرملة / أرمل', code: 'WIDOWED', subtext: 'أرمل/ة', status: 'نشط' },
+  ]);
+
+  const [stages, setStages] = useState<ConstantItem[]>([
+    { id: 'stg1', title: 'عقود جديدة (بانتظار مساند)', code: 'NEW', subtext: 'المرحلة 1', status: 'نشط' },
+    { id: 'stg2', title: 'توثيق مساند والتفويض الإلكتروني', code: 'MUSANED', subtext: 'المرحلة 2', status: 'نشط' },
+    { id: 'stg3', title: 'حجز تساهيل والفحص الطبي الخارجي', code: 'MEDICAL_EXT', subtext: 'المرحلة 3', status: 'نشط' },
+    { id: 'stg4', title: 'إصدار التأشيرة والتفييز بالسفارة', code: 'VISA_ISSUED', subtext: 'المرحلة 4', status: 'نشط' },
+    { id: 'stg5', title: 'تصريح العمل وتذكرة الطيران', code: 'TICKET_BOOKED', subtext: 'المرحلة 5', status: 'نشط' },
+    { id: 'stg6', title: 'الوصول للمملكة والفحص الطبي الداخلي', code: 'ARRIVED_KSA', subtext: 'المرحلة 6', status: 'نشط' },
+    { id: 'stg7', title: 'التسليم النهائي وبدء فترة الضمان', code: 'DELIVERED', subtext: 'المرحلة 7', status: 'نشط' },
+  ]);
+
+  const handleAddItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle) return;
+
+    const newItem: ConstantItem = {
+      id: `item-${Date.now()}`,
+      title: newTitle,
+      code: newCode || 'CUSTOM',
+      status: 'نشط',
+    };
+
+    if (activeTab === 'nationalities') setNationalities([...nationalities, newItem]);
+    if (activeTab === 'professions') setProfessions([...professions, newItem]);
+    if (activeTab === 'religions') setReligions([...religions, newItem]);
+    if (activeTab === 'skills') setSkills([...skills, newItem]);
+    if (activeTab === 'airports') setAirports([...airports, newItem]);
+    if (activeTab === 'social_statuses') setSocialStatuses([...socialStatuses, newItem]);
+    if (activeTab === 'stages') setStages([...stages, newItem]);
+
+    setNewTitle('');
+    setNewCode('');
+    setShowAddModal(false);
+  };
+
+  const getActiveList = () => {
+    switch (activeTab) {
+      case 'nationalities': return nationalities;
+      case 'professions': return professions;
+      case 'religions': return religions;
+      case 'skills': return skills;
+      case 'airports': return airports;
+      case 'social_statuses': return socialStatuses;
+      case 'stages': return stages;
+    }
+  };
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
-            <i className="fa-solid fa-list-check text-primary ml-2"></i> ثوابت إعدادات الاستقدام (Master System Constants)
+          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-sliders text-emerald-600"></i>
+            ثوابت وإعدادات الاستقدام والتشغيل (Master Constants)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>إدارة دول المصدر والجنسيات المتاحة، المهن المعتمدة، المطارات، والأديان</p>
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+            إدارة الجنسيات والدول، المهن المعتمدة، الأديان، المهارات، المطارات، الحالات الاجتماعية، ومراحل العقود
+          </p>
         </div>
+
+        <button
+          onClick={() => setShowAddModal(true)}
+          style={{
+            backgroundColor: '#005154',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: '10px',
+            padding: '8px 18px',
+            fontSize: '13px',
+            fontWeight: '800',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <i className="fa-solid fa-plus text-xs"></i>
+          إضافة بند جديد
+        </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-        <button className={`btn-odoo ${activeTab === 'nationalities' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`} onClick={() => setActiveTab('nationalities')}>
-          الجنسيات والدول المتاحة (8)
-        </button>
-        <button className={`btn-odoo ${activeTab === 'professions' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`} onClick={() => setActiveTab('professions')}>
-          المهن المعتمدة (4)
-        </button>
+      {/* Tabs Navigation */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+        {[
+          { id: 'nationalities', label: `الجنسيات (${nationalities.length})`, icon: 'fa-globe' },
+          { id: 'professions', label: `المهن المعتمدة (${professions.length})`, icon: 'fa-user-tie' },
+          { id: 'religions', label: `الأديان (${religions.length})`, icon: 'fa-kaaba' },
+          { id: 'skills', label: `المهارات (${skills.length})`, icon: 'fa-star' },
+          { id: 'airports', label: `المطارات (${airports.length})`, icon: 'fa-plane-departure' },
+          { id: 'social_statuses', label: `الحالات الاجتماعية (${socialStatuses.length})`, icon: 'fa-heart' },
+          { id: 'stages', label: `مراحل الاستقدام (${stages.length})`, icon: 'fa-timeline' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: '1px solid',
+                borderColor: isActive ? '#005154' : '#E2E8F0',
+                backgroundColor: isActive ? '#005154' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#334155',
+                fontWeight: isActive ? '800' : '600',
+                fontSize: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {activeTab === 'nationalities' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
-          {(nationalities.length > 0 ? nationalities : NATIONALITIES_SEED).map((nat, idx) => (
-            <div key={idx} className="table-card" style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '32px' }}>{nat.icon}</span>
+      {/* Constants Data Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
+        {getActiveList().map((item) => (
+          <div
+            key={item.id}
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '12px',
+              padding: '16px',
+              border: '1px solid #E2E8F0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {item.icon ? (
+                <span style={{ fontSize: '24px' }}>{item.icon}</span>
+              ) : (
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    backgroundColor: '#F1F5F9',
+                    color: '#005154',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: '800',
+                    fontSize: '12px',
+                  }}
+                >
+                  <i className="fa-solid fa-check"></i>
+                </div>
+              )}
               <div>
-                <h4 style={{ fontSize: '15px', fontWeight: '800' }}>{nat.name} ({nat.code})</h4>
-                <Badge text={nat.status} type="success" />
+                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>{item.title}</h4>
+                {item.subtext && <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#64748B' }}>{item.subtext}</p>}
+                {item.code && (
+                  <span style={{ fontSize: '10px', color: '#94A3B8', fontFamily: 'monospace', fontWeight: '700' }}>
+                    كود: {item.code}
+                  </span>
+                )}
               </div>
             </div>
-          ))}
-        </div>
-      )}
 
-      {activeTab === 'professions' && (
-        <div className="table-card">
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>اسم المهنة</th>
-                <th>التصنيف الرئيسية</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PROFESSIONS.map((prof, idx) => (
-                <tr key={idx}>
-                  <td style={{ fontWeight: '700' }}>{prof.name}</td>
-                  <td><Badge text={prof.category} type="purple" /></td>
-                  <td><Badge text="نشطة" type="success" /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            <Badge text={item.status} type="success" />
+          </div>
+        ))}
+      </div>
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px',
+          }}
+        >
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '480px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
+              إضافة بند جديد في القاموس
+            </h3>
+
+            <form onSubmit={handleAddItem}>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+                  اسم البند / العنوان *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="مثال: إندونيسيا، رعاية صحية، مطار دبي"
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+                  الكود الإنجليزي / الرمز (اختياري)
+                </label>
+                <input
+                  type="text"
+                  value={newCode}
+                  onChange={(e) => setNewCode(e.target.value)}
+                  placeholder="مثال: IDN, HEALTH_CARE, DXB"
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  حفظ البند
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

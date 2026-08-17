@@ -3,6 +3,26 @@ import { ExternalOffice } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { Badge } from '../components/ui/Badge';
+
+interface OfficeUser {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  linked_office: string;
+  nationality: string;
+  status: 'نشط' | 'معلق';
+}
+
+interface OfficeFile {
+  id: string;
+  office_name: string;
+  file_title: string;
+  file_type: string;
+  upload_date: string;
+  file_size: string;
+}
 
 const INITIAL_OFFICES: ExternalOffice[] = [
   {
@@ -46,32 +66,74 @@ const INITIAL_OFFICES: ExternalOffice[] = [
     arrivedCountCount: 1100,
     rating: 4.8,
     authorizedCompanies: ['masi', 'yaqoot', 'topaz', 'ruwad'],
-  }
+  },
+];
+
+const MOCK_OFFICE_USERS: OfficeUser[] = [
+  {
+    id: 'OU-01',
+    name: 'عبدالفتح (مسؤول الوكلاء)',
+    phone: '+966558025628',
+    email: 'abdelftah@alsulaim-group.com',
+    linked_office: 'Manila Overseas Placement',
+    nationality: 'الفلبين',
+    status: 'نشط',
+  },
+  {
+    id: 'OU-02',
+    name: 'Bekele Tadesse',
+    phone: '+251115512345',
+    email: 'bekele@addisbureau.et',
+    linked_office: 'Addis International Bureau',
+    nationality: 'إثيوبيا',
+    status: 'نشط',
+  },
+];
+
+const MOCK_OFFICE_FILES: OfficeFile[] = [
+  {
+    id: 'OF-01',
+    office_name: 'Manila Overseas Placement',
+    file_title: 'ترخيص وزارة العمل الفلبينية POEA ساري',
+    file_type: 'PDF',
+    upload_date: '2026-01-10',
+    file_size: '2.4 MB',
+  },
+  {
+    id: 'OF-02',
+    office_name: 'Addis International Bureau',
+    file_title: 'عقد الشراكة والإرساليات المعتمد مع شركة السليم',
+    file_type: 'PDF',
+    upload_date: '2026-02-15',
+    file_size: '4.1 MB',
+  },
 ];
 
 export const ExternalOfficesAgentsPage: React.FC = () => {
   const { activeCompany } = useCompany();
   const [offices, setOffices] = useState<ExternalOffice[]>([]);
+  const [activeTab, setActiveTab] = useState<'offices' | 'users' | 'files'>('offices');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    realErpDataStore.getRecords<ExternalOffice>('external_recruitment_offices', INITIAL_OFFICES).then(data => setOffices(data));
+    realErpDataStore.getRecords<ExternalOffice>('external_recruitment_offices', INITIAL_OFFICES).then((data) => setOffices(data));
   }, []);
 
   return (
-    <div style={{ padding: '24px', backgroundColor: '#F8FAFC', minHeight: '85vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header Banner */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
+          background: 'linear-gradient(135deg, #005154 0%, #047857 100%)',
           borderRadius: '16px',
           padding: '24px 32px',
           color: '#FFFFFF',
-          marginBottom: '24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
+          boxShadow: '0 4px 20px rgba(0, 81, 84, 0.2)',
         }}
       >
         <div>
@@ -87,198 +149,167 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           >
             INTERNATIONAL RECRUITMENT NETWORK
           </span>
-          <h1 style={{ fontSize: '24px', fontWeight: '900', margin: '4px 0 0 0', fontFamily: 'Cairo, sans-serif' }}>
-            بوابة المكاتب الخارجية والوكلاء المصرحين (5 دول معتمدة)
+          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '6px 0 0 0' }}>
+            بوابة المكاتب والوكلاء الخارجيين المعتمدين (ClickERP Network)
           </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#DBEAFE' }}>
-            الربط المباشر مع مكاتب الفلبين، إثيوبيا، الهند، كينيا، وأوغندا بنظام صلاحيات مقيد.
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#E2E8F0' }}>
+            الربط المباشر مع مكاتب الفلبين، إثيوبيا، الهند، كينيا، وأوغندا وإدارة مستخدمي الوكلاء
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            type="button"
-            style={{
-              backgroundColor: '#FFFFFF',
-              color: '#1E3A8A',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '12px 20px',
-              fontWeight: '800',
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
+            onClick={() => exportData('external_offices', offices, 'excel', `المكاتب الخارجية - ${activeCompany.name}`)}
+            style={{ backgroundColor: '#FFFFFF', color: '#005154', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}
           >
-            + اعتماد مكتب خارجي جديد
-          </button>
-          <button
-            type="button"
-            onClick={() => exportData('external-offices', offices, 'excel')}
-            title="تصدير Excel"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              fontWeight: '700',
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
-          >
-            <i className="fa-solid fa-file-excel" style={{ marginLeft: '4px' }}></i> Excel
-          </button>
-          <button
-            type="button"
-            onClick={() => exportData('external-offices', offices, 'pdf')}
-            title="تصدير PDF"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              fontWeight: '700',
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
-          >
-            <i className="fa-solid fa-file-pdf" style={{ marginLeft: '4px' }}></i> PDF
-          </button>
-          <button
-            type="button"
-            onClick={() => exportData('external-offices', offices, 'csv')}
-            title="تصدير CSV"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              fontWeight: '700',
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
-          >
-            <i className="fa-solid fa-file-csv" style={{ marginLeft: '4px' }}></i> CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => exportData('external-offices', offices, 'print')}
-            title="طباعة التقرير"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: '#FFFFFF',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              fontWeight: '700',
-              fontSize: '13px',
-              cursor: 'pointer',
-            }}
-          >
-            <i className="fa-solid fa-print" style={{ marginLeft: '4px' }}></i> طباعة
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
         </div>
       </div>
 
-      {/* Grid of External Offices */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-        {offices.map((off) => (
-          <div
-            key={off.id}
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '14px',
-              border: '1px solid #E2E8F0',
-              padding: '20px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: '#EFF6FF',
-                    color: '#1D4ED8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: '900',
-                    fontSize: '14px',
-                  }}
-                >
-                  {off.countryCode}
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#0F172A', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
-                    {off.officeName}
-                  </h3>
-                  <div style={{ fontSize: '11px', color: '#64748B' }}>
-                    الدولة: <strong>{off.country}</strong> | الترخيص: {off.licenseNumber}
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ fontSize: '13px', fontWeight: '800', color: '#D97706' }}>
-                <i className="fa-solid fa-star" style={{ marginLeft: '4px' }}></i>
-                {off.rating}
-              </div>
-            </div>
-
-            <div
-              style={{
-                backgroundColor: '#F8FAFC',
-                padding: '12px',
-                borderRadius: '8px',
-                fontSize: '12px',
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '8px',
-                marginBottom: '14px',
-              }}
-            >
-              <div>
-                <span style={{ color: '#64748B' }}>المرشحون النشطون:</span>
-                <div style={{ fontWeight: '800', fontSize: '14px', color: '#2563EB' }}>{off.activeCandidatesCount} مرشح</div>
-              </div>
-              <div>
-                <span style={{ color: '#64748B' }}>إجمالي الواصلين:</span>
-                <div style={{ fontWeight: '800', fontSize: '14px', color: '#059669' }}>{off.arrivedCountCount} واصل</div>
-              </div>
-            </div>
-
-            <div style={{ fontSize: '12px', color: '#334155', marginBottom: '16px' }}>
-              <strong>الشركات المصرحة للربط:</strong>{' '}
-              {off.authorizedCompanies.map((cId) => (
-                <span key={cId} style={{ backgroundColor: '#F1F5F9', color: '#1E293B', padding: '2px 6px', borderRadius: '4px', marginLeft: '4px', fontSize: '11px', fontWeight: '700' }}>
-                  {cId.toUpperCase()}
-                </span>
-              ))}
-            </div>
-
+      {/* Sub Tabs */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+        {[
+          { id: 'offices', label: `المكاتب الخارجية (${offices.length || 3})`, icon: 'fa-building' },
+          { id: 'users', label: `مستخدمي الوكلاء (${MOCK_OFFICE_USERS.length})`, icon: 'fa-users-gear' },
+          { id: 'files', label: `ملفات ووثائق الوكلاء (${MOCK_OFFICE_FILES.length})`, icon: 'fa-folder-open' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
             <button
-              type="button"
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
               style={{
-                width: '100%',
-                backgroundColor: '#1E293B',
-                color: '#FFFFFF',
-                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
                 borderRadius: '8px',
-                padding: '10px',
+                border: '1px solid',
+                borderColor: isActive ? '#005154' : '#E2E8F0',
+                backgroundColor: isActive ? '#005154' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#334155',
+                fontWeight: isActive ? '800' : '600',
                 fontSize: '12px',
-                fontWeight: '700',
                 cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
-              عرض بوابات الإرساليات والسير الذاتية
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
             </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* Tab 1: Offices Cards & Grid */}
+      {activeTab === 'offices' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+          {(offices.length > 0 ? offices : INITIAL_OFFICES).map((office) => (
+            <div
+              key={office.id}
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '16px',
+                padding: '20px',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <strong style={{ fontSize: '15px', color: '#0F172A' }}>{office.officeName}</strong>
+                <Badge text={office.country} type="purple" />
+              </div>
+
+              <div style={{ fontSize: '12px', color: '#475569', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div><i className="fa-solid fa-id-badge ml-1.5 text-slate-400"></i> الترخيص: <strong style={{ fontFamily: 'monospace' }}>{office.licenseNumber}</strong></div>
+                <div><i className="fa-solid fa-user-tie ml-1.5 text-slate-400"></i> المدير: {office.managerName}</div>
+                <div><i className="fa-solid fa-phone ml-1.5 text-slate-400"></i> {office.phone}</div>
+                <div><i className="fa-solid fa-envelope ml-1.5 text-slate-400"></i> {office.email}</div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #F1F5F9', paddingTop: '12px', fontSize: '12px' }}>
+                <div>السير المتاحة: <strong style={{ color: '#005154' }}>{office.activeCandidatesCount}</strong></div>
+                <div>العمالة الواصلة: <strong style={{ color: '#047857' }}>{office.arrivedCountCount}</strong></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Tab 2: Users */}
+      {activeTab === 'users' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>مستخدمي الوكلاء والمكاتب الخارجية</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>اسم المستخدم</th>
+                <th>بيانات التواصل</th>
+                <th>المكتب المرتبط</th>
+                <th>الدولة والجنسية</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_OFFICE_USERS.map((u, idx) => (
+                <tr key={u.id}>
+                  <td><strong>{idx + 1}</strong></td>
+                  <td><strong style={{ color: '#005154' }}>{u.name}</strong></td>
+                  <td>
+                    <div>{u.phone}</div>
+                    <div style={{ fontSize: '10px', color: '#64748B' }}>{u.email}</div>
+                  </td>
+                  <td><span style={{ fontWeight: '700' }}>{u.linked_office}</span></td>
+                  <td>{u.nationality}</td>
+                  <td><Badge text={u.status} type="success" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 3: Files */}
+      {activeTab === 'files' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>وثائق وتراخيص المكاتب الخارجية</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>المكتب الخارجي</th>
+                <th>عنوان الوثيقة والملف</th>
+                <th>نوع الملف</th>
+                <th>تاريخ الرفع</th>
+                <th>الحجم</th>
+                <th>الإجراء</th>
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_OFFICE_FILES.map((f, idx) => (
+                <tr key={f.id}>
+                  <td><strong>{idx + 1}</strong></td>
+                  <td><strong style={{ color: '#005154' }}>{f.office_name}</strong></td>
+                  <td>{f.file_title}</td>
+                  <td><Badge text={f.file_type} type="purple" /></td>
+                  <td>{f.upload_date}</td>
+                  <td>{f.file_size}</td>
+                  <td>
+                    <button style={{ backgroundColor: '#005154', color: '#FFFFFF', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}>
+                      <i className="fa-solid fa-download ml-1"></i> تحميل
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

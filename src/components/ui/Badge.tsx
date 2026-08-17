@@ -2,7 +2,7 @@ import React from 'react';
 
 interface BadgeProps {
   text: string;
-  type?: 'success' | 'warning' | 'danger' | 'info' | 'purple';
+  type?: 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'primary';
   icon?: string;
 }
 

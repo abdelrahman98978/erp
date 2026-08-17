@@ -25,6 +25,60 @@ export interface EmployeeRecord {
   status: 'نشط' | 'إجازة' | 'نهاية خدمة' | 'معلق';
 }
 
+interface VacationRequest {
+  id: string;
+  employee_name: string;
+  vacation_type: string;
+  balance: number;
+  from_date: string;
+  to_date: string;
+  days_count: number;
+  notes: string;
+  status: 'معتمد' | 'بانتظار الموافقة' | 'مرفوض';
+}
+
+interface AdvanceRequest {
+  id: string;
+  employee_name: string;
+  payment_method: string;
+  amount: number;
+  date: string;
+  installments_count: number;
+  status: 'معتمد' | 'بانتظار الصرف' | 'مسدد';
+}
+
+interface SanctionItem {
+  id: string;
+  employee_name: string;
+  sanction_type: string;
+  amount: number;
+  date: string;
+  deduct_from_salary: boolean;
+  reason: string;
+  status: 'معتمد' | 'قيد المراجعة';
+}
+
+interface PermissionRequest {
+  id: string;
+  employee_name: string;
+  permission_type: string;
+  date: string;
+  time: string;
+  reason: string;
+  status: 'معتمد' | 'بانتظار المشرف';
+}
+
+interface RewardRequest {
+  id: string;
+  employee_name: string;
+  reward_type: string;
+  salary: number;
+  net_reward: number;
+  payout_timing: string;
+  date: string;
+  status: 'معتمد' | 'بانتظار الصرف';
+}
+
 const DEFAULT_MOCK_EMPLOYEES: EmployeeRecord[] = [
   {
     id: 'emp-101',
@@ -87,13 +141,94 @@ export const HRPage: React.FC = () => {
 
   const employees: EmployeeRecord[] = rawEmployees.length > 0 ? (rawEmployees as EmployeeRecord[]) : DEFAULT_MOCK_EMPLOYEES;
 
-  const [activeTab, setActiveTab] = useState<'employees' | 'payroll' | 'vacations'>('employees');
+  const [activeTab, setActiveTab] = useState<
+    'employees' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll'
+  >('employees');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddEmpModal, setShowAddEmpModal] = useState(false);
-  const [showAdvanceModal, setShowAdvanceModal] = useState(false);
   const [selectedEmpFor360, setSelectedEmpFor360] = useState<EmployeeRecord | null>(null);
 
-  // Form State
+  // Vacations Data
+  const [vacations, setVacations] = useState<VacationRequest[]>([
+    {
+      id: 'VAC-01',
+      employee_name: 'فهد العتيبي',
+      vacation_type: 'إجازة اعتيادية سنوية',
+      balance: 24,
+      from_date: '2026-08-20',
+      to_date: '2026-08-27',
+      days_count: 7,
+      notes: 'إجازة سنوية دورية',
+      status: 'معتمد',
+    },
+    {
+      id: 'VAC-02',
+      employee_name: 'سارة خالد',
+      vacation_type: 'إجازة اضطرارية',
+      balance: 18,
+      from_date: '2026-08-18',
+      to_date: '2026-08-19',
+      days_count: 2,
+      notes: 'ظرف عائلي طارئ',
+      status: 'بانتظار الموافقة',
+    },
+  ]);
+
+  // Advances Data
+  const [advances, setAdvances] = useState<AdvanceRequest[]>([
+    {
+      id: 'ADV-01',
+      employee_name: 'إبراهيم الشمري',
+      payment_method: 'تحويل بنكي راتب',
+      amount: 3000,
+      date: '2026-08-01',
+      installments_count: 3,
+      status: 'معتمد',
+    },
+  ]);
+
+  // Sanctions Data
+  const [sanctions, setSanctions] = useState<SanctionItem[]>([
+    {
+      id: 'SANC-01',
+      employee_name: 'أحمد التميمي',
+      sanction_type: 'تأخير غير مبرر عن الدوام',
+      amount: 250,
+      date: '2026-08-12',
+      deduct_from_salary: true,
+      reason: 'تكرار التأخير الصباحي لأكثر من 45 دقيقة',
+      status: 'معتمد',
+    },
+  ]);
+
+  // Permissions Data
+  const [permissions, setPermissions] = useState<PermissionRequest[]>([
+    {
+      id: 'PERM-01',
+      employee_name: 'سارة خالد',
+      permission_type: 'استئذان شخصي (ساعتان)',
+      date: '2026-08-17',
+      time: '12:00 - 14:00',
+      reason: 'مراجعة جهة حكومية رسمية',
+      status: 'معتمد',
+    },
+  ]);
+
+  // Rewards Data
+  const [rewards, setRewards] = useState<RewardRequest[]>([
+    {
+      id: 'REW-01',
+      employee_name: 'عبدالفتح (مسؤول الوكلاء)',
+      reward_type: 'مكافأة تميز وتحقيق مستهدف العقود',
+      salary: 12500,
+      net_reward: 2500,
+      payout_timing: 'مع راتب الشهر الحالي',
+      date: '2026-08-15',
+      status: 'معتمد',
+    },
+  ]);
+
+  // Employee Add Form State
   const [name, setName] = useState('');
   const [nationalId, setNationalId] = useState('');
   const [jobTitle, setJobTitle] = useState('أخصائي استقدام');
@@ -122,78 +257,13 @@ export const HRPage: React.FC = () => {
       allowances: sal * 0.3,
       salary: sal,
       leave_balance: 30,
-      status: 'نشط',
+      status: 'نشط' as const,
     };
 
     await createItem.mutateAsync(newRecord);
     setShowAddEmpModal(false);
     setName('');
     setNationalId('');
-  };
-
-  const handleExportSIF = () => {
-    const today = new Date();
-    const dateStr = today.toISOString().slice(0, 10).replace(/-/g, '');
-    const timeStr = today.toTimeString().slice(0, 8).replace(/:/g, '');
-    const monthStr = today.toISOString().slice(0, 7);
-
-    const totalNet = employees.reduce((sum, emp) => {
-      const basic = emp.salary * 0.7;
-      const housing = emp.salary * 0.2;
-      const transport = emp.salary * 0.1;
-      const gosi = (basic + housing) * 0.0975;
-      return sum + (basic + housing + transport - gosi);
-    }, 0);
-
-    const estId = activeCompany.taxNumber || '7009827341';
-    const bankCode = 'RIBL'; // Riyad Bank / Rajhi
-
-    // SCR Header Line
-    const scrHeader = `SCR,${estId},${bankCode},${dateStr},${timeStr},${totalNet.toFixed(2)},${employees.length},SAR,${monthStr}`;
-
-    // EDR Detail Lines
-    const edrLines = employees.map((emp) => {
-      const basic = (emp.salary * 0.7).toFixed(2);
-      const housing = (emp.salary * 0.2).toFixed(2);
-      const transport = (emp.salary * 0.1).toFixed(2);
-      const gosi = ((emp.salary * 0.7 + emp.salary * 0.2) * 0.0975).toFixed(2);
-      const net = (emp.salary * 0.7 + emp.salary * 0.2 + emp.salary * 0.1 - (emp.salary * 0.7 + emp.salary * 0.2) * 0.0975).toFixed(2);
-      const iban = emp.iban || `SA03800000000${emp.national_id}12`;
-
-      return `EDR,${emp.national_id},${bankCode},${iban},${emp.name},${basic},${housing},${transport},0.00,${gosi},${net},0`;
-    });
-
-    const sifContent = [scrHeader, ...edrLines].join('\r\n');
-    const blob = new Blob([sifContent], { type: 'text/plain;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `WPS_SIF_${activeCompany.code}_${monthStr}.sif`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handlePostPayrollJournals = () => {
-    const totalGross = employees.reduce((sum, emp) => sum + emp.salary, 0);
-    const totalGosi = employees.reduce((sum, emp) => sum + (emp.salary * 0.9 * 0.0975), 0);
-    const totalNet = totalGross - totalGosi;
-
-    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
-    const currentMonth = new Date().toISOString().slice(0, 7);
-
-    journalEngine.createJournalEntry(companyCode, {
-      entryDate: new Date().toISOString().slice(0, 10),
-      description: `قيد مسير رواتب موظفي ${activeCompany.name} لشهر (${currentMonth}) - حماية الأجور WPS`,
-      createdBy: 'مدير الموارد البشرية والرواتب',
-      autoPost: true,
-      lines: [
-        { accountCode: '51010', accountName: 'مصروفات الرواتب والأجور الأساسية والبدلات', debit: totalGross, credit: 0 },
-        { accountCode: '21010', accountName: 'مستحقات الرواتب والأجور (صافي البنك)', debit: 0, credit: totalNet },
-        { accountCode: '21060', accountName: 'مستحقات المؤسسة العامة للتأمينات الاجتماعية (GOSI)', debit: 0, credit: totalGosi },
-      ],
-    });
-
-    alert(`تم بنجاح اعتماد وترحيل قيد مسير الرواتب بقيمة إجمالية ${totalGross.toLocaleString()} ر.س إلى دفتر اليومية العامة!`);
   };
 
   const handleExportWPS = () => {
@@ -241,371 +311,548 @@ export const HRPage: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
-  const filteredEmployees = employees.filter((e) =>
-    e.name.includes(searchQuery) ||
-    e.employee_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    e.national_id.includes(searchQuery) ||
-    e.job_title.includes(searchQuery)
+  const filteredEmployees = employees.filter(
+    (e) =>
+      e.name.includes(searchQuery) ||
+      e.employee_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      e.national_id.includes(searchQuery) ||
+      e.job_title.includes(searchQuery)
   );
 
-  const totalPayroll = employees.reduce((acc, e) => acc + (e.salary || 0), 0);
-
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
         <div>
-          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <i className="fa-solid fa-users-viewfinder text-purple-700"></i>
-            الموارد البشرية ومسير الرواتب (HRIS & WPS Payroll Suite)
+          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-users-gear text-emerald-600"></i>
+            إدارة الموارد البشرية والرواتب (HR & Payroll System)
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
-            إدارة الكوادر الوظيفية، مسير الرواتب المعتمد لحماية الأجور، والإجازات لـ{' '}
-            <strong className="text-slate-700">{activeCompany.name}</strong>
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+            شؤون الموظفين، الإجازات، السلف، الجزاءات، الأذونات، مسير الرواتب WPS، والمكافآت
           </p>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div style={{ display: 'flex', gap: '10px' }}>
           <button
             onClick={() => setShowAddEmpModal(true)}
-            className="px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+            style={{
+              backgroundColor: '#005154',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '8px 18px',
+              fontSize: '13px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
           >
-            <i className="fa-solid fa-user-plus"></i>
+            <i className="fa-solid fa-user-plus text-xs"></i>
             إضافة موظف جديد
           </button>
+
           <button
             onClick={handleExportWPS}
-            className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-200 transition-all flex items-center gap-2"
+            style={{
+              backgroundColor: '#059669',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '8px 16px',
+              fontSize: '13px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
           >
-            <i className="fa-solid fa-file-invoice-dollar"></i>
-            تصدير ملف حماية الأجور (WPS)
-          </button>
-          <button
-            onClick={() => exportData('employees', filteredEmployees, 'excel', `سجل الموظفين - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير إكسيل"
-          >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
-            Excel
-          </button>
-          <button
-            onClick={() => exportData('employees', filteredEmployees, 'csv', `سجل الموظفين - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير CSV"
-          >
-            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
-            CSV
-          </button>
-          <button
-            onClick={() => exportData('employees', filteredEmployees, 'pdf', `سجل الموظفين - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير PDF"
-          >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
-            PDF
-          </button>
-          <button
-            onClick={() => exportData('employees', filteredEmployees, 'print', `سجل الموظفين والكوادر - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="طباعة التقرير المعتمد"
-          >
-            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
-            طباعة
+            <i className="fa-solid fa-file-excel text-xs"></i>
+            تصدير ملف WPS للبنك
           </button>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي الكوادر المسجلة</span>
-          <div className="text-2xl font-black text-slate-900 mt-1">{employees.length} موظفاً</div>
-          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">نسبة التوطين 78%</span>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">مسير الرواتب الشهري</span>
-          <div className="text-2xl font-black text-purple-700 mt-1">{totalPayroll.toLocaleString()} ر.س</div>
-          <span className="text-xs text-slate-400 font-medium">شامل البدلات والتأمينات</span>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">متوسط الراتب</span>
-          <div className="text-2xl font-black text-teal-700 mt-1">
-            {(totalPayroll / (employees.length || 1)).toFixed(0)} ر.س
-          </div>
-          <span className="text-xs text-slate-400 font-medium">معدل الرواتب</span>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">طلبات الإجازات القائمة</span>
-          <div className="text-2xl font-black text-amber-600 mt-1">2 طلبات</div>
-          <span className="text-xs text-amber-600 font-bold mt-1 inline-block">بانتظار الاعتماد</span>
-        </div>
+      {/* Sub Tabs Navigation (ClickERP Style) */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+        {[
+          { id: 'employees', label: `الموظفون (${employees.length})`, icon: 'fa-users' },
+          { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: 'fa-calendar-minus' },
+          { id: 'advances', label: `طلبات السلف (${advances.length})`, icon: 'fa-hand-holding-dollar' },
+          { id: 'sanctions', label: `جزاءات الموظف (${sanctions.length})`, icon: 'fa-scale-unbalanced' },
+          { id: 'permissions', label: `طلبات الأذونات (${permissions.length})`, icon: 'fa-door-open' },
+          { id: 'rewards', label: `طلبات المكافآت (${rewards.length})`, icon: 'fa-award' },
+          { id: 'payroll', label: 'مسير الرواتب (WPS)', icon: 'fa-money-check-dollar' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: '1px solid',
+                borderColor: isActive ? '#005154' : '#E2E8F0',
+                backgroundColor: isActive ? '#005154' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#334155',
+                fontWeight: isActive ? '800' : '600',
+                fontSize: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
-        <button
-          onClick={() => setActiveTab('employees')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'employees' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          <i className="fa-solid fa-users"></i>
-          سجل الموظفين والملفات ({employees.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('payroll')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'payroll' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          <i className="fa-solid fa-money-check-dollar"></i>
-          مسير الرواتب المعتمد (WPS)
-        </button>
-      </div>
-
-      {/* Content */}
-      {activeTab === 'employees' ? (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-          <div className="flex-1 max-w-md">
+      {/* Tab 1: Employees List */}
+      {activeTab === 'employees' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <input
               type="text"
-              placeholder="ابحث باسم الموظف، الكود، أو الهوية الوطنية..."
+              placeholder="البحث بالاسم، كود الموظف، الهوية، أو الوظيفة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-600 transition-colors"
+              style={{
+                padding: '8px 14px',
+                borderRadius: '8px',
+                border: '1px solid #CBD5E1',
+                fontSize: '12px',
+                width: '320px',
+              }}
             />
+            <span style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>
+              إجمالي الموظفين: {filteredEmployees.length}
+            </span>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-right text-sm">
-              <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
-                <tr>
-                  <th className="py-3.5 px-4">كود الموظف</th>
-                  <th className="py-3.5 px-4">اسم الموظف والهوية</th>
-                  <th className="py-3.5 px-4">المسمى الوظيفي</th>
-                  <th className="py-3.5 px-4">القسم والفرع</th>
-                  <th className="py-3.5 px-4">تاريخ التعيين</th>
-                  <th className="py-3.5 px-4">الراتب الإجمالي</th>
-                  <th className="py-3.5 px-4">الحالة</th>
-                  <th className="py-3.5 px-4 text-center">الملف 360°</th>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>كود الموظف</th>
+                <th>اسم الموظف</th>
+                <th>رقم الهوية الوطنية</th>
+                <th>الوظيفة والمهنة</th>
+                <th>القسم الإداري</th>
+                <th>تاريخ التعيين</th>
+                <th>الراتب الأساسي</th>
+                <th>الحالة</th>
+                <th>الإجراء</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEmployees.map((emp) => (
+                <tr key={emp.id}>
+                  <td><strong style={{ color: '#005154' }}>{emp.employee_code}</strong></td>
+                  <td>
+                    <div style={{ fontWeight: '800', color: '#0F172A' }}>{emp.name}</div>
+                    <div style={{ fontSize: '10px', color: '#64748B' }}>{emp.branch}</div>
+                  </td>
+                  <td><span style={{ fontFamily: 'monospace' }}>{emp.national_id}</span></td>
+                  <td>{emp.job_title}</td>
+                  <td><span className="badge-odoo badge-secondary">{emp.department}</span></td>
+                  <td>{emp.hire_date}</td>
+                  <td><strong style={{ color: '#047857' }}>{emp.salary.toLocaleString()} ر.س</strong></td>
+                  <td><Badge text={emp.status} type="success" /></td>
+                  <td>
+                    <button
+                      onClick={() => setSelectedEmpFor360(emp)}
+                      style={{
+                        backgroundColor: 'rgba(0, 81, 84, 0.08)',
+                        color: '#005154',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      الملف الرقمي 360°
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={8} className="py-10 text-center text-slate-400">
-                      <i className="fa-solid fa-spinner fa-spin ml-2"></i> جاري استرجاع سجلات الموظفين...
-                    </td>
-                  </tr>
-                ) : filteredEmployees.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="py-10 text-center text-slate-400">
-                      لا يوجد موظفون مطابقون للبحث
-                    </td>
-                  </tr>
-                ) : (
-                  filteredEmployees.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3.5 px-4 font-mono font-black text-purple-700">{emp.employee_code}</td>
-                      <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-900">{emp.name}</div>
-                        <div className="text-xs text-slate-400 font-mono">هوية: {emp.national_id}</div>
-                      </td>
-                      <td className="py-3.5 px-4 font-bold text-slate-800">{emp.job_title}</td>
-                      <td className="py-3.5 px-4 text-xs">
-                        <Badge text={emp.department} type="purple" />
-                        <div className="text-slate-400 mt-0.5">{emp.branch}</div>
-                      </td>
-                      <td className="py-3.5 px-4 text-xs text-slate-600">{emp.hire_date}</td>
-                      <td className="py-3.5 px-4 font-bold text-teal-800">{emp.salary.toLocaleString()} ر.س</td>
-                      <td className="py-3.5 px-4">
-                        <Badge text={emp.status} type="success" />
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          onClick={() => setSelectedEmpFor360(emp)}
-                          className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 mx-auto"
-                        >
-                          <i className="fa-solid fa-id-card"></i> الملف الرقمي 360°
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
-      ) : (
-        /* Payroll Table */
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-              <i className="fa-solid fa-file-invoice-dollar text-emerald-600"></i>
-              كشف مسير الرواتب الشهرية المعتمد لحماية الأجور (WPS Payroll Sheet)
-            </h3>
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={handlePostPayrollJournals}
-                className="px-3.5 py-1.5 bg-purple-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-purple-800 transition-all flex items-center gap-1.5"
-              >
-                <i className="fa-solid fa-wand-magic-sparkles"></i> اعتماد وترحيل قيد الرواتب
-              </button>
-              <button
-                onClick={handleExportSIF}
-                className="px-3.5 py-1.5 bg-blue-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-blue-800 transition-all flex items-center gap-1.5"
-                title="تصدير ملف حماية الأجور بصيغة SIF المعيارية للبنوك السعودية"
-              >
-                <i className="fa-solid fa-file-code"></i> تصدير ملف البنك (SIF)
-              </button>
-              <button
-                onClick={handleExportWPS}
-                className="px-3.5 py-1.5 bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm hover:bg-emerald-800 transition-all flex items-center gap-1.5"
-              >
-                <i className="fa-solid fa-file-excel"></i> تصدير Excel
-              </button>
+      )}
+
+      {/* Tab 2: Vacations Requests */}
+      {activeTab === 'vacations' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات الإجازات المسجلة</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>التسلسل</th>
+                <th>الموظف</th>
+                <th>نوع الإجازة</th>
+                <th>رصيد الإجازات</th>
+                <th>من تاريخ</th>
+                <th>إلى تاريخ</th>
+                <th>عدد الأيام</th>
+                <th>ملاحظات</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vacations.map((vac) => (
+                <tr key={vac.id}>
+                  <td><strong>{vac.id}</strong></td>
+                  <td style={{ fontWeight: '800' }}>{vac.employee_name}</td>
+                  <td>{vac.vacation_type}</td>
+                  <td><strong style={{ color: '#2563EB' }}>{vac.balance} يوم</strong></td>
+                  <td>{vac.from_date}</td>
+                  <td>{vac.to_date}</td>
+                  <td><strong>{vac.days_count} أيام</strong></td>
+                  <td><span style={{ fontSize: '11px', color: '#64748B' }}>{vac.notes}</span></td>
+                  <td><Badge text={vac.status} type={vac.status === 'معتمد' ? 'success' : 'warning'} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 3: Advances Requests */}
+      {activeTab === 'advances' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات السلف المالية</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>التسلسل</th>
+                <th>الموظف</th>
+                <th>طريقة السداد</th>
+                <th>القيمة</th>
+                <th>التاريخ</th>
+                <th>عدد الأقساط</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {advances.map((adv) => (
+                <tr key={adv.id}>
+                  <td><strong>{adv.id}</strong></td>
+                  <td style={{ fontWeight: '800' }}>{adv.employee_name}</td>
+                  <td>{adv.payment_method}</td>
+                  <td><strong style={{ color: '#047857' }}>{adv.amount.toLocaleString()} ر.س</strong></td>
+                  <td>{adv.date}</td>
+                  <td>{adv.installments_count} أشهر</td>
+                  <td><Badge text={adv.status} type="success" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 4: Sanctions */}
+      {activeTab === 'sanctions' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>جزاءات ومخالفات الموظف</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>التسلسل</th>
+                <th>الموظف</th>
+                <th>نوع الجزاء</th>
+                <th>القيمة المخصومة</th>
+                <th>التاريخ</th>
+                <th>الخصم مع الراتب</th>
+                <th>السبب</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sanctions.map((sanc) => (
+                <tr key={sanc.id}>
+                  <td><strong>{sanc.id}</strong></td>
+                  <td style={{ fontWeight: '800' }}>{sanc.employee_name}</td>
+                  <td>{sanc.sanction_type}</td>
+                  <td><strong style={{ color: '#DC2626' }}>{sanc.amount} ر.س</strong></td>
+                  <td>{sanc.date}</td>
+                  <td>{sanc.deduct_from_salary ? 'نعم (مباشر)' : 'لا'}</td>
+                  <td style={{ fontSize: '11px', color: '#64748B' }}>{sanc.reason}</td>
+                  <td><Badge text={sanc.status} type="danger" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 5: Permissions */}
+      {activeTab === 'permissions' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات الأذونات والاستئذان</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>التسلسل</th>
+                <th>الموظف</th>
+                <th>نوع الإذن</th>
+                <th>التاريخ</th>
+                <th>الفترة الزمنية</th>
+                <th>السبب</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {permissions.map((perm) => (
+                <tr key={perm.id}>
+                  <td><strong>{perm.id}</strong></td>
+                  <td style={{ fontWeight: '800' }}>{perm.employee_name}</td>
+                  <td>{perm.permission_type}</td>
+                  <td>{perm.date}</td>
+                  <td><strong>{perm.time}</strong></td>
+                  <td style={{ fontSize: '11px', color: '#64748B' }}>{perm.reason}</td>
+                  <td><Badge text={perm.status} type="success" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 6: Rewards */}
+      {activeTab === 'rewards' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات الحوافز والمكافآت</h3>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>التسلسل</th>
+                <th>الموظف</th>
+                <th>نوع المكافأة</th>
+                <th>الراتب</th>
+                <th>صافي قيمة المكافأة</th>
+                <th>توقيت الصرف</th>
+                <th>التاريخ</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rewards.map((rew) => (
+                <tr key={rew.id}>
+                  <td><strong>{rew.id}</strong></td>
+                  <td style={{ fontWeight: '800' }}>{rew.employee_name}</td>
+                  <td>{rew.reward_type}</td>
+                  <td>{rew.salary.toLocaleString()} ر.س</td>
+                  <td><strong style={{ color: '#047857' }}>+{rew.net_reward.toLocaleString()} ر.س</strong></td>
+                  <td>{rew.payout_timing}</td>
+                  <td>{rew.date}</td>
+                  <td><Badge text={rew.status} type="success" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Tab 7: Payroll WPS */}
+      {activeTab === 'payroll' && (
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0F172A' }}>
+                مسير الرواتب المعتمد وحماية الأجور (WPS)
+              </h3>
+              <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#64748B' }}>
+                احتساب التأمينات الاجتماعية (GOSI)، البدلات، والاستقطاعات البنكية المباشرة
+              </p>
             </div>
+            <button
+              onClick={handleExportWPS}
+              style={{
+                backgroundColor: '#059669',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '12px',
+                fontWeight: '800',
+                cursor: 'pointer',
+              }}
+            >
+              تصدير شيت الرواتب
+            </button>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-right text-sm">
-              <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
-                <tr>
-                  <th className="py-3.5 px-4">اسم الموظف</th>
-                  <th className="py-3.5 px-4">الراتب الأساسي (70%)</th>
-                  <th className="py-3.5 px-4">بدل السكن (20%)</th>
-                  <th className="py-3.5 px-4">بدل النقل (10%)</th>
-                  <th className="py-3.5 px-4">التأمينات GOSI (9.75%)</th>
-                  <th className="py-3.5 px-4 font-black text-emerald-800">صافي الراتب المحول</th>
-                  <th className="py-3.5 px-4">حالة المسير</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                {employees.map((emp) => {
-                  const basic = emp.salary * 0.7;
-                  const housing = emp.salary * 0.2;
-                  const transport = emp.salary * 0.1;
-                  const gosi = (basic + housing) * 0.0975;
-                  const net = basic + housing + transport - gosi;
-                  return (
-                    <tr key={emp.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-900">{emp.name}</div>
-                        <div className="text-[11px] text-slate-400 font-mono">{emp.national_id}</div>
-                      </td>
-                      <td className="py-3.5 px-4 font-bold text-slate-800">{basic.toLocaleString()} ر.س</td>
-                      <td className="py-3.5 px-4 text-xs text-slate-600">{housing.toLocaleString()} ر.س</td>
-                      <td className="py-3.5 px-4 text-xs text-slate-600">{transport.toLocaleString()} ر.س</td>
-                      <td className="py-3.5 px-4 text-xs font-bold text-rose-600">{gosi.toFixed(2)} ر.س</td>
-                      <td className="py-3.5 px-4 font-black text-emerald-700">{net.toFixed(2)} ر.س</td>
-                      <td className="py-3.5 px-4">
-                        <Badge text="معتمد وجاهز للصرف" type="success" />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
+              <tr>
+                <th>الموظف</th>
+                <th>الراتب الأساسي (70%)</th>
+                <th>بدل السكن (20%)</th>
+                <th>بدل النقل (10%)</th>
+                <th>التأمينات GOSI (9.75%)</th>
+                <th>صافي المحول للبنك</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((emp) => {
+                const basic = emp.salary * 0.7;
+                const housing = emp.salary * 0.2;
+                const transport = emp.salary * 0.1;
+                const gosi = (basic + housing) * 0.0975;
+                const net = basic + housing + transport - gosi;
+                return (
+                  <tr key={emp.id}>
+                    <td>
+                      <div style={{ fontWeight: '800' }}>{emp.name}</div>
+                      <div style={{ fontSize: '10px', color: '#64748B' }}>{emp.job_title}</div>
+                    </td>
+                    <td>{basic.toLocaleString()} ر.س</td>
+                    <td>{housing.toLocaleString()} ر.س</td>
+                    <td>{transport.toLocaleString()} ر.س</td>
+                    <td style={{ color: '#DC2626' }}>-{gosi.toFixed(2)} ر.س</td>
+                    <td><strong style={{ color: '#047857' }}>{net.toFixed(2)} ر.س</strong></td>
+                    <td><Badge text="جاهز للتحويل" type="success" /></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 
       {/* Add Employee Modal */}
       {showAddEmpModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <i className="fa-solid fa-user-plus text-purple-400"></i>
-                <h3 className="font-bold text-base">تسجيل موظف جديد بالنظام</h3>
-              </div>
-              <button onClick={() => setShowAddEmpModal(false)} className="text-slate-400 hover:text-white">
-                <i className="fa-solid fa-xmark text-lg"></i>
-              </button>
-            </div>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px',
+          }}
+        >
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
+              إضافة موظف جديد لمنظومة العمل
+            </h3>
 
-            <form onSubmit={handleAddEmployee} className="p-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم الموظف بالكامل *</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="الاسم الرباعي..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleAddEmployee}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">رقم الهوية الوطنية / الإقامة *</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
+                    اسم الموظف *
+                  </label>
                   <input
                     type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
+                    رقم الهوية الوطنية / الإقامة *
+                  </label>
+                  <input
+                    type="text"
+                    required
                     value={nationalId}
                     onChange={(e) => setNationalId(e.target.value)}
-                    placeholder="10 أرقام..."
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-bold outline-none"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">المسمى الوظيفي *</label>
-                  <input
-                    type="text"
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    placeholder="المسمى الوظيفي..."
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
-                    required
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">القسم / الإدارة</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
+                    المسمى الوظيفي *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={jobTitle}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
+                    القسم الإداري *
+                  </label>
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
                   >
-                    <option>التشغيل والاستقدام</option>
-                    <option>إدارة الإيواء</option>
-                    <option>الإدارة المالية</option>
-                    <option>خدمة العملاء (CRM)</option>
-                    <option>الموارد البشرية</option>
+                    <option value="التشغيل والاستقدام">التشغيل والاستقدام</option>
+                    <option value="إدارة الإيواء">إدارة الإيواء</option>
+                    <option value="الإدارة المالية">الإدارة المالية</option>
+                    <option value="خدمة العملاء (CRM)">خدمة العملاء (CRM)</option>
+                    <option value="الموارد البشرية">الموارد البشرية</option>
                   </select>
                 </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">الراتب الإجمالي (ر.س) *</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
+                    الفرع *
+                  </label>
+                  <input
+                    type="text"
+                    value={branch}
+                    onChange={(e) => setBranch(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
+                    الراتب الإجمالي (ر.س) *
+                  </label>
                   <input
                     type="number"
+                    required
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none"
-                    required
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                 <button
                   type="button"
                   onClick={() => setShowAddEmpModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+                  style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '12px', cursor: 'pointer' }}
                 >
-                  <i className="fa-solid fa-check"></i>
-                  حفظ وتسجيل الموظف
+                  حفظ الموظف
                 </button>
               </div>
             </form>
@@ -613,15 +860,10 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Employee 360 Modal */}
+      {/* Employee 360 Digital File Modal */}
       {selectedEmpFor360 && (
-        <Employee360DigitalFileModal
-          employee={selectedEmpFor360 as any}
-          onClose={() => setSelectedEmpFor360(null)}
-        />
+        <Employee360DigitalFileModal employee={selectedEmpFor360 as any} onClose={() => setSelectedEmpFor360(null)} />
       )}
     </div>
   );
 };
-
-export default HRPage;

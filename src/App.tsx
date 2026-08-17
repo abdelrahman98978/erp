@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AppShell } from './components/layout/AppShell';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
@@ -112,6 +112,16 @@ const MainContent: React.FC = () => {
     setFlowState('landing');
   };
 
+  useEffect(() => {
+    const handleNav = (e: any) => {
+      if (e.detail?.tab) {
+        handleSelectTab(e.detail.tab, e.detail.title || e.detail.tab);
+      }
+    };
+    window.addEventListener('alsulaim_navigate', handleNav);
+    return () => window.removeEventListener('alsulaim_navigate', handleNav);
+  }, []);
+
   // 1. Landing Page (Portal Overview)
   if (flowState === 'landing') {
     return (
@@ -181,13 +191,19 @@ const MainContent: React.FC = () => {
       case 'completed-contracts':
       case 'returned-contracts':
       case 'dispatches':
+      case 'contract-extension-requests':
+      case 'contract-return-requests':
+      case 'musaned-pipeline':
         return <RecruitmentContractsPage />;
 
       case 'rent-contracts':
       case 'create-rent':
       case 'all-rent-contracts':
+      case 'rental-orders':
       case 'active-rent':
       case 'transferred-rent':
+      case 'completed-rent':
+      case 'rent-contract-terms':
         return <RentContractsPage />;
 
       case 'rent-packages':
@@ -207,9 +223,12 @@ const MainContent: React.FC = () => {
       case 'new-orders':
       case 'in-progress-orders':
       case 'contracted-orders':
+      case 'incomplete-orders':
       case 'professional-requests':
       case 'special-requests':
+      case 'renew-contracts':
       case 'known-service':
+      case 'contact-requests':
         return <OrdersPage />;
 
       case 'ingaz':
@@ -223,16 +242,21 @@ const MainContent: React.FC = () => {
       case 'outside-shelter':
       case 'available-transfer':
       case 'deportation-stage':
+      case 'shelter-places':
         return <ShelterPage />;
 
       case 'sponsorship-transfer':
       case 'transfer-requests':
+      case 'web-transfer-requests':
       case 'trial-period':
       case 'transferred-done':
+      case 'transfer-contract-terms':
         return <SponsorshipTransferPage />;
 
+      case 'travel':
       case 'arrival-flights':
       case 'deportation-flights':
+      case 'deportation-travel':
       case 'logistics':
         return <TravelPage />;
 
@@ -264,6 +288,8 @@ const MainContent: React.FC = () => {
       case 'balance-sheet':
       case 'invoices':
       case 'receipts':
+      case 'vouchers':
+      case 'banks-boxes':
       case 'payment-vouchers':
       case 'tax-returns':
       case 'chart-accounts':
@@ -284,8 +310,13 @@ const MainContent: React.FC = () => {
 
       case 'employees':
       case 'employee-list':
+      case 'maids-hr':
       case 'payroll':
       case 'leave-requests':
+      case 'employee-advances':
+      case 'employee-sanctions':
+      case 'employee-permissions':
+      case 'employee-rewards':
       case 'salaries':
       case 'hr':
         return <HRPage />;
@@ -321,6 +352,7 @@ const MainContent: React.FC = () => {
       case 'whatsapp-dispatch':
       case 'messages':
       case 'sent-messages':
+      case 'sms-dispatch':
         return <SentMessagesPage />;
 
       case 'visitors':
@@ -341,6 +373,7 @@ const MainContent: React.FC = () => {
         return <ZATCAPage />;
 
       case 'attendances':
+      case 'daily-work-reports':
         return <AttendancesPage />;
 
       case 'activity-logs':

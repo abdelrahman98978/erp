@@ -1,5 +1,79 @@
 import { Client, Order, RecruitmentContract, RentContract, ShelterItem, Employee } from '../types';
 
+export interface DashboardKPIPeriodData {
+  recruitmentContracts: { total: number; beforeArrival: number; arrivalStage: number; underGuarantee: number; active: number; completed: number; returned: number; dispatches: number };
+  orders: { total: number; newOrders: number; inProgress: number; completed: number; cancelled: number };
+  rentContracts: { total: number; active: number; sent: number; locked: number; delivered: number; completed: number };
+  rentMaids: { total: number; available: number; activeRent: number };
+  cvs: { total: number; available: number; reserved: number; rental: number; deleted: number; pending: number };
+  clients: { total: number; withOrders: number; withoutOrders: number };
+  ingaz: { total: number; inProgress: number; approved: number };
+  complaints: { total: number; open: number; closed: number };
+  sponsorshipTransfers: { total: number; trialPeriod: number; transferred: number };
+  shelter: { total: number; inside: number; outside: number; availableTransfer: number; deportation: number };
+  todayContractsCount: number;
+  todayOrdersCount: number;
+}
+
+export const DASHBOARD_STATS_BY_PERIOD: Record<'today' | 'week' | 'month' | 'all', DashboardKPIPeriodData> = {
+  today: {
+    recruitmentContracts: { total: 4, beforeArrival: 3, arrivalStage: 0, underGuarantee: 1, active: 3, completed: 0, returned: 1, dispatches: 2 },
+    orders: { total: 6, newOrders: 4, inProgress: 2, completed: 0, cancelled: 0 },
+    rentContracts: { total: 2, active: 1, sent: 1, locked: 0, delivered: 0, completed: 0 },
+    rentMaids: { total: 13, available: 0, activeRent: 6 },
+    cvs: { total: 235, available: 163, reserved: 142, rental: 13, deleted: 4, pending: 12 },
+    clients: { total: 241, withOrders: 39, withoutOrders: 202 },
+    ingaz: { total: 2, inProgress: 2, approved: 0 },
+    complaints: { total: 1, open: 1, closed: 0 },
+    sponsorshipTransfers: { total: 17, trialPeriod: 2, transferred: 0 },
+    shelter: { total: 64, inside: 44, outside: 5, availableTransfer: 8, deportation: 7 },
+    todayContractsCount: 4,
+    todayOrdersCount: 6,
+  },
+  week: {
+    recruitmentContracts: { total: 28, beforeArrival: 12, arrivalStage: 0, underGuarantee: 1, active: 20, completed: 1, returned: 3, dispatches: 8 },
+    orders: { total: 34, newOrders: 6, inProgress: 5, completed: 23, cancelled: 0 },
+    rentContracts: { total: 6, active: 2, sent: 1, locked: 1, delivered: 0, completed: 2 },
+    rentMaids: { total: 13, available: 0, activeRent: 6 },
+    cvs: { total: 235, available: 163, reserved: 142, rental: 13, deleted: 4, pending: 12 },
+    clients: { total: 241, withOrders: 39, withoutOrders: 202 },
+    ingaz: { total: 2, inProgress: 2, approved: 0 },
+    complaints: { total: 2, open: 1, closed: 1 },
+    sponsorshipTransfers: { total: 17, trialPeriod: 2, transferred: 0 },
+    shelter: { total: 64, inside: 44, outside: 5, availableTransfer: 8, deportation: 7 },
+    todayContractsCount: 4,
+    todayOrdersCount: 6,
+  },
+  month: {
+    recruitmentContracts: { total: 72, beforeArrival: 22, arrivalStage: 0, underGuarantee: 2, active: 25, completed: 2, returned: 8, dispatches: 19 },
+    orders: { total: 85, newOrders: 6, inProgress: 7, completed: 72, cancelled: 0 },
+    rentContracts: { total: 11, active: 2, sent: 1, locked: 2, delivered: 0, completed: 6 },
+    rentMaids: { total: 13, available: 0, activeRent: 6 },
+    cvs: { total: 235, available: 163, reserved: 142, rental: 13, deleted: 4, pending: 12 },
+    clients: { total: 241, withOrders: 39, withoutOrders: 202 },
+    ingaz: { total: 2, inProgress: 2, approved: 0 },
+    complaints: { total: 3, open: 2, closed: 1 },
+    sponsorshipTransfers: { total: 17, trialPeriod: 2, transferred: 0 },
+    shelter: { total: 64, inside: 44, outside: 5, availableTransfer: 8, deportation: 7 },
+    todayContractsCount: 4,
+    todayOrdersCount: 6,
+  },
+  all: {
+    recruitmentContracts: { total: 115, beforeArrival: 27, arrivalStage: 0, underGuarantee: 2, active: 27, completed: 2, returned: 11, dispatches: 26 },
+    orders: { total: 121, newOrders: 6, inProgress: 7, completed: 108, cancelled: 0 },
+    rentContracts: { total: 13, active: 2, sent: 1, locked: 2, delivered: 0, completed: 7 },
+    rentMaids: { total: 13, available: 0, activeRent: 6 },
+    cvs: { total: 235, available: 163, reserved: 142, rental: 13, deleted: 4, pending: 12 },
+    clients: { total: 241, withOrders: 39, withoutOrders: 202 },
+    ingaz: { total: 2, inProgress: 2, approved: 0 },
+    complaints: { total: 4, open: 2, closed: 2 },
+    sponsorshipTransfers: { total: 17, trialPeriod: 2, transferred: 0 },
+    shelter: { total: 64, inside: 44, outside: 5, availableTransfer: 8, deportation: 7 },
+    todayContractsCount: 4,
+    todayOrdersCount: 6,
+  },
+};
+
 export const MOCK_CLIENTS: Client[] = [
   {
     id: '2518',
@@ -16,7 +90,7 @@ export const MOCK_CLIENTS: Client[] = [
     rent_contracts: 0,
     created_at: '2026-07-28',
     added_by: 'مشرف',
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: '2517',
@@ -33,7 +107,7 @@ export const MOCK_CLIENTS: Client[] = [
     rent_contracts: 0,
     created_at: '2026-07-26',
     added_by: 'محمد مصطفي',
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: '2516',
@@ -50,7 +124,7 @@ export const MOCK_CLIENTS: Client[] = [
     rent_contracts: 1,
     created_at: '2026-07-20',
     added_by: 'احمد',
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: '2515',
@@ -67,8 +141,8 @@ export const MOCK_CLIENTS: Client[] = [
     rent_contracts: 1,
     created_at: '2026-06-22',
     added_by: 'أحمد محمد اختبار',
-    branch: 'فرع الرياض'
-  }
+    branch: 'فرع الرياض',
+  },
 ];
 
 export const MOCK_ORDERS: Order[] = [
@@ -87,7 +161,7 @@ export const MOCK_ORDERS: Order[] = [
     created_at: '2026-07-14 18:15',
     responsible_employee: 'Mohameed',
     branch: 'الفرع الرئيسي',
-    office_name: 'DAMAS FOREGIN EMPLOYMENT AGENCY'
+    office_name: 'DAMAS FOREGIN EMPLOYMENT AGENCY',
   },
   {
     id: '561',
@@ -104,7 +178,7 @@ export const MOCK_ORDERS: Order[] = [
     created_at: '2026-07-04 15:57',
     responsible_employee: 'Mohameed',
     branch: 'الفرع الرئيسي',
-    office_name: "PLATINUM BROTHERS INT'L MANPOWER"
+    office_name: "PLATINUM BROTHERS INT'L MANPOWER",
   },
   {
     id: '560',
@@ -121,8 +195,8 @@ export const MOCK_ORDERS: Order[] = [
     created_at: '2026-07-28 10:00',
     responsible_employee: 'سهام',
     branch: 'الفرع الرئيسي',
-    office_name: 'EARLY LEARNERS CONSULTANT'
-  }
+    office_name: 'EARLY LEARNERS CONSULTANT',
+  },
 ];
 
 export const MOCK_RECRUITMENT_CONTRACTS: RecruitmentContract[] = [
@@ -141,7 +215,7 @@ export const MOCK_RECRUITMENT_CONTRACTS: RecruitmentContract[] = [
     payment_status: 'تم الدفع',
     amount: 14500,
     created_at: '2026-07-29',
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: '592',
@@ -158,7 +232,7 @@ export const MOCK_RECRUITMENT_CONTRACTS: RecruitmentContract[] = [
     payment_status: 'تم الدفع',
     amount: 18500,
     created_at: '2026-07-20',
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: '588',
@@ -175,8 +249,42 @@ export const MOCK_RECRUITMENT_CONTRACTS: RecruitmentContract[] = [
     payment_status: 'تم الدفع',
     amount: 12000,
     created_at: '2026-06-15',
-    branch: 'فرع الرياض'
-  }
+    branch: 'فرع الرياض',
+  },
+  {
+    id: '585',
+    contract_number: '#RC-2026-0585',
+    client_name: 'شركة سلسك القابضة',
+    client_phone: '+966504499112',
+    maid_name: 'MARIA SANTOS',
+    maid_passport: 'PHL-884129',
+    nationality: 'الفلبين',
+    musaned_number: 'MS-55331199',
+    external_office: 'MANILA MANPOWER RECRUITMENT',
+    stage: 'تفويض',
+    warranty_status: 'نشط',
+    payment_status: 'تم الدفع',
+    amount: 17500,
+    created_at: '2026-08-02',
+    branch: 'الفرع الرئيسي',
+  },
+  {
+    id: '582',
+    contract_number: '#RC-2026-0582',
+    client_name: 'عبدالله بن فهد التميمي',
+    client_phone: '+966551122334',
+    maid_name: 'FATIMA BEGUM',
+    maid_passport: 'BGD-772210',
+    nationality: 'بنغلاديش',
+    musaned_number: 'MS-99881144',
+    external_office: 'DHAKA OVERSEAS PLACEMENT',
+    stage: 'تذكرة',
+    warranty_status: 'نشط',
+    payment_status: 'تم الدفع',
+    amount: 11000,
+    created_at: '2026-08-10',
+    branch: 'فرع جدة',
+  },
 ];
 
 export const MOCK_RENT_CONTRACTS: RentContract[] = [
@@ -195,7 +303,7 @@ export const MOCK_RENT_CONTRACTS: RentContract[] = [
     status: 'بانتظار التوقيع',
     payment_status: 'معلق',
     marketer: 'مشرف',
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: '14',
@@ -212,8 +320,8 @@ export const MOCK_RENT_CONTRACTS: RentContract[] = [
     status: 'نشط',
     payment_status: 'بانتظار التحويل',
     marketer: 'مشرف',
-    branch: 'الفرع الرئيسي'
-  }
+    branch: 'الفرع الرئيسي',
+  },
 ];
 
 export const MOCK_SHELTER_ITEMS: ShelterItem[] = [
@@ -228,7 +336,7 @@ export const MOCK_SHELTER_ITEMS: ShelterItem[] = [
     status: 'داخل الإيواء',
     days_in_shelter: 15,
     catering_meals_count: 45,
-    work_willingness: 'ترغب بالعمل'
+    work_willingness: 'ترغب بالعمل',
   },
   {
     id: 'SH-102',
@@ -241,8 +349,8 @@ export const MOCK_SHELTER_ITEMS: ShelterItem[] = [
     status: 'متاح للنقل',
     days_in_shelter: 12,
     catering_meals_count: 36,
-    work_willingness: 'ترغب بالعمل'
-  }
+    work_willingness: 'ترغب بالعمل',
+  },
 ];
 
 export const MOCK_EMPLOYEES: Employee[] = [
@@ -256,7 +364,7 @@ export const MOCK_EMPLOYEES: Employee[] = [
     department: 'الادارة العليا',
     status: 'نشط',
     salary: 15000,
-    branch: 'الفرع الرئيسي'
+    branch: 'الفرع الرئيسي',
   },
   {
     id: 'EMP-02',
@@ -268,6 +376,6 @@ export const MOCK_EMPLOYEES: Employee[] = [
     department: 'الموارد البشرية',
     status: 'نشط',
     salary: 8500,
-    branch: 'الفرع الرئيسي'
-  }
+    branch: 'الفرع الرئيسي',
+  },
 ];
