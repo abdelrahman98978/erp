@@ -312,6 +312,9 @@ const MainContent: React.FC = () => {
       case 'employee-list':
       case 'maids-hr':
       case 'payroll':
+      case 'payrolls':
+      case 'wps':
+      case 'salary':
       case 'leave-requests':
       case 'employee-advances':
       case 'employee-sanctions':

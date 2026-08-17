@@ -326,7 +326,7 @@ export const ComplaintsPage: React.FC = () => {
                     <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{disp.details}</div>
                   </td>
                   <td style={{ fontWeight: '800', color: '#EF4444' }}>
-                    {disp.amount_claimed > 0 ? `${disp.amount_claimed.toLocaleString()} ر.س` : 'غير مالي'}
+                    {(disp.amount_claimed ?? 0) > 0 ? `${(disp.amount_claimed ?? 0).toLocaleString()} ر.س` : 'غير مالي'}
                   </td>
                   <td><Badge text={disp.priority} type={disp.priority.includes('VIP') ? 'danger' : 'warning'} /></td>
                   <td>

@@ -83,7 +83,7 @@ export const CustodiesPage: React.FC = () => {
     },
     { header: 'الموظف المستلم', accessor: (row) => <span style={{ fontWeight: '600' }}>{row.employee_name}</span> },
     { header: 'المقر / الفرع', accessor: (row) => <Badge text={row.location} type="purple" /> },
-    { header: 'القيمة التقديرية', accessor: (row) => <span style={{ fontWeight: '700', color: '#005154' }}>{row.estimated_value.toLocaleString()} ر.س</span> },
+    { header: 'القيمة التقديرية', accessor: (row) => <span style={{ fontWeight: '700', color: '#005154' }}>{(row.estimated_value ?? 0).toLocaleString()} ر.س</span> },
     { header: 'تاريخ التسليم', accessor: (row) => <span style={{ fontSize: '12px' }}>{row.received_date}</span> },
     { header: 'الحالة', accessor: (row) => <Badge text={row.status} type={row.status === 'في حوزة الموظف' ? 'success' : row.status === 'تم الاسترجاع' ? 'purple' : 'warning'} /> },
     {
@@ -245,7 +245,7 @@ export const CustodiesPage: React.FC = () => {
                 <div>🔹 <strong>اسم الأصل:</strong> {selectedCustodyForDoc.item_name}</div>
                 <div>🔹 <strong>الرقم التسلسلي:</strong> {selectedCustodyForDoc.serial_number}</div>
                 <div>🔹 <strong>تاريخ الاستلام:</strong> {selectedCustodyForDoc.received_date}</div>
-                <div>🔹 <strong>القيمة التقديرية:</strong> {selectedCustodyForDoc.estimated_value.toLocaleString()} ر.س</div>
+                <div>🔹 <strong>القيمة التقديرية:</strong> {(selectedCustodyForDoc.estimated_value ?? 0).toLocaleString()} ر.س</div>
               </div>
             </div>
 

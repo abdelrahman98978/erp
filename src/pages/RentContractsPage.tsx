@@ -331,8 +331,8 @@ export const RentContractsPage: React.FC = () => {
                   </td>
                   <td><strong>{c.duration_months} شهر</strong></td>
                   <td><span style={{ fontSize: '11px', color: '#475569' }}>{c.start_date} إلى {c.end_date}</span></td>
-                  <td>{c.monthly_cost.toLocaleString()} ر.س</td>
-                  <td><strong style={{ color: '#047857' }}>{c.total_amount.toLocaleString()} ر.س</strong></td>
+                  <td>{(c.monthly_cost ?? 0).toLocaleString()} ر.س</td>
+                  <td><strong style={{ color: '#047857' }}>{(c.total_amount ?? 0).toLocaleString()} ر.س</strong></td>
                   <td><Badge text={c.status} type="success" /></td>
                   <td>
                     <button
@@ -376,9 +376,9 @@ export const RentContractsPage: React.FC = () => {
                   <td>{pkg.nationality}</td>
                   <td><Badge text={pkg.rent_type} type="purple" /></td>
                   <td>{pkg.duration}</td>
-                  <td>{pkg.price_before_tax.toLocaleString()} ر.س</td>
-                  <td>{pkg.tax.toLocaleString()} ر.س</td>
-                  <td><strong style={{ color: '#047857' }}>{pkg.total_price.toLocaleString()} ر.س</strong></td>
+                  <td>{(pkg.price_before_tax ?? 0).toLocaleString()} ر.س</td>
+                  <td>{(pkg.tax ?? 0).toLocaleString()} ر.س</td>
+                  <td><strong style={{ color: '#047857' }}>{(pkg.total_price ?? 0).toLocaleString()} ر.س</strong></td>
                   <td>{pkg.days_count} يوم</td>
                   <td><Badge text="مفعل وظاهر" type="success" /></td>
                 </tr>
