@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useRecruitmentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
+import { useAppStore } from '../stores/appStore';
 
 export interface RecruitmentContractItem {
   id: string;
@@ -135,13 +136,33 @@ export const RecruitmentContractsPage: React.FC = () => {
 
   const contracts: RecruitmentContractItem[] = rawContracts as RecruitmentContractItem[];
 
-  const [activeTab, setActiveTab] = useState<
-    'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns'
-  >('all');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns' => {
+    switch (tabKey) {
+      case 'current-contracts': return 'active';
+      case 'completed-contracts': return 'completed';
+      case 'returned-contracts': return 'returned';
+      case 'dispatches': return 'dispatches';
+      case 'contract-extension-requests': return 'extensions';
+      case 'contract-return-requests': return 'returns';
+      default: return 'all';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'create-contract') {
+      setShowAddModal(true);
+    }
+  }, [storeActiveTab]);
+
   const [activeStage, setActiveStage] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-contract');
   const [selectedContractForPrint, setSelectedContractForPrint] = useState<RecruitmentContractItem | null>(null);
 
   // Add Contract Form State (Full ClickERP fields)

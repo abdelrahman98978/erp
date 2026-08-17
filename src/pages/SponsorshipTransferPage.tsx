@@ -4,6 +4,7 @@ import { Badge } from '../components/ui/Badge';
 import { StatCard } from '../components/ui/StatCard';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 
 interface TransferRequest {
   id: string;
@@ -52,6 +53,7 @@ const MOCK_TRANSFERS: TransferRequest[] = [
 ];
 
 export const SponsorshipTransferPage: React.FC = () => {
+  const storeActiveTab = useAppStore(state => state.activeTab);
   const [transfers, setTransfers] = useState<TransferRequest[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newForm, setNewForm] = useState({
@@ -67,6 +69,12 @@ export const SponsorshipTransferPage: React.FC = () => {
   useEffect(() => {
     realErpDataStore.getRecords<TransferRequest>('sponsorship_transfers', MOCK_TRANSFERS).then(data => setTransfers(data));
   }, []);
+
+  const displayedTransfers = transfers.filter(t => {
+    if (storeActiveTab === 'trial-period') return t.status === 'فترة التجربة';
+    if (storeActiveTab === 'transferred-done') return t.status === 'تم النقل';
+    return true;
+  });
 
   const handleConfirmTransfer = async (row: TransferRequest) => {
     const updated = await realErpDataStore.updateRecord<TransferRequest>(
@@ -242,11 +250,11 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       <DataTable
         columns={columns}
-        data={transfers}
+        data={displayedTransfers}
         searchPlaceholder="ابحث برقم العقد، اسم العاملة، الكفيل القديم أو الجديد..."
         onAddClick={() => setShowAddModal(true)}
         addLabel="إضافة طلب نقل كفالة"
-        exportConfig={{ sectionKey: 'sponsorship-transfer', rawData: transfers }}
+        exportConfig={{ sectionKey: 'sponsorship-transfer', rawData: displayedTransfers }}
       />
 
       {/* Add Transfer Modal */}

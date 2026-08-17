@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useRentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
+import { useAppStore } from '../stores/appStore';
 
 export interface RentContractRecord {
   id: string;
@@ -126,11 +127,29 @@ export const RentContractsPage: React.FC = () => {
   const rentContracts: RentContractRecord[] =
     rawRentContracts.length > 0 ? (rawRentContracts as RentContractRecord[]) : DEFAULT_MOCK_RENT_CONTRACTS;
 
-  const [activeTab, setActiveTab] = useState<
-    'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages'
-  >('all');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages' => {
+    switch (tabKey) {
+      case 'active-rent': return 'active';
+      case 'transferred-rent': return 'delivered';
+      case 'completed-rent': return 'completed';
+      case 'rent-packages': return 'packages';
+      default: return 'all';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'create-rent') {
+      setShowAddModal(true);
+    }
+  }, [storeActiveTab]);
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-rent');
   const [selectedContractForPrint, setSelectedContractForPrint] = useState<RentContractRecord | null>(null);
 
   // Form State

@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 
 export const SettingsPage: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('security-2fa');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedSection = (tabKey: string): string => {
+    if (tabKey === 'rbac-matrix') return 'rbac-matrix';
+    if (tabKey === 'settings-general' || tabKey === 'general') return 'general';
+    if (tabKey === 'contacts') return 'contacts';
+    if (tabKey === 'media') return 'media';
+    if (tabKey === 'quick-links') return 'quick-links';
+    if (tabKey === 'login-config') return 'login-config';
+    if (tabKey === 'seo') return 'seo';
+    if (tabKey === 'zoho') return 'zoho';
+    if (tabKey === 'stipulations') return 'stipulations';
+    return 'security-2fa';
+  };
+
+  const [activeSection, setActiveSection] = useState<string>(() => getMappedSection(storeActiveTab));
+
+  useEffect(() => {
+    setActiveSection(getMappedSection(storeActiveTab));
+  }, [storeActiveTab]);
+
   const [require2FAAdmin, setRequire2FAAdmin] = useState(true);
   const [allowOptional2FA, setAllowOptional2FA] = useState(true);
   const [allowBiometrics, setAllowBiometrics] = useState(true);

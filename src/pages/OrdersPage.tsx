@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useOrders, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
+import { useAppStore } from '../stores/appStore';
 
 export interface OrderRecord {
   id: string;
@@ -48,15 +49,33 @@ const DEFAULT_MOCK_ORDERS: OrderRecord[] = [
     company_id: 'SAF',
     client_name: 'سارة خالد الدوسري',
     client_phone: '+966559876543',
-    maid_name: 'سيرة ذاتية قيد الاختيار',
-    nationality: 'إندونيسيا',
-    passport_number: 'A992019',
+    maid_name: 'طلب عمالة إثيوبية مواصفات خاصة',
+    nationality: 'إثيوبيا',
+    passport_number: 'PENDING',
     request_type: 'حسب المواصفات',
+    status: 'تحت الإجراء',
+    timer_status: 'حرج',
+    deadline: '12 ساعة',
+    contract_status: 'بدون عقد',
+    responsible_employee: 'فهد العتيبي (مسوق)',
+    branch: 'فرع الرياض الرئيسي',
+    office_name: 'DAMAS FOREIGN AGENCY',
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'ORD-2026-003',
+    company_id: 'SAF',
+    client_name: 'محمد عبدالله العتيبي',
+    client_phone: '+966551234567',
+    maid_name: 'FLORENCE NABATANZI',
+    nationality: 'أوغندا',
+    passport_number: 'UG99281',
+    request_type: 'معروفة',
     status: 'تم التعاقد',
     timer_status: 'عادي',
-    deadline: 'مكتمل',
+    deadline: 'منتهي',
     contract_status: 'تم التعاقد',
-    responsible_employee: 'سارة خالد',
+    responsible_employee: 'سارة خالد (خدمة عملاء)',
     branch: 'فرع جدة',
     office_name: 'JAKARTA GLOBAL AGENCY',
     created_at: new Date().toISOString(),
@@ -70,7 +89,28 @@ export const OrdersPage: React.FC = () => {
 
   const orders: OrderRecord[] = rawOrders.length > 0 ? (rawOrders as OrderRecord[]) : DEFAULT_MOCK_ORDERS;
 
-  const [activeFilter, setActiveFilter] = useState('all');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedFilter = (tabKey: string) => {
+    switch (tabKey) {
+      case 'new-orders': return 'new';
+      case 'contracted-orders': return 'contracted';
+      case 'incomplete-orders': return 'incomplete';
+      case 'professional-requests': return 'professional';
+      case 'special-requests': return 'special';
+      case 'renew-contracts': return 'renew';
+      case 'known-service': return 'known';
+      case 'contact-requests': return 'contact';
+      default: return 'all';
+    }
+  };
+
+  const [activeFilter, setActiveFilter] = useState(() => getMappedFilter(storeActiveTab));
+
+  useEffect(() => {
+    setActiveFilter(getMappedFilter(storeActiveTab));
+  }, [storeActiveTab]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 

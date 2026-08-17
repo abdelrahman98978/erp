@@ -4,6 +4,7 @@ import { Badge } from '../components/ui/Badge';
 import { StatCard } from '../components/ui/StatCard';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 
 interface MessageLog {
   id: string;
@@ -120,13 +121,30 @@ const MOCK_TEMPLATES: MessageTemplate[] = [
 ];
 
 export const SentMessagesPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'logs' | 'compose' | 'templates' | 'gateways'>('logs');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedState = (tabKey: string): { tab: 'logs' | 'compose' | 'templates' | 'gateways', channel: 'SMS' | 'WhatsApp' } => {
+    if (tabKey === 'whatsapp-dispatch') return { tab: 'compose', channel: 'WhatsApp' };
+    if (tabKey === 'sms-dispatch') return { tab: 'compose', channel: 'SMS' };
+    if (tabKey === 'message-templates') return { tab: 'templates', channel: 'WhatsApp' };
+    if (tabKey === 'sms-gateways') return { tab: 'gateways', channel: 'WhatsApp' };
+    return { tab: 'logs', channel: 'WhatsApp' };
+  };
+
+  const [activeTab, setActiveTab] = useState<'logs' | 'compose' | 'templates' | 'gateways'>(() => getMappedState(storeActiveTab).tab);
+  const [composeChannel, setComposeChannel] = useState<'SMS' | 'WhatsApp'>(() => getMappedState(storeActiveTab).channel);
+
+  useEffect(() => {
+    const s = getMappedState(storeActiveTab);
+    setActiveTab(s.tab);
+    setComposeChannel(s.channel);
+  }, [storeActiveTab]);
+
   const [channelFilter, setChannelFilter] = useState<'all' | 'SMS' | 'WhatsApp'>('all');
   const [messages, setMessages] = useState<MessageLog[]>([]);
   const [templates, setTemplates] = useState<MessageTemplate[]>(MOCK_TEMPLATES);
 
   // Quick Composer State
-  const [composeChannel, setComposeChannel] = useState<'SMS' | 'WhatsApp'>('WhatsApp');
   const [recipientName, setRecipientName] = useState('');
   const [recipientPhone, setRecipientPhone] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');

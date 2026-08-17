@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useShelterRecords, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
+import { useAppStore } from '../stores/appStore';
 
 export interface ShelterRecordItem {
   id: string;
@@ -75,9 +76,30 @@ export const ShelterPage: React.FC = () => {
 
   const shelterItems: ShelterRecordItem[] = rawShelter.length > 0 ? (rawShelter as ShelterRecordItem[]) : DEFAULT_MOCK_SHELTER;
 
-  const [activeSubTab, setActiveSubTab] = useState<string>('all');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): string => {
+    switch (tabKey) {
+      case 'inside-shelter': return 'inside';
+      case 'outside-shelter': return 'outside';
+      case 'available-transfer': return 'available';
+      case 'deportation-stage': return 'deportation';
+      case 'shelter-places': return 'places';
+      default: return 'all';
+    }
+  };
+
+  const [activeSubTab, setActiveSubTab] = useState<string>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveSubTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'create-shelter') {
+      setShowAddModal(true);
+    }
+  }, [storeActiveTab]);
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-shelter');
 
   // Add Form State
   const [maidName, setMaidName] = useState('');

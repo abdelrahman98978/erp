@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useEmployees, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { Employee360DigitalFileModal } from '../components/hr/Employee360DigitalFileModal';
 import { journalEngine } from '../services/accounting/journalEngine';
+import { useAppStore } from '../stores/appStore';
 
 export interface EmployeeRecord {
   id: string;
@@ -141,9 +142,42 @@ export const HRPage: React.FC = () => {
 
   const employees: EmployeeRecord[] = rawEmployees.length > 0 ? (rawEmployees as EmployeeRecord[]) : DEFAULT_MOCK_EMPLOYEES;
 
-  const [activeTab, setActiveTab] = useState<
-    'employees' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll'
-  >('employees');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'employees' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' => {
+    switch (tabKey) {
+      case 'employee-permissions':
+      case 'permissions':
+        return 'permissions';
+      case 'leave-requests':
+      case 'vacations':
+        return 'vacations';
+      case 'employee-advances':
+      case 'advances':
+        return 'advances';
+      case 'employee-sanctions':
+      case 'sanctions':
+        return 'sanctions';
+      case 'employee-rewards':
+      case 'rewards':
+        return 'rewards';
+      case 'payrolls':
+      case 'payroll':
+      case 'wps':
+      case 'salary':
+      case 'salaries':
+        return 'payroll';
+      default:
+        return 'employees';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'employees' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+  }, [storeActiveTab]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddEmpModal, setShowAddEmpModal] = useState(false);
   const [selectedEmpFor360, setSelectedEmpFor360] = useState<EmployeeRecord | null>(null);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
@@ -66,9 +66,44 @@ const SUPPLIERS_ACCOUNTS = [
 
 export const FinancePage: React.FC = () => {
   const { activeCompany } = useCompany();
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'chart-of-accounts' | 'period-closing' | 'tax'
-  >('overview');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'chart-of-accounts' | 'period-closing' | 'tax' => {
+    switch (tabKey) {
+      case 'chart-accounts':
+      case 'chart-of-accounts':
+        return 'chart-of-accounts';
+      case 'journals':
+        return 'journals';
+      case 'vouchers':
+        return 'vouchers';
+      case 'zatca':
+      case 'tax':
+        return 'tax';
+      case 'trial-balance':
+        return 'trial-balance';
+      case 'income-statement':
+        return 'income-statement';
+      case 'financial-position':
+        return 'financial-position';
+      case 'period-closing':
+        return 'period-closing';
+      case 'musaned-escrow':
+        return 'musaned-escrow';
+      case 'suppliers-agents':
+        return 'suppliers-agents';
+      case 'transfers':
+        return 'transfers';
+      default:
+        return 'overview';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'chart-of-accounts' | 'period-closing' | 'tax'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+  }, [storeActiveTab]);
 
   const [journals, setJournals] = useState<JournalEntry[]>(MOCK_JOURNALS);
   const [vouchers, setVouchers] = useState<Voucher[]>(MOCK_VOUCHERS);

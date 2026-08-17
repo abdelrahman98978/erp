@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
+import { useAppStore } from '../stores/appStore';
 
 export interface ComplaintTicket {
   id: string;
@@ -104,13 +105,39 @@ export const ComplaintsPage: React.FC = () => {
   const complaints: ComplaintTicket[] = rawComplaints.length > 0 ? (rawComplaints as any[]) : MOCK_COMPLAINTS;
   const [interDisputes, setInterDisputes] = useState<InterCompanyDispute[]>(MOCK_INTER_DISPUTES);
 
-  const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla'>('tickets');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla' => {
+    switch (tabKey) {
+      case 'complaint-types':
+      case 'complaint-analytics':
+        return 'analytics';
+      case 'inter-company-disputes':
+        return 'inter-company';
+      case 'escalated-complaints':
+        return 'escalated';
+      case 'sla-tracking':
+        return 'sla';
+      default:
+        return 'tickets';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'create-complaint') {
+      setShowAddModal(true);
+    }
+  }, [storeActiveTab]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
 
   // Modals
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-complaint');
   const [showAddDisputeModal, setShowAddDisputeModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<ComplaintTicket | null>(null);
 
