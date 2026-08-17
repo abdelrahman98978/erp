@@ -16,7 +16,7 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-i18next'],
           'vendor-charts': ['chart.js', 'react-chartjs-2'],
-          'vendor-pdf': ['jspdf', 'html2canvas'],
+          'vendor-pdf': ['jspdf'],
           'vendor-xlsx': ['xlsx'],
           'vendor-icons': ['lucide-react'],
           'vendor-dates': ['date-fns'],
