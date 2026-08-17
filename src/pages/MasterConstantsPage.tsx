@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { exportData } from '../services/exportService';
 
 interface ConstantItem {
   id: string;
@@ -17,6 +18,7 @@ export const MasterConstantsPage: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newCode, setNewCode] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [nationalities, setNationalities] = useState<ConstantItem[]>([
     { id: '1', title: 'إثيوبيا', code: 'ETH', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇪🇹' },
@@ -111,17 +113,46 @@ export const MasterConstantsPage: React.FC = () => {
     setShowAddModal(false);
   };
 
-  const getActiveList = () => {
-    switch (activeTab) {
-      case 'nationalities': return nationalities;
-      case 'professions': return professions;
-      case 'religions': return religions;
-      case 'skills': return skills;
-      case 'airports': return airports;
-      case 'social_statuses': return socialStatuses;
-      case 'stages': return stages;
-    }
+  const handleDeleteItem = (id: string) => {
+    if (!confirm('هل أنت متأكد من حذف هذا البند من الثوابت؟')) return;
+    if (activeTab === 'nationalities') setNationalities(nationalities.filter(i => i.id !== id));
+    if (activeTab === 'professions') setProfessions(professions.filter(i => i.id !== id));
+    if (activeTab === 'religions') setReligions(religions.filter(i => i.id !== id));
+    if (activeTab === 'skills') setSkills(skills.filter(i => i.id !== id));
+    if (activeTab === 'airports') setAirports(airports.filter(i => i.id !== id));
+    if (activeTab === 'social_statuses') setSocialStatuses(socialStatuses.filter(i => i.id !== id));
+    if (activeTab === 'stages') setStages(stages.filter(i => i.id !== id));
   };
+
+  const handleToggleStatus = (id: string) => {
+    const toggle = (list: ConstantItem[]) =>
+      list.map(i => i.id === id ? { ...i, status: (i.status === 'نشط' ? 'معطل' : 'نشط') as any } : i);
+
+    if (activeTab === 'nationalities') setNationalities(toggle(nationalities));
+    if (activeTab === 'professions') setProfessions(toggle(professions));
+    if (activeTab === 'religions') setReligions(toggle(religions));
+    if (activeTab === 'skills') setSkills(toggle(skills));
+    if (activeTab === 'airports') setAirports(toggle(airports));
+    if (activeTab === 'social_statuses') setSocialStatuses(toggle(socialStatuses));
+    if (activeTab === 'stages') setStages(toggle(stages));
+  };
+
+  const getActiveList = () => {
+    let list: ConstantItem[] = [];
+    switch (activeTab) {
+      case 'nationalities': list = nationalities; break;
+      case 'professions': list = professions; break;
+      case 'religions': list = religions; break;
+      case 'skills': list = skills; break;
+      case 'airports': list = airports; break;
+      case 'social_statuses': list = socialStatuses; break;
+      case 'stages': list = stages; break;
+    }
+    if (!searchTerm) return list;
+    return list.filter(i => i.title.toLowerCase().includes(searchTerm.toLowerCase()) || i.code?.toLowerCase().includes(searchTerm.toLowerCase()));
+  };
+
+  const activeList = getActiveList();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -137,26 +168,42 @@ export const MasterConstantsPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowAddModal(true)}
-          style={{
-            backgroundColor: '#005154',
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: '10px',
-            padding: '8px 18px',
-            fontSize: '13px',
-            fontWeight: '800',
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <i className="fa-solid fa-plus text-xs"></i>
-          إضافة بند جديد
-        </button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'excel')}
+            className="btn-odoo btn-odoo-secondary"
+            style={{ padding: '6px 12px', fontSize: '12px' }}
+          >
+            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          </button>
+          <button
+            onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'pdf')}
+            className="btn-odoo btn-odoo-secondary"
+            style={{ padding: '6px 12px', fontSize: '12px' }}
+          >
+            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            style={{
+              backgroundColor: '#005154',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '8px 18px',
+              fontSize: '13px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <i className="fa-solid fa-plus text-xs"></i>
+            إضافة بند جديد
+          </button>
+        </div>
       </div>
 
       {/* Tabs Navigation */}
@@ -198,9 +245,21 @@ export const MasterConstantsPage: React.FC = () => {
         })}
       </div>
 
+      {/* Search Input */}
+      <div style={{ maxWidth: '360px' }}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          placeholder="بحث سريع في القائمة الحالية..."
+          className="filter-input"
+          style={{ width: '100%', padding: '8px 14px', borderRadius: '10px' }}
+        />
+      </div>
+
       {/* Constants Data Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
-        {getActiveList().map((item) => (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
+        {activeList.map((item) => (
           <div
             key={item.id}
             style={{
@@ -212,6 +271,7 @@ export const MasterConstantsPage: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+              opacity: item.status === 'معطل' ? 0.6 : 1
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -246,7 +306,24 @@ export const MasterConstantsPage: React.FC = () => {
               </div>
             </div>
 
-            <Badge text={item.status} type="success" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                type="button"
+                onClick={() => handleToggleStatus(item.id)}
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: '2px' }}
+                title="تغيير الحالة"
+              >
+                <Badge text={item.status} type={item.status === 'نشط' ? 'success' : 'danger'} />
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteItem(item.id)}
+                style={{ border: 'none', background: 'transparent', color: '#EF4444', cursor: 'pointer', padding: '4px', fontSize: '12px' }}
+                title="حذف"
+              >
+                <i className="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -254,6 +331,8 @@ export const MasterConstantsPage: React.FC = () => {
       {/* Add Modal */}
       {showAddModal && (
         <div
+          role="dialog"
+          aria-modal="true"
           style={{
             position: 'fixed',
             inset: 0,
