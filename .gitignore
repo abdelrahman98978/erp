@@ -36,3 +36,5 @@ supabase/.branches/
 # Local artifacts
 *.local
 .cache/
+.agents/skills/awesome-skills/
+.agents/skills/community-skills/
