@@ -152,7 +152,7 @@ export const IngazPage: React.FC = () => {
     },
     {
       header: 'رسوم التفويض',
-      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-teal-dark)' }}>{row.fee_amount.toFixed(2)} ر.س</span>
+      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-teal-dark)' }}>{(row.fee_amount ?? 0).toFixed(2)} ر.س</span>
     },
     {
       header: 'حالة التوثيق (Enjaz/Musaned)',

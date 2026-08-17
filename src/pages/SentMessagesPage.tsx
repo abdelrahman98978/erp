@@ -227,7 +227,7 @@ export const SentMessagesPage: React.FC = () => {
       header: 'التكلفة',
       accessor: (row) => (
         <span style={{ fontSize: '12px', fontWeight: '800', color: '#059669' }}>
-          {row.cost_sar.toFixed(2)} ر.س
+          {(row.cost_sar ?? 0.12).toFixed(2)} ر.س
         </span>
       )
     },
