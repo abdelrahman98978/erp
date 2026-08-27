@@ -147,31 +147,31 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
   });
 
   return (
-    <aside className="w-64 bg-[#1e293b] text-slate-200 border-l border-slate-700 flex flex-col h-full select-none shadow-xl">
+    <aside className="w-64 bg-white text-zinc-900 border-l border-zinc-200 flex flex-col h-full select-none shadow-sm">
       {/* Brand Header matching SMACC */}
-      <div className="p-4 bg-[#0f172a] border-b border-slate-800 flex items-center justify-between">
+      <div className="p-4 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center font-bold text-white shadow-md text-lg tracking-wider border border-blue-400/30">
+          <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center font-bold text-white shadow-sm text-sm tracking-wider">
             SMACC
           </div>
           <div>
-            <h2 className="font-bold text-sm text-slate-100 leading-tight">نظام المحاسبة الشامل</h2>
-            <p className="text-[11px] text-slate-400">بحر العرب / الإصدار الحديث</p>
+            <h2 className="font-bold text-xs text-zinc-900 leading-tight">نظام المحاسبة الشامل</h2>
+            <p className="text-[10.5px] text-zinc-500">بحر العرب / الإصدار الحديث</p>
           </div>
         </div>
-        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" title="النظام متصل" />
+        <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" title="النظام متصل" />
       </div>
 
       {/* Menu Quick Search Input */}
-      <div className="p-3 border-b border-slate-800 bg-[#1e293b]">
+      <div className="p-3 border-b border-zinc-200 bg-white">
         <div className="relative">
-          <Search className="w-4 h-4 absolute right-3 top-2.5 text-slate-400" />
+          <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
           <input
             type="text"
             placeholder="البحث في قائمة SMACC..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 rounded-md py-1.5 pr-9 pl-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full bg-[#fbfbf5] border border-zinc-200 rounded-full py-1 pr-8 pl-3 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-black transition-all"
           />
         </div>
       </div>
@@ -185,7 +185,7 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
           const isActive = activeTab === item.id;
 
           return (
-            <div key={item.id} className="rounded-md overflow-hidden">
+            <div key={item.id} className="rounded-full overflow-hidden">
               <button
                 onClick={() => {
                   if (hasChildren) {
@@ -194,22 +194,22 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
                     onSelectTab(item.id);
                   }
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-xs font-semibold transition-colors duration-150 ${
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-black text-white shadow-sm font-semibold'
+                    : 'text-zinc-700 hover:bg-zinc-100 hover:text-black'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-blue-400'}`} />
+                <div className="flex items-center gap-2">
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#c1fbd4]' : 'text-zinc-500'}`} />
                   <span>{item.title}</span>
                 </div>
                 {hasChildren && (
-                  <span className="text-slate-400 hover:text-slate-200">
+                  <span className="text-zinc-400 hover:text-zinc-600">
                     {isOpen ? (
-                      <ChevronDown className="w-3.5 h-3.5" />
+                      <ChevronDown className="w-3 h-3" />
                     ) : (
-                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <ChevronLeft className="w-3 h-3" />
                     )}
                   </span>
                 )}
@@ -217,22 +217,22 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
 
               {/* Child Menu Tree */}
               {hasChildren && isOpen && (
-                <div className="mr-4 mt-1 mb-1 pl-2 border-r-2 border-slate-700/60 space-y-1">
+                <div className="mr-3 mt-1 mb-1 pl-2 border-r border-zinc-200 space-y-1">
                   {item.children?.map((child) => {
                     const isChildActive = activeTab === child.id || activeTab === child.route;
                     return (
                       <button
                         key={child.id}
                         onClick={() => onSelectTab(child.route)}
-                        className={`w-full text-right px-3 py-1.5 rounded text-[12px] transition-all flex items-center justify-between ${
+                        className={`w-full text-right px-3 py-1.5 rounded-full text-[11.5px] transition-all flex items-center justify-between ${
                           isChildActive
-                            ? 'bg-blue-500/20 text-blue-300 font-bold border-r-2 border-blue-400'
-                            : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                            ? 'bg-black text-white font-semibold'
+                            : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
                         }`}
                       >
                         <span>{child.title}</span>
                         {child.badge && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">
+                          <span className="text-[9.5px] px-2 py-0.5 rounded-full bg-[#c1fbd4] text-black font-semibold">
                             {child.badge}
                           </span>
                         )}
@@ -247,12 +247,12 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="p-3 bg-[#0f172a] border-t border-slate-800 text-[11px] text-slate-400 flex flex-col gap-1">
-        <div className="flex items-center justify-between text-slate-300">
+      <div className="p-3 bg-zinc-50 border-t border-zinc-200 text-[11px] text-zinc-500 flex flex-col gap-1">
+        <div className="flex items-center justify-between text-zinc-700">
           <span>حالة النظام:</span>
-          <span className="font-semibold text-emerald-400">جاهز ومطابق 100%</span>
+          <span className="font-semibold text-emerald-600">جاهز ومطابق 100%</span>
         </div>
-        <div className="text-[10px] text-slate-500 text-center mt-1">
+        <div className="text-[10px] text-zinc-400 text-center mt-1">
           حقوق الطبع © 2026 بحر العرب لأنظمة المعلومات
         </div>
       </div>
