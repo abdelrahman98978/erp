@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { Vault, Plus, FileSpreadsheet, FileText, Search, Printer, RotateCcw, X, ShieldCheck } from 'lucide-react';
 
 interface Custody {
   id: string;
@@ -24,6 +24,7 @@ const INITIAL_CUSTODIES: Custody[] = [
 
 export const CustodiesPage: React.FC = () => {
   const [custodies, setCustodies] = useState<Custody[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedCustodyForDoc, setSelectedCustodyForDoc] = useState<Custody | null>(null);
 
@@ -70,142 +71,209 @@ export const CustodiesPage: React.FC = () => {
     }));
   };
 
-  const columns: Column<Custody>[] = [
-    { header: 'رمز العُهدة', accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.id}</span> },
-    {
-      header: 'اسم العُهدة والرقم التسلسلي',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700' }}>{row.item_name}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>S/N: {row.serial_number}</div>
-        </div>
-      )
-    },
-    { header: 'الموظف المستلم', accessor: (row) => <span style={{ fontWeight: '600' }}>{row.employee_name}</span> },
-    { header: 'المقر / الفرع', accessor: (row) => <Badge text={row.location} type="purple" /> },
-    { header: 'القيمة التقديرية', accessor: (row) => <span style={{ fontWeight: 600, color: '#000000' }}>{(row.estimated_value ?? 0).toLocaleString()} ر.س</span> },
-    { header: 'تاريخ التسليم', accessor: (row) => <span style={{ fontSize: '12px' }}>{row.received_date}</span> },
-    { header: 'الحالة', accessor: (row) => <Badge text={row.status} type={row.status === 'في حوزة الموظف' ? 'success' : row.status === 'تم الاسترجاع' ? 'purple' : 'warning'} /> },
-    {
-      header: 'الإجراءات',
-      accessor: (row) => (
-        <div style={{ display: 'flex', gap: '4px' }}>
-          <button
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '4px 8px', fontSize: '11.5px' }}
-            onClick={() => toggleCustodyStatus(row.id)}
-          >
-            {row.status === 'في حوزة الموظف' ? 'استرجاع' : 'إعادة تسليم'}
-          </button>
-          <button
-            className="btn-odoo btn-odoo-purple"
-            style={{ padding: '4px 8px', fontSize: '11.5px' }}
-            onClick={() => setSelectedCustodyForDoc(row)}
-          >
-            سند التسليم
-          </button>
-        </div>
-      )
-    }
-  ];
+  const filteredCustodies = custodies.filter(c =>
+    c.item_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.employee_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.serial_number.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Header Banner */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
-            <i className="fa-solid fa-vault text-black ml-2"></i> إدارة عُهد وأصول الموظفين (HR Assets & Custodies)
-          </h2>
-          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
-            تسليم الأصول، السيارات، الأجهزة الذكية، وتوليد سندات الاستلام الرسمية
-          </p>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Vault className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>HR ASSETS & CUSTODIES</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              إدارة عُهد وأصول الموظفين
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              تسليم الأصول، السيارات، الأجهزة الذكية، وتوليد سندات الاستلام الرسمية
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="button-primary-pill" onClick={() => setShowAddModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
-            <i className="fa-solid fa-plus ml-1"></i> + تسليم عُهدة جديدة
+        <div className="flex items-center gap-2 flex-wrap">
+          <button className="button-white-pill" onClick={() => setShowAddModal(true)} style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}>
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ تسليم عُهدة جديدة</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('custodies', custodies, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+          <button className="button-outline-on-dark" onClick={() => exportData('custodies', custodies, 'excel')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>Excel</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('custodies', custodies, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
+          <button className="button-outline-on-dark" onClick={() => exportData('custodies', custodies, 'pdf')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <FileText className="w-4 h-4 ml-1 text-rose-400" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={custodies}
-        searchPlaceholder="ابحث باسم العُهدة، الموظف، أو الرقم التسلسلي..."
-        onAddClick={() => setShowAddModal(true)}
-        addLabel="إضافة عُهدة جديدة"
-        exportConfig={{ sectionKey: 'custodies', rawData: custodies }}
-      />
+      {/* Table Card */}
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="ابحث باسم العُهدة، الموظف، أو الرقم التسلسلي..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-input"
+              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+            />
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+            العدد: {filteredCustodies.length} عُهدة
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">رمز العُهدة</th>
+                <th className="p-3.5">اسم العُهدة والرقم التسلسلي</th>
+                <th className="p-3.5">الموظف المستلم</th>
+                <th className="p-3.5">المقر / الفرع</th>
+                <th className="p-3.5">القيمة التقديرية</th>
+                <th className="p-3.5">تاريخ التسليم</th>
+                <th className="p-3.5">الحالة</th>
+                <th className="p-3.5 text-center">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {filteredCustodies.map((row) => (
+                <tr key={row.id} className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{row.item_name}</div>
+                    <div className="text-[11px] text-zinc-500 font-mono">S/N: {row.serial_number}</div>
+                  </td>
+                  <td className="p-3.5 font-semibold text-black">{row.employee_name}</td>
+                  <td className="p-3.5">
+                    <Badge text={row.location} type="purple" />
+                  </td>
+                  <td className="p-3.5 font-mono font-bold text-black">{(row.estimated_value ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5 font-mono text-zinc-500">{row.received_date}</td>
+                  <td className="p-3.5">
+                    <Badge text={row.status} type={row.status === 'في حوزة الموظف' ? 'success' : row.status === 'تم الاسترجاع' ? 'purple' : 'warning'} />
+                  </td>
+                  <td className="p-3.5 text-center">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <button
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        onClick={() => toggleCustodyStatus(row.id)}
+                      >
+                        <RotateCcw className="w-3 h-3 ml-1" />
+                        <span>{row.status === 'في حوزة الموظف' ? 'استرجاع' : 'إعادة تسليم'}</span>
+                      </button>
+                      <button
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        onClick={() => setSelectedCustodyForDoc(row)}
+                      >
+                        <FileText className="w-3 h-3 ml-1" />
+                        <span>سند التسليم</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Add Custody Modal */}
       {showAddModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="table-card" style={{ width: '500px', padding: '24px', background: 'white', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>تسليم عُهدة جديدة لموظف</h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Vault className="w-4 h-4 text-emerald-400" />
+                <span>تسليم عُهدة جديدة لموظف</span>
+              </h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <form onSubmit={handleAddCustody}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">اسم الأصل / العُهدة *</label>
+
+            <form onSubmit={handleAddCustody} className="p-6 space-y-4 bg-white text-black">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الأصل / العُهدة *</label>
                 <input
                   type="text"
-                  className="filter-input"
                   placeholder="مثال: لاب توب، سيارة، هاتف..."
                   value={addForm.item_name}
                   onChange={e => setAddForm({ ...addForm, item_name: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">اسم الموظف المستلم *</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموظف المستلم *</label>
                   <input
                     type="text"
-                    className="filter-input"
                     placeholder="الاسم الثلاثي..."
                     value={addForm.employee_name}
                     onChange={e => setAddForm({ ...addForm, employee_name: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     required
                   />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">الرقم التسلسلي (S/N)</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الرقم التسلسلي (S/N)</label>
                   <input
                     type="text"
-                    className="filter-input"
                     placeholder="Serial Number..."
                     value={addForm.serial_number}
                     onChange={e => setAddForm({ ...addForm, serial_number: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">القيمة التقديرية (ر.س)</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">القيمة التقديرية (ر.س)</label>
                   <input
                     type="number"
-                    className="filter-input"
                     placeholder="0.00"
                     value={addForm.estimated_value}
                     onChange={e => setAddForm({ ...addForm, estimated_value: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                   />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">المقر المخصص</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">المقر المخصص</label>
                   <select
-                    className="filter-select"
                     value={addForm.location}
                     onChange={e => setAddForm({ ...addForm, location: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option>فرع الرياض الرئيسي</option>
                     <option>فرع جدة</option>
@@ -215,9 +283,13 @@ export const CustodiesPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e4e4e7' }}>
-                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowAddModal(false)}>إلغاء</button>
-                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>تسليم الأصل وحفظ العُهدة</button>
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-100">
+                <button type="button" className="button-outline-on-light" style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }} onClick={() => setShowAddModal(false)}>
+                  إلغاء
+                </button>
+                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                  تسليم الأصل وحفظ العُهدة
+                </button>
               </div>
             </form>
           </div>
@@ -226,33 +298,47 @@ export const CustodiesPage: React.FC = () => {
 
       {/* Handover Document Modal */}
       {selectedCustodyForDoc && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="table-card" style={{ width: '560px', padding: '24px', background: 'white', borderRadius: '12px' }}>
-            <div style={{ textAlign: 'center', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0 }}>مجموعة خالد السليم التجارية</h3>
-              <span style={{ fontSize: '12px', fontWeight: 500, color: '#71717a' }}>سند تسلم واستلام عُهدة موظف رسمية</span>
-            </div>
-
-            <div style={{ fontSize: '13px', lineHeight: '1.8', marginBottom: '20px' }}>
-              <p>أقر أنا الموظف / <strong>{selectedCustodyForDoc.employee_name}</strong> بأنني استلمت العُهدة المبينة أدنها بحالة جيدة وأتعهد بالحفاظ عليها وإعادتها فور طلب الإدارة:</p>
-              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', marginTop: '10px' }}>
-                <div>🔹 <strong>اسم الأصل:</strong> {selectedCustodyForDoc.item_name}</div>
-                <div>🔹 <strong>الرقم التسلسلي:</strong> {selectedCustodyForDoc.serial_number}</div>
-                <div>🔹 <strong>تاريخ الاستلام:</strong> {selectedCustodyForDoc.received_date}</div>
-                <div>🔹 <strong>القيمة التقديرية:</strong> {(selectedCustodyForDoc.estimated_value ?? 0).toLocaleString()} ر.س</div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-base text-white flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>سند تسلم واستلام عُهدة موظف رسمية</span>
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">مجموعة خالد السليم التجارية</p>
               </div>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px', borderTop: '1px dashed #CBD5E1', paddingTop: '16px', fontSize: '12px' }}>
-              <div>توقيع الموظف المستلم: ____________</div>
-              <div>اعتماد الموارد البشرية: ____________</div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '20px' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => setSelectedCustodyForDoc(null)}>إغلاق</button>
-              <button className="btn-odoo btn-odoo-purple" onClick={() => window.print()}>
-                <i className="fa-solid fa-print ml-1"></i> طباعة السند الرسمية
+              <button onClick={() => setSelectedCustodyForDoc(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
               </button>
+            </div>
+
+            <div className="p-6 space-y-4 bg-white text-black">
+              <p className="text-xs text-zinc-700 leading-relaxed">
+                أقر أنا الموظف / <strong className="text-black">{selectedCustodyForDoc.employee_name}</strong> بأنني استلمت العُهدة المبينة أدنها بحالة جيدة وأتعهد بالحفاظ عليها وإعادتها فور طلب الإدارة:
+              </p>
+
+              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 space-y-2 text-xs">
+                <div>🔹 <strong>اسم الأصل:</strong> {selectedCustodyForDoc.item_name}</div>
+                <div>🔹 <strong>الرقم التسلسلي:</strong> <span className="font-mono">{selectedCustodyForDoc.serial_number}</span></div>
+                <div>🔹 <strong>تاريخ الاستلام:</strong> <span className="font-mono">{selectedCustodyForDoc.received_date}</span></div>
+                <div>🔹 <strong>القيمة التقديرية:</strong> <span className="font-mono font-bold text-emerald-700">{(selectedCustodyForDoc.estimated_value ?? 0).toLocaleString()} ر.س</span></div>
+              </div>
+
+              <div className="flex justify-between pt-4 border-t border-dashed border-zinc-200 text-xs text-zinc-600">
+                <div>توقيع الموظف المستلم: ____________</div>
+                <div>اعتماد الموارد البشرية: ____________</div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button className="button-outline-on-light" style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }} onClick={() => setSelectedCustodyForDoc(null)}>
+                  إغلاق
+                </button>
+                <button className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }} onClick={() => window.print()}>
+                  <Printer className="w-4 h-4 ml-1" />
+                  <span>طباعة السند</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

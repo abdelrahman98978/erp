@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { Badge } from '../components/ui/Badge';
+import { FileText, FileSpreadsheet, ArrowRight, ArrowLeft, Check, Upload, User, Award, Paperclip } from 'lucide-react';
 
 export const CreateCVPage: React.FC = () => {
   const { setActiveTab } = useAppStore();
@@ -90,33 +90,56 @@ export const CreateCVPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', margin: 0, color: '#000000', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-address-card"></i>
-            إضافة سيرة ذاتية جديدة
-          </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#71717a' }}>
-            إدخال البيانات الشخصية، الجواز، المهارات، الفحوصات الطبية، والوسائط بدقة متناهية
-          </p>
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Header Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <FileText className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>CV BUILDER SUITE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              إضافة وتدقيق سيرة ذاتية جديدة
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              إدخال البيانات الشخصية، الجواز، المهارات، الفحوصات الطبية، والوسائط بدقة متناهية
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
-            className="button-primary-pill"
+            className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-import ml-1"></i> + استيراد جماعي (Excel)
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <span>+ استيراد جماعي (Excel)</span>
           </button>
           <button
             type="button"
             onClick={() => window.history.back()}
             className="button-outline-on-light"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', background: '#ffffff' }}
           >
             إلغاء ورجوع
           </button>
@@ -124,14 +147,15 @@ export const CreateCVPage: React.FC = () => {
       </div>
 
       {/* Step Indicators */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[
-          { step: 1, title: '1. الوكالة والنوع', icon: 'fa-building' },
-          { step: 2, title: '2. البيانات الشخصية', icon: 'fa-id-card' },
-          { step: 3, title: '3. المهارات واللغات', icon: 'fa-star' },
-          { step: 4, title: '4. المرفقات والتكلفة', icon: 'fa-paperclip' },
+          { step: 1, title: '1. الوكالة والنوع', icon: User },
+          { step: 2, title: '2. البيانات الشخصية', icon: FileText },
+          { step: 3, title: '3. المهارات واللغات', icon: Award },
+          { step: 4, title: '4. المرفقات والتكلفة', icon: Paperclip },
         ].map((s) => {
           const isActive = activeStep === s.step;
+          const Icon = s.icon;
           return (
             <button
               key={s.step}
@@ -154,7 +178,7 @@ export const CreateCVPage: React.FC = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <i className={`fa-solid ${s.icon}`}></i>
+              <Icon className="w-4 h-4" />
               <span>{s.title}</span>
             </button>
           );
@@ -165,18 +189,16 @@ export const CreateCVPage: React.FC = () => {
       <form onSubmit={handleSubmit}>
         {/* Step 1: Agency & Type */}
         {activeStep === 1 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
-              القسم 1: نوع السيرة والوكالة الخارجية
-            </h3>
+          <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+            <h3 className="text-base font-bold text-black mb-4">القسم 1: نوع السيرة والوكالة الخارجية</h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>نوع السيرة الذاتية *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">نوع السيرة الذاتية *</label>
                 <select
                   value={formData.type_id}
                   onChange={(e) => setFormData({ ...formData, type_id: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option value="توسط">استقدام (توسط أفراد)</option>
                   <option value="إيجار">تأجير وتشغيل</option>
@@ -185,11 +207,11 @@ export const CreateCVPage: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>الجنسية *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">الجنسية *</label>
                 <select
                   value={formData.nationality_id}
                   onChange={(e) => setFormData({ ...formData, nationality_id: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option value="الفلبين">الفلبين (PHL)</option>
                   <option value="إثيوبيا">إثيوبيا (ETH)</option>
@@ -202,44 +224,37 @@ export const CreateCVPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>المكتب الخارجي الشريك *</label>
-                <select
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">المكتب / الوكالة المصدرة *</label>
+                <input
+                  type="text"
                   value={formData.office_id}
                   onChange={(e) => setFormData({ ...formData, office_id: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
-                >
-                  <option value="PLATINUM BROTHERS INT'L">PLATINUM BROTHERS INT'L (مانيلا)</option>
-                  <option value="DAMAS FOREIGN AGENCY">DAMAS FOREIGN AGENCY (أديس أبابا)</option>
-                  <option value="VERSATILE OVERSEAS">VERSATILE OVERSEAS (نيروبي)</option>
-                  <option value="KAMPALA GLOBAL MANPOWER">KAMPALA GLOBAL MANPOWER (أوغندا)</option>
-                </select>
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>المهنة المطلوبة *</label>
-                <select
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">المهنة المصرحة *</label>
+                <input
+                  type="text"
                   value={formData.job_title}
                   onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
-                >
-                  <option value="عاملة منزلية">عاملة منزلية</option>
-                  <option value="مربية أطفال">مربية أطفال</option>
-                  <option value="طباخة منزلية">طباخة منزلية</option>
-                  <option value="ممرضة منزلية">ممرضة منزلية</option>
-                </select>
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <div className="flex justify-end pt-4 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setActiveStep(2)}
                 className="button-primary-pill"
                 style={{ padding: '8px 22px', fontSize: '12.5px', minHeight: '36px' }}
               >
-                التالي: البيانات الشخصية <i className="fa-solid fa-arrow-left mr-1"></i>
+                <span>التالي: البيانات الشخصية</span>
+                <ArrowLeft className="w-4 h-4 mr-1.5" />
               </button>
             </div>
           </div>
@@ -247,93 +262,72 @@ export const CreateCVPage: React.FC = () => {
 
         {/* Step 2: Personal Information */}
         {activeStep === 2 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
-              القسم 2: البيانات الشخصية وجواز السفر
-            </h3>
+          <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+            <h3 className="text-base font-bold text-black mb-4">القسم 2: البيانات الشخصية والجواز</h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الاسم الكامل بالإنجليزية *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">الاسم بالإنجليزية (حسب الجواز) *</label>
                 <input
                   type="text"
                   required
                   value={formData.full_name_en}
                   onChange={(e) => setFormData({ ...formData, full_name_en: e.target.value })}
-                  placeholder="MARIA SANTOS CORTEZ"
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                  placeholder="MARIA CLARA SANTOS"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                 />
               </div>
+
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الاسم بالعربية</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">الاسم بالعربية</label>
                 <input
                   type="text"
                   value={formData.full_name_ar}
                   onChange={(e) => setFormData({ ...formData, full_name_ar: e.target.value })}
-                  placeholder="ماريا سانتوس كورتيز"
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                  placeholder="ماريا كلارا سانتوس"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم جواز السفر *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم جواز السفر *</label>
                 <input
                   type="text"
                   required
                   value={formData.passport_number}
                   onChange={(e) => setFormData({ ...formData, passport_number: e.target.value })}
-                  placeholder="P9982710B"
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                  placeholder="P1234567A"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                 />
               </div>
-            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '14px', marginBottom: '14px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>العمر *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">العمر</label>
                 <input
                   type="number"
                   value={formData.age}
                   onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                 />
               </div>
+
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الديانة *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">الديانة</label>
                 <select
                   value={formData.religion}
                   onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>مسلمة</option>
                   <option>مسيحية</option>
                   <option>أخرى</option>
                 </select>
               </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الحالة الاجتماعية</label>
-                <select
-                  value={formData.marital_status}
-                  onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
-                >
-                  <option>عزباء</option>
-                  <option>متزوجة</option>
-                  <option>مطلقة</option>
-                  <option>أرملة</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>عدد الأطفال</label>
-                <input
-                  type="number"
-                  value={formData.children_count}
-                  onChange={(e) => setFormData({ ...formData, children_count: e.target.value })}
-                  style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}
-                />
-              </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <div className="flex justify-between pt-4 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setActiveStep(1)}
@@ -348,62 +342,46 @@ export const CreateCVPage: React.FC = () => {
                 className="button-primary-pill"
                 style={{ padding: '8px 22px', fontSize: '12.5px', minHeight: '36px' }}
               >
-                التالي: المهارات واللغات <i className="fa-solid fa-arrow-left mr-1"></i>
+                <span>التالي: المهارات واللغات</span>
+                <ArrowLeft className="w-4 h-4 mr-1.5" />
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 3: Skills & Experience */}
+        {/* Step 3: Skills & Languages */}
         {activeStep === 3 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
-              القسم 3: المهارات والخبرات العملية واللغات
-            </h3>
+          <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+            <h3 className="text-base font-bold text-black mb-4">القسم 3: المهارات واللغات والخبرات السابقة</h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '20px' }}>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
               {[
-                { id: 'baby_care', label: 'رعاية الأطفال والرضع' },
-                { id: 'elderly_care', label: 'رعاية كبار السن' },
-                { id: 'cooking_arabic', label: 'الطبخ وإعداد الوجبات' },
-                { id: 'cleaning', label: 'التنظيف والترتيب' },
-                { id: 'washing_ironing', label: 'الغسيل وكي الملابس' },
-                { id: 'driving', label: 'قيادة السيارات' },
-                { id: 'sewing', label: 'الخياطة والحياكة' },
-              ].map((sk) => (
-                <label
-                  key={sk.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    backgroundColor: '#F8FAFC',
-                    border: '1px solid #E2E8F0',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    color: '#334155',
-                    cursor: 'pointer',
-                  }}
-                >
+                { key: 'baby_care', label: 'رعاية الأطفال والرضع' },
+                { key: 'elderly_care', label: 'رعاية كبار السن' },
+                { key: 'cooking_arabic', label: 'الطبخ وإعداد المأكولات' },
+                { key: 'cleaning', label: 'التنظيف وترتيب المنزل' },
+                { key: 'washing_ironing', label: 'الغسيل وكي الملابس' },
+                { key: 'driving', label: 'قيادة السيارات' },
+              ].map((skill) => (
+                <label key={skill.key} className="flex items-center gap-2.5 p-3 bg-zinc-50 border border-zinc-100 rounded-2xl cursor-pointer hover:bg-zinc-100/60 transition-colors">
                   <input
                     type="checkbox"
-                    checked={(formData as any)[sk.id]}
-                    onChange={(e) => setFormData({ ...formData, [sk.id]: e.target.checked })}
+                    checked={(formData as any)[skill.key]}
+                    onChange={(e) => setFormData({ ...formData, [skill.key]: e.target.checked })}
+                    className="rounded border-zinc-300 text-black focus:ring-black h-4 w-4"
                   />
-                  <span>{sk.label}</span>
+                  <span className="text-xs text-zinc-800 font-semibold">{skill.label}</span>
                 </label>
               ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>مستوى التحدث بالعربية</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">مستوى التحدث بالعربية</label>
                 <select
                   value={formData.arabic_level}
                   onChange={(e) => setFormData({ ...formData, arabic_level: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>ممتاز / طليق</option>
                   <option>متوسط / مفهوم</option>
@@ -413,11 +391,11 @@ export const CreateCVPage: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>مستوى التحدث بالإنجليزية</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">مستوى التحدث بالإنجليزية</label>
                 <select
                   value={formData.english_level}
                   onChange={(e) => setFormData({ ...formData, english_level: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>ممتاز / Fluent</option>
                   <option>جيد / Good</option>
@@ -427,7 +405,7 @@ export const CreateCVPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+            <div className="flex justify-between pt-4 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setActiveStep(2)}
@@ -442,7 +420,8 @@ export const CreateCVPage: React.FC = () => {
                 className="button-primary-pill"
                 style={{ padding: '8px 22px', fontSize: '12.5px', minHeight: '36px' }}
               >
-                التالي: المرفقات والاعتماد <i className="fa-solid fa-arrow-left mr-1"></i>
+                <span>التالي: المرفقات والاعتماد</span>
+                <ArrowLeft className="w-4 h-4 mr-1.5" />
               </button>
             </div>
           </div>
@@ -450,52 +429,50 @@ export const CreateCVPage: React.FC = () => {
 
         {/* Step 4: Media, Cost, & Submission */}
         {activeStep === 4 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
-              القسم 4: التكاليف، الوسائط، وحفظ السيرة
-            </h3>
+          <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+            <h3 className="text-base font-bold text-black mb-4">القسم 4: التكاليف، الوسائط، وحفظ السيرة</h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>الراتب الشهري (ر.س) *</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">الراتب الشهري (ر.س) *</label>
                 <input
                   type="number"
                   required
                   value={formData.monthly_salary}
                   onChange={(e) => setFormData({ ...formData, monthly_salary: parseFloat(e.target.value) || 1500 })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>التكلفة للمكتب الخارجي ($)</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">التكلفة للمكتب الخارجي ($)</label>
                 <input
                   type="number"
                   value={formData.cost_usd}
                   onChange={(e) => setFormData({ ...formData, cost_usd: parseFloat(e.target.value) || 1200 })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                 />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>رابط الفيديو التعريفي (YouTube / Drive)</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">رابط الفيديو التعريفي (YouTube / Drive)</label>
                 <input
                   type="text"
                   value={formData.video_url}
                   onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
                   placeholder="https://..."
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>حالة الفحص الطبي</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">حالة الفحص الطبي</label>
                 <select
                   value={formData.medical_report_status}
                   onChange={(e) => setFormData({ ...formData, medical_report_status: e.target.value })}
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>سليم ولائق طبياً (مرفق)</option>
                   <option>قيد الفحص المخبري</option>
@@ -503,7 +480,7 @@ export const CreateCVPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e4e4e7', paddingTop: '16px' }}>
+            <div className="flex justify-between pt-4 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setActiveStep(3)}
@@ -517,7 +494,8 @@ export const CreateCVPage: React.FC = () => {
                 className="button-primary-pill"
                 style={{ padding: '9px 24px', fontSize: '13px', minHeight: '38px' }}
               >
-                <i className="fa-solid fa-check ml-1"></i> حفظ ونشر السيرة الذاتية
+                <Check className="w-4 h-4 ml-1.5" />
+                <span>حفظ ونشر السيرة الذاتية</span>
               </button>
             </div>
           </div>
@@ -526,3 +504,5 @@ export const CreateCVPage: React.FC = () => {
     </div>
   );
 };
+
+export default CreateCVPage;

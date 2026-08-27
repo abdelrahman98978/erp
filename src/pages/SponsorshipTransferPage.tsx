@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
-import { StatCard } from '../components/ui/StatCard';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { RefreshCw, Plus, FileSpreadsheet, FileText, Search, Clock, Check, X } from 'lucide-react';
 
 interface TransferRequest {
   id: string;
@@ -56,6 +55,7 @@ export const SponsorshipTransferPage: React.FC = () => {
   const storeActiveTab = useAppStore(state => state.activeTab);
   const [transfers, setTransfers] = useState<TransferRequest[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [newForm, setNewForm] = useState({
     maid_name: '',
     nationality: 'اثيوبيا',
@@ -71,6 +71,13 @@ export const SponsorshipTransferPage: React.FC = () => {
   }, []);
 
   const displayedTransfers = transfers.filter(t => {
+    const matchesSearch =
+      t.contract_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.maid_name.includes(searchQuery) ||
+      t.old_sponsor.includes(searchQuery) ||
+      t.new_sponsor.includes(searchQuery);
+
+    if (!matchesSearch) return false;
     if (storeActiveTab === 'trial-period') return t.status === 'فترة التجربة';
     if (storeActiveTab === 'transferred-done') return t.status === 'تم النقل';
     return true;
@@ -122,118 +129,81 @@ export const SponsorshipTransferPage: React.FC = () => {
     });
   };
 
-  const columns: Column<TransferRequest>[] = [
-    {
-      header: 'رقم النقل والعقد',
-      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.contract_number}</span>
-    },
-    {
-      header: 'اسم العاملة والجنسية',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700' }}>{row.maid_name}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.nationality}</div>
-        </div>
-      )
-    },
-    {
-      header: 'الكفيل القديم (المتنازل)',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700' }}>{row.old_sponsor}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.old_sponsor_phone}</div>
-        </div>
-      )
-    },
-    {
-      header: 'الكفيل الجديد (المستلم)',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700', color: 'var(--odoo-purple)' }}>{row.new_sponsor || 'بانتظار تخصيص'}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{row.new_sponsor_phone || '---'}</div>
-        </div>
-      )
-    },
-    {
-      header: 'فترة التجربة (10d)',
-      accessor: (row) => (
-        <span style={{ fontWeight: '800', color: row.trial_days_remaining > 0 ? '#D97706' : '#059669' }}>
-          {row.trial_days_remaining > 0 ? `${row.trial_days_remaining} أيام متبقية` : 'انتهت التجربة'}
-        </span>
-      )
-    },
-    {
-      header: 'رسوم التنازل',
-      accessor: (row) => <span style={{ fontWeight: 600, color: '#000000' }}>{(row.contract_amount ?? 0).toLocaleString()} ر.س</span>
-    },
-    {
-      header: 'الحالة',
-      accessor: (row) => (
-        <Badge
-          text={row.status}
-          type={row.status === 'تم النقل' ? 'success' : row.status === 'فترة التجربة' ? 'warning' : 'danger'}
-        />
-      )
-    },
-    {
-      header: 'الإجراءات',
-      accessor: (row) => (
-        <div style={{ display: 'flex', gap: '6px' }}>
-          {row.status === 'فترة التجربة' && (
-            <button
-              onClick={() => handleConfirmTransfer(row)}
-              className="btn-odoo btn-odoo-primary"
-              style={{ padding: '4px 8px', height: '30px', fontSize: '12px' }}
-            >
-              تأكيد النقل النهائي
-            </button>
-          )}
-          <button
-            onClick={() => exportData('sponsorship-transfer', [row], 'pdf', `عقد_تنازل_${row.maid_name}`)}
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '4px 8px', height: '30px', fontSize: '12px' }}
-          >
-            طباعة العقد
-          </button>
-        </div>
-      )
-    }
-  ];
-
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
-            <i className="fa-solid fa-repeat text-purple ml-2"></i> إدارة طلبات نقل الكفالة والتنازل
-          </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            متابعة عداد فترة التجربة (10 أيام)، تحويل المبالغ بين الكفلاء، وإعادة التخصيص
-          </p>
+    <div className="space-y-6">
+      {/* Top Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <RefreshCw className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>QIWA & SPONSORSHIP TRANSFER</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              إدارة طلبات نقل الكفالة والتنازل
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              متابعة عداد فترة التجربة (10 أيام)، تحويل المبالغ بين الكفلاء، وإعادة التخصيص
+            </p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="button-primary-pill" onClick={() => setShowAddModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
-            <i className="fa-solid fa-plus ml-1"></i> + إضافة طلب نقل كفالة
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            className="button-white-pill"
+            onClick={() => setShowAddModal(true)}
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة طلب نقل كفالة</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('sponsorship-transfer', transfers, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+          <button
+            className="button-outline-on-light"
+            onClick={() => exportData('sponsorship-transfer', transfers, 'excel')}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
+          >
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <span>Excel</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('sponsorship-transfer', transfers, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
+          <button
+            className="button-outline-on-light"
+            onClick={() => exportData('sponsorship-transfer', transfers, 'pdf')}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
+          >
+            <FileText className="w-4 h-4 ml-1 text-rose-600" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '24px' }}>
+      {/* KPI Stats */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>طلبات نقل الكفالة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{transfers.length}</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{transfers.length}</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>إجمالي المعاملات</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
           <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>قيد التجربة (10 أيام)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {transfers.filter(t => t.status === 'فترة التجربة').length}
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>عمالة قيد التجربة</span>
@@ -241,55 +211,136 @@ export const SponsorshipTransferPage: React.FC = () => {
 
         <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>تم النقل النهائي</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {transfers.filter(t => t.status === 'تم النقل').length}
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معاملات مكتملة</span>
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={displayedTransfers}
-        searchPlaceholder="ابحث برقم العقد، اسم العاملة، الكفيل القديم أو الجديد..."
-        onAddClick={() => setShowAddModal(true)}
-        addLabel="إضافة طلب نقل كفالة"
-        exportConfig={{ sectionKey: 'sponsorship-transfer', rawData: displayedTransfers }}
-      />
+      {/* Table */}
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="ابحث برقم العقد، اسم العاملة، الكفيل القديم أو الجديد..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-input"
+              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+            />
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+            العدد: {displayedTransfers.length} معاملة
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">رقم النقل</th>
+                <th className="p-3.5">العاملة والجنسية</th>
+                <th className="p-3.5">الكفيل القديم (المتنازل)</th>
+                <th className="p-3.5">الكفيل الجديد (المستلم)</th>
+                <th className="p-3.5">فترة التجربة (10d)</th>
+                <th className="p-3.5">رسوم التنازل</th>
+                <th className="p-3.5">الحالة</th>
+                <th className="p-3.5 text-center">الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {displayedTransfers.map((row) => (
+                <tr key={row.id} className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-mono font-bold text-black">{row.contract_number}</td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{row.maid_name}</div>
+                    <div className="text-zinc-500">{row.nationality}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{row.old_sponsor}</div>
+                    <div className="text-zinc-500 font-mono">{row.old_sponsor_phone}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-purple-800">{row.new_sponsor || 'بانتظار تخصيص'}</div>
+                    <div className="text-zinc-500 font-mono">{row.new_sponsor_phone || '---'}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <span className={`font-bold font-mono flex items-center gap-1 ${row.trial_days_remaining > 0 ? 'text-amber-700' : 'text-emerald-700'}`}>
+                      <Clock className="w-3 h-3" />
+                      {row.trial_days_remaining > 0 ? `${row.trial_days_remaining} أيام متبقية` : 'انتهت التجربة'}
+                    </span>
+                  </td>
+                  <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.contract_amount ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5">
+                    <Badge
+                      text={row.status}
+                      type={row.status === 'تم النقل' ? 'success' : row.status === 'فترة التجربة' ? 'warning' : 'danger'}
+                    />
+                  </td>
+                  <td className="p-3.5 text-center">
+                    <div className="flex items-center justify-center gap-1.5">
+                      {row.status === 'فترة التجربة' && (
+                        <button
+                          onClick={() => handleConfirmTransfer(row)}
+                          className="button-primary-pill"
+                          style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        >
+                          <Check className="w-3 h-3 ml-1" />
+                          <span>تأكيد النقل</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => exportData('sponsorship-transfer', [row], 'pdf', `عقد_تنازل_${row.maid_name}`)}
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                      >
+                        طباعة
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Add Transfer Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base flex items-center gap-2">
-                <i className="fa-solid fa-people-arrows" style={{ color: '#c1fbd4' }}></i>
-                تسجيل طلب نقل كفالة وتنازل جديد
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-emerald-400" />
+                <span>تسجيل طلب نقل كفالة وتنازل جديد</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="text-zinc-400 hover:text-white">
-                <i className="fa-solid fa-xmark text-lg"></i>
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleAddTransfer} className="p-6 space-y-4">
+            <form onSubmit={handleAddTransfer} className="p-6 space-y-4 bg-white text-black">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">اسم العاملة *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العاملة *</label>
                   <input
                     type="text"
                     required
                     value={newForm.maid_name}
                     onChange={e => setNewForm({ ...newForm, maid_name: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     placeholder="مثال: MERON HAILE"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">الجنسية *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الجنسية *</label>
                   <select
                     value={newForm.nationality}
                     onChange={e => setNewForm({ ...newForm, nationality: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option>اثيوبيا</option>
                     <option>الفلبين</option>
@@ -302,23 +353,23 @@ export const SponsorshipTransferPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">الكفيل الحالي (المتنازل) *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الكفيل الحالي (المتنازل) *</label>
                   <input
                     type="text"
                     required
                     value={newForm.old_sponsor}
                     onChange={e => setNewForm({ ...newForm, old_sponsor: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     placeholder="اسم الكفيل الحالي"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">جوال الكفيل الحالي</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">جوال الكفيل الحالي</label>
                   <input
                     type="text"
                     value={newForm.old_sponsor_phone}
                     onChange={e => setNewForm({ ...newForm, old_sponsor_phone: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                     placeholder="05xxxxxxxx"
                   />
                 </div>
@@ -326,39 +377,39 @@ export const SponsorshipTransferPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">الكفيل الجديد (المستلم)</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الكفيل الجديد (المستلم)</label>
                   <input
                     type="text"
                     value={newForm.new_sponsor}
                     onChange={e => setNewForm({ ...newForm, new_sponsor: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     placeholder="اسم الكفيل الجديد"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">رسوم التنازل (ر.س)</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رسوم التنازل (ر.س)</label>
                   <input
                     type="number"
                     value={newForm.contract_amount}
                     onChange={e => setNewForm({ ...newForm, contract_amount: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200">
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="button-outline-on-light"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="button-primary-pill"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ وتسجيل الطلب
                 </button>
@@ -370,3 +421,5 @@ export const SponsorshipTransferPage: React.FC = () => {
     </div>
   );
 };
+
+export default SponsorshipTransferPage;

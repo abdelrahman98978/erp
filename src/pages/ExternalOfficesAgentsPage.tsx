@@ -4,6 +4,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { Badge } from '../components/ui/Badge';
+import { Globe, Building2, Users, FolderOpen, FileSpreadsheet, Download, Phone, Mail, UserCheck, ShieldCheck } from 'lucide-react';
 
 interface OfficeUser {
   id: string;
@@ -113,14 +114,13 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
   const { activeCompany } = useCompany();
   const [offices, setOffices] = useState<ExternalOffice[]>([]);
   const [activeTab, setActiveTab] = useState<'offices' | 'users' | 'files'>('offices');
-  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     realErpDataStore.getRecords<ExternalOffice>('external_recruitment_offices', INITIAL_OFFICES).then((data) => setOffices(data));
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="space-y-6">
       {/* Top Header Banner */}
       <div
         className="card-feature-cinematic"
@@ -137,45 +137,54 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        <div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-            INTERNATIONAL RECRUITMENT NETWORK
-          </span>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            بوابة المكاتب والوكلاء الخارجيين المعتمدين
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            الربط المباشر مع مكاتب الفلبين، إثيوبيا، الهند، كينيا، وأوغندا وإدارة مستخدمي الوكلاء
-          </p>
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Globe className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                INTERNATIONAL RECRUITMENT NETWORK
+              </span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: 0, letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+              بوابة المكاتب والوكلاء الخارجيين المعتمدين
+            </h1>
+            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
+              الربط المباشر مع مكاتب الفلبين، إثيوبيا، الهند، كينيا، وأوغندا وإدارة مستخدمي الوكلاء
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => exportData('external_offices', offices, 'excel', `المكاتب الخارجية - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-400 ml-1"></i> Excel
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <span>Excel</span>
           </button>
         </div>
       </div>
 
       {/* Sub Tabs */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'offices', label: `المكاتب الخارجية (${offices.length || 3})`, icon: 'fa-building' },
-          { id: 'users', label: `مستخدمي الوكلاء (${MOCK_OFFICE_USERS.length})`, icon: 'fa-users-gear' },
-          { id: 'files', label: `ملفات ووثائق الوكلاء (${MOCK_OFFICE_FILES.length})`, icon: 'fa-folder-open' },
+          { id: 'offices', label: `المكاتب الخارجية (${offices.length || 3})`, icon: Building2 },
+          { id: 'users', label: `مستخدمي الوكلاء (${MOCK_OFFICE_USERS.length})`, icon: Users },
+          { id: 'files', label: `ملفات ووثائق الوكلاء (${MOCK_OFFICE_FILES.length})`, icon: FolderOpen },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -188,7 +197,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
             </button>
           );
@@ -197,36 +206,49 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
 
       {/* Tab 1: Offices Cards & Grid */}
       {activeTab === 'offices' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {(offices.length > 0 ? offices : INITIAL_OFFICES).map((office) => (
             <div
               key={office.id}
+              className="card-pricing"
               style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '16px',
-                padding: '20px',
-                border: '1px solid #E2E8F0',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                borderRadius: '24px',
+                background: '#ffffff',
+                padding: '24px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '12px',
+                justifyContent: 'space-between',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <strong style={{ fontSize: '15px', color: '#0F172A' }}>{office.officeName}</strong>
-                <Badge text={office.country} type="purple" />
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-bold text-black text-base">{office.officeName}</h3>
+                  <Badge text={office.country} type="purple" />
+                </div>
+
+                <div className="text-xs text-zinc-600 space-y-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>الترخيص: <strong className="font-mono text-black">{office.licenseNumber}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>المدير: <strong className="text-black">{office.managerName}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-zinc-400" />
+                    <span className="font-mono">{office.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>{office.email}</span>
+                  </div>
+                </div>
               </div>
 
-              <div style={{ fontSize: '12px', color: '#475569', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div><i className="fa-solid fa-id-badge ml-1.5 text-slate-400"></i> الترخيص: <strong style={{ fontFamily: 'monospace' }}>{office.licenseNumber}</strong></div>
-                <div><i className="fa-solid fa-user-tie ml-1.5 text-slate-400"></i> المدير: {office.managerName}</div>
-                <div><i className="fa-solid fa-phone ml-1.5 text-slate-400"></i> {office.phone}</div>
-                <div><i className="fa-solid fa-envelope ml-1.5 text-slate-400"></i> {office.email}</div>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e4e4e7', paddingTop: '12px', fontSize: '12px' }}>
-                <div>السير المتاحة: <strong style={{ color: '#000000' }}>{office.activeCandidatesCount}</strong></div>
-                <div>العمالة الواصلة: <strong style={{ color: '#000000' }}>{office.arrivedCountCount}</strong></div>
+              <div className="flex justify-between border-t border-zinc-100 pt-3 text-xs bg-zinc-50 -mx-6 -mb-6 p-4 rounded-b-3xl">
+                <div>السير المتاحة: <strong className="text-black font-mono font-bold">{office.activeCandidatesCount}</strong></div>
+                <div>العمالة الواصلة: <strong className="text-emerald-700 font-mono font-bold">{office.arrivedCountCount}</strong></div>
               </div>
             </div>
           ))}
@@ -235,74 +257,85 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
 
       {/* Tab 2: Users */}
       {activeTab === 'users' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>مستخدمي الوكلاء والمكاتب الخارجية</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>اسم المستخدم</th>
-                <th>بيانات التواصل</th>
-                <th>المكتب المرتبط</th>
-                <th>الدولة والجنسية</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_OFFICE_USERS.map((u, idx) => (
-                <tr key={u.id}>
-                  <td><strong>{idx + 1}</strong></td>
-                  <td><strong style={{ color: '#000000' }}>{u.name}</strong></td>
-                  <td>
-                    <div>{u.phone}</div>
-                    <div style={{ fontSize: '10px', color: '#64748B' }}>{u.email}</div>
-                  </td>
-                  <td><span style={{ fontWeight: '700' }}>{u.linked_office}</span></td>
-                  <td>{u.nationality}</td>
-                  <td><Badge text={u.status} type="success" /></td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">مستخدمي الوكلاء والمكاتب الخارجية</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">#</th>
+                  <th className="p-3.5">اسم المستخدم</th>
+                  <th className="p-3.5">بيانات التواصل</th>
+                  <th className="p-3.5">المكتب المرتبط</th>
+                  <th className="p-3.5">الدولة والجنسية</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MOCK_OFFICE_USERS.map((u, idx) => (
+                  <tr key={u.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-bold font-mono text-black">{idx + 1}</td>
+                    <td className="p-3.5 font-bold text-black">{u.name}</td>
+                    <td className="p-3.5">
+                      <div className="font-mono">{u.phone}</div>
+                      <div className="text-[11px] text-zinc-400">{u.email}</div>
+                    </td>
+                    <td className="p-3.5 font-semibold text-black">{u.linked_office}</td>
+                    <td className="p-3.5 text-zinc-600">{u.nationality}</td>
+                    <td className="p-3.5"><Badge text={u.status} type="success" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 3: Files */}
       {activeTab === 'files' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>وثائق وتراخيص المكاتب الخارجية</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>المكتب الخارجي</th>
-                <th>عنوان الوثيقة والملف</th>
-                <th>نوع الملف</th>
-                <th>تاريخ الرفع</th>
-                <th>الحجم</th>
-                <th>الإجراء</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_OFFICE_FILES.map((f, idx) => (
-                <tr key={f.id}>
-                  <td><strong>{idx + 1}</strong></td>
-                  <td><strong style={{ color: '#000000' }}>{f.office_name}</strong></td>
-                  <td>{f.file_title}</td>
-                  <td><Badge text={f.file_type} type="purple" /></td>
-                  <td>{f.upload_date}</td>
-                  <td>{f.file_size}</td>
-                  <td>
-                    <button className="button-outline-on-light" style={{ borderRadius: '9999px', padding: '4px 12px', fontSize: '11px', fontWeight: 550, cursor: 'pointer', minHeight: '28px' }}>
-                      <i className="fa-solid fa-download ml-1"></i> تحميل
-                    </button>
-                  </td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">وثائق وتراخيص المكاتب الخارجية</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">#</th>
+                  <th className="p-3.5">المكتب الخارجي</th>
+                  <th className="p-3.5">عنوان الوثيقة والملف</th>
+                  <th className="p-3.5">نوع الملف</th>
+                  <th className="p-3.5">تاريخ الرفع</th>
+                  <th className="p-3.5">الحجم</th>
+                  <th className="p-3.5 text-center">الإجراء</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MOCK_OFFICE_FILES.map((f, idx) => (
+                  <tr key={f.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-bold font-mono text-black">{idx + 1}</td>
+                    <td className="p-3.5 font-bold text-black">{f.office_name}</td>
+                    <td className="p-3.5 font-semibold text-zinc-800">{f.file_title}</td>
+                    <td className="p-3.5"><Badge text={f.file_type} type="purple" /></td>
+                    <td className="p-3.5 font-mono text-zinc-500">{f.upload_date}</td>
+                    <td className="p-3.5 font-mono">{f.file_size}</td>
+                    <td className="p-3.5 text-center">
+                      <button className="button-outline-on-light" style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}>
+                        <Download className="w-3 h-3 ml-1" />
+                        <span>تحميل</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
   );
 };
+
+export default ExternalOfficesAgentsPage;

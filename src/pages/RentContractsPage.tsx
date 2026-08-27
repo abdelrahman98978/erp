@@ -5,6 +5,7 @@ import { useRentContracts, useTableMutation } from '../hooks/queries/useErpQueri
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
 import { useAppStore } from '../stores/appStore';
+import { Plus, FileSpreadsheet, Search, Handshake, X } from 'lucide-react';
 
 export interface RentContractRecord {
   id: string;
@@ -121,7 +122,7 @@ const DEFAULT_MOCK_RENT_CONTRACTS: RentContractRecord[] = [
 
 export const RentContractsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
-  const { data: rawRentContracts = [], isLoading } = useRentContracts();
+  const { data: rawRentContracts = [] } = useRentContracts();
   const { createItem } = useTableMutation('rent_contracts');
 
   const rentContracts: RentContractRecord[] =
@@ -222,50 +223,71 @@ export const RentContractsPage: React.FC = () => {
   const currentDisplayList = getFilteredContracts();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-handshake text-blue-600"></i>
-            عقود التأجير وباقات التشغيل (Rental Contracts Suite)
-          </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
-            إدارة عقود التأجير الشهري واليومي، باقات الأسعار، وتوثيق السندات لـ{' '}
-            <strong style={{ color: '#000000' }}>{activeCompany.name}</strong>
-          </p>
+    <div className="space-y-6">
+      {/* Header Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Handshake className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>RENTAL CONTRACTS SUITE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              عقود التأجير وباقات التشغيل
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              إدارة عقود التأجير الشهري واليومي، باقات الأسعار، وتوثيق السندات لـ {activeCompany.name}
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddModal(true)}
-            className="button-primary-pill"
-            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus text-xs"></i>
-            + إضافة عقد تأجير جديد
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة عقد تأجير جديد</span>
           </button>
-
           <button
             onClick={() => exportData('rent_contracts', currentDisplayList, 'excel', `عقود التأجير - ${activeCompany.name}`)}
             className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <span>Excel</span>
           </button>
         </div>
       </div>
 
       {/* Sub Tabs Navigation */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-zinc-200 pb-3">
         {[
-          { id: 'all', label: `جميع عقود التأجير (${rentContracts.length || 13})`, icon: 'fa-folder-open' },
-          { id: 'active', label: 'عقود نشطة (2)', icon: 'fa-circle-play' },
-          { id: 'sent', label: 'عقود مرسلة (1)', icon: 'fa-paper-plane' },
-          { id: 'locked', label: 'عقود موصدة (2)', icon: 'fa-lock' },
-          { id: 'delivered', label: 'تم التسليم (0)', icon: 'fa-truck' },
-          { id: 'completed', label: 'عقود مكتملة (7)', icon: 'fa-circle-check' },
-          { id: 'packages', label: `باقات التأجير (${MOCK_PACKAGES.length || 2})`, icon: 'fa-box-open' },
+          { id: 'all', label: `جميع عقود التأجير (${rentContracts.length || 13})` },
+          { id: 'active', label: 'عقود نشطة (2)' },
+          { id: 'sent', label: 'عقود مرسلة (1)' },
+          { id: 'locked', label: 'عقود موصدة (2)' },
+          { id: 'delivered', label: 'تم التسليم (0)' },
+          { id: 'completed', label: 'عقود مكتملة (7)' },
+          { id: 'packages', label: `باقات التأجير (${MOCK_PACKAGES.length || 2})` },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -273,9 +295,8 @@ export const RentContractsPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -288,7 +309,6 @@ export const RentContractsPage: React.FC = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
               <span>{tab.label}</span>
             </button>
           );
@@ -297,64 +317,65 @@ export const RentContractsPage: React.FC = () => {
 
       {/* Contracts Table */}
       {activeTab !== 'packages' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث برقم العقد، اسم العميل، أو العاملة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="text-input"
-                style={{ borderRadius: '9999px', paddingRight: '36px', paddingLeft: '16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
               />
             </div>
-            <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               العدد المعروض: {currentDisplayList.length} عقد
             </span>
           </div>
 
           <div style={{ overflowX: 'auto', width: '100%' }}>
-            <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
-              <thead>
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
-                  <th>رقم العقد</th>
-                  <th>اسم العميل</th>
-                  <th>العاملة والجنسية</th>
-                  <th>مدة الإيجار</th>
-                  <th>تاريخ البداية والنهاية</th>
-                  <th>التكلفة الشهرية</th>
-                  <th>الإجمالي شامل الضريبة</th>
-                  <th>الحالة</th>
-                  <th>الإجراء</th>
+                  <th className="p-3.5">رقم العقد</th>
+                  <th className="p-3.5">اسم العميل</th>
+                  <th className="p-3.5">العاملة والجنسية</th>
+                  <th className="p-3.5">مدة الإيجار</th>
+                  <th className="p-3.5">تاريخ البداية والنهاية</th>
+                  <th className="p-3.5">التكلفة الشهرية</th>
+                  <th className="p-3.5">الإجمالي شامل الضريبة</th>
+                  <th className="p-3.5">الحالة</th>
+                  <th className="p-3.5 text-center">الإجراء</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {currentDisplayList.map((c) => (
-                  <tr key={c.id}>
-                    <td style={{ fontWeight: 550, color: '#000000', fontFamily: 'monospace' }}>{c.contract_number}</td>
-                    <td>
-                      <div style={{ fontWeight: 550, color: '#000000' }}>{c.client_name}</div>
-                      <div style={{ fontSize: '11px', color: '#71717a' }}>{c.client_phone}</div>
+                  <tr key={c.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono text-black font-bold">{c.contract_number}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{c.client_name}</div>
+                      <div className="text-zinc-500 font-mono">{c.client_phone}</div>
                     </td>
-                    <td>
-                      <div style={{ fontWeight: 550, color: '#000000' }}>{c.maid_name}</div>
-                      <div style={{ fontSize: '11px', color: '#71717a' }}>{c.nationality}</div>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{c.maid_name}</div>
+                      <div className="text-zinc-500">{c.nationality}</div>
                     </td>
-                    <td>{c.duration_months} شهر</td>
-                    <td style={{ fontSize: '12px', color: '#71717a' }}>
+                    <td className="p-3.5 font-bold text-black">{c.duration_months} شهر</td>
+                    <td className="p-3.5 text-zinc-500 font-mono">
                       {c.start_date} إلى {c.end_date}
                     </td>
-                    <td>{(c.monthly_cost ?? 0).toLocaleString()} ر.س</td>
-                    <td style={{ fontWeight: 550, color: '#000000' }}>{(c.total_amount ?? 0).toLocaleString()} ر.س</td>
-                    <td><Badge text={c.status} type={c.status === 'نشط' ? 'success' : 'primary'} /></td>
-                    <td>
+                    <td className="p-3.5 font-mono">{(c.monthly_cost ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(c.total_amount ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3.5">
+                      <Badge text={c.status} type={c.status === 'نشط' ? 'success' : 'primary'} />
+                    </td>
+                    <td className="p-3.5 text-center">
                       <button
                         onClick={() => setSelectedContractForPrint(c)}
                         className="button-outline-on-light"
-                        style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
-                        title="طباعة العقد"
+                        style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}
                       >
                         طباعة العقد
                       </button>
@@ -369,122 +390,164 @@ export const RentContractsPage: React.FC = () => {
 
       {/* Packages Tab */}
       {activeTab === 'packages' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>باقات التأجير المعتمدة</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>عنوان الباقة</th>
-                <th>الجنسية</th>
-                <th>نوع الإيجار</th>
-                <th>المدة</th>
-                <th>السعر بدون ضريبة</th>
-                <th>الضريبة (15%)</th>
-                <th>الإجمالي بعد الضريبة</th>
-                <th>عدد الأيام</th>
-                <th>الظهور</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_PACKAGES.map((pkg, idx) => (
-                <tr key={pkg.id}>
-                  <td><strong>{idx + 1}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{pkg.title}</td>
-                  <td>{pkg.nationality}</td>
-                  <td><Badge text={pkg.rent_type} type="purple" /></td>
-                  <td>{pkg.duration}</td>
-                  <td>{(pkg.price_before_tax ?? 0).toLocaleString()} ر.س</td>
-                  <td>{(pkg.tax ?? 0).toLocaleString()} ر.س</td>
-                  <td><strong style={{ color: '#047857' }}>{(pkg.total_price ?? 0).toLocaleString()} ر.س</strong></td>
-                  <td>{pkg.days_count} يوم</td>
-                  <td><Badge text="مفعل وظاهر" type="success" /></td>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-base font-bold text-black mb-4">باقات التأجير المعتمدة</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3">#</th>
+                  <th className="p-3">عنوان الباقة</th>
+                  <th className="p-3">الجنسية</th>
+                  <th className="p-3">نوع الإيجار</th>
+                  <th className="p-3">المدة</th>
+                  <th className="p-3">السعر بدون ضريبة</th>
+                  <th className="p-3">الضريبة (15%)</th>
+                  <th className="p-3">الإجمالي بعد الضريبة</th>
+                  <th className="p-3">عدد الأيام</th>
+                  <th className="p-3">الظهور</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MOCK_PACKAGES.map((pkg, idx) => (
+                  <tr key={pkg.id} className="hover:bg-zinc-50">
+                    <td className="p-3 font-mono font-bold text-black">{idx + 1}</td>
+                    <td className="p-3 font-bold text-black">{pkg.title}</td>
+                    <td className="p-3 text-zinc-600">{pkg.nationality}</td>
+                    <td className="p-3">
+                      <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{pkg.rent_type}</span>
+                    </td>
+                    <td className="p-3">{pkg.duration}</td>
+                    <td className="p-3 font-mono">{(pkg.price_before_tax ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3 font-mono text-zinc-500">{(pkg.tax ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3 font-mono font-bold text-emerald-700">{(pkg.total_price ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3 font-mono">{pkg.days_count} يوم</td>
+                    <td className="p-3">
+                      <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>مفعل وظاهر</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Add Rent Contract Modal */}
       {showAddModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '640px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-              إضافة عقد تأجير جديد (ClickERP Form)
-            </h3>
-
-            <form onSubmit={handleCreateContract}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>اسم العميل *</label>
-                  <input type="text" required value={clientName} onChange={(e) => setClientName(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم الجوال *</label>
-                  <input type="text" required value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="+9665..." style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white">إضافة عقد تأجير جديد</h3>
+                <p className="text-xs text-zinc-400 mt-0.5">تسجيل بيانات العميل والعاملة والمدة الإيجارية</p>
               </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                type="button"
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>العاملة المطلوبة للتأجير *</label>
-                  <input type="text" required value={maidName} onChange={(e) => setMaidName(e.target.value)} placeholder="سيتي نورعيني (سير تأجير نشطة)" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
+            <form onSubmit={handleCreateContract} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-6 overflow-y-auto space-y-4 custom-scrollbar flex-1 bg-white text-black">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم العميل *</label>
+                    <input
+                      type="text"
+                      required
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الجوال *</label>
+                    <input
+                      type="text"
+                      required
+                      value={clientPhone}
+                      onChange={(e) => setClientPhone(e.target.value)}
+                      placeholder="+9665..."
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الجنسية *</label>
-                  <select value={nationality} onChange={(e) => setNationality(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
-                    <option>إندونيسيا</option>
-                    <option>إثيوبيا</option>
-                    <option>الفلبين</option>
-                    <option>أوغندا</option>
-                    <option>كينيا</option>
-                  </select>
-                </div>
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>المدة (بالشهور) *</label>
-                  <input type="number" required value={durationMonths} onChange={(e) => setDurationMonths(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">العاملة المطلوبة للتأجير *</label>
+                    <input
+                      type="text"
+                      required
+                      value={maidName}
+                      onChange={(e) => setMaidName(e.target.value)}
+                      placeholder="سيتي نورعيني (سير تأجير نشطة)"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">الجنسية *</label>
+                    <select
+                      value={nationality}
+                      onChange={(e) => setNationality(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    >
+                      <option>إندونيسيا</option>
+                      <option>إثيوبيا</option>
+                      <option>الفلبين</option>
+                      <option>أوغندا</option>
+                      <option>كينيا</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>السعر الشهري قبل الضريبة *</label>
-                  <input type="number" required value={monthlyCost} onChange={(e) => setMonthlyCost(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الإجمالي بعد الضريبة</label>
-                  <div style={{ padding: '8px 10px', backgroundColor: '#F1F5F9', borderRadius: '8px', fontWeight: '800', color: '#047857', fontSize: '12px' }}>
-                    {totalAmount.toLocaleString()} ر.س
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">المدة (بالشهور) *</label>
+                    <input
+                      type="number"
+                      required
+                      value={durationMonths}
+                      onChange={(e) => setDurationMonths(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">السعر الشهري قبل الضريبة *</label>
+                    <input
+                      type="number"
+                      required
+                      value={monthlyCost}
+                      onChange={(e) => setMonthlyCost(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-zinc-700 block mb-1 font-semibold">الإجمالي بعد الضريبة</label>
+                    <div className="py-2 px-3 bg-zinc-100 rounded-2xl font-bold font-mono text-emerald-700 text-xs">
+                      {totalAmount.toLocaleString()} ر.س
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="button-outline-on-light"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="button-primary-pill"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   اعتماد وحفظ العقد
                 </button>
@@ -496,12 +559,15 @@ export const RentContractsPage: React.FC = () => {
 
       {/* Contract Print Modal */}
       {selectedContractForPrint && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '640px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>طباعة عقد التأجير المعتمد</h3>
-              <button onClick={() => setSelectedContractForPrint(null)} style={{ border: 'none', background: 'none', fontSize: '18px', cursor: 'pointer', color: '#94A3B8' }}>
-                <i className="fa-solid fa-xmark"></i>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6">
+            <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
+              <h3 className="font-bold text-black text-base">طباعة عقد التأجير المعتمد</h3>
+              <button
+                onClick={() => setSelectedContractForPrint(null)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
             <DualBrandingDocumentGenerator
@@ -509,22 +575,22 @@ export const RentContractsPage: React.FC = () => {
               documentNumber={selectedContractForPrint.contract_number}
               date={new Date().toISOString().slice(0, 10)}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>اسم العميل:</span>
-                  <strong style={{ color: '#0F172A' }}>{selectedContractForPrint.client_name}</strong>
+              <div className="flex flex-col gap-2 text-xs">
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">اسم العميل:</span>
+                  <strong className="text-black">{selectedContractForPrint.client_name}</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>العاملة المؤجرة:</span>
-                  <strong style={{ color: '#0F172A' }}>{selectedContractForPrint.maid_name}</strong>
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">العاملة المؤجرة:</span>
+                  <strong className="text-black">{selectedContractForPrint.maid_name}</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>مدة العقد:</span>
-                  <strong>{selectedContractForPrint.duration_months} شهر ({selectedContractForPrint.start_date} إلى {selectedContractForPrint.end_date})</strong>
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">مدة العقد:</span>
+                  <strong className="text-black">{selectedContractForPrint.duration_months} شهر ({selectedContractForPrint.start_date} إلى {selectedContractForPrint.end_date})</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>الإجمالي شامل الضريبة:</span>
-                  <strong style={{ color: '#047857' }}>{(selectedContractForPrint.total_amount ?? 0).toLocaleString()} ر.س</strong>
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">الإجمالي شامل الضريبة:</span>
+                  <strong className="text-emerald-700 font-mono font-bold">{(selectedContractForPrint.total_amount ?? 0).toLocaleString()} ر.س</strong>
                 </div>
               </div>
             </DualBrandingDocumentGenerator>
@@ -534,3 +600,5 @@ export const RentContractsPage: React.FC = () => {
     </div>
   );
 };
+
+export default RentContractsPage;

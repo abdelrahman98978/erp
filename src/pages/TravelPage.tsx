@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
+import { Plane, Plus, FileSpreadsheet, Search, X } from 'lucide-react';
 
 export interface FlightRecord {
   id: string;
@@ -143,45 +144,68 @@ export const TravelPage: React.FC = () => {
   const currentDisplayList = getFilteredFlights();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-plane-departure text-blue-600"></i>
-            إدارة اللوجستيات وحجوزات الطيران (Travel & Flights Hub)
-          </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
-            متابعة رحلات وصول العمالة الجديدة، رحلات الترحيل، وإسناد فرق وسائقي الاستقبال بالمطارات
-          </p>
+    <div className="space-y-6">
+      {/* Header Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Plane className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>TRAVEL & FLIGHTS HUB</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              إدارة اللوجستيات وحجوزات الطيران
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              متابعة رحلات وصول العمالة الجديدة، رحلات الترحيل، وإسناد فرق وسائقي الاستقبال بالمطارات لـ {activeCompany.name}
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="button-primary-pill"
-            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus text-xs"></i>
-            + جدولة رحلة طيران جديدة
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ جدولة رحلة طيران</span>
           </button>
 
           <button
             onClick={() => exportData('travel_flights', currentDisplayList, 'excel', `رحلات الطيران - ${activeCompany.name}`)}
             className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <span>Excel</span>
           </button>
         </div>
       </div>
 
       {/* Sub Tabs Navigation */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'all', label: `جميع الرحلات (${flights.length})`, icon: 'fa-folder-open' },
-          { id: 'arrivals', label: 'رحلات الوصول (Arrivals)', icon: 'fa-plane-arrival' },
-          { id: 'deportations', label: 'رحلات الترحيل (Deportation)', icon: 'fa-plane-departure' },
+          { id: 'all', label: `جميع الرحلات (${flights.length})` },
+          { id: 'arrivals', label: 'رحلات الوصول (Arrivals)' },
+          { id: 'deportations', label: 'رحلات الترحيل (Deportation)' },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -189,9 +213,8 @@ export const TravelPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -204,7 +227,6 @@ export const TravelPage: React.FC = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
               <span>{tab.label}</span>
             </button>
           );
@@ -212,101 +234,122 @@ export const TravelPage: React.FC = () => {
       </div>
 
       {/* Flights Table */}
-      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff' }}>
-          <input
-            type="text"
-            placeholder="البحث برقم الرحلة، اسم العاملة، أو الجواز..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="text-input"
-            style={{ borderRadius: '9999px', padding: '0 16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
-          />
-          <span className="pill-tag-shade" style={{ fontSize: '12px' }}>
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="البحث برقم الرحلة، اسم العاملة، أو الجواز..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-input"
+              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+            />
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
             العدد المعروض: {currentDisplayList.length} رحلة
           </span>
         </div>
 
-        <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>نوع الرحلة</th>
-              <th>بيانات العاملة</th>
-              <th>العميل</th>
-              <th>شركة الطيران ورقم الرحلة</th>
-              <th>مطار الوصول</th>
-              <th>تاريخ وتوقيت الرحلة</th>
-              <th>سائق الاستقبال</th>
-              <th>الحالة</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentDisplayList.map((f) => (
-              <tr key={f.id}>
-                <td><strong style={{ color: '#000000' }}>{f.id}</strong></td>
-                <td><Badge text={f.travel_type} type={f.travel_type === 'وصول' ? 'success' : 'danger'} /></td>
-                <td>
-                  <div style={{ fontWeight: 600, color: '#000000' }}>{f.maid_name}</div>
-                  <div style={{ fontSize: '10px', color: '#71717a', fontFamily: 'monospace' }}>{f.nationality} • {f.passport_number}</div>
-                </td>
-                <td><span style={{ fontWeight: 550 }}>{f.client_name}</span></td>
-                <td>
-                  <div style={{ fontWeight: 600, color: '#000000' }}>{f.airline}</div>
-                  <div style={{ fontSize: '10px', color: '#71717a', fontFamily: 'monospace' }}>{f.flight_number}</div>
-                </td>
-                <td><span style={{ fontSize: '11px' }}>{f.arrival_airport}</span></td>
-                <td>
-                  <strong style={{ color: '#000000' }}>{f.flight_date}</strong>
-                  <div style={{ fontSize: '10px', color: '#71717a' }}>{f.flight_time}</div>
-                </td>
-                <td><span style={{ fontSize: '11px', color: '#000000', fontWeight: 600 }}>{f.driver_assigned || 'غير مسند'}</span></td>
-                <td><Badge text={f.status} type={f.status.includes('تم') ? 'success' : 'purple'} /></td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">#</th>
+                <th className="p-3.5">نوع الرحلة</th>
+                <th className="p-3.5">بيانات العاملة</th>
+                <th className="p-3.5">العميل</th>
+                <th className="p-3.5">شركة الطيران ورقم الرحلة</th>
+                <th className="p-3.5">مطار الوصول</th>
+                <th className="p-3.5">تاريخ وتوقيت الرحلة</th>
+                <th className="p-3.5">سائق الاستقبال</th>
+                <th className="p-3.5">الحالة</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {currentDisplayList.map((f) => (
+                <tr key={f.id} className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-mono font-bold text-black">{f.id}</td>
+                  <td className="p-3.5">
+                    <Badge text={f.travel_type} type={f.travel_type === 'وصول' ? 'success' : 'danger'} />
+                  </td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{f.maid_name}</div>
+                    <div className="text-[11px] text-zinc-500 font-mono">{f.nationality} • {f.passport_number}</div>
+                  </td>
+                  <td className="p-3.5 font-semibold text-black">{f.client_name}</td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{f.airline}</div>
+                    <div className="text-[11px] text-zinc-500 font-mono">{f.flight_number}</div>
+                  </td>
+                  <td className="p-3.5 text-zinc-600">{f.arrival_airport}</td>
+                  <td className="p-3.5 font-mono">
+                    <div className="font-bold text-black">{f.flight_date}</div>
+                    <div className="text-zinc-500">{f.flight_time}</div>
+                  </td>
+                  <td className="p-3.5 font-semibold text-black">{f.driver_assigned || 'غير مسند'}</td>
+                  <td className="p-3.5">
+                    <Badge text={f.status} type={f.status.includes('تم') ? 'success' : 'purple'} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Add Flight Modal */}
       {showAddModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '640px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-              جدولة رحلة طيران جديدة (ClickERP Logistics)
-            </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Plane className="w-4 h-4 text-emerald-400" />
+                <span>جدولة رحلة طيران جديدة (Logistics Form)</span>
+              </h3>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <form onSubmit={handleAddFlight}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+            <form onSubmit={handleAddFlight} className="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1 bg-white text-black">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>نوع الرحلة *</label>
-                  <select value={travelType} onChange={(e) => setTravelType(e.target.value as any)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">نوع الرحلة *</label>
+                  <select
+                    value={travelType}
+                    onChange={(e) => setTravelType(e.target.value as any)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
                     <option value="وصول">رحلة وصول إلى المملكة</option>
                     <option value="ترحيل">رحلة ترحيل ومغادرة</option>
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>اسم العاملة *</label>
-                  <input type="text" required value={maidName} onChange={(e) => setMaidName(e.target.value)} placeholder="اسم العاملة بالجواز" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم العاملة *</label>
+                  <input
+                    type="text"
+                    required
+                    value={maidName}
+                    onChange={(e) => setMaidName(e.target.value)}
+                    placeholder="اسم العاملة بالجواز"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>شركة الطيران *</label>
-                  <select value={airline} onChange={(e) => setAirline(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">شركة الطيران *</label>
+                  <select
+                    value={airline}
+                    onChange={(e) => setAirline(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
                     <option>الخطوط السعودية (SAUDIA)</option>
                     <option>الخطوط الإثيوبية (Ethiopian)</option>
                     <option>الخطوط الفلبينية (Philippine Airlines)</option>
@@ -315,25 +358,48 @@ export const TravelPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم الرحلة *</label>
-                  <input type="text" required value={flightNumber} onChange={(e) => setFlightNumber(e.target.value)} placeholder="SV-861" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الرحلة *</label>
+                  <input
+                    type="text"
+                    required
+                    value={flightNumber}
+                    onChange={(e) => setFlightNumber(e.target.value)}
+                    placeholder="SV-861"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>تاريخ الرحلة *</label>
-                  <input type="date" required value={flightDate} onChange={(e) => setFlightDate(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">تاريخ الرحلة *</label>
+                  <input
+                    type="date"
+                    required
+                    value={flightDate}
+                    onChange={(e) => setFlightDate(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>توقيت الوصول *</label>
-                  <input type="time" required value={flightTime} onChange={(e) => setFlightTime(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">توقيت الوصول *</label>
+                  <input
+                    type="time"
+                    required
+                    value={flightTime}
+                    onChange={(e) => setFlightTime(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
                 </div>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>مطار الوصول بالمملكة *</label>
-                <select value={arrivalAirport} onChange={(e) => setArrivalAirport(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
+              <div>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">مطار الوصول بالمملكة *</label>
+                <select
+                  value={arrivalAirport}
+                  onChange={(e) => setArrivalAirport(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                >
                   <option>مطار الملك خالد الدولي - الرياض (RUH)</option>
                   <option>مطار الملك عبدالعزيز الدولي - جدة (JED)</option>
                   <option>مطار الملك فهد الدولي - الدمام (DMM)</option>
@@ -342,19 +408,19 @@ export const TravelPage: React.FC = () => {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3 -mx-6 -mb-6 mt-4">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="button-outline-on-light"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="button-primary-pill"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ وجدولة الرحلة
                 </button>
@@ -366,3 +432,5 @@ export const TravelPage: React.FC = () => {
     </div>
   );
 };
+
+export default TravelPage;

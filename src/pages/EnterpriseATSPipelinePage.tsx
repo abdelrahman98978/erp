@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Candidate, CandidateStage } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
-import { StatCard } from '../components/ui/StatCard';
 import { Badge } from '../components/ui/Badge';
-import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { Users, UserPlus, Calendar, ArrowRight, ArrowLeft, Video, X } from 'lucide-react';
 
 const INITIAL_CANDIDATES: Candidate[] = [
   {
@@ -156,27 +155,33 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              ENTERPRISE ATS RECRUITMENT PIPELINE
-            </span>
-            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>تتبع المتقدمين والتوظيف الدولي</span>
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Users className="w-5 h-5" />
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            مسار التوظيف والفرز الذكي (12 مرحلة متكاملة)
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            تقييم السير بالذكاء الاصطناعي، جدولة المقابلات المرئية، وإصدار عروض العمل الرقمية
-          </p>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                ENTERPRISE ATS RECRUITMENT PIPELINE
+              </span>
+              <span style={{ color: '#a1a1aa', fontSize: '12px' }}>تتبع المتقدمين والتوظيف الدولي</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+              مسار التوظيف والفرز الذكي (12 مرحلة متكاملة)
+            </h1>
+            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
+              تقييم السير بالذكاء الاصطناعي، جدولة المقابلات المرئية، وإصدار عروض العمل الرقمية لـ {activeCompany.name}
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
-            className="button-aloe-pill"
+            className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-user-plus ml-1"></i> + طلب احتياج وظيفي جديد
+            <UserPlus className="w-4 h-4 ml-1" />
+            <span>+ طلب احتياج وظيفي جديد</span>
           </button>
         </div>
       </div>
@@ -209,7 +214,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
       </div>
 
       {/* Stage Selector Pills */}
-      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', borderBottom: '1px solid #e4e4e7' }}>
+      <div className="flex gap-2 overflow-x-auto pb-3 border-b border-zinc-200">
         <button
           type="button"
           onClick={() => setSelectedStage('الكل')}
@@ -264,58 +269,46 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
       </div>
 
       {/* Candidates Visual Kanban Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredCandidates.map((cnd) => (
           <div
             key={cnd.id}
+            className="card-pricing"
             style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '16px',
-              border: '1px solid #E2E8F0',
-              padding: '20px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              borderRadius: '24px',
+              background: '#ffffff',
+              padding: '24px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between'
             }}
           >
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748B', fontFamily: 'monospace' }}>{cnd.candidateCode}</span>
-                  <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#0F172A', margin: '2px 0 0 0' }}>
-                    {cnd.name}
-                  </h3>
+                  <span className="text-xs text-zinc-400 font-mono font-bold">{cnd.candidateCode}</span>
+                  <h3 className="text-base font-bold text-black mt-0.5">{cnd.name}</h3>
                 </div>
 
                 {/* AI Score Badge */}
-                <div
-                  style={{
-                    backgroundColor: '#ECFDF5',
-                    border: '1px solid #A7F3D0',
-                    color: '#047857',
-                    borderRadius: '10px',
-                    padding: '4px 10px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{ fontSize: '10px', fontWeight: '800' }}>مطابقة AI</div>
-                  <div style={{ fontSize: '15px', fontWeight: '900' }}>{cnd.aiScore}%</div>
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-2.5 py-1 text-center">
+                  <div className="text-[10px] font-bold">مطابقة AI</div>
+                  <div className="text-sm font-bold font-mono">{cnd.aiScore}%</div>
                 </div>
               </div>
 
-              <div style={{ fontSize: '13px', color: '#334155', marginBottom: '10px', fontWeight: '700' }}>
-                الوظيفة المطلوبة: <span style={{ color: '#047857' }}>{cnd.appliedPosition}</span>
+              <div className="text-xs font-semibold text-zinc-800 mb-3">
+                الوظيفة المطلوبة: <span className="text-emerald-700 font-bold">{cnd.appliedPosition}</span>
               </div>
 
-              <div style={{ backgroundColor: '#F8FAFC', padding: '12px', borderRadius: '10px', fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', border: '1px solid #F1F5F9' }}>
+              <div className="bg-zinc-50 p-3 rounded-2xl text-xs space-y-1.5 mb-4 border border-zinc-100 text-zinc-700">
                 <div><strong>الجنسية والخبرة:</strong> {cnd.nationality} ({cnd.experienceYears} سنوات خبرة)</div>
                 <div><strong>المؤهل العلمي:</strong> {cnd.education}</div>
                 <div><strong>المكتب المصدر:</strong> {cnd.externalOfficeName || 'وكالة دولية معتمدة'}</div>
-                <div><strong>الراتب المتوقع:</strong> {cnd.expectedSalary.toLocaleString()} ر.س</div>
+                <div><strong>الراتب المتوقع:</strong> <span className="font-mono font-bold text-black">{cnd.expectedSalary.toLocaleString()}</span> ر.س</div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+              <div className="flex items-center justify-between mb-4">
                 <Badge
                   text={`المرحلة: ${cnd.stage}`}
                   type={cnd.stage === 'وصول وانضمام' ? 'success' : cnd.stage === 'مرفوض' ? 'danger' : 'purple'}
@@ -325,32 +318,36 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                     setActiveCandidate(cnd);
                     setShowInterviewModal(true);
                   }}
-                  style={{ background: 'none', border: 'none', color: '#2563EB', fontSize: '11.5px', fontWeight: '800', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ fontSize: '11px', padding: '3px 10px', minHeight: '26px' }}
                 >
-                  <i className="fa-solid fa-calendar-check ml-1"></i> جدولة مقابلة
+                  <Calendar className="w-3 h-3 ml-1 text-blue-600" />
+                  <span>جدولة مقابلة</span>
                 </button>
               </div>
             </div>
 
             {/* Stage Transition Buttons */}
-            <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #F1F5F9', paddingTop: '12px' }}>
+            <div className="flex gap-2 border-t border-zinc-100 pt-3">
               <button
                 type="button"
                 onClick={() => handleMoveStage(cnd.id, 'prev')}
                 disabled={stagesList.indexOf(cnd.stage) <= 0}
-                className="btn-odoo btn-odoo-secondary"
-                style={{ flex: 1, padding: '6px', fontSize: '11px', opacity: stagesList.indexOf(cnd.stage) <= 0 ? 0.4 : 1 }}
+                className="button-outline-on-light flex-1"
+                style={{ fontSize: '11px', minHeight: '30px', padding: '4px', opacity: stagesList.indexOf(cnd.stage) <= 0 ? 0.35 : 1 }}
               >
-                ← المرحلة السابقة
+                <ArrowRight className="w-3 h-3 ml-1" />
+                <span>المرحلة السابقة</span>
               </button>
               <button
                 type="button"
                 onClick={() => handleMoveStage(cnd.id, 'next')}
                 disabled={stagesList.indexOf(cnd.stage) >= stagesList.length - 1}
-                className="btn-odoo btn-odoo-primary"
-                style={{ flex: 1, padding: '6px', fontSize: '11px', background: '#059669', borderColor: '#059669', opacity: stagesList.indexOf(cnd.stage) >= stagesList.length - 1 ? 0.4 : 1 }}
+                className="button-primary-pill flex-1"
+                style={{ fontSize: '11px', minHeight: '30px', padding: '4px', opacity: stagesList.indexOf(cnd.stage) >= stagesList.length - 1 ? 0.35 : 1 }}
               >
-                المرحلة التالية →
+                <span>المرحلة التالية</span>
+                <ArrowLeft className="w-3 h-3 mr-1" />
               </button>
             </div>
           </div>
@@ -359,58 +356,52 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
 
       {/* INTERVIEW MODAL */}
       {showInterviewModal && activeCandidate && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '16px'
-        }}>
-          <div style={{ background: '#FFF', borderRadius: '16px', maxWidth: '500px', width: '100%', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#0F172A' }}>
-                <i className="fa-solid fa-video text-blue-600 ml-2"></i> جدولة مقابلة مرئية للمرشح: {activeCandidate.name}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-md bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <Video className="w-4 h-4 text-emerald-400" />
+                <span>جدولة مقابلة مرئية: {activeCandidate.name}</span>
               </h2>
-              <button onClick={() => setShowInterviewModal(false)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+              <button
+                onClick={() => setShowInterviewModal(false)}
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="p-6 space-y-4 bg-white text-black">
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>تاريخ وتوقيت المقابلة (بتوقيت الرياض)</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">تاريخ وتوقيت المقابلة (بتوقيت الرياض)</label>
                 <input
                   type="datetime-local"
                   value={interviewDate}
                   onChange={(e) => setInterviewDate(e.target.value)}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>المسؤول عن المقابلة</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">المسؤول عن المقابلة</label>
                 <input
                   type="text"
                   value={interviewerName}
                   onChange={(e) => setInterviewerName(e.target.value)}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
-              <div style={{ background: '#EFF6FF', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#1E40AF', lineHeight: '1.5' }}>
-                <i className="fa-solid fa-circle-info ml-1"></i> سيتم إرسال رابط المقابلة المرئية تلقائياً للمرشح عبر الواتساب والبريد الإلكتروني، وإشعار المكتب الخارجي.
+              <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-2xl text-xs text-emerald-900 leading-relaxed">
+                سيتم إرسال رابط المقابلة المرئية تلقائياً للمرشح عبر الواتساب والبريد الإلكتروني، وإشعار المكتب الخارجي.
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowInterviewModal(false)}
-                  className="btn-odoo btn-odoo-secondary"
-                  style={{ padding: '8px 16px', fontSize: '13px' }}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
@@ -420,8 +411,8 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                     alert(`تم تأكيد موعد المقابلة للمرشح ${activeCandidate.name} بنجاح.`);
                     setShowInterviewModal(false);
                   }}
-                  className="btn-odoo btn-odoo-primary"
-                  style={{ padding: '8px 20px', fontSize: '13px', background: '#059669', borderColor: '#059669' }}
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   تأكيد وإرسال الدعوة
                 </button>
@@ -433,3 +424,5 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
     </div>
   );
 };
+
+export default EnterpriseATSPipelinePage;

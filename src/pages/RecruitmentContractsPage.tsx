@@ -5,6 +5,7 @@ import { useRecruitmentContracts, useTableMutation } from '../hooks/queries/useE
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
 import { useAppStore } from '../stores/appStore';
+import { FileSignature, Plus, FileSpreadsheet, FileText, Search, ArrowLeft, Printer, X, LayoutGrid, List } from 'lucide-react';
 
 export interface RecruitmentContractItem {
   id: string;
@@ -131,7 +132,7 @@ const MOCK_RETURNS: ReturnRequest[] = [
 
 export const RecruitmentContractsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
-  const { data: rawContracts = [], isLoading } = useRecruitmentContracts();
+  const { data: rawContracts = [] } = useRecruitmentContracts();
   const { createItem, updateItem } = useTableMutation('contracts');
 
   const contracts: RecruitmentContractItem[] = rawContracts as RecruitmentContractItem[];
@@ -159,30 +160,22 @@ export const RecruitmentContractsPage: React.FC = () => {
     }
   }, [storeActiveTab]);
 
-  const [activeStage, setActiveStage] = useState<string>('all');
+  const [activeStage] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-contract');
   const [selectedContractForPrint, setSelectedContractForPrint] = useState<RecruitmentContractItem | null>(null);
 
-  // Add Contract Form State (Full ClickERP fields)
-  const [clientType, setClientType] = useState<'شخص' | 'شركة'>('شخص');
+  // Add Contract Form State
+  const [clientType] = useState<'شخص' | 'شركة'>('شخص');
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
   const [clientNationalId, setClientNationalId] = useState('');
-  const [clientBirthDate, setClientBirthDate] = useState('');
-  const [clientAltPhone, setClientAltPhone] = useState('');
-  const [clientAddress, setClientAddress] = useState('');
   const [deliveryCity, setDeliveryCity] = useState('الرياض');
-  const [roomsCount, setRoomsCount] = useState('');
-  const [familyMembersCount, setFamilyMembersCount] = useState('');
-  const [childrenUnder12, setChildrenUnder12] = useState('');
-  const [clientJob, setClientJob] = useState('');
-  const [addMaidMode, setAddMaidMode] = useState<'عامل/ة موجودة' | 'عامل/ة مختصرة'>('عامل/ة موجودة');
   const [maidName, setMaidName] = useState('');
   const [maidPassport, setMaidPassport] = useState('');
   const [nationality, setNationality] = useState('الفلبين');
-  const [externalOffice, setExternalOffice] = useState("PLATINUM BROTHERS INT'L");
+  const [externalOffice] = useState("PLATINUM BROTHERS INT'L");
   const [amountInput, setAmountInput] = useState('14500');
   const [branch, setBranch] = useState('فرع الرياض الرئيسي');
 
@@ -259,92 +252,101 @@ export const RecruitmentContractsPage: React.FC = () => {
   const currentDisplayList = getFilteredContracts();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 330, margin: 0, color: '#000000', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-file-signature" style={{ color: '#000000' }}></i>
-            عقود الاستقدام المباشرة (Musaned Pipeline)
-          </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#71717a' }}>
-            متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ{' '}
-            <strong style={{ color: '#000000' }}>{activeCompany.name}</strong>
-          </p>
+    <div className="space-y-6">
+      {/* Header Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <FileSignature className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>MUSANED RECRUITMENT PIPELINE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              عقود الاستقدام المباشرة
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ {activeCompany.name}
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <div style={{ backgroundColor: '#f4f4f5', padding: '3px', borderRadius: '9999px', display: 'flex', gap: '2px', border: '1px solid #e4e4e7' }}>
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="bg-zinc-900 border border-zinc-800 p-1 rounded-full flex gap-1">
             <button
               onClick={() => setViewMode('table')}
-              style={{
-                padding: '5px 14px',
-                borderRadius: '9999px',
-                border: 'none',
-                backgroundColor: viewMode === 'table' ? '#000000' : 'transparent',
-                color: viewMode === 'table' ? '#ffffff' : '#71717a',
-                fontWeight: 500,
-                fontSize: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
+              className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                viewMode === 'table' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+              }`}
             >
-              <i className="fa-solid fa-table-list ml-1"></i> جدول
+              <List className="w-3.5 h-3.5" />
+              <span>جدول</span>
             </button>
             <button
               onClick={() => setViewMode('kanban')}
-              style={{
-                padding: '5px 14px',
-                borderRadius: '9999px',
-                border: 'none',
-                backgroundColor: viewMode === 'kanban' ? '#000000' : 'transparent',
-                color: viewMode === 'kanban' ? '#ffffff' : '#71717a',
-                fontWeight: 500,
-                fontSize: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
+              className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                viewMode === 'kanban' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+              }`}
             >
-              <i className="fa-solid fa-columns ml-1"></i> مسار Kanban
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>Kanban</span>
             </button>
           </div>
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="button-primary-pill"
-            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus text-xs"></i>
-            + إضافة عقد استقدام جديد
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة عقد استقدام</span>
           </button>
 
           <button
             onClick={() => exportData('recruitment_contracts', currentDisplayList, 'excel', `عقود الاستقدام - ${activeCompany.name}`)}
             className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <span>Excel</span>
           </button>
           <button
             onClick={() => exportData('recruitment_contracts', currentDisplayList, 'pdf', `عقود الاستقدام - ${activeCompany.name}`)}
             className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
+            <FileText className="w-4 h-4 ml-1 text-rose-600" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
       {/* Main Sub-Tabs */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'all', label: `جميع عقود الاستقدام (${contracts.length || 115})`, icon: 'fa-folder-open' },
-          { id: 'active', label: 'العقود السارية (27)', icon: 'fa-clock' },
-          { id: 'completed', label: 'العقود المكتملة (2)', icon: 'fa-circle-check' },
-          { id: 'returned', label: 'العقود المرتجعة (11)', icon: 'fa-rotate-left' },
-          { id: 'dispatches', label: `إرساليات المكتب الخارجي (${MOCK_DISPATCHES.length || 26})`, icon: 'fa-paper-plane' },
-          { id: 'extensions', label: `طلبات تمديد العقود (${MOCK_EXTENSIONS.length || 1})`, icon: 'fa-calendar-plus' },
-          { id: 'returns', label: `طلبات استرجاع العقود (${MOCK_RETURNS.length || 1})`, icon: 'fa-hand-holding-dollar' },
+          { id: 'all', label: `جميع عقود الاستقدام (${contracts.length || 115})` },
+          { id: 'active', label: 'العقود السارية (27)' },
+          { id: 'completed', label: 'العقود المكتملة (2)' },
+          { id: 'returned', label: 'العقود المرتجعة (11)' },
+          { id: 'dispatches', label: `إرساليات المكتب الخارجي (${MOCK_DISPATCHES.length || 26})` },
+          { id: 'extensions', label: `طلبات تمديد العقود (${MOCK_EXTENSIONS.length || 1})` },
+          { id: 'returns', label: `طلبات استرجاع العقود (${MOCK_RETURNS.length || 1})` },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -352,9 +354,8 @@ export const RecruitmentContractsPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -367,7 +368,6 @@ export const RecruitmentContractsPage: React.FC = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
               <span>{tab.label}</span>
             </button>
           );
@@ -376,105 +376,119 @@ export const RecruitmentContractsPage: React.FC = () => {
 
       {/* Contracts Table / Kanban View */}
       {['all', 'active', 'completed', 'returned'].includes(activeTab) && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث برقم العقد، اسم العميل، اسم العاملة، أو الجواز..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="text-input"
-                style={{ borderRadius: '9999px', paddingRight: '36px', paddingLeft: '16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
               />
             </div>
-            <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               العدد المعروض: {currentDisplayList.length} عقد
             </span>
           </div>
 
           {viewMode === 'table' ? (
-            <div style={{ overflowX: 'auto', width: '100%' }}>
-              <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
-                <thead>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                   <tr>
-                    <th>رقم العقد</th>
-                    <th>توثيق مساند</th>
-                    <th>العميل</th>
-                    <th>العاملة</th>
-                    <th>الجنسية والمكتب</th>
-                    <th>مبلغ العقد</th>
-                    <th>المرحلة الحالية</th>
-                    <th>الضمان</th>
-                    <th>الإجراءات</th>
+                    <th className="p-3.5">رقم العقد</th>
+                    <th className="p-3.5">توثيق مساند</th>
+                    <th className="p-3.5">العميل</th>
+                    <th className="p-3.5">العاملة</th>
+                    <th className="p-3.5">الجنسية والمكتب</th>
+                    <th className="p-3.5">مبلغ العقد</th>
+                    <th className="p-3.5">المرحلة الحالية</th>
+                    <th className="p-3.5">الضمان</th>
+                    <th className="p-3.5 text-center">الإجراءات</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-zinc-100">
                   {currentDisplayList.map((c) => (
-                    <tr key={c.id}>
-                      <td style={{ fontWeight: 550, color: '#000000', fontFamily: 'monospace' }}>{c.contract_number}</td>
-                      <td><span className="pill-tag-shade" style={{ fontFamily: 'monospace', fontSize: '11px' }}>{c.musaned_number || 'MSN-9982'}</span></td>
-                      <td>
-                        <div style={{ fontWeight: 550, color: '#000000' }}>{c.client_name}</div>
-                        <div style={{ fontSize: '11px', color: '#71717a' }}>{c.client_phone}</div>
+                    <tr key={c.id} className="hover:bg-zinc-50">
+                      <td className="p-3.5 font-mono font-bold text-black">{c.contract_number}</td>
+                      <td className="p-3.5">
+                        <span className="pill-tag-shade" style={{ fontFamily: 'monospace', fontSize: '10.5px' }}>
+                          {c.musaned_number || 'MSN-9982'}
+                        </span>
                       </td>
-                      <td>
-                        <div style={{ fontWeight: 550, color: '#000000' }}>{c.maid_name}</div>
-                        <div style={{ fontSize: '11px', color: '#71717a', fontFamily: 'monospace' }}>{c.maid_passport}</div>
+                      <td className="p-3.5">
+                        <div className="font-bold text-black">{c.client_name}</div>
+                        <div className="text-zinc-500 font-mono">{c.client_phone}</div>
                       </td>
-                      <td>
-                        <div>{c.nationality}</div>
-                        <div style={{ fontSize: '11px', color: '#71717a' }}>{c.external_office || 'مكتب خارجي معتمد'}</div>
+                      <td className="p-3.5">
+                        <div className="font-bold text-black">{c.maid_name}</div>
+                        <div className="text-zinc-500 font-mono">{c.maid_passport}</div>
                       </td>
-                      <td style={{ fontWeight: 550, color: '#000000' }}>{(c.amount ?? 0).toLocaleString()} ر.س</td>
-                      <td><Badge text={c.stage} type="primary" /></td>
-                      <td><Badge text={c.warranty_status} type="success" /></td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '6px' }}>
+                      <td className="p-3.5">
+                        <div className="font-bold text-black">{c.nationality}</div>
+                        <div className="text-zinc-500 text-[11px]">{c.external_office || 'مكتب خارجي معتمد'}</div>
+                      </td>
+                      <td className="p-3.5 font-mono font-bold text-emerald-700">{(c.amount ?? 0).toLocaleString()} ر.س</td>
+                      <td className="p-3.5"><Badge text={c.stage} type="primary" /></td>
+                      <td className="p-3.5"><Badge text={c.warranty_status} type="success" /></td>
+                      <td className="p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
                           <button
                             onClick={() => handleAdvanceStage(c)}
                             className="button-outline-on-light"
-                            style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
+                            style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
                             title="نقل للمرحلة التالية"
                           >
-                            تقدم المرحلة <i className="fa-solid fa-arrow-left text-xs"></i>
+                            <span>تقدم</span>
+                            <ArrowLeft className="w-3 h-3 mr-1" />
                           </button>
                           <button
                             onClick={() => setSelectedContractForPrint(c)}
                             className="button-outline-on-light"
-                            style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
+                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                             title="طباعة العقد"
                           >
-                          <i className="fa-solid fa-print"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                            <Printer className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
               {currentDisplayList.map((c) => (
-                <div key={c.id} style={{ backgroundColor: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ color: '#000000', fontSize: '13px' }}>{c.contract_number}</strong>
-                    <Badge text={c.stage} type="primary" />
-                  </div>
+                <div key={c.id} className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col justify-between">
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: '14px', color: '#000000' }}>{c.client_name}</div>
-                    <div style={{ fontSize: '11px', color: '#71717a' }}>العاملة: {c.maid_name} ({c.nationality})</div>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-mono text-xs font-bold text-zinc-500">{c.contract_number}</span>
+                      <Badge text={c.stage} type="primary" />
+                    </div>
+                    <h4 className="font-bold text-black text-sm mb-1">{c.client_name}</h4>
+                    <p className="text-xs text-zinc-600 mb-3">{c.maid_name} - {c.nationality}</p>
+                    <div className="py-2 px-3 bg-white rounded-xl text-xs font-mono font-bold text-emerald-700 mb-3 border border-zinc-200">
+                      {(c.amount ?? 0).toLocaleString()} ر.س
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e4e4e7', paddingTop: '10px' }}>
-                    <strong style={{ color: '#000000', fontSize: '13px' }}>{(c.amount ?? 0).toLocaleString()} ر.س</strong>
+                  <div className="flex gap-2 pt-2 border-t border-zinc-200">
+                    <button
+                      onClick={() => handleAdvanceStage(c)}
+                      className="button-primary-pill flex-1"
+                      style={{ fontSize: '11px', minHeight: '28px', padding: '2px 8px' }}
+                    >
+                      المرحلة التالية
+                    </button>
                     <button
                       onClick={() => setSelectedContractForPrint(c)}
-                      className="button-primary-pill"
-                      style={{ padding: '4px 14px', fontSize: '11px', minHeight: '28px' }}
+                      className="button-outline-on-light"
+                      style={{ fontSize: '11px', minHeight: '28px', padding: '2px 8px' }}
                     >
-                      طباعة
+                      <Printer className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
@@ -484,293 +498,150 @@ export const RecruitmentContractsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab: External Office Dispatches */}
-      {activeTab === 'dispatches' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>إرساليات المكتب الخارجي</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>رقم العقد</th>
-                <th>العميل</th>
-                <th>العاملة</th>
-                <th>الجنسية</th>
-                <th>المكتب الخارجي</th>
-                <th>حالة العقد</th>
-                <th>حالة الإرسالية</th>
-                <th>تاريخ الإرسالية</th>
-                <th>محطة الوصول</th>
-                <th>التكلفة ($)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_DISPATCHES.map((disp) => (
-                <tr key={disp.id}>
-                  <td><strong>{disp.contract_number}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{disp.client_name}</td>
-                  <td>{disp.maid_name}</td>
-                  <td>{disp.nationality}</td>
-                  <td>{disp.office_name}</td>
-                  <td><Badge text={disp.contract_status} type="success" /></td>
-                  <td><Badge text={disp.dispatch_status} type="purple" /></td>
-                  <td>{disp.dispatch_date}</td>
-                  <td>{disp.arrival_station}</td>
-                  <td><strong style={{ color: '#047857' }}>${disp.cost_usd}</strong></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab: Extension Requests */}
-      {activeTab === 'extensions' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات تمديد عقود الاستقدام</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>رقم العقد</th>
-                <th>العميل</th>
-                <th>العاملة</th>
-                <th>سنوات التمديد</th>
-                <th>مقدم الطلب</th>
-                <th>تاريخ الطلب</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_EXTENSIONS.map((ext) => (
-                <tr key={ext.id}>
-                  <td><strong>{ext.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{ext.contract_number}</td>
-                  <td>{ext.client_name}</td>
-                  <td>{ext.maid_name}</td>
-                  <td><strong>{ext.extension_years} سنوات</strong></td>
-                  <td>{ext.applicant}</td>
-                  <td>{ext.request_date}</td>
-                  <td><Badge text={ext.status} type="success" /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Tab: Return Requests */}
-      {activeTab === 'returns' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات استرجاع العقود والمبالغ</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>رقم العقد</th>
-                <th>اسم العميل</th>
-                <th>اسم العاملة</th>
-                <th>الملاحظات والسبب</th>
-                <th>تاريخ الطلب</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_RETURNS.map((ret) => (
-                <tr key={ret.id}>
-                  <td><strong>{ret.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{ret.contract_number}</td>
-                  <td>{ret.client_name}</td>
-                  <td>{ret.maid_name}</td>
-                  <td style={{ fontSize: '11px', color: '#64748B' }}>{ret.notes}</td>
-                  <td>{ret.request_date}</td>
-                  <td><Badge text={ret.status} type="danger" /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Comprehensive Add Contract Modal (Full ClickERP fields) */}
+      {/* Add Contract Modal */}
       {showAddModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '20px',
-              width: '100%',
-              maxWidth: '780px',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              padding: '28px',
-              boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '900', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <i className="fa-solid fa-plus-circle text-emerald-600"></i>
-                إضافة عقد استقدام جديد (ClickERP Complete Form)
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-emerald-400" />
+                <span>إضافة عقد استقدام جديد (Musaned Form)</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} style={{ border: 'none', background: 'none', fontSize: '18px', cursor: 'pointer', color: '#94A3B8' }}>
-                <i className="fa-solid fa-xmark"></i>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleAddContract} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Section 1: Client Information */}
-              <div style={{ backgroundColor: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 600, color: '#000000' }}>
-                  1. بيانات العميل صاحب الطلب
-                </h4>
-
-                <div style={{ display: 'flex', gap: '20px', marginBottom: '12px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                    <input type="radio" name="clientType" checked={clientType === 'شخص'} onChange={() => setClientType('شخص')} />
-                    شخص (أفراد)
-                  </label>
-                  <label style={{ fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                    <input type="radio" name="clientType" checked={clientType === 'شركة'} onChange={() => setClientType('شركة')} />
-                    شركة (قطاع أعمال)
-                  </label>
+            <form onSubmit={handleAddContract} className="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1 bg-white text-black">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم العميل *</label>
+                  <input
+                    type="text"
+                    required
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>اسم العميل *</label>
-                    <input type="text" required value={clientName} onChange={(e) => setClientName(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم الجوال *</label>
-                    <input type="text" required value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="+9665..." style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم الهوية الوطنية *</label>
-                    <input type="text" value={clientNationalId} onChange={(e) => setClientNationalId(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>مدينة تسليم العميل *</label>
-                    <input type="text" value={deliveryCity} onChange={(e) => setDeliveryCity(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>تاريخ الميلاد (اختياري)</label>
-                    <input type="date" value={clientBirthDate} onChange={(e) => setClientBirthDate(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم الجوال الآخر (اختياري)</label>
-                    <input type="text" value={clientAltPhone} onChange={(e) => setClientAltPhone(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>عدد الغرف (اختياري)</label>
-                    <input type="number" value={roomsCount} onChange={(e) => setRoomsCount(e.target.value)} placeholder="مثال: 5" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>أفراد الأسرة (اختياري)</label>
-                    <input type="number" value={familyMembersCount} onChange={(e) => setFamilyMembersCount(e.target.value)} placeholder="مثال: 4" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>أطفال تحت سن 12</label>
-                    <input type="number" value={childrenUnder12} onChange={(e) => setChildrenUnder12(e.target.value)} placeholder="مثال: 2" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الجوال *</label>
+                  <input
+                    type="text"
+                    required
+                    value={clientPhone}
+                    onChange={(e) => setClientPhone(e.target.value)}
+                    placeholder="+9665..."
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
                 </div>
               </div>
 
-              {/* Section 2: Maid & Office Information */}
-              <div style={{ backgroundColor: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 600, color: '#000000' }}>
-                  2. بيانات العاملة والمكتب الخارجي
-                </h4>
-
-                <div style={{ display: 'flex', gap: '20px', marginBottom: '12px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                    <input type="radio" name="maidMode" checked={addMaidMode === 'عامل/ة موجودة'} onChange={() => setAddMaidMode('عامل/ة موجودة')} />
-                    عامل/ة موجودة بالبنك
-                  </label>
-                  <label style={{ fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-                    <input type="radio" name="maidMode" checked={addMaidMode === 'عامل/ة مختصرة'} onChange={() => setAddMaidMode('عامل/ة مختصرة')} />
-                    عامل/ة مختصرة
-                  </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الهوية / الإقامة</label>
+                  <input
+                    type="text"
+                    value={clientNationalId}
+                    onChange={(e) => setClientNationalId(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>اسم العاملة *</label>
-                    <input type="text" required value={maidName} onChange={(e) => setMaidName(e.target.value)} placeholder="مثال: MARIA SANTOS" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>رقم جواز السفر</label>
-                    <input type="text" value={maidPassport} onChange={(e) => setMaidPassport(e.target.value)} placeholder="PH882910" style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الجنسية *</label>
-                    <select value={nationality} onChange={(e) => setNationality(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
-                      <option>الفلبين</option>
-                      <option>إثيوبيا</option>
-                      <option>أوغندا</option>
-                      <option>كينيا</option>
-                      <option>سريلانكا</option>
-                      <option>الهند</option>
-                      <option>بنغلاديش</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>المكتب الخارجي الشريك *</label>
-                    <select value={externalOffice} onChange={(e) => setExternalOffice(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
-                      <option>PLATINUM BROTHERS INT'L</option>
-                      <option>DAMAS FOREIGN AGENCY</option>
-                      <option>VERSATILE OVERSEAS</option>
-                      <option>MANILA RECRUITMENT HUB</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>مبلغ العقد قبل الضريبة *</label>
-                    <input type="number" required value={amountInput} onChange={(e) => setAmountInput(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>الفرع المسؤول</label>
-                    <select value={branch} onChange={(e) => setBranch(e.target.value)} style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', boxSizing: 'border-box' }}>
-                      <option>فرع الرياض الرئيسي</option>
-                      <option>فرع جدة</option>
-                      <option>فرع الدمام</option>
-                      <option>فرع خميس مشيط</option>
-                    </select>
-                  </div>
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">مدينة التوصيل</label>
+                  <select
+                    value={deliveryCity}
+                    onChange={(e) => setDeliveryCity(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option>الرياض</option>
+                    <option>جدة</option>
+                    <option>الدمام</option>
+                    <option>المدينة المنورة</option>
+                    <option>أبها</option>
+                  </select>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم العاملة *</label>
+                  <input
+                    type="text"
+                    required
+                    value={maidName}
+                    onChange={(e) => setMaidName(e.target.value)}
+                    placeholder="MARIA SANTOS"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الجواز</label>
+                  <input
+                    type="text"
+                    value={maidPassport}
+                    onChange={(e) => setMaidPassport(e.target.value)}
+                    placeholder="P1234567"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">الجنسية</label>
+                  <select
+                    value={nationality}
+                    onChange={(e) => setNationality(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option>الفلبين</option>
+                    <option>إثيوبيا</option>
+                    <option>كينيا</option>
+                    <option>أوغندا</option>
+                    <option>سريلانكا</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">مبلغ الاستقدام (ر.س)</label>
+                  <input
+                    type="number"
+                    value={amountInput}
+                    onChange={(e) => setAmountInput(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">الفرع المسؤول</label>
+                  <select
+                    value={branch}
+                    onChange={(e) => setBranch(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option>فرع الرياض الرئيسي</option>
+                    <option>فرع جدة</option>
+                    <option>فرع الدمام</option>
+                    <option>فرع خميس مشيط</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3 -mx-6 -mb-6 mt-4">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="button-outline-on-light"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="button-primary-pill"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   اعتماد وحفظ العقد
                 </button>
@@ -782,12 +653,15 @@ export const RecruitmentContractsPage: React.FC = () => {
 
       {/* Contract Print Modal */}
       {selectedContractForPrint && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '640px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800' }}>طباعة عقد الاستقدام المعتمد</h3>
-              <button onClick={() => setSelectedContractForPrint(null)} style={{ border: 'none', background: 'none', fontSize: '18px', cursor: 'pointer', color: '#94A3B8' }}>
-                <i className="fa-solid fa-xmark"></i>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6">
+            <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
+              <h3 className="font-bold text-black text-base">طباعة عقد الاستقدام المعتمد</h3>
+              <button
+                onClick={() => setSelectedContractForPrint(null)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
             <DualBrandingDocumentGenerator
@@ -795,22 +669,22 @@ export const RecruitmentContractsPage: React.FC = () => {
               documentNumber={selectedContractForPrint.contract_number}
               date={new Date().toISOString().slice(0, 10)}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>اسم العميل:</span>
-                  <strong style={{ color: '#0F172A' }}>{selectedContractForPrint.client_name}</strong>
+              <div className="flex flex-col gap-2 text-xs">
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">اسم العميل:</span>
+                  <strong className="text-black">{selectedContractForPrint.client_name}</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>رقم توثيق مساند:</span>
-                  <strong style={{ color: '#6D28D9', fontFamily: 'monospace' }}>{selectedContractForPrint.musaned_number || 'MSN-992011'}</strong>
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">رقم توثيق مساند:</span>
+                  <strong className="text-purple-700 font-mono font-bold">{selectedContractForPrint.musaned_number || 'MSN-992011'}</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>العاملة والجنسية:</span>
-                  <strong style={{ color: '#0F172A' }}>{selectedContractForPrint.maid_name} ({selectedContractForPrint.nationality})</strong>
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">العاملة والجنسية:</span>
+                  <strong className="text-black">{selectedContractForPrint.maid_name} ({selectedContractForPrint.nationality})</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F1F5F9' }}>
-                  <span style={{ color: '#64748B', fontWeight: '700' }}>إجمالي المبلغ:</span>
-                  <strong style={{ color: '#047857' }}>{(selectedContractForPrint.amount ?? 0).toLocaleString()} ر.س</strong>
+                <div className="flex justify-between py-1.5 border-b border-zinc-100">
+                  <span className="text-zinc-500 font-semibold">إجمالي المبلغ:</span>
+                  <strong className="text-emerald-700 font-mono font-bold">{(selectedContractForPrint.amount ?? 0).toLocaleString()} ر.س</strong>
                 </div>
               </div>
             </DualBrandingDocumentGenerator>
@@ -820,3 +694,5 @@ export const RecruitmentContractsPage: React.FC = () => {
     </div>
   );
 };
+
+export default RecruitmentContractsPage;

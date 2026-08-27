@@ -5,6 +5,7 @@ import { useJournals, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { chartOfAccountsService } from '../services/accounting/chartOfAccountsService';
 import { useAppStore } from '../stores/appStore';
+import { BookOpen, Plus, FileSpreadsheet, FileText, Search, Upload, Eye, X, Check, AlertTriangle, Trash2 } from 'lucide-react';
 
 export interface JournalLineItem {
   id: string;
@@ -78,7 +79,7 @@ export const JournalsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { setActiveTab } = useAppStore();
   const { data: rawJournals = [], isLoading } = useJournals();
-  const { createItem, updateItem } = useTableMutation('company_journal_entries');
+  const { createItem } = useTableMutation('company_journal_entries');
 
   const journals: JournalRecord[] = rawJournals.length > 0 ? rawJournals : DEFAULT_MOCK_JOURNALS;
   const accountsList = chartOfAccountsService.getAccountsByCompany(activeCompanyId);
@@ -187,59 +188,78 @@ export const JournalsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header & Controls */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <i className="fa-solid fa-book-journal-whills text-purple-600"></i>
-            دفتر اليومية والقيود المزدوجة المتوازنة
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">
-            إدارة وترحيل قيود اليومية العامة لـ{' '}
-            <strong className="text-slate-700">{activeCompany.name}</strong> بدقة محاسبية متوازنة (Double Entry)
-          </p>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <BookOpen className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>JOURNAL ENTRIES LEDGER</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              دفتر اليومية والقيود المزدوجة
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              إدارة وترحيل قيود اليومية العامة لـ{' '}
+              <strong style={{ color: '#ffffff', fontWeight: 600 }}>{activeCompany.name}</strong> بدقة محاسبية متوازنة (Double Entry)
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="button-primary-pill"
-            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus text-xs"></i>
-            + إنشاء قيد محاسبي متوازن
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إنشاء قيد محاسبي متوازن</span>
           </button>
           <button
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
-            className="button-outline-on-light"
+            className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            title="استيراد قيود يومية من ملف Excel / CSV"
           >
-            <i className="fa-solid fa-file-import ml-1"></i>
-            استيراد قيود
+            <Upload className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>استيراد قيود</span>
           </button>
           <button
             onClick={() => exportData('journals', filteredJournals, 'excel', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="button-outline-on-light"
+            className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            title="تصدير إكسيل"
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
-            Excel
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>Excel</span>
           </button>
           <button
             onClick={() => exportData('journals', filteredJournals, 'pdf', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="button-outline-on-light"
+            className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            title="تصدير PDF"
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i>
-            PDF
+            <FileText className="w-4 h-4 ml-1 text-rose-400" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي القيود المرحّلة</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{journals.length} قيداً</div>
@@ -272,15 +292,17 @@ export const JournalsPage: React.FC = () => {
       </div>
 
       {/* Filter & Table Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex-1 min-w-[280px]">
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
               placeholder="ابحث برقم القيد، البيان، أو اسم المحاسب..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-600 transition-colors"
+              className="text-input"
+              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
             />
           </div>
 
@@ -288,7 +310,7 @@ export const JournalsPage: React.FC = () => {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none"
+              className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs font-bold text-black focus:border-black focus:outline-none"
             >
               <option value="ALL">جميع أنواع القيود</option>
               <option value="MANUAL">قيود يدوية (MANUAL)</option>
@@ -300,63 +322,65 @@ export const JournalsPage: React.FC = () => {
 
         {/* Journals Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-sm">
-            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
               <tr>
-                <th className="py-3.5 px-4">رقم القيد</th>
-                <th className="py-3.5 px-4">التاريخ</th>
-                <th className="py-3.5 px-4">البيان والشرح</th>
-                <th className="py-3.5 px-4">إجمالي المدين</th>
-                <th className="py-3.5 px-4">إجمالي الدائن</th>
-                <th className="py-3.5 px-4">الفرع / مركز التكلفة</th>
-                <th className="py-3.5 px-4">المُعد / المعتمد</th>
-                <th className="py-3.5 px-4">الحالة</th>
-                <th className="py-3.5 px-4 text-center">إجراءات</th>
+                <th className="p-3.5">رقم القيد</th>
+                <th className="p-3.5">التاريخ</th>
+                <th className="p-3.5">البيان والشرح</th>
+                <th className="p-3.5">إجمالي المدين</th>
+                <th className="p-3.5">إجمالي الدائن</th>
+                <th className="p-3.5">الفرع / مركز التكلفة</th>
+                <th className="p-3.5">المُعد</th>
+                <th className="p-3.5">الحالة</th>
+                <th className="p-3.5 text-center">إجراءات</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+            <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-center text-slate-400">
-                    <i className="fa-solid fa-spinner fa-spin ml-2"></i> جاري استرجاع القيود المحاسبية من سوبابيس...
+                  <td colSpan={9} className="py-10 text-center text-zinc-400">
+                    جاري استرجاع القيود المحاسبية...
                   </td>
                 </tr>
               ) : filteredJournals.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-center text-slate-400">
+                  <td colSpan={9} className="py-10 text-center text-zinc-400">
                     لا توجد قيود مسجلة تطابق معايير البحث
                   </td>
                 </tr>
               ) : (
                 filteredJournals.map((j) => (
-                  <tr key={j.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-black text-purple-700">{j.entry_number}</td>
-                    <td className="py-3.5 px-4 text-xs text-slate-500">{j.entry_date}</td>
-                    <td className="py-3.5 px-4 font-bold text-slate-900 max-w-xs truncate" title={j.description}>
+                  <tr key={j.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-mono font-bold text-black">{j.entry_number}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{j.entry_date}</td>
+                    <td className="p-3.5 font-semibold text-black max-w-xs truncate" title={j.description}>
                       {j.description}
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-black">{j.total_debit.toLocaleString()} ر.س</td>
-                    <td className="py-3.5 px-4 font-bold text-rose-700">{j.total_credit.toLocaleString()} ر.س</td>
-                    <td className="py-3.5 px-4 text-xs text-slate-600">
+                    <td className="p-3.5 font-mono font-bold text-black">{j.total_debit.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-rose-700">{j.total_credit.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 text-zinc-600">
                       <div>{j.branch_name}</div>
                       {j.cost_center_code && (
-                        <span className="text-[10px] text-slate-400 font-mono">[{j.cost_center_code}]</span>
+                        <span className="text-[10px] text-zinc-400 font-mono">[{j.cost_center_code}]</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-xs text-slate-600">{j.created_by}</td>
-                    <td className="py-3.5 px-4">
+                    <td className="p-3.5 text-zinc-600">{j.created_by}</td>
+                    <td className="p-3.5">
                       <Badge
                         text={j.status === 'POSTED' ? 'مرحّل ومعتمد' : 'مسودة'}
                         type={j.status === 'POSTED' ? 'success' : 'warning'}
                       />
                     </td>
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="p-3.5 text-center">
                       <button
                         onClick={() => setSelectedJournal(j)}
-                        className="p-1.5 hover:bg-slate-100 text-slate-600 rounded-lg transition-colors text-xs font-bold"
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                         title="عرض تفاصيل أطراف القيد"
                       >
-                        <i className="fa-solid fa-eye text-purple-600"></i> معاينة
+                        <Eye className="w-3 h-3 ml-1" />
+                        <span>معاينة</span>
                       </button>
                     </td>
                   </tr>
@@ -369,41 +393,38 @@ export const JournalsPage: React.FC = () => {
 
       {/* Add Balanced Journal Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2.5">
-                <i className="fa-solid fa-scale-balanced text-purple-400"></i>
-                <h3 className="font-bold text-base">إنشاء قيد يومية متوازن جديد (Double-Entry Journal)</h3>
-              </div>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <i className="fa-solid fa-xmark text-lg"></i>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
+            <div className="p-5 bg-black text-white flex items-center justify-between shrink-0">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <span>إنشاء قيد يومية متوازن جديد (Double-Entry Journal)</span>
+              </h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveJournal} className="p-6 space-y-5 overflow-y-auto flex-1">
+            <form onSubmit={handleSaveJournal} className="p-6 space-y-4 overflow-y-auto flex-1 bg-white text-black">
               {/* Header Details */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">تاريخ القيد *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">تاريخ القيد *</label>
                   <input
                     type="date"
                     value={entryDate}
                     onChange={(e) => setEntryDate(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">نوع القيد *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">نوع القيد *</label>
                   <select
                     value={entryType}
                     onChange={(e) => setEntryType(e.target.value as any)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="MANUAL">قيد يومية يدوي (MANUAL)</option>
                     <option value="AUTOMATIC">قيد تسوية / تلقائي (AUTOMATIC)</option>
@@ -412,11 +433,11 @@ export const JournalsPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">الفرع *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع *</label>
                   <select
                     value={branchName}
                     onChange={(e) => setBranchName(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option>فرع الرياض الرئيسي</option>
                     <option>فرع جدة</option>
@@ -427,42 +448,41 @@ export const JournalsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">البيان والشرح المحاسبي للقيد *</label>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">البيان والشرح المحاسبي للقيد *</label>
                 <input
                   type="text"
                   placeholder="مثال: إثبات سداد مصاريف استقدام عمالة / تحصيل دفعة عقد إيجار..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:border-purple-600"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
               {/* Multi-Line Journal Lines Builder */}
-              <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 space-y-3">
+              <div className="border border-zinc-200 rounded-2xl p-4 bg-zinc-50 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-700 flex items-center gap-2">
-                    <i className="fa-solid fa-list-ol text-purple-600"></i>
-                    بنود وأطراف القيد المحاسبي
-                  </h4>
+                  <h4 className="text-xs font-bold text-black">بنود وأطراف القيد المحاسبي</h4>
                   <button
                     type="button"
                     onClick={handleAddLine}
-                    className="px-3 py-1.5 bg-white border border-purple-300 text-purple-700 hover:bg-purple-50 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5"
+                    className="button-outline-on-light"
+                    style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
                   >
-                    <i className="fa-solid fa-plus text-[10px]"></i> إضافة طرف قيد
+                    <Plus className="w-3 h-3 ml-1" />
+                    <span>إضافة طرف قيد</span>
                   </button>
                 </div>
 
                 <div className="space-y-2">
                   {lines.map((line, idx) => (
-                    <div key={idx} className="grid grid-cols-12 gap-2 items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <div key={idx} className="grid grid-cols-12 gap-2 items-center bg-white p-3 rounded-2xl border border-zinc-200">
                       <div className="col-span-5">
-                        <label className="block text-[10px] text-slate-400 font-bold mb-1">الحساب المحاسبي</label>
+                        <label className="block text-[10px] text-zinc-500 font-semibold mb-1">الحساب المحاسبي</label>
                         <select
                           value={line.account_code}
                           onChange={(e) => handleLineChange(idx, 'account_code', e.target.value)}
-                          className="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 outline-none"
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-1.5 px-2 text-xs text-black focus:border-black focus:outline-none"
                         >
                           {accountsList.map((acc) => (
                             <option key={acc.code} value={acc.code}>
@@ -473,26 +493,26 @@ export const JournalsPage: React.FC = () => {
                       </div>
 
                       <div className="col-span-3">
-                        <label className="block text-[10px] text-zinc-700 font-bold mb-1">مدين (Debit)</label>
+                        <label className="block text-[10px] text-zinc-700 font-semibold mb-1">مدين (Debit)</label>
                         <input
                           type="number"
                           step="0.01"
                           value={line.debit === 0 ? '' : line.debit}
                           onChange={(e) => handleLineChange(idx, 'debit', e.target.value)}
                           placeholder="0.00"
-                          className="w-full px-2.5 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-black outline-none focus:border-black"
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-1.5 px-2 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
                         />
                       </div>
 
                       <div className="col-span-3">
-                        <label className="block text-[10px] text-rose-600 font-bold mb-1">دائن (Credit)</label>
+                        <label className="block text-[10px] text-rose-600 font-semibold mb-1">دائن (Credit)</label>
                         <input
                           type="number"
                           step="0.01"
                           value={line.credit === 0 ? '' : line.credit}
                           onChange={(e) => handleLineChange(idx, 'credit', e.target.value)}
                           placeholder="0.00"
-                          className="w-full px-2.5 py-1.5 bg-rose-50/50 border border-rose-200 rounded-lg text-xs font-bold text-rose-900 outline-none"
+                          className="w-full bg-rose-50/50 border border-rose-200 rounded-xl py-1.5 px-2 text-xs font-mono font-bold text-rose-900 focus:border-rose-500 focus:outline-none"
                         />
                       </div>
 
@@ -501,56 +521,57 @@ export const JournalsPage: React.FC = () => {
                           type="button"
                           onClick={() => handleRemoveLine(idx)}
                           disabled={lines.length <= 2}
-                          className="text-slate-300 hover:text-rose-500 disabled:opacity-30 transition-colors p-1"
+                          className="text-zinc-400 hover:text-rose-600 disabled:opacity-30 p-1"
                         >
-                          <i className="fa-solid fa-trash-can text-sm"></i>
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Balance Summary & Validation Box */}
-                <div className={`p-4 rounded-xl border flex items-center justify-between ${
+                {/* Balance Summary Box */}
+                <div className={`p-3.5 rounded-2xl border flex items-center justify-between ${
                   isBalanced ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'
                 }`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                      isBalanced ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'
-                    }`}>
-                      <i className={`fa-solid ${isBalanced ? 'fa-check' : 'fa-triangle-exclamation'}`}></i>
-                    </div>
+                  <div className="flex items-center gap-2.5">
+                    {isBalanced ? (
+                      <Check className="w-4 h-4 text-emerald-700" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-amber-700" />
+                    )}
                     <div>
                       <div className="text-xs font-bold">
                         {isBalanced ? 'القيد المحاسبي متوازن وصالح للترحيل' : 'القيد غير متوازن! يجب أن يتساوى المدين مع الدائن.'}
                       </div>
-                      <div className="text-[11px] opacity-80">
+                      <div className="text-[11px] opacity-80 font-mono">
                         إجمالي المدين: {totalDebit.toLocaleString()} ر.س | إجمالي الدائن: {totalCredit.toLocaleString()} ر.س
                       </div>
                     </div>
                   </div>
 
-                  <div className="text-end font-mono font-bold text-sm">
+                  <div className="text-end font-mono font-bold text-xs">
                     الفارق: {difference.toFixed(2)} ر.س
                   </div>
                 </div>
               </div>
 
               {/* Submit Buttons */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold transition-all"
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={!isBalanced || !description}
-                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 disabled:opacity-50 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
-                  <i className="fa-solid fa-check"></i>
                   ترحيل واعتماد القيد المحاسبي
                 </button>
               </div>

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { StatCard } from '../components/ui/StatCard';
-import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { Package, Calculator, FileText, Plus, Check, PenSquare, FileSignature, FileSpreadsheet, X } from 'lucide-react';
 
 export interface RentPackage {
   id: string;
@@ -135,7 +134,7 @@ const MOCK_TERMS: ContractTermClause[] = [
 export const RentPackagesPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'packages' | 'calculator' | 'terms'>('packages');
   const [packages, setPackages] = useState<RentPackage[]>([]);
-  const [terms, setTerms] = useState<ContractTermClause[]>(MOCK_TERMS);
+  const [terms] = useState<ContractTermClause[]>(MOCK_TERMS);
   const [showAddModal, setShowAddModal] = useState(false);
 
   // Pricing Calculator State
@@ -180,7 +179,6 @@ export const RentPackagesPage: React.FC = () => {
     setShowAddModal(false);
   };
 
-  const calcTotalMonths = calcDuration;
   const calcSubtotal = calcBaseRate * calcDuration * calcWorkersCount;
   const calcDiscount = calcDuration >= 12 ? calcSubtotal * 0.2 : calcDuration >= 3 ? calcSubtotal * 0.1 : 0;
   const calcTotalAfterDiscount = calcSubtotal - calcDiscount;
@@ -200,70 +198,46 @@ export const RentPackagesPage: React.FC = () => {
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
           flexWrap: 'wrap',
-          gap: '16px'
+          gap: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              RENTAL PACKAGES & SLAs
-            </span>
-            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>محرك باقات وبنود عقود التأجير والتشغيل</span>
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Package className="w-5 h-5" />
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            باقات وبنود عقود التأجير والتشغيل
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            تحديد أسعار الباقات المرنة، الخصومات الترويجية، وحساب هوامش الأرباح وبنود العقد الموحد
-          </p>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>PRICING & BUNDLES</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              باقات التأجير وهوامش الربح
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              هيكلة الأسعار، حاسبة عروض الأسعار B2B/B2C، وشروط وثيقة التعاقد
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowAddModal(true)}
-            className="button-aloe-pill"
+            className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus ml-1"></i> + إضافة باقة تأجير جديدة
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة باقة جديدة</span>
           </button>
         </div>
       </div>
 
-      {/* KPI Stats */}
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الباقات المعتمدة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{packages.length} باقات</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>أفراد وقطاع تجاري</span>
-        </div>
-
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>عقود التأجير النشطة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>50 عقداً</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إيرادات شهرية مستقرة</span>
-        </div>
-
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>متوسط الإيجار الشهري</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>2,100 ر.س</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>شامل الضمان والرعاية</span>
-        </div>
-
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>نسبة التجديد للعقود</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>92.4%</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>استمرارية الخدمة</span>
-        </div>
-      </div>
-
-      {/* Sub Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+      {/* Tabs */}
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-zinc-200 pb-3">
         {[
-          { id: 'packages', label: `قائمة الباقات والأسعار (${packages.length})`, icon: 'fa-boxes-stacked' },
-          { id: 'calculator', label: 'حاسبة التكلفة والربحية', icon: 'fa-calculator' },
-          { id: 'terms', label: `بنود وشروط العقد (${terms.length})`, icon: 'fa-file-contract' },
+          { id: 'packages', label: `الباقات المعتمدة (${packages.length})` },
+          { id: 'calculator', label: 'حاسبة عروض الأسعار والهوامش' },
+          { id: 'terms', label: 'بنود وشروط وثيقة التأجير' },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -271,6 +245,8 @@ export const RentPackagesPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -281,79 +257,65 @@ export const RentPackagesPage: React.FC = () => {
                 fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                whiteSpace: 'nowrap',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
               <span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* TAB 1: PACKAGES CARDS */}
+      {/* TAB 1: PACKAGES LIST */}
       {activeTab === 'packages' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-          {(packages.length > 0 ? packages : MOCK_PACKAGES).map((pkg) => (
-            <div
-              key={pkg.id}
-              style={{
-                background: '#FFF',
-                borderRadius: '16px',
-                border: '1px solid #E2E8F0',
-                padding: '24px',
-                position: 'relative',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}
-            >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {packages.map((pkg) => (
+            <div key={pkg.id} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                  <Badge text={pkg.category} type="info" />
+                <div className="flex justify-between items-start mb-3">
+                  <span className="pill-tag-shade" style={{ fontSize: '11px' }}>{pkg.category}</span>
+                  <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{pkg.active_contracts} عقد نشط</span>
+                </div>
+
+                <h3 className="text-base font-bold text-black mb-1">{pkg.name}</h3>
+                <p className="text-xs text-zinc-500 mb-4">{pkg.terms_summary}</p>
+
+                <div className="py-3 px-4 bg-zinc-50 rounded-2xl mb-4 border border-zinc-100 flex justify-between items-baseline">
+                  <div>
+                    <span className="text-2xl font-mono font-bold text-black">{pkg.monthly_rate.toLocaleString()}</span>
+                    <span className="text-xs text-zinc-500 mr-1">ر.س / شهر</span>
+                  </div>
                   {pkg.discount_percentage > 0 && (
-                    <span style={{ background: '#EF4444', color: '#FFF', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: '800' }}>
-                      خصم {pkg.discount_percentage}%
-                    </span>
+                    <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>خصم {pkg.discount_percentage}%</span>
                   )}
                 </div>
 
-                <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#0F172A', marginBottom: '6px' }}>{pkg.name}</h3>
-                <div style={{ fontSize: '28px', fontWeight: '900', color: '#047857', marginBottom: '4px' }}>
-                  {(pkg.monthly_rate ?? 0).toLocaleString()} <span style={{ fontSize: '13px', fontWeight: '700', color: '#64748B' }}>ر.س / شهرياً</span>
-                </div>
-                <div style={{ fontSize: '11.5px', color: '#64748B', marginBottom: '16px' }}>
-                  تأمين مسترد: {(pkg.security_deposit ?? 0).toLocaleString()} ر.س | العقود السارية: <strong>{pkg.active_contracts ?? 0}</strong>
-                </div>
-
-                <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: '14px', marginBottom: '16px' }}>
-                  <div style={{ fontSize: '12.5px', fontWeight: '700', color: '#334155', marginBottom: '8px' }}>المزايا المشمولة في الباقة:</div>
-                  <ul className="space-y-1.5" style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '12.5px' }}>
-                    {(Array.isArray(pkg.features) ? pkg.features : typeof pkg.features === 'string' ? (pkg.features as string).split('\n').filter(Boolean) : []).map((feat, fIdx) => (
-                      <li key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', color: '#475569' }}>
-                        <i className="fa-solid fa-circle-check text-emerald-600" style={{ fontSize: '14px' }}></i> {feat}
+                <div className="space-y-2 mb-6">
+                  <span className="text-xs text-zinc-500 font-bold block mb-1">المزايا والضمانات المشمولة:</span>
+                  <ul className="space-y-1.5 text-xs text-zinc-700">
+                    {pkg.features.map((feat, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>{feat}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #F1F5F9', paddingTop: '14px' }}>
+              <div className="flex gap-2 border-t border-zinc-100 pt-4">
                 <button
-                  className="btn-odoo btn-odoo-secondary"
-                  style={{ flex: 1, fontSize: '12px' }}
+                  className="button-outline-on-light flex-1"
+                  style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
                 >
-                  <i className="fa-solid fa-pen-to-square ml-1"></i> تعديل الباقة
+                  <PenSquare className="w-3.5 h-3.5 ml-1" />
+                  <span>تعديل الباقة</span>
                 </button>
                 <button
-                  className="btn-odoo btn-odoo-primary"
-                  style={{ flex: 1, fontSize: '12px', background: '#047857', borderColor: '#047857' }}
+                  className="button-primary-pill flex-1"
+                  style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
                 >
-                  <i className="fa-solid fa-file-signature ml-1"></i> إنشاء عقد بالباقة
+                  <FileSignature className="w-3.5 h-3.5 ml-1" />
+                  <span>إنشاء عقد</span>
                 </button>
               </div>
             </div>
@@ -363,19 +325,20 @@ export const RentPackagesPage: React.FC = () => {
 
       {/* TAB 2: PRICING CALCULATOR */}
       {activeTab === 'calculator' && (
-        <div style={{ background: '#FFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0F172A', marginBottom: '16px' }}>
-            <i className="fa-solid fa-calculator text-emerald-600 ml-2"></i> حاسبة عروض الأسعار وهوامش الربح لعقود التأجير
+        <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+          <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+            <Calculator className="w-5 h-5" />
+            <span>حاسبة عروض الأسعار وهوامش الربح لعقود التأجير</span>
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px' }}>مدة التعاقد (بالأشهر)</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">مدة التعاقد (بالأشهر)</label>
                 <select
                   value={calcDuration}
                   onChange={(e) => setCalcDuration(Number(e.target.value))}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option value={1}>شهر واحد (باقة مرنة)</option>
                   <option value={3}>3 أشهر (ربع سنوي - خصم 10%)</option>
@@ -385,67 +348,66 @@ export const RentPackagesPage: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px' }}>عدد العاملات / الكوادر المطلوبة</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">عدد العاملات / الكوادر المطلوبة</label>
                 <input
                   type="number"
                   min={1}
                   max={50}
                   value={calcWorkersCount}
                   onChange={(e) => setCalcWorkersCount(Math.max(1, Number(e.target.value)))}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px' }}>سعر الإيجار الشهري للعاملة الواحدة (ر.س)</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">سعر الإيجار الشهري للعاملة الواحدة (ر.س)</label>
                 <input
                   type="number"
                   step={50}
                   value={calcBaseRate}
                   onChange={(e) => setCalcBaseRate(Number(e.target.value))}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Calculated Breakdown Card */}
-            <div style={{ background: '#F8FAFC', padding: '20px', borderRadius: '14px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col justify-between">
               <div>
-                <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A', marginBottom: '14px' }}>
-                  تفاصيل العرض المالي للعقد الموحد
-                </h3>
+                <h3 className="text-sm font-bold text-black mb-3">تفاصيل العرض المالي للعقد الموحد</h3>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #E2E8F0' }}>
-                  <span style={{ color: '#64748B' }}>القيمة الأساسية ({calcDuration} شهر × {calcWorkersCount} عاملة):</span>
-                  <span style={{ fontWeight: '700' }}>{calcSubtotal.toLocaleString()} ر.س</span>
+                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-zinc-600">
+                  <span>القيمة الأساسية ({calcDuration} شهر × {calcWorkersCount} عاملة):</span>
+                  <span className="font-mono font-bold text-black">{calcSubtotal.toLocaleString()} ر.س</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #E2E8F0' }}>
-                  <span style={{ color: '#059669' }}>الخصم الترويجي المطبق:</span>
-                  <span style={{ fontWeight: '800', color: '#059669' }}>- {calcDiscount.toLocaleString()} ر.س</span>
+                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-emerald-700 font-semibold">
+                  <span>الخصم الترويجي المطبق:</span>
+                  <span className="font-mono font-bold">- {calcDiscount.toLocaleString()} ر.س</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #E2E8F0' }}>
-                  <span style={{ color: '#64748B' }}>المبلغ الخاضع للضريبة:</span>
-                  <span style={{ fontWeight: '700' }}>{calcTotalAfterDiscount.toLocaleString()} ر.س</span>
+                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-zinc-600">
+                  <span>المبلغ الخاضع للضريبة:</span>
+                  <span className="font-mono font-bold text-black">{calcTotalAfterDiscount.toLocaleString()} ر.س</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', padding: '6px 0', borderBottom: '1px solid #E2E8F0' }}>
-                  <span style={{ color: '#64748B' }}>ضريبة القيمة المضافة (15% ZATCA):</span>
-                  <span style={{ fontWeight: '700' }}>{calcVat.toLocaleString()} ر.س</span>
+                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-zinc-600">
+                  <span>ضريبة القيمة المضافة (15% ZATCA):</span>
+                  <span className="font-mono font-bold text-black">{calcVat.toLocaleString()} ر.س</span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', padding: '12px 0', marginTop: '6px' }}>
-                  <span style={{ fontWeight: '900', color: '#0F172A' }}>الإجمالي النهائي شامل الضريبة:</span>
-                  <span style={{ fontWeight: '900', color: '#047857', fontSize: '20px' }}>{calcGrandTotal.toLocaleString()} ر.س</span>
+                <div className="flex justify-between text-base py-3 font-bold text-black mt-2">
+                  <span>الإجمالي النهائي شامل الضريبة:</span>
+                  <span className="font-mono text-emerald-700 text-lg">{calcGrandTotal.toLocaleString()} ر.س</span>
                 </div>
               </div>
 
               <button
-                className="btn-odoo btn-odoo-primary"
-                style={{ width: '100%', padding: '10px', fontSize: '13px', background: '#047857', borderColor: '#047857' }}
+                className="button-primary-pill w-full mt-4"
+                style={{ minHeight: '38px', fontSize: '12.5px', padding: '8px 20px' }}
               >
-                <i className="fa-solid fa-file-invoice-dollar ml-1"></i> تصدير عرض سعر رسمي (PDF Quotation)
+                <FileSpreadsheet className="w-4 h-4 ml-1.5" />
+                <span>تصدير عرض سعر رسمي (PDF Quotation)</span>
               </button>
             </div>
           </div>
@@ -454,31 +416,27 @@ export const RentPackagesPage: React.FC = () => {
 
       {/* TAB 3: CONTRACT TERMS */}
       {activeTab === 'terms' && (
-        <div className="space-y-3">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#0F172A' }}>
-              بنود وشروط وثيقة عقد الإيجار والتشغيل المعتمدة
-            </h2>
-            <button className="btn-odoo btn-odoo-primary" style={{ fontSize: '12px', background: '#0F172A', borderColor: '#0F172A' }}>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-base font-bold text-black">بنود وشروط وثيقة عقد الإيجار والتشغيل المعتمدة</h2>
+            <button className="button-primary-pill" style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}>
               + إضافة بند شرطي جديد
             </button>
           </div>
 
           <div className="space-y-3">
             {terms.map((term) => (
-              <div key={term.id} style={{ background: '#FFF', padding: '18px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ background: '#047857', color: '#FFF', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: '800' }}>
+              <div key={term.id} className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <span style={{ width: '24px', height: '24px', borderRadius: '9999px', background: '#000000', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold' }}>
                       {term.clause_no}
                     </span>
-                    <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A', margin: 0 }}>{term.title}</h3>
+                    <h3 className="text-sm font-bold text-black">{term.title}</h3>
                   </div>
                   {term.is_mandatory && <Badge text="بند إلزامي نظاماً" type="purple" />}
                 </div>
-                <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.6', margin: 0 }}>
-                  {term.text}
-                </p>
+                <p className="text-xs text-zinc-600 leading-relaxed pr-8">{term.text}</p>
               </div>
             ))}
           </div>
@@ -487,47 +445,41 @@ export const RentPackagesPage: React.FC = () => {
 
       {/* ADD PACKAGE MODAL */}
       {showAddModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '16px'
-        }}>
-          <div style={{ background: '#FFF', borderRadius: '16px', maxWidth: '550px', width: '100%', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0F172A' }}>
-                <i className="fa-solid fa-plus text-emerald-600 ml-2"></i> إضافة باقة تأجير جديدة
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-lg bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 ml-1" />
+                <span>إضافة باقة تأجير جديدة</span>
               </h2>
-              <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <form onSubmit={handleCreatePackage} className="space-y-4">
+            <form onSubmit={handleCreatePackage} className="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1 bg-white text-black">
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>اسم الباقة</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم الباقة</label>
                 <input
                   type="text"
                   required
                   placeholder="مثال: باقة نصف سنوية (6 أشهر)"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>تصنيف الباقة</label>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">تصنيف الباقة</label>
                   <select
                     value={formData.category}
                     onChange={(e: any) => setFormData({ ...formData, category: e.target.value })}
-                    style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="أفراد وعائلات">أفراد وعائلات</option>
                     <option value="شركات وقطاع تجاري">شركات وقطاع تجاري</option>
@@ -536,61 +488,61 @@ export const RentPackagesPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>المدة بالأشهر</label>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">المدة بالأشهر</label>
                   <input
                     type="number"
                     value={formData.duration_months}
                     onChange={(e) => setFormData({ ...formData, duration_months: Number(e.target.value) })}
-                    style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>السعر الشهري (ر.س)</label>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">السعر الشهري (ر.س)</label>
                   <input
                     type="number"
                     value={formData.monthly_rate}
                     onChange={(e) => setFormData({ ...formData, monthly_rate: Number(e.target.value) })}
-                    style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>نسبة الخصم (%)</label>
+                  <label className="text-xs text-zinc-700 block mb-1 font-semibold">نسبة الخصم (%)</label>
                   <input
                     type="number"
                     value={formData.discount_percentage}
                     onChange={(e) => setFormData({ ...formData, discount_percentage: Number(e.target.value) })}
-                    style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>مزايا الباقة (كل ميزة في سطر منفصل)</label>
+                <label className="text-xs text-zinc-700 block mb-1 font-semibold">مزايا الباقة (كل ميزة في سطر منفصل)</label>
                 <textarea
                   rows={3}
                   value={formData.featuresText}
                   onChange={(e) => setFormData({ ...formData, featuresText: e.target.value })}
-                  style={{ width: '100%', padding: '10px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3 -mx-6 -mb-6 mt-4">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="btn-odoo btn-odoo-secondary"
-                  style={{ padding: '8px 16px', fontSize: '13px' }}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="btn-odoo btn-odoo-primary"
-                  style={{ padding: '8px 20px', fontSize: '13px', background: '#047857', borderColor: '#047857' }}
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ واعتماد الباقة
                 </button>
@@ -602,3 +554,5 @@ export const RentPackagesPage: React.FC = () => {
     </div>
   );
 };
+
+export default RentPackagesPage;

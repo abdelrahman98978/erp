@@ -225,53 +225,75 @@ export const FinancePage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <i className="fa-solid fa-scale-balanced" style={{ color: '#000000' }}></i>
-            الإدارة المالية والقوائم الختامية (Enterprise Financial Suite)
-          </h2>
-          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
-            المركز المالي، ميزان المراجعة، قائمة الدخل، قيود اليومية، وتسويات مساند لـ{' '}
-            <strong style={{ color: '#000000', fontWeight: 600 }}>{activeCompany.name}</strong>
-          </p>
+      {/* Top Header Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <i className="fa-solid fa-scale-balanced" style={{ fontSize: '18px' }}></i>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCIAL & ACCOUNTING SUITE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              الإدارة المالية والقوائم الختامية
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              المركز المالي، ميزان المراجعة، قائمة الدخل، قيود اليومية، وتسويات مساند لـ{' '}
+              <strong style={{ color: '#ffffff', fontWeight: 600 }}>{activeCompany.name}</strong>
+            </p>
+          </div>
         </div>
 
         {/* Global Action & Export Toolbar */}
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddJournalModal(true)}
-            className="button-primary-pill"
+            className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus text-xs"></i> + قيد يومية
+            <i className="fa-solid fa-plus text-xs ml-1"></i> + قيد يومية
           </button>
           <button
             onClick={() => setShowAddVoucherModal(true)}
-            className="button-outline-on-light"
+            className="button-outline-on-dark"
             style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-invoice-dollar ml-1"></i> سند قبض / صرف
           </button>
 
           {/* Direct Export Buttons */}
-          <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-[#e4e4e7]">
+          <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/20">
             <button
               onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="button-outline-on-light"
-              style={{ padding: '6px 12px', fontSize: '12px', minHeight: '32px' }}
+              className="button-outline-on-dark"
+              style={{ padding: '4px 12px', fontSize: '11.5px', minHeight: '30px', border: 'none', background: 'transparent' }}
               title="تصدير إكسيل"
             >
-              <i className="fa-solid fa-file-excel text-emerald-600"></i> Excel
+              <i className="fa-solid fa-file-excel text-emerald-400 ml-1"></i> Excel
             </button>
             <button
               onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="button-outline-on-light"
-              style={{ padding: '6px 12px', fontSize: '12px', minHeight: '32px' }}
+              className="button-outline-on-dark"
+              style={{ padding: '4px 12px', fontSize: '11.5px', minHeight: '30px', border: 'none', background: 'transparent' }}
               title="تصدير PDF"
             >
-              <i className="fa-solid fa-file-pdf text-rose-600"></i> PDF
+              <i className="fa-solid fa-file-pdf text-rose-400 ml-1"></i> PDF
             </button>
           </div>
         </div>
