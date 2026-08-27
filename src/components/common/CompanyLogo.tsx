@@ -144,9 +144,9 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
       xmlns="http://www.w3.org/2000/svg"
       style={{ borderRadius: '8px', ...style }}
     >
-      <rect width="200" height="200" rx="20" fill="#0F172A" />
+      <rect width="200" height="200" rx="40" fill="#000000" />
       <circle cx="100" cy="100" r="75" fill="none" stroke="#D4AF37" strokeWidth="6" />
-      <text x="100" y="115" textAnchor="middle" fill="#D4AF37" fontSize="55" fontWeight="900" fontFamily="Cairo, sans-serif">
+      <text x="100" y="115" textAnchor="middle" fill="#D4AF37" fontSize="55" fontWeight="900" fontFamily="var(--font-family-display)">
         KS
       </text>
     </svg>

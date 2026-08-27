@@ -448,18 +448,18 @@ export const WebsiteVisitorsPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ background: '#FFF', padding: '20px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A', marginBottom: '12px' }}>
-              <i className="fa-solid fa-mobile-screen-button text-purple-600 ml-2"></i> توزيع الأجهزة والمتصفحات
+          <div style={{ background: '#FFF', padding: '20px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#000000', marginBottom: '12px' }}>
+              <i className="fa-solid fa-mobile-screen-button ml-2" style={{ color: '#000000' }}></i> توزيع الأجهزة والمتصفحات
             </h3>
             <div className="space-y-3">
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
                   <span>الهواتف الذكية (iOS Safari & Android)</span>
-                  <strong>78%</strong>
+                  <strong style={{ fontFamily: 'monospace' }}>78%</strong>
                 </div>
-                <div style={{ width: '100%', height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{ width: '78%', height: '100%', background: '#8B5CF6' }}></div>
+                <div style={{ width: '100%', height: '8px', background: '#f4f4f5', borderRadius: '9999px', overflow: 'hidden' }}>
+                  <div style={{ width: '78%', height: '100%', background: '#000000' }}></div>
                 </div>
               </div>
               <div>

@@ -209,17 +209,17 @@ export const CostCentersPage: React.FC = () => {
                   const remaining = cc.budget - cc.actual_spent;
                   return (
                     <tr key={cc.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3.5 px-4 font-mono font-black text-purple-700">{cc.code}</td>
-                      <td className="py-3.5 px-4 font-bold text-slate-900">{cc.name}</td>
-                      <td className="py-3.5 px-4 text-xs text-slate-600">{cc.manager_name || 'مشرف المركز'}</td>
-                      <td className="py-3.5 px-4 font-bold text-slate-800">{cc.budget.toLocaleString()} ر.س</td>
+                      <td className="py-3.5 px-4 font-mono font-bold text-black">{cc.code}</td>
+                      <td className="py-3.5 px-4 font-bold text-black">{cc.name}</td>
+                      <td className="py-3.5 px-4 text-xs text-zinc-600">{cc.manager_name || 'مشرف المركز'}</td>
+                      <td className="py-3.5 px-4 font-bold text-black">{cc.budget.toLocaleString()} ر.س</td>
                       <td className="py-3.5 px-4 font-bold text-rose-700">{cc.actual_spent.toLocaleString()} ر.س</td>
                       <td className="py-3.5 px-4 font-bold text-emerald-700">{remaining.toLocaleString()} ر.س</td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="w-24 h-2 bg-zinc-100 rounded-full overflow-hidden">
                             <div
-                              className={`h-full ${spentPercent > 90 ? 'bg-rose-500' : 'bg-purple-600'}`}
+                              className={`h-full ${spentPercent > 90 ? 'bg-rose-500' : 'bg-black'}`}
                               style={{ width: `${Math.min(spentPercent, 100)}%` }}
                             />
                           </div>
@@ -237,16 +237,16 @@ export const CostCentersPage: React.FC = () => {
 
       {/* Add Cost Center Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-4 bg-black text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <i className="fa-solid fa-diagram-project text-purple-400"></i>
+                <i className="fa-solid fa-diagram-project" style={{ color: '#c1fbd4' }}></i>
                 <h3 className="font-bold text-base">إضافة مركز تكلفة جديد</h3>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-zinc-400 hover:text-white transition-colors"
               >
                 <i className="fa-solid fa-xmark text-lg"></i>
               </button>
@@ -254,51 +254,53 @@ export const CostCentersPage: React.FC = () => {
 
             <form onSubmit={handleAddCostCenter} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم مركز التكلفة *</label>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">اسم مركز التكلفة *</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="مثال: مركز إيواء حي الرمال / مركز شحنات الطيران..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-medium outline-none focus:border-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم المدير / المشرف المسؤول</label>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">اسم المدير / المشرف المسؤول</label>
                 <input
                   type="text"
                   value={managerName}
                   onChange={(e) => setManagerName(e.target.value)}
                   placeholder="اسم مشرف المركز..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-medium outline-none focus:border-black"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">الميزانية السنوية المعتمدة (ر.س) *</label>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">الميزانية السنوية المعتمدة (ر.س) *</label>
                 <input
                   type="number"
                   step="1000"
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 outline-none"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-bold text-black outline-none focus:border-black"
                   required
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   <i className="fa-solid fa-check"></i>
                   حفظ مركز التكلفة

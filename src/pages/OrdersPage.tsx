@@ -302,22 +302,22 @@ export const OrdersPage: React.FC = () => {
                 </tr>
               ) : (
                 filteredOrders.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-black text-purple-700">#{ord.id}</td>
+                  <tr key={ord.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-bold text-black">#{ord.id}</td>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-900">{ord.client_name}</div>
-                      <div className="text-xs text-slate-400 font-mono">{ord.client_phone}</div>
+                      <div className="font-bold text-black">{ord.client_name}</div>
+                      <div className="text-xs text-zinc-400 font-mono">{ord.client_phone}</div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-900">{ord.maid_name}</div>
-                      <div className="text-xs text-slate-500">{ord.nationality}</div>
+                      <div className="font-bold text-black">{ord.maid_name}</div>
+                      <div className="text-xs text-zinc-500">{ord.nationality}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-xs font-bold text-slate-600">{ord.office_name || 'مكتب مانيلا'}</td>
+                    <td className="py-3.5 px-4 text-xs font-bold text-zinc-600">{ord.office_name || 'مكتب مانيلا'}</td>
                     <td className="py-3.5 px-4">
                       <Badge text={ord.request_type} type="purple" />
                     </td>
                     <td className="py-3.5 px-4 text-xs">
-                      <span className="font-bold text-amber-600 flex items-center gap-1">
+                      <span className="font-bold text-black flex items-center gap-1">
                         <i className="fa-regular fa-clock"></i> {ord.deadline}
                       </span>
                     </td>
@@ -331,7 +331,8 @@ export const OrdersPage: React.FC = () => {
                       {ord.contract_status !== 'تم التعاقد' ? (
                         <button
                           onClick={() => handleConvertToContract(ord)}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1 mx-auto"
+                          className="button-primary-pill"
+                          style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
                         >
                           <i className="fa-solid fa-file-contract"></i>
                           تحويل لعقد
@@ -352,50 +353,50 @@ export const OrdersPage: React.FC = () => {
 
       {/* Add Order Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-4 bg-black text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <i className="fa-solid fa-cart-plus text-purple-400"></i>
+                <i className="fa-solid fa-cart-plus" style={{ color: '#c1fbd4' }}></i>
                 <h3 className="font-bold text-base">تسجيل طلب استقدام جديد</h3>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setShowAddModal(false)} className="text-zinc-400 hover:text-white">
                 <i className="fa-solid fa-xmark text-lg"></i>
               </button>
             </div>
 
             <form onSubmit={handleAddOrder} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم العميل *</label>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">اسم العميل *</label>
                 <input
                   type="text"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="اسم العميل الرباعي..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-medium outline-none focus:border-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">رقم جوال العميل *</label>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">رقم جوال العميل *</label>
                 <input
                   type="text"
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
                   placeholder="+9665..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-medium outline-none focus:border-black"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">الجنسية المطلوبة</label>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1.5">الجنسية المطلوبة</label>
                   <select
                     value={nationality}
                     onChange={(e) => setNationality(e.target.value)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-bold outline-none focus:border-black"
                   >
                     <option>الفلبين</option>
                     <option>إندونيسيا</option>
@@ -405,11 +406,11 @@ export const OrdersPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">نوع الطلب</label>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1.5">نوع الطلب</label>
                   <select
                     value={requestType}
                     onChange={(e) => setRequestType(e.target.value as any)}
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold outline-none"
+                    className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-bold outline-none focus:border-black"
                   >
                     <option value="حسب المواصفات">حسب المواصفات</option>
                     <option value="معينة">معينة بالاسم</option>
@@ -419,27 +420,29 @@ export const OrdersPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">اسم السيرة الذاتية (إن وجدت)</label>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">اسم السيرة الذاتية (إن وجدت)</label>
                 <input
                   type="text"
                   value={maidName}
                   onChange={(e) => setMaidName(e.target.value)}
                   placeholder="اسم العاملة أو كود السيرة الذاتية..."
-                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm font-medium outline-none focus:border-black"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-sm font-bold shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   <i className="fa-solid fa-check"></i>
                   تسجيل الطلب

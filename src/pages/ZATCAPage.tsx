@@ -325,11 +325,11 @@ export const ZATCAPage: React.FC = () => {
                 </tr>
               ) : (
                 filteredInvoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-black text-purple-800">{inv.invoice_number}</td>
+                  <tr key={inv.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-bold text-black">{inv.invoice_number}</td>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-slate-900">{inv.client_name}</div>
-                      <div className="text-[11px] text-slate-400">
+                      <div className="font-bold text-black">{inv.client_name}</div>
+                      <div className="text-[11px] text-zinc-400">
                         {inv.client_vat_number ? `ضريبي: ${inv.client_vat_number}` : `هوية: ${inv.client_national_id || 'أفراد'}`}
                       </div>
                     </td>
@@ -339,9 +339,9 @@ export const ZATCAPage: React.FC = () => {
                         type="purple"
                       />
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-slate-700">{(inv.subtotal ?? 0).toLocaleString()} ر.س</td>
-                    <td className="py-3.5 px-4 font-bold text-amber-600">{(inv.vat_amount ?? 0).toLocaleString()} ر.س</td>
-                    <td className="py-3.5 px-4 font-black text-emerald-800">{(inv.total_amount ?? 0).toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-bold text-black">{(inv.subtotal ?? 0).toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-bold text-black">{(inv.vat_amount ?? 0).toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-bold text-black">{(inv.total_amount ?? 0).toLocaleString()} ر.س</td>
                     <td className="py-3.5 px-4">
                       <Badge
                         text={inv.zatca_status === 'CLEARED' ? 'تمت المصادقة (Clearance)' : 'تم الإبلاغ (Reported)'}
@@ -352,7 +352,8 @@ export const ZATCAPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-center">
                       <button
                         onClick={() => setSelectedInvoiceForXml(inv)}
-                        className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 mx-auto"
+                        className="button-outline-on-light"
+                        style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px', margin: '0 auto' }}
                       >
                         <i className="fa-solid fa-qrcode text-emerald-600"></i>
                         XML & QR

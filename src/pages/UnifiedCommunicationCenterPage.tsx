@@ -340,8 +340,8 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
       {/* TAB 2: COMPOSE MEMO */}
       {activeTab === 'compose' && (
         <div style={{ background: '#FFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0F172A', marginBottom: '16px' }}>
-            <i className="fa-solid fa-file-pen text-purple-600 ml-2"></i> تحرير خطاب رسمي أو تعميم تنفيذي
+          <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
+            <i className="fa-solid fa-file-pen ml-2" style={{ color: '#000000' }}></i> تحرير خطاب رسمي أو تعميم تنفيذي
           </h2>
 
           <form onSubmit={handleCreateMemo} className="space-y-4">
@@ -437,15 +437,15 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab('inbox')}
-                className="btn-odoo btn-odoo-secondary"
-                style={{ padding: '8px 16px', fontSize: '13px' }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 18px', fontSize: '13px', minHeight: '36px' }}
               >
                 إلغاء
               </button>
               <button
                 type="submit"
-                className="btn-odoo btn-odoo-primary"
-                style={{ padding: '8px 24px', fontSize: '13px', background: '#4C1D95', borderColor: '#4C1D95' }}
+                className="button-primary-pill"
+                style={{ padding: '6px 22px', fontSize: '13px', minHeight: '36px' }}
               >
                 <i className="fa-solid fa-stamp ml-1"></i> اعتماد وإصدار الخطاب الرسمي
               </button>

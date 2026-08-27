@@ -263,11 +263,11 @@ export const RecruitmentContractsPage: React.FC = () => {
       {/* Header */}
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-file-signature text-purple-700"></i>
+          <h2 style={{ fontSize: '20px', fontWeight: 330, margin: 0, color: '#000000', letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-file-signature" style={{ color: '#000000' }}></i>
             عقود الاستقدام المباشرة (Musaned Pipeline)
           </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#71717a' }}>
             متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ{' '}
             <strong style={{ color: '#000000' }}>{activeCompany.name}</strong>
           </p>

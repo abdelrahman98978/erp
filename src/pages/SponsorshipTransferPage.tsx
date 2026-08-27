@@ -259,14 +259,14 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* Add Transfer Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden font-sans">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-4 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base flex items-center gap-2">
-                <i className="fa-solid fa-people-arrows text-purple-400"></i>
+                <i className="fa-solid fa-people-arrows" style={{ color: '#c1fbd4' }}></i>
                 تسجيل طلب نقل كفالة وتنازل جديد
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setShowAddModal(false)} className="text-zinc-400 hover:text-white">
                 <i className="fa-solid fa-xmark text-lg"></i>
               </button>
             </div>
