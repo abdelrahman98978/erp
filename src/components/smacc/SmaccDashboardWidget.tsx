@@ -16,30 +16,31 @@ export const SmaccDashboardWidget: React.FC = () => {
   const [periodFilter, setPeriodFilter] = useState('الأيام الأخيرة');
 
   return (
-    <div className="space-y-6 font-sans select-none dir-rtl text-right">
+    <div className="space-y-6 font-sans select-none dir-rtl text-right" style={{ fontFamily: 'var(--font-family-ui)', fontFeatureSettings: '"ss03" 1' }}>
       {/* Top Banner Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold">
+      <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '9999px', background: '#000000', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '12px' }}>
             SMACC
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold text-white text-base">لوحة التحكم الهيكلية (نظام SMACC للمحاسبة)</h3>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 550, color: '#000000', margin: 0 }}>لوحة التحكم الهيكلية (نظام SMACC للمحاسبة)</h3>
+              <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
                 مطابق 100%
               </span>
             </div>
-            <p className="text-xs text-slate-400">الصفحة الرئيسية • متابعة الحركة المالية والأقسام التشغيلية</p>
+            <p style={{ fontSize: '12px', color: '#71717a', margin: '2px 0 0 0' }}>الصفحة الرئيسية • متابعة الحركة المالية والأقسام التشغيلية</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">الفترة الزمنية:</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '12px', color: '#71717a' }}>الفترة الزمنية:</span>
           <select
             value={periodFilter}
             onChange={(e) => setPeriodFilter(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-xs text-white rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500"
+            className="text-input"
+            style={{ height: '36px', minHeight: '36px', borderRadius: '9999px', fontSize: '12px', padding: '0 14px' }}
           >
             <option value="الأيام الأخيرة">الأيام الأخيرة</option>
             <option value="هذا الشهر">هذا الشهر</option>
@@ -49,181 +50,180 @@ export const SmaccDashboardWidget: React.FC = () => {
         </div>
       </div>
 
-      {/* Top 3 Stat Counter Cards matching SMACC Screenshot */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Top 3 Stat Counter Cards with Level 3 Stacked Shadows and Thin 330 Display Numbers */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Card 1: عدد البائعين */}
-        <div className="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-md flex items-center justify-between">
+        <div className="card-pricing" style={{ padding: '22px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span className="text-xs font-semibold text-slate-400 block mb-1">عدد البائعين</span>
-            <span className="text-3xl font-black text-white tracking-tight">2</span>
+            <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a', display: 'block', marginBottom: '4px' }}>عدد البائعين</span>
+            <span className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>2</span>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
-            <Users className="w-6 h-6" />
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: '#000000', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Users className="w-5 h-5" />
           </div>
         </div>
 
         {/* Card 2: عدد العملاء */}
-        <div className="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-md flex items-center justify-between">
+        <div className="card-pistachio-band" style={{ padding: '22px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span className="text-xs font-semibold text-slate-400 block mb-1">عدد العملاء</span>
-            <span className="text-3xl font-black text-white tracking-tight">4</span>
+            <span style={{ fontSize: '12px', fontWeight: 550, color: '#000000', display: 'block', marginBottom: '4px' }}>عدد العملاء</span>
+            <span className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>4</span>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
-            <UserCheck className="w-6 h-6" />
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: '#ffffff', color: '#000000', border: '1px solid rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <UserCheck className="w-5 h-5" />
           </div>
         </div>
 
         {/* Card 3: عدد محصلين المبيعات */}
-        <div className="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-md flex items-center justify-between">
+        <div className="card-pricing" style={{ padding: '22px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <span className="text-xs font-semibold text-slate-400 block mb-1">عدد محصلين المبيعات</span>
-            <span className="text-3xl font-black text-white tracking-tight">1</span>
+            <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a', display: 'block', marginBottom: '4px' }}>عدد محصلين المبيعات</span>
+            <span className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>1</span>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-lg shadow-rose-600/30">
-            <CreditCard className="w-6 h-6" />
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: '#f4f4f5', color: '#000000', border: '1px solid #e4e4e7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <CreditCard className="w-5 h-5" />
           </div>
         </div>
       </div>
 
-      {/* Grid Section 1: Financial Movement (مدفوعات & ايصالات استلام) */}
+      {/* Grid Section 1: Financial Movement */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Box 1: مدفوعات (Payments) */}
-        <div className="bg-slate-800 rounded-2xl border border-slate-700 p-5 space-y-4 shadow-md">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-slate-400" />
-              <h4 className="font-bold text-white text-sm">مدفوعات (Payment Summary)</h4>
+        <div className="card-pricing" style={{ padding: '22px', borderRadius: '16px', background: '#ffffff' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#000000' }} />
+              <h4 style={{ fontSize: '14px', fontWeight: 550, color: '#000000', margin: 0 }}>مدفوعات (Payment Summary)</h4>
             </div>
-            <div className="px-2.5 py-1 bg-slate-900 rounded-lg text-[11px] text-slate-300 border border-slate-700">
+            <span className="pill-tag-shade" style={{ fontSize: '11px' }}>
               {periodFilter}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>إجمالي الدفعات</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
+            </div>
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>المدفوعات النقدية</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
+            </div>
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>مدفوعات الشيك</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
+            </div>
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>الدفعات المحولة</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-1">
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">إجمالي الدفعات</span>
-              <span className="text-base font-extrabold text-white mt-1 block">0.00 ر.س</span>
-            </div>
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">المدفوعات النقدية</span>
-              <span className="text-base font-extrabold text-white mt-1 block">0.00 ر.س</span>
-            </div>
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">مدفوعات الشيك</span>
-              <span className="text-base font-extrabold text-white mt-1 block">0.00 ر.س</span>
-            </div>
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">الدفعات المحولة</span>
-              <span className="text-base font-extrabold text-white mt-1 block">0.00 ر.س</span>
-            </div>
-          </div>
-
-          <div className="p-4 bg-slate-900/50 rounded-xl text-center text-xs text-slate-500 border border-dashed border-slate-700">
+          <div style={{ padding: '12px', background: '#fafafa', borderRadius: '12px', textAlign: 'center', fontSize: '12px', color: '#71717a', border: '1px dashed #e4e4e7', marginTop: '12px' }}>
             السجل غير موجود (جاهز لاستقبال سندات الصرف الجديدة)
           </div>
         </div>
 
         {/* Box 2: ايصالات استلام (Receipt Vouchers) */}
-        <div className="bg-slate-800 rounded-2xl border border-blue-500/30 p-5 space-y-4 shadow-md relative overflow-hidden">
-          <div className="absolute top-0 right-0 left-0 h-1 bg-blue-500" />
-          <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
-              <h4 className="font-bold text-white text-sm">ايصالات استلام (Receipt Vouchers)</h4>
+        <div className="card-pricing" style={{ padding: '22px', borderRadius: '16px', background: '#ffffff' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#000000' }} />
+              <h4 style={{ fontSize: '14px', fontWeight: 550, color: '#000000', margin: 0 }}>ايصالات استلام (Receipt Vouchers)</h4>
             </div>
-            <div className="px-2.5 py-1 bg-slate-900 rounded-lg text-[11px] text-blue-300 border border-blue-500/30">
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               {periodFilter}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>إجمالي الايصالات</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
+            </div>
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>سند استلام نقدي</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
+            </div>
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>ايصالات الشيك</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
+            </div>
+            <div style={{ background: '#fafafa', padding: '12px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>الايصالات المحولة</span>
+              <span style={{ fontSize: '15px', fontWeight: 550, color: '#000000', marginTop: '2px', display: 'block' }}>0.00 ر.س</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-1">
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">إجمالي الايصالات</span>
-              <span className="text-base font-extrabold text-blue-400 mt-1 block">0.00 ر.س</span>
-            </div>
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">سند استلام نقدي</span>
-              <span className="text-base font-extrabold text-blue-400 mt-1 block">0.00 ر.س</span>
-            </div>
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">ايصالات الشيك</span>
-              <span className="text-base font-extrabold text-blue-400 mt-1 block">0.00 ر.س</span>
-            </div>
-            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-700/60">
-              <span className="text-[11px] text-slate-400 block">الايصالات المحولة</span>
-              <span className="text-base font-extrabold text-blue-400 mt-1 block">0.00 ر.س</span>
-            </div>
-          </div>
-
-          <div className="p-4 bg-blue-950/30 rounded-xl text-center text-xs text-blue-400/70 border border-dashed border-blue-800/50">
+          <div style={{ padding: '12px', background: '#fafafa', borderRadius: '12px', textAlign: 'center', fontSize: '12px', color: '#71717a', border: '1px dashed #e4e4e7', marginTop: '12px' }}>
             السجل غير موجود (جاهز لاستقبال سندات القبض والإيداعات)
           </div>
         </div>
       </div>
 
-      {/* Grid Section 2: Purchasing & Orders (عرض اسعار المشتروات / امر الشراء / فاتورة الشراء) */}
+      {/* Grid Section 2: Purchasing & Orders */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Box 3: عرض اسعار المشتروات */}
-        <div className="bg-slate-800 rounded-2xl border border-slate-700 p-4 space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-            <h4 className="font-bold text-white text-xs">عرض اسعار المشتروات</h4>
-            <span className="text-[10px] text-slate-400">{periodFilter}</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px', marginBottom: '14px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>عرض اسعار المشتروات</h4>
+            <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{periodFilter}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="bg-slate-900 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">عدد عروض الاسعار</span>
-              <span className="font-bold text-white">0.00</span>
+            <div style={{ background: '#fafafa', padding: '10px', borderRadius: '10px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '10.5px', color: '#71717a', display: 'block' }}>عدد عروض الاسعار</span>
+              <span style={{ fontWeight: 550, color: '#000000' }}>0.00</span>
             </div>
-            <div className="bg-slate-900 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">إجمالي عروض الاسعار</span>
-              <span className="font-bold text-white">0.00</span>
+            <div style={{ background: '#fafafa', padding: '10px', borderRadius: '10px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '10.5px', color: '#71717a', display: 'block' }}>إجمالي عروض الاسعار</span>
+              <span style={{ fontWeight: 550, color: '#000000' }}>0.00</span>
             </div>
-            <div className="bg-slate-900 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">كمية عروض الاسعار</span>
-              <span className="font-bold text-white">0.00</span>
+            <div style={{ background: '#fafafa', padding: '10px', borderRadius: '10px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '10.5px', color: '#71717a', display: 'block' }}>كمية عروض الاسعار</span>
+              <span style={{ fontWeight: 550, color: '#000000' }}>0.00</span>
             </div>
-            <div className="bg-slate-900 p-2 rounded-lg">
-              <span className="text-[10px] text-slate-400 block">الكمية التي تمت معالجتها</span>
-              <span className="font-bold text-white">0.00</span>
+            <div style={{ background: '#fafafa', padding: '10px', borderRadius: '10px', border: '1px solid #e4e4e7' }}>
+              <span style={{ fontSize: '10.5px', color: '#71717a', display: 'block' }}>الكمية المعالجة</span>
+              <span style={{ fontWeight: 550, color: '#000000' }}>0.00</span>
             </div>
           </div>
 
-          <div className="p-3 bg-slate-900/40 rounded-lg text-center text-[11px] text-slate-500">
+          <div style={{ padding: '10px', background: '#fafafa', borderRadius: '10px', textAlign: 'center', fontSize: '11px', color: '#71717a', marginTop: '12px', border: '1px solid #e4e4e7' }}>
             السجل غير موجود
           </div>
         </div>
 
         {/* Box 4: فاتورة الشراء */}
-        <div className="bg-slate-800 rounded-2xl border border-slate-700 p-4 space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-            <h4 className="font-bold text-white text-xs">فاتورة الشراء</h4>
-            <span className="text-[10px] text-slate-400">{periodFilter}</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px', marginBottom: '14px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>فاتورة الشراء</h4>
+            <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{periodFilter}</span>
           </div>
 
-          <div className="bg-slate-900 p-4 rounded-xl text-center">
-            <span className="text-[11px] text-slate-400 block">إجمالي قيمة فواتير الشراء</span>
-            <span className="text-xl font-bold text-white mt-1 block">0.00 ر.س</span>
+          <div style={{ background: '#fafafa', padding: '16px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e4e4e7' }}>
+            <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>إجمالي قيمة فواتير الشراء</span>
+            <span className="display-sm" style={{ fontSize: '24px', fontWeight: 330, color: '#000000', marginTop: '4px', display: 'block' }}>0.00 ر.س</span>
           </div>
 
-          <div className="p-3 bg-slate-900/40 rounded-lg text-center text-[11px] text-slate-500">
+          <div style={{ padding: '10px', background: '#fafafa', borderRadius: '10px', textAlign: 'center', fontSize: '11px', color: '#71717a', marginTop: '12px', border: '1px solid #e4e4e7' }}>
             السجل غير موجود
           </div>
         </div>
 
         {/* Box 5: أمر الشراء */}
-        <div className="bg-slate-800 rounded-2xl border border-blue-500/40 p-4 space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-slate-700 pb-2">
-            <h4 className="font-bold text-white text-xs">أمر الشراء</h4>
-            <span className="text-[10px] text-blue-300">{periodFilter}</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px', marginBottom: '14px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>أمر الشراء</h4>
+            <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>{periodFilter}</span>
           </div>
 
-          <div className="bg-slate-900 p-4 rounded-xl text-center border border-blue-900/40">
-            <span className="text-[11px] text-slate-400 block">إجمالي أوامر الشراء المعتمدة</span>
-            <span className="text-xl font-bold text-blue-400 mt-1 block">0.00 ر.س</span>
+          <div style={{ background: '#fafafa', padding: '16px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e4e4e7' }}>
+            <span style={{ fontSize: '11px', color: '#71717a', display: 'block' }}>إجمالي أوامر الشراء المعتمدة</span>
+            <span className="display-sm" style={{ fontSize: '24px', fontWeight: 330, color: '#000000', marginTop: '4px', display: 'block' }}>0.00 ر.س</span>
           </div>
 
-          <div className="p-3 bg-blue-950/30 rounded-lg text-center text-[11px] text-blue-400/60">
+          <div style={{ padding: '10px', background: '#fafafa', borderRadius: '10px', textAlign: 'center', fontSize: '11px', color: '#71717a', marginTop: '12px', border: '1px solid #e4e4e7' }}>
             السجل غير موجود
           </div>
         </div>

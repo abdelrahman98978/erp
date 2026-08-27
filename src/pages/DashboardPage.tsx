@@ -17,15 +17,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* SMACC Structural Dashboard Replica */}
       <SmaccDashboardWidget />
-      {/* Top Welcome Hero Banner with Period Filter (Exact ClickERP Feature Set) */}
+      {/* Top Welcome Hero Banner with Period Filter */}
       <div
+        className="card-feature-cinematic"
         style={{
-          background: 'linear-gradient(135deg, #00383A 0%, #005154 50%, #046A6E 100%)',
           borderRadius: '16px',
-          padding: '24px 28px',
+          padding: '28px',
           color: '#FFFFFF',
-          boxShadow: '0 8px 24px rgba(0, 81, 84, 0.15)',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
+          background: '#000000',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
@@ -33,34 +33,34 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div
               style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '14px',
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(8px)',
+                width: '52px',
+                height: '52px',
+                borderRadius: '9999px',
+                backgroundColor: '#ffffff',
+                color: '#000000',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '24px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                fontSize: '22px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
               }}
             >
-              🏢
+              <i className="fa-solid fa-building-columns"></i>
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '11px', backgroundColor: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '12px', fontWeight: '800' }}>
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                   مؤشرات فورية
                 </span>
-                <span style={{ fontSize: '11px', color: '#A7F3D0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#34D399', display: 'inline-block' }}></span>
+                <span style={{ fontSize: '11.5px', color: '#a1a1aa', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#c1fbd4', display: 'inline-block' }}></span>
                   محدث الآن - آخر تحديث اليوم
                 </span>
               </div>
-              <h2 style={{ fontSize: '22px', fontWeight: '900', margin: 0, letterSpacing: '-0.3px' }}>
-                مرحباً مكتب دار الرواد للاستقدام 👋
+              <h2 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: 0, letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+                مرحباً مجموعة خالد السليم 👋
               </h2>
-              <p style={{ fontSize: '12px', opacity: 0.85, margin: '4px 0 0 0', maxWidth: '600px' }}>
+              <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', maxWidth: '600px', fontWeight: 420 }}>
                 تابع أداء العقود والطلبات والإيرادات لحظة بلحظة مع إمكانية التحكم الكامل في الأقسام والعمليات التشغيلية.
               </p>
             </div>
@@ -70,80 +70,36 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             <button
               onClick={() => onNavigate('create-contract', 'إضافة عقد استقدام')}
-              style={{
-                backgroundColor: '#FFFFFF',
-                color: '#005154',
-                border: 'none',
-                borderRadius: '20px',
-                padding: '7px 16px',
-                fontSize: '12px',
-                fontWeight: '800',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-              }}
+              className="button-aloe-pill"
+              style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
             >
               <i className="fa-solid fa-plus text-xs"></i> عقد جديد
             </button>
             <button
               onClick={() => onNavigate('orders', 'الطلبات المباشرة')}
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.15)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '20px',
-                padding: '7px 14px',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-              }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12.5px', padding: '6px 14px', minHeight: '38px' }}
             >
               الطلبات المباشرة
             </button>
             <button
               onClick={() => onNavigate('branch-departments', 'إدارة الفرق')}
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.15)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '20px',
-                padding: '7px 14px',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-              }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12.5px', padding: '6px 14px', minHeight: '38px' }}
             >
               إدارة الفرق
             </button>
             <button
               onClick={() => onNavigate('reports', 'مركز التقارير')}
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.15)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '20px',
-                padding: '7px 14px',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-              }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12.5px', padding: '6px 14px', minHeight: '38px' }}
             >
               التقارير
             </button>
             <button
               onClick={() => onNavigate('finance-home', 'لوحة التحكم المالية')}
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.15)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '20px',
-                padding: '7px 14px',
-                fontSize: '12px',
-                fontWeight: '700',
-                cursor: 'pointer',
-              }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12.5px', padding: '6px 14px', minHeight: '38px' }}
             >
               المالية
             </button>
@@ -155,7 +111,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           style={{
             marginTop: '20px',
             paddingTop: '16px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
@@ -164,8 +120,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '12px', fontWeight: '800', opacity: 0.9 }}>تحديث القيم فوراً:</span>
-            <div style={{ display: 'flex', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '10px', padding: '3px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 500, color: '#a1a1aa' }}>تحديث القيم فوراً:</span>
+            <div style={{ display: 'flex', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '9999px', padding: '3px', border: '1px solid rgba(255,255,255,0.1)' }}>
               {(['today', 'week', 'month', 'all'] as const).map((period) => {
                 const labels: Record<string, string> = {
                   today: 'اليوم',
@@ -181,15 +137,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                     onClick={() => setSelectedPeriod(period)}
                     style={{
                       border: 'none',
-                      backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-                      color: isActive ? '#005154' : '#FFFFFF',
-                      fontWeight: isActive ? '900' : '600',
-                      padding: '5px 14px',
-                      borderRadius: '8px',
-                      fontSize: '12px',
+                      backgroundColor: isActive ? '#ffffff' : 'transparent',
+                      color: isActive ? '#000000' : '#ffffff',
+                      fontWeight: isActive ? 600 : 420,
+                      padding: '4px 14px',
+                      borderRadius: '9999px',
+                      fontSize: '11.5px',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      boxShadow: isActive ? '0 2px 6px rgba(0,0,0,0.15)' : 'none',
+                      transition: 'all 0.15s ease',
                     }}
                   >
                     {labels[period]}

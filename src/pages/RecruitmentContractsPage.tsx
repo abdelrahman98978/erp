@@ -274,19 +274,19 @@ export const RecruitmentContractsPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <div style={{ backgroundColor: '#F1F5F9', padding: '4px', borderRadius: '10px', display: 'flex', gap: '4px', border: '1px solid #E2E8F0' }}>
+          <div style={{ backgroundColor: '#f4f4f5', padding: '3px', borderRadius: '9999px', display: 'flex', gap: '2px', border: '1px solid #e4e4e7' }}>
             <button
               onClick={() => setViewMode('table')}
               style={{
-                padding: '6px 12px',
-                borderRadius: '6px',
+                padding: '5px 14px',
+                borderRadius: '9999px',
                 border: 'none',
-                backgroundColor: viewMode === 'table' ? '#FFFFFF' : 'transparent',
-                color: viewMode === 'table' ? '#0F172A' : '#64748B',
-                fontWeight: '800',
+                backgroundColor: viewMode === 'table' ? '#000000' : 'transparent',
+                color: viewMode === 'table' ? '#ffffff' : '#71717a',
+                fontWeight: 500,
                 fontSize: '12px',
                 cursor: 'pointer',
-                boxShadow: viewMode === 'table' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                transition: 'all 0.15s ease',
               }}
             >
               <i className="fa-solid fa-table-list ml-1"></i> جدول
@@ -294,15 +294,15 @@ export const RecruitmentContractsPage: React.FC = () => {
             <button
               onClick={() => setViewMode('kanban')}
               style={{
-                padding: '6px 12px',
-                borderRadius: '6px',
+                padding: '5px 14px',
+                borderRadius: '9999px',
                 border: 'none',
-                backgroundColor: viewMode === 'kanban' ? '#FFFFFF' : 'transparent',
-                color: viewMode === 'kanban' ? '#0F172A' : '#64748B',
-                fontWeight: '800',
+                backgroundColor: viewMode === 'kanban' ? '#000000' : 'transparent',
+                color: viewMode === 'kanban' ? '#ffffff' : '#71717a',
+                fontWeight: 500,
                 fontSize: '12px',
                 cursor: 'pointer',
-                boxShadow: viewMode === 'kanban' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                transition: 'all 0.15s ease',
               }}
             >
               <i className="fa-solid fa-columns ml-1"></i> مسار Kanban
@@ -311,20 +311,8 @@ export const RecruitmentContractsPage: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            style={{
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '8px 18px',
-              fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-plus text-xs"></i>
             + إضافة عقد استقدام جديد
@@ -332,21 +320,23 @@ export const RecruitmentContractsPage: React.FC = () => {
 
           <button
             onClick={() => exportData('recruitment_contracts', currentDisplayList, 'excel', `عقود الاستقدام - ${activeCompany.name}`)}
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
           <button
             onClick={() => exportData('recruitment_contracts', currentDisplayList, 'pdf', `عقود الاستقدام - ${activeCompany.name}`)}
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
-      {/* Main Sub-Tabs (ClickERP Structure) */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+      {/* Main Sub-Tabs */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'all', label: `جميع عقود الاستقدام (${contracts.length || 115})`, icon: 'fa-folder-open' },
           { id: 'active', label: 'العقود السارية (27)', icon: 'fa-clock' },
@@ -365,14 +355,14 @@ export const RecruitmentContractsPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#334155',
-                fontWeight: isActive ? '800' : '600',
-                fontSize: '12px',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -386,69 +376,76 @@ export const RecruitmentContractsPage: React.FC = () => {
 
       {/* Contracts Table / Kanban View */}
       {['all', 'active', 'completed', 'returned'].includes(activeTab) && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <input
-              type="text"
-              placeholder="البحث برقم العقد، اسم العميل، اسم العاملة، أو الجواز..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ padding: '8px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', width: '320px' }}
-            />
-            <span style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+              <input
+                type="text"
+                placeholder="البحث برقم العقد، اسم العميل، اسم العاملة، أو الجواز..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="text-input"
+                style={{ borderRadius: '9999px', paddingRight: '36px', paddingLeft: '16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
+              />
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
               العدد المعروض: {currentDisplayList.length} عقد
             </span>
           </div>
 
           {viewMode === 'table' ? (
-            <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-              <thead>
-                <tr>
-                  <th>رقم العقد</th>
-                  <th>توثيق مساند</th>
-                  <th>العميل</th>
-                  <th>العاملة</th>
-                  <th>الجنسية والمكتب</th>
-                  <th>مبلغ العقد</th>
-                  <th>المرحلة الحالية</th>
-                  <th>الضمان</th>
-                  <th>الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentDisplayList.map((c) => (
-                  <tr key={c.id}>
-                    <td><strong style={{ color: '#005154' }}>{c.contract_number}</strong></td>
-                    <td><span style={{ fontFamily: 'monospace', color: '#6D28D9', fontWeight: '700' }}>{c.musaned_number || 'MSN-9982'}</span></td>
-                    <td>
-                      <div style={{ fontWeight: '800', color: '#0F172A' }}>{c.client_name}</div>
-                      <div style={{ fontSize: '10px', color: '#64748B' }}>{c.client_phone}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: '800', color: '#0F172A' }}>{c.maid_name}</div>
-                      <div style={{ fontSize: '10px', color: '#64748B', fontFamily: 'monospace' }}>{c.maid_passport}</div>
-                    </td>
-                    <td>
-                      <div>{c.nationality}</div>
-                      <div style={{ fontSize: '10px', color: '#64748B' }}>{c.external_office || 'مكتب خارجي معتمد'}</div>
-                    </td>
-                    <td><strong style={{ color: '#047857' }}>{(c.amount ?? 0).toLocaleString()} ر.س</strong></td>
-                    <td><Badge text={c.stage} type="primary" /></td>
-                    <td><Badge text={c.warranty_status} type="success" /></td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '6px' }}>
-                        <button
-                          onClick={() => handleAdvanceStage(c)}
-                          style={{ backgroundColor: 'rgba(0,81,84,0.08)', color: '#005154', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
-                          title="نقل للمرحلة التالية"
-                        >
-                          تقدم المرحلة <i className="fa-solid fa-arrow-left text-xs"></i>
-                        </button>
-                        <button
-                          onClick={() => setSelectedContractForPrint(c)}
-                          style={{ backgroundColor: 'rgba(109,40,217,0.08)', color: '#6D28D9', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
-                          title="طباعة العقد"
-                        >
+            <div style={{ overflowX: 'auto', width: '100%' }}>
+              <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
+                <thead>
+                  <tr>
+                    <th>رقم العقد</th>
+                    <th>توثيق مساند</th>
+                    <th>العميل</th>
+                    <th>العاملة</th>
+                    <th>الجنسية والمكتب</th>
+                    <th>مبلغ العقد</th>
+                    <th>المرحلة الحالية</th>
+                    <th>الضمان</th>
+                    <th>الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentDisplayList.map((c) => (
+                    <tr key={c.id}>
+                      <td style={{ fontWeight: 550, color: '#000000', fontFamily: 'monospace' }}>{c.contract_number}</td>
+                      <td><span className="pill-tag-shade" style={{ fontFamily: 'monospace', fontSize: '11px' }}>{c.musaned_number || 'MSN-9982'}</span></td>
+                      <td>
+                        <div style={{ fontWeight: 550, color: '#000000' }}>{c.client_name}</div>
+                        <div style={{ fontSize: '11px', color: '#71717a' }}>{c.client_phone}</div>
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 550, color: '#000000' }}>{c.maid_name}</div>
+                        <div style={{ fontSize: '11px', color: '#71717a', fontFamily: 'monospace' }}>{c.maid_passport}</div>
+                      </td>
+                      <td>
+                        <div>{c.nationality}</div>
+                        <div style={{ fontSize: '11px', color: '#71717a' }}>{c.external_office || 'مكتب خارجي معتمد'}</div>
+                      </td>
+                      <td style={{ fontWeight: 550, color: '#000000' }}>{(c.amount ?? 0).toLocaleString()} ر.س</td>
+                      <td><Badge text={c.stage} type="primary" /></td>
+                      <td><Badge text={c.warranty_status} type="success" /></td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <button
+                            onClick={() => handleAdvanceStage(c)}
+                            className="button-outline-on-light"
+                            style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
+                            title="نقل للمرحلة التالية"
+                          >
+                            تقدم المرحلة <i className="fa-solid fa-arrow-left text-xs"></i>
+                          </button>
+                          <button
+                            onClick={() => setSelectedContractForPrint(c)}
+                            className="button-outline-on-light"
+                            style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
+                            title="طباعة العقد"
+                          >
                           <i className="fa-solid fa-print"></i>
                         </button>
                       </div>
@@ -457,7 +454,8 @@ export const RecruitmentContractsPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
-          ) : (
+          </div>
+        ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
               {currentDisplayList.map((c) => (
                 <div key={c.id} style={{ backgroundColor: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>

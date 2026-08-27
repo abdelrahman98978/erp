@@ -188,75 +188,68 @@ export const ShelterPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-200 transition-all flex items-center gap-2"
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus"></i>
-            تسكين عاملة جديدة بالإيواء
+            <i className="fa-solid fa-bed ml-1.5"></i>
+            + تسكين نزيلة جديدة
           </button>
           <button
             onClick={() => exportData('shelter', filteredItems, 'excel', `سجل الإيواء والإعاشة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير إكسيل"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
             Excel
           </button>
           <button
             onClick={() => exportData('shelter', filteredItems, 'csv', `سجل الإيواء والإعاشة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير CSV"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-csv ml-1.5"></i>
             CSV
           </button>
           <button
             onClick={() => exportData('shelter', filteredItems, 'pdf', `سجل الإيواء والإعاشة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير PDF"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
             PDF
-          </button>
-          <button
-            onClick={() => exportData('shelter', filteredItems, 'print', `سجل مركز الإيواء والإعاشة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="طباعة التقرير المعتمد"
-          >
-            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
-            طباعة
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي النزيلات حالياً</span>
-          <div className="text-2xl font-black text-emerald-800 mt-1">{insideCount} عاملة</div>
-          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">تسكين وإعاشة نشطة</span>
+        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#000000' }}>إجمالي النزيلات حالياً</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{insideCount} عاملة</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>تسكين وإعاشة نشطة</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">متاحات لنقل الكفالة / التأجير</span>
-          <div className="text-2xl font-black text-purple-700 mt-1">{transferCount} عاملة</div>
-          <span className="text-xs text-purple-600 font-bold mt-1 inline-block">جاهزات للعمل الفوري</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a' }}>متاحات لنقل الكفالة / التأجير</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{transferCount} عاملة</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '8px' }}>جاهزات للعمل الفوري</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">في مرحلة المغادرة / الترحيل</span>
-          <div className="text-2xl font-black text-rose-700 mt-1">{deportationCount} عاملة</div>
-          <span className="text-xs text-slate-400 font-medium">بانتظار إصدار تذاكر السفر</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a' }}>في مرحلة المغادرة / الترحيل</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{deportationCount} عاملة</div>
+          <span style={{ fontSize: '11.5px', color: '#71717a', marginTop: '6px', display: 'block' }}>بانتظار إصدار تذاكر السفر</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي الوجبات الموثقة</span>
-          <div className="text-2xl font-black text-slate-900 mt-1">{totalMeals} وجبة</div>
-          <span className="text-xs text-slate-400 font-medium">سجل التموين والإعاشة</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a' }}>إجمالي الوجبات الموثقة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{totalMeals} وجبة</div>
+          <span style={{ fontSize: '11.5px', color: '#71717a', marginTop: '6px', display: 'block' }}>سجل التموين والإعاشة</span>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2 overflow-x-auto">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflowX: 'auto', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'all', label: 'جميع النزيلات', count: shelterItems.length },
           { id: 'inside', label: 'داخل الإيواء', count: insideCount },
@@ -266,11 +259,21 @@ export const ShelterPage: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveSubTab(tab.id)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2 ${
-              activeSubTab === tab.id
-                ? 'bg-emerald-700 text-white shadow-sm'
-                : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-            }`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              border: '1px solid',
+              borderColor: activeSubTab === tab.id ? '#000000' : '#e4e4e7',
+              backgroundColor: activeSubTab === tab.id ? '#000000' : '#ffffff',
+              color: activeSubTab === tab.id ? '#ffffff' : '#27272a',
+              fontWeight: activeSubTab === tab.id ? 550 : 420,
+              fontSize: '12.5px',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
           >
             <span>{tab.label}</span>
             <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeSubTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
@@ -281,29 +284,36 @@ export const ShelterPage: React.FC = () => {
       </div>
 
       {/* Table Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex-1 max-w-md">
-          <input
-            type="text"
-            placeholder="ابحث باسم العاملة، رقم الجواز، أو اسم العميل..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-600 transition-colors"
-          />
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+            <input
+              type="text"
+              placeholder="ابحث باسم العاملة، رقم الجواز، أو اسم العميل..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-input"
+              style={{ borderRadius: '9999px', paddingRight: '36px', paddingLeft: '16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
+            />
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
+            العدد المعروض: {filteredItems.length} نزيلة
+          </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-sm">
-            <thead className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+          <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
+            <thead>
               <tr>
-                <th className="py-3.5 px-4">كود النزيلة / الجواز</th>
-                <th className="py-3.5 px-4">اسم العاملة والجنسية</th>
-                <th className="py-3.5 px-4">العميل / مرجع العقد</th>
-                <th className="py-3.5 px-4">مقر الإيواء</th>
-                <th className="py-3.5 px-4">أيام الإقامة والوجبات</th>
-                <th className="py-3.5 px-4">الرغبة في العمل</th>
-                <th className="py-3.5 px-4">الحالة الحالية</th>
-                <th className="py-3.5 px-4 text-center">إجراءات</th>
+                <th>كود النزيلة / الجواز</th>
+                <th>اسم العاملة والجنسية</th>
+                <th>العميل / مرجع العقد</th>
+                <th>مقر الإيواء</th>
+                <th>أيام الإقامة والوجبات</th>
+                <th>الرغبة في العمل</th>
+                <th>الحالة الحالية</th>
+                <th style={{ textAlign: 'center' }}>إجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-700">

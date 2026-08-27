@@ -184,60 +184,62 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       )}
 
       {/* Super Admin Top Command Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #181C1C 0%, #005154 100%)',
-        borderRadius: '16px',
-        padding: '24px',
-        color: '#FFFFFF',
-        marginBottom: '24px',
-        boxShadow: '0 10px 30px rgba(0, 81, 84, 0.25)',
-        border: '1px solid rgba(212, 175, 55, 0.3)'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          marginBottom: '24px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          border: '1px solid #27272a'
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <span style={{ background: '#D4AF37', color: '#181C1C', fontSize: '11px', fontWeight: '900', padding: '2px 10px', borderRadius: '9999px', letterSpacing: '0.5px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                 SUPER ADMIN CONTROLLER (30 ADVANCED FEATURES)
               </span>
-              <Badge text="System SLA 99.98%" type="success" icon="fa-solid fa-server" />
-              <Badge text="2FA Forced" type="purple" icon="fa-solid fa-shield-halved" />
+              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>System SLA 99.98%</span>
             </div>
-            <h2 style={{ fontSize: '24px', fontWeight: '900', fontFamily: 'Cairo, sans-serif', margin: 0 }}>
+            <h2 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
               لوحة التحكم الشاملة ومحرك الـ 30 ميزة للآدمن (Super Admin Suite)
             </h2>
-            <p style={{ fontSize: '13px', color: '#B0C4DE', margin: '4px 0 0 0' }}>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
               مجموعة خالد السليم • مركز السيطرة الأمنية والمالية والربط الحكومي والذكاء الاصطناعي
             </p>
           </div>
 
           {/* Quick Admin Actions & Emergency Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             <button
-              className="btn-odoo"
+              className="button-aloe-pill"
               onClick={() => setShowBroadcastModal(true)}
-              style={{ background: '#714B67', color: '#FFFFFF', fontSize: '12.5px' }}
+              style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
             >
-              <i className="fa-solid fa-bullhorn ml-1"></i> 1. بث رسالة عاجلة
+              <i className="fa-solid fa-bullhorn ml-1"></i> بث رسالة عاجلة
             </button>
             <button
-              className="btn-odoo"
+              className="button-outline-on-dark"
               onClick={() => setShowBackupModal(true)}
-              style={{ background: 'rgba(255,255,255,0.15)', color: '#FFFFFF', border: '1px solid rgba(255,255,255,0.2)', fontSize: '12.5px' }}
+              style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
             >
-              <i className="fa-solid fa-database ml-1"></i> 2. النسخ والاستعادة DB
+              <i className="fa-solid fa-database ml-1"></i> النسخ والاستعادة DB
             </button>
             <button
-              className="btn-odoo"
+              className="button-outline-on-dark"
               onClick={() => setEmergencyLockdown(!emergencyLockdown)}
-              style={{ background: emergencyLockdown ? '#10B981' : '#EF4444', color: '#FFFFFF', fontWeight: '800', fontSize: '12.5px' }}
+              style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: emergencyLockdown ? '#10b981' : '#ef4444', color: emergencyLockdown ? '#10b981' : '#f87171' }}
             >
-              <i className="fa-solid fa-[#000] fa-skull-crossbones ml-1"></i> 3. {emergencyLockdown ? 'فك الطوارئ' : 'زر الطوارئ Lock'}
+              <i className="fa-solid fa-skull-crossbones ml-1"></i> {emergencyLockdown ? 'فك الطوارئ' : 'زر الطوارئ Lock'}
             </button>
             <button
-              className="btn-odoo btn-odoo-secondary"
+              className="button-outline-on-dark"
               onClick={() => setCurrentUserRole('BranchSpecialist')}
               title="اختبار تجربة المستخدم العادي وتقييد الوصول"
-              style={{ fontSize: '12px' }}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
               تبديل لنواة موظف فرع
             </button>

@@ -98,37 +98,34 @@ export const AttendancesPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowUploadModal(true)}>
+          <button className="button-primary-pill" onClick={() => setShowUploadModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
             <i className="fa-solid fa-file-excel ml-1"></i> رفع شيت بصمة الإكسيل
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('attendances', attendances, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('attendances', attendances, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('attendances', attendances, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          <button className="button-outline-on-light" onClick={() => exportData('attendances', attendances, 'csv')} title="تصدير CSV" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-csv ml-1"></i> CSV
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('attendances', attendances, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('attendances', attendances, 'print')} title="طباعة التقرير">
-            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          <button className="button-outline-on-light" onClick={() => exportData('attendances', attendances, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
       {/* Stats Cards Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #10B981', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>الموظفون الحاضرون اليوم</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>{totalPresent} موظفاً</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>الموظفون الحاضرون اليوم</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{totalPresent} موظفاً</div>
         </div>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #F59E0B', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>حالات التأخير المسجلة</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#F59E0B', marginTop: '4px' }}>{totalLate} حالات</div>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>حالات التأخير المسجلة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{totalLate} حالات</div>
         </div>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #005154', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>معدل الانضباط العام</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>98.4%</div>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>معدل الانضباط العام</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>98.4%</div>
         </div>
       </div>
 
@@ -144,26 +141,26 @@ export const AttendancesPage: React.FC = () => {
       {/* Biometric Upload Modal */}
       {showUploadModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="table-card" style={{ width: '480px', padding: '24px', background: 'white', borderRadius: '12px' }}>
+          <div className="card-pricing" style={{ width: '480px', padding: '28px', background: '#ffffff', borderRadius: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
-                <i className="fa-solid fa-file-excel ml-2 text-success"></i> استيراد شيت البصمة الجماعي
+              <h3 style={{ fontSize: '16px', fontWeight: 550, color: '#000000', margin: 0 }}>
+                <i className="fa-solid fa-file-excel ml-2 text-emerald-600"></i> استيراد شيت البصمة الجماعي
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowUploadModal(false)}></i>
+              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px', color: '#71717a' }} onClick={() => setShowUploadModal(false)}></i>
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+            <p style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '16px' }}>
               اختر ملف إكسيل (.xlsx / .csv) المصدَر من جهاز البصمة الإلكترونية للمعالجة التلقائية.
             </p>
 
-            <div style={{ border: '2px dashed #CBD5E1', padding: '30px', textAlign: 'center', borderRadius: '8px', marginBottom: '20px', background: '#F8FAFC' }}>
-              <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '36px', color: '#0284C7', marginBottom: '10px' }}></i>
-              <div style={{ fontSize: '13px', fontWeight: '700' }}>اسحب وأسقط ملف البصمة هنا</div>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>أو قم باختيار الملف من جهازك</span>
+            <div style={{ border: '1px dashed #e4e4e7', padding: '30px', textAlign: 'center', borderRadius: '12px', marginBottom: '20px', background: '#fafafa' }}>
+              <i className="fa-solid fa-cloud-arrow-up" style={{ fontSize: '32px', color: '#000000', marginBottom: '10px' }}></i>
+              <div style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>اسحب وأسقط ملف البصمة هنا</div>
+              <span style={{ fontSize: '11.5px', color: '#71717a' }}>أو قم باختيار الملف من جهازك</span>
             </div>
 
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => setShowUploadModal(false)}>إلغاء</button>
-              <button className="btn-odoo btn-odoo-purple" onClick={handleSimulatedSheetImport}>
+              <button className="button-outline-on-light" onClick={() => setShowUploadModal(false)}>إلغاء</button>
+              <button className="button-primary-pill" onClick={handleSimulatedSheetImport}>
                 معالجة واستيراد السجلات
               </button>
             </div>
@@ -174,20 +171,21 @@ export const AttendancesPage: React.FC = () => {
       {/* Manual Attendance Modal */}
       {showManualModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="table-card" style={{ width: '480px', padding: '24px', background: 'white', borderRadius: '12px' }}>
+          <div className="card-pricing" style={{ width: '480px', padding: '28px', background: '#ffffff', borderRadius: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>تسجيل حضور وانصراف يدوي</h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowManualModal(false)}></i>
+              <h3 style={{ fontSize: '16px', fontWeight: 550, color: '#000000', margin: 0 }}>تسجيل حضور وانصراف يدوي</h3>
+              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px', color: '#71717a' }} onClick={() => setShowManualModal(false)}></i>
             </div>
             <form onSubmit={handleManualSubmit}>
               <div className="filter-group" style={{ marginBottom: '12px' }}>
                 <label className="filter-label">اسم الموظف *</label>
                 <input
                   type="text"
-                  className="filter-input"
+                  className="text-input"
                   placeholder="الاسم الثلاثي..."
                   value={manualForm.emp_name}
                   onChange={e => setManualForm({ ...manualForm, emp_name: e.target.value })}
+                  style={{ width: '100%', height: '40px', borderRadius: '9999px', padding: '0 14px' }}
                   required
                 />
               </div>
@@ -196,9 +194,10 @@ export const AttendancesPage: React.FC = () => {
                   <label className="filter-label">وقت الحضور *</label>
                   <input
                     type="time"
-                    className="filter-input"
+                    className="text-input"
                     value={manualForm.check_in}
                     onChange={e => setManualForm({ ...manualForm, check_in: e.target.value })}
+                    style={{ width: '100%', height: '40px', borderRadius: '9999px', padding: '0 14px' }}
                     required
                   />
                 </div>
@@ -206,16 +205,17 @@ export const AttendancesPage: React.FC = () => {
                   <label className="filter-label">وقت الانصراف *</label>
                   <input
                     type="time"
-                    className="filter-input"
+                    className="text-input"
                     value={manualForm.check_out}
                     onChange={e => setManualForm({ ...manualForm, check_out: e.target.value })}
+                    style={{ width: '100%', height: '40px', borderRadius: '9999px', padding: '0 14px' }}
                     required
                   />
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowManualModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">حفظ السجل</button>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '20px' }}>
+                <button type="button" className="button-outline-on-light" onClick={() => setShowManualModal(false)}>إلغاء</button>
+                <button type="submit" className="button-primary-pill">حفظ السجل</button>
               </div>
             </form>
           </div>

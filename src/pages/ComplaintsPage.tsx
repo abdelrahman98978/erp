@@ -245,56 +245,50 @@ export const ComplaintsPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-danger" onClick={() => setShowAddDisputeModal(true)}>
-            <i className="fa-solid fa-building-circle-exclamation ml-1"></i> رفع شكوى للإدارة العليا
+          <button className="button-primary-pill" onClick={() => setShowAddDisputeModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-building-circle-exclamation ml-1"></i> + رفع شكوى للإدارة العليا
           </button>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> تسجيل شكوى عميل جديدة
+          <button className="button-outline-on-light" onClick={() => setShowAddModal(true)} style={{ fontSize: '13px', padding: '6px 16px', minHeight: '38px' }}>
+            <i className="fa-solid fa-plus ml-1"></i> تسجيل شكوى عميل
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('complaints', filteredTickets, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('complaints', filteredTickets, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('complaints', filteredTickets, 'print')} title="طباعة التقرير">
-            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          <button className="button-outline-on-light" onClick={() => exportData('complaints', filteredTickets, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
       {/* Metric Cards Bar */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ background: 'white', padding: '18px', borderRadius: '12px', borderRight: '4px solid #714B67', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي التذاكر والشكاوى</span>
-          <div style={{ fontSize: '26px', fontWeight: '900', color: '#714B67', marginTop: '4px' }}>{complaints.length} تذكرة</div>
-          <span style={{ fontSize: '11.5px', color: 'var(--status-success)' }}>معالجة 88% هذا الشهر</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي التذاكر والشكاوى</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{complaints.length} تذكرة</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>معالجة 88% هذا الشهر</span>
         </div>
 
-        <div style={{ background: 'white', padding: '18px', borderRadius: '12px', borderRight: '4px solid #EF4444', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>نزاعات الشركات المصعدة للإدارة العليا</span>
-          <div style={{ fontSize: '26px', fontWeight: '900', color: '#EF4444', marginTop: '4px' }}>{interDisputes.length} نزاعات</div>
-          <span style={{ fontSize: '11.5px', color: '#EF4444' }}>مرفوعة لمكتب خالد السليم</span>
+        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>نزاعات الشركات المصعدة للإدارة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>{interDisputes.length} نزاعات</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>مرفوعة لمكتب خالد السليم</span>
         </div>
 
-        <div style={{ background: 'white', padding: '18px', borderRadius: '12px', borderRight: '4px solid #10B981', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>نسبة الالتزام بالـ SLA</span>
-          <div style={{ fontSize: '26px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>96.8%</div>
-          <span style={{ fontSize: '11.5px', color: '#10B981' }}>إغلاق التذاكر ضمن الموعد</span>
+        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>نسبة الالتزام بالـ SLA</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>96.8%</div>
+          <span style={{ fontSize: '11.5px', color: '#000000', fontWeight: 500, marginTop: '6px', display: 'block' }}>إغلاق التذاكر ضمن الموعد</span>
         </div>
 
-        <div style={{ background: 'white', padding: '18px', borderRadius: '12px', borderRight: '4px solid #F59E0B', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '700' }}>معدل رضا العملاء (CSAT)</span>
-          <div style={{ fontSize: '26px', fontWeight: '900', color: '#F59E0B', marginTop: '4px' }}>4.8 / 5.0</div>
-          <span style={{ fontSize: '11.5px', color: '#F59E0B' }}>بناءً على 142 تقييم</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>معدل رضا العملاء (CSAT)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>4.8 / 5.0</div>
+          <span style={{ fontSize: '11.5px', color: '#71717a', marginTop: '6px', display: 'block' }}>بناءً على 142 تقييم</span>
         </div>
       </div>
 
       {/* Tabs Row */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px', overflowX: 'auto' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
         {[
           { id: 'tickets', label: '📥 تذاكر العملاء والدعم' },
           { id: 'inter-company', label: '🏢 شكاوى ونزاعات الشركات للإدارة العليا' },
@@ -304,9 +298,20 @@ export const ComplaintsPage: React.FC = () => {
         ].map(tab => (
           <button
             key={tab.id}
-            className={`btn-odoo ${activeTab === tab.id ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
             onClick={() => setActiveTab(tab.id as any)}
-            style={{ whiteSpace: 'nowrap', fontSize: '12.5px' }}
+            style={{
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              border: '1px solid',
+              borderColor: activeTab === tab.id ? '#000000' : '#e4e4e7',
+              backgroundColor: activeTab === tab.id ? '#000000' : '#ffffff',
+              color: activeTab === tab.id ? '#ffffff' : '#27272a',
+              fontWeight: activeTab === tab.id ? 550 : 420,
+              fontSize: '12.5px',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.15s ease',
+            }}
           >
             {tab.label}
           </button>
@@ -315,17 +320,17 @@ export const ComplaintsPage: React.FC = () => {
 
       {/* Tab: Inter-Company Disputes Escalated to Executive Management */}
       {activeTab === 'inter-company' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
-                🏢 شكاوى ونزاعات الشركات والمكاتب المرفوعة للإدارة العليا (Executive Escalations Desk)
+              <h3 style={{ fontSize: '16px', fontWeight: 550, color: '#000000', margin: 0 }}>
+                🏢 شكاوى ونزاعات الشركات والمكاتب المرفوعة للإدارة العليا
               </h3>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+              <p style={{ fontSize: '12px', color: '#71717a', margin: '4px 0 0 0' }}>
                 متابعة والبت بالشكاوى التشغيلية والمالية بين توباز، دار الرواد، السفير، الماسي، والأيال والمكاتب الخارجية
               </p>
             </div>
-            <button className="btn-odoo btn-odoo-danger" onClick={() => setShowAddDisputeModal(true)}>
+            <button className="button-primary-pill" onClick={() => setShowAddDisputeModal(true)} style={{ fontSize: '12.5px', padding: '6px 16px' }}>
               + رفع شكوى رسمية جديدة
             </button>
           </div>

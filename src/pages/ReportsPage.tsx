@@ -21,121 +21,120 @@ export const ReportsPage: React.FC = () => {
   const totalRent = reportData.reduce((s, r) => s + r.rent_contracts, 0);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#3B82F6', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               EXECUTIVE BI & ANALYTICS
             </span>
-            <span style={{ color: '#94A3B8', fontSize: '12px' }}>مركز التقارير التنفيذية والمالية الموحدة</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>مركز التقارير التنفيذية والمالية الموحدة</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
             التقارير التحليلية والمؤشرات المالية والتشغيلية للمجموعة
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#CBD5E1' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             تحليل الأرباح والخسائر، عقود مساند، باقات التأجير، وهوامش ربحية الفروع والشركات
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={() => exportData('finance', reportData, 'excel')}
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 16px', fontSize: '13px', background: '#059669', borderColor: '#059669' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-excel ml-1"></i> تصدير مصنف Excel
           </button>
           <button
             onClick={() => exportData('finance', reportData, 'pdf')}
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '8px 16px', fontSize: '13px' }}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-pdf text-red-600 ml-1"></i> تصدير تقرير PDF
+            <i className="fa-solid fa-file-pdf text-rose-400 ml-1"></i> تصدير تقرير PDF
           </button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي الإيرادات المحققة"
-          value={`${totalRevenue.toLocaleString()} ر.س`}
-          icon="fa-solid fa-chart-line"
-          subtext="نمو شهري +14.8%"
-          variant="teal"
-        />
-        <StatCard
-          title="صافي الأرباح التشغيلية"
-          value={`${totalNetProfit.toLocaleString()} ر.س`}
-          icon="fa-solid fa-coins"
-          subtext="هامش ربح مجمع 57.6%"
-          variant="purple"
-        />
-        <StatCard
-          title="عقود الاستقدام (مساند)"
-          value={`${totalRecruitment} عقد`}
-          icon="fa-solid fa-file-signature"
-          subtext="متوسط دورة الإنجاز 28 يوماً"
-          variant="info"
-        />
-        <StatCard
-          title="عقود التأجير والتشغيل"
-          value={`${totalRent} عقد`}
-          icon="fa-solid fa-handshake"
-          subtext="تغطية تشغيلية كاملة"
-          variant="warning"
-        />
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الإيرادات المحققة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRevenue.toLocaleString()} ر.س</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>نمو شهري +14.8%</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>صافي الأرباح التشغيلية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalNetProfit.toLocaleString()} ر.س</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>هامش ربح مجمع 57.6%</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>عقود الاستقدام (مساند)</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRecruitment} عقد</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>دورة الإنجاز 28 يوماً</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>عقود التأجير والتشغيل</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRent} عقد</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تغطية تشغيلية كاملة</span>
+        </div>
       </div>
 
       {/* Filters Bar */}
-      <div style={{ background: '#FFF', padding: '14px 18px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: '800', color: '#1E293B', marginLeft: '6px' }}>الفترة الزمنية:</span>
-          <button
-            onClick={() => setSelectedPeriod('today')}
-            style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', border: '1px solid #CBD5E1', background: selectedPeriod === 'today' ? '#0F172A' : '#F8FAFC', color: selectedPeriod === 'today' ? '#FFF' : '#334155', cursor: 'pointer' }}
-          >
-            اليوم
-          </button>
-          <button
-            onClick={() => setSelectedPeriod('month')}
-            style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', border: '1px solid #CBD5E1', background: selectedPeriod === 'month' ? '#0F172A' : '#F8FAFC', color: selectedPeriod === 'month' ? '#FFF' : '#334155', cursor: 'pointer' }}
-          >
-            هذا الشهر (أغسطس 2026)
-          </button>
-          <button
-            onClick={() => setSelectedPeriod('quarter')}
-            style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', border: '1px solid #CBD5E1', background: selectedPeriod === 'quarter' ? '#0F172A' : '#F8FAFC', color: selectedPeriod === 'quarter' ? '#FFF' : '#334155', cursor: 'pointer' }}
-          >
-            الربع الثالث (Q3)
-          </button>
-          <button
-            onClick={() => setSelectedPeriod('year')}
-            style={{ padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '700', border: '1px solid #CBD5E1', background: selectedPeriod === 'year' ? '#0F172A' : '#F8FAFC', color: selectedPeriod === 'year' ? '#FFF' : '#334155', cursor: 'pointer' }}
-          >
-            السنة المالية 2026
-          </button>
+      <div className="card-pricing" style={{ padding: '14px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000', marginLeft: '6px' }}>الفترة الزمنية:</span>
+          {(['today', 'month', 'quarter', 'year'] as const).map((p) => {
+            const labels = { today: 'اليوم', month: 'هذا الشهر (أغسطس 2026)', quarter: 'الربع الثالث (Q3)', year: 'السنة المالية 2026' };
+            const isActive = selectedPeriod === p;
+            return (
+              <button
+                key={p}
+                onClick={() => setSelectedPeriod(p)}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '11.5px',
+                  fontWeight: isActive ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isActive ? '#000000' : '#e4e4e7',
+                  background: isActive ? '#000000' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {labels[p]}
+              </button>
+            );
+          })}
         </div>
 
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: '800', color: '#1E293B' }}>الشركة:</span>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000' }}>الشركة:</span>
           <select
             value={selectedCompany}
             onChange={(e) => setSelectedCompany(e.target.value)}
-            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', fontWeight: '700' }}
+            className="text-input"
+            style={{ height: '36px', minHeight: '36px', borderRadius: '9999px', fontSize: '12px', padding: '0 14px' }}
           >
             <option value="all">كافة شركات المجموعة الموحدة</option>
             <option value="masi">شركة السفير الماسي</option>
@@ -147,48 +146,50 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Main Breakdown Table */}
-      <div style={{ background: '#FFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#0F172A', marginBottom: '16px' }}>
-          <i className="fa-solid fa-table-cells text-emerald-600 ml-2"></i> جدول الأداء المالي والتشغيلي المقارن لشركات المجموعة
-        </h2>
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 550, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <i className="fa-solid fa-table-cells text-emerald-600"></i> جدول الأداء المالي والتشغيلي المقارن لشركات المجموعة
+          </h2>
+        </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '13px' }}>
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+          <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
             <thead>
-              <tr style={{ background: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
-                <th style={{ padding: '12px' }}>الشركة / الكيان</th>
-                <th style={{ padding: '12px' }}>عقود الاستقدام</th>
-                <th style={{ padding: '12px' }}>عقود التأجير</th>
-                <th style={{ padding: '12px' }}>إجمالي الإيرادات (ر.س)</th>
-                <th style={{ padding: '12px' }}>المصروفات والتكاليف (ر.س)</th>
-                <th style={{ padding: '12px' }}>صافي الأرباح (ر.س)</th>
-                <th style={{ padding: '12px' }}>هامش الربح</th>
+              <tr>
+                <th>الشركة / الكيان</th>
+                <th>عقود الاستقدام</th>
+                <th>عقود التأجير</th>
+                <th>إجمالي الإيرادات (ر.س)</th>
+                <th>المصروفات والتكاليف (ر.س)</th>
+                <th>صافي الأرباح (ر.س)</th>
+                <th>هامش الربح</th>
               </tr>
             </thead>
             <tbody>
               {reportData.map((row) => (
-                <tr key={row.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                  <td style={{ padding: '14px 12px', fontWeight: '800', color: '#0F172A' }}>{row.name}</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '700', color: '#2563EB' }}>{row.recruitment_contracts} عقد</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '700', color: '#059669' }}>{row.rent_contracts} عقد</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '800', color: '#0F172A' }}>{(row.total_revenue ?? 0).toLocaleString()} ر.س</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '700', color: '#DC2626' }}>{(row.expenses ?? 0).toLocaleString()} ر.س</td>
-                  <td style={{ padding: '14px 12px', fontWeight: '900', color: '#047857' }}>{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
-                  <td style={{ padding: '14px 12px' }}>
+                <tr key={row.id}>
+                  <td style={{ fontWeight: 550, color: '#000000' }}>{row.name}</td>
+                  <td>{row.recruitment_contracts} عقد</td>
+                  <td>{row.rent_contracts} عقد</td>
+                  <td style={{ fontWeight: 550, color: '#000000' }}>{(row.total_revenue ?? 0).toLocaleString()} ر.س</td>
+                  <td>{(row.expenses ?? 0).toLocaleString()} ر.س</td>
+                  <td style={{ fontWeight: 550, color: '#000000' }}>{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
+                  <td>
                     <Badge text={row.margin} type="success" />
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr style={{ background: '#F8FAFC', borderTop: '2px solid #CBD5E1', fontWeight: '900' }}>
-                <td style={{ padding: '14px 12px' }}>الإجمالي المجمع للمجموعة</td>
-                <td style={{ padding: '14px 12px', color: '#2563EB' }}>{totalRecruitment} عقد</td>
-                <td style={{ padding: '14px 12px', color: '#059669' }}>{totalRent} عقد</td>
-                <td style={{ padding: '14px 12px' }}>{(totalRevenue ?? 0).toLocaleString()} ر.س</td>
-                <td style={{ padding: '14px 12px', color: '#DC2626' }}>{(totalExpenses ?? 0).toLocaleString()} ر.س</td>
-                <td style={{ padding: '14px 12px', color: '#047857', fontSize: '15px' }}>{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
-                <td style={{ padding: '14px 12px' }}><Badge text="57.6%" type="purple" /></td>
+              <tr style={{ background: '#fafafa', borderTop: '1px solid #e4e4e7', fontWeight: 550 }}>
+                <td>الإجمالي المجمع للمجموعة</td>
+                <td>{totalRecruitment} عقد</td>
+                <td>{totalRent} عقد</td>
+                <td>{(totalRevenue ?? 0).toLocaleString()} ر.س</td>
+                <td>{(totalExpenses ?? 0).toLocaleString()} ر.س</td>
+                <td style={{ fontSize: '15px' }}>{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
+                <td><Badge text="57.6%" type="purple" /></td>
               </tr>
             </tfoot>
           </table>

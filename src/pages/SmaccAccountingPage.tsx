@@ -177,102 +177,82 @@ export const SmaccAccountingPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-slate-900 min-h-screen text-slate-100 font-sans space-y-6 dir-rtl text-right">
+    <div className="space-y-6">
       {/* Top Header & Section Navigation */}
-      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 p-6 rounded-2xl border border-blue-700/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-600/30 rounded-2xl border border-blue-500/30 text-blue-400">
-            <DollarSign className="w-8 h-8" />
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <DollarSign className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white tracking-tight">قسم المحاسبة المالية الشامل (SMACC Financial Suite)</h1>
-            <p className="text-xs text-blue-200 mt-0.5">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC FINANCIAL SUITE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              قسم المحاسبة المالية الشامل
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
               دليل الحسابات، قيود اليومية، سندات القبض والصرف، ميزان المراجعة، ومراكز التكلفة
             </p>
           </div>
         </div>
 
         {/* Tab Buttons ordered exactly matching SMACC ERP */}
-        <div className="flex flex-wrap items-center bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 space-x-1 space-x-reverse text-xs font-bold">
-          <button
-            onClick={() => setActiveTab('coa')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'coa' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            1. دليل الحسابات
-          </button>
-          <button
-            onClick={() => setActiveTab('cost-centers')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'cost-centers' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            2. مراكز التكلفة
-          </button>
-          <button
-            onClick={() => setActiveTab('journals')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'journals' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            3. قيود اليومية
-          </button>
-          <button
-            onClick={() => setActiveTab('vouchers')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'vouchers' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            4. سندات القبض والصرف
-          </button>
-          <button
-            onClick={() => setActiveTab('ledger')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'ledger' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            5. كشف حساب تفصيلي
-          </button>
-          <button
-            onClick={() => setActiveTab('trial-balance')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'trial-balance' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            6. ميزان المراجعة
-          </button>
-          <button
-            onClick={() => setActiveTab('income-statement')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'income-statement' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            7. قائمة الدخل (P&L)
-          </button>
-          <button
-            onClick={() => setActiveTab('balance-sheet')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'balance-sheet' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            8. المركز المالي (الميزانية)
-          </button>
-          <button
-            onClick={() => setActiveTab('fiscal-closing')}
-            className={`px-3 py-1.5 rounded-lg transition-all ${
-              activeTab === 'fiscal-closing' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            9. الإقفال والربط المالي
-          </button>
+        <div className="flex flex-wrap items-center bg-white/10 p-1.5 rounded-full border border-white/15 gap-1 text-xs">
+          {[
+            { id: 'coa', label: '1. دليل الحسابات' },
+            { id: 'cost-centers', label: '2. مراكز التكلفة' },
+            { id: 'journals', label: '3. قيود اليومية' },
+            { id: 'vouchers', label: '4. سندات القبض والصرف' },
+            { id: 'ledger', label: '5. كشف حساب تفصيلي' },
+            { id: 'trial-balance', label: '6. ميزان المراجعة' },
+            { id: 'income-statement', label: '7. قائمة الدخل (P&L)' },
+            { id: 'balance-sheet', label: '8. المركز المالي' },
+            { id: 'fiscal-closing', label: '9. الإقفال والربط' },
+          ].map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontWeight: isActive ? 550 : 420,
+                  background: isActive ? '#ffffff' : 'transparent',
+                  color: isActive ? '#000000' : '#d4d4d8',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* SECTION 1: Chart of Accounts (دليل الحسابات الشجري) */}
       {activeTab === 'coa' && (
         <div className="space-y-6">
-          <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
               <Search className="w-4 h-4 absolute right-3 top-3 text-slate-400" />
               <input
@@ -280,20 +260,22 @@ export const SmaccAccountingPage: React.FC = () => {
                 placeholder="البحث بالرمز أو اسم الحساب..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pr-9 pl-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="text-input"
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
               />
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsAccountModalOpen(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-md transition-all flex items-center gap-1.5"
+                className="button-primary-pill"
+                style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
               >
-                <Plus className="w-4 h-4" />
-                <span>إضافة حساب جديد</span>
+                <Plus className="w-4 h-4 ml-1" />
+                <span>+ إضافة حساب جديد</span>
               </button>
-              <button className="px-3 py-2 bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold hover:bg-slate-600 transition-colors flex items-center gap-1.5">
-                <FileSpreadsheet className="w-4 h-4" />
+              <button className="button-outline-on-light" style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}>
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
                 <span>تصدير دليل الحسابات</span>
               </button>
             </div>

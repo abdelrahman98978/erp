@@ -49,69 +49,69 @@ export const SmaccModulesPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 bg-slate-900 min-h-screen text-slate-100 font-sans space-y-6">
+    <div className="space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 rounded-2xl border border-blue-700/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-600/30 rounded-xl border border-blue-500/30">
-              <Building2 className="w-7 h-7 text-blue-400" />
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Building2 className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC REPLACEMENT</span>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">نظام الأقسام الداخلية والخارجية (SMACC Replacement)</h1>
-              <p className="text-xs text-blue-200 mt-0.5">
-                إدارة الأصول الثابتة، المخزون، البائعين والمحصلين، والربط الإلكتروني الخارجي
-              </p>
-            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              نظام الأقسام الداخلية والخارجية
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              إدارة الأصول الثابتة، المخزون، البائعين والمحصلين، والربط الإلكتروني الخارجي
+            </p>
           </div>
         </div>
 
         {/* Quick Module Tabs */}
-        <div className="flex items-center bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 space-x-1 space-x-reverse text-xs font-semibold">
-          <button
-            onClick={() => setActiveModuleTab('fixed-assets')}
-            className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
-              activeModuleTab === 'fixed-assets'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Building2 className="w-4 h-4" />
-            <span>الأصول الثابتة</span>
-          </button>
-          <button
-            onClick={() => setActiveModuleTab('inventory')}
-            className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
-              activeModuleTab === 'inventory'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Package className="w-4 h-4" />
-            <span>المخزون</span>
-          </button>
-          <button
-            onClick={() => setActiveModuleTab('sales-collectors')}
-            className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
-              activeModuleTab === 'sales-collectors'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            <span>البائعين والمحصلين</span>
-          </button>
-          <button
-            onClick={() => setActiveModuleTab('external-links')}
-            className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
-              activeModuleTab === 'external-links'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Globe className="w-4 h-4" />
-            <span>الأقسام الخارجية والربط</span>
-          </button>
+        <div className="flex flex-wrap items-center bg-white/10 p-1.5 rounded-full border border-white/15 gap-1 text-xs">
+          {[
+            { id: 'fixed-assets', label: 'الأصول الثابتة' },
+            { id: 'inventory', label: 'المخزون' },
+            { id: 'sales-collectors', label: 'البائعون والمحصلون' },
+            { id: 'external-links', label: 'الربط الخارجي' },
+          ].map(tab => {
+            const isActive = activeModuleTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveModuleTab(tab.id as any)}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: '9999px',
+                  fontWeight: isActive ? 550 : 420,
+                  background: isActive ? '#ffffff' : 'transparent',
+                  color: isActive ? '#000000' : '#d4d4d8',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 

@@ -263,6 +263,7 @@ export const HRPage: React.FC = () => {
   ]);
 
   // Employee Add Form State
+  const [selectedEmployeeForFile, setSelectedEmployeeForFile] = useState<EmployeeRecord | null>(null);
   const [name, setName] = useState('');
   const [nationalId, setNationalId] = useState('');
   const [jobTitle, setJobTitle] = useState('أخصائي استقدام');
@@ -367,53 +368,29 @@ export const HRPage: React.FC = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={() => setShowAddEmpModal(true)}
-            style={{
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '8px 18px',
-              fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-user-plus text-xs"></i>
-            إضافة موظف جديد
+            + إضافة موظف جديد
           </button>
 
           <button
             onClick={handleExportWPS}
-            style={{
-              backgroundColor: '#059669',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '8px 16px',
-              fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(5, 150, 105, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
+            className="button-outline-on-light"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-excel text-xs"></i>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
             تصدير ملف WPS للبنك
           </button>
         </div>
       </div>
 
-      {/* Sub Tabs Navigation (ClickERP Style) */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+      {/* Sub Tabs Navigation */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'employees', label: `الموظفون (${employees.length})`, icon: 'fa-users' },
           { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: 'fa-calendar-minus' },
@@ -432,14 +409,14 @@ export const HRPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#334155',
-                fontWeight: isActive ? '800' : '600',
-                fontSize: '12px',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -453,75 +430,76 @@ export const HRPage: React.FC = () => {
 
       {/* Tab 1: Employees List */}
       {activeTab === 'employees' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <input
-              type="text"
-              placeholder="البحث بالاسم، كود الموظف، الهوية، أو الوظيفة..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                padding: '8px 14px',
-                borderRadius: '8px',
-                border: '1px solid #CBD5E1',
-                fontSize: '12px',
-                width: '320px',
-              }}
-            />
-            <span style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+              <input
+                type="text"
+                placeholder="البحث بالاسم، كود الموظف، الهوية، أو الوظيفة..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="text-input"
+                style={{
+                  borderRadius: '9999px',
+                  paddingRight: '36px',
+                  paddingLeft: '16px',
+                  height: '38px',
+                  minHeight: '38px',
+                  width: '320px',
+                  fontSize: '13px',
+                }}
+              />
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
               إجمالي الموظفين: {filteredEmployees.length}
             </span>
           </div>
 
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>كود الموظف</th>
-                <th>اسم الموظف</th>
-                <th>رقم الهوية الوطنية</th>
-                <th>الوظيفة والمهنة</th>
-                <th>القسم الإداري</th>
-                <th>تاريخ التعيين</th>
-                <th>الراتب الأساسي</th>
-                <th>الحالة</th>
-                <th>الإجراء</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredEmployees.map((emp) => (
-                <tr key={emp.id}>
-                  <td><strong style={{ color: '#005154' }}>{emp.employee_code}</strong></td>
-                  <td>
-                    <div style={{ fontWeight: '800', color: '#0F172A' }}>{emp.name}</div>
-                    <div style={{ fontSize: '10px', color: '#64748B' }}>{emp.branch}</div>
-                  </td>
-                  <td><span style={{ fontFamily: 'monospace' }}>{emp.national_id}</span></td>
-                  <td>{emp.job_title}</td>
-                  <td><span className="badge-odoo badge-secondary">{emp.department}</span></td>
-                  <td>{emp.hire_date}</td>
-                  <td><strong style={{ color: '#047857' }}>{(emp.salary ?? 0).toLocaleString()} ر.س</strong></td>
-                  <td><Badge text={emp.status} type="success" /></td>
-                  <td>
-                    <button
-                      onClick={() => setSelectedEmpFor360(emp)}
-                      style={{
-                        backgroundColor: 'rgba(0, 81, 84, 0.08)',
-                        color: '#005154',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '4px 10px',
-                        fontSize: '11px',
-                        fontWeight: '800',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      الملف الرقمي 360°
-                    </button>
-                  </td>
+          <div style={{ overflowX: 'auto', width: '100%' }}>
+            <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
+              <thead>
+                <tr>
+                  <th>كود الموظف</th>
+                  <th>اسم الموظف</th>
+                  <th>رقم الهوية</th>
+                  <th>المسمى الوظيفي</th>
+                  <th>القسم والفرع</th>
+                  <th>الراتب الأساسي</th>
+                  <th>الحالة</th>
+                  <th>الملف الرقمي 360</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredEmployees.map((emp) => (
+                  <tr key={emp.id}>
+                    <td style={{ fontWeight: 550, color: '#000000', fontFamily: 'monospace' }}>{emp.employee_code}</td>
+                    <td>
+                      <div style={{ fontWeight: 550, color: '#000000' }}>{emp.name}</div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>تاريخ التعيين: {emp.hire_date}</div>
+                    </td>
+                    <td style={{ fontFamily: 'monospace', color: '#71717a' }}>{emp.national_id}</td>
+                    <td style={{ fontWeight: 550, color: '#000000' }}>{emp.job_title}</td>
+                    <td>
+                      <div>{emp.department}</div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>{emp.branch}</div>
+                    </td>
+                    <td style={{ fontWeight: 550, color: '#000000' }}>{(emp.salary ?? 0).toLocaleString()} ر.س</td>
+                    <td><Badge text={emp.status} type={emp.status === 'نشط' ? 'success' : 'warning'} /></td>
+                    <td>
+                      <button
+                        onClick={() => setSelectedEmployeeForFile(emp)}
+                        className="button-outline-on-light"
+                        style={{ padding: '4px 12px', fontSize: '11.5px', minHeight: '28px' }}
+                      >
+                        <i className="fa-solid fa-id-card-clip ml-1"></i> الملف الرقمي
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

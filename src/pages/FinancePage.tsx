@@ -242,56 +242,46 @@ export const FinancePage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddJournalModal(true)}
-            className="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-xs shadow-md shadow-purple-200 transition-all flex items-center gap-1.5"
+            className="button-primary-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus"></i> قيد يومية
+            <i className="fa-solid fa-plus text-xs"></i> + قيد يومية
           </button>
           <button
             onClick={() => setShowAddVoucherModal(true)}
-            className="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold text-xs shadow-md shadow-teal-200 transition-all flex items-center gap-1.5"
+            className="button-outline-on-light"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-invoice-dollar"></i> سند قبض / صرف
+            <i className="fa-solid fa-file-invoice-dollar ml-1"></i> سند قبض / صرف
           </button>
 
-          {/* Direct Export Buttons for Current Active Section */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+          {/* Direct Export Buttons */}
+          <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-[#e4e4e7]">
             <button
               onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="p-2 hover:bg-white text-emerald-700 rounded-lg text-xs font-bold transition-all"
-              title="تصدير ميزان المراجعة إكسيل"
+              className="button-outline-on-light"
+              style={{ padding: '6px 12px', fontSize: '12px', minHeight: '32px' }}
+              title="تصدير إكسيل"
             >
-              <i className="fa-solid fa-file-excel"></i>
-            </button>
-            <button
-              onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'csv', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="p-2 hover:bg-white text-blue-700 rounded-lg text-xs font-bold transition-all"
-              title="تصدير CSV"
-            >
-              <i className="fa-solid fa-file-csv"></i>
+              <i className="fa-solid fa-file-excel text-emerald-600"></i> Excel
             </button>
             <button
               onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="p-2 hover:bg-white text-rose-700 rounded-lg text-xs font-bold transition-all"
+              className="button-outline-on-light"
+              style={{ padding: '6px 12px', fontSize: '12px', minHeight: '32px' }}
               title="تصدير PDF"
             >
-              <i className="fa-solid fa-file-pdf"></i>
-            </button>
-            <button
-              onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'print', `تقرير ميزان المراجعة - ${activeCompany.name}`)}
-              className="p-2 hover:bg-white text-purple-700 rounded-lg text-xs font-bold transition-all"
-              title="طباعة التقرير المالي الرسمي"
-            >
-              <i className="fa-solid fa-print"></i>
+              <i className="fa-solid fa-file-pdf text-rose-600"></i> PDF
             </button>
           </div>
         </div>
       </div>
 
       {/* 4-Category Accounting Sequence Header (SOCPA / IFRS Standard Layout) */}
-      <div className="finance-nav-grid">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Category 1: القوائم والتقارير */}
-        <div className="finance-category-box">
-          <span className="finance-category-title">📊 1. القوائم والمركز المالي</span>
+        <div className="card-pricing" style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a', display: 'block', marginBottom: '10px' }}>📊 1. القوائم والمركز المالي</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'overview', label: '🏠 اللوحة المالية العامة', icon: 'fa-chart-pie' },
@@ -302,18 +292,32 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 12px',
+                  borderRadius: '9999px',
+                  border: '1px solid',
+                  borderColor: activeTab === t.id ? '#000000' : 'transparent',
+                  backgroundColor: activeTab === t.id ? '#000000' : '#fafafa',
+                  color: activeTab === t.id ? '#ffffff' : '#27272a',
+                  fontWeight: activeTab === t.id ? 550 : 420,
+                  fontSize: '11.5px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
               >
                 <span>{t.label}</span>
-                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '10.5px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
         </div>
 
         {/* Category 2: العمليات اليومية */}
-        <div className="finance-category-box">
-          <span className="finance-category-title">📜 2. القيود والعمليات اليومية</span>
+        <div className="card-pricing" style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a', display: 'block', marginBottom: '10px' }}>📜 2. القيود والعمليات اليومية</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'journals', label: '📜 دفتر القيود المحاسبية', icon: 'fa-book' },
@@ -323,18 +327,32 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 12px',
+                  borderRadius: '9999px',
+                  border: '1px solid',
+                  borderColor: activeTab === t.id ? '#000000' : 'transparent',
+                  backgroundColor: activeTab === t.id ? '#000000' : '#fafafa',
+                  color: activeTab === t.id ? '#ffffff' : '#27272a',
+                  fontWeight: activeTab === t.id ? 550 : 420,
+                  fontSize: '11.5px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
               >
                 <span>{t.label}</span>
-                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '10.5px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
         </div>
 
         {/* Category 3: الاستقدام والشركاء والزكاة */}
-        <div className="finance-category-box">
-          <span className="finance-category-title">🤝 3. الاستقدام والشركاء والزكاة</span>
+        <div className="card-pricing" style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a', display: 'block', marginBottom: '10px' }}>🤝 3. الاستقدام والشركاء والزكاة</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'musaned-escrow', label: '🤝 أمانات مساند (90 يوماً)', icon: 'fa-shield-halved' },
@@ -344,18 +362,32 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 12px',
+                  borderRadius: '9999px',
+                  border: '1px solid',
+                  borderColor: activeTab === t.id ? '#000000' : 'transparent',
+                  backgroundColor: activeTab === t.id ? '#000000' : '#fafafa',
+                  color: activeTab === t.id ? '#ffffff' : '#27272a',
+                  fontWeight: activeTab === t.id ? 550 : 420,
+                  fontSize: '11.5px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
               >
                 <span>{t.label}</span>
-                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '10.5px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
         </div>
 
         {/* Category 4: الدليل والإقفالات */}
-        <div className="finance-category-box">
-          <span className="finance-category-title">⚙️ 4. الهيكل المحاسبي والإقفال</span>
+        <div className="card-pricing" style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', fontWeight: 550, color: '#71717a', display: 'block', marginBottom: '10px' }}>⚙️ 4. الهيكل المحاسبي والإقفال</span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {[
               { id: 'chart-of-accounts', label: '🌳 شجرة الحسابات والدليل', icon: 'fa-sitemap' },
@@ -364,10 +396,24 @@ export const FinancePage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => setActiveTab(t.id as any)}
-                className={`finance-tab-pill ${activeTab === t.id ? 'active' : ''}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 12px',
+                  borderRadius: '9999px',
+                  border: '1px solid',
+                  borderColor: activeTab === t.id ? '#000000' : 'transparent',
+                  backgroundColor: activeTab === t.id ? '#000000' : '#fafafa',
+                  color: activeTab === t.id ? '#ffffff' : '#27272a',
+                  fontWeight: activeTab === t.id ? 550 : 420,
+                  fontSize: '11.5px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
               >
                 <span>{t.label}</span>
-                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '11px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
+                <i className={`fa-solid ${t.icon}`} style={{ fontSize: '10.5px', opacity: activeTab === t.id ? 1 : 0.6 }}></i>
               </button>
             ))}
           </div>
@@ -378,67 +424,67 @@ export const FinancePage: React.FC = () => {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           <div className="stat-card-grid">
-            <div className="stat-card" style={{ borderRight: '4px solid #005154' }}>
+            <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
               <div className="stat-header">
-                <span className="stat-title">إجمالي الإيرادات المحققة</span>
-                <div className="stat-icon" style={{ background: '#E6F4F1', color: '#005154' }}>
+                <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الإيرادات المحققة</span>
+                <div style={{ width: '36px', height: '36px', borderRadius: '9999px', background: '#ffffff', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <i className="fa-solid fa-arrow-trend-up"></i>
                 </div>
               </div>
-              <div className="stat-value" style={{ color: '#005154' }}>525,471.20 ر.س</div>
-              <div className="stat-footer">
-                <span className="stat-badge up">
-                  <i className="fa-solid fa-arrow-up"></i> نمو شهري 14.8%
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>525,471.20 ر.س</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+                <span className="pill-tag-mint">
+                  <i className="fa-solid fa-arrow-up text-xs"></i> نمو شهري 14.8%
                 </span>
-                <span>عقود استقدام وتأجير</span>
+                <span style={{ fontSize: '11.5px', color: '#71717a' }}>عقود استقدام وتأجير</span>
               </div>
             </div>
 
-            <div className="stat-card" style={{ borderRight: '4px solid #EF4444' }}>
+            <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="stat-header">
-                <span className="stat-title">إجمالي المصروفات والتشغيل</span>
-                <div className="stat-icon" style={{ background: '#FEE2E2', color: '#DC2626' }}>
+                <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>إجمالي المصروفات والتشغيل</span>
+                <div style={{ width: '36px', height: '36px', borderRadius: '9999px', background: '#f4f4f5', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <i className="fa-solid fa-arrow-trend-down"></i>
                 </div>
               </div>
-              <div className="stat-value" style={{ color: '#DC2626' }}>220,500.00 ر.س</div>
-              <div className="stat-footer">
-                <span className="stat-badge down">
-                  <i className="fa-solid fa-clock"></i> مصاريف الفترة
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>220,500.00 ر.س</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+                <span className="pill-tag-shade">
+                  <i className="fa-solid fa-clock text-xs"></i> مصاريف الفترة
                 </span>
-                <span>تأشيرات، رواتب، إعاشة</span>
+                <span style={{ fontSize: '11.5px', color: '#71717a' }}>تأشيرات، رواتب، إعاشة</span>
               </div>
             </div>
 
-            <div className="stat-card purple" style={{ borderRight: '4px solid #714B67' }}>
+            <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
               <div className="stat-header">
-                <span className="stat-title">صافي الأرباح التشغيلية</span>
-                <div className="stat-icon" style={{ background: '#F3E8EE', color: '#714B67' }}>
+                <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>صافي الأرباح التشغيلية</span>
+                <div style={{ width: '36px', height: '36px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <i className="fa-solid fa-vault"></i>
                 </div>
               </div>
-              <div className="stat-value" style={{ color: '#714B67' }}>304,971.20 ر.س</div>
-              <div className="stat-footer">
-                <span className="stat-badge up">
-                  <i className="fa-solid fa-check"></i> هامش ربح 58%
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', letterSpacing: '-0.02em' }}>304,971.20 ر.س</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+                <span className="pill-tag-mint">
+                  <i className="fa-solid fa-check text-xs"></i> هامش ربح 58%
                 </span>
-                <span>أداء مالي قياسي</span>
+                <span style={{ fontSize: '11.5px', color: '#a1a1aa' }}>أداء مالي قياسي</span>
               </div>
             </div>
 
-            <div className="stat-card warning" style={{ borderRight: '4px solid #F59E0B' }}>
+            <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="stat-header">
-                <span className="stat-title">أمانات مساند المعلقة (90 يوماً)</span>
-                <div className="stat-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
+                <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>أمانات مساند المعلقة (90 يوماً)</span>
+                <div style={{ width: '36px', height: '36px', borderRadius: '9999px', background: '#f4f4f5', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <i className="fa-solid fa-shield-halved"></i>
                 </div>
               </div>
-              <div className="stat-value" style={{ color: '#D97706' }}>184,500.00 ر.س</div>
-              <div className="stat-footer">
-                <span className="stat-badge" style={{ background: '#FEF3C7', color: '#B45309' }}>
-                  <i className="fa-solid fa-hourglass-half"></i> فترة الضمان
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>184,500.00 ر.س</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+                <span className="pill-tag-shade">
+                  <i className="fa-solid fa-hourglass-half text-xs"></i> فترة الضمان
                 </span>
-                <span>حساب وسيط محمي</span>
+                <span style={{ fontSize: '11.5px', color: '#71717a' }}>حساب وسيط محمي</span>
               </div>
             </div>
           </div>

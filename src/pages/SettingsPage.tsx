@@ -56,55 +56,61 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
-            <i className="fa-solid fa-sliders text-primary ml-2"></i> إعدادات النظام ومحتوى المنصة والأمان
+          <h2 style={{ fontSize: '20px', fontWeight: 550, color: '#000000', margin: 0 }}>
+            <i className="fa-solid fa-sliders text-emerald-600 ml-2"></i> إعدادات النظام ومحتوى المنصة والأمان
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             ضبط سياسات أمان المصادقة الثنائية (2FA)، اسم المنصة، الروابط السريعة الحكومية، ونصوص البوابة
           </p>
         </div>
-        <button className="btn-odoo btn-odoo-primary" onClick={handleSaveSettings}>
-          <i className="fa-solid fa-floppy-disk"></i> حفظ جميع التعديلات
+        <button className="button-primary-pill" onClick={handleSaveSettings} style={{ fontSize: '13px', padding: '8px 20px', minHeight: '38px' }}>
+          <i className="fa-solid fa-floppy-disk ml-1"></i> حفظ جميع التعديلات
         </button>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '20px' }}>
         {/* Left Side Settings Navigation Menu */}
-        <div className="table-card" style={{ padding: '12px' }}>
-          {SECTIONS.map((sec) => (
-            <div
-              key={sec.id}
-              onClick={() => setActiveSection(sec.id)}
-              style={{
-                padding: '10px 14px',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '13px',
-                fontWeight: activeSection === sec.id ? '700' : '500',
-                background: activeSection === sec.id ? 'var(--primary-light)' : 'transparent',
-                color: activeSection === sec.id ? 'var(--primary)' : 'var(--text-main)',
-                cursor: 'pointer',
-                marginBottom: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}
-            >
-              <i className={`fa-solid ${sec.icon}`}></i>
-              <span>{sec.name}</span>
-            </div>
-          ))}
+        <div className="card-pricing" style={{ padding: '12px', borderRadius: '16px', background: '#ffffff', height: 'fit-content' }}>
+          {SECTIONS.map((sec) => {
+            const isActive = activeSection === sec.id;
+            return (
+              <div
+                key={sec.id}
+                onClick={() => setActiveSection(sec.id)}
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '12.5px',
+                  fontWeight: isActive ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isActive ? '#000000' : 'transparent',
+                  background: isActive ? '#000000' : 'transparent',
+                  color: isActive ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  marginBottom: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <i className={`fa-solid ${sec.icon}`} style={{ fontSize: '12px', opacity: isActive ? 1 : 0.6 }}></i>
+                <span>{sec.name}</span>
+              </div>
+            );
+          })}
         </div>
 
         {/* Right Side Settings Form View */}
-        <div className="table-card" style={{ padding: '24px' }}>
+        <div className="card-pricing" style={{ padding: '28px', borderRadius: '16px', background: '#ffffff' }}>
           {activeSection === 'security-2fa' && (
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: '#005154', borderBottom: '2px solid #005154', paddingBottom: '8px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 550, marginBottom: '8px', color: '#000000', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px' }}>
                 إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
               </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+              <p style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '20px' }}>
                 تعديل وتحديد سياسات الأمان والحماية لحسابات مديري النظام والموظفين بالفروع.
               </p>
 

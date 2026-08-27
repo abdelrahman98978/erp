@@ -287,42 +287,42 @@ export const UsersPage: React.FC = () => {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAddUserModal(true)}>
-            <i className="fa-solid fa-user-plus ml-1"></i> إضافة مستخدم جديد
+          <button className="button-primary-pill" onClick={() => setShowAddUserModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-user-plus ml-1"></i> + إضافة مستخدم جديد
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('users', users, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('users', users, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('users', users, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+          <button className="button-outline-on-light" onClick={() => exportData('users', users, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
       {/* 2FA & Biometrics Stats Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #005154' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي المستخدمين</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>{users.length}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي المستخدمين</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{users.length}</div>
         </div>
 
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #10B981' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>المصادقة 2FA مفعلة</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>
+        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>المصادقة 2FA مفعلة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>
             {users.filter(u => u.two_factor_enabled).length}
           </div>
         </div>
 
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #8B5CF6' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>الدخول بالبصمة مسجل</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#8B5CF6', marginTop: '4px' }}>
+        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>الدخول بالبصمة مسجل</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>
             {users.filter(u => u.biometric_enabled).length}
           </div>
         </div>
 
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #F59E0B' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>حسابات بانتظار التوثيق</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#F59E0B', marginTop: '4px' }}>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>حسابات بانتظار التوثيق</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>
             {users.filter(u => !u.two_factor_enabled).length}
           </div>
         </div>

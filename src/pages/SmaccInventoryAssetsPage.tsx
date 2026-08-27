@@ -81,44 +81,85 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-slate-900 min-h-screen text-slate-100 font-sans space-y-6 dir-rtl text-right">
+    <div className="space-y-6">
       {/* Top Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-6 rounded-2xl border border-slate-700/60 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-blue-600/30 rounded-2xl border border-blue-500/30 text-blue-400">
-            <Building2 className="w-8 h-8" />
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Building2 className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white tracking-tight">إدارة الأصول الثابتة والمخزون (SMACC Assets & Stock)</h1>
-            <p className="text-xs text-blue-200 mt-0.5">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC ASSETS & STOCK</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              إدارة الأصول الثابتة والمخزون
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
               سجل الأصول والإهلاكات الدوري، دليل الأصناف والمنتجات، وأذونات الصرف والإضافة
             </p>
           </div>
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex flex-wrap items-center bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 space-x-1 space-x-reverse text-xs font-bold">
+        <div className="flex flex-wrap items-center bg-white/10 p-1.5 rounded-full border border-white/15 gap-1 text-xs">
           <button
             onClick={() => setActiveTab('assets')}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              activeTab === 'assets' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
+            style={{
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              fontWeight: activeTab === 'assets' ? 550 : 420,
+              background: activeTab === 'assets' ? '#ffffff' : 'transparent',
+              color: activeTab === 'assets' ? '#000000' : '#d4d4d8',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
           >
             سجل الأصول الثابتة
           </button>
           <button
             onClick={() => setActiveTab('inventory')}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              activeTab === 'inventory' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
+            style={{
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              fontWeight: activeTab === 'inventory' ? 550 : 420,
+              background: activeTab === 'inventory' ? '#ffffff' : 'transparent',
+              color: activeTab === 'inventory' ? '#000000' : '#d4d4d8',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
           >
             دليل أصناف المخزون
           </button>
           <button
             onClick={() => setActiveTab('stock-vouchers')}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              activeTab === 'stock-vouchers' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'
-            }`}
+            style={{
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              fontWeight: activeTab === 'stock-vouchers' ? 550 : 420,
+              background: activeTab === 'stock-vouchers' ? '#ffffff' : 'transparent',
+              color: activeTab === 'stock-vouchers' ? '#000000' : '#d4d4d8',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
           >
             أذونات الصرف والإضافة
           </button>
@@ -128,7 +169,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       {/* TAB 1: Fixed Assets */}
       {activeTab === 'assets' && (
         <div className="space-y-6">
-          <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
               <Search className="w-4 h-4 absolute right-3 top-3 text-slate-400" />
               <input
@@ -136,29 +177,32 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 placeholder="البحث في الأصول الثابتة..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pr-9 pl-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="text-input"
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
               />
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsAssetModalOpen(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-md transition-all flex items-center gap-1.5"
+                className="button-primary-pill"
+                style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
               >
-                <Plus className="w-4 h-4" />
-                <span>إضافة أصل ثابت جديد</span>
+                <Plus className="w-4 h-4 ml-1" />
+                <span>+ إضافة أصل ثابت جديد</span>
               </button>
               <button
                 onClick={() => alert('تم تشغيل وإعادة احتساب الإهلاك التلقائي لجميع الأصول المسجلة وتوليد قيود اليومية!')}
-                className="px-3 py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+                className="button-outline-on-light"
+                style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-4 h-4 ml-1 text-emerald-600" />
                 <span>احتساب الإهلاك الدوري</span>
               </button>
             </div>
           </div>
 
-          <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg">
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', background: '#ffffff', overflow: 'hidden' }}>
             <table className="w-full text-right text-xs text-slate-300">
               <thead className="bg-slate-900 text-slate-400 font-bold border-b border-slate-700">
                 <tr>

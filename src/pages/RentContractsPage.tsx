@@ -239,36 +239,25 @@ export const RentContractsPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => setShowAddModal(true)}
-            style={{
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '8px 18px',
-              fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-plus text-xs"></i>
-            إضافة عقد تأجير جديد
+            + إضافة عقد تأجير جديد
           </button>
 
           <button
             onClick={() => exportData('rent_contracts', currentDisplayList, 'excel', `عقود التأجير - ${activeCompany.name}`)}
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
         </div>
       </div>
 
-      {/* Sub Tabs Navigation (ClickERP Full Structure) */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+      {/* Sub Tabs Navigation */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'all', label: `جميع عقود التأجير (${rentContracts.length || 13})`, icon: 'fa-folder-open' },
           { id: 'active', label: 'عقود نشطة (2)', icon: 'fa-circle-play' },
@@ -287,14 +276,14 @@ export const RentContractsPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#334155',
-                fontWeight: isActive ? '800' : '600',
-                fontSize: '12px',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -308,63 +297,73 @@ export const RentContractsPage: React.FC = () => {
 
       {/* Contracts Table */}
       {activeTab !== 'packages' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <input
-              type="text"
-              placeholder="البحث برقم العقد، اسم العميل، أو العاملة..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ padding: '8px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', width: '320px' }}
-            />
-            <span style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+              <input
+                type="text"
+                placeholder="البحث برقم العقد، اسم العميل، أو العاملة..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="text-input"
+                style={{ borderRadius: '9999px', paddingRight: '36px', paddingLeft: '16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
+              />
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
               العدد المعروض: {currentDisplayList.length} عقد
             </span>
           </div>
 
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>رقم العقد</th>
-                <th>اسم العميل</th>
-                <th>العاملة والجنسية</th>
-                <th>مدة الإيجار</th>
-                <th>تاريخ البداية والنهاية</th>
-                <th>التكلفة الشهرية</th>
-                <th>الإجمالي شامل الضريبة</th>
-                <th>الحالة</th>
-                <th>الإجراء</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentDisplayList.map((c) => (
-                <tr key={c.id}>
-                  <td><strong style={{ color: '#005154' }}>{c.contract_number}</strong></td>
-                  <td>
-                    <div style={{ fontWeight: '800', color: '#0F172A' }}>{c.client_name}</div>
-                    <div style={{ fontSize: '10px', color: '#64748B' }}>{c.client_phone}</div>
-                  </td>
-                  <td>
-                    <div style={{ fontWeight: '800', color: '#0F172A' }}>{c.maid_name}</div>
-                    <div style={{ fontSize: '10px', color: '#64748B' }}>{c.nationality}</div>
-                  </td>
-                  <td><strong>{c.duration_months} شهر</strong></td>
-                  <td><span style={{ fontSize: '11px', color: '#475569' }}>{c.start_date} إلى {c.end_date}</span></td>
-                  <td>{(c.monthly_cost ?? 0).toLocaleString()} ر.س</td>
-                  <td><strong style={{ color: '#047857' }}>{(c.total_amount ?? 0).toLocaleString()} ر.س</strong></td>
-                  <td><Badge text={c.status} type="success" /></td>
-                  <td>
-                    <button
-                      onClick={() => setSelectedContractForPrint(c)}
-                      style={{ backgroundColor: 'rgba(0,81,84,0.08)', color: '#005154', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
-                    >
-                      طباعة العقد
-                    </button>
-                  </td>
+          <div style={{ overflowX: 'auto', width: '100%' }}>
+            <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
+              <thead>
+                <tr>
+                  <th>رقم العقد</th>
+                  <th>اسم العميل</th>
+                  <th>العاملة والجنسية</th>
+                  <th>مدة الإيجار</th>
+                  <th>تاريخ البداية والنهاية</th>
+                  <th>التكلفة الشهرية</th>
+                  <th>الإجمالي شامل الضريبة</th>
+                  <th>الحالة</th>
+                  <th>الإجراء</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentDisplayList.map((c) => (
+                  <tr key={c.id}>
+                    <td style={{ fontWeight: 550, color: '#000000', fontFamily: 'monospace' }}>{c.contract_number}</td>
+                    <td>
+                      <div style={{ fontWeight: 550, color: '#000000' }}>{c.client_name}</div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>{c.client_phone}</div>
+                    </td>
+                    <td>
+                      <div style={{ fontWeight: 550, color: '#000000' }}>{c.maid_name}</div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>{c.nationality}</div>
+                    </td>
+                    <td>{c.duration_months} شهر</td>
+                    <td style={{ fontSize: '12px', color: '#71717a' }}>
+                      {c.start_date} إلى {c.end_date}
+                    </td>
+                    <td>{(c.monthly_cost ?? 0).toLocaleString()} ر.س</td>
+                    <td style={{ fontWeight: 550, color: '#000000' }}>{(c.total_amount ?? 0).toLocaleString()} ر.س</td>
+                    <td><Badge text={c.status} type={c.status === 'نشط' ? 'success' : 'primary'} /></td>
+                    <td>
+                      <button
+                        onClick={() => setSelectedContractForPrint(c)}
+                        className="button-outline-on-light"
+                        style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
+                        title="طباعة العقد"
+                      >
+                        طباعة العقد
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
