@@ -195,92 +195,81 @@ export const OrdersPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus"></i>
-            تسجيل طلب عميل جديد
+            <i className="fa-solid fa-plus text-xs"></i>
+            + تسجيل طلب عميل جديد
           </button>
           <button
             onClick={() => exportData('orders', filteredOrders, 'excel', `طلبات الاستقدام - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير إكسيل"
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
             Excel
           </button>
           <button
-            onClick={() => exportData('orders', filteredOrders, 'csv', `طلبات الاستقدام - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير CSV"
-          >
-            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
-            CSV
-          </button>
-          <button
             onClick={() => exportData('orders', filteredOrders, 'pdf', `طلبات الاستقدام - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير PDF"
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i>
             PDF
-          </button>
-          <button
-            onClick={() => exportData('orders', filteredOrders, 'print', `سجل طلبات العملاء والعمليات - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="طباعة التقرير المعتمد"
-          >
-            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
-            طباعة
           </button>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
-        <button
-          onClick={() => setActiveFilter('all')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeFilter === 'all' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          <span>جميع الطلبات</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeFilter === 'all' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
-            {orders.length}
-          </span>
-        </button>
-        <button
-          onClick={() => setActiveFilter('new')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeFilter === 'new' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          <span>طلبات جديدة بانتظار العقد</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeFilter === 'new' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
-            {orders.filter((o) => o.status === 'جديد').length}
-          </span>
-        </button>
-        <button
-          onClick={() => setActiveFilter('contracted')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeFilter === 'contracted' ? 'bg-purple-700 text-white shadow-sm' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-          }`}
-        >
-          <span>تم التعاقد معهم</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeFilter === 'contracted' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'}`}>
-            {orders.filter((o) => o.contract_status === 'تم التعاقد').length}
-          </span>
-        </button>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'all', label: 'جميع الطلبات', count: orders.length },
+          { id: 'new', label: 'طلبات جديدة بانتظار العقد', count: orders.filter((o) => o.status === 'جديد').length },
+          { id: 'contracted', label: 'تم التعاقد معهم', count: orders.filter((o) => o.contract_status === 'تم التعاقد').length },
+        ].map(tab => {
+          const isActive = activeFilter === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveFilter(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span>{tab.label}</span>
+              <span className={isActive ? "pill-tag-mint" : "pill-tag-shade"} style={{ fontSize: '10px' }}>
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Table Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex-1 max-w-md">
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff' }}>
           <input
             type="text"
             placeholder="ابحث برقم الطلب، اسم العميل، أو الجوال..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-600 transition-colors"
+            className="text-input"
+            style={{ borderRadius: '9999px', padding: '0 16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
           />
         </div>
 

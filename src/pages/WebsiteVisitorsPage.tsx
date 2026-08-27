@@ -244,37 +244,40 @@ export const WebsiteVisitorsPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#10B981', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               REALTIME WEB TRAFFIC
             </span>
-            <span style={{ color: '#94A3B8', fontSize: '12px' }}>تحليلات زيارات بوابة المجموعة الخارجية</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>تحليلات زيارات بوابة المجموعة الخارجية</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            زوار المنصة الخارجية ومتابعة العملاء المحتملين (Web Traffic & Lead Stream)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            زوار المنصة الخارجية ومتابعة العملاء
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#CBD5E1' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             تتبع التفاعل المباشر للزوار، السير الذاتية الأكثر مشاهدة، ومعدلات التحويل إلى حجوزات مساند
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('website_visitors', visitors, 'excel')} style={{ padding: '8px 16px', fontSize: '13px', background: '#059669', borderColor: '#059669' }}>
+          <button className="button-aloe-pill" onClick={() => exportData('website_visitors', visitors, 'excel')} style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}>
             <i className="fa-solid fa-file-excel ml-1"></i> تصدير تقرير الزيارات
           </button>
         </div>
@@ -282,59 +285,65 @@ export const WebsiteVisitorsPage: React.FC = () => {
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي الزيارات اليوم"
-          value={`${totalViewsToday.toLocaleString()} زائر`}
-          icon="fa-solid fa-eye"
-          subtext="متوسط بقاء 4.2 دقيقة"
-          variant="teal"
-        />
-        <StatCard
-          title="العملاء المحتملون (Leads)"
-          value={`${activeLeadsCount} عملاء`}
-          icon="fa-solid fa-user-check"
-          subtext="جاهزون للتواصل المباشر"
-          variant="purple"
-        />
-        <StatCard
-          title="معدل التحويل لحجوزات"
-          value="8.4%"
-          icon="fa-solid fa-cart-check"
-          subtext="أعلى من المتوسط بنسبة 2.1%"
-          variant="info"
-        />
-        <StatCard
-          title="السير الأكثر طلباً"
-          value="الفلبين وإثيوبيا"
-          icon="fa-solid fa-fire"
-          subtext="85% من إجمالي المشاهدات"
-          variant="warning"
-        />
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي الزيارات اليوم</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalViewsToday.toLocaleString()} زائر</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>متوسط بقاء 4.2 دقيقة</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>العملاء المحتملون (Leads)</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{activeLeadsCount} عملاء</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تواصل فوري</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>معدل التحويل لحجوزات</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>4.8%</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>أعلى من المتوسط</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>حجوزات السير الذاتية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>26 سيرة</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تم اختيارها اليوم</span>
+        </div>
       </div>
 
-      {/* Sub Navigation */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', paddingBottom: '8px' }}>
-        <button
-          onClick={() => setActiveTab('live')}
-          className={`btn-odoo ${activeTab === 'live' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-tower-broadcast ml-1"></i> البث المباشر للزيارات ({visitors.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('popular')}
-          className={`btn-odoo ${activeTab === 'popular' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-fire ml-1"></i> السير الذاتية الأكثر مشاهدة ({MOCK_POPULAR_CVS.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('traffic-sources')}
-          className={`btn-odoo ${activeTab === 'traffic-sources' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-chart-pie ml-1"></i> مصادر الزيارات والحملات
-        </button>
+      {/* Navigation Subtabs */}
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'live', label: `البث المباشر للزيارات (${visitors.length})`, icon: 'fa-tower-broadcast' },
+          { id: 'popular', label: `السير الذاتية الأكثر مشاهدة (${MOCK_POPULAR_CVS.length})`, icon: 'fa-fire' },
+          { id: 'traffic-sources', label: 'مصادر الزيارات والحملات', icon: 'fa-chart-pie' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* TAB 1: LIVE STREAM */}

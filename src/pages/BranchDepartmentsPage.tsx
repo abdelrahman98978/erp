@@ -266,11 +266,12 @@ export const BranchDepartmentsPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddDeptModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> إضافة قسم تخصصي لـ ({selectedEntity.code})
+          <button className="button-primary-pill" onClick={() => setShowAddDeptModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-plus ml-1"></i> + إضافة قسم تخصصي لـ ({selectedEntity.code})
           </button>
           <button
-            className="btn-odoo btn-odoo-primary"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             onClick={() => {
               const exportRows = entities.flatMap(ent =>
                 ent.departments.map(d => ({
@@ -290,33 +291,11 @@ export const BranchDepartmentsPage: React.FC = () => {
             }}
             title="تصدير Excel"
           >
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
           <button
-            className="btn-odoo btn-odoo-secondary"
-            onClick={() => {
-              const exportRows = entities.flatMap(ent =>
-                ent.departments.map(d => ({
-                  entity_code: ent.code,
-                  entity_name: ent.name,
-                  category: ent.category,
-                  location: ent.location,
-                  manager: ent.manager,
-                  dept_name: d.name,
-                  head: d.head,
-                  staff_count: d.staff_count,
-                  kpi: d.kpi,
-                  status: d.status,
-                }))
-              );
-              exportData('branches', exportRows, 'csv', 'الهيكل التنظيمي وأقسام المجموعة');
-            }}
-            title="تصدير CSV"
-          >
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
-          </button>
-          <button
-            className="btn-odoo btn-odoo-secondary"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             onClick={() => {
               const exportRows = entities.flatMap(ent =>
                 ent.departments.map(d => ({
@@ -336,60 +315,42 @@ export const BranchDepartmentsPage: React.FC = () => {
             }}
             title="تصدير PDF"
           >
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button
-            className="btn-odoo btn-odoo-secondary"
-            onClick={() => {
-              const exportRows = entities.flatMap(ent =>
-                ent.departments.map(d => ({
-                  entity_code: ent.code,
-                  entity_name: ent.name,
-                  category: ent.category,
-                  location: ent.location,
-                  manager: ent.manager,
-                  dept_name: d.name,
-                  head: d.head,
-                  staff_count: d.staff_count,
-                  kpi: d.kpi,
-                  status: d.status,
-                }))
-              );
-              exportData('branches', exportRows, 'print', 'الهيكل التنظيمي وأقسام المجموعة');
-            }}
-            title="طباعة التقرير"
-          >
-            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
       {/* Category Filter Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <button
-          className={`btn-odoo ${activeCategoryFilter === 'all' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveCategoryFilter('all')}
-        >
-          جميع الكيانات والشركات والمكاتب ({entities.length})
-        </button>
-        <button
-          className={`btn-odoo ${activeCategoryFilter === 'فرع منطقي' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveCategoryFilter('فرع منطقي')}
-        >
-          🏛️ الفروع الإقليمية والإيواء (4)
-        </button>
-        <button
-          className={`btn-odoo ${activeCategoryFilter === 'شركة مجموعة' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveCategoryFilter('شركة مجموعة')}
-        >
-          💎 شركات المجموعة الرئيسية (5)
-        </button>
-        <button
-          className={`btn-odoo ${activeCategoryFilter === 'مكتب خارجي' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveCategoryFilter('مكتب خارجي')}
-        >
-          🌍 المكاتب الخارجية والوكالات (3)
-        </button>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'all', label: `جميع الكيانات والشركات والمكاتب (${entities.length})` },
+          { id: 'فرع منطقي', label: '🏛️ الفروع الإقليمية والإيواء (4)' },
+          { id: 'شركة مجموعة', label: '💎 شركات المجموعة الرئيسية (5)' },
+          { id: 'مكتب خارجي', label: '🌍 المكاتب الخارجية والوكالات (3)' },
+        ].map(tab => {
+          const isActive = activeCategoryFilter === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveCategoryFilter(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Group Entities Selector Bar */}

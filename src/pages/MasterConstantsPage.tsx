@@ -171,43 +171,38 @@ export const MasterConstantsPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'excel')}
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '6px 12px', fontSize: '12px' }}
+            className="button-outline-on-light"
+            style={{ padding: '6px 14px', fontSize: '12px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
           <button
             onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'pdf')}
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '6px 12px', fontSize: '12px' }}
+            className="button-outline-on-light"
+            style={{ padding: '6px 14px', fontSize: '12px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
           <button
             onClick={() => setShowAddModal(true)}
+            className="button-primary-pill"
             style={{
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '8px 18px',
+              padding: '6px 18px',
               fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
+              minHeight: '38px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
             }}
           >
             <i className="fa-solid fa-plus text-xs"></i>
-            إضافة بند جديد
+            + إضافة بند جديد
           </button>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'nationalities', label: `الجنسيات (${nationalities.length})`, icon: 'fa-globe' },
           { id: 'professions', label: `المهن المعتمدة (${professions.length})`, icon: 'fa-user-tie' },
@@ -223,19 +218,19 @@ export const MasterConstantsPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#334155',
-                fontWeight: isActive ? '800' : '600',
-                fontSize: '12px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
               }}
             >
               <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>

@@ -259,18 +259,18 @@ export const OfficesPage: React.FC = () => {
     {
       header: 'الإجراءات',
       accessor: (row) => (
-        <div style={{ display: 'flex', gap: '4px' }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
           <button
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '4px 8px', height: '28px', fontSize: '11px' }}
+            className="button-outline-on-light"
+            style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
             onClick={() => setSelectedOfficeStatement(row)}
             title="كشف حساب المعاملات"
           >
-            <i className="fa-solid fa-file-invoice-dollar ml-1"></i> كشف حساب
+            <i className="fa-solid fa-file-invoice-dollar ml-1 text-emerald-600"></i> كشف حساب
           </button>
           <button
-            className="btn-odoo btn-odoo-purple"
-            style={{ padding: '4px 8px', height: '28px', fontSize: '11px' }}
+            className="button-outline-on-light"
+            style={{ padding: '4px 10px', fontSize: '11.5px', minHeight: '28px' }}
             title="إعادة تعيين بيانات الدخول"
           >
             <i className="fa-solid fa-key ml-1"></i> البوابة
@@ -281,31 +281,34 @@ export const OfficesPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#3B82F6', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               INTERNATIONAL AGENCIES
             </span>
-            <span style={{ color: '#94A3B8', fontSize: '12px' }}>شبكة الوكلاء المعتمدين دولياً</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>شبكة الوكلاء المعتمدين دولياً</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            إدارة المكاتب والوكلاء الخارجيين (Overseas Manpower Agencies)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            إدارة المكاتب والوكلاء الخارجيين
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#CBD5E1' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             إدارة عقود واتفاقيات المكاتب الخارجية، ميزانيات السير، تسوية الدفعات بالدولار، وحسابات الدخول
           </p>
         </div>
@@ -313,44 +316,38 @@ export const OfficesPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => setShowAddModal(true)}
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 18px', fontSize: '13px', background: '#059669', borderColor: '#059669' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus ml-1"></i> إضافة مكتب خارجي جديد
+            <i className="fa-solid fa-plus ml-1"></i> + إضافة مكتب خارجي جديد
           </button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي الوكلاء الدوليين"
-          value={`${offices.length} وكالات`}
-          icon="fa-solid fa-earth-americas"
-          subtext="مرخصة ومعتمدة لدى مساند"
-          variant="teal"
-        />
-        <StatCard
-          title="إجمالي السير المرفوعة"
-          value={`${totalCvs} سيرة ذاتية`}
-          icon="fa-solid fa-file-lines"
-          subtext="جاهزة للتعاقد الفوري"
-          variant="purple"
-        />
-        <StatCard
-          title="عقود الاستقدام المنجزة"
-          value={`${totalContracts} عقد`}
-          icon="fa-solid fa-file-circle-check"
-          subtext="تم التفييز وإصدار التذاكر"
-          variant="info"
-        />
-        <StatCard
-          title="أرصدة المحافظ والحسابات"
-          value={`$${totalBalanceUsd.toLocaleString()}`}
-          icon="fa-solid fa-dollar-sign"
-          subtext="أمانات وتسويات مكاتب خارجية"
-          variant="warning"
-        />
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الوكلاء الدوليين</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{offices.length} وكالات</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مرخصة لدى مساند</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>إجمالي السير المرفوعة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalCvs} سيرة</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>جاهزة للتعاقد الفوري</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>عقود الاستقدام المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalContracts} عقد</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تم التفييز والتذاكر</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>أرصدة المحافظ والحسابات</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>${totalBalanceUsd.toLocaleString()}</div>
+        </div>
       </div>
 
       {/* Country Filter Bar & Export */}

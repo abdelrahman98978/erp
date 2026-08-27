@@ -204,66 +204,69 @@ export const IngazPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> إضافة تفويض جديد
+          <button className="button-primary-pill" onClick={() => setShowModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-plus ml-1"></i> + إضافة تفويض جديد
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('ingaz', filteredDelegations, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('ingaz', filteredDelegations, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('ingaz', filteredDelegations, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('ingaz', filteredDelegations, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('ingaz', filteredDelegations, 'print')} title="طباعة التقرير">
-            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          <button className="button-outline-on-light" onClick={() => exportData('ingaz', filteredDelegations, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #005154' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>إجمالي التفاويض</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>{delegations.length}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي التفاويض</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{delegations.length}</div>
         </div>
 
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #10B981' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>الموثقة بنجاح</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>
+        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>الموثقة بنجاح</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>
             {delegations.filter(d => d.status === 'تم التوثيق').length}
           </div>
         </div>
 
-        <div style={{ background: 'white', padding: '16px 20px', borderRadius: 'var(--radius-md)', border: '1px solid #E2E8F0', borderRight: '4px solid #F59E0B' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>بانتظار الموافقة</span>
-          <div style={{ fontSize: '24px', fontWeight: '900', color: '#F59E0B', marginTop: '4px' }}>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>بانتظار الموافقة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>
             {delegations.filter(d => d.status === 'بانتظار الموافقة').length}
           </div>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        <button
-          className={`btn-odoo ${activeTab === 'all' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveTab('all')}
-        >
-          جميع التفاويض ({delegations.length})
-        </button>
-        <button
-          className={`btn-odoo ${activeTab === 'verified' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveTab('verified')}
-        >
-          الموثقة (Enjaz Done)
-        </button>
-        <button
-          className={`btn-odoo ${activeTab === 'pending' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveTab('pending')}
-        >
-          قيد المراجعة
-        </button>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+        {[
+          { id: 'all', label: `جميع التفاويض (${delegations.length})` },
+          { id: 'verified', label: 'الموثقة (Enjaz Done)' },
+          { id: 'pending', label: 'قيد المراجعة' },
+        ].map(t => {
+          const isActive = activeTab === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
 
       <DataTable

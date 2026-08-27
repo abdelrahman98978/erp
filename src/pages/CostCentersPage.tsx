@@ -114,78 +114,66 @@ export const CostCentersPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus"></i>
-            إضافة مركز تكلفة جديد
+            <i className="fa-solid fa-plus text-xs"></i>
+            + إضافة مركز تكلفة جديد
           </button>
           <button
             onClick={() => exportData('cost_centers', filteredCostCenters, 'excel', `مراكز التكلفة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير إكسيل"
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
             Excel
           </button>
           <button
-            onClick={() => exportData('cost_centers', filteredCostCenters, 'csv', `مراكز التكلفة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير CSV"
-          >
-            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
-            CSV
-          </button>
-          <button
             onClick={() => exportData('cost_centers', filteredCostCenters, 'pdf', `مراكز التكلفة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير PDF"
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i>
             PDF
-          </button>
-          <button
-            onClick={() => exportData('cost_centers', filteredCostCenters, 'print', `تقرير مراكز التكلفة والمحاسبة التحليلية - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="طباعة التقرير المعتمد"
-          >
-            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
-            طباعة
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي الميزانيات المخصصة</span>
-          <div className="text-2xl font-black text-slate-900 mt-1">{totalBudget.toLocaleString()} ر.س</div>
-          <span className="text-xs text-purple-600 font-bold mt-1 inline-block">{costCenters.length} مراكز نشطة</span>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الميزانيات المخصصة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalBudget.toLocaleString()} ر.س</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>{costCenters.length} مراكز نشطة</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي المنصرف الفعلي</span>
-          <div className="text-2xl font-black text-rose-700 mt-1">{totalSpent.toLocaleString()} ر.س</div>
-          <span className="text-xs text-slate-400 font-medium">
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي المنصرف الفعلي</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalSpent.toLocaleString()} ر.س</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>
             معدل الصرف: {totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0}%
           </span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">المتبقي من الميزانية المعتمدة</span>
-          <div className="text-2xl font-black text-emerald-700 mt-1">{remainingBudget.toLocaleString()} ر.س</div>
-          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">سيولة متبقية</span>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المتبقي من الميزانية المعتمدة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{remainingBudget.toLocaleString()} ر.س</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>سيولة متبقية</span>
         </div>
       </div>
 
       {/* Table Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex-1 max-w-md">
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff' }}>
           <input
             type="text"
             placeholder="ابحث بكود المركز، الاسم، أو المسؤول..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-purple-600 transition-colors"
+            className="text-input"
+            style={{ borderRadius: '9999px', padding: '0 16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
           />
         </div>
 

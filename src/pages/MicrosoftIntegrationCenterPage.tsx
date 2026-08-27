@@ -80,37 +80,39 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
   ]);
 
   return (
-    <div style={{ padding: '24px', backgroundColor: '#F8FAFC', minHeight: '85vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Banner */}
       <div
+        className="card-feature-cinematic"
         style={{
-          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+          background: '#000000',
           borderRadius: '16px',
-          padding: '24px 32px',
+          padding: '28px',
           color: '#FFFFFF',
-          marginBottom: '24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <i className="fa-brands fa-microsoft" style={{ color: '#00A4EF', fontSize: '20px' }}></i>
-            <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: '700' }}>MICROSOFT ENTERPRISE INTEGRATION CENTER</span>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              MICROSOFT ENTERPRISE INTEGRATION
+            </span>
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: '900', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
             مركز تكامل ميكروسوفت المؤسسي (Project + Power BI + Visio)
           </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#CBD5E1' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             ربط مباشر مع بيئة Microsoft 365 لإدارة المشاريع، التحليلات المتقدمة مع RLS، والهياكل التنظيمية الديناميكية.
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '10px' }}>
-          <span style={{ backgroundColor: '#059669', color: '#FFF', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>
+          <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
             <i className="fa-solid fa-circle-check" style={{ marginLeft: '4px' }}></i>
             Microsoft Entra ID Connected
           </span>
@@ -118,72 +120,40 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
       </div>
 
       {/* Tabs Selector */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>
-        <button
-          type="button"
-          onClick={() => setActiveTab('project')}
-          style={{
-            padding: '10px 20px',
-            borderRadius: '10px',
-            border: 'none',
-            backgroundColor: activeTab === 'project' ? '#2563EB' : '#FFFFFF',
-            color: activeTab === 'project' ? '#FFFFFF' : '#475569',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-          }}
-        >
-          <i className="fa-solid fa-diagram-project"></i>
-          <span>Microsoft Project (المشاريع والمهام)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('powerbi')}
-          style={{
-            padding: '10px 20px',
-            borderRadius: '10px',
-            border: 'none',
-            backgroundColor: activeTab === 'powerbi' ? '#F59E0B' : '#FFFFFF',
-            color: activeTab === 'powerbi' ? '#FFFFFF' : '#475569',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-          }}
-        >
-          <i className="fa-solid fa-chart-line"></i>
-          <span>Power BI Analytics (التحليلات المؤسسية RLS)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('visio')}
-          style={{
-            padding: '10px 20px',
-            borderRadius: '10px',
-            border: 'none',
-            backgroundColor: activeTab === 'visio' ? '#7C3AED' : '#FFFFFF',
-            color: activeTab === 'visio' ? '#FFFFFF' : '#475569',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-          }}
-        >
-          <i className="fa-solid fa-sitemap"></i>
-          <span>Microsoft Visio (الهيكل التنظيمي الخريطي)</span>
-        </button>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'project', label: 'Microsoft Project (المشاريع والمهام)', icon: 'fa-diagram-project' },
+          { id: 'powerbi', label: 'Power BI Analytics (التحليلات المؤسسية RLS)', icon: 'fa-chart-line' },
+          { id: 'visio', label: 'Visio Org Architect (الهيكل الإداري التفاعلي)', icon: 'fa-sitemap' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab 1: MS Project */}

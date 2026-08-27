@@ -182,36 +182,25 @@ export const FinancialRequestsPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => setShowAddModal(true)}
-            style={{
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '8px 18px',
-              fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0, 81, 84, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-plus text-xs"></i>
-            إنشاء طلب مالي جديد
+            + إنشاء طلب مالي جديد
           </button>
 
           <button
             onClick={() => exportData('financial_requests', currentDisplayList, 'excel', `الطلبات المالية - ${activeCompany.name}`)}
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid #CBD5E1', padding: '8px 14px', borderRadius: '10px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
         </div>
       </div>
 
-      {/* Sub Tabs Navigation (ClickERP Financial Scope) */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+      {/* Sub Tabs Navigation */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'all', label: `جميع الطلبات المالية (${requests.length})`, icon: 'fa-folder-open' },
           { id: 'incomplete', label: 'الطلبات غير المكتملة / قيد المراجعة', icon: 'fa-clock' },
@@ -226,14 +215,14 @@ export const FinancialRequestsPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#334155',
-                fontWeight: isActive ? '800' : '600',
-                fontSize: '12px',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -246,16 +235,17 @@ export const FinancialRequestsPage: React.FC = () => {
       </div>
 
       {/* Requests Table */}
-      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff' }}>
           <input
             type="text"
             placeholder="البحث بالرقم، المدفوع له، أو الوصف..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ padding: '8px 14px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', width: '320px' }}
+            className="text-input"
+            style={{ borderRadius: '9999px', padding: '0 16px', height: '38px', minHeight: '38px', width: '320px', fontSize: '13px' }}
           />
-          <span style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>
+          <span className="pill-tag-shade" style={{ fontSize: '12px' }}>
             العدد المعروض: {currentDisplayList.length} طلب
           </span>
         </div>

@@ -102,42 +102,52 @@ export const AgentImportsPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner with Quick Actions */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: '#FFF',
-        padding: '18px 24px',
-        borderRadius: '16px',
-        border: '1px solid #E2E8F0',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="material-symbols-outlined text-purple-600" style={{ fontSize: '26px' }}>file_download</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              AGENT BATCH IMPORTS
+            </span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>استيراد السير الذاتية والمكاتب الدولية</span>
+          </div>
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
             ملفات السير المرفوعة من الوكلاء بالخارج
-          </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+          </h1>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             مراجعة واعتماد السير الذاتية المرفوعة بالجملة من مكاتب الاستقدام الخارجية أو استيراد ملفات Excel/CSV جديدة
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={handleDownloadCVTemplate}
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '8px 16px', fontSize: '13px' }}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
             <i className="fa-solid fa-download ml-1"></i> تحميل نموذج Excel
           </button>
           <button
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 18px', fontSize: '13px' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: '18px', verticalAlign: 'middle', marginLeft: '4px' }}>publish</span>
-            فتح معالج الاستيراد الشامل
+            <i className="fa-solid fa-file-import ml-1"></i> فتح معالج الاستيراد
           </button>
         </div>
       </div>

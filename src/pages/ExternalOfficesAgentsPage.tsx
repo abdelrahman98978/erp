@@ -121,38 +121,30 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Header Banner */}
+      {/* Top Header Banner */}
       <div
+        className="card-feature-cinematic"
         style={{
-          background: 'linear-gradient(135deg, #005154 0%, #047857 100%)',
+          backgroundColor: '#000000',
           borderRadius: '16px',
-          padding: '24px 32px',
+          padding: '28px',
           color: '#FFFFFF',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
-          boxShadow: '0 4px 20px rgba(0, 81, 84, 0.2)',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
         <div>
-          <span
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              color: '#FFFFFF',
-              borderRadius: '12px',
-              padding: '2px 10px',
-              fontSize: '11px',
-              fontWeight: '800',
-            }}
-          >
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
             INTERNATIONAL RECRUITMENT NETWORK
           </span>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '6px 0 0 0' }}>
-            بوابة المكاتب والوكلاء الخارجيين المعتمدين (ClickERP Network)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            بوابة المكاتب والوكلاء الخارجيين المعتمدين
           </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#E2E8F0' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             الربط المباشر مع مكاتب الفلبين، إثيوبيا، الهند، كينيا، وأوغندا وإدارة مستخدمي الوكلاء
           </p>
         </div>
@@ -160,15 +152,16 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => exportData('external_offices', offices, 'excel', `المكاتب الخارجية - ${activeCompany.name}`)}
-            style={{ backgroundColor: '#FFFFFF', color: '#005154', border: 'none', padding: '8px 16px', borderRadius: '10px', fontSize: '12px', fontWeight: '800', cursor: 'pointer' }}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+            <i className="fa-solid fa-file-excel text-emerald-400 ml-1"></i> Excel
           </button>
         </div>
       </div>
 
       {/* Sub Tabs */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '10px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
         {[
           { id: 'offices', label: `المكاتب الخارجية (${offices.length || 3})`, icon: 'fa-building' },
           { id: 'users', label: `مستخدمي الوكلاء (${MOCK_OFFICE_USERS.length})`, icon: 'fa-users-gear' },
@@ -183,14 +176,14 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '8px 16px',
-                borderRadius: '8px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#334155',
-                fontWeight: isActive ? '800' : '600',
-                fontSize: '12px',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}

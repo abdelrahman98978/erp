@@ -94,11 +94,11 @@ export const CreateCVPage: React.FC = () => {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-address-card text-purple-700"></i>
-            إضافة سيرة ذاتية جديدة (ClickERP 136-Field Complete Form)
+          <h2 style={{ fontSize: '22px', fontWeight: '800', margin: 0, color: '#000000', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <i className="fa-solid fa-address-card"></i>
+            إضافة سيرة ذاتية جديدة
           </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#71717a' }}>
             إدخال البيانات الشخصية، الجواز، المهارات، الفحوصات الطبية، والوسائط بدقة متناهية
           </p>
         </div>
@@ -107,35 +107,16 @@ export const CreateCVPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
-            style={{
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '8px 14px',
-              fontSize: '12px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
+            className="button-primary-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-import"></i> استيراد جماعي (Excel)
+            <i className="fa-solid fa-file-import ml-1"></i> + استيراد جماعي (Excel)
           </button>
           <button
             type="button"
             onClick={() => window.history.back()}
-            style={{
-              backgroundColor: '#F1F5F9',
-              color: '#475569',
-              border: '1px solid #CBD5E1',
-              borderRadius: '8px',
-              padding: '8px 14px',
-              fontSize: '12px',
-              fontWeight: '700',
-              cursor: 'pointer',
-            }}
+            className="button-outline-on-light"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
             إلغاء ورجوع
           </button>
@@ -161,14 +142,14 @@ export const CreateCVPage: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                padding: '12px',
-                borderRadius: '10px',
+                padding: '10px 16px',
+                borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#005154' : '#E2E8F0',
-                backgroundColor: isActive ? '#005154' : '#FFFFFF',
-                color: isActive ? '#FFFFFF' : '#64748B',
-                fontWeight: '800',
-                fontSize: '12px',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#71717a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}

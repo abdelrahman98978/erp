@@ -188,31 +188,34 @@ export const RentPackagesPage: React.FC = () => {
   const calcGrandTotal = calcTotalAfterDiscount + calcVat;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #047857 0%, #065F46 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#10B981', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               RENTAL PACKAGES & SLAs
             </span>
-            <span style={{ color: '#A7F3D0', fontSize: '12px' }}>محرك باقات وبنود عقود التأجير والتشغيل</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>محرك باقات وبنود عقود التأجير والتشغيل</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            باقات وبنود عقود التأجير والتشغيل (Rental Pricing & SLAs)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            باقات وبنود عقود التأجير والتشغيل
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#D1FAE5' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             تحديد أسعار الباقات المرنة، الخصومات الترويجية، وحساب هوامش الأرباح وبنود العقد الموحد
           </p>
         </div>
@@ -220,69 +223,75 @@ export const RentPackagesPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => setShowAddModal(true)}
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 18px', fontSize: '13px', background: '#0F172A', borderColor: '#0F172A' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus ml-1"></i> إضافة باقة تأجير جديدة
+            <i className="fa-solid fa-plus ml-1"></i> + إضافة باقة تأجير جديدة
           </button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي الباقات المعتمدة"
-          value={`${packages.length} باقات`}
-          icon="fa-solid fa-boxes-packing"
-          subtext="أفراد وقطاع تجاري"
-          variant="teal"
-        />
-        <StatCard
-          title="عقود التأجير النشطة"
-          value="50 عقداً"
-          icon="fa-solid fa-handshake"
-          subtext="إيرادات شهرية مستقرة"
-          variant="purple"
-        />
-        <StatCard
-          title="متوسط الإيجار الشهري"
-          value="2,100 ر.س"
-          icon="fa-solid fa-receipt"
-          subtext="شامل الضمان والرعاية"
-          variant="info"
-        />
-        <StatCard
-          title="نسبة التجديد للعقود"
-          value="92.4%"
-          icon="fa-solid fa-rotate"
-          subtext="رضا العملاء واستمرارية الخدمة"
-          variant="warning"
-        />
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الباقات المعتمدة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{packages.length} باقات</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>أفراد وقطاع تجاري</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>عقود التأجير النشطة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>50 عقداً</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إيرادات شهرية مستقرة</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>متوسط الإيجار الشهري</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>2,100 ر.س</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>شامل الضمان والرعاية</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>نسبة التجديد للعقود</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>92.4%</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>استمرارية الخدمة</span>
+        </div>
       </div>
 
       {/* Sub Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', paddingBottom: '8px' }}>
-        <button
-          onClick={() => setActiveTab('packages')}
-          className={`btn-odoo ${activeTab === 'packages' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-boxes-stacked ml-1"></i> قائمة الباقات والأسعار ({packages.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('calculator')}
-          className={`btn-odoo ${activeTab === 'calculator' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-calculator ml-1"></i> حاسبة التكلفة والربحية
-        </button>
-        <button
-          onClick={() => setActiveTab('terms')}
-          className={`btn-odoo ${activeTab === 'terms' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-scroll ml-1"></i> بنود وشروط العقد الموحد ({terms.length})
-        </button>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'packages', label: `قائمة الباقات والأسعار (${packages.length})`, icon: 'fa-boxes-stacked' },
+          { id: 'calculator', label: 'حاسبة التكلفة والربحية', icon: 'fa-calculator' },
+          { id: 'terms', label: `بنود وشروط العقد (${terms.length})`, icon: 'fa-file-contract' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* TAB 1: PACKAGES CARDS */}

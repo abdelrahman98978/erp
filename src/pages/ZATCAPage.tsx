@@ -160,70 +160,76 @@ export const ZATCAPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-200 transition-all flex items-center gap-2"
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-invoice"></i>
-            إصدار فاتورة ضريبية إلكترونية
+            <i className="fa-solid fa-plus text-xs"></i>
+            + إصدار فاتورة ضريبية جديدة
           </button>
           <button
             onClick={() => setShowCsidModal(true)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all flex items-center gap-1.5"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            title="إعدادات الربط والشهادات الرقمية"
           >
-            <i className="fa-solid fa-key text-amber-600"></i>
-            شهادة الختم CSID
+            <i className="fa-solid fa-key ml-1"></i>
+            شهادة CSID والربط
           </button>
           <button
             onClick={() => exportData('zatca', filteredInvoices, 'excel', `فواتير هيئة الزكاة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير إكسيل"
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
             Excel
           </button>
           <button
-            onClick={() => exportData('zatca', filteredInvoices, 'csv', `فواتير هيئة الزكاة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير CSV"
-          >
-            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
-            CSV
-          </button>
-          <button
             onClick={() => exportData('zatca', filteredInvoices, 'pdf', `فواتير هيئة الزكاة - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير PDF"
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i>
             PDF
-          </button>
-          <button
-            onClick={() => exportData('zatca', filteredInvoices, 'print', `سجل الفواتير الضريبية ZATCA - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="طباعة التقرير المعتمد"
-          >
-            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
-            طباعة
           </button>
         </div>
       </div>
 
       {/* ZATCA Production Clearance Banner */}
-      <div className="bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-900 text-white p-5 rounded-2xl shadow-lg border border-teal-800 flex items-center justify-between flex-wrap gap-4">
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          color: '#ffffff',
+          padding: '24px 28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div className="space-y-1">
-          <div className="text-xs font-bold uppercase tracking-wider text-teal-400">
-            حالة الربط المباشر مع منصة فاتورة (ZATCA Portal)
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              ZATCA PHASE 2 CLEARANCE
+            </span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>الفوترة الإلكترونية المعتمدة</span>
           </div>
-          <h3 className="text-lg font-black text-white">
-            الرقم الضريبي المعتمد: {activeCompany.taxNumber} • شهادة الاعتماد (CSID) سارية
+          <h3 className="display-sm" style={{ fontSize: '20px', fontWeight: 330, color: '#ffffff', letterSpacing: '-0.02em' }}>
+            الرقم الضريبي: {activeCompany.taxNumber} • شهادة الاعتماد (CSID) نشطة
           </h3>
-          <p className="text-xs text-slate-300">
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             توليد كود الاستجابة السريع QR Code متطابق 100% مع مواصفة ZATCA UBL 2.1 والختم التشفيري ECDSA
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="px-3 py-1.5 bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 rounded-xl text-xs font-bold flex items-center gap-1.5">
-            <i className="fa-solid fa-shield-check"></i>
+          <span className="pill-tag-mint" style={{ padding: '6px 14px', fontSize: '12px' }}>
+            <i className="fa-solid fa-shield-check ml-1"></i>
             Clearing Engine: Active
           </span>
         </div>
@@ -231,41 +237,41 @@ export const ZATCAPage: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي الفواتير الصادرة</span>
-          <div className="text-2xl font-black text-slate-900 mt-1">{invoices.length} فاتورة</div>
-          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">100% معتمدة لدى الهيئة</span>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الفواتير الصادرة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{invoices.length} فاتورة</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>100% معتمدة</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي المبيعات (بدون ضريبة)</span>
-          <div className="text-2xl font-black text-slate-900 mt-1">
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المبيعات (بدون ضريبة)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {invoices.reduce((acc, inv) => acc + (inv.subtotal || 0), 0).toLocaleString()} ر.س
           </div>
-          <span className="text-xs text-slate-400 font-medium">المبلغ الأساسي الخاضع للضريبة</span>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>المبلغ الأساسي</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">ضريبة القيمة المضافة (15%)</span>
-          <div className="text-2xl font-black text-amber-600 mt-1">
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>ضريبة القيمة المضافة (15%)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {invoices.reduce((acc, inv) => acc + (inv.vat_amount || 0), 0).toLocaleString()} ر.س
           </div>
-          <span className="text-xs text-slate-400 font-medium">مستحق الإقرار الضريبي الدوري</span>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>الإقرار الدوري</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي المبالغ شاملة الضريبة</span>
-          <div className="text-2xl font-black text-emerald-700 mt-1">
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي المبالغ شاملة الضريبة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {invoices.reduce((acc, inv) => acc + (inv.total_amount || 0), 0).toLocaleString()} ر.س
           </div>
-          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">شامل ضريبة 15%</span>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>شامل ضريبة 15%</span>
         </div>
       </div>
 
       {/* Filter & Invoices Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex-1 min-w-[280px]">
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ minWidth: '280px' }}>
             <input
               type="text"
               placeholder="ابحث برقم الفاتورة، اسم العميل، أو مرجع العقد..."

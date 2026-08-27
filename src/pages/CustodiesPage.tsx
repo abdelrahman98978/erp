@@ -123,20 +123,14 @@ export const CustodiesPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> تسليم عُهدة جديدة
+          <button className="button-primary-pill" onClick={() => setShowAddModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-plus ml-1"></i> + تسليم عُهدة جديدة
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('custodies', custodies, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('custodies', custodies, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('custodies', custodies, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('custodies', custodies, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('custodies', custodies, 'print')} title="طباعة التقرير">
-            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          <button className="button-outline-on-light" onClick={() => exportData('custodies', custodies, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>

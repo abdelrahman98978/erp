@@ -215,17 +215,14 @@ export const GroupDispatchPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowDispatchModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> توجيه معاملة / خطاب جديد
+          <button className="button-primary-pill" onClick={() => setShowDispatchModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-plus ml-1"></i> + توجيه معاملة / خطاب جديد
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('group-dispatch', filteredDispatches, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('group-dispatch', filteredDispatches, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('group-dispatch', filteredDispatches, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('group-dispatch', filteredDispatches, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
+          <button className="button-outline-on-light" onClick={() => exportData('group-dispatch', filteredDispatches, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>

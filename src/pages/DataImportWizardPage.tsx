@@ -143,32 +143,32 @@ export const DataImportWizardPage: React.FC = () => {
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '28px', color: '#005154' }}>database</span>
+          <h2 style={{ fontSize: '22px', fontWeight: '800', color: '#000000', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '28px', color: '#000000' }}>database</span>
             معالج استيراد البيانات المؤسسي
           </h2>
-          <p style={{ fontSize: '13px', color: '#64748B', marginTop: '4px' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', marginTop: '4px' }}>
             استيراد بيانات من ملفات Excel أو CSV أو JSON إلى أقسام النظام بشكل آمن ومحقق
           </p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '6px 14px', fontSize: '12px' }}
+            className="button-outline-on-light"
+            style={{ padding: '6px 16px', fontSize: '12.5px', minHeight: '38px' }}
             onClick={() => setStep(step === 'history' ? 'select-type' : 'history')}
           >
-            <i className="fa-solid fa-clock-rotate-left" style={{ marginLeft: '4px' }}></i>
+            <i className="fa-solid fa-clock-rotate-left ml-1"></i>
             {step === 'history' ? 'العودة للمعالج' : 'سجل الاستيرادات'}
           </button>
           {step !== 'select-type' && step !== 'history' && (
             <button
-              className="btn-odoo btn-odoo-secondary"
-              style={{ padding: '6px 14px', fontSize: '12px' }}
+              className="button-outline-on-light"
+              style={{ padding: '6px 16px', fontSize: '12.5px', minHeight: '38px' }}
               onClick={handleReset}
             >
-              <i className="fa-solid fa-rotate-right" style={{ marginLeft: '4px' }}></i>
+              <i className="fa-solid fa-rotate-right ml-1"></i>
               بدء من جديد
             </button>
           )}
@@ -177,11 +177,11 @@ export const DataImportWizardPage: React.FC = () => {
 
       {/* Progress Stepper */}
       {step !== 'history' && (
-        <div style={{
+        <div className="card-pricing" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'linear-gradient(135deg, #F8FAFC, #F1F5F9)',
+          background: '#ffffff',
           borderRadius: '16px', padding: '18px 24px', marginBottom: '24px',
-          border: '1px solid #E2E8F0',
+          border: '1px solid #e4e4e7',
         }}>
           {STEPS.map((s, idx) => (
             <React.Fragment key={s.key}>
@@ -194,28 +194,28 @@ export const DataImportWizardPage: React.FC = () => {
                 onClick={() => idx < currentStepIndex && setStep(s.key)}
               >
                 <div style={{
-                  width: '44px', height: '44px', borderRadius: '50%',
+                  width: '40px', height: '40px', borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: idx < currentStepIndex ? '#005154' : idx === currentStepIndex ? 'linear-gradient(135deg, #005154, #00838F)' : '#CBD5E1',
-                  color: '#FFF', fontSize: '20px',
-                  boxShadow: idx === currentStepIndex ? '0 4px 15px rgba(0, 81, 84, 0.3)' : 'none',
+                  background: idx < currentStepIndex ? '#000000' : idx === currentStepIndex ? '#000000' : '#f4f4f5',
+                  color: idx <= currentStepIndex ? '#ffffff' : '#71717a', fontSize: '18px',
+                  boxShadow: idx === currentStepIndex ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
                   transition: 'all 0.3s ease',
                 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
                     {idx < currentStepIndex ? 'check' : s.icon}
                   </span>
                 </div>
                 <span style={{
-                  fontSize: '11px', fontWeight: idx === currentStepIndex ? '700' : '500',
-                  color: idx <= currentStepIndex ? '#005154' : '#94A3B8',
+                  fontSize: '11.5px', fontWeight: idx === currentStepIndex ? 550 : 420,
+                  color: idx <= currentStepIndex ? '#000000' : '#a1a1aa',
                 }}>
                   {s.label}
                 </span>
               </div>
               {idx < STEPS.length - 1 && (
                 <div style={{
-                  flex: 1, height: '3px', margin: '0 8px',
-                  background: idx < currentStepIndex ? '#005154' : '#E2E8F0',
+                  flex: 1, height: '2px', margin: '0 8px',
+                  background: idx < currentStepIndex ? '#000000' : '#e4e4e7',
                   borderRadius: '2px', marginBottom: '22px',
                   transition: 'background 0.3s ease',
                 }} />
@@ -231,16 +231,16 @@ export const DataImportWizardPage: React.FC = () => {
           {/* Header, Search & Category Filter */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="material-symbols-outlined text-teal-700" style={{ fontSize: '22px' }}>apps</span>
+              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#000000', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="material-symbols-outlined text-black" style={{ fontSize: '22px' }}>apps</span>
                 اختر قسم أو نوع البيانات المراد استيرادها ({filteredTemplates.length} قالب جاهز)
               </h3>
 
               {/* Search Box */}
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
-                background: '#FFF', border: '1.5px solid #E2E8F0',
-                borderRadius: '10px', padding: '6px 14px', width: '280px',
+                background: '#FFF', border: '1px solid #e4e4e7',
+                borderRadius: '9999px', padding: '0 16px', width: '280px', height: '38px', minHeight: '38px'
               }}>
                 <i className="fa-solid fa-magnifying-glass text-slate-400"></i>
                 <input
@@ -271,25 +271,33 @@ export const DataImportWizardPage: React.FC = () => {
                 { id: 'finance', label: 'المالية والمحاسبة والضرائب', icon: 'fa-solid fa-money-bill-transfer' },
                 { id: 'hr', label: 'الموارد البشرية والحضور والعهد', icon: 'fa-solid fa-user-tie' },
                 { id: 'support', label: 'الشكاوى والعمليات', icon: 'fa-solid fa-headset' },
-              ].map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setCategoryFilter(cat.id)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                    padding: '6px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: '700',
-                    border: '1px solid',
-                    cursor: 'pointer',
-                    background: categoryFilter === cat.id ? '#005154' : '#FFF',
-                    color: categoryFilter === cat.id ? '#FFF' : '#475569',
-                    borderColor: categoryFilter === cat.id ? '#005154' : '#CBD5E1',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <i className={cat.icon}></i>
-                  <span>{cat.label}</span>
-                </button>
-              ))}
+              ].map(cat => {
+                const isActive = categoryFilter === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setCategoryFilter(cat.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '6px 16px',
+                      borderRadius: '9999px',
+                      fontSize: '12px',
+                      fontWeight: isActive ? 550 : 420,
+                      border: '1px solid',
+                      borderColor: isActive ? '#000000' : '#e4e4e7',
+                      background: isActive ? '#000000' : '#ffffff',
+                      color: isActive ? '#ffffff' : '#27272a',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <i className={cat.icon}></i>
+                    <span>{cat.label}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

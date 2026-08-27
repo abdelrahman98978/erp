@@ -172,94 +172,94 @@ export const ActivityLogPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#4F46E5', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               SECURITY & AUDIT TRAIL
             </span>
-            <span style={{ color: '#C7D2FE', fontSize: '12px' }}>سجل العمليات والرقابة الداخلية المباشرة</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>سجل العمليات والرقابة الداخلية المباشرة</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            سجل النشاط وحركات التدقيق الأمني (Enterprise Audit Trail & Security Log)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            سجل النشاط وحركات التدقيق الأمني
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#E0E7FF' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             تتبع غير قابل للتعديل لكافة العمليات المالية، إنشاء العقود، تسجيل الدخول، وتغييرات الصلاحيات
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('activity_log', filteredActivities, 'excel')} style={{ padding: '8px 16px', fontSize: '13px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+          <button className="button-outline-on-dark" onClick={() => exportData('activity_log', filteredActivities, 'excel')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-400 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('activity_log', filteredActivities, 'pdf')} style={{ padding: '8px 16px', fontSize: '13px' }}>
-            <i className="fa-solid fa-file-pdf text-red-600 ml-1"></i> PDF
+          <button className="button-outline-on-dark" onClick={() => exportData('activity_log', filteredActivities, 'pdf')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-400 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي العمليات المسجلة"
-          value={`${activities.length} حركة`}
-          icon="fa-solid fa-clock-rotate-left"
-          subtext="سجل تدقيق مشفر غير قابل للتعديل"
-          variant="purple"
-        />
-        <StatCard
-          title="الاعتمادات المالية المنجزة"
-          value="18 عملية"
-          icon="fa-solid fa-file-circle-check"
-          subtext="سندات صرف وقبض معتمدة"
-          variant="teal"
-        />
-        <StatCard
-          title="جلسات الدخول النشطة"
-          value="4 مستخدمين"
-          icon="fa-solid fa-users"
-          subtext="تحقق ثنائي 2FA نشط"
-          variant="info"
-        />
-        <StatCard
-          title="مستوى الامتثال الأمني"
-          value="100% ممتاز"
-          icon="fa-solid fa-shield-halved"
-          subtext="متوافق مع معايير الأمن السيبراني"
-          variant="warning"
-        />
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي العمليات المسجلة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{activities.length} حركة</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل تدقيق مشفر</span>
+        </div>
+
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الاعتمادات المالية المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>18 عملية</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>سندات صرف وقبض</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>جلسات الدخول النشطة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>4 مستخدمين</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>2FA نشط</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مستوى الامتثال الأمني</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>100%</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>معايير الأمن السيبراني</span>
+        </div>
       </div>
 
       {/* Filter Bars */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', background: '#FFF', padding: '14px 18px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+      <div className="card-pricing" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', background: '#FFF', padding: '16px 20px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: '800', color: '#1E293B' }}>تصفية بالقسم:</span>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>تصفية بالقسم:</span>
           {modules.map(m => (
             <button
               key={m}
               onClick={() => setSelectedModule(m)}
               style={{
-                padding: '4px 12px',
-                borderRadius: '16px',
+                padding: '4px 14px',
+                borderRadius: '9999px',
                 fontSize: '11.5px',
-                fontWeight: '700',
-                border: '1px solid #CBD5E1',
-                background: selectedModule === m ? '#0F172A' : '#F8FAFC',
-                color: selectedModule === m ? '#FFF' : '#475569',
-                cursor: 'pointer'
+                fontWeight: selectedModule === m ? 550 : 420,
+                border: '1px solid',
+                borderColor: selectedModule === m ? '#000000' : '#e4e4e7',
+                background: selectedModule === m ? '#000000' : '#ffffff',
+                color: selectedModule === m ? '#ffffff' : '#27272a',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
               {m}
@@ -268,11 +268,11 @@ export const ActivityLogPage: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: '800', color: '#1E293B' }}>نوع الإجراء:</span>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>نوع الإجراء:</span>
           <select
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
-            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '12px', fontWeight: '700' }}
+            style={{ padding: '6px 12px', borderRadius: '9999px', border: '1px solid #e4e4e7', fontSize: '12px', fontWeight: 500, background: '#ffffff', color: '#27272a' }}
           >
             {actions.map(a => (
               <option key={a} value={a}>{a}</option>

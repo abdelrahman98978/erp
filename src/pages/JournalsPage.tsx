@@ -202,85 +202,72 @@ export const JournalsPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-200 transition-all flex items-center gap-2"
+            className="button-primary-pill"
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-plus"></i>
-            إنشاء قيد محاسبي متوازن
+            <i className="fa-solid fa-plus text-xs"></i>
+            + إنشاء قيد محاسبي متوازن
           </button>
           <button
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
-            className="px-3.5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-sm shadow-md shadow-emerald-200 transition-all flex items-center gap-1.5"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="استيراد قيود يومية من ملف Excel / CSV"
           >
             <i className="fa-solid fa-file-import ml-1"></i>
-            استيراد قيود (Excel)
+            استيراد قيود
           </button>
           <button
             onClick={() => exportData('journals', filteredJournals, 'excel', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير إكسيل"
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
             Excel
           </button>
           <button
-            onClick={() => exportData('journals', filteredJournals, 'csv', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="تصدير CSV"
-          >
-            <i className="fa-solid fa-file-csv text-blue-600 ml-1.5"></i>
-            CSV
-          </button>
-          <button
             onClick={() => exportData('journals', filteredJournals, 'pdf', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير PDF"
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i>
             PDF
-          </button>
-          <button
-            onClick={() => exportData('journals', filteredJournals, 'print', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="px-3.5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
-            title="طباعة التقرير الرسمي"
-          >
-            <i className="fa-solid fa-print text-purple-700 ml-1.5"></i>
-            طباعة
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي القيود المرحّلة</span>
-          <div className="text-2xl font-black text-slate-900 mt-1">{journals.length} قيداً</div>
-          <span className="text-xs text-emerald-600 font-bold mt-1 inline-block">100% متطابقة محاسبياً</span>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي القيود المرحّلة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{journals.length} قيداً</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>100% متطابقة</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي حركات المدين (Debit)</span>
-          <div className="text-2xl font-black text-teal-700 mt-1">
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي حركات المدين (Debit)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {journals.reduce((acc, j) => acc + (j.total_debit || 0), 0).toLocaleString()} ر.س
           </div>
-          <span className="text-xs text-slate-400 font-medium">مجموع الأطراف المدينة</span>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>مجموع المدين</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">إجمالي حركات الدائن (Credit)</span>
-          <div className="text-2xl font-black text-rose-700 mt-1">
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي حركات الدائن (Credit)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {journals.reduce((acc, j) => acc + (j.total_credit || 0), 0).toLocaleString()} ر.س
           </div>
-          <span className="text-xs text-slate-400 font-medium">مجموع الأطراف الدائنة</span>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مجموع الدائن</span>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <span className="text-xs font-bold text-slate-400">حالة التوازن المحاسبي</span>
-          <div className="text-2xl font-black text-emerald-600 mt-1 flex items-center gap-2">
-            <i className="fa-solid fa-scale-balanced"></i>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>حالة التوازن المحاسبي</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             متوازن تماماً
           </div>
-          <span className="text-xs text-slate-400 font-medium">فارق المدين والدائن = 0.00 ر.س</span>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>فارق = 0.00 ر.س</span>
         </div>
       </div>
 

@@ -68,13 +68,13 @@ export const WhatsAppInboxPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header Banner */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
             <i className="fa-brands fa-whatsapp text-emerald-600 text-3xl"></i>
-            منظومة رسائل الواتساب الموحدة (WhatsApp Business Omni-Channel Hub)
+            منظومة رسائل الواتساب الموحدة (WhatsApp Business Hub)
           </h2>
           <p className="text-sm text-slate-500 mt-1">
             الرد الآلي والفوري، قوالب الإشعارات المعتمدة، وإرسال تنبيهات العقود والفواتير للعملاء
@@ -84,14 +84,16 @@ export const WhatsAppInboxPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => exportData('clients', chats, 'excel', 'سجل محادثات الواتساب')}
-            className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير Excel"
           >
             <i className="fa-solid fa-file-excel text-emerald-600 ml-1.5"></i> Excel
           </button>
           <button
             onClick={() => exportData('clients', chats, 'pdf', 'سجل محادثات الواتساب')}
-            className="px-3.5 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all"
+            className="button-outline-on-light"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             title="تصدير PDF"
           >
             <i className="fa-solid fa-file-pdf text-rose-600 ml-1.5"></i> PDF

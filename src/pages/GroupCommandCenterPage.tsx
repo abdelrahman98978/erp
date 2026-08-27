@@ -29,91 +29,70 @@ export const GroupCommandCenterPage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '24px', backgroundColor: '#F8FAFC', minHeight: '85vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Top Banner */}
       <div
+        className="card-feature-cinematic"
         style={{
-          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+          background: '#000000',
           borderRadius: '16px',
-          padding: '24px 32px',
+          padding: '28px',
           color: '#FFFFFF',
-          marginBottom: '24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <span
-              style={{
-                backgroundColor: 'rgba(5, 150, 105, 0.2)',
-                color: '#10B981',
-                border: '1px solid #059669',
-                borderRadius: '12px',
-                padding: '2px 10px',
-                fontSize: '11px',
-                fontWeight: '800',
-              }}
-            >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               GROUP EXECUTIVE GOVERNANCE
             </span>
-            <span style={{ fontSize: '12px', color: '#94A3B8' }}>خالد السليم للاستقدام والتشغيل</span>
+            <span style={{ fontSize: '12px', color: '#a1a1aa' }}>خالد السليم للاستقدام والتشغيل</span>
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: '900', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
-            مركز القيادة والرقابة التنفيذية للمجموعة (Group Executive Command Center)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            مركز القيادة والرقابة التنفيذية للمجموعة
           </h1>
         </div>
 
         <button
           type="button"
           onClick={() => setShowImpersonateModal(true)}
-          style={{
-            backgroundColor: '#DC2626',
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: '10px',
-            padding: '12px 20px',
-            fontWeight: '800',
-            fontSize: '13px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
+          className="button-aloe-pill"
+          style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
         >
-          <i className="fa-solid fa-user-secret"></i>
-          <span>تفعيل محاكاة موظف (Act As Employee)</span>
+          <i className="fa-solid fa-user-secret ml-1"></i>
+          <span>+ تفعيل محاكاة موظف (Act As Employee)</span>
         </button>
       </div>
 
       {/* Group Consolidated Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>إجمالي إيرادات المجموعة YTD</div>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#059669', marginTop: '6px' }}>28,500,000 ر.س</div>
-          <div style={{ fontSize: '11px', color: '#10B981', marginTop: '4px', fontWeight: '700' }}>+14.2% مقارنة بالعام الماضي</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <div style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي إيرادات المجموعة YTD</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>28,500,000 ر.س</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>+14.2% مقارنة بالعام الماضي</span>
         </div>
 
-        <div style={{ backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>إجمالي كادر المجموعة (Consolidated HR)</div>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#2563EB', marginTop: '6px' }}>450 موظف</div>
-          <div style={{ fontSize: '11px', color: '#64748B', marginTop: '4px' }}>موزعين على 18 فرعاً</div>
+        <div className="card-pricing" style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+          <div style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي كادر المجموعة (HR)</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>450 موظف</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>موزعين على 18 فرعاً</span>
         </div>
 
-        <div style={{ backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>الطلبات السارية في جميع الشركات</div>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#7C3AED', marginTop: '6px' }}>1,240 طلب</div>
-          <div style={{ fontSize: '11px', color: '#64748B', marginTop: '4px' }}>استقدام وتأجير وتشغيل</div>
+        <div className="card-pricing-featured" style={{ backgroundColor: '#000000', padding: '24px', borderRadius: '16px', color: '#ffffff' }}>
+          <div style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الطلبات السارية في الشركات</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>1,240 طلب</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>استقدام وتأجير وتشغيل</span>
         </div>
 
-        <div style={{ backgroundColor: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <div style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>مرشحو مسار ATS الدولي</div>
-          <div style={{ fontSize: '22px', fontWeight: '900', color: '#D97706', marginTop: '6px' }}>3,410 مرشح</div>
-          <div style={{ fontSize: '11px', color: '#64748B', marginTop: '4px' }}>من 5 مكاتب خارجية</div>
+        <div className="card-pricing" style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+          <div style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مرشحو مسار ATS الدولي</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>3,410 مرشح</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>من 5 مكاتب خارجية</span>
         </div>
       </div>
 

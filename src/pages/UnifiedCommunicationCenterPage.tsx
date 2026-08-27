@@ -134,31 +134,34 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#8B5CF6', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               INTER-COMPANY CORRESPONDENCE
             </span>
-            <span style={{ color: '#DDD6FE', fontSize: '12px' }}>نظام الخطابات والتعميمات الإدارية الموثقة</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>نظام الخطابات والتعميمات الإدارية الموثقة</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            مركز التواصل والمراسلات الموحد للمجموعة (Executive Memo & Dispatch Hub)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            مركز التواصل والمراسلات الموحد للمجموعة
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#EDE9FE' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             إصدار وتوثيق الخطابات الرسمية بين الشركات، التعميمات التنفيذية، والتوجيهات للمكاتب الخارجية
           </p>
         </div>
@@ -166,71 +169,75 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => setActiveTab('compose')}
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 18px', fontSize: '13px', background: '#10B981', borderColor: '#10B981' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-pen ml-1"></i> تحرير خطاب رسمي جديد
+            <i className="fa-solid fa-file-pen ml-1"></i> + تحرير خطاب رسمي جديد
           </button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي الخطابات والتعميمات"
-          value={`${correspondenceList.length} مراسلة`}
-          icon="fa-solid fa-envelopes-bulk"
-          subtext="موثقة إلكترونياً بالكامل"
-          variant="purple"
-        />
-        <StatCard
-          title="المراسلات العاجلة"
-          value="2 خطابات"
-          icon="fa-solid fa-triangle-exclamation"
-          subtext="تتطلب اتخاذ إجراء فوري"
-          variant="warning"
-        />
-        <StatCard
-          title="التوجيهات للمكاتب الدولية"
-          value="18 توجيهاً"
-          icon="fa-solid fa-earth-americas"
-          subtext="الفلبين، إثيوبيا، أوغندا"
-          variant="teal"
-        />
-        <StatCard
-          title="نسبة الاعتماد والتنفيذ"
-          value="98.5%"
-          icon="fa-solid fa-stamp"
-          subtext="حوكمة وتكامل بين الشركات"
-          variant="info"
-        />
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الخطابات والتعميمات</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{correspondenceList.length} مراسلة</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>موثقة إلكترونياً</span>
+        </div>
+
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المراسلات العاجلة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>2 خطابات</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إجراء فوري</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>التوجيهات للمكاتب الدولية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>18 توجيهاً</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>الفلبين، إثيوبيا</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>نسبة الاعتماد والتنفيذ</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>98.5%</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>حوكمة متكاملة</span>
+        </div>
       </div>
 
       {/* Sub Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', paddingBottom: '8px' }}>
-        <button
-          onClick={() => setActiveTab('inbox')}
-          className={`btn-odoo ${activeTab === 'inbox' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-inbox ml-1"></i> وارد وصادر المراسلات ({correspondenceList.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('compose')}
-          className={`btn-odoo ${activeTab === 'compose' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-feather-pointed ml-1"></i> منشئ الخطابات والتعميمات
-        </button>
-        {selectedMemo && (
-          <button
-            onClick={() => setActiveTab('letterhead-preview')}
-            className={`btn-odoo ${activeTab === 'letterhead-preview' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-            style={{ padding: '8px 16px', fontSize: '13px' }}
-          >
-            <i className="fa-solid fa-file-invoice ml-1"></i> معاينة الخطاب الرسمي المطبوع
-          </button>
-        )}
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'inbox', label: `وارد وصادر المراسلات (${correspondenceList.length})`, icon: 'fa-inbox' },
+          { id: 'compose', label: 'منشئ الخطابات والتعميمات', icon: 'fa-feather-pointed' },
+          ...(selectedMemo ? [{ id: 'letterhead-preview', label: 'معاينة الخطاب الرسمي المطبوع', icon: 'fa-file-invoice' }] : []),
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* TAB 1: INBOX & TIMELINE */}

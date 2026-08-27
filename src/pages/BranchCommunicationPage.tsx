@@ -148,51 +148,51 @@ export const BranchCommunicationPage: React.FC = () => {
       {/* Top Header Banner */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-comments-dollar text-purple ml-2"></i> مركز التواصل والمناقلات بين فروع الشركة (Inter-Branch Hub)
+          <h2 style={{ fontSize: '22px', fontWeight: '800' }}>
+            <i className="fa-solid fa-comments-dollar text-purple ml-2"></i> مركز التواصل والمناقلات بين فروع الشركة
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
             مجموعة خالد السليم • البث المباشر بين الفروع، التعاميم الرسمية، مناقلات العمالة والسيولة
           </p>
         </div>
 
-        <button className="btn-odoo btn-odoo-purple" onClick={() => setShowTransferModal(true)}>
-          <i className="fa-solid fa-right-left ml-1"></i> طلب مناقلة بين الفروع
+        <button className="button-primary-pill" onClick={() => setShowTransferModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+          <i className="fa-solid fa-right-left ml-1"></i> + طلب مناقلة بين الفروع
         </button>
       </div>
 
       {/* Branch Metrics Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #005154', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>الفرع الرئيسي (الرياض)</span>
-          <div style={{ fontSize: '20px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>14 موظف متصل الان</div>
-          <span style={{ fontSize: '11px', color: '#10B981' }}>تزامن 100%</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>الفرع الرئيسي (الرياض)</span>
+          <div className="display-sm" style={{ fontSize: '28px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>14 متصل</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>تزامن 100%</span>
         </div>
 
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #714B67', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>فرع جدة (الغربية)</span>
-          <div style={{ fontSize: '20px', fontWeight: '900', color: '#714B67', marginTop: '4px' }}>8 موظفين متصلين</div>
-          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>18 تفويض معتمد</span>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>فرع جدة (الغربية)</span>
+          <div className="display-sm" style={{ fontSize: '28px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>8 متصلين</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '8px' }}>18 تفويض معتمد</span>
         </div>
 
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #3B82F6', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>فرع الخبر (الشرقية)</span>
-          <div style={{ fontSize: '20px', fontWeight: '900', color: '#3B82F6', marginTop: '4px' }}>6 موظفين متصلين</div>
-          <span style={{ fontSize: '11px', color: '#10B981' }}>جاهز للاستلام</span>
+        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>فرع الخبر (الشرقية)</span>
+          <div className="display-sm" style={{ fontSize: '28px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>6 متصلين</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>جاهز للاستلام</span>
         </div>
 
-        <div style={{ background: 'white', padding: '16px', borderRadius: '12px', borderRight: '4px solid #F59E0B', border: '1px solid #E2E8F0' }}>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>مركز الإيواء والتغذية</span>
-          <div style={{ fontSize: '20px', fontWeight: '900', color: '#F59E0B', marginTop: '4px' }}>61 عاملة بالنزل</div>
-          <span style={{ fontSize: '11px', color: '#F59E0B' }}>6 متاحات للمناقلة</span>
+        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>مركز الإيواء والتغذية</span>
+          <div className="display-sm" style={{ fontSize: '28px', fontWeight: 330, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>61 عاملة</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>6 متاحات للمناقلة</span>
         </div>
       </div>
 
       {/* Main Grid Layout: Left Chat Channels & Right Transfer Requests */}
       <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '20px' }}>
         {/* Left Channels Menu */}
-        <div className="table-card" style={{ padding: '16px' }}>
-          <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#005154', marginBottom: '12px' }}>
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#000000', marginBottom: '12px' }}>
             <i className="fa-solid fa-headset ml-1"></i> قنوات التواصل بين الفروع
           </h3>
 
@@ -208,20 +208,21 @@ export const BranchCommunicationPage: React.FC = () => {
                 key={c.id}
                 onClick={() => setActiveChannel(c.id)}
                 style={{
-                  padding: '10px 12px',
-                  borderRadius: '8px',
+                  padding: '8px 14px',
+                  borderRadius: '9999px',
                   cursor: 'pointer',
-                  fontSize: '13px',
-                  fontWeight: activeChannel === c.id ? '800' : '500',
-                  background: activeChannel === c.id ? 'rgba(0, 81, 84, 0.1)' : 'transparent',
-                  color: activeChannel === c.id ? '#005154' : '#181C1C',
+                  fontSize: '12.5px',
+                  fontWeight: activeChannel === c.id ? 550 : 420,
+                  background: activeChannel === c.id ? '#000000' : 'transparent',
+                  color: activeChannel === c.id ? '#ffffff' : '#27272a',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 <span>{c.name}</span>
-                <span style={{ fontSize: '10px', background: '#E2E8F0', padding: '2px 6px', borderRadius: '4px' }}>{c.badge}</span>
+                <span className="pill-tag-shade" style={{ fontSize: '10px' }}>{c.badge}</span>
               </div>
             ))}
           </div>

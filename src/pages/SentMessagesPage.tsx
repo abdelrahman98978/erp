@@ -284,31 +284,34 @@ export const SentMessagesPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#4F46E5', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               COMMUNICATION HUB
             </span>
-            <span style={{ color: '#C7D2FE', fontSize: '12px' }}>بوابات الرسائل والإشعارات المباشرة</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>بوابات الرسائل والإشعارات المباشرة</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            مركز الرسائل الموحد (SMS & WhatsApp Business Center)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            مركز الرسائل الموحد (SMS & WhatsApp Business)
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#E0E7FF' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             إرسال إشعارات مساند، تذاكر الوصول، الفواتير الإلكترونية ZATCA، والحملات التسويقية
           </p>
         </div>
@@ -316,76 +319,76 @@ export const SentMessagesPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             onClick={() => setActiveTab('compose')}
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 16px', fontSize: '13px', background: '#10B981', borderColor: '#10B981' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-paper-plane ml-1"></i> إرسال رسالة فورية
+            <i className="fa-solid fa-paper-plane ml-1"></i> + إرسال رسالة فورية
           </button>
         </div>
       </div>
 
       {/* KPI Stats Bar */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="رصيد الرسائل (SMS Gateway)"
-          value="48,250 نقطة"
-          icon="fa-solid fa-comment-sms"
-          subtext="بوابة Unifonic / Taqnyat معتمدة"
-          variant="purple"
-        />
-        <StatCard
-          title="واتساب للأعمال (WhatsApp API)"
-          value="99.8% تسليم"
-          icon="fa-brands fa-whatsapp"
-          subtext="Meta Verified Green Badge"
-          variant="teal"
-        />
-        <StatCard
-          title="الرسائل المرسلة اليوم"
-          value={messages.length.toString()}
-          icon="fa-solid fa-envelopes-bulk"
-          subtext="إشعارات مساند وفواتير ZATCA"
-          variant="info"
-        />
-        <StatCard
-          title="متوسط تكلفة الرسالة"
-          value="0.13 ر.س"
-          icon="fa-solid fa-coins"
-          subtext="وفر بنسبة 35% عبر قوالب واتساب"
-          variant="warning"
-        />
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>رصيد الرسائل (SMS Gateway)</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>48,250 نقطة</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>Unifonic / Taqnyat</span>
+        </div>
+
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>واتساب للأعمال (WhatsApp API)</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>99.8% تسليم</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>Meta Verified</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الرسائل المرسلة اليوم</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{messages.length}</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إشعارات مساند و ZATCA</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>متوسط تكلفة الرسالة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>0.13 ر.س</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>وفر 35% عبر واتساب</span>
+        </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E2E8F0', paddingBottom: '8px' }}>
-        <button
-          onClick={() => setActiveTab('logs')}
-          className={`btn-odoo ${activeTab === 'logs' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-list-check ml-1"></i> سجل وأرشيف الرسائل ({messages.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('compose')}
-          className={`btn-odoo ${activeTab === 'compose' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-pen-to-square ml-1"></i> محرر الإرسال الفوري
-        </button>
-        <button
-          onClick={() => setActiveTab('templates')}
-          className={`btn-odoo ${activeTab === 'templates' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-layer-group ml-1"></i> قوالب ونماذج الإشعارات ({templates.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('gateways')}
-          className={`btn-odoo ${activeTab === 'gateways' ? 'btn-odoo-primary' : 'btn-odoo-secondary'}`}
-          style={{ padding: '8px 16px', fontSize: '13px' }}
-        >
-          <i className="fa-solid fa-server ml-1"></i> إعدادات بوابات الربط (Gateways)
-        </button>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+        {[
+          { id: 'logs', label: `سجل وأرشيف الرسائل (${messages.length})`, icon: 'fa-list-check' },
+          { id: 'compose', label: 'محرر الإرسال الفوري', icon: 'fa-pen-to-square' },
+          { id: 'templates', label: `قوالب ونماذج الإشعارات (${templates.length})`, icon: 'fa-layer-group' },
+          { id: 'gateways', label: 'إعدادات بوابات الربط (Gateways)', icon: 'fa-server' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* TAB 1: LOGS */}

@@ -212,40 +212,40 @@ export const SponsorshipTransferPage: React.FC = () => {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="btn-odoo btn-odoo-purple" onClick={() => setShowAddModal(true)}>
-            <i className="fa-solid fa-plus ml-1"></i> إضافة طلب نقل كفالة
+          <button className="button-primary-pill" onClick={() => setShowAddModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
+            <i className="fa-solid fa-plus ml-1"></i> + إضافة طلب نقل كفالة
           </button>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => exportData('sponsorship-transfer', transfers, 'excel')} title="تصدير Excel">
-            <i className="fa-solid fa-file-excel ml-1"></i> Excel
+          <button className="button-outline-on-light" onClick={() => exportData('sponsorship-transfer', transfers, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sponsorship-transfer', transfers, 'csv')} title="تصدير CSV">
-            <i className="fa-solid fa-file-csv text-primary ml-1"></i> CSV
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sponsorship-transfer', transfers, 'pdf')} title="تصدير PDF">
-            <i className="fa-solid fa-file-pdf text-danger ml-1"></i> PDF
-          </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sponsorship-transfer', transfers, 'print')} title="طباعة التقرير">
-            <i className="fa-solid fa-print text-purple ml-1"></i> طباعة
+          <button className="button-outline-on-light" onClick={() => exportData('sponsorship-transfer', transfers, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
+            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
           </button>
         </div>
       </div>
 
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '20px' }}>
-        <StatCard title="طلبات نقل الكفالة" value={String(transfers.length)} icon="fa-solid fa-repeat" subtext="إجمالي المعاملات" variant="teal" />
-        <StatCard
-          title="قيد التجربة (10 أيام)"
-          value={String(transfers.filter(t => t.status === 'فترة التجربة').length)}
-          icon="fa-solid fa-hourglass-half"
-          subtext="عمالة قيد التجربة المباشرة"
-          variant="warning"
-        />
-        <StatCard
-          title="تم النقل النهائي"
-          value={String(transfers.filter(t => t.status === 'تم النقل').length)}
-          icon="fa-solid fa-circle-check"
-          subtext="معاملات مكتملة بالكامل"
-          variant="purple"
-        />
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '24px' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>طلبات نقل الكفالة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{transfers.length}</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>إجمالي المعاملات</span>
+        </div>
+
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>قيد التجربة (10 أيام)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {transfers.filter(t => t.status === 'فترة التجربة').length}
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>عمالة قيد التجربة</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>تم النقل النهائي</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {transfers.filter(t => t.status === 'تم النقل').length}
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معاملات مكتملة</span>
+        </div>
       </div>
 
       <DataTable

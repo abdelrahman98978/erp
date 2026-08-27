@@ -139,117 +139,125 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Top Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-        color: '#FFF',
-        padding: '20px 24px',
-        borderRadius: '16px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#000000',
+          color: '#FFF',
+          padding: '28px',
+          borderRadius: '16px',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ background: '#10B981', color: '#FFF', padding: '2px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: '800' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               ENTERPRISE ATS RECRUITMENT PIPELINE
             </span>
-            <span style={{ color: '#A7F3D0', fontSize: '12px' }}>تتبع المتقدمين والتوظيف الدولي</span>
+            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>تتبع المتقدمين والتوظيف الدولي</span>
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '900', margin: '4px 0 0 0' }}>
-            نظام مسار التوظيف والفرز الذكي (12 مرحلة متكاملة مع مساند و HRIS)
+          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+            مسار التوظيف والفرز الذكي (12 مرحلة متكاملة)
           </h1>
-          <p style={{ margin: '2px 0 0 0', fontSize: '13px', color: '#D1FAE5' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
             تقييم السير بالذكاء الاصطناعي، جدولة المقابلات المرئية، وإصدار عروض العمل الرقمية
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '8px 18px', fontSize: '13px', background: '#0F172A', borderColor: '#0F172A' }}
+            className="button-aloe-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-user-plus ml-1"></i> طلب احتياج وظيفي جديد
+            <i className="fa-solid fa-user-plus ml-1"></i> + طلب احتياج وظيفي جديد
           </button>
         </div>
       </div>
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <StatCard
-          title="إجمالي المتقدمين النشطين"
-          value={`${candidates.length} مرشحاً`}
-          icon="fa-solid fa-users"
-          subtext="تم الفحص والتدقيق الأمني"
-          variant="teal"
-        />
-        <StatCard
-          title="متوسط توافق الـ AI"
-          value="92.5%"
-          icon="fa-solid fa-brain"
-          subtext="مطابقة معايير التأشيرة والمهنة"
-          variant="purple"
-        />
-        <StatCard
-          title="عروض العمل المقبولة"
-          value="8 عروض"
-          icon="fa-solid fa-envelope-open-text"
-          subtext="في مرحلة استخراج التأشيرة"
-          variant="info"
-        />
-        <StatCard
-          title="متوسط مدة الفرز والتوظيف"
-          value="4.5 أيام"
-          icon="fa-solid fa-clock-rotate-left"
-          subtext="أسرع بـ 40% من الدورة التقليدية"
-          variant="warning"
-        />
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي المتقدمين النشطين</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{candidates.length} مرشحاً</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تم التدقيق الأمني</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>متوسط توافق الـ AI</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>92.5%</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>مطابقة المعايير</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>عروض العمل المقبولة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>8 عروض</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مرحلة التأشيرة</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>متوسط مدة الفرز والتوظيف</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>4.5 أيام</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>أسرع بـ 40%</span>
+        </div>
       </div>
 
       {/* Stage Selector Pills */}
-      <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '6px', borderBottom: '1px solid #E2E8F0' }}>
+      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', borderBottom: '1px solid #e4e4e7' }}>
         <button
           type="button"
           onClick={() => setSelectedStage('الكل')}
           style={{
-            padding: '6px 14px',
-            borderRadius: '20px',
-            border: 'none',
-            backgroundColor: selectedStage === 'الكل' ? '#0F172A' : '#FFFFFF',
-            color: selectedStage === 'الكل' ? '#FFFFFF' : '#475569',
-            fontWeight: '800',
-            fontSize: '12px',
+            padding: '6px 16px',
+            borderRadius: '9999px',
+            border: '1px solid',
+            borderColor: selectedStage === 'الكل' ? '#000000' : '#e4e4e7',
+            backgroundColor: selectedStage === 'الكل' ? '#000000' : '#ffffff',
+            color: selectedStage === 'الكل' ? '#ffffff' : '#27272a',
+            fontWeight: selectedStage === 'الكل' ? 550 : 420,
+            fontSize: '12.5px',
             cursor: 'pointer',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-            whiteSpace: 'nowrap'
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap',
           }}
         >
           جميع المراحل ({candidates.length})
         </button>
         {stagesList.map((stg) => {
           const count = candidates.filter(c => c.stage === stg).length;
+          const isSel = selectedStage === stg;
           return (
             <button
               key={stg}
               type="button"
               onClick={() => setSelectedStage(stg)}
               style={{
-                padding: '6px 14px',
-                borderRadius: '20px',
-                border: '1px solid #CBD5E1',
-                backgroundColor: selectedStage === stg ? '#059669' : '#FFFFFF',
-                color: selectedStage === stg ? '#FFFFFF' : '#475569',
-                fontWeight: '700',
-                fontSize: '12px',
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isSel ? '#000000' : '#e4e4e7',
+                backgroundColor: isSel ? '#000000' : '#ffffff',
+                color: isSel ? '#ffffff' : '#27272a',
+                fontWeight: isSel ? 550 : 420,
+                fontSize: '12.5px',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                transition: 'all 0.15s ease',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              {stg} {count > 0 && <span style={{ background: selectedStage === stg ? 'rgba(255,255,255,0.3)' : '#E2E8F0', padding: '1px 6px', borderRadius: '10px', fontSize: '10px', marginRight: '4px' }}>{count}</span>}
+              <span>{stg}</span>
+              <span className={isSel ? "pill-tag-mint" : "pill-tag-shade"} style={{ fontSize: '10px' }}>
+                {count}
+              </span>
             </button>
           );
         })}
