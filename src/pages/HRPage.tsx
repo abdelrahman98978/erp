@@ -4,8 +4,8 @@ import { exportData } from '../services/exportService';
 import { useEmployees, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { Employee360DigitalFileModal } from '../components/hr/Employee360DigitalFileModal';
-import { journalEngine } from '../services/accounting/journalEngine';
 import { useAppStore } from '../stores/appStore';
+import { Users, Plus, FileSpreadsheet, FileText, Search, UserCheck, CalendarMinus, DollarSign, AlertCircle, Clock, Award, ShieldCheck, X } from 'lucide-react';
 
 export interface EmployeeRecord {
   id: string;
@@ -183,7 +183,7 @@ export const HRPage: React.FC = () => {
   const [selectedEmpFor360, setSelectedEmpFor360] = useState<EmployeeRecord | null>(null);
 
   // Vacations Data
-  const [vacations, setVacations] = useState<VacationRequest[]>([
+  const [vacations] = useState<VacationRequest[]>([
     {
       id: 'VAC-01',
       employee_name: 'فهد العتيبي',
@@ -209,7 +209,7 @@ export const HRPage: React.FC = () => {
   ]);
 
   // Advances Data
-  const [advances, setAdvances] = useState<AdvanceRequest[]>([
+  const [advances] = useState<AdvanceRequest[]>([
     {
       id: 'ADV-01',
       employee_name: 'إبراهيم الشمري',
@@ -222,7 +222,7 @@ export const HRPage: React.FC = () => {
   ]);
 
   // Sanctions Data
-  const [sanctions, setSanctions] = useState<SanctionItem[]>([
+  const [sanctions] = useState<SanctionItem[]>([
     {
       id: 'SANC-01',
       employee_name: 'أحمد التميمي',
@@ -236,7 +236,7 @@ export const HRPage: React.FC = () => {
   ]);
 
   // Permissions Data
-  const [permissions, setPermissions] = useState<PermissionRequest[]>([
+  const [permissions] = useState<PermissionRequest[]>([
     {
       id: 'PERM-01',
       employee_name: 'سارة خالد',
@@ -249,7 +249,7 @@ export const HRPage: React.FC = () => {
   ]);
 
   // Rewards Data
-  const [rewards, setRewards] = useState<RewardRequest[]>([
+  const [rewards] = useState<RewardRequest[]>([
     {
       id: 'REW-01',
       employee_name: 'عبدالفتح (مسؤول الوكلاء)',
@@ -263,7 +263,6 @@ export const HRPage: React.FC = () => {
   ]);
 
   // Employee Add Form State
-  const [selectedEmployeeForFile, setSelectedEmployeeForFile] = useState<EmployeeRecord | null>(null);
   const [name, setName] = useState('');
   const [nationalId, setNationalId] = useState('');
   const [jobTitle, setJobTitle] = useState('أخصائي استقدام');
@@ -355,60 +354,83 @@ export const HRPage: React.FC = () => {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-users-gear text-emerald-600"></i>
-            إدارة الموارد البشرية والرواتب (HR & Payroll System)
-          </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
-            شؤون الموظفين، الإجازات، السلف، الجزاءات، الأذونات، مسير الرواتب WPS، والمكافآت
-          </p>
+    <div className="space-y-6">
+      {/* Top Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Users className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>HR & PAYROLL SUITE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              إدارة الموارد البشرية والرواتب
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              شؤون الموظفين، الإجازات، السلف، الجزاءات، الأذونات، مسير الرواتب WPS، والمكافآت لـ {activeCompany.name}
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowAddEmpModal(true)}
-            className="button-primary-pill"
-            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-user-plus text-xs"></i>
-            + إضافة موظف جديد
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة موظف جديد</span>
           </button>
 
           <button
             onClick={handleExportWPS}
-            className="button-outline-on-light"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i>
-            تصدير ملف WPS للبنك
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>تصدير ملف WPS للبنك</span>
           </button>
         </div>
       </div>
 
       {/* Sub Tabs Navigation */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'employees', label: `الموظفون (${employees.length})`, icon: 'fa-users' },
-          { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: 'fa-calendar-minus' },
-          { id: 'advances', label: `طلبات السلف (${advances.length})`, icon: 'fa-hand-holding-dollar' },
-          { id: 'sanctions', label: `جزاءات الموظف (${sanctions.length})`, icon: 'fa-scale-unbalanced' },
-          { id: 'permissions', label: `طلبات الأذونات (${permissions.length})`, icon: 'fa-door-open' },
-          { id: 'rewards', label: `طلبات المكافآت (${rewards.length})`, icon: 'fa-award' },
-          { id: 'payroll', label: 'مسير الرواتب (WPS)', icon: 'fa-money-check-dollar' },
+          { id: 'employees', label: `الموظفون (${employees.length})`, icon: Users },
+          { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: CalendarMinus },
+          { id: 'advances', label: `طلبات السلف (${advances.length})`, icon: DollarSign },
+          { id: 'sanctions', label: `جزاءات الموظف (${sanctions.length})`, icon: AlertCircle },
+          { id: 'permissions', label: `طلبات الأذونات (${permissions.length})`, icon: Clock },
+          { id: 'rewards', label: `طلبات المكافآت (${rewards.length})`, icon: Award },
+          { id: 'payroll', label: 'مسير الرواتب (WPS)', icon: ShieldCheck },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -421,7 +443,7 @@ export const HRPage: React.FC = () => {
                 transition: 'all 0.15s ease',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
             </button>
           );
@@ -430,69 +452,62 @@ export const HRPage: React.FC = () => {
 
       {/* Tab 1: Employees List */}
       {activeTab === 'employees' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-              <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث بالاسم، كود الموظف، الهوية، أو الوظيفة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="text-input"
-                style={{
-                  borderRadius: '9999px',
-                  paddingRight: '36px',
-                  paddingLeft: '16px',
-                  height: '38px',
-                  minHeight: '38px',
-                  width: '320px',
-                  fontSize: '13px',
-                }}
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
               />
             </div>
-            <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               إجمالي الموظفين: {filteredEmployees.length}
             </span>
           </div>
 
-          <div style={{ overflowX: 'auto', width: '100%' }}>
-            <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
-              <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
-                  <th>كود الموظف</th>
-                  <th>اسم الموظف</th>
-                  <th>رقم الهوية</th>
-                  <th>المسمى الوظيفي</th>
-                  <th>القسم والفرع</th>
-                  <th>الراتب الأساسي</th>
-                  <th>الحالة</th>
-                  <th>الملف الرقمي 360</th>
+                  <th className="p-3.5">كود الموظف</th>
+                  <th className="p-3.5">اسم الموظف</th>
+                  <th className="p-3.5">رقم الهوية</th>
+                  <th className="p-3.5">المسمى الوظيفي</th>
+                  <th className="p-3.5">القسم والفرع</th>
+                  <th className="p-3.5">الراتب الأساسي</th>
+                  <th className="p-3.5">الحالة</th>
+                  <th className="p-3.5 text-center">الملف الرقمي 360</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {filteredEmployees.map((emp) => (
-                  <tr key={emp.id}>
-                    <td style={{ fontWeight: 550, color: '#000000', fontFamily: 'monospace' }}>{emp.employee_code}</td>
-                    <td>
-                      <div style={{ fontWeight: 550, color: '#000000' }}>{emp.name}</div>
-                      <div style={{ fontSize: '11px', color: '#71717a' }}>تاريخ التعيين: {emp.hire_date}</div>
+                  <tr key={emp.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{emp.employee_code}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{emp.name}</div>
+                      <div className="text-[11px] text-zinc-400 font-mono">تاريخ التعيين: {emp.hire_date}</div>
                     </td>
-                    <td style={{ fontFamily: 'monospace', color: '#71717a' }}>{emp.national_id}</td>
-                    <td style={{ fontWeight: 550, color: '#000000' }}>{emp.job_title}</td>
-                    <td>
-                      <div>{emp.department}</div>
-                      <div style={{ fontSize: '11px', color: '#71717a' }}>{emp.branch}</div>
+                    <td className="p-3.5 font-mono text-zinc-500">{emp.national_id}</td>
+                    <td className="p-3.5 font-semibold text-black">{emp.job_title}</td>
+                    <td className="p-3.5">
+                      <div className="font-semibold text-zinc-800">{emp.department}</div>
+                      <div className="text-[11px] text-zinc-400">{emp.branch}</div>
                     </td>
-                    <td style={{ fontWeight: 550, color: '#000000' }}>{(emp.salary ?? 0).toLocaleString()} ر.س</td>
-                    <td><Badge text={emp.status} type={emp.status === 'نشط' ? 'success' : 'warning'} /></td>
-                    <td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(emp.salary ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3.5"><Badge text={emp.status} type={emp.status === 'نشط' ? 'success' : 'warning'} /></td>
+                    <td className="p-3.5 text-center">
                       <button
-                        onClick={() => setSelectedEmployeeForFile(emp)}
+                        onClick={() => setSelectedEmpFor360(emp)}
                         className="button-outline-on-light"
-                        style={{ padding: '4px 12px', fontSize: '11.5px', minHeight: '28px' }}
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
                       >
-                        <i className="fa-solid fa-id-card-clip ml-1"></i> الملف الرقمي
+                        <UserCheck className="w-3 h-3 ml-1" />
+                        <span>الملف الرقمي</span>
                       </button>
                     </td>
                   </tr>
@@ -505,316 +520,317 @@ export const HRPage: React.FC = () => {
 
       {/* Tab 2: Vacations Requests */}
       {activeTab === 'vacations' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات الإجازات المسجلة</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>الموظف</th>
-                <th>نوع الإجازة</th>
-                <th>رصيد الإجازات</th>
-                <th>من تاريخ</th>
-                <th>إلى تاريخ</th>
-                <th>عدد الأيام</th>
-                <th>ملاحظات</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vacations.map((vac) => (
-                <tr key={vac.id}>
-                  <td><strong>{vac.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{vac.employee_name}</td>
-                  <td>{vac.vacation_type}</td>
-                  <td><strong style={{ color: '#2563EB' }}>{vac.balance} يوم</strong></td>
-                  <td>{vac.from_date}</td>
-                  <td>{vac.to_date}</td>
-                  <td><strong>{vac.days_count} أيام</strong></td>
-                  <td><span style={{ fontSize: '11px', color: '#64748B' }}>{vac.notes}</span></td>
-                  <td><Badge text={vac.status} type={vac.status === 'معتمد' ? 'success' : 'warning'} /></td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">طلبات الإجازات المسجلة</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">التسلسل</th>
+                  <th className="p-3.5">الموظف</th>
+                  <th className="p-3.5">نوع الإجازة</th>
+                  <th className="p-3.5">رصيد الإجازات</th>
+                  <th className="p-3.5">من تاريخ</th>
+                  <th className="p-3.5">إلى تاريخ</th>
+                  <th className="p-3.5">عدد الأيام</th>
+                  <th className="p-3.5">ملاحظات</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {vacations.map((vac) => (
+                  <tr key={vac.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{vac.id}</td>
+                    <td className="p-3.5 font-bold text-black">{vac.employee_name}</td>
+                    <td className="p-3.5">{vac.vacation_type}</td>
+                    <td className="p-3.5 font-mono font-bold text-black">{vac.balance} يوم</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{vac.from_date}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{vac.to_date}</td>
+                    <td className="p-3.5 font-bold text-black">{vac.days_count} أيام</td>
+                    <td className="p-3.5 text-zinc-500">{vac.notes}</td>
+                    <td className="p-3.5"><Badge text={vac.status} type={vac.status === 'معتمد' ? 'success' : 'warning'} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 3: Advances Requests */}
       {activeTab === 'advances' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات السلف المالية</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>الموظف</th>
-                <th>طريقة السداد</th>
-                <th>القيمة</th>
-                <th>التاريخ</th>
-                <th>عدد الأقساط</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {advances.map((adv) => (
-                <tr key={adv.id}>
-                  <td><strong>{adv.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{adv.employee_name}</td>
-                  <td>{adv.payment_method}</td>
-                  <td><strong style={{ color: '#047857' }}>{(adv.amount ?? 0).toLocaleString()} ر.س</strong></td>
-                  <td>{adv.date}</td>
-                  <td>{adv.installments_count} أشهر</td>
-                  <td><Badge text={adv.status} type="success" /></td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">طلبات السلف المالية</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">التسلسل</th>
+                  <th className="p-3.5">الموظف</th>
+                  <th className="p-3.5">طريقة السداد</th>
+                  <th className="p-3.5">القيمة</th>
+                  <th className="p-3.5">التاريخ</th>
+                  <th className="p-3.5">عدد الأقساط</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {advances.map((adv) => (
+                  <tr key={adv.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{adv.id}</td>
+                    <td className="p-3.5 font-bold text-black">{adv.employee_name}</td>
+                    <td className="p-3.5">{adv.payment_method}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(adv.amount ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{adv.date}</td>
+                    <td className="p-3.5 font-bold text-black">{adv.installments_count} أشهر</td>
+                    <td className="p-3.5"><Badge text={adv.status} type="success" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 4: Sanctions */}
       {activeTab === 'sanctions' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>جزاءات ومخالفات الموظف</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>الموظف</th>
-                <th>نوع الجزاء</th>
-                <th>القيمة المخصومة</th>
-                <th>التاريخ</th>
-                <th>الخصم مع الراتب</th>
-                <th>السبب</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sanctions.map((sanc) => (
-                <tr key={sanc.id}>
-                  <td><strong>{sanc.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{sanc.employee_name}</td>
-                  <td>{sanc.sanction_type}</td>
-                  <td><strong style={{ color: '#DC2626' }}>{sanc.amount} ر.س</strong></td>
-                  <td>{sanc.date}</td>
-                  <td>{sanc.deduct_from_salary ? 'نعم (مباشر)' : 'لا'}</td>
-                  <td style={{ fontSize: '11px', color: '#64748B' }}>{sanc.reason}</td>
-                  <td><Badge text={sanc.status} type="danger" /></td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">جزاءات ومخالفات الموظف</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">التسلسل</th>
+                  <th className="p-3.5">الموظف</th>
+                  <th className="p-3.5">نوع الجزاء</th>
+                  <th className="p-3.5">القيمة المخصومة</th>
+                  <th className="p-3.5">التاريخ</th>
+                  <th className="p-3.5">الخصم مع الراتب</th>
+                  <th className="p-3.5">السبب</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {sanctions.map((sanc) => (
+                  <tr key={sanc.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{sanc.id}</td>
+                    <td className="p-3.5 font-bold text-black">{sanc.employee_name}</td>
+                    <td className="p-3.5">{sanc.sanction_type}</td>
+                    <td className="p-3.5 font-mono font-bold text-rose-700">{sanc.amount} ر.س</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{sanc.date}</td>
+                    <td className="p-3.5">{sanc.deduct_from_salary ? 'نعم (مباشر)' : 'لا'}</td>
+                    <td className="p-3.5 text-zinc-500">{sanc.reason}</td>
+                    <td className="p-3.5"><Badge text={sanc.status} type="danger" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 5: Permissions */}
       {activeTab === 'permissions' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات الأذونات والاستئذان</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>الموظف</th>
-                <th>نوع الإذن</th>
-                <th>التاريخ</th>
-                <th>الفترة الزمنية</th>
-                <th>السبب</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {permissions.map((perm) => (
-                <tr key={perm.id}>
-                  <td><strong>{perm.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{perm.employee_name}</td>
-                  <td>{perm.permission_type}</td>
-                  <td>{perm.date}</td>
-                  <td><strong>{perm.time}</strong></td>
-                  <td style={{ fontSize: '11px', color: '#64748B' }}>{perm.reason}</td>
-                  <td><Badge text={perm.status} type="success" /></td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">طلبات الأذونات والاستئذان</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">التسلسل</th>
+                  <th className="p-3.5">الموظف</th>
+                  <th className="p-3.5">نوع الإذن</th>
+                  <th className="p-3.5">التاريخ</th>
+                  <th className="p-3.5">الفترة الزمنية</th>
+                  <th className="p-3.5">السبب</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {permissions.map((perm) => (
+                  <tr key={perm.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{perm.id}</td>
+                    <td className="p-3.5 font-bold text-black">{perm.employee_name}</td>
+                    <td className="p-3.5">{perm.permission_type}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{perm.date}</td>
+                    <td className="p-3.5 font-bold text-black">{perm.time}</td>
+                    <td className="p-3.5 text-zinc-500">{perm.reason}</td>
+                    <td className="p-3.5"><Badge text={perm.status} type="success" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 6: Rewards */}
       {activeTab === 'rewards' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800' }}>طلبات الحوافز والمكافآت</h3>
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>التسلسل</th>
-                <th>الموظف</th>
-                <th>نوع المكافأة</th>
-                <th>الراتب</th>
-                <th>صافي قيمة المكافأة</th>
-                <th>توقيت الصرف</th>
-                <th>التاريخ</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rewards.map((rew) => (
-                <tr key={rew.id}>
-                  <td><strong>{rew.id}</strong></td>
-                  <td style={{ fontWeight: '800' }}>{rew.employee_name}</td>
-                  <td>{rew.reward_type}</td>
-                  <td>{rew.salary.toLocaleString()} ر.س</td>
-                  <td><strong style={{ color: '#047857' }}>+{rew.net_reward.toLocaleString()} ر.س</strong></td>
-                  <td>{rew.payout_timing}</td>
-                  <td>{rew.date}</td>
-                  <td><Badge text={rew.status} type="success" /></td>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white">
+            <h3 className="text-sm font-bold text-black">طلبات الحوافز والمكافآت</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">التسلسل</th>
+                  <th className="p-3.5">الموظف</th>
+                  <th className="p-3.5">نوع المكافأة</th>
+                  <th className="p-3.5">الراتب</th>
+                  <th className="p-3.5">صافي قيمة المكافأة</th>
+                  <th className="p-3.5">توقيت الصرف</th>
+                  <th className="p-3.5">التاريخ</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {rewards.map((rew) => (
+                  <tr key={rew.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{rew.id}</td>
+                    <td className="p-3.5 font-bold text-black">{rew.employee_name}</td>
+                    <td className="p-3.5">{rew.reward_type}</td>
+                    <td className="p-3.5 font-mono">{rew.salary.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">+{rew.net_reward.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 text-zinc-600">{rew.payout_timing}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{rew.date}</td>
+                    <td className="p-3.5"><Badge text={rew.status} type="success" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 7: Payroll WPS */}
       {activeTab === 'payroll' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white">
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0F172A' }}>
+              <h3 className="text-sm font-bold text-black">
                 مسير الرواتب المعتمد وحماية الأجور (WPS)
               </h3>
-              <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#64748B' }}>
+              <p className="text-xs text-zinc-500 mt-0.5">
                 احتساب التأمينات الاجتماعية (GOSI)، البدلات، والاستقطاعات البنكية المباشرة
               </p>
             </div>
             <button
               onClick={handleExportWPS}
-              style={{
-                backgroundColor: '#059669',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '8px 16px',
-                fontSize: '12px',
-                fontWeight: '800',
-                cursor: 'pointer',
-              }}
+              className="button-primary-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
             >
-              تصدير شيت الرواتب
+              <FileSpreadsheet className="w-4 h-4 ml-1" />
+              <span>تصدير شيت الرواتب</span>
             </button>
           </div>
 
-          <table className="odoo-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
-              <tr>
-                <th>الموظف</th>
-                <th>الراتب الأساسي (70%)</th>
-                <th>بدل السكن (20%)</th>
-                <th>بدل النقل (10%)</th>
-                <th>التأمينات GOSI (9.75%)</th>
-                <th>صافي المحول للبنك</th>
-                <th>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map((emp) => {
-                const basic = emp.salary * 0.7;
-                const housing = emp.salary * 0.2;
-                const transport = emp.salary * 0.1;
-                const gosi = (basic + housing) * 0.0975;
-                const net = basic + housing + transport - gosi;
-                return (
-                  <tr key={emp.id}>
-                    <td>
-                      <div style={{ fontWeight: '800' }}>{emp.name}</div>
-                      <div style={{ fontSize: '10px', color: '#64748B' }}>{emp.job_title}</div>
-                    </td>
-                    <td>{basic.toLocaleString()} ر.س</td>
-                    <td>{housing.toLocaleString()} ر.س</td>
-                    <td>{transport.toLocaleString()} ر.س</td>
-                    <td style={{ color: '#DC2626' }}>-{gosi.toFixed(2)} ر.س</td>
-                    <td><strong style={{ color: '#047857' }}>{net.toFixed(2)} ر.س</strong></td>
-                    <td><Badge text="جاهز للتحويل" type="success" /></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">الموظف</th>
+                  <th className="p-3.5">الراتب الأساسي (70%)</th>
+                  <th className="p-3.5">بدل السكن (20%)</th>
+                  <th className="p-3.5">بدل النقل (10%)</th>
+                  <th className="p-3.5">التأمينات GOSI (9.75%)</th>
+                  <th className="p-3.5">صافي المحول للبنك</th>
+                  <th className="p-3.5">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {employees.map((emp) => {
+                  const basic = emp.salary * 0.7;
+                  const housing = emp.salary * 0.2;
+                  const transport = emp.salary * 0.1;
+                  const gosi = (basic + housing) * 0.0975;
+                  const net = basic + housing + transport - gosi;
+                  return (
+                    <tr key={emp.id} className="hover:bg-zinc-50">
+                      <td className="p-3.5">
+                        <div className="font-bold text-black">{emp.name}</div>
+                        <div className="text-[11px] text-zinc-400">{emp.job_title}</div>
+                      </td>
+                      <td className="p-3.5 font-mono">{basic.toLocaleString()} ر.س</td>
+                      <td className="p-3.5 font-mono">{housing.toLocaleString()} ر.س</td>
+                      <td className="p-3.5 font-mono">{transport.toLocaleString()} ر.س</td>
+                      <td className="p-3.5 font-mono text-rose-700">-{gosi.toFixed(2)} ر.س</td>
+                      <td className="p-3.5 font-mono font-bold text-emerald-700">{net.toFixed(2)} ر.س</td>
+                      <td className="p-3.5"><Badge text="جاهز للتحويل" type="success" /></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Add Employee Modal */}
       {showAddEmpModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '540px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-              إضافة موظف جديد لمنظومة العمل
-            </h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Users className="w-4 h-4 text-emerald-400" />
+                <span>إضافة موظف جديد لمنظومة العمل</span>
+              </h3>
+              <button onClick={() => setShowAddEmpModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <form onSubmit={handleAddEmployee}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+            <form onSubmit={handleAddEmployee} className="p-6 space-y-4 bg-white text-black">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                    اسم الموظف *
-                  </label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموظف *</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                    رقم الهوية الوطنية / الإقامة *
-                  </label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الهوية / الإقامة *</label>
                   <input
                     type="text"
                     required
                     value={nationalId}
                     onChange={(e) => setNationalId(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                    المسمى الوظيفي *
-                  </label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">المسمى الوظيفي *</label>
                   <input
                     type="text"
                     required
                     value={jobTitle}
                     onChange={(e) => setJobTitle(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                    القسم الإداري *
-                  </label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">القسم الإداري *</label>
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="التشغيل والاستقدام">التشغيل والاستقدام</option>
                     <option value="إدارة الإيواء">إدارة الإيواء</option>
@@ -825,46 +841,42 @@ export const HRPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                    الفرع *
-                  </label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع *</label>
                   <input
                     type="text"
                     value={branch}
                     onChange={(e) => setBranch(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                    الراتب الإجمالي (ر.س) *
-                  </label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الراتب الإجمالي (ر.س) *</label>
                   <input
                     type="number"
                     required
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddEmpModal(false)}
                   className="button-outline-on-light"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="button-primary-pill"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ الموظف
                 </button>
@@ -881,3 +893,5 @@ export const HRPage: React.FC = () => {
     </div>
   );
 };
+
+export default HRPage;

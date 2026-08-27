@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { 
+  Sliders, Fingerprint, Shield, Building2, Phone, Image, Link, 
+  Key, Search, MessageSquare, FileText, Check, Save, ExternalLink
+} from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
   const storeActiveTab = useAppStore(state => state.activeTab);
@@ -32,16 +36,16 @@ export const SettingsPage: React.FC = () => {
   const [otpExpiryMinutes, setOtpExpiryMinutes] = useState(5);
 
   const SECTIONS = [
-    { id: 'security-2fa', name: 'أمان المصادقة والبصمة البيومترية', icon: 'fa-fingerprint' },
-    { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: 'fa-user-lock' },
-    { id: 'general', name: 'البيانات الأساسية', icon: 'fa-building' },
-    { id: 'contacts', name: 'روابط التواصل والموقع', icon: 'fa-phone' },
-    { id: 'media', name: 'الهوية والوسائط والشعار', icon: 'fa-image' },
-    { id: 'quick-links', name: 'إدارة الروابط السريعة (Quick Links)', icon: 'fa-link' },
-    { id: 'login-config', name: 'تسجيل دخول الموقع الخارجي', icon: 'fa-key' },
-    { id: 'seo', name: 'إعدادات SEO & Tags', icon: 'fa-searchengin' },
-    { id: 'zoho', name: 'إعدادات Zoho SalesIQ Live Chat', icon: 'fa-comments' },
-    { id: 'stipulations', name: 'السياسات والشروط والضمان', icon: 'fa-file-lines' }
+    { id: 'security-2fa', name: 'أمان المصادقة والبصمة البيومترية', icon: Fingerprint },
+    { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: Shield },
+    { id: 'general', name: 'البيانات الأساسية', icon: Building2 },
+    { id: 'contacts', name: 'روابط التواصل والموقع', icon: Phone },
+    { id: 'media', name: 'الهوية والوسائط والشعار', icon: Image },
+    { id: 'quick-links', name: 'إدارة الروابط السريعة (Quick Links)', icon: Link },
+    { id: 'login-config', name: 'تسجيل دخول الموقع الخارجي', icon: Key },
+    { id: 'seo', name: 'إعدادات SEO & Tags', icon: Search },
+    { id: 'zoho', name: 'إعدادات Zoho SalesIQ Live Chat', icon: MessageSquare },
+    { id: 'stipulations', name: 'السياسات والشروط والضمان', icon: FileText }
   ];
 
   const handleSaveSettings = async () => {
@@ -51,154 +55,183 @@ export const SettingsPage: React.FC = () => {
       setting_value: JSON.stringify({ require2FAAdmin, allowOptional2FA, allowBiometrics, allowFaceId, otpExpiryMinutes }),
       description: 'إعدادات المصادقة الثنائية والبصمة البيومترية'
     });
-    alert('تم حفظ جميع إعدادات النظام وسياسات البصمة والمصادقة الثنائية بنجاح!');
   };
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 550, color: '#000000', margin: 0 }}>
-            <i className="fa-solid fa-sliders text-emerald-600 ml-2"></i> إعدادات النظام ومحتوى المنصة والأمان
-          </h2>
-          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
-            ضبط سياسات أمان المصادقة الثنائية (2FA)، اسم المنصة، الروابط السريعة الحكومية، ونصوص البوابة
-          </p>
+    <div className="space-y-6">
+      {/* Top Feature Cinematic Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Sliders className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SYSTEM SETTINGS & CMS</span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الأمان والهوية والربط</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                إعدادات النظام ومحتوى المنصة والأمان
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                ضبط سياسات أمان المصادقة الثنائية (2FA)، اسم المنصة، الروابط السريعة الحكومية، ونصوص البوابة
+              </p>
+            </div>
+          </div>
+
+          <button
+            className="button-white-pill"
+            onClick={handleSaveSettings}
+            style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <Save className="w-3.5 h-3.5 ml-1 text-black" />
+            <span>حفظ جميع التعديلات</span>
+          </button>
         </div>
-        <button className="button-primary-pill" onClick={handleSaveSettings} style={{ fontSize: '13px', padding: '8px 20px', minHeight: '38px' }}>
-          <i className="fa-solid fa-floppy-disk ml-1"></i> حفظ جميع التعديلات
-        </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '20px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Left Side Settings Navigation Menu */}
-        <div className="card-pricing" style={{ padding: '12px', borderRadius: '16px', background: '#ffffff', height: 'fit-content' }}>
-          {SECTIONS.map((sec) => {
-            const isActive = activeSection === sec.id;
-            return (
-              <div
-                key={sec.id}
-                onClick={() => setActiveSection(sec.id)}
-                style={{
-                  padding: '10px 14px',
-                  borderRadius: '9999px',
-                  fontSize: '12.5px',
-                  fontWeight: isActive ? 550 : 420,
-                  border: '1px solid',
-                  borderColor: isActive ? '#000000' : 'transparent',
-                  background: isActive ? '#000000' : 'transparent',
-                  color: isActive ? '#ffffff' : '#27272a',
-                  cursor: 'pointer',
-                  marginBottom: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <i className={`fa-solid ${sec.icon}`} style={{ fontSize: '12px', opacity: isActive ? 1 : 0.6 }}></i>
-                <span>{sec.name}</span>
-              </div>
-            );
-          })}
+        <div className="card-pricing md:col-span-1" style={{ padding: '12px', borderRadius: '24px', background: '#ffffff', height: 'fit-content' }}>
+          <div className="space-y-1">
+            {SECTIONS.map((sec) => {
+              const isActive = activeSection === sec.id;
+              const Icon = sec.icon;
+              return (
+                <button
+                  key={sec.id}
+                  onClick={() => setActiveSection(sec.id)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    borderRadius: '9999px',
+                    fontSize: '12px',
+                    fontWeight: isActive ? 550 : 420,
+                    border: '1px solid',
+                    borderColor: isActive ? '#000000' : 'transparent',
+                    backgroundColor: isActive ? '#000000' : 'transparent',
+                    color: isActive ? '#ffffff' : '#27272a',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    transition: 'all 0.15s ease',
+                    textAlign: 'right',
+                  }}
+                >
+                  <Icon className="w-3.5 h-3.5" style={{ opacity: isActive ? 1 : 0.6 }} />
+                  <span className="truncate">{sec.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Right Side Settings Form View */}
-        <div className="card-pricing" style={{ padding: '28px', borderRadius: '16px', background: '#ffffff' }}>
+        <div className="card-pricing md:col-span-3" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
           {activeSection === 'security-2fa' && (
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 550, marginBottom: '8px', color: '#000000', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px' }}>
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
                 إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
               </h3>
-              <p style={{ fontSize: '12.5px', color: '#71717a', marginBottom: '20px' }}>
+              <p className="text-xs text-zinc-500">
                 تعديل وتحديد سياسات الأمان والحماية لحسابات مديري النظام والموظفين بالفروع.
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fbfbf5', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #e4e4e7' }}>
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={require2FAAdmin}
                     onChange={e => setRequire2FAAdmin(e.target.checked)}
-                    style={{ accentColor: '#000000', width: '18px', height: '18px' }}
+                    className="rounded text-black focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span style={{ fontWeight: 600, fontSize: '14px', color: '#000000', display: 'block' }}>
+                    <span className="font-bold text-xs text-black block">
                       إلزامية المصادقة الثنائية (2FA) لجميع المديرين والمشرفين (Admins Only)
                     </span>
-                    <span style={{ fontSize: '12px', color: '#71717a' }}>
+                    <span className="text-[11px] text-zinc-500 block mt-0.5">
                       منع تسجيل الدخول لأي حساب إداري ذو صلاحيات واسعة دون إدخال رمز التحقق الثنائي (TOTP / SMS).
                     </span>
                   </div>
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fbfbf5', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #e4e4e7' }}>
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={allowOptional2FA}
                     onChange={e => setAllowOptional2FA(e.target.checked)}
-                    style={{ accentColor: '#000000', width: '18px', height: '18px' }}
+                    className="rounded text-black focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span style={{ fontWeight: '800', fontSize: '14px', color: '#181C1C', display: 'block' }}>
+                    <span className="font-bold text-xs text-black block">
                       السماح للموظفين بتفعيل الـ 2FA اختيارياً
                     </span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    <span className="text-[11px] text-zinc-500 block mt-0.5">
                       تمكين موظفي الفروع والمكاتب من اختيار وتفعيل تطبيق المصادقة (Google Authenticator) للحفاظ على أمان حساباتهم.
                     </span>
                   </div>
                 </label>
 
-                {/* Biometric Fingerprint Toggle */}
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#ECFDF5', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #A7F3D0' }}>
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={allowBiometrics}
                     onChange={e => setAllowBiometrics(e.target.checked)}
-                    style={{ accentColor: '#059669', width: '18px', height: '18px' }}
+                    className="rounded text-emerald-600 focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span style={{ fontWeight: '800', fontSize: '14px', color: '#065F46', display: 'block' }}>
-                      <i className="fa-solid fa-fingerprint me-1"></i> تفعيل الدخول ببصمة الإصبع (Touch ID / Windows Hello / WebAuthn)
+                    <span className="font-bold text-xs text-emerald-900 block flex items-center gap-1">
+                      <Fingerprint className="w-3.5 h-3.5" />
+                      <span>تفعيل الدخول ببصمة الإصبع (Touch ID / Windows Hello / WebAuthn)</span>
                     </span>
-                    <span style={{ fontSize: '12px', color: '#047857' }}>
+                    <span className="text-[11px] text-emerald-700 block mt-0.5">
                       السماح للمستخدمين بالدخول الفوري المشفر للمنظومة عبر مستشعر البصمة الحيوي للأجهزة المعتمدة.
                     </span>
                   </div>
                 </label>
 
-                {/* Biometric Face ID Toggle */}
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F5F3FF', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #DDD6FE' }}>
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={allowFaceId}
                     onChange={e => setAllowFaceId(e.target.checked)}
-                    style={{ accentColor: '#7C3AED', width: '18px', height: '18px' }}
+                    className="rounded text-black focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span style={{ fontWeight: '800', fontSize: '14px', color: '#5B21B6', display: 'block' }}>
-                      <i className="fa-solid fa-face-viewfinder me-1"></i> تفعيل الدخول ببصمة الوجه ثلاثية الأبعاد (Face ID)
+                    <span className="font-bold text-xs text-black block">
+                      تفعيل الدخول ببصمة الوجه ثلاثية الأبعاد (Face ID)
                     </span>
-                    <span style={{ fontSize: '12px', color: '#6D28D9' }}>
+                    <span className="text-[11px] text-zinc-500 block mt-0.5">
                       تمكين تقنية التعرف على الوجه وفحص الحيوية (Liveness Detection) لتسجيل الدخول السريع والآمن.
                     </span>
                   </div>
                 </label>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">صلاحية رمز التحقق OTP بالدقائق</label>
-                  <select className="filter-select" value={otpExpiryMinutes} onChange={e => setOtpExpiryMinutes(Number(e.target.value))}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">صلاحية رمز التحقق OTP بالدقائق</label>
+                  <select className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" value={otpExpiryMinutes} onChange={e => setOtpExpiryMinutes(Number(e.target.value))}>
                     <option value={3}>3 دقائق</option>
                     <option value={5}>5 دقائق (مستحسن)</option>
                     <option value={10}>10 دقائق</option>
                   </select>
                 </div>
 
-                <div className="filter-group">
-                  <label className="filter-label">وسيلة الإرسال الافتراضية للرموز</label>
-                  <select className="filter-select" defaultValue="Google Authenticator">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">وسيلة الإرسال الافتراضية للرموز</label>
+                  <select className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="Google Authenticator">
                     <option>تطبيق Google Authenticator (TOTP)</option>
                     <option>رسالة SMS نصية قصيرة</option>
                     <option>إشعار عبر الواتساب الرسمي</option>
@@ -209,82 +242,46 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeSection === 'rbac-matrix' && (
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--odoo-purple)', borderBottom: '2px solid var(--odoo-purple)', paddingBottom: '8px' }}>
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
                 مصفوفة الصلاحيات والأدوار (Role-Based Access Control - RBAC Matrix)
               </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+              <p className="text-xs text-zinc-500">
                 تحديد دقيق لصلاحيات القراءة، الإنشاء، التعديل، الحذف، والاعتماد المالي لكل دور وظيفي.
               </p>
 
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'right' }}>
-                  <thead>
-                    <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
-                      <th style={{ padding: '12px' }}>الدور الوظيفي (Role)</th>
-                      <th style={{ padding: '12px', textAlign: 'center' }}>عرض (Read)</th>
-                      <th style={{ padding: '12px', textAlign: 'center' }}>إنشاء (Create)</th>
-                      <th style={{ padding: '12px', textAlign: 'center' }}>تعديل (Edit)</th>
-                      <th style={{ padding: '12px', textAlign: 'center' }}>حذف (Delete)</th>
-                      <th style={{ padding: '12px', textAlign: 'center' }}>اعتماد مالي (Approve)</th>
-                      <th style={{ padding: '12px', textAlign: 'center' }}>تصدير (Export)</th>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs text-zinc-700">
+                  <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                    <tr>
+                      <th className="p-3.5">الدور الوظيفي (Role)</th>
+                      <th className="p-3.5 text-center">عرض</th>
+                      <th className="p-3.5 text-center">إنشاء</th>
+                      <th className="p-3.5 text-center">تعديل</th>
+                      <th className="p-3.5 text-center">حذف</th>
+                      <th className="p-3.5 text-center">اعتماد مالي</th>
+                      <th className="p-3.5 text-center">تصدير</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '12px', fontWeight: '800', color: 'var(--odoo-purple)' }}>مدير النظام العام (Super Admin)</td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked disabled /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '12px', fontWeight: '700' }}>مدير الفرع (Branch Manager)</td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '12px', fontWeight: '700' }}>المحاسب المالي (Senior Accountant)</td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '12px', fontWeight: '700' }}>أخصائي الموارد البشرية (HR Specialist)</td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '12px', fontWeight: '700' }}>مشرف مركز الإيواء (Shelter Supervisor)</td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '12px', fontWeight: '700' }}>مسؤول المبيعات وخدمة العملاء (Sales Agent)</td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" defaultChecked /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                      <td style={{ textAlign: 'center' }}><input type="checkbox" /></td>
-                    </tr>
+                  <tbody className="divide-y divide-zinc-100">
+                    {[
+                      { role: 'مدير النظام العام (Super Admin)', r: true, c: true, e: true, d: true, a: true, x: true, locked: true },
+                      { role: 'مدير الفرع (Branch Manager)', r: true, c: true, e: true, d: false, a: true, x: true, locked: false },
+                      { role: 'المحاسب المالي (Senior Accountant)', r: true, c: true, e: true, d: false, a: true, x: true, locked: false },
+                      { role: 'أخصائي الموارد البشرية (HR Specialist)', r: true, c: true, e: true, d: false, a: false, x: true, locked: false },
+                      { role: 'مشرف مركز الإيواء (Shelter Supervisor)', r: true, c: true, e: true, d: false, a: false, x: false, locked: false },
+                      { role: 'مسؤول المبيعات (Sales Agent)', r: true, c: true, e: false, d: false, a: false, x: false, locked: false },
+                    ].map((row, idx) => (
+                      <tr key={idx} className="hover:bg-zinc-50">
+                        <td className="p-3.5 font-bold text-black">{row.role}</td>
+                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.r} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.c} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.e} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.d} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.a} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.x} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -292,86 +289,85 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeSection === 'general' && (
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--odoo-purple)', borderBottom: '2px solid var(--odoo-purple)', paddingBottom: '8px' }}>
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
                 1. البيانات الأساسية واسم المنصة
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">اسم الموقع بالعربية *</label>
-                  <input type="text" className="filter-input" defaultValue="مجموعة الخالد السالم للاستقدام والتشغيل" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموقع بالعربية *</label>
+                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="مجموعة خالد السليم للاستقدام والتشغيل" />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">اسم الموقع بالإنجليزية *</label>
-                  <input type="text" className="filter-input" defaultValue="MAJMOAT ALKHALID ALSALIM ERP" />
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموقع بالإنجليزية *</label>
+                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="MAJMOAT KHALID ALSALIM ERP" />
                 </div>
-                <div className="filter-group" style={{ gridColumn: 'span 2' }}>
-                  <label className="filter-label">العنوان الوطني والرسمي *</label>
-                  <input type="text" className="filter-input" defaultValue="اليرموك، الرياض 13251، المملكة العربية السعودية" />
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">العنوان الوطني والرسمي *</label>
+                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="اليرموك، الرياض 13251، المملكة العربية السعودية" />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">البريد الإلكتروني الرسمي</label>
-                  <input type="email" className="filter-input" defaultValue="info@clickandmore.sa" />
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">البريد الإلكتروني الرسمي</label>
+                  <input type="email" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="info@alsalim-group.sa" />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">رقم الهاتف الرئيسي</label>
-                  <input type="text" className="filter-input" defaultValue="+966594249640" />
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الهاتف الرئيسي</label>
+                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="+966594249640" />
                 </div>
               </div>
             </div>
           )}
 
           {activeSection === 'quick-links' && (
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '16px', color: 'var(--odoo-teal-dark)', borderBottom: '2px solid var(--odoo-teal)', paddingBottom: '8px' }}>
-                4. إعدادات الروابط السريعة الشفافة (Quick Links Bar)
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
+                4. إعدادات الروابط السريعة (Quick Links Bar)
               </h3>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+              <p className="text-xs text-zinc-500">
                 الروابط الظاهرة في الشريط العلوي للانتقال المباشر للمنصات الحكومية والخدمية
               </p>
 
-              <table className="odoo-data-table">
-                <thead>
-                  <tr>
-                    <th>اسم الرابط Quick Link</th>
-                    <th>الرابط المباشر URL</th>
-                    <th>الأيقونة</th>
-                    <th>الحالة</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style={{ fontWeight: '700' }}>مساند برو</td>
-                    <td>https://pros.musaned.com.sa/login</td>
-                    <td><code>fa-external-link</code></td>
-                    <td><Badge text="مفعل" type="success" /></td>
-                  </tr>
-                  <tr>
-                    <td style={{ fontWeight: '700' }}>مساند توثيق</td>
-                    <td>https://tawtheeq.musaned.com.sa/</td>
-                    <td><code>fa-file-text-o</code></td>
-                    <td><Badge text="مفعل" type="success" /></td>
-                  </tr>
-                  <tr>
-                    <td style={{ fontWeight: '700' }}>اللايف شات (Zoho)</td>
-                    <td>https://salesiq.zoho.sa/platinumeastern/liveview</td>
-                    <td><code>fa-comments</code></td>
-                    <td><Badge text="مفعل" type="success" /></td>
-                  </tr>
-                  <tr>
-                    <td style={{ fontWeight: '700' }}>منصة إنجاز</td>
-                    <td>https://visa.mofa.gov.sa/enjaz/getvisainformation/</td>
-                    <td><code>fa-id-card-o</code></td>
-                    <td><Badge text="مفعل" type="success" /></td>
-                  </tr>
-                  <tr>
-                    <td style={{ fontWeight: '700' }}>منصة تأشير</td>
-                    <td>https://ksavisa.sa/</td>
-                    <td><code>fa-plane</code></td>
-                    <td><Badge text="مفعل" type="success" /></td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs text-zinc-700">
+                  <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                    <tr>
+                      <th className="p-3.5">اسم الرابط Quick Link</th>
+                      <th className="p-3.5">الرابط المباشر URL</th>
+                      <th className="p-3.5">الحالة</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100">
+                    {[
+                      { name: 'مساند برو', url: 'https://pros.musaned.com.sa/login' },
+                      { name: 'مساند توثيق', url: 'https://tawtheeq.musaned.com.sa/' },
+                      { name: 'اللايف شات (Zoho)', url: 'https://salesiq.zoho.sa/platinumeastern/liveview' },
+                      { name: 'منصة إنجاز', url: 'https://visa.mofa.gov.sa/enjaz/getvisainformation/' },
+                      { name: 'منصة تأشير', url: 'https://ksavisa.sa/' },
+                    ].map((link, idx) => (
+                      <tr key={idx} className="hover:bg-zinc-50">
+                        <td className="p-3.5 font-bold text-black">{link.name}</td>
+                        <td className="p-3.5 font-mono text-zinc-500 text-[11px]">{link.url}</td>
+                        <td className="p-3.5"><Badge text="مفعل" type="success" /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeSection !== 'security-2fa' && activeSection !== 'rbac-matrix' && activeSection !== 'general' && activeSection !== 'quick-links' && (
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
+                إعدادات {SECTIONS.find(s => s.id === activeSection)?.name}
+              </h3>
+              <p className="text-xs text-zinc-500">
+                يتم إدارة وتحديث هذه المحددات بصورة مستمرة وتطبيقها على كامل الموقع والموديلات المرتبطة.
+              </p>
+              <div className="p-8 text-center bg-zinc-50 rounded-2xl border border-zinc-200">
+                <Check className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
+                <span className="text-xs font-bold text-black block">الإعدادات محدثة ومتوافقة مع المعايير</span>
+              </div>
             </div>
           )}
         </div>
@@ -379,3 +375,5 @@ export const SettingsPage: React.FC = () => {
     </div>
   );
 };
+
+export default SettingsPage;

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
-import { StatCard } from '../components/ui/StatCard';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { MessageSquare, Plus, FileSpreadsheet, FileText, Send, RotateCw, CheckCircle2, Clock, Layers, Server, Search, PhoneCall } from 'lucide-react';
 
 interface MessageLog {
   id: string;
@@ -141,6 +140,7 @@ export const SentMessagesPage: React.FC = () => {
   }, [storeActiveTab]);
 
   const [channelFilter, setChannelFilter] = useState<'all' | 'SMS' | 'WhatsApp'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [messages, setMessages] = useState<MessageLog[]>([]);
   const [templates, setTemplates] = useState<MessageTemplate[]>(MOCK_TEMPLATES);
 
@@ -196,92 +196,17 @@ export const SentMessagesPage: React.FC = () => {
 
   const filteredMessages = messages.filter(m => {
     if (channelFilter !== 'all' && m.channel !== channelFilter) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      return (
+        m.id.toLowerCase().includes(q) ||
+        m.recipient_name.toLowerCase().includes(q) ||
+        m.phone.includes(q) ||
+        m.content.toLowerCase().includes(q)
+      );
+    }
     return true;
   });
-
-  const columns: Column<MessageLog>[] = [
-    {
-      header: 'كود الرسالة',
-      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)', fontFamily: 'monospace' }}>{row.id}</span>
-    },
-    {
-      header: 'المستلم ورقم الجوال',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '700', color: '#1E293B' }}>{row.recipient_name}</span>
-          <div style={{ fontSize: '11.5px', color: '#64748B', fontFamily: 'monospace', direction: 'ltr', textAlign: 'right' }}>
-            {row.phone}
-          </div>
-        </div>
-      )
-    },
-    {
-      header: 'القناة',
-      accessor: (row) => (
-        <Badge
-          text={row.channel}
-          type={row.channel === 'WhatsApp' ? 'success' : 'info'}
-          icon={row.channel === 'WhatsApp' ? 'fa-brands fa-whatsapp' : 'fa-solid fa-comment-sms'}
-        />
-      )
-    },
-    {
-      header: 'نوع النموذج / المناسبة',
-      accessor: (row) => (
-        <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#334155' }}>
-          {row.template}
-        </span>
-      )
-    },
-    {
-      header: 'نص الرسالة',
-      accessor: (row) => (
-        <div style={{ maxWidth: '340px', fontSize: '12px', color: '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={row.content}>
-          {row.content}
-        </div>
-      )
-    },
-    {
-      header: 'التكلفة',
-      accessor: (row) => (
-        <span style={{ fontSize: '12px', fontWeight: '800', color: '#059669' }}>
-          {(row.cost_sar ?? 0.12).toFixed(2)} ر.س
-        </span>
-      )
-    },
-    {
-      header: 'تاريخ الإرسال',
-      accessor: (row) => <span style={{ fontSize: '11.5px', color: '#64748B', fontFamily: 'monospace' }}>{row.sent_at}</span>
-    },
-    {
-      header: 'الحالة',
-      accessor: (row) => (
-        <Badge
-          text={row.status}
-          type={row.status === 'تم التسليم' ? 'success' : row.status === 'قيد الإرسال' ? 'warning' : 'danger'}
-          icon={row.status === 'تم التسليم' ? 'fa-solid fa-circle-check' : 'fa-solid fa-clock'}
-        />
-      )
-    },
-    {
-      header: 'الإجراءات',
-      accessor: (row) => (
-        <button
-          className="btn-odoo btn-odoo-secondary"
-          style={{ padding: '4px 8px', fontSize: '11px', height: '28px' }}
-          onClick={() => {
-            setComposeChannel(row.channel);
-            setRecipientName(row.recipient_name);
-            setRecipientPhone(row.phone);
-            setMessageBody(row.content);
-            setActiveTab('compose');
-          }}
-        >
-          <i className="fa-solid fa-rotate-right ml-1"></i> إعادة إرسال
-        </button>
-      )
-    }
-  ];
 
   return (
     <div className="space-y-6">
@@ -301,28 +226,31 @@ export const SentMessagesPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              COMMUNICATION HUB
-            </span>
-            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>بوابات الرسائل والإشعارات المباشرة</span>
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <MessageSquare className="w-5 h-5" />
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            مركز الرسائل الموحد (SMS & WhatsApp Business)
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            إرسال إشعارات مساند، تذاكر الوصول، الفواتير الإلكترونية ZATCA، والحملات التسويقية
-          </p>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>COMMUNICATION HUB</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+              مركز الرسائل الموحد (SMS & WhatsApp Business)
+            </h1>
+            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
+              إرسال إشعارات مساند، تذاكر الوصول، الفواتير الإلكترونية ZATCA، والحملات التسويقية
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab('compose')}
-            className="button-aloe-pill"
+            className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-paper-plane ml-1"></i> + إرسال رسالة فورية
+            <Send className="w-4 h-4 ml-1" />
+            <span>+ إرسال رسالة فورية</span>
           </button>
         </div>
       </div>
@@ -331,38 +259,39 @@ export const SentMessagesPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>رصيد الرسائل (SMS Gateway)</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>48,250 نقطة</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>48,250 نقطة</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>Unifonic / Taqnyat</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
           <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>واتساب للأعمال (WhatsApp API)</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>99.8% تسليم</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>99.8% تسليم</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>Meta Verified</span>
         </div>
 
         <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الرسائل المرسلة اليوم</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{messages.length}</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{messages.length}</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إشعارات مساند و ZATCA</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>متوسط تكلفة الرسالة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>0.13 ر.س</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>0.13 ر.س</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>وفر 35% عبر واتساب</span>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'logs', label: `سجل وأرشيف الرسائل (${messages.length})`, icon: 'fa-list-check' },
-          { id: 'compose', label: 'محرر الإرسال الفوري', icon: 'fa-pen-to-square' },
-          { id: 'templates', label: `قوالب ونماذج الإشعارات (${templates.length})`, icon: 'fa-layer-group' },
-          { id: 'gateways', label: 'إعدادات بوابات الربط (Gateways)', icon: 'fa-server' },
+          { id: 'logs', label: `سجل وأرشيف الرسائل (${messages.length})`, icon: MessageSquare },
+          { id: 'compose', label: 'محرر الإرسال الفوري', icon: Send },
+          { id: 'templates', label: `قوالب ونماذج الإشعارات (${templates.length})`, icon: Layers },
+          { id: 'gateways', label: 'إعدادات بوابات الربط (Gateways)', icon: Server },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
           return (
             <button
               key={tab.id}
@@ -378,13 +307,13 @@ export const SentMessagesPage: React.FC = () => {
                 fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 whiteSpace: 'nowrap',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
             </button>
           );
@@ -393,95 +322,138 @@ export const SentMessagesPage: React.FC = () => {
 
       {/* TAB 1: LOGS */}
       {activeTab === 'logs' && (
-        <div className="space-y-3">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', gap: '6px' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="flex gap-1.5 overflow-x-auto">
               <button
                 onClick={() => setChannelFilter('all')}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  border: '1px solid #CBD5E1',
-                  background: channelFilter === 'all' ? '#0F172A' : '#FFF',
-                  color: channelFilter === 'all' ? '#FFF' : '#334155',
-                  cursor: 'pointer'
-                }}
+                className={channelFilter === 'all' ? 'button-primary-pill' : 'button-outline-on-light'}
+                style={{ padding: '4px 14px', fontSize: '11.5px', minHeight: '30px' }}
               >
                 الكل ({messages.length})
               </button>
               <button
                 onClick={() => setChannelFilter('WhatsApp')}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  border: '1px solid #10B981',
-                  background: channelFilter === 'WhatsApp' ? '#10B981' : '#FFF',
-                  color: channelFilter === 'WhatsApp' ? '#FFF' : '#047857',
-                  cursor: 'pointer'
-                }}
+                className={channelFilter === 'WhatsApp' ? 'button-primary-pill' : 'button-outline-on-light'}
+                style={{ padding: '4px 14px', fontSize: '11.5px', minHeight: '30px' }}
               >
-                <i className="fa-brands fa-whatsapp ml-1"></i> واتساب
+                واتساب
               </button>
               <button
                 onClick={() => setChannelFilter('SMS')}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  border: '1px solid #3B82F6',
-                  background: channelFilter === 'SMS' ? '#3B82F6' : '#FFF',
-                  color: channelFilter === 'SMS' ? '#FFF' : '#1D4ED8',
-                  cursor: 'pointer'
-                }}
+                className={channelFilter === 'SMS' ? 'button-primary-pill' : 'button-outline-on-light'}
+                style={{ padding: '4px 14px', fontSize: '11.5px', minHeight: '30px' }}
               >
-                <i className="fa-solid fa-comment-sms ml-1"></i> رسائل نصية (SMS)
+                رسائل نصية (SMS)
               </button>
             </div>
 
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sent_messages', filteredMessages, 'excel')} style={{ padding: '6px 12px', fontSize: '12px' }}>
-                <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+            <div className="flex items-center gap-2">
+              <div className="relative w-64">
+                <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
+                <input
+                  type="text"
+                  placeholder="ابحث بالاسم، الرقم، النص..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-8 pl-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+              <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <span>Excel</span>
               </button>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => exportData('sent_messages', filteredMessages, 'pdf')} style={{ padding: '6px 12px', fontSize: '12px' }}>
-                <i className="fa-solid fa-file-pdf text-red-600 ml-1"></i> PDF
+              <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
+                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <span>PDF</span>
               </button>
             </div>
           </div>
 
-          <DataTable
-            columns={columns}
-            data={filteredMessages}
-            searchPlaceholder="ابحث بالاسم، رقم الجوال، الكود، أو نص الرسالة..."
-          />
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">كود الرسالة</th>
+                  <th className="p-3.5">المستلم ورقم الجوال</th>
+                  <th className="p-3.5">القناة</th>
+                  <th className="p-3.5">نوع النموذج</th>
+                  <th className="p-3.5">نص الرسالة</th>
+                  <th className="p-3.5">التكلفة</th>
+                  <th className="p-3.5">تاريخ الإرسال</th>
+                  <th className="p-3.5">الحالة</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {filteredMessages.map(row => (
+                  <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{row.recipient_name}</div>
+                      <div className="text-[11px] text-zinc-400 font-mono">{row.phone}</div>
+                    </td>
+                    <td className="p-3.5">
+                      <Badge
+                        text={row.channel}
+                        type={row.channel === 'WhatsApp' ? 'success' : 'info'}
+                      />
+                    </td>
+                    <td className="p-3.5 font-semibold text-black">{row.template}</td>
+                    <td className="p-3.5 max-w-xs truncate text-zinc-600" title={row.content}>{row.content}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.cost_sar ?? 0.12).toFixed(2)} ر.س</td>
+                    <td className="p-3.5 font-mono text-zinc-400 text-[11px]">{row.sent_at}</td>
+                    <td className="p-3.5">
+                      <Badge
+                        text={row.status}
+                        type={row.status === 'تم التسليم' ? 'success' : row.status === 'قيد الإرسال' ? 'warning' : 'danger'}
+                      />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        onClick={() => {
+                          setComposeChannel(row.channel);
+                          setRecipientName(row.recipient_name);
+                          setRecipientPhone(row.phone);
+                          setMessageBody(row.content);
+                          setActiveTab('compose');
+                        }}
+                      >
+                        <RotateCw className="w-3 h-3 ml-1" />
+                        <span>إعادة إرسال</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* TAB 2: COMPOSE */}
       {activeTab === 'compose' && (
-        <div style={{ background: '#FFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '16px', color: '#1E293B' }}>
-            <i className="fa-solid fa-paper-plane text-emerald-600 ml-2"></i> إرسال رسالة فورية أو تعميم
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h2 className="text-base font-bold text-black mb-4 flex items-center gap-2">
+            <Send className="w-4 h-4 text-black" />
+            <span>إرسال رسالة فورية أو تعميم</span>
           </h2>
 
           {sendSuccess && (
-            <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#047857', padding: '12px 16px', borderRadius: '10px', marginBottom: '16px', fontWeight: '700', fontSize: '13px' }}>
-              <i className="fa-solid fa-circle-check ml-1"></i> تم إرسال الرسالة بنجاح وتسجيلها في الأرشيف المعتمد!
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-2xl mb-4 font-bold text-xs flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>تم إرسال الرسالة بنجاح وتسجيلها في الأرشيف المعتمد!</span>
             </div>
           )}
 
-          <form onSubmit={handleSendMessage} className="space-y-4">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+          <form onSubmit={handleSendMessage} className="space-y-4 bg-white text-black">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px', color: '#334155' }}>
-                  قناة الإرسال
-                </label>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px', border: '1px solid #CBD5E1', borderRadius: '8px', cursor: 'pointer', background: composeChannel === 'WhatsApp' ? '#ECFDF5' : '#FFF' }}>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">قناة الإرسال *</label>
+                <div className="flex gap-2">
+                  <label className={`flex items-center gap-2 p-2.5 border rounded-2xl cursor-pointer text-xs flex-1 transition-all ${composeChannel === 'WhatsApp' ? 'border-black bg-zinc-50 font-bold' : 'border-zinc-200 bg-white'}`}>
                     <input
                       type="radio"
                       name="channel"
@@ -489,9 +461,9 @@ export const SentMessagesPage: React.FC = () => {
                       checked={composeChannel === 'WhatsApp'}
                       onChange={() => setComposeChannel('WhatsApp')}
                     />
-                    <i className="fa-brands fa-whatsapp text-emerald-600"></i> واتساب للأعمال
+                    <span>واتساب للأعمال</span>
                   </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px', border: '1px solid #CBD5E1', borderRadius: '8px', cursor: 'pointer', background: composeChannel === 'SMS' ? '#EFF6FF' : '#FFF' }}>
+                  <label className={`flex items-center gap-2 p-2.5 border rounded-2xl cursor-pointer text-xs flex-1 transition-all ${composeChannel === 'SMS' ? 'border-black bg-zinc-50 font-bold' : 'border-zinc-200 bg-white'}`}>
                     <input
                       type="radio"
                       name="channel"
@@ -499,19 +471,17 @@ export const SentMessagesPage: React.FC = () => {
                       checked={composeChannel === 'SMS'}
                       onChange={() => setComposeChannel('SMS')}
                     />
-                    <i className="fa-solid fa-comment-sms text-blue-600"></i> رسالة نصية SMS
+                    <span>رسالة نصية SMS</span>
                   </label>
                 </div>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px', color: '#334155' }}>
-                  اختيار قالب جاهز (اختياري)
-                </label>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">اختيار قالب جاهز (اختياري)</label>
                 <select
                   value={selectedTemplateId}
                   onChange={handleTemplateSelect}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option value="">-- رسالة حرة مخصصة --</option>
                   {templates.map(t => (
@@ -521,65 +491,58 @@ export const SentMessagesPage: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px', color: '#334155' }}>
-                  اسم المستلم / العميل
-                </label>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم المستلم / العميل</label>
                 <input
                   type="text"
                   placeholder="مثال: فهد عبدالرحمن الشمري"
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px', color: '#334155' }}>
-                  رقم الجوال (مع المفتاح الدولي)
-                </label>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الجوال (مع المفتاح الدولي) *</label>
                 <input
                   type="text"
                   placeholder="+9665XXXXXXXX"
                   value={recipientPhone}
                   onChange={(e) => setRecipientPhone(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px', direction: 'ltr', textAlign: 'right' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', marginBottom: '6px', color: '#334155' }}>
-                نص الرسالة
-              </label>
+              <label className="block text-xs font-semibold text-zinc-700 mb-1">نص الرسالة *</label>
               <textarea
                 rows={4}
                 value={messageBody}
                 onChange={(e) => setMessageBody(e.target.value)}
                 placeholder="اكتب نص الرسالة هنا..."
-                style={{ width: '100%', padding: '12px', border: '1px solid #CBD5E1', borderRadius: '8px', fontSize: '13px', lineHeight: '1.6' }}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
                 required
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748B', marginTop: '4px' }}>
+              <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
                 <span>عدد الحروف: {messageBody.length}</span>
                 <span>{composeChannel === 'SMS' ? `عدد أجزاء الرسالة: ${Math.ceil(messageBody.length / 70) || 1}` : 'رسالة واتساب مشفرة'}</span>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
               <button
                 type="submit"
                 disabled={isSending}
-                className="btn-odoo btn-odoo-primary"
-                style={{ padding: '10px 24px', fontSize: '14px', background: '#0F172A', borderColor: '#0F172A' }}
+                className="button-primary-pill"
+                style={{ padding: '8px 24px', fontSize: '13px', minHeight: '38px' }}
               >
                 {isSending ? (
-                  <>
-                    <i className="fa-solid fa-spinner fa-spin ml-2"></i> جاري الإرسال الفوري...
-                  </>
+                  <span>جاري الإرسال الفوري...</span>
                 ) : (
                   <>
-                    <i className="fa-solid fa-paper-plane ml-2"></i> إرسال الرسالة الآن
+                    <Send className="w-4 h-4 ml-1" />
+                    <span>إرسال الرسالة الآن</span>
                   </>
                 )}
               </button>
@@ -590,21 +553,21 @@ export const SentMessagesPage: React.FC = () => {
 
       {/* TAB 3: TEMPLATES */}
       {activeTab === 'templates' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {templates.map(tmp => (
-            <div key={tmp.id} style={{ background: '#FFF', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div key={tmp.id} className="card-pricing flex flex-col justify-between" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748B' }}>{tmp.id}</span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-mono font-bold text-xs text-zinc-400">{tmp.id}</span>
                   <Badge text={tmp.category} type="info" />
                 </div>
-                <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A', marginBottom: '8px' }}>{tmp.title}</h3>
-                <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', fontSize: '12.5px', color: '#334155', lineHeight: '1.6', marginBottom: '12px', border: '1px solid #F1F5F9' }}>
+                <h3 className="text-sm font-bold text-black mb-2">{tmp.title}</h3>
+                <div className="bg-zinc-50 p-3 rounded-xl text-xs text-zinc-700 leading-relaxed mb-3 border border-zinc-100">
                   {tmp.text}
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '16px' }}>
+                <div className="flex flex-wrap gap-1 mb-4">
                   {tmp.variables.map(v => (
-                    <span key={v} style={{ background: '#EEF2FF', color: '#4F46E5', padding: '2px 6px', borderRadius: '4px', fontSize: '10.5px', fontWeight: '700', fontFamily: 'monospace' }}>
+                    <span key={v} className="bg-zinc-100 text-black px-2 py-0.5 rounded text-[11px] font-mono font-bold">
                       {`{{${v}}}`}
                     </span>
                   ))}
@@ -612,15 +575,15 @@ export const SentMessagesPage: React.FC = () => {
               </div>
 
               <button
-                className="btn-odoo btn-odoo-secondary"
-                style={{ width: '100%', fontSize: '12px' }}
+                className="button-outline-on-light w-full"
+                style={{ fontSize: '12px', padding: '6px 12px', minHeight: '32px' }}
                 onClick={() => {
                   setSelectedTemplateId(tmp.id);
                   setMessageBody(tmp.text);
                   setActiveTab('compose');
                 }}
               >
-                <i className="fa-solid fa-pen-nib ml-1"></i> استخدام هذا القالب في الإرسال
+                استخدام هذا القالب في الإرسال
               </button>
             </div>
           ))}
@@ -629,35 +592,37 @@ export const SentMessagesPage: React.FC = () => {
 
       {/* TAB 4: GATEWAYS */}
       {activeTab === 'gateways' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-          <div style={{ background: '#FFF', padding: '20px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-                <i className="fa-solid fa-tower-broadcast text-blue-600 ml-2"></i> بوابة SMS المعتمدة (Taqnyat / Unifonic)
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-sm font-bold text-black flex items-center gap-2">
+                <Server className="w-4 h-4 text-black" />
+                <span>بوابة SMS المعتمدة (Taqnyat / Unifonic)</span>
               </h3>
               <Badge text="متصل ومفعل" type="success" />
             </div>
-            <p style={{ fontSize: '12.5px', color: '#64748B', marginBottom: '12px' }}>
+            <p className="text-xs text-zinc-600 mb-3">
               بوابة إرسال الرسائل القصيرة الرسمية داخل المملكة العربية السعودية بمعرف Sender ID مسجل لدى هيئة الاتصالات.
             </p>
-            <div className="space-y-1.5" style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', fontSize: '12px' }}>
+            <div className="bg-zinc-50 p-3 rounded-xl text-xs text-zinc-700 space-y-1 border border-zinc-100">
               <div><strong>اسم المرسل المعتمد:</strong> ALSULAIM</div>
               <div><strong>الرصيد المتبقي:</strong> 48,250 رسالة</div>
               <div><strong>زمن الاستجابة:</strong> 0.8 ثانية</div>
             </div>
           </div>
 
-          <div style={{ background: '#FFF', padding: '20px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-                <i className="fa-brands fa-whatsapp text-emerald-600 ml-2"></i> واتساب للأعمال (Meta Cloud API)
+          <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-sm font-bold text-black flex items-center gap-2">
+                <PhoneCall className="w-4 h-4 text-emerald-600" />
+                <span>واتساب للأعمال (Meta Cloud API)</span>
               </h3>
               <Badge text="توثيق معتمد" type="success" />
             </div>
-            <p style={{ fontSize: '12.5px', color: '#64748B', marginBottom: '12px' }}>
+            <p className="text-xs text-zinc-600 mb-3">
               ربط مباشر وموثق بالعلامة الخضراء لإرسال قوالب التفييز والرحلات والفواتير الضريبية.
             </p>
-            <div className="space-y-1.5" style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', fontSize: '12px' }}>
+            <div className="bg-zinc-50 p-3 rounded-xl text-xs text-zinc-700 space-y-1 border border-zinc-100">
               <div><strong>الرقم الموثق:</strong> +966 11 400 2026</div>
               <div><strong>مستوى الجودة (Quality):</strong> عالي (High)</div>
               <div><strong>حد الإرسال اليومي (Tier):</strong> غير محدود (Tier Unlimited)</div>
@@ -668,3 +633,5 @@ export const SentMessagesPage: React.FC = () => {
     </div>
   );
 };
+
+export default SentMessagesPage;

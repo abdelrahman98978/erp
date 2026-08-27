@@ -3,6 +3,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { CompanyLogo } from '../components/common/CompanyLogo';
 import { CompanyId } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
+import { ArrowLeft, Network, TrendingUp, Bot, ShieldCheck } from 'lucide-react';
 
 interface LandingPageProps {
   onSelectCompany: (companyId: string) => void;
@@ -271,7 +272,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   </span>
                   <span style={{ fontSize: '13px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                     <span>دخول المنظومة</span>
-                    <i className="fa-solid fa-arrow-left" style={{ fontSize: '11px' }}></i>
+                    <ArrowLeft className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </div>
@@ -292,8 +293,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
             <div className="card-feature-cinematic" style={{ padding: '36px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', fontSize: '20px' }}>
-                <i className="fa-solid fa-network-wired"></i>
+              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+                <Network className="w-5 h-5" />
               </div>
               <h3 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '12px', color: '#ffffff' }}>
                 الربط والامتثال الحكومي الشامل
@@ -304,8 +305,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </div>
 
             <div className="card-feature-cinematic" style={{ padding: '36px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', fontSize: '20px' }}>
-                <i className="fa-solid fa-chart-line"></i>
+              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+                <TrendingUp className="w-5 h-5" />
               </div>
               <h3 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '12px', color: '#ffffff' }}>
                 المحاسبة المتقدمة وقياس الأداء
@@ -316,8 +317,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </div>
 
             <div className="card-feature-cinematic" style={{ padding: '36px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', fontSize: '20px' }}>
-                <i className="fa-solid fa-robot"></i>
+              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+                <Bot className="w-5 h-5" />
               </div>
               <h3 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '12px', color: '#ffffff' }}>
                 مساعد الذكاء الاصطناعي المؤسسي
@@ -330,7 +331,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         </div>
       </section>
 
-      {/* 5. Footer: Dark Full-Width Cinematic Footer */}
+      {/* 5. Footer */}
       <footer className="footer-dark" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '48px', marginBottom: '64px' }}>
           <div>
@@ -391,3 +392,4 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
   );
 };
 
+export default LandingPage;

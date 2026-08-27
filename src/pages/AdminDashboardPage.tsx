@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { 
+  Shield, ShieldAlert, Database, Radio, Server, Lock, Key, 
+  Sparkles, Download, Check, X, AlertTriangle, UserX, Cpu, Network
+} from 'lucide-react';
 
 export interface AdminDashboardPageProps {
   onNavigate?: (href: string, title: string) => void;
@@ -70,7 +74,6 @@ const MODULE_PERMISSIONS = [
 ];
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigate }) => {
-  const { t } = useLanguage();
   const [currentUserRole, setCurrentUserRole] = useState<'Administrator' | 'BranchSpecialist'>('Administrator');
   const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'security' | 'devops' | 'rbac' | 'gateways' | 'ai-insights'>('overview');
   const [sessions, setSessions] = useState<UserSession[]>([]);
@@ -101,7 +104,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
 
   const handleForceLogout = (sessionId: string) => {
     setSessions(prev => prev.filter(s => s.id !== sessionId));
-    alert('تم إنهاء جلسة المستخدم وإخراجه فورياً من النظام لأسباب أمنية.');
   };
 
   const togglePermission = (moduleId: string, roleKey: string) => {
@@ -117,7 +119,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
   const handleSendBroadcast = (e: React.FormEvent) => {
     e.preventDefault();
     if (!broadcastMessage) return;
-    alert(`تم بث الرسالة العاجلة بنجاح لجميع المستخدمين المتصلين الان: "${broadcastMessage}"`);
     setBroadcastMessage('');
     setShowBroadcastModal(false);
   };
@@ -125,32 +126,22 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
   // Restrict access if user is not Administrator
   if (currentUserRole !== 'Administrator') {
     return (
-      <div style={{ maxWidth: '800px', margin: '40px auto', textAlign: 'center', padding: '40px' }} className="table-card">
-        <div style={{
-          width: '80px',
-          height: '80px',
-          borderRadius: '50%',
-          background: '#FEE2E2',
-          color: '#DC2626',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '36px',
-          margin: '0 auto 20px auto'
-        }}>
-          <i className="fa-solid fa-lock"></i>
+      <div className="card-pricing max-w-lg mx-auto text-center p-8 mt-12 bg-white rounded-3xl border border-zinc-200">
+        <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4">
+          <Lock className="w-8 h-8" />
         </div>
-        <h2 style={{ fontSize: '24px', fontWeight: '900', color: '#991B1B', marginBottom: '12px' }}>
+        <h2 className="text-xl font-black text-rose-900 mb-2">
           403 Access Denied - منطقة محظورة للآدمن فقط
         </h2>
-        <p style={{ fontSize: '14px', color: '#4B5563', lineHeight: '1.7', marginBottom: '24px' }}>
-          عذراً، هذه اللوحة مخصصة حصرياً لمديري النظام (Super Administrators). حسابك الحالي ذو دور <strong>({currentUserRole})</strong> ولا يملك صلاحيات الوصول إلى 30 ميزة تحكم الآدمن.
+        <p className="text-xs text-zinc-600 leading-relaxed mb-6">
+          عذراً، هذه اللوحة مخصصة حصرياً لمديري النظام (Super Administrators). حسابك الحالي ذو دور <strong>({currentUserRole})</strong> ولا يملك صلاحيات الوصول.
         </p>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <button className="btn-odoo btn-odoo-primary" onClick={() => setCurrentUserRole('Administrator')}>
-            <i className="fa-solid fa-user-shield ml-1"></i> التبديل لحساب الآدمن (اختبار)
+        <div className="flex gap-3 justify-center">
+          <button className="button-primary-pill" onClick={() => setCurrentUserRole('Administrator')} style={{ padding: '6px 18px', fontSize: '12.5px' }}>
+            <Shield className="w-3.5 h-3.5 ml-1" />
+            <span>التبديل لحساب الآدمن</span>
           </button>
-          <button className="btn-odoo btn-odoo-secondary" onClick={() => onNavigate && onNavigate('dashboard', 'الرئيسية والمؤشرات')}>
+          <button className="button-outline-on-light" onClick={() => onNavigate && onNavigate('dashboard', 'الرئيسية والمؤشرات')} style={{ padding: '6px 16px', fontSize: '12.5px' }}>
             الرجوع للرئيسية
           </button>
         </div>
@@ -159,25 +150,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Emergency Lockdown Notice Banner if active */}
       {emergencyLockdown && (
-        <div style={{
-          background: '#DC2626',
-          color: '#FFFFFF',
-          padding: '12px 20px',
-          borderRadius: '12px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontWeight: '800'
-        }}>
-          <div>
-            <i className="fa-solid fa-triangle-exclamation ml-2"></i>
-            وضع الطوارئ الفوري مفعّل (Emergency Lockdown Active) - تم تجميد تسجيلات الدخول وتعيين النظام على القراءة فقط.
+        <div className="bg-rose-600 text-white p-3.5 rounded-2xl flex items-center justify-between font-bold text-xs shadow-md">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-white" />
+            <span>وضع الطوارئ الفوري مفعّل (Emergency Lockdown Active) - تم تجميد تسجيلات الدخول وتعيين النظام على القراءة فقط.</span>
           </div>
-          <button className="btn-odoo" style={{ background: '#FFFFFF', color: '#DC2626', fontWeight: '900', padding: '4px 12px' }} onClick={() => setEmergencyLockdown(false)}>
+          <button className="bg-white text-rose-600 px-3 py-1 rounded-full text-xs font-black hover:bg-rose-50" onClick={() => setEmergencyLockdown(false)}>
             إلغاء الإغلاق
           </button>
         </div>
@@ -191,383 +172,347 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
-          marginBottom: '24px',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          border: '1px solid #27272a'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                SUPER ADMIN CONTROLLER (30 ADVANCED FEATURES)
-              </span>
-              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>System SLA 99.98%</span>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Shield className="w-5 h-5 text-emerald-400" />
             </div>
-            <h2 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-              لوحة التحكم الشاملة ومحرك الـ 30 ميزة للآدمن (Super Admin Suite)
-            </h2>
-            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              مجموعة خالد السليم • مركز السيطرة الأمنية والمالية والربط الحكومي والذكاء الاصطناعي
-            </p>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  SUPER ADMIN CONTROLLER (30 ADVANCED FEATURES)
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>System SLA 99.98%</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                لوحة التحكم الشاملة ومحرك الـ 30 ميزة للآدمن
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                مجموعة خالد السليم • مركز السيطرة الأمنية والمالية والربط الحكومي والذكاء الاصطناعي
+              </p>
+            </div>
           </div>
 
           {/* Quick Admin Actions & Emergency Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="flex items-center gap-2 flex-wrap">
             <button
-              className="button-aloe-pill"
+              className="button-white-pill"
               onClick={() => setShowBroadcastModal(true)}
-              style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
-              <i className="fa-solid fa-bullhorn ml-1"></i> بث رسالة عاجلة
+              <Radio className="w-3.5 h-3.5 ml-1 text-black" />
+              <span>بث رسالة عاجلة</span>
             </button>
             <button
               className="button-outline-on-dark"
               onClick={() => setShowBackupModal(true)}
-              style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
-              <i className="fa-solid fa-database ml-1"></i> النسخ والاستعادة DB
+              <Database className="w-3.5 h-3.5 ml-1" />
+              <span>النسخ والاستعادة DB</span>
             </button>
             <button
               className="button-outline-on-dark"
               onClick={() => setEmergencyLockdown(!emergencyLockdown)}
-              style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: emergencyLockdown ? '#10b981' : '#ef4444', color: emergencyLockdown ? '#10b981' : '#f87171' }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: emergencyLockdown ? '#10b981' : '#ef4444', color: emergencyLockdown ? '#10b981' : '#f87171' }}
             >
-              <i className="fa-solid fa-skull-crossbones ml-1"></i> {emergencyLockdown ? 'فك الطوارئ' : 'زر الطوارئ Lock'}
+              <ShieldAlert className="w-3.5 h-3.5 ml-1" />
+              <span>{emergencyLockdown ? 'فك الطوارئ' : 'زر الطوارئ Lock'}</span>
             </button>
             <button
               className="button-outline-on-dark"
               onClick={() => setCurrentUserRole('BranchSpecialist')}
-              title="اختبار تجربة المستخدم العادي وتقييد الوصول"
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              تبديل لنواة موظف فرع
+              تبديل لموظف فرع
             </button>
           </div>
         </div>
 
         {/* Global Live Indicators Ribbon */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '12px',
-          marginTop: '20px',
-          paddingTop: '16px',
-          borderTop: '1px solid rgba(255,255,255,0.1)'
-        }}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5 pt-4 border-t border-white/10 text-xs">
           <div>
-            <span style={{ fontSize: '11px', color: '#94A3B8' }}>إجمالي أصول ومقبوضات المجموعة</span>
-            <div style={{ fontSize: '18px', fontWeight: '800', color: '#34D399' }}>5,820,470 ر.س</div>
+            <span className="text-zinc-400">إجمالي مقبوضات المجموعة</span>
+            <div className="text-base font-bold text-emerald-400 font-mono mt-0.5">5,820,470 ر.س</div>
           </div>
           <div>
-            <span style={{ fontSize: '11px', color: '#94A3B8' }}>العقود السارية (توسط وتأجير)</span>
-            <div style={{ fontSize: '18px', fontWeight: '800', color: '#60A5FA' }}>1,450 عقد نشط</div>
+            <span className="text-zinc-400">العقود السارية</span>
+            <div className="text-base font-bold text-white font-mono mt-0.5">1,450 عقد نشط</div>
           </div>
           <div>
-            <span style={{ fontSize: '11px', color: '#94A3B8' }}>المستخدمون المتصلون الآن</span>
-            <div style={{ fontSize: '18px', fontWeight: '800', color: '#FBBF24' }}>{sessions.length} مستخدم نشط</div>
+            <span className="text-zinc-400">المستخدمون المتصلون الآن</span>
+            <div className="text-base font-bold text-amber-400 font-mono mt-0.5">{sessions.length} مستخدم نشط</div>
           </div>
           <div>
-            <span style={{ fontSize: '11px', color: '#94A3B8' }}>الربط الضريبي والحكومي</span>
-            <div style={{ fontSize: '18px', fontWeight: '800', color: '#A7F3D0' }}>ZATCA & Musaned OK</div>
+            <span className="text-zinc-400">الربط الضريبي والحكومي</span>
+            <div className="text-base font-bold text-emerald-400 font-mono mt-0.5">ZATCA & Musaned OK</div>
           </div>
         </div>
       </div>
 
       {/* Main Admin Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '4px' }}>
-        <button
-          className={`btn-odoo ${activeAdminTab === 'overview' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveAdminTab('overview')}
-        >
-          <i className="fa-solid fa-grid-2 ml-1"></i> دليل الـ 30 ميزة والرقابة
-        </button>
-        <button
-          className={`btn-odoo ${activeAdminTab === 'security' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveAdminTab('security')}
-        >
-          <i className="fa-solid fa-shield-halved ml-1"></i> للأمان وحظر الـ IP (1-6)
-        </button>
-        <button
-          className={`btn-odoo ${activeAdminTab === 'devops' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveAdminTab('devops')}
-        >
-          <i className="fa-solid fa-server ml-1"></i> الخوادم والنسخ الاحتياطي (7-12)
-        </button>
-        <button
-          className={`btn-odoo ${activeAdminTab === 'rbac' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveAdminTab('rbac')}
-        >
-          <i className="fa-solid fa-user-lock ml-1"></i> الصلاحيات وحماية الهوية (13-18)
-        </button>
-        <button
-          className={`btn-odoo ${activeAdminTab === 'gateways' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveAdminTab('gateways')}
-        >
-          <i className="fa-solid fa-network-wired ml-1"></i> الربط الحكومي والبنوك (19-24)
-        </button>
-        <button
-          className={`btn-odoo ${activeAdminTab === 'ai-insights' ? 'btn-odoo-purple' : 'btn-odoo-secondary'}`}
-          onClick={() => setActiveAdminTab('ai-insights')}
-        >
-          <i className="fa-solid fa-wand-magic-sparkles ml-1"></i> الذكاء الاصطناعي والبث (25-30)
-        </button>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
+        {[
+          { id: 'overview', label: 'دليل الـ 30 ميزة والرقابة', icon: Shield },
+          { id: 'security', label: 'الأمان وحظر الـ IP (1-6)', icon: Lock },
+          { id: 'devops', label: 'الخوادم والنسخ الاحتياطي (7-12)', icon: Server },
+          { id: 'rbac', label: 'الصلاحيات وحماية الهوية (13-18)', icon: Key },
+          { id: 'gateways', label: 'الربط الحكومي والبنوك (19-24)', icon: Network },
+          { id: 'ai-insights', label: 'الذكاء الاصطناعي والبث (25-30)', icon: Sparkles },
+        ].map((tab) => {
+          const isActive = activeAdminTab === tab.id;
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveAdminTab(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Tab 1: 30 Features Master Grid Overview */}
       {activeAdminTab === 'overview' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-              <i className="fa-solid fa-list-check ml-2"></i> دليل ميزات الآدمن الإضافية 30 (Complete Admin Feature Matrix)
-            </h3>
-            <p style={{ fontSize: '13px', color: '#71717a', marginBottom: '20px' }}>
-              لوحة التحكم توفر أدوات كاملة للمدير العام لإدارة وحماية المنظومة ERP:
-            </p>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-1 flex items-center gap-2">
+            <Shield className="w-4 h-4 text-black" />
+            <span>دليل ميزات الآدمن الإضافية 30 (Complete Admin Feature Matrix)</span>
+          </h3>
+          <p className="text-xs text-zinc-500 mb-4">
+            لوحة التحكم توفر أدوات كاملة للمدير العام لإدارة وحماية المنظومة ERP:
+          </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-              {/* Feature Cards 1 to 30 */}
-              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', borderRight: '4px solid #000000', border: '1px solid #e4e4e7' }}>
-                <span style={{ fontWeight: 600, fontSize: '14px', color: '#000000', display: 'block' }}>1. زر الطوارئ والإغلاق الفوري</span>
-                <span style={{ fontSize: '12px', color: '#71717a' }}>تجميد الوصول للنظام فورياً عند أي تهجم سيبراني.</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {[
+              { num: '1', title: 'زر الطوارئ والإغلاق الفوري', desc: 'تجميد الوصول للنظام فورياً عند أي تهجم سيبراني.' },
+              { num: '2', title: 'مدير النسخ واستعادة البيانات DB', desc: 'جدولة واسترجاع نسخ احتياطية كاملة SQL/JSON.' },
+              { num: '3', title: 'كاشف التهديدات والأنشطة الغريبة', desc: 'تنبيه تلقائي لمحاولات تسجيل الدخول الفاشلة المتكررة.' },
+              { num: '4', title: 'جدار الحماية وحظر الـ IPs', desc: 'قائمة بيضاء وحمراء لعناوين الإنترنت المسموح بدخولها.' },
+              { num: '5', title: 'سجل تدقيق كلمة المرور الصارم Audit', desc: 'تتبع تغييرات كلمات السر والتعديلات على الحسابات.' },
+              { num: '6', title: 'مركز البث الإداري المباشر Broadcast', desc: 'إرسال إشعارات نافذة عاجلة لجميع المستخدمين المتصلين.' },
+              { num: '7', title: 'مستكشف سجلات السيرفر الحي Tail Logs', desc: 'قراءة وفلترة أخطاء الخادم وقواعد البيانات مباشرة.' },
+              { num: '8', title: 'سياسة تعقيد وتغيير كلمة السر الدوري', desc: 'إجبار تغيير رمز المرور كل 90 يوماً مع شروط أمان عالية.' },
+              { num: '9', title: 'إغلاق الجلسة التلقائي عند الخمول', desc: 'إنهاء الجلسة بعد 15 دقيقة من عدم النشاط.' },
+              { num: '10', title: 'منشئ التقارير التنفيذية Custom Reports', desc: 'تصميم تقارير مخصصة لمجلس الإدارة وأصحاب القرار.' },
+              { num: '11', title: 'هيكلة الفروع ومراكز التكلفة المتقدمة', desc: 'ربط الفروع بمراكز التكلفة وميزانيات المبيعات.' },
+              { num: '12', title: 'متتبع أداء الموظفين والمسوقين KPI', desc: 'متابعة مبيعات وسرعة إنجاز كل موظف بالشركة.' }
+            ].map(f => (
+              <div key={f.num} className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-1">
+                <span className="font-bold text-xs text-black block">{f.num}. {f.title}</span>
+                <span className="text-[11px] text-zinc-500 block leading-relaxed">{f.desc}</span>
               </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #714B67' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#714B67', display: 'block' }}>2. مدير النسخ واستعادة البيانات DB</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>جدولة واسترجاع نسخ احتياطية كاملة SQL/JSON.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #F59E0B' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#F59E0B', display: 'block' }}>3. كاشف التهديدات والأنشطة الغريبة</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>تنبيه تلقائي لمحاولات تسجيل الدخول الفاشلة المتكررة.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #10B981' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#10B981', display: 'block' }}>4. جدار الحماية وحظر الـ IPs</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>قائمة بيضاء وحمراء لعناوين الإنترنت المسموح بدخولها.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #3B82F6' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#3B82F6', display: 'block' }}>5. سجل تدقيق كلمة المرور الصارم Audit</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>تتبع تغييرات كلمات السر والتعديلات على الحسابات.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #8B5CF6' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#8B5CF6', display: 'block' }}>6. مركز البث الإداري المباشر Broadcast</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>إرسال إشعارات نافذة عاجلة لجميع المستخدمين المتصلين.</span>
-              </div>
-
-              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', borderRight: '4px solid #000000', border: '1px solid #e4e4e7' }}>
-                <span style={{ fontWeight: 600, fontSize: '14px', color: '#000000', display: 'block' }}>7. مستكشف سجلات السيرفر الحي Tail Logs</span>
-                <span style={{ fontSize: '12px', color: '#71717a' }}>قراءة وفلترة أخطاء الخادم وقواعد البيانات مباشرة.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #EF4444' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#EF4444', display: 'block' }}>8. سياسة تعقيد وتغيير كلمة السر الدوري</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>إجبار تغيير رمز المرور كل 90 يوماً مع شروط أمان عالية.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #10B981' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#10B981', display: 'block' }}>9. إغلاق الجلسة التلقائي عند الخمول</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>إنهاء الجلسة بعد 15 دقيقة من عدم النشاط.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #F59E0B' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#F59E0B', display: 'block' }}>10. منشئ التقارير التنفيذية Custom Reports</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>تصميم تقارير مخصصة لمجلس الإدارة وأصحاب القرار.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #3B82F6' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#3B82F6', display: 'block' }}>11. هيكلة الفروع ومراكز التكلفة المتقدمة</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>ربط الفروع بمراكز التكلفة وميزانيات المبيعات.</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #8B5CF6' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#8B5CF6', display: 'block' }}>12. متتبع أداء الموظفين والمسوقين KPI</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>متابعة مبيعات وسرعة إنجاز كل موظف بالشركة.</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Tab 2: Security, 2FA, IP Firewall & Audit Trail (Features 1-6) */}
+      {/* Tab 2: Security, 2FA, IP Firewall */}
       {activeAdminTab === 'security' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-              <i className="fa-solid fa-shield-halved ml-2"></i> أدوات الأمان وحظر الـ IP وجدار الحماية (Features 1 to 6)
+        <div className="space-y-4">
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+            <h3 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+              <Lock className="w-4 h-4 text-black" />
+              <span>أدوات الأمان وحظر الـ IP وجدار الحماية (Features 1 to 6)</span>
             </h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
-              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#000000' }}>4. تقييد الدخول بعناوين الـ IP المعتمدة (IP Whitelisting)</h4>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
+                <h4 className="text-xs font-bold text-black">4. تقييد الدخول بعناوين الـ IP المعتمدة (IP Whitelisting)</h4>
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-800">
                   <input
                     type="checkbox"
                     checked={ipRestricted}
                     onChange={e => setIpRestricted(e.target.checked)}
-                    style={{ accentColor: '#000000', width: '16px', height: '16px' }}
+                    className="rounded text-black focus:ring-0"
                   />
-                  <span style={{ fontSize: '13px', fontWeight: '700' }}>تفعيل حظر الدخول من الخارج وقصر الدخول على شريحة IP الشركة</span>
+                  <span>تفعيل حظر الدخول وقصر الدخول على شريحة IP الشركة</span>
                 </label>
-                <input type="text" className="filter-input" defaultValue="197.34.110.0/24, 185.12.90.0/24" placeholder="أدخل عناوين IP المسموحة..." />
+                <input type="text" className="w-full bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" defaultValue="197.34.110.0/24, 185.12.90.0/24" placeholder="أدخل عناوين IP المسموحة..." />
               </div>
 
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>9. مهلة تسجيل الخروج التلقائي عند الخمول</h4>
-                <select className="filter-select" value={autoSessionTimeout} onChange={e => setAutoSessionTimeout(e.target.value)}>
+              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
+                <h4 className="text-xs font-bold text-black">9. مهلة تسجيل الخروج التلقائي عند الخمول</h4>
+                <select className="w-full bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" value={autoSessionTimeout} onChange={e => setAutoSessionTimeout(e.target.value)}>
                   <option value="5">5 دقائق</option>
                   <option value="15">15 دقيقة (الموصى به)</option>
                   <option value="30">30 دقيقة</option>
                   <option value="60">ساعة واحدة</option>
                 </select>
-                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px' }}>
+                <p className="text-[11px] text-zinc-500">
                   سيتم قفل الشاشة وإلزام إدخال كلمة المرور عند ترك الجهاز دون استخدام.
                 </p>
               </div>
             </div>
 
-            <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>الجلسات الفعالة ومراقبة المستخدمين لحظياً</h4>
-            <table className="odoo-data-table">
-              <thead>
-                <tr>
-                  <th>المستخدم والدور</th>
-                  <th>عنوان الـ IP</th>
-                  <th>الجهاز والمتصفح</th>
-                  <th>وقت التسجيل</th>
-                  <th>حالة 2FA</th>
-                  <th>الإجراءات الأمنية</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sessions.map(s => (
-                  <tr key={s.id}>
-                    <td style={{ fontWeight: '700' }}>
-                      {s.name}
-                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>@{s.username} • {s.role}</div>
-                    </td>
-                    <td style={{ fontFamily: 'monospace', fontWeight: '700' }}>{s.ip_address}</td>
-                    <td style={{ fontSize: '12px' }}>{s.device}</td>
-                    <td style={{ fontSize: '12px' }}>{s.login_time}</td>
-                    <td><Badge text={s.two_factor_status} type="success" icon="fa-solid fa-key" /></td>
-                    <td>
-                      <button className="btn-odoo btn-odoo-danger" style={{ padding: '4px 8px', fontSize: '11px' }} onClick={() => handleForceLogout(s.id)}>
-                        إنهاء الجلسة فوراً
-                      </button>
-                    </td>
+            <h4 className="text-xs font-bold text-black mb-3">الجلسات الفعالة ومراقبة المستخدمين لحظياً</h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3.5">المستخدم والدور</th>
+                    <th className="p-3.5">عنوان الـ IP</th>
+                    <th className="p-3.5">الجهاز والمتصفح</th>
+                    <th className="p-3.5">وقت التسجيل</th>
+                    <th className="p-3.5">حالة 2FA</th>
+                    <th className="p-3.5 text-center">الإجراءات الأمنية</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {sessions.map(s => (
+                    <tr key={s.id} className="hover:bg-zinc-50">
+                      <td className="p-3.5 font-bold text-black">
+                        {s.name}
+                        <div className="text-[11px] text-zinc-400 font-normal">@{s.username} • {s.role}</div>
+                      </td>
+                      <td className="p-3.5 font-mono font-bold text-zinc-700">{s.ip_address}</td>
+                      <td className="p-3.5 text-zinc-600 text-xs">{s.device}</td>
+                      <td className="p-3.5 text-zinc-500 text-xs">{s.login_time}</td>
+                      <td className="p-3.5"><Badge text={s.two_factor_status} type="success" /></td>
+                      <td className="p-3.5 text-center">
+                        <button
+                          className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50"
+                          style={{ padding: '2px 8px', fontSize: '11px', minHeight: '26px' }}
+                          onClick={() => handleForceLogout(s.id)}
+                        >
+                          إنهاء الجلسة
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Tab 3: DevOps, Server Logs & DB Backups (Features 7-12) */}
+      {/* Tab 3: DevOps, Server Logs & DB Backups */}
       {activeAdminTab === 'devops' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-              <i className="fa-solid fa-server ml-2"></i> إدارة DevOps والنسخ الاحتياطي وسجلات السيرفر (Features 7 to 12)
-            </h3>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+            <Server className="w-4 h-4 text-black" />
+            <span>إدارة DevOps والنسخ الاحتياطي وسجلات السيرفر (Features 7 to 12)</span>
+          </h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
-                <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 600 }}>حجم قاعدة البيانات الحالية</span>
-                <div style={{ fontSize: '22px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>1.42 GB</div>
-                <span style={{ fontSize: '11px', color: '#10B981' }}>آخر نسخة: اليوم 03:00 ص</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>مساحة التخزين السحابي (S3 Document Vault)</span>
-                <div style={{ fontSize: '22px', fontWeight: '900', color: '#3B82F6', marginTop: '4px' }}>48.6 GB / 500 GB</div>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>مستندات وجوازات مفحوصة</span>
-              </div>
-
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>نسبة النجاح للـ Cache (Redis Hit Ratio)</span>
-                <div style={{ fontSize: '22px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>96.4%</div>
-                <span style={{ fontSize: '11px', color: '#10B981' }}>استجابة فائقة السرعة</span>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <span className="text-xs font-semibold text-zinc-500">حجم قاعدة البيانات الحالية</span>
+              <div className="text-xl font-black text-black mt-1 font-mono">1.42 GB</div>
+              <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">آخر نسخة: اليوم 03:00 ص</span>
             </div>
 
-            <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>7. مستكشف سجلات السيرفر المباشر (Real-Time Tail Logs)</h4>
-            <div style={{ background: '#0F172A', color: '#38BDF8', padding: '16px', borderRadius: '10px', fontFamily: 'monospace', fontSize: '12px', height: '160px', overflowY: 'auto' }}>
-              <div>[2026-07-31 15:38:12] [INFO] system.auth: User 'admin' logged in from 197.34.110.42 (2FA TOTP Verified)</div>
-              <div>[2026-07-31 15:38:15] [INFO] zatca.invoice: Signed bill #INV-Z-2026-002 Clearance successful CSID valid.</div>
-              <div>[2026-07-31 15:38:22] [INFO] musaned.sync: Fetched 18 new delegations from Musaned API Gateway.</div>
-              <div>[2026-07-31 15:38:40] [INFO] db.backup: Incremental snapshot completed successfully (Size 12.4 MB).</div>
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <span className="text-xs font-semibold text-zinc-500">مساحة التخزين السحابي (S3)</span>
+              <div className="text-xl font-black text-black mt-1 font-mono">48.6 GB / 500 GB</div>
+              <span className="text-[11px] text-zinc-500 mt-1 block">مستندات وجوازات مفحوصة</span>
             </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <span className="text-xs font-semibold text-zinc-500">نسبة نجاح الـ Cache (Redis)</span>
+              <div className="text-xl font-black text-emerald-700 mt-1 font-mono">96.4%</div>
+              <span className="text-[11px] text-emerald-700 mt-1 block">استجابة فائقة السرعة</span>
+            </div>
+          </div>
+
+          <h4 className="text-xs font-bold text-black mb-2">7. مستكشف سجلات السيرفر المباشر (Real-Time Tail Logs)</h4>
+          <div className="bg-black text-emerald-400 p-4 rounded-2xl font-mono text-xs h-40 overflow-y-auto space-y-1">
+            <div>[2026-07-31 15:38:12] [INFO] system.auth: User 'admin' logged in from 197.34.110.42 (2FA TOTP Verified)</div>
+            <div>[2026-07-31 15:38:15] [INFO] zatca.invoice: Signed bill #INV-Z-2026-002 Clearance successful CSID valid.</div>
+            <div>[2026-07-31 15:38:22] [INFO] musaned.sync: Fetched 18 new delegations from Musaned API Gateway.</div>
+            <div>[2026-07-31 15:38:40] [INFO] db.backup: Incremental snapshot completed successfully (Size 12.4 MB).</div>
           </div>
         </div>
       )}
 
-      {/* Tab 4: RBAC Matrix & Data Protection (Features 13-18) */}
+      {/* Tab 4: RBAC Matrix */}
       {activeAdminTab === 'rbac' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-              <i className="fa-solid fa-user-lock ml-2"></i> مصفوفة الصلاحيات وحجب البيانات الحساسة (Features 13 to 18)
-            </h3>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+            <Key className="w-4 h-4 text-black" />
+            <span>مصفوفة الصلاحيات وحجب البيانات الحساسة (Features 13 to 18)</span>
+          </h3>
 
-            <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '16px', borderRadius: '12px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#1E40AF' }}>29. حجب البيانات الحساسة SAIF Masking</h4>
-                <p style={{ margin: 0, fontSize: '12px', color: '#1E3A8A' }}>تشفير وحجب أرقام الهويات والجوازات عن الموظفين غير المصرح لهم بأمر الإدارة.</p>
-              </div>
-              <button
-                className={`btn-odoo ${dataMaskingEnabled ? 'btn-odoo-success' : 'btn-odoo-secondary'}`}
-                onClick={() => setDataMaskingEnabled(!dataMaskingEnabled)}
-              >
-                {dataMaskingEnabled ? 'الحجب مفعّل' : 'تعطيل الحجب'}
-              </button>
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 mb-6 flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h4 className="text-xs font-bold text-black m-0">29. حجب البيانات الحساسة (Data Masking)</h4>
+              <p className="text-[11px] text-zinc-500 mt-0.5 m-0">تشفير وحجب أرقام الهويات والجوازات عن الموظفين غير المصرح لهم بأمر الإدارة.</p>
             </div>
+            <button
+              className={dataMaskingEnabled ? 'button-primary-pill' : 'button-outline-on-light'}
+              style={{ fontSize: '11.5px', padding: '4px 14px', minHeight: '30px' }}
+              onClick={() => setDataMaskingEnabled(!dataMaskingEnabled)}
+            >
+              {dataMaskingEnabled ? 'الحجب مفعّل' : 'تعطيل الحجب'}
+            </button>
+          </div>
 
-            <table className="odoo-data-table">
-              <thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
-                  <th>القسم والوحدة المودل</th>
-                  <th style={{ textAlign: 'center' }}>الآدمن (Super Admin)</th>
-                  <th style={{ textAlign: 'center' }}>مدير القسم (Manager)</th>
-                  <th style={{ textAlign: 'center' }}>موظف فرع (Staff)</th>
-                  <th style={{ textAlign: 'center' }}>وكيل خارجي (Agency)</th>
+                  <th className="p-3.5">القسم والوحدة</th>
+                  <th className="p-3.5 text-center">الآدمن (Super Admin)</th>
+                  <th className="p-3.5 text-center">مدير القسم (Manager)</th>
+                  <th className="p-3.5 text-center">موظف فرع (Staff)</th>
+                  <th className="p-3.5 text-center">وكيل خارجي (Agency)</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {MODULE_PERMISSIONS.map(m => (
-                  <tr key={m.id}>
-                    <td style={{ fontWeight: '800' }}>{m.name}</td>
-                    <td style={{ textAlign: 'center' }}>
+                  <tr key={m.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-bold text-black">{m.name}</td>
+                    <td className="p-3.5 text-center">
                       <input
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.admin}
                         onChange={() => togglePermission(m.id, 'admin')}
-                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
+                        className="rounded text-black focus:ring-0"
                       />
                     </td>
-                    <td style={{ textAlign: 'center' }}>
+                    <td className="p-3.5 text-center">
                       <input
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.manager}
                         onChange={() => togglePermission(m.id, 'manager')}
-                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
+                        className="rounded text-black focus:ring-0"
                       />
                     </td>
-                    <td style={{ textAlign: 'center' }}>
+                    <td className="p-3.5 text-center">
                       <input
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.staff}
                         onChange={() => togglePermission(m.id, 'staff')}
-                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
+                        className="rounded text-black focus:ring-0"
                       />
                     </td>
-                    <td style={{ textAlign: 'center' }}>
+                    <td className="p-3.5 text-center">
                       <input
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.agent}
                         onChange={() => togglePermission(m.id, 'agent')}
-                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
+                        className="rounded text-black focus:ring-0"
                       />
                     </td>
                   </tr>
@@ -578,93 +523,121 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
         </div>
       )}
 
-      {/* Tab 5: Government, Bank & API Gateways (Features 19-24) */}
+      {/* Tab 5: Gateways */}
       {activeAdminTab === 'gateways' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '20px' }}>
-            <i className="fa-solid fa-network-wired ml-2"></i> حالة الربط الحكومي، البنوك، وبوابات الرسائل (Features 19 to 24)
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+            <Network className="w-4 h-4 text-black" />
+            <span>حالة الربط الحكومي، البنوك، وبوابات الرسائل (Features 19 to 24)</span>
           </h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #10B981' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>رصيد بوابة الـ SMS الرسمية</span>
-              <div style={{ fontSize: '22px', fontWeight: '900', color: '#10B981', marginTop: '4px' }}>42,500 رسالة</div>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>مزود الخدمة: Unifonic / Mobily</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <span className="text-xs font-semibold text-zinc-500">رصيد بوابة الـ SMS الرسمية</span>
+              <div className="text-xl font-black text-black mt-1 font-mono">42,500 رسالة</div>
+              <span className="text-[11px] text-zinc-500 mt-1 block">مزود الخدمة: Unifonic / Mobily</span>
             </div>
 
-            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #3B82F6' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>حالة الربط المصرفي (بنك الرياض B2B)</span>
-              <div style={{ fontSize: '22px', fontWeight: '900', color: '#3B82F6', marginTop: '4px' }}>متصل ومفعل</div>
-              <span style={{ fontSize: '11px', color: '#10B981' }}>الرواتب والتحويلات المباشرة</span>
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <span className="text-xs font-semibold text-zinc-500">حالة الربط المصرفي (بنك الرياض B2B)</span>
+              <div className="text-xl font-black text-emerald-700 mt-1">متصل ومفعل</div>
+              <span className="text-[11px] text-emerald-700 mt-1 block">الرواتب والتحويلات المباشرة</span>
             </div>
           </div>
 
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>البوابة / المنصة الحكومية</th>
-                <th>طبيعة الخدمة والربط</th>
-                <th>تاريخ صلاحية الشهادة CSID</th>
-                <th>الحالة التشغيلية</th>
-                <th>الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ fontWeight: '800' }}>15. هيئة الزكاة ZATCA Phase 2</td>
-                <td>فواتير الفلترة Clearance</td>
-                <td>صالحة حتى 2028-12-31</td>
-                <td><Badge text="متصل وجاهز" type="success" /></td>
-                <td><button className="btn-odoo btn-odoo-secondary" style={{ padding: '2px 8px', fontSize: '11px' }}>تحديث الشهادة CSID</button></td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: '800' }}>16. منصة مساند توثيق وحقود</td>
-                <td>استعلام عقود وتأشيرات</td>
-                <td>ارتباط مباشر (Webhook)</td>
-                <td><Badge text="متصل وجاهز" type="success" /></td>
-                <td><button className="btn-odoo btn-odoo-secondary" style={{ padding: '2px 8px', fontSize: '11px' }}>مزامنة فورية</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">البوابة / المنصة الحكومية</th>
+                  <th className="p-3.5">طبيعة الخدمة والربط</th>
+                  <th className="p-3.5">صلاحية الشهادة CSID</th>
+                  <th className="p-3.5">الحالة التشغيلية</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">15. هيئة الزكاة ZATCA Phase 2</td>
+                  <td className="p-3.5 text-zinc-600">فواتير الفلترة Clearance</td>
+                  <td className="p-3.5 font-mono text-zinc-500 text-[11px]">صالحة حتى 2028-12-31</td>
+                  <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
+                  <td className="p-3.5 text-center">
+                    <button className="button-outline-on-light" style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}>تحديث CSID</button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">16. منصة مساند توثيق وعقود</td>
+                  <td className="p-3.5 text-zinc-600">استعلام عقود وتأشيرات</td>
+                  <td className="p-3.5 font-mono text-zinc-500 text-[11px]">ارتباط مباشر (Webhook)</td>
+                  <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
+                  <td className="p-3.5 text-center">
+                    <button className="button-outline-on-light" style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}>مزامنة فورية</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
-      {/* Tab 6: AI Executive Insights, Broadcast & Subsidiaries (Features 25-30) */}
+      {/* Tab 6: AI Executive Insights */}
       {activeAdminTab === 'ai-insights' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="table-card" style={{ padding: '24px', background: '#fbfbf5', border: '1px solid #e4e4e7' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '12px' }}>
-              <i className="fa-solid fa-wand-magic-sparkles ml-2"></i> 20. مساعد الذكاء الاصطناعي للإدارة العليا (AI Executive Assistant)
-            </h3>
-            <p style={{ fontSize: '13.5px', color: '#334155', lineHeight: '1.7', marginBottom: '16px' }}>
-              تحليل توقعات الإيرادات والنمو الربع سنوي لمجموعة خالد السليم استناداً لبيانات عقود الاستقدام والتأجير:
-            </p>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-2 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-black" />
+            <span>20. مساعد الذكاء الاصطناعي للإدارة العليا (AI Executive Assistant)</span>
+          </h3>
+          <p className="text-xs text-zinc-600 leading-relaxed mb-4">
+            تحليل توقعات الإيرادات والنمو الربع سنوي لمجموعة خالد السليم استناداً لبيانات عقود الاستقدام والتأجير:
+          </p>
 
-            <div style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1px solid #CBD5E1', marginBottom: '16px' }}>
-              <h4 style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A', marginBottom: '8px' }}>💡 توصيات الذكاء الاصطناعي التشغيلية:</h4>
-              <ul style={{ margin: 0, paddingRight: '20px', fontSize: '13px', color: '#475569', lineHeight: '1.8' }}>
-                <li>ارتفاع الطلب على العمالة المنزلية الإثيوبية بنسبة +34% خلال الشهر القادم. يُنصح بزيادة التفاويض الخارجية لمكتب DAMAS.</li>
-                <li>مؤشر سرعة إنجاز تفاويض إنجاز تسجل معدل قياسي (3.2 يوم).</li>
-                <li>تنبيه: يوجد 7 عقود تأجير تحتاج تمديد خلال الأيام الـ 5 القادمة.</li>
-              </ul>
-            </div>
+          <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 space-y-2">
+            <h4 className="text-xs font-bold text-black">💡 توصيات الذكاء الاصطناعي التشغيلية:</h4>
+            <ul className="text-xs text-zinc-700 leading-relaxed space-y-1 list-disc pr-4">
+              <li>ارتفاع الطلب على العمالة المنزلية الإثيوبية بنسبة +34% خلال الشهر القادم. يُنصح بزيادة التفاويض الخارجية لمكتب DAMAS.</li>
+              <li>مؤشر سرعة إنجاز تفاويض إنجاز تسجل معدل قياسي (3.2 يوم).</li>
+              <li>تنبيه: يوجد 7 عقود تأجير تحتاج تمديد خلال الأيام الـ 5 القادمة.</li>
+            </ul>
           </div>
         </div>
       )}
 
       {/* Broadcast Modal */}
       {showBroadcastModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '500px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '12px' }}>بث إشعار عاجل لجميع المستخدمين المتصلين</h3>
-            <form onSubmit={handleSendBroadcast}>
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">نص الرسالة العاجلة *</label>
-                <textarea className="filter-input" rows={4} value={broadcastMessage} onChange={e => setBroadcastMessage(e.target.value)} placeholder="مثال: يرجى العلم بوجود تحديث مجدول لسيرفرات النظام الساعة 12 منتصف الليل..." required />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Radio className="w-4 h-4 text-emerald-400" />
+                <span>بث إشعار عاجل لجميع المستخدمين</span>
+              </h3>
+              <button onClick={() => setShowBroadcastModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSendBroadcast} className="p-6 space-y-4 bg-white text-black">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">نص الرسالة العاجلة *</label>
+                <textarea
+                  rows={4}
+                  value={broadcastMessage}
+                  onChange={e => setBroadcastMessage(e.target.value)}
+                  placeholder="مثال: يرجى العلم بوجود تحديث مجدول لسيرفرات النظام الساعة 12 منتصف الليل..."
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  required
+                />
               </div>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowBroadcastModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">إرسال وبث الإشعار الان</button>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button type="button" className="button-outline-on-light" onClick={() => setShowBroadcastModal(false)} style={{ padding: '6px 16px', fontSize: '13px', minHeight: '36px' }}>
+                  إلغاء
+                </button>
+                <button type="submit" className="button-primary-pill" style={{ padding: '6px 20px', fontSize: '13px', minHeight: '36px' }}>
+                  <Radio className="w-3.5 h-3.5 ml-1" />
+                  <span>إرسال وبث الإشعار</span>
+                </button>
               </div>
             </form>
           </div>
@@ -673,22 +646,39 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
 
       {/* Backup Modal */}
       {showBackupModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', marginBottom: '12px' }}>إدارة النسخ الاحتياطي واستعادة البيانات (Backup Manager)</h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-              إنشاء وتنزيل نسخة شاسعة لقاعدة البيانات وحفظها بالسحابة آمنة.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-              <button className="btn-odoo btn-odoo-primary" onClick={() => { alert('تم بدء إنشاء النسخة الاحتياطية وتنزيل الملف DB_ALSALIM_2026.sql'); setShowBackupModal(false); }}>
-                <i className="fa-solid fa-download ml-1"></i> إنشاء وتنزيل النسخة الحالية (.SQL)
-              </button>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => { alert('تم جدولة النسخ التلقائي اليومي الساعة 03:00 ص'); setShowBackupModal(false); }}>
-                جدولة النسخ التلقائي اليومي
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Database className="w-4 h-4 text-emerald-400" />
+                <span>إدارة النسخ الاحتياطي (Backup Manager)</span>
+              </h3>
+              <button onClick={() => setShowBackupModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
               </button>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => setShowBackupModal(false)}>إغلاق</button>
+
+            <div className="p-6 space-y-4 bg-white text-black">
+              <p className="text-xs text-zinc-600 leading-relaxed">
+                إنشاء وتنزيل نسخة شاسعة لقاعدة البيانات وحفظها بالسحابة آمنة.
+              </p>
+              <div className="space-y-2">
+                <button
+                  className="button-primary-pill w-full flex items-center justify-center gap-2"
+                  style={{ minHeight: '38px', fontSize: '12.5px' }}
+                  onClick={() => setShowBackupModal(false)}
+                >
+                  <Download className="w-4 h-4" />
+                  <span>إنشاء وتنزيل النسخة الحالية (.SQL)</span>
+                </button>
+                <button
+                  className="button-outline-on-light w-full"
+                  style={{ minHeight: '38px', fontSize: '12.5px' }}
+                  onClick={() => setShowBackupModal(false)}
+                >
+                  جدولة النسخ التلقائي اليومي
+                </button>
+              </div>
             </div>
           </div>
         </div>

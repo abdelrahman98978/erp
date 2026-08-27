@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
-import { StatCard } from '../components/ui/StatCard';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { 
+  ShieldAlert, ShieldCheck, FileSpreadsheet, FileText, Search, 
+  Clock, Laptop, User, Check, RefreshCw
+} from 'lucide-react';
 
 export interface ActivityItem {
   id: string;
@@ -97,6 +99,7 @@ export const ActivityLogPage: React.FC = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [selectedModule, setSelectedModule] = useState<string>('الكل');
   const [selectedAction, setSelectedAction] = useState<string>('الكل');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     realErpDataStore.getRecords<ActivityItem>('activity_log', MOCK_ACTIVITIES).then(data => setActivities(data));
@@ -108,68 +111,9 @@ export const ActivityLogPage: React.FC = () => {
   const filteredActivities = activities.filter(act => {
     if (selectedModule !== 'الكل' && act.module !== selectedModule) return false;
     if (selectedAction !== 'الكل' && act.action_type !== selectedAction) return false;
+    if (searchTerm && !act.user_name.includes(searchTerm) && !act.details.includes(searchTerm) && !act.ip_address.includes(searchTerm)) return false;
     return true;
   });
-
-  const columns: Column<ActivityItem>[] = [
-    {
-      header: 'كود السجل',
-      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)', fontFamily: 'monospace' }}>{row.id}</span>
-    },
-    {
-      header: 'المستخدم والدور الوظيفي',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '800', color: '#1E293B' }}>{row.user_name}</span>
-          <div style={{ fontSize: '11.5px', color: '#64748B' }}>
-            <Badge text={row.role} type={row.role === 'Super Admin' ? 'danger' : 'info'} />
-          </div>
-        </div>
-      )
-    },
-    {
-      header: 'نوع الإجراء',
-      accessor: (row) => (
-        <Badge
-          text={row.action_type}
-          type={row.action_type === 'اعتماد مالي' ? 'success' : row.action_type === 'حذف' ? 'danger' : row.action_type === 'تسجيل دخول' ? 'warning' : 'primary'}
-        />
-      )
-    },
-    {
-      header: 'القسم / الموديول',
-      accessor: (row) => (
-        <span style={{ fontSize: '12px', fontWeight: '700', color: '#047857' }}>
-          {row.module}
-        </span>
-      )
-    },
-    {
-      header: 'تفاصيل العملية والتغييرات',
-      accessor: (row) => (
-        <div style={{ maxWidth: '360px', fontSize: '12px', color: '#334155', lineHeight: '1.4' }}>
-          {row.details}
-        </div>
-      )
-    },
-    {
-      header: 'عنوان الـ IP والجهاز',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontFamily: 'monospace', fontSize: '11.5px', fontWeight: '700', color: '#475569' }}>{row.ip_address}</span>
-          <div style={{ fontSize: '10.5px', color: '#94A3B8' }}>{row.device}</div>
-        </div>
-      )
-    },
-    {
-      header: 'الوقت والتاريخ',
-      accessor: (row) => (
-        <span style={{ fontSize: '11.5px', color: '#D97706', fontWeight: '800', fontFamily: 'monospace' }}>
-          {row.created_at}
-        </span>
-      )
-    }
-  ];
 
   return (
     <div className="space-y-6">
@@ -177,40 +121,52 @@ export const ActivityLogPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           background: '#000000',
-          color: '#FFF',
-          padding: '28px',
           borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          flexWrap: 'wrap',
-          gap: '16px',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              SECURITY & AUDIT TRAIL
-            </span>
-            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>سجل العمليات والرقابة الداخلية المباشرة</span>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  SECURITY & AUDIT TRAIL
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الرقابة الداخلية المباشرة</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                سجل النشاط وحركات التدقيق الأمني
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                تتبع غير قابل للتعديل لكافة العمليات المالية، إنشاء العقود، تسجيل الدخول، وتغييرات الصلاحيات
+              </p>
+            </div>
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            سجل النشاط وحركات التدقيق الأمني
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            تتبع غير قابل للتعديل لكافة العمليات المالية، إنشاء العقود، تسجيل الدخول، وتغييرات الصلاحيات
-          </p>
-        </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button className="button-outline-on-dark" onClick={() => exportData('activity_log', filteredActivities, 'excel')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-400 ml-1"></i> Excel
-          </button>
-          <button className="button-outline-on-dark" onClick={() => exportData('activity_log', filteredActivities, 'pdf')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-pdf text-rose-400 ml-1"></i> PDF
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              className="button-outline-on-dark"
+              onClick={() => exportData('activity_log', filteredActivities, 'excel')}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <span>Excel</span>
+            </button>
+            <button
+              className="button-outline-on-dark"
+              onClick={() => exportData('activity_log', filteredActivities, 'pdf')}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <span>PDF</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -237,57 +193,113 @@ export const ActivityLogPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مستوى الامتثال الأمني</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>100%</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>معايير الأمن السيبراني</span>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>الأمن السيبراني</span>
         </div>
       </div>
 
       {/* Filter Bars */}
-      <div className="card-pricing" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', background: '#FFF', padding: '16px 20px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>تصفية بالقسم:</span>
-          {modules.map(m => (
-            <button
-              key={m}
-              onClick={() => setSelectedModule(m)}
-              style={{
-                padding: '4px 14px',
-                borderRadius: '9999px',
-                fontSize: '11.5px',
-                fontWeight: selectedModule === m ? 550 : 420,
-                border: '1px solid',
-                borderColor: selectedModule === m ? '#000000' : '#e4e4e7',
-                background: selectedModule === m ? '#000000' : '#ffffff',
-                color: selectedModule === m ? '#ffffff' : '#27272a',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              {m}
-            </button>
-          ))}
+      <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="flex flex-wrap gap-1.5 items-center">
+          <span className="text-xs font-semibold text-zinc-500 ml-1">تصفية:</span>
+          {modules.map(m => {
+            const isActive = selectedModule === m;
+            return (
+              <button
+                key={m}
+                onClick={() => setSelectedModule(m)}
+                style={{
+                  padding: '4px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '11.5px',
+                  fontWeight: isActive ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isActive ? '#000000' : '#e4e4e7',
+                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {m}
+              </button>
+            );
+          })}
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>نوع الإجراء:</span>
+        <div className="flex items-center gap-3">
           <select
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
-            style={{ padding: '6px 12px', borderRadius: '9999px', border: '1px solid #e4e4e7', fontSize: '12px', fontWeight: 500, background: '#ffffff', color: '#27272a' }}
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
           >
             {actions.map(a => (
               <option key={a} value={a}>{a}</option>
             ))}
           </select>
+
+          <input
+            type="text"
+            placeholder="بحث في السجلات..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
+          />
         </div>
       </div>
 
       {/* Data Table */}
-      <DataTable
-        columns={columns}
-        data={filteredActivities}
-        searchPlaceholder="ابحث باسم المستخدم، الإجراء، التفاصيل، أو عنوان الـ IP..."
-        exportConfig={{ sectionKey: 'activity_log', rawData: filteredActivities }}
-      />
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">كود السجل</th>
+                <th className="p-3.5">المستخدم والدور</th>
+                <th className="p-3.5">نوع الإجراء</th>
+                <th className="p-3.5">القسم</th>
+                <th className="p-3.5">تفاصيل العملية والتغييرات</th>
+                <th className="p-3.5">عنوان الـ IP والجهاز</th>
+                <th className="p-3.5">الوقت والتاريخ</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {filteredActivities.map((row) => (
+                <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{row.user_name}</div>
+                    <div className="text-[10px] text-zinc-400">{row.role}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        row.action_type === 'اعتماد مالي'
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          : row.action_type === 'حذف'
+                          ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                          : row.action_type === 'تسجيل دخول'
+                          ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                          : 'bg-zinc-100 text-zinc-800'
+                      }`}
+                    >
+                      {row.action_type}
+                    </span>
+                  </td>
+                  <td className="p-3.5 text-zinc-800 font-semibold">{row.module}</td>
+                  <td className="p-3.5 text-zinc-600 max-w-sm leading-relaxed">{row.details}</td>
+                  <td className="p-3.5 font-mono text-[11px]">
+                    <div className="text-zinc-800 font-bold">{row.ip_address}</div>
+                    <div className="text-zinc-400 text-[10px]">{row.device}</div>
+                  </td>
+                  <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{row.created_at}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
+
+export default ActivityLogPage;

@@ -3,6 +3,10 @@ import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { 
+  Send, Plus, FileSpreadsheet, FileText, Eye, Printer, X, Check, 
+  Building2, Plane, Globe, Award, ShieldAlert, Sparkles
+} from 'lucide-react';
 
 export interface GroupDispatchMemo {
   id: string;
@@ -19,14 +23,14 @@ export interface GroupDispatchMemo {
 }
 
 const GROUP_COMPANIES = [
-  { id: 'topaz', name: 'شركة توباز (Topaz Group)', icon: 'diamond', color: '#0f6b6e' },
-  { id: 'ruwad', name: 'دار الرواد (Dar Al-Ruwad)', icon: 'architecture', color: '#000000' },
-  { id: 'saffir', name: 'السفير (Al-Saffir)', icon: 'handshake', color: '#535f74' },
-  { id: 'masi', name: 'الماسي (Al-Masi Luxury)', icon: 'token', color: '#181c1c' },
-  { id: 'ayal', name: 'الأيال للسفر والسياحة (Al-Ayal Travel)', icon: 'flight_takeoff', color: '#6f3b18' },
-  { id: 'damas', name: 'مكتب داماس الإثيوبي (DAMAS Agency)', icon: 'public', color: '#059669' },
-  { id: 'platinum', name: 'مكتب بلاتينيوم الفلبيني (PLATINUM Int\'l)', icon: 'public', color: '#2563EB' },
-  { id: 'versatile', name: 'مكتب فيرساتيل الهندي (VERSATILE Ltd)', icon: 'public', color: '#D97706' }
+  { id: 'topaz', name: 'شركة توباز (Topaz Group)', icon: Award, color: '#0f6b6e' },
+  { id: 'ruwad', name: 'دار الرواد (Dar Al-Ruwad)', icon: Building2, color: '#000000' },
+  { id: 'saffir', name: 'السفير (Al-Saffir)', icon: Building2, color: '#535f74' },
+  { id: 'masi', name: 'الماسي (Al-Masi Luxury)', icon: Sparkles, color: '#181c1c' },
+  { id: 'ayal', name: 'الأيال للسفر والسياحة (Al-Ayal Travel)', icon: Plane, color: '#6f3b18' },
+  { id: 'damas', name: 'مكتب داماس الإثيوبي (DAMAS Agency)', icon: Globe, color: '#059669' },
+  { id: 'platinum', name: 'مكتب بلاتينيوم الفلبيني (PLATINUM Int\'l)', icon: Globe, color: '#2563EB' },
+  { id: 'versatile', name: 'مكتب فيرساتيل الهندي (VERSATILE Ltd)', icon: Globe, color: '#D97706' }
 ];
 
 const MOCK_DISPATCHES: GroupDispatchMemo[] = [
@@ -72,7 +76,6 @@ const MOCK_DISPATCHES: GroupDispatchMemo[] = [
 ];
 
 export const GroupDispatchPage: React.FC = () => {
-  const { t } = useLanguage();
   const [dispatches, setDispatches] = useState<GroupDispatchMemo[]>([]);
   const [selectedEntity, setSelectedEntity] = useState<string>('all');
   const [showDispatchModal, setShowDispatchModal] = useState(false);
@@ -124,7 +127,6 @@ export const GroupDispatchPage: React.FC = () => {
       details: '',
       priority: 'عاجل جداً'
     });
-    alert('تم توجيه وإرسال الخطاب/المعاملة بين شركات المجموعة بنجاح وتنبيه الجهة المستلمة!');
   };
 
   const filteredDispatches = dispatches.filter(d => {
@@ -132,191 +134,233 @@ export const GroupDispatchPage: React.FC = () => {
     return d.source_entity.includes(selectedEntity) || d.target_entity.includes(selectedEntity);
   });
 
-  const columns = [
-    {
-      header: 'رقم المعاملة',
-      accessor: (row: GroupDispatchMemo) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.dispatch_no}</span>
-    },
-    {
-      header: 'الجهة المُرْسِلة والجهة المُسْتَلِمَة',
-      accessor: (row: GroupDispatchMemo) => (
-        <div>
-          <span style={{ fontWeight: 600, color: '#000000' }}>من: {row.source_entity}</span>
-          <div style={{ fontSize: '11.5px', fontWeight: 500, color: '#71717a', marginTop: '2px' }}>إلى: {row.target_entity}</div>
-        </div>
-      )
-    },
-    {
-      header: 'نوع الخطاب والموضوع',
-      accessor: (row: GroupDispatchMemo) => (
-        <div>
-          <Badge text={row.dispatch_type} type="purple" />
-          <div style={{ fontWeight: '700', fontSize: '13px', marginTop: '4px' }}>{row.subject}</div>
-        </div>
-      )
-    },
-    {
-      header: 'الأولوية',
-      accessor: (row: GroupDispatchMemo) => (
-        <Badge
-          text={row.priority}
-          type={row.priority === 'عاجل جداً' ? 'danger' : row.priority === 'هام' ? 'warning' : 'info'}
-          icon="fa-solid fa-[#000] fa-paper-plane"
-        />
-      )
-    },
-    {
-      header: 'الحالة والمتابعة',
-      accessor: (row: GroupDispatchMemo) => (
-        <div>
-          <Badge text={row.status} type={row.status === 'تم الاستلام والتنفيذ' ? 'success' : 'warning'} />
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>المسؤول: {row.assigned_officer}</div>
-        </div>
-      )
-    },
-    {
-      header: 'التاريخ',
-      accessor: (row: GroupDispatchMemo) => <span style={{ fontSize: '12px' }}>{row.created_at}</span>
-    },
-    {
-      header: 'الإجراءات',
-      accessor: (row: GroupDispatchMemo) => (
-        <div style={{ display: 'flex', gap: '6px' }}>
-          <button
-            className="btn-odoo btn-odoo-primary"
-            style={{ padding: '4px 8px', fontSize: '11px' }}
-            onClick={() => setSelectedMemo(row)}
-          >
-            <i className="fa-solid fa-eye ml-1"></i> عرض الخطاب
-          </button>
-          <button
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '4px 8px', fontSize: '11px' }}
-            onClick={() => alert(`طباعة المعاملة الرسمية رقم ${row.dispatch_no}`)}
-          >
-            طباعة
-          </button>
-        </div>
-      )
-    }
-  ];
-
   return (
-    <div>
+    <div className="space-y-6">
       {/* Top Banner Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
-            <i className="fa-solid fa-paper-plane text-black ml-2"></i> مركز التواصل والإرسال الموحد لشركات المجموعة والمكاتب الخارجية
-          </h2>
-          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
-            مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر والسياحة، والمكاتب الخارجية (DAMAS, PLATINUM, VERSATILE)
-          </p>
-        </div>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Send className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  CENTRAL GROUP DISPATCH HUB
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>8 كيانات ومكاتب</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                مركز التواصل والإرسال الموحد لشركات المجموعة والمكاتب الخارجية
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر والسياحة، والمكاتب الخارجية
+              </p>
+            </div>
+          </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="button-primary-pill" onClick={() => setShowDispatchModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
-            <i className="fa-solid fa-plus ml-1"></i> + توجيه معاملة / خطاب جديد
-          </button>
-          <button className="button-outline-on-light" onClick={() => exportData('group-dispatch', filteredDispatches, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
-          </button>
-          <button className="button-outline-on-light" onClick={() => exportData('group-dispatch', filteredDispatches, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              className="button-white-pill"
+              onClick={() => setShowDispatchModal(true)}
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+            >
+              <Plus className="w-4 h-4 ml-1 text-black" />
+              <span>+ توجيه معاملة جديدة</span>
+            </button>
+            <button
+              className="button-outline-on-dark"
+              onClick={() => exportData('group-dispatch', filteredDispatches, 'excel')}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <span>Excel</span>
+            </button>
+            <button
+              className="button-outline-on-dark"
+              onClick={() => exportData('group-dispatch', filteredDispatches, 'pdf')}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <span>PDF</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Group Companies Interactive Selector Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '20px' }}>
-        <div
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
+        <button
           onClick={() => setSelectedEntity('all')}
           style={{
-            background: selectedEntity === 'all' ? '#000000' : '#FFFFFF',
-            color: selectedEntity === 'all' ? '#FFFFFF' : '#181C1C',
-            padding: '14px 16px',
+            padding: '6px 16px',
             borderRadius: '9999px',
+            border: '1px solid',
+            borderColor: selectedEntity === 'all' ? '#000000' : '#e4e4e7',
+            backgroundColor: selectedEntity === 'all' ? '#000000' : '#ffffff',
+            color: selectedEntity === 'all' ? '#ffffff' : '#27272a',
+            fontWeight: selectedEntity === 'all' ? 550 : 420,
+            fontSize: '12.5px',
             cursor: 'pointer',
-            border: selectedEntity === 'all' ? '1px solid #000000' : '1px solid #e4e4e7',
-            textAlign: 'center',
-            fontWeight: 600,
-            fontSize: '13px',
-            boxShadow: selectedEntity === 'all' ? '0 2px 8px rgba(0,0,0,0.15)' : 'none'
+            transition: 'all 0.15s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          <span className="material-symbols-outlined" style={{ display: 'block', fontSize: '28px', marginBottom: '4px' }}>domain</span>
-          جميع الشركات والمكاتب ({dispatches.length})
-        </div>
+          <Building2 className="w-3.5 h-3.5" />
+          <span>جميع الشركات والمكاتب ({dispatches.length})</span>
+        </button>
 
-        {GROUP_COMPANIES.map(c => (
-          <div
-            key={c.id}
-            onClick={() => setSelectedEntity(c.name.split(' ')[1] || c.id)}
-            style={{
-              background: selectedEntity.includes(c.id) || selectedEntity.includes(c.name.split(' ')[1]) ? c.color : '#FFFFFF',
-              color: selectedEntity.includes(c.id) || selectedEntity.includes(c.name.split(' ')[1]) ? '#FFFFFF' : '#181C1C',
-              padding: '14px 16px',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              border: '1px solid #E2E8F0',
-              textAlign: 'center',
-              fontWeight: '800',
-              fontSize: '13px',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ display: 'block', fontSize: '28px', marginBottom: '4px' }}>{c.icon}</span>
-            {c.name}
-          </div>
-        ))}
+        {GROUP_COMPANIES.map(c => {
+          const isSelected = selectedEntity.includes(c.id) || selectedEntity.includes(c.name.split(' ')[1]);
+          const Icon = c.icon;
+          return (
+            <button
+              key={c.id}
+              onClick={() => setSelectedEntity(c.name.split(' ')[1] || c.id)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isSelected ? '#000000' : '#e4e4e7',
+                backgroundColor: isSelected ? '#000000' : '#ffffff',
+                color: isSelected ? '#ffffff' : '#27272a',
+                fontWeight: isSelected ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span>{c.name}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Data Table */}
-      <div className="table-card" style={{ padding: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-            سجل المراسلات والمعاملات الرسمية بين شركات المجموعة
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+            <Send className="w-4 h-4 text-black" />
+            <span>سجل المراسلات والمعاملات الرسمية بين شركات المجموعة</span>
           </h3>
-          <Badge text={`${filteredDispatches.length} معاملة`} type="purple" />
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+            {filteredDispatches.length} معاملة
+          </span>
         </div>
 
-        <table className="odoo-data-table">
-          <thead>
-            <tr>
-              {columns.map((col, idx) => (
-                <th key={idx}>{col.header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDispatches.map(row => (
-              <tr key={row.id}>
-                {columns.map((col, idx) => (
-                  <td key={idx}>{col.accessor(row)}</td>
-                ))}
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">رقم المعاملة</th>
+                <th className="p-3.5">الجهة المُرسِلة والمُستلِمة</th>
+                <th className="p-3.5">نوع الخطاب والموضوع</th>
+                <th className="p-3.5">الأولوية</th>
+                <th className="p-3.5">الحالة والمتابعة</th>
+                <th className="p-3.5">التاريخ</th>
+                <th className="p-3.5 text-center">الإجراءات</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {filteredDispatches.map(row => (
+                <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-3.5 font-mono font-bold text-black">{row.dispatch_no}</td>
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">من: {row.source_entity}</div>
+                    <div className="text-[11px] text-zinc-500">إلى: {row.target_entity}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <span className="bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded-full text-[10px] font-bold inline-block mb-1">
+                      {row.dispatch_type}
+                    </span>
+                    <div className="font-bold text-black text-xs">{row.subject}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        row.priority === 'عاجل جداً'
+                          ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                          : row.priority === 'هام'
+                          ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                          : 'bg-zinc-100 text-zinc-800'
+                      }`}
+                    >
+                      {row.priority}
+                    </span>
+                  </td>
+                  <td className="p-3.5">
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        row.status === 'تم الاستلام والتنفيذ'
+                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          : 'bg-amber-50 text-amber-800 border border-amber-200'
+                      }`}
+                    >
+                      {row.status}
+                    </span>
+                    <div className="text-[10px] text-zinc-400 mt-0.5">المسؤول: {row.assigned_officer}</div>
+                  </td>
+                  <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{row.created_at}</td>
+                  <td className="p-3.5 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                        onClick={() => setSelectedMemo(row)}
+                      >
+                        عرض الخطاب
+                      </button>
+                      <button
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                        onClick={() => alert(`طباعة المعاملة الرسمية رقم ${row.dispatch_no}`)}
+                      >
+                        طباعة
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Dispatch Modal */}
       {showDispatchModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '560px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                <i className="fa-solid fa-paper-plane ml-2"></i> توجيه خطاب / معاملة رسمية بين الشركات
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Send className="w-4 h-4 text-emerald-400" />
+                <span>توجيه خطاب / معاملة رسمية بين الشركات</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowDispatchModal(false)}></i>
+              <button onClick={() => setShowDispatchModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <form onSubmit={handleCreateDispatch}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">الجهة المُرسِلة *</label>
+            <form onSubmit={handleCreateDispatch} className="p-6 space-y-4 bg-white text-black">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الجهة المُرسِلة *</label>
                   <select
-                    className="filter-select"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     value={formData.source_entity}
                     onChange={e => setFormData({ ...formData, source_entity: e.target.value })}
                   >
@@ -324,10 +368,10 @@ export const GroupDispatchPage: React.FC = () => {
                   </select>
                 </div>
 
-                <div className="filter-group">
-                  <label className="filter-label">الجهة المُستلِمة *</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الجهة المُستلِمة *</label>
                   <select
-                    className="filter-select"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     value={formData.target_entity}
                     onChange={e => setFormData({ ...formData, target_entity: e.target.value })}
                   >
@@ -336,11 +380,11 @@ export const GroupDispatchPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">نوع الخطاب / المعاملة *</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">نوع الخطاب / المعاملة *</label>
                   <select
-                    className="filter-select"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     value={formData.dispatch_type}
                     onChange={e => setFormData({ ...formData, dispatch_type: e.target.value as any })}
                   >
@@ -352,10 +396,10 @@ export const GroupDispatchPage: React.FC = () => {
                   </select>
                 </div>
 
-                <div className="filter-group">
-                  <label className="filter-label">درجة الأولوية</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">درجة الأولوية</label>
                   <select
-                    className="filter-select"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     value={formData.priority}
                     onChange={e => setFormData({ ...formData, priority: e.target.value as any })}
                   >
@@ -367,11 +411,11 @@ export const GroupDispatchPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">موضوع الخطاب / المعاملة *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">موضوع الخطاب / المعاملة *</label>
                 <input
                   type="text"
-                  className="filter-input"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   placeholder="مثال: طلب اصدار وتأكيد حجوزات طيران..."
                   value={formData.subject}
                   onChange={e => setFormData({ ...formData, subject: e.target.value })}
@@ -379,21 +423,35 @@ export const GroupDispatchPage: React.FC = () => {
                 />
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">تفاصيل ونص المعاملة *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">تفاصيل ونص المعاملة *</label>
                 <textarea
-                  className="filter-input"
                   rows={4}
                   placeholder="اكتب التوجيهات والقرارات التفصيلية هنا..."
                   value={formData.details}
                   onChange={e => setFormData({ ...formData, details: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', borderTop: '1px solid #e4e4e7', paddingTop: '12px' }}>
-                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowDispatchModal(false)}>إلغاء</button>
-                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>اعتماد وإرسال المعاملة</button>
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  className="button-outline-on-light"
+                  style={{ padding: '6px 16px', fontSize: '13px', minHeight: '36px' }}
+                  onClick={() => setShowDispatchModal(false)}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill"
+                  style={{ padding: '6px 20px', fontSize: '13px', minHeight: '36px' }}
+                >
+                  <Send className="w-3.5 h-3.5 ml-1" />
+                  <span>اعتماد وإرسال المعاملة</span>
+                </button>
               </div>
             </form>
           </div>
@@ -402,36 +460,50 @@ export const GroupDispatchPage: React.FC = () => {
 
       {/* View Memo Details Modal */}
       {selectedMemo && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '560px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                وثيقة الخطاب والمعاملة الرسمية {selectedMemo.dispatch_no}
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <FileText className="w-4 h-4 text-emerald-400" />
+                <span>وثيقة الخطاب والمعاملة الرسمية {selectedMemo.dispatch_no}</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setSelectedMemo(null)}></i>
+              <button onClick={() => setSelectedMemo(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '10px', marginBottom: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px', fontSize: '13px' }}>
+            <div className="p-6 space-y-4 bg-white text-black">
+              <div className="grid grid-cols-2 gap-3 p-3.5 bg-zinc-50 rounded-2xl border border-zinc-100 text-xs">
                 <div><strong>من:</strong> {selectedMemo.source_entity}</div>
                 <div><strong>إلى:</strong> {selectedMemo.target_entity}</div>
                 <div><strong>نوع الخطاب:</strong> {selectedMemo.dispatch_type}</div>
                 <div><strong>التاريخ:</strong> {selectedMemo.created_at}</div>
               </div>
 
-              <hr style={{ border: 'none', borderTop: '1px solid #E2E8F0', margin: '12px 0' }} />
+              <div>
+                <h4 className="text-xs font-bold text-black mb-1">الموضوع: {selectedMemo.subject}</h4>
+                <p className="text-xs text-zinc-600 leading-relaxed bg-zinc-50 p-3 rounded-2xl border border-zinc-100">
+                  {selectedMemo.details}
+                </p>
+              </div>
 
-              <h4 style={{ fontSize: '14px', fontWeight: '800', margin: '0 0 8px 0' }}>الموضوع: {selectedMemo.subject}</h4>
-              <p style={{ fontSize: '13.5px', color: '#334155', lineHeight: '1.7', margin: 0 }}>
-                {selectedMemo.details}
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => setSelectedMemo(null)}>إغلاق</button>
-              <button className="btn-odoo btn-odoo-primary" onClick={() => { alert(`تم طباعة وتحميل الخطاب PDF لـ ${selectedMemo.dispatch_no}`); setSelectedMemo(null); }}>
-                <i className="fa-solid fa-print ml-1"></i> طباعة الوثيقة الرسمية PDF
-              </button>
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button
+                  className="button-outline-on-light"
+                  style={{ padding: '6px 16px', fontSize: '13px', minHeight: '36px' }}
+                  onClick={() => setSelectedMemo(null)}
+                >
+                  إغلاق
+                </button>
+                <button
+                  className="button-primary-pill"
+                  style={{ padding: '6px 20px', fontSize: '13px', minHeight: '36px' }}
+                  onClick={() => { setSelectedMemo(null); }}
+                >
+                  <Printer className="w-3.5 h-3.5 ml-1" />
+                  <span>طباعة الوثيقة الرسمية</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

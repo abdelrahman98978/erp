@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { StatCard } from '../components/ui/StatCard';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { 
+  BarChart3, FileSpreadsheet, FileText, TrendingUp, DollarSign, 
+  Handshake, FileCheck, Building2, ArrowUpRight
+} from 'lucide-react';
 
 export const ReportsPage: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'month' | 'quarter' | 'year'>('month');
@@ -26,48 +29,52 @@ export const ReportsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
           background: '#000000',
-          color: '#FFF',
-          padding: '28px',
           borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          flexWrap: 'wrap',
-          gap: '16px'
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              EXECUTIVE BI & ANALYTICS
-            </span>
-            <span style={{ color: '#a1a1aa', fontSize: '12px' }}>مركز التقارير التنفيذية والمالية الموحدة</span>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <BarChart3 className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  EXECUTIVE BI & ANALYTICS
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>المؤشرات التنفيذية الموحدة</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                التقارير التحليلية والمؤشرات المالية والتشغيلية للمجموعة
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                تحليل الأرباح والخسائر، عقود مساند، باقات التأجير، وهوامش ربحية الفروع والشركات
+              </p>
+            </div>
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            التقارير التحليلية والمؤشرات المالية والتشغيلية للمجموعة
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            تحليل الأرباح والخسائر، عقود مساند، باقات التأجير، وهوامش ربحية الفروع والشركات
-          </p>
-        </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => exportData('finance', reportData, 'excel')}
-            className="button-aloe-pill"
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <i className="fa-solid fa-file-excel ml-1"></i> تصدير مصنف Excel
-          </button>
-          <button
-            onClick={() => exportData('finance', reportData, 'pdf')}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
-          >
-            <i className="fa-solid fa-file-pdf text-rose-400 ml-1"></i> تصدير تقرير PDF
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => exportData('finance', reportData, 'excel')}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+            >
+              <FileSpreadsheet className="w-4 h-4 ml-1 text-black" />
+              <span>تصدير مصنف Excel</span>
+            </button>
+            <button
+              onClick={() => exportData('finance', reportData, 'pdf')}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
+            >
+              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <span>تصدير PDF</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -100,10 +107,10 @@ export const ReportsPage: React.FC = () => {
 
       {/* Filters Bar */}
       <div className="card-pricing" style={{ padding: '14px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000', marginLeft: '6px' }}>الفترة الزمنية:</span>
+        <div className="flex flex-wrap gap-1.5 items-center">
+          <span className="text-xs font-semibold text-zinc-700 ml-2">الفترة الزمنية:</span>
           {(['today', 'month', 'quarter', 'year'] as const).map((p) => {
-            const labels = { today: 'اليوم', month: 'هذا الشهر (أغسطس 2026)', quarter: 'الربع الثالث (Q3)', year: 'السنة المالية 2026' };
+            const labels = { today: 'اليوم', month: 'هذا الشهر', quarter: 'الربع الثالث (Q3)', year: 'السنة المالية 2026' };
             const isActive = selectedPeriod === p;
             return (
               <button
@@ -116,7 +123,7 @@ export const ReportsPage: React.FC = () => {
                   fontWeight: isActive ? 550 : 420,
                   border: '1px solid',
                   borderColor: isActive ? '#000000' : '#e4e4e7',
-                  background: isActive ? '#000000' : '#ffffff',
+                  backgroundColor: isActive ? '#000000' : '#ffffff',
                   color: isActive ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -128,13 +135,12 @@ export const ReportsPage: React.FC = () => {
           })}
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000' }}>الشركة:</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-zinc-700">الشركة:</span>
           <select
             value={selectedCompany}
             onChange={(e) => setSelectedCompany(e.target.value)}
-            className="text-input"
-            style={{ height: '36px', minHeight: '36px', borderRadius: '9999px', fontSize: '12px', padding: '0 14px' }}
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
           >
             <option value="all">كافة شركات المجموعة الموحدة</option>
             <option value="masi">شركة السفير الماسي</option>
@@ -146,50 +152,51 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* Main Breakdown Table */}
-      <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #e4e4e7', background: '#ffffff' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 550, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <i className="fa-solid fa-table-cells text-emerald-600"></i> جدول الأداء المالي والتشغيلي المقارن لشركات المجموعة
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="p-4 border-b border-zinc-100 bg-white">
+          <h2 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+            <Building2 className="w-4 h-4 text-black" />
+            <span>جدول الأداء المالي والتشغيلي المقارن لشركات المجموعة</span>
           </h2>
         </div>
 
-        <div style={{ overflowX: 'auto', width: '100%' }}>
-          <table className="odoo-data-table" style={{ width: '100%', textAlign: 'right' }}>
-            <thead>
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
               <tr>
-                <th>الشركة / الكيان</th>
-                <th>عقود الاستقدام</th>
-                <th>عقود التأجير</th>
-                <th>إجمالي الإيرادات (ر.س)</th>
-                <th>المصروفات والتكاليف (ر.س)</th>
-                <th>صافي الأرباح (ر.س)</th>
-                <th>هامش الربح</th>
+                <th className="p-3.5">الشركة / الكيان</th>
+                <th className="p-3.5">عقود الاستقدام</th>
+                <th className="p-3.5">عقود التأجير</th>
+                <th className="p-3.5">إجمالي الإيرادات</th>
+                <th className="p-3.5">المصروفات والتكاليف</th>
+                <th className="p-3.5">صافي الأرباح</th>
+                <th className="p-3.5">هامش الربح</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-zinc-100">
               {reportData.map((row) => (
-                <tr key={row.id}>
-                  <td style={{ fontWeight: 550, color: '#000000' }}>{row.name}</td>
-                  <td>{row.recruitment_contracts} عقد</td>
-                  <td>{row.rent_contracts} عقد</td>
-                  <td style={{ fontWeight: 550, color: '#000000' }}>{(row.total_revenue ?? 0).toLocaleString()} ر.س</td>
-                  <td>{(row.expenses ?? 0).toLocaleString()} ر.س</td>
-                  <td style={{ fontWeight: 550, color: '#000000' }}>{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
-                  <td>
+                <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-3.5 font-bold text-black">{row.name}</td>
+                  <td className="p-3.5 font-mono">{row.recruitment_contracts} عقد</td>
+                  <td className="p-3.5 font-mono">{row.rent_contracts} عقد</td>
+                  <td className="p-3.5 font-mono font-bold text-black">{(row.total_revenue ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5 font-mono text-zinc-500">{(row.expenses ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5">
                     <Badge text={row.margin} type="success" />
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr style={{ background: '#fafafa', borderTop: '1px solid #e4e4e7', fontWeight: 550 }}>
-                <td>الإجمالي المجمع للمجموعة</td>
-                <td>{totalRecruitment} عقد</td>
-                <td>{totalRent} عقد</td>
-                <td>{(totalRevenue ?? 0).toLocaleString()} ر.س</td>
-                <td>{(totalExpenses ?? 0).toLocaleString()} ر.س</td>
-                <td style={{ fontSize: '15px' }}>{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
-                <td><Badge text="57.6%" type="purple" /></td>
+              <tr className="bg-zinc-50 font-bold text-black border-t border-zinc-200">
+                <td className="p-3.5">الإجمالي المجمع للمجموعة</td>
+                <td className="p-3.5 font-mono">{totalRecruitment} عقد</td>
+                <td className="p-3.5 font-mono">{totalRent} عقد</td>
+                <td className="p-3.5 font-mono">{(totalRevenue ?? 0).toLocaleString()} ر.س</td>
+                <td className="p-3.5 font-mono">{(totalExpenses ?? 0).toLocaleString()} ر.س</td>
+                <td className="p-3.5 font-mono text-emerald-700">{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
+                <td className="p-3.5"><Badge text="57.6%" type="purple" /></td>
               </tr>
             </tfoot>
           </table>

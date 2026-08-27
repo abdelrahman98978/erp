@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { useImpersonation } from '../contexts/ImpersonationContext';
 import { CompanyId } from '../types';
+import { Building2, UserCheck, ShieldCheck, ArrowLeft, Check, X, ShieldAlert, Users, TrendingUp, Layers } from 'lucide-react';
 
 export const GroupCommandCenterPage: React.FC = () => {
   const { companies, setActiveCompanyId } = useCompany();
@@ -10,7 +11,7 @@ export const GroupCommandCenterPage: React.FC = () => {
   const [selectedEmpId, setSelectedEmpId] = useState<string>('EMP-1042');
   const [selectedEmpName, setSelectedEmpName] = useState<string>('فهد العتيبي');
   const [selectedEmpTitle, setSelectedEmpTitle] = useState<string>('مسؤول عقود واستقدام');
-  const [selectedTargetCompany, setSelectedTargetCompany] = useState<CompanyId>('masi');
+  const [selectedTargetCompany, setSelectedTargetCompany] = useState<CompanyId>('SAF');
   const [impersonationReason, setImpersonationReason] = useState<string>('معاينة طلبات الاستقدام ومطابقة العروض مع العميل');
   const [showImpersonateModal, setShowImpersonateModal] = useState<boolean>(false);
 
@@ -29,7 +30,7 @@ export const GroupCommandCenterPage: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="space-y-6">
       {/* Top Banner */}
       <div
         className="card-feature-cinematic"
@@ -46,50 +47,55 @@ export const GroupCommandCenterPage: React.FC = () => {
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              GROUP EXECUTIVE GOVERNANCE
-            </span>
-            <span style={{ fontSize: '12px', color: '#a1a1aa' }}>خالد السليم للاستقدام والتشغيل</span>
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Building2 className="w-5 h-5 text-emerald-400" />
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            مركز القيادة والرقابة التنفيذية للمجموعة
-          </h1>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                GROUP EXECUTIVE GOVERNANCE
+              </span>
+              <span style={{ fontSize: '12px', color: '#a1a1aa' }}>خالد السليم للاستقدام والتشغيل</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+              مركز القيادة والرقابة التنفيذية للمجموعة
+            </h1>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={() => setShowImpersonateModal(true)}
-          className="button-aloe-pill"
-          style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          className="button-white-pill"
+          style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
         >
-          <i className="fa-solid fa-user-secret ml-1"></i>
+          <UserCheck className="w-4 h-4 ml-1 text-black" />
           <span>+ تفعيل محاكاة موظف (Act As Employee)</span>
         </button>
       </div>
 
       {/* Group Consolidated Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
           <div style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي إيرادات المجموعة YTD</div>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>28,500,000 ر.س</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>+14.2% مقارنة بالعام الماضي</span>
         </div>
 
-        <div className="card-pricing" style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي كادر المجموعة (HR)</div>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>450 موظف</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>موزعين على 18 فرعاً</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ backgroundColor: '#000000', padding: '24px', borderRadius: '16px', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
           <div style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الطلبات السارية في الشركات</div>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>1,240 طلب</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>استقدام وتأجير وتشغيل</span>
         </div>
 
-        <div className="card-pricing" style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مرشحو مسار ATS الدولي</div>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>3,410 مرشح</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>من 5 مكاتب خارجية</span>
@@ -97,60 +103,55 @@ export const GroupCommandCenterPage: React.FC = () => {
       </div>
 
       {/* Group Companies Comparison Matrix */}
-      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '20px', marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-          مصفوفة أداء الكيانات الأربعة (Consolidated Companies Matrix):
-        </h3>
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="p-4 border-b border-zinc-100 bg-white">
+          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+            <Building2 className="w-4 h-4 text-black" />
+            <span>مصفوفة أداء الكيانات الأربعة (Consolidated Companies Matrix)</span>
+          </h3>
+        </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
-                <th style={{ padding: '12px' }}>اسم الشركة / الكيان</th>
-                <th style={{ padding: '12px' }}>الفروع</th>
-                <th style={{ padding: '12px' }}>الكادر الوظيفي</th>
-                <th style={{ padding: '12px' }}>الطلبات النشطة</th>
-                <th style={{ padding: '12px' }}>إيرادات YTD</th>
-                <th style={{ padding: '12px' }}>حالة الربط المحاسبي</th>
-                <th style={{ padding: '12px', textAlign: 'center' }}>التحكم</th>
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">اسم الشركة / الكيان</th>
+                <th className="p-3.5">الفروع</th>
+                <th className="p-3.5">الكادر الوظيفي</th>
+                <th className="p-3.5">الطلبات النشطة</th>
+                <th className="p-3.5">إيرادات YTD</th>
+                <th className="p-3.5">حالة الربط المحاسبي</th>
+                <th className="p-3.5 text-center">التحكم</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-zinc-100">
               {companies.map((c) => (
-                <tr key={c.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                  <td style={{ padding: '12px', fontWeight: '800', color: '#0F172A' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fa-solid fa-building text-emerald-600"></i>
-                      {c.name}
+                <tr key={c.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-3.5 font-bold text-black">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-black" />
+                      <span>{c.name}</span>
                     </div>
                   </td>
-                  <td style={{ padding: '12px' }}>{c.branchesCount} فروع</td>
-                  <td style={{ padding: '12px', fontWeight: '700' }}>{c.employeesCount} موظف</td>
-                  <td style={{ padding: '12px' }}>{c.activeOrdersCount} طلب</td>
-                  <td style={{ padding: '12px', fontWeight: '800', color: '#059669' }}>
+                  <td className="p-3.5">{c.branchesCount} فروع</td>
+                  <td className="p-3.5 font-bold text-zinc-800">{c.employeesCount} موظف</td>
+                  <td className="p-3.5 font-mono">{c.activeOrdersCount} طلب</td>
+                  <td className="p-3.5 font-mono font-bold text-emerald-700">
                     {c.revenueYTD.toLocaleString('ar-SA')} ر.س
                   </td>
-                  <td style={{ padding: '12px' }}>
-                    <span style={{ backgroundColor: '#ECFDF5', color: '#047857', padding: '3px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: '700' }}>
+                  <td className="p-3.5">
+                    <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
                       مستقل 100% (ZATCA Ready)
                     </span>
                   </td>
-                  <td style={{ padding: '12px', textAlign: 'center' }}>
+                  <td className="p-3.5 text-center">
                     <button
                       type="button"
                       onClick={() => setActiveCompanyId(c.id as CompanyId)}
-                      style={{
-                        backgroundColor: '#1E293B',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '6px 12px',
-                        fontSize: '11px',
-                        fontWeight: '700',
-                        cursor: 'pointer',
-                      }}
+                      className="button-primary-pill"
+                      style={{ padding: '3px 12px', fontSize: '11px', minHeight: '26px' }}
                     >
-                      دخول بيئة الشركة
+                      دخول البيئة
                     </button>
                   </td>
                 </tr>
@@ -161,39 +162,32 @@ export const GroupCommandCenterPage: React.FC = () => {
       </div>
 
       {/* Audit Log Trail Section */}
-      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-            سجلات التدقيق والحماية المركزية (Group Security Audit Trail):
+      <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+            <ShieldCheck className="w-4 h-4 text-black" />
+            <span>سجلات التدقيق والحماية المركزية (Group Security Audit Trail)</span>
           </h3>
-          <span style={{ fontSize: '11px', color: '#64748B', fontWeight: '600' }}>سجلات غير قابلة للتعديل أو الحذف</span>
+          <span className="text-[11px] text-zinc-400 font-semibold">سجلات غير قابلة للتعديل أو الحذف</span>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div className="space-y-2.5">
           {auditLogs.map((log) => (
             <div
               key={log.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '12px 16px',
-                backgroundColor: '#F8FAFC',
-                borderRadius: '8px',
-                borderRight: '4px solid #2563EB',
-              }}
+              className="flex items-center justify-between p-3 bg-zinc-50 rounded-2xl border border-zinc-100 text-xs"
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontWeight: '800', fontSize: '12px', color: '#1E293B' }}>{log.actorName}</span>
-                  <span style={{ fontSize: '10px', backgroundColor: '#DBEAFE', color: '#1E40AF', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="font-bold text-black">{log.actorName}</span>
+                  <span className="bg-zinc-200 text-black px-2 py-0.5 rounded-full text-[10px] font-bold">
                     {log.actionType}
                   </span>
-                  <span style={{ fontSize: '11px', color: '#64748B' }}>IP: {log.ipAddress}</span>
+                  <span className="text-[11px] text-zinc-400 font-mono">IP: {log.ipAddress}</span>
                 </div>
-                <div style={{ fontSize: '12px', color: '#334155', marginTop: '4px' }}>{log.details}</div>
+                <div className="text-zinc-600">{log.details}</div>
               </div>
-              <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600' }}>
+              <div className="text-[11px] text-zinc-400 font-mono">
                 {new Date(log.timestamp).toLocaleTimeString('ar-SA')}
               </div>
             </div>
@@ -203,85 +197,81 @@ export const GroupCommandCenterPage: React.FC = () => {
 
       {/* Impersonation Modal */}
       {showImpersonateModal && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 1200,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', padding: '28px', width: '480px', maxWidth: '90%', border: '1px solid #e4e4e7' }}>
-            <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#ba1a1a', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <i className="fa-solid fa-user-secret" style={{ marginLeft: '8px' }}></i>
-              تأكيد دخول النظام بصلاحيات موظف (Act As Employee)
-            </h3>
-            <p style={{ fontSize: '12px', color: '#64748B', marginBottom: '20px' }}>
-              سيتم تسجيل هذا الدخول بالكامل في سجلات التدقيق (Audit Log) مع تسجيل السبب والتوقيت ورفع بصمة العملية.
-            </p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-emerald-400" />
+                <span>دخول النظام بصلاحيات موظف (Act As Employee)</span>
+              </h3>
+              <button onClick={() => setShowImpersonateModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <form onSubmit={handleExecuteImpersonation}>
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                  اختيار الشركةTarget Company:
+            <form onSubmit={handleExecuteImpersonation} className="p-6 space-y-4 bg-white text-black">
+              <p className="text-xs text-zinc-500 leading-relaxed m-0">
+                سيتم تسجيل هذا الدخول بالكامل في سجلات التدقيق (Audit Log) مع تسجيل السبب والتوقيت ورفع بصمة العملية.
+              </p>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                  اختيار الشركة (Target Company) *
                 </label>
                 <select
                   value={selectedTargetCompany}
                   onChange={(e) => setSelectedTargetCompany(e.target.value as CompanyId)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
-                  <option value="masi">شركة السفير الماسي</option>
-                  <option value="yaqoot">شركة ياقوت نجد</option>
-                  <option value="topaz">شركة توباز للاستقدام</option>
-                  <option value="ruwad">دار الرواد</option>
+                  <option value="SAF">شركة السفير الماسي</option>
+                  <option value="YAQ">شركة ياقوت نجد</option>
+                  <option value="TOP">شركة توباز للاستقدام</option>
+                  <option value="DAR">دار الرواد</option>
                 </select>
               </div>
 
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                  الموظف المستهدف (Target Employee):
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                  الموظف المستهدف (Target Employee) *
                 </label>
                 <input
                   type="text"
                   value={selectedEmpName}
                   onChange={(e) => setSelectedEmpName(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '4px' }}>
-                  سبب المحاكاة والمراجعة (Reason for Audit Log):
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                  سبب المحاكاة والمراجعة (Reason for Audit Log) *
                 </label>
                 <textarea
                   value={impersonationReason}
                   onChange={(e) => setImpersonationReason(e.target.value)}
                   rows={3}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowImpersonateModal(false)}
-                  style={{ backgroundColor: '#F1F5F9', border: 'none', borderRadius: '8px', padding: '10px 18px', fontWeight: '700', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ padding: '6px 16px', fontSize: '13px', minHeight: '36px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  style={{ backgroundColor: '#DC2626', color: '#FFFFFF', border: 'none', borderRadius: '8px', padding: '10px 18px', fontWeight: '800', cursor: 'pointer' }}
+                  className="button-primary-pill"
+                  style={{ padding: '6px 20px', fontSize: '13px', minHeight: '36px' }}
                 >
-                  تأكيد ودخول النمط
+                  <Check className="w-4 h-4 ml-1" />
+                  <span>تأكيد ودخول النمط</span>
                 </button>
               </div>
             </form>
@@ -291,3 +281,5 @@ export const GroupCommandCenterPage: React.FC = () => {
     </div>
   );
 };
+
+export default GroupCommandCenterPage;

@@ -4,6 +4,7 @@ import { exportData } from '../services/exportService';
 import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
+import { Headphones, Plus, FileSpreadsheet, FileText, Search, Clock, AlertTriangle, MessageSquare, Building2, Check, X, ShieldAlert, Send } from 'lucide-react';
 
 export interface ComplaintTicket {
   id: string;
@@ -107,23 +108,22 @@ export const ComplaintsPage: React.FC = () => {
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla' => {
+  const getMappedTab = (tabKey: string): 'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' => {
     switch (tabKey) {
       case 'complaint-types':
       case 'complaint-analytics':
+      case 'sla-tracking':
         return 'analytics';
       case 'inter-company-disputes':
         return 'inter-company';
       case 'escalated-complaints':
         return 'escalated';
-      case 'sla-tracking':
-        return 'sla';
       default:
         return 'tickets';
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' | 'sla'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics'>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -232,63 +232,106 @@ export const ComplaintsPage: React.FC = () => {
   });
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Header Banner */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
-            <i className="fa-solid fa-headset text-black ml-2"></i> مركز الشكاوى والدعم الفني والنزاعات بين الشركات (Executive Support Hub)
-          </h2>
-          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
-            إدارة الشكاوى، الـ SLA، تصعيد البلاغات بين الشركات الـ 5 والمكاتب الخارجية الـ 3 لمكتب الإدارة العليا
-          </p>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Headphones className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>EXECUTIVE SUPPORT HUB</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              مركز الشكاوى والدعم الفني والنزاعات بين الشركات
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              إدارة الشكاوى، الـ SLA، تصعيد البلاغات بين الشركات والمكاتب الخارجية لمكتب الإدارة العليا
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="button-primary-pill" onClick={() => setShowAddDisputeModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
-            <i className="fa-solid fa-building-circle-exclamation ml-1"></i> + رفع شكوى للإدارة العليا
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            className="button-white-pill"
+            onClick={() => setShowAddDisputeModal(true)}
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <ShieldAlert className="w-4 h-4 ml-1 text-rose-600" />
+            <span>+ رفع شكوى للإدارة العليا</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => setShowAddModal(true)} style={{ fontSize: '13px', padding: '6px 16px', minHeight: '38px' }}>
-            <i className="fa-solid fa-plus ml-1"></i> تسجيل شكوى عميل
+          <button
+            className="button-outline-on-dark"
+            onClick={() => setShowAddModal(true)}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+          >
+            <Plus className="w-4 h-4 ml-1" />
+            <span>تسجيل شكوى عميل</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('complaints', filteredTickets, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+          <button
+            className="button-outline-on-dark"
+            onClick={() => exportData('complaints', filteredTickets, 'excel')}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+          >
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>Excel</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('complaints', filteredTickets, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
+          <button
+            className="button-outline-on-dark"
+            onClick={() => exportData('complaints', filteredTickets, 'pdf')}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+          >
+            <FileText className="w-4 h-4 ml-1 text-rose-400" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
       {/* Metric Cards Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي التذاكر والشكاوى</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{complaints.length} تذكرة</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>معالجة 88% هذا الشهر</span>
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي التذاكر والشكاوى</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{complaints.length} تذكرة</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معالجة 88% هذا الشهر</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>نزاعات الشركات المصعدة للإدارة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>{interDisputes.length} نزاعات</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '8px' }}>مرفوعة لمكتب خالد السليم</span>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>نزاعات الشركات المصعدة للإدارة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{interDisputes.length} نزاعات</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مرفوعة لمكتب خالد السليم</span>
         </div>
 
-        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>نسبة الالتزام بالـ SLA</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>96.8%</div>
-          <span style={{ fontSize: '11.5px', color: '#000000', fontWeight: 500, marginTop: '6px', display: 'block' }}>إغلاق التذاكر ضمن الموعد</span>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>نسبة الالتزام بالـ SLA</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>96.8%</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إغلاق التذاكر ضمن الموعد</span>
         </div>
 
-        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>معدل رضا العملاء (CSAT)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>4.8 / 5.0</div>
-          <span style={{ fontSize: '11.5px', color: '#71717a', marginTop: '6px', display: 'block' }}>بناءً على 142 تقييم</span>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>معدل رضا العملاء (CSAT)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>4.8 / 5.0</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>بناءً على 142 تقييم</span>
         </div>
       </div>
 
       {/* Tabs Row */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'tickets', label: '📥 تذاكر العملاء والدعم' },
           { id: 'inter-company', label: '🏢 شكاوى ونزاعات الشركات للإدارة العليا' },
@@ -318,87 +361,102 @@ export const ComplaintsPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Tab: Inter-Company Disputes Escalated to Executive Management */}
+      {/* Tab: Inter-Company Disputes */}
       {activeTab === 'inter-company' && (
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 550, color: '#000000', margin: 0 }}>
-                🏢 شكاوى ونزاعات الشركات والمكاتب المرفوعة للإدارة العليا
+              <h3 className="text-sm font-bold text-black">
+                شكاوى ونزاعات الشركات والمكاتب المرفوعة للإدارة العليا
               </h3>
-              <p style={{ fontSize: '12px', color: '#71717a', margin: '4px 0 0 0' }}>
+              <p className="text-xs text-zinc-500 mt-0.5">
                 متابعة والبت بالشكاوى التشغيلية والمالية بين توباز، دار الرواد، السفير، الماسي، والأيال والمكاتب الخارجية
               </p>
             </div>
-            <button className="button-primary-pill" onClick={() => setShowAddDisputeModal(true)} style={{ fontSize: '12.5px', padding: '6px 16px' }}>
+            <button
+              className="button-primary-pill"
+              onClick={() => setShowAddDisputeModal(true)}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
+            >
               + رفع شكوى رسمية جديدة
             </button>
           </div>
 
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>رقم البلاغ</th>
-                <th>الشركة المشتكية (المرفوع منها)</th>
-                <th>الجهة المشتكى عليها</th>
-                <th>موضوع النزاع / الشكوى</th>
-                <th>المبلغ المطالب به</th>
-                <th>الأولوية</th>
-                <th>حالة البت بالإدارة العليا</th>
-              </tr>
-            </thead>
-            <tbody>
-              {interDisputes.map(disp => (
-                <tr key={disp.id}>
-                  <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{disp.dispute_no}</td>
-                  <td style={{ fontWeight: '700' }}>{disp.sender_entity}</td>
-                  <td style={{ fontWeight: '700', color: 'var(--odoo-teal-dark)' }}>{disp.target_entity}</td>
-                  <td>
-                    <div style={{ fontWeight: '800', fontSize: '13px' }}>{disp.subject}</div>
-                    <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{disp.details}</div>
-                  </td>
-                  <td style={{ fontWeight: '800', color: '#EF4444' }}>
-                    {(disp.amount_claimed ?? 0) > 0 ? `${(disp.amount_claimed ?? 0).toLocaleString()} ر.س` : 'غير مالي'}
-                  </td>
-                  <td><Badge text={disp.priority} type={disp.priority.includes('VIP') ? 'danger' : 'warning'} /></td>
-                  <td>
-                    <Badge
-                      text={disp.executive_status}
-                      type={disp.executive_status === 'تم التسوية والاعتماد' ? 'success' : 'danger'}
-                    />
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم البلاغ</th>
+                  <th className="p-3.5">الشركة المشتكية</th>
+                  <th className="p-3.5">الجهة المشتكى عليها</th>
+                  <th className="p-3.5">موضوع النزاع / الشكوى</th>
+                  <th className="p-3.5">المبلغ المطالب به</th>
+                  <th className="p-3.5">الأولوية</th>
+                  <th className="p-3.5">حالة البت بالإدارة العليا</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {interDisputes.map(disp => (
+                  <tr key={disp.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{disp.dispute_no}</td>
+                    <td className="p-3.5 font-bold text-black">{disp.sender_entity}</td>
+                    <td className="p-3.5 font-bold text-zinc-800">{disp.target_entity}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{disp.subject}</div>
+                      <div className="text-[11px] text-zinc-500">{disp.details}</div>
+                    </td>
+                    <td className="p-3.5 font-mono font-bold text-rose-700">
+                      {(disp.amount_claimed ?? 0) > 0 ? `${(disp.amount_claimed ?? 0).toLocaleString()} ر.س` : 'غير مالي'}
+                    </td>
+                    <td className="p-3.5"><Badge text={disp.priority} type={disp.priority.includes('VIP') ? 'danger' : 'warning'} /></td>
+                    <td className="p-3.5">
+                      <Badge
+                        text={disp.executive_status}
+                        type={disp.executive_status === 'تم التسوية والاعتماد' ? 'success' : 'danger'}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Main Tickets List View */}
       {(activeTab === 'tickets' || activeTab === 'escalated') && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          {/* Filters Bar */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{ flex: 1, minWidth: '240px' }}>
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
-                className="filter-input"
                 placeholder="ابحث برقم التذكرة، اسم العميل، أو الجوال..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
+                className="text-input"
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
               />
             </div>
-            <div>
-              <select className="filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+
+            <div className="flex items-center gap-2">
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+              >
                 <option value="all">جميع الحالات</option>
                 <option value="جديدة">جديدة</option>
                 <option value="قيد المعالجة">قيد المعالجة</option>
                 <option value="مرفوعة للمشرف">مرفوعة للمشرف</option>
                 <option value="تم الحل وإغلاق الشكوى">تم الحل وإغلاق الشكوى</option>
               </select>
-            </div>
-            <div>
-              <select className="filter-select" value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)}>
+
+              <select
+                value={priorityFilter}
+                onChange={e => setPriorityFilter(e.target.value)}
+                className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+              >
                 <option value="all">جميع الأولويات</option>
                 <option value="عاجل طارئ">عاجل طارئ</option>
                 <option value="مهم">مهم</option>
@@ -407,103 +465,112 @@ export const ComplaintsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Data Table */}
-          <table className="odoo-data-table">
-            <thead>
-              <tr>
-                <th>رقم التذكرة</th>
-                <th>اسم العميل والجوال</th>
-                <th>تصنيف الشكوى والعقد</th>
-                <th>الأولوية والتصعيد</th>
-                <th>الـ SLA المتبقي</th>
-                <th>الموظف المكلَف</th>
-                <th>الحالة الحالية</th>
-                <th>الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredTickets.map(ticket => (
-                <tr key={ticket.id}>
-                  <td style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{ticket.ticket_no}</td>
-                  <td>
-                    <div style={{ fontWeight: '700' }}>{ticket.client_name}</div>
-                    <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{ticket.client_phone}</div>
-                  </td>
-                  <td>
-                    <div style={{ fontWeight: '700' }}>{ticket.category}</div>
-                    <div style={{ fontSize: '11.5px', color: 'var(--odoo-teal-dark)' }}>{ticket.contract_ref}</div>
-                  </td>
-                  <td>
-                    <Badge
-                      text={ticket.priority}
-                      type={ticket.priority === 'عاجل طارئ' ? 'danger' : ticket.priority === 'مهم' ? 'warning' : 'info'}
-                    />
-                  </td>
-                  <td>
-                    {ticket.sla_hours_left > 0 ? (
-                      <span style={{ fontWeight: '800', color: ticket.sla_hours_left <= 4 ? '#EF4444' : '#F59E0B' }}>
-                        <i className="fa-solid fa-clock ml-1"></i> متبقي {ticket.sla_hours_left} ساعة
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>مكتملة</span>
-                    )}
-                  </td>
-                  <td style={{ fontSize: '12.5px' }}>{ticket.assigned_agent}</td>
-                  <td>
-                    <Badge
-                      text={ticket.status}
-                      type={ticket.status === 'تم الحل وإغلاق الشكوى' ? 'success' : ticket.status === 'مرفوعة للمشرف' ? 'danger' : 'warning'}
-                    />
-                  </td>
-                  <td>
-                    <button className="btn-odoo btn-odoo-purple" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => setSelectedTicket(ticket)}>
-                      معاينة ومعالجة
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم التذكرة</th>
+                  <th className="p-3.5">اسم العميل والجوال</th>
+                  <th className="p-3.5">تصنيف الشكوى والعقد</th>
+                  <th className="p-3.5">الأولوية والتصعيد</th>
+                  <th className="p-3.5">الـ SLA المتبقي</th>
+                  <th className="p-3.5">الموظف المكلَف</th>
+                  <th className="p-3.5">الحالة الحالية</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {filteredTickets.map(ticket => (
+                  <tr key={ticket.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-mono font-bold text-black">{ticket.ticket_no}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{ticket.client_name}</div>
+                      <div className="text-[11px] text-zinc-400 font-mono">{ticket.client_phone}</div>
+                    </td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{ticket.category}</div>
+                      <div className="text-[11px] text-zinc-500 font-mono">{ticket.contract_ref}</div>
+                    </td>
+                    <td className="p-3.5">
+                      <Badge
+                        text={ticket.priority}
+                        type={ticket.priority === 'عاجل طارئ' ? 'danger' : ticket.priority === 'مهم' ? 'warning' : 'info'}
+                      />
+                    </td>
+                    <td className="p-3.5">
+                      {ticket.sla_hours_left > 0 ? (
+                        <span className={`font-mono font-bold text-xs flex items-center gap-1 ${ticket.sla_hours_left <= 4 ? 'text-rose-600' : 'text-amber-600'}`}>
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>متبقي {ticket.sla_hours_left} ساعة</span>
+                        </span>
+                      ) : (
+                        <span className="text-zinc-400">مكتملة</span>
+                      )}
+                    </td>
+                    <td className="p-3.5 text-zinc-600">{ticket.assigned_agent}</td>
+                    <td className="p-3.5">
+                      <Badge
+                        text={ticket.status}
+                        type={ticket.status === 'تم الحل وإغلاق الشكوى' ? 'success' : ticket.status === 'مرفوعة للمشرف' ? 'danger' : 'warning'}
+                      />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        onClick={() => setSelectedTicket(ticket)}
+                      >
+                        معاينة ومعالجة
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab 3: WhatsApp Support Live Chat */}
       {activeTab === 'whatsapp' && (
-        <div className="table-card" style={{ padding: '24px', background: '#F8FAFC' }}>
-          <div style={{ display: 'flex', gap: '20px', minHeight: '400px' }}>
-            <div style={{ width: '280px', background: 'white', borderRadius: '8px', padding: '12px', border: '1px solid #E2E8F0' }}>
-              <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>محادثات الدعم النشطة</h4>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[400px]">
+            <div className="bg-zinc-50 rounded-2xl p-3 border border-zinc-200">
+              <h4 className="text-xs font-bold text-black mb-3">محادثات الدعم النشطة</h4>
               {complaints.map(c => (
-                <div key={c.id} style={{ padding: '10px', borderRadius: '6px', background: '#F1F5F9', marginBottom: '8px', cursor: 'pointer' }}>
-                  <div style={{ fontWeight: '700', fontSize: '13px' }}>{c.client_name}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.client_phone} • {c.ticket_no}</div>
+                <div key={c.id} className="p-2.5 rounded-xl bg-white border border-zinc-200 mb-2 cursor-pointer hover:border-black transition-colors">
+                  <div className="font-bold text-xs text-black">{c.client_name}</div>
+                  <div className="text-[11px] text-zinc-400 font-mono">{c.client_phone} • {c.ticket_no}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ flex: 1, background: 'white', borderRadius: '8px', padding: '16px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div className="md:col-span-2 bg-white rounded-2xl p-4 border border-zinc-200 flex flex-col justify-between">
               <div>
-                <div style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '10px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="border-b border-zinc-100 pb-3 mb-3 flex justify-between items-center">
                   <div>
-                    <h4 style={{ fontSize: '15px', fontWeight: '800', margin: 0 }}>بندر صالح الهويريني (+966555774494)</h4>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
+                    <h4 className="text-xs font-bold text-black">بندر صالح الهويريني (+966555774494)</h4>
+                    <span className="text-[11px] text-zinc-400 font-mono">تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
                   </div>
                   <Badge text="مرفوعة للمشرف" type="danger" />
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ alignSelf: 'flex-start', background: '#fbfbf5', border: '1px solid #e4e4e7', padding: '10px 14px', borderRadius: '12px', maxWidth: '75%', fontSize: '13px', color: '#000000' }}>
+                <div className="space-y-3">
+                  <div className="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl max-w-[80%] text-xs text-black">
                     السلام عليكم، العاملة ترغب بالامتناع عن العمل وتطالب بالتحويل للإيواء أو الترحيل. نأمل المعالجة عاجلاً.
                   </div>
-                  <div style={{ alignSelf: 'flex-end', background: '#000000', color: '#ffffff', padding: '10px 14px', borderRadius: '12px', maxWidth: '75%', fontSize: '13px' }}>
+                  <div className="bg-black text-white p-3 rounded-2xl max-w-[80%] mr-auto text-xs">
                     وعليكم السلام أستاذ بندر، تم استلام الطلب وتصعيد التذكرة مباشرة لمشرف الإيواء لمتابعة حالة العاملة.
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                <input type="text" className="filter-input" placeholder="اكتب ردك المباشر للعميل عبر الواتساب..." />
-                <button className="btn-odoo btn-odoo-purple"><i className="fa-solid fa-paper-plane ml-1"></i> إرسال</button>
+              <div className="flex gap-2 mt-4 pt-3 border-t border-zinc-100">
+                <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" placeholder="اكتب ردك المباشر للعميل عبر الواتساب..." />
+                <button className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 18px', fontSize: '12px' }}>
+                  <Send className="w-3.5 h-3.5 ml-1" />
+                  <span>إرسال</span>
+                </button>
               </div>
             </div>
           </div>
@@ -512,44 +579,43 @@ export const ComplaintsPage: React.FC = () => {
 
       {/* Tab 4: Root Cause Analytics */}
       {activeTab === 'analytics' && (
-        <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-            📊 تحليلات أسباب الشكاوى الجذرية (Root Cause Analysis - RCA)
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-black" />
+            <span>تحليلات أسباب الشكاوى الجذرية (Root Cause Analysis - RCA)</span>
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div>
-              <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>توزيع مسببات الشكاوى</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold text-zinc-700">توزيع مسببات الشكاوى</h4>
               {[
-                { label: 'رفض عمل أو عدم رغبة العاملة', percent: 45, color: '#714B67' },
-                { label: 'تأخير الوصول من المكتب الخارجي', percent: 25, color: '#EF4444' },
-                { label: 'تسويات واسترجاع مالي', percent: 18, color: '#F59E0B' },
-                { label: 'استفسارات عامة وسلوك', percent: 12, color: '#10B981' }
+                { label: 'رفض عمل أو عدم رغبة العاملة', percent: 45, color: 'bg-black' },
+                { label: 'تأخير الوصول من المكتب الخارجي', percent: 25, color: 'bg-rose-600' },
+                { label: 'تسويات واسترجاع مالي', percent: 18, color: 'bg-amber-500' },
+                { label: 'استفسارات عامة وسلوك', percent: 12, color: 'bg-emerald-600' }
               ].map((item, idx) => (
-                <div key={idx} style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: '700', marginBottom: '4px' }}>
-                    <span>{item.label}</span>
-                    <span>{item.percent}%</span>
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between text-xs font-bold">
+                    <span className="text-black">{item.label}</span>
+                    <span className="font-mono text-zinc-600">{item.percent}%</span>
                   </div>
-                  <div style={{ width: '100%', height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${item.percent}%`, height: '100%', background: item.color }}></div>
+                  <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
+                    <div className={`h-full ${item.color} rounded-full`} style={{ width: `${item.percent}%` }} />
                   </div>
                 </div>
               ))}
             </div>
 
-            <div>
-              <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>إحصائيات الفروع والمكاتب الأكثر بلاغاً</h4>
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                  • <strong>فرع الرياض</strong>: 52% من إجمالي التذاكر (متابعة الإيواء وتأجير العقود).
-                </p>
-                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                  • <strong>مكتب بلاتينيوم الفلبيني</strong>: 28% من بلاغات تأخير إصدار التأشيرات.
-                </p>
-                <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                  • <strong>متوسط زمن حل الشكوى</strong>: 6.4 ساعات فقط.
-                </p>
-              </div>
+            <div className="bg-zinc-50 p-5 rounded-2xl border border-zinc-200 space-y-3">
+              <h4 className="text-xs font-bold text-black">إحصائيات الفروع والمكاتب الأكثر بلاغاً</h4>
+              <p className="text-xs text-zinc-600">
+                • <strong>فرع الرياض</strong>: 52% من إجمالي التذاكر (متابعة الإيواء وتأجير العقود).
+              </p>
+              <p className="text-xs text-zinc-600">
+                • <strong>مكتب بلاتينيوم الفلبيني</strong>: 28% من بلاغات تأخير إصدار التأشيرات.
+              </p>
+              <p className="text-xs text-zinc-600">
+                • <strong>متوسط زمن حل الشكوى</strong>: 6.4 ساعات فقط.
+              </p>
             </div>
           </div>
         </div>
@@ -557,22 +623,25 @@ export const ComplaintsPage: React.FC = () => {
 
       {/* Add Inter-Company Dispute Modal */}
       {showAddDisputeModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#EF4444' }}>
-                رفع بلاغ / شكوى بين الشركات لرئاسة الإدارة العليا
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-rose-400" />
+                <span>رفع بلاغ / شكوى بين الشركات للإدارة العليا</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddDisputeModal(false)}></i>
+              <button onClick={() => setShowAddDisputeModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <form onSubmit={handleAddInterDispute}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الشركة / الفرع المشتكي *</label>
+            <form onSubmit={handleAddInterDispute} className="p-6 space-y-4 bg-white text-black">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الشركة / الفرع المشتكي *</label>
                 <select
-                  className="filter-select"
                   value={disputeForm.sender_entity}
                   onChange={e => setDisputeForm({ ...disputeForm, sender_entity: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>💎 شركة توباز (Topaz Group)</option>
                   <option>🏗️ دار الرواد (Dar Al-Ruwad)</option>
@@ -582,12 +651,12 @@ export const ComplaintsPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الجهة المشتكى عليها (الطرف الآخر) *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الجهة المشتكى عليها (الطرف الآخر) *</label>
                 <select
-                  className="filter-select"
                   value={disputeForm.target_entity}
                   onChange={e => setDisputeForm({ ...disputeForm, target_entity: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>🇵🇭 مكتب بلاتينيوم الفلبيني (PLATINUM)</option>
                   <option>🇪🇹 مكتب داماس الإثيوبي (DAMAS)</option>
@@ -597,35 +666,35 @@ export const ComplaintsPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">موضوع الشكوى والنزاع *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">موضوع الشكوى والنزاع *</label>
                 <input
                   type="text"
-                  className="filter-input"
                   placeholder="عنوان مختصر للنزاع..."
                   value={disputeForm.subject}
                   onChange={e => setDisputeForm({ ...disputeForm, subject: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">المبلغ المطالب به (إن وجد)</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">المبلغ المطالب به</label>
                   <input
                     type="number"
-                    className="filter-input"
                     placeholder="0.00 ر.س"
                     value={disputeForm.amount_claimed}
                     onChange={e => setDisputeForm({ ...disputeForm, amount_claimed: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
                   />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">الأولوية والتصعيد *</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الأولوية والتصعيد *</label>
                   <select
-                    className="filter-select"
                     value={disputeForm.priority}
                     onChange={e => setDisputeForm({ ...disputeForm, priority: e.target.value as any })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="عالي جداً VIP">عالي جداً VIP (خالد السليم)</option>
                     <option value="عاجل">عاجل</option>
@@ -634,21 +703,25 @@ export const ComplaintsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">التفاصيل والأسباب الموجبة للتصعيد *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">التفاصيل والأسباب الموجبة للتصعيد *</label>
                 <textarea
-                  className="filter-input"
                   rows={3}
                   placeholder="شرح أسباب البلاغ والطلب المطلوب من الإدارة العليا..."
                   value={disputeForm.details}
                   onChange={e => setDisputeForm({ ...disputeForm, details: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddDisputeModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-danger">رفع البلاغ للإدارة العليا</button>
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                <button type="button" className="button-outline-on-light" onClick={() => setShowAddDisputeModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                  إلغاء
+                </button>
+                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                  رفع البلاغ للإدارة العليا
+                </button>
               </div>
             </form>
           </div>
@@ -657,48 +730,51 @@ export const ComplaintsPage: React.FC = () => {
 
       {/* Add Client Complaint Modal */}
       {showAddModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                تسجيل وتوجيه شكوى / تذكرة جديدة
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Headphones className="w-4 h-4 text-emerald-400" />
+                <span>تسجيل وتوجيه شكوى / تذكرة جديدة</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <form onSubmit={handleAddTicket}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">اسم العميل بالكامل *</label>
+            <form onSubmit={handleAddTicket} className="p-6 space-y-4 bg-white text-black">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل بالكامل *</label>
                   <input
                     type="text"
-                    className="filter-input"
                     placeholder="اسم العميل..."
                     value={addForm.client_name}
                     onChange={e => setAddForm({ ...addForm, client_name: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                     required
                   />
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">رقم الجوال *</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الجوال *</label>
                   <input
                     type="text"
-                    className="filter-input"
                     placeholder="+9665..."
                     value={addForm.client_phone}
                     onChange={e => setAddForm({ ...addForm, client_phone: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
                     required
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div className="filter-group">
-                  <label className="filter-label">تصنيف الشكوى *</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">تصنيف الشكوى *</label>
                   <select
-                    className="filter-select"
                     value={addForm.category}
                     onChange={e => setAddForm({ ...addForm, category: e.target.value as any })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="رفض عمل">رفض عمل</option>
                     <option value="تأخير وصول">تأخير وصول</option>
@@ -707,12 +783,12 @@ export const ComplaintsPage: React.FC = () => {
                     <option value="جودة وسلوك">جودة وسلوك</option>
                   </select>
                 </div>
-                <div className="filter-group">
-                  <label className="filter-label">مستوى الأولوية *</label>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">مستوى الأولوية *</label>
                   <select
-                    className="filter-select"
                     value={addForm.priority}
                     onChange={e => setAddForm({ ...addForm, priority: e.target.value as any })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="عادي">عادي (SLA 24 ساعة)</option>
                     <option value="مهم">مهم (SLA 12 ساعة)</option>
@@ -721,12 +797,12 @@ export const ComplaintsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الفرع المكلَف *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع المكلَف *</label>
                 <select
-                  className="filter-select"
                   value={addForm.branch}
                   onChange={e => setAddForm({ ...addForm, branch: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 >
                   <option>فرع الرياض الرئيسي</option>
                   <option>فرع جدة</option>
@@ -737,21 +813,26 @@ export const ComplaintsPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">شرح وتفاصيل الشكوى *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">شرح وتفاصيل الشكوى *</label>
                 <textarea
-                  className="filter-input"
                   rows={3}
                   placeholder="اكتب التفاصيل هنا..."
                   value={addForm.description}
                   onChange={e => setAddForm({ ...addForm, description: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">تسجيل التذكرة وتفعيل SLA</button>
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                <button type="button" className="button-outline-on-light" onClick={() => setShowAddModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                  إلغاء
+                </button>
+                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                  <Check className="w-4 h-4 ml-1" />
+                  <span>تسجيل التذكرة وتفعيل SLA</span>
+                </button>
               </div>
             </form>
           </div>
@@ -760,25 +841,37 @@ export const ComplaintsPage: React.FC = () => {
 
       {/* Ticket Action Modal */}
       {selectedTicket && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '500px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                معالجة التذكرة رقم ({selectedTicket.ticket_no})
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Headphones className="w-4 h-4 text-emerald-400" />
+                <span>معالجة التذكرة رقم ({selectedTicket.ticket_no})</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setSelectedTicket(null)}></i>
+              <button onClick={() => setSelectedTicket(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div style={{ background: '#F8FAFC', padding: '14px', borderRadius: '8px', marginBottom: '16px', fontSize: '13px' }}>
-              <div><strong>العميل:</strong> {selectedTicket.client_name} ({selectedTicket.client_phone})</div>
-              <div style={{ marginTop: '4px' }}><strong>الشرح:</strong> {selectedTicket.description}</div>
-              <div style={{ marginTop: '4px', color: 'var(--odoo-purple)' }}><strong>المسؤول الحلي:</strong> {selectedTicket.assigned_agent}</div>
-            </div>
+            <div className="p-6 space-y-4 bg-white text-black">
+              <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 space-y-2 text-xs">
+                <div><strong className="text-zinc-500">العميل:</strong> <span className="font-bold text-black">{selectedTicket.client_name} ({selectedTicket.client_phone})</span></div>
+                <div><strong className="text-zinc-500">الشرح:</strong> <span className="text-zinc-700">{selectedTicket.description}</span></div>
+                <div><strong className="text-zinc-500">المسؤول الحالي:</strong> <span className="font-bold text-emerald-700">{selectedTicket.assigned_agent}</span></div>
+              </div>
 
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-              <button className="btn-odoo btn-odoo-secondary" onClick={() => setSelectedTicket(null)}>إلغاء</button>
-              <button className="btn-odoo btn-odoo-danger" onClick={() => handleResolveTicket('مرفوعة للمشرف')}>تصعيد للمشرف</button>
-              <button className="btn-odoo btn-odoo-purple" onClick={() => handleResolveTicket('تم الحل وإغلاق الشكوى')}>إغلاق وإتمام الحل</button>
+              <div className="flex gap-2 justify-end pt-3 border-t border-zinc-100 flex-wrap">
+                <button className="button-outline-on-light" onClick={() => setSelectedTicket(null)} style={{ minHeight: '36px', padding: '6px 14px', fontSize: '12.5px' }}>
+                  إلغاء
+                </button>
+                <button className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50" onClick={() => handleResolveTicket('مرفوعة للمشرف')} style={{ minHeight: '36px', padding: '6px 14px', fontSize: '12.5px' }}>
+                  تصعيد للمشرف
+                </button>
+                <button className="button-primary-pill" onClick={() => handleResolveTicket('تم الحل وإغلاق الشكوى')} style={{ minHeight: '36px', padding: '6px 18px', fontSize: '12.5px' }}>
+                  <Check className="w-4 h-4 ml-1" />
+                  <span>إغلاق وإتمام الحل</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

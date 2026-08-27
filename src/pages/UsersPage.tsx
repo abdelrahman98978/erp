@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { DataTable, Column } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { UserCheck, ShieldCheck, Plus, FileSpreadsheet, FileText, Search, Fingerprint, Lock, Shield, X, Check, QrCode, Smartphone, MessageSquare, Mail, ArrowLeft } from 'lucide-react';
 
 export interface UserAdmin {
   id: string;
@@ -104,6 +104,7 @@ export const UsersPage: React.FC = () => {
   const [selectedMethod, setSelectedMethod] = useState<'Google Authenticator' | 'SMS' | 'WhatsApp' | 'Email' | 'بصمة بيومترية (FIDO2)'>('Google Authenticator');
   const [otpCode, setOtpCode] = useState('');
   const [step, setStep] = useState<1 | 2>(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // New User Form State
   const [newUser, setNewUser] = useState({
@@ -144,15 +145,11 @@ export const UsersPage: React.FC = () => {
     const updated = await realErpDataStore.updateRecord<UserAdmin>('system_users', selectedUser.id, patch, MOCK_USERS);
     setUsers(updated);
     setShow2FAModal(false);
-    alert(isEnabling ? `تم تفعيل المصادقة الثنائية (2FA) للمستخدم ${selectedUser.name} بنجاح عبر (${selectedMethod})!` : `تم تعطيل المصادقة للمستخدم ${selectedUser.name}.`);
   };
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUser.name || !newUser.username) {
-      alert('يرجى كتابة اسم الموظف واسم المستخدم');
-      return;
-    }
+    if (!newUser.name || !newUser.username) return;
 
     const createdRecord: UserAdmin = {
       id: String(Date.now()),
@@ -185,236 +182,238 @@ export const UsersPage: React.FC = () => {
       biometric_enabled: true,
       biometric_type: 'Touch ID (بصمة إصبع)'
     });
-    alert(`تم إنشاء حساب المستخدم ${createdRecord.name} بنجاح وتعيين الصلاحيات البيومترية!`);
   };
 
-  const columns: Column<UserAdmin>[] = [
-    {
-      header: '#',
-      accessor: (row) => <span style={{ fontWeight: '800', color: 'var(--odoo-purple)' }}>{row.id}</span>
-    },
-    {
-      header: 'الاسم واسم المستخدم',
-      accessor: (row) => (
-        <div>
-          <span style={{ fontWeight: '800', color: '#0F172A' }}>{row.name}</span>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>@{row.username} • {row.email}</div>
-        </div>
-      )
-    },
-    {
-      header: 'الدور الوظيفي والصلاحيات',
-      accessor: (row) => (
-        <div>
-          <Badge text={row.role} type="purple" />
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{row.user_type}</div>
-        </div>
-      )
-    },
-    {
-      header: 'الفرع المخصص',
-      accessor: (row) => <span style={{ fontSize: '12px', fontWeight: '700', color: '#334155' }}>{row.branch}</span>
-    },
-    {
-      header: 'المصادقة الثنائية (2FA)',
-      accessor: (row) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-          {row.two_factor_enabled ? (
-            <Badge text={`مفعلة (${row.two_factor_method || 'TOTP'})`} type="success" icon="fa-solid fa-shield-halved" />
-          ) : (
-            <Badge text="غير مفعلة" type="warning" icon="fa-solid fa-lock-open" />
-          )}
-        </div>
-      )
-    },
-    {
-      header: 'البصمة البيومترية',
-      accessor: (row) => (
-        <div>
-          {row.biometric_enabled ? (
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '3px 8px',
-                borderRadius: '6px',
-                background: '#ECFDF5',
-                color: '#065F46',
-                fontSize: '11px',
-                fontWeight: '800',
-                border: '1px solid #A7F3D0'
-              }}
-            >
-              <i className="fa-solid fa-fingerprint text-emerald-600" aria-hidden="true"></i>
-              {row.biometric_type || 'بصمة معتمدة'}
-            </span>
-          ) : (
-            <span style={{ fontSize: '11px', color: '#94A3B8' }}>غير مسجلة</span>
-          )}
-        </div>
-      )
-    },
-    {
-      header: 'الحالة',
-      accessor: (row) => <Badge text={row.status} type={row.status === 'نشط' ? 'success' : 'danger'} />
-    },
-    {
-      header: 'الإجراءات',
-      accessor: (row) => (
-        <div style={{ display: 'flex', gap: '6px' }}>
-          <button
-            className={`btn-odoo ${row.two_factor_enabled ? 'btn-odoo-secondary' : 'btn-odoo-purple'}`}
-            style={{ padding: '4px 10px', height: '30px', fontSize: '11.5px', fontWeight: '800' }}
-            onClick={() => handleOpen2FAModal(row)}
-          >
-            <i className="fa-solid fa-fingerprint ml-1 text-emerald-600"></i> {row.two_factor_enabled ? 'إدارة الأمان' : 'تفعيل 2FA'}
-          </button>
-        </div>
-      )
-    }
-  ];
+  const filteredUsers = users.filter(u =>
+    u.name.includes(searchQuery) ||
+    u.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    u.branch.includes(searchQuery)
+  );
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800' }}>
-            <i className="fa-solid fa-user-shield text-purple ml-2"></i> مستخدمو النظام والتحكم بالصلاحيات والمصادقة البيومترية
-          </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            إدارة موظفي الفروع، المكاتب الخارجية، تعيين الأدوار وتفعيل حماية البصمة (Touch ID / Face ID) والمصادقة الثنائية 2FA
-          </p>
+    <div className="space-y-6">
+      {/* Header Banner */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>RBAC & ZERO TRUST AUTH</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              مستخدمو النظام والتحكم بالصلاحيات
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              إدارة موظفي الفروع، الأدوار، وتفعيل حماية البصمة البيومترية والمصادقة الثنائية 2FA
+            </p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="button-primary-pill" onClick={() => setShowAddUserModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
-            <i className="fa-solid fa-user-plus ml-1"></i> + إضافة مستخدم جديد
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            className="button-white-pill"
+            onClick={() => setShowAddUserModal(true)}
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة مستخدم جديد</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('users', users, 'excel')} title="تصدير Excel" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+          <button
+            className="button-outline-on-dark"
+            onClick={() => exportData('users', users, 'excel')}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+          >
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>Excel</span>
           </button>
-          <button className="button-outline-on-light" onClick={() => exportData('users', users, 'pdf')} title="تصدير PDF" style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
+          <button
+            className="button-outline-on-dark"
+            onClick={() => exportData('users', users, 'pdf')}
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+          >
+            <FileText className="w-4 h-4 ml-1 text-rose-400" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
       {/* 2FA & Biometrics Stats Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي المستخدمين</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>{users.length}</div>
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المستخدمين</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{users.length}</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>كافة الفروع</span>
         </div>
 
-        <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>المصادقة 2FA مفعلة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المصادقة 2FA مفعلة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {users.filter(u => u.two_factor_enabled).length}
           </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>حسابات مؤمنة</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>الدخول بالبصمة مسجل</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الدخول بالبصمة مسجل</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {users.filter(u => u.biometric_enabled).length}
           </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>FIDO2 / WebAuthn</span>
         </div>
 
-        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>حسابات بانتظار التوثيق</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px', letterSpacing: '-0.02em' }}>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>حسابات بانتظار التوثيق</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {users.filter(u => !u.two_factor_enabled).length}
           </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>غير محمية بـ 2FA</span>
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={users}
-        searchPlaceholder="ابحث بالاسم، اسم المستخدم، البريد، أو الفرع..."
-        onAddClick={() => setShowAddUserModal(true)}
-        addLabel="إضافة مستخدم جديد"
-        exportConfig={{ sectionKey: 'users', rawData: users }}
-      />
+      {/* Table Card */}
+      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="ابحث بالاسم، اسم المستخدم، البريد، أو الفرع..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="text-input"
+              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+            />
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+            المستخدمون: {filteredUsers.length}
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-xs text-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <tr>
+                <th className="p-3.5">الاسم واسم المستخدم</th>
+                <th className="p-3.5">الدور الوظيفي والصلاحيات</th>
+                <th className="p-3.5">الفرع المخصص</th>
+                <th className="p-3.5">المصادقة الثنائية (2FA)</th>
+                <th className="p-3.5">البصمة البيومترية</th>
+                <th className="p-3.5">الحالة</th>
+                <th className="p-3.5 text-center">الأمان</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {filteredUsers.map((u) => (
+                <tr key={u.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-3.5">
+                    <div className="font-bold text-black">{u.name}</div>
+                    <div className="text-[11px] text-zinc-400 font-mono">@{u.username} • {u.email}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <Badge text={u.role} type="purple" />
+                    <div className="text-[11px] text-zinc-400 mt-0.5">{u.user_type}</div>
+                  </td>
+                  <td className="p-3.5 font-semibold text-zinc-800">{u.branch}</td>
+                  <td className="p-3.5">
+                    {u.two_factor_enabled ? (
+                      <Badge text={`مفعلة (${u.two_factor_method || 'TOTP'})`} type="success" />
+                    ) : (
+                      <Badge text="غير مفعلة" type="warning" />
+                    )}
+                  </td>
+                  <td className="p-3.5">
+                    {u.biometric_enabled ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                        <Fingerprint className="w-3 h-3 text-emerald-600" />
+                        <span>{u.biometric_type || 'بصمة معتمدة'}</span>
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-zinc-400">غير مسجلة</span>
+                    )}
+                  </td>
+                  <td className="p-3.5"><Badge text={u.status} type={u.status === 'نشط' ? 'success' : 'danger'} /></td>
+                  <td className="p-3.5 text-center">
+                    <button
+                      onClick={() => handleOpen2FAModal(u)}
+                      className="button-outline-on-light"
+                      style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                    >
+                      <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
+                      <span>{u.two_factor_enabled ? 'إدارة الأمان' : 'تفعيل 2FA'}</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Add User Modal */}
       {showAddUserModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(6px)',
-            zIndex: 2000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px'
-          }}
-        >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '560px',
-              background: '#FFFFFF',
-              borderRadius: '20px',
-              padding: '28px',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.25)',
-              maxHeight: '90vh',
-              overflowY: 'auto'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                <i className="fa-solid fa-user-plus ml-2"></i> إنشاء مستخدم جديد وتعيين الصلاحيات
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-emerald-400" />
+                <span>إنشاء مستخدم جديد وتعيين الصلاحيات</span>
               </h3>
-              <button
-                type="button"
-                onClick={() => setShowAddUserModal(false)}
-                style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '18px', color: '#64748B' }}
-              >
-                <i className="fa-solid fa-xmark"></i>
+              <button onClick={() => setShowAddUserModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <form onSubmit={handleCreateUser} className="p-6 space-y-4 bg-white text-black">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: '800', display: 'block', marginBottom: '4px' }}>اسم الموظف الثلاثي *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموظف الثلاثي *</label>
                   <input
                     type="text"
                     required
                     value={newUser.name}
                     onChange={e => setNewUser({ ...newUser, name: e.target.value })}
                     placeholder="مثال: خالد محمد العتيبي"
-                    className="filter-input"
-                    style={{ width: '100%' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: '800', display: 'block', marginBottom: '4px' }}>اسم المستخدم (Username) *</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم المستخدم (Username) *</label>
                   <input
                     type="text"
                     required
                     value={newUser.username}
                     onChange={e => setNewUser({ ...newUser, username: e.target.value })}
                     placeholder="مثال: khaled_ops"
-                    className="filter-input"
-                    style={{ width: '100%' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: '800', display: 'block', marginBottom: '4px' }}>الدور الوظيفي (Role)</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الدور الوظيفي (Role)</label>
                   <select
                     value={newUser.role}
                     onChange={e => setNewUser({ ...newUser, role: e.target.value })}
-                    className="filter-select"
-                    style={{ width: '100%' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="Administrator">Administrator (مدير نظام)</option>
                     <option value="HR Director">HR Director (مدير موارد بشرية)</option>
@@ -426,12 +425,11 @@ export const UsersPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: '800', display: 'block', marginBottom: '4px' }}>الفرع المخصص</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع المخصص</label>
                   <select
                     value={newUser.branch}
                     onChange={e => setNewUser({ ...newUser, branch: e.target.value })}
-                    className="filter-select"
-                    style={{ width: '100%' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
                     <option value="الفرع الرئيسي">الفرع الرئيسي - الرياض</option>
                     <option value="فرع الرياض - اليرموك">فرع الرياض - اليرموك</option>
@@ -441,58 +439,59 @@ export const UsersPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: '800', display: 'block', marginBottom: '4px' }}>رقم الجوال</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الجوال</label>
                   <input
                     type="tel"
                     value={newUser.phone}
                     onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
                     placeholder="05XXXXXXXX"
-                    className="filter-input"
-                    style={{ width: '100%' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: '800', display: 'block', marginBottom: '4px' }}>البريد الإلكتروني الرسمي</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">البريد الإلكتروني الرسمي</label>
                   <input
                     type="email"
                     value={newUser.email}
                     onChange={e => setNewUser({ ...newUser, email: e.target.value })}
                     placeholder="user@alsulaim.sa"
-                    className="filter-input"
-                    style={{ width: '100%' }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
               {/* Security Toggles */}
-              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '10px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12.5px', fontWeight: '700' }}>
+              <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 space-y-2 text-xs">
+                <label className="flex items-center gap-2 cursor-pointer font-semibold text-zinc-800">
                   <input
                     type="checkbox"
                     checked={newUser.two_factor_enabled}
                     onChange={e => setNewUser({ ...newUser, two_factor_enabled: e.target.checked })}
-                    style={{ accentColor: '#000000' }}
+                    className="accent-black rounded"
                   />
                   <span>إلزام الحساب بالمصادقة الثنائية (2FA OTP) عند تسجيل الدخول</span>
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12.5px', fontWeight: '700' }}>
+                <label className="flex items-center gap-2 cursor-pointer font-semibold text-zinc-800">
                   <input
                     type="checkbox"
                     checked={newUser.biometric_enabled}
                     onChange={e => setNewUser({ ...newUser, biometric_enabled: e.target.checked })}
-                    style={{ accentColor: '#059669' }}
+                    className="accent-emerald-600 rounded"
                   />
                   <span>تسجيل صلاحية الدخول بالبصمة الحيوية وبصمة الوجه (WebAuthn)</span>
                 </label>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddUserModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-primary">
-                  <i className="fa-solid fa-check ml-1"></i> حفظ وإنشاء الحساب
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                <button type="button" className="button-outline-on-light" onClick={() => setShowAddUserModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                  إلغاء
+                </button>
+                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                  <Check className="w-4 h-4 ml-1" />
+                  <span>حفظ وإنشاء الحساب</span>
                 </button>
               </div>
             </form>
@@ -502,221 +501,204 @@ export const UsersPage: React.FC = () => {
 
       {/* 2FA & Biometric Configuration Modal */}
       {show2FAModal && selectedUser && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <div className="table-card" style={{ width: '540px', padding: '24px', background: '#FFFFFF', borderRadius: '14px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                <i className="fa-solid fa-shield-halved ml-2"></i> المصادقة الثنائية والأمان البيومتري (2FA & Biometrics)
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Shield className="w-4 h-4 text-emerald-400" />
+                <span>المصادقة الثنائية والأمان البيومتري (2FA & Biometrics)</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShow2FAModal(false)}></i>
+              <button onClick={() => setShow2FAModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div style={{ background: '#F8FAFC', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '13.5px', fontWeight: '700', color: '#181C1C' }}>المستخدم: {selectedUser.name} (@{selectedUser.username})</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>البريد: {selectedUser.email} • الهاتف: {selectedUser.phone}</div>
-            </div>
+            <div className="p-6 space-y-4 bg-white text-black">
+              <div className="bg-zinc-50 p-3 rounded-2xl border border-zinc-100 text-xs">
+                <div className="font-bold text-black">المستخدم: {selectedUser.name} (@{selectedUser.username})</div>
+                <div className="text-zinc-500 font-mono mt-0.5">البريد: {selectedUser.email} • الهاتف: {selectedUser.phone}</div>
+              </div>
 
-            {selectedUser.two_factor_enabled ? (
-              <div>
-                <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '14px', borderRadius: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <i className="fa-solid fa-circle-check" style={{ color: '#10B981', fontSize: '24px' }}></i>
-                  <div>
-                    <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#065F46' }}>المصادقة الثنائية مفعلة حالياً</h4>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#047857' }}>وسيلة التحقق النشطة: {selectedUser.two_factor_method || 'Google Authenticator'}</p>
-                    {selectedUser.biometric_enabled && (
-                      <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#059669', fontWeight: '700' }}>
-                        <i className="fa-solid fa-fingerprint me-1"></i> البصمة الحيوية: {selectedUser.biometric_type || 'Touch ID / Face ID'}
+              {selectedUser.two_factor_enabled ? (
+                <div className="space-y-4">
+                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center gap-3">
+                    <ShieldCheck className="w-8 h-8 text-emerald-600 shrink-0" />
+                    <div>
+                      <h4 className="font-bold text-sm text-emerald-900">المصادقة الثنائية مفعلة حالياً</h4>
+                      <p className="text-xs text-emerald-700 mt-0.5">وسيلة التحقق النشطة: {selectedUser.two_factor_method || 'Google Authenticator'}</p>
+                      {selectedUser.biometric_enabled && (
+                        <p className="text-xs text-emerald-800 font-bold mt-1 flex items-center gap-1">
+                          <Fingerprint className="w-3.5 h-3.5" />
+                          <span>البصمة الحيوية: {selectedUser.biometric_type || 'Touch ID / Face ID'}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                    <button className="button-outline-on-light" onClick={() => setShow2FAModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                      إغلاق
+                    </button>
+                    <button className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50" onClick={handleToggle2FA} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                      تعطيل المصادقة 2FA
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {step === 1 ? (
+                    <div className="space-y-3">
+                      <p className="text-xs text-zinc-600">
+                        اختر طريقة المصادقة الثنائية والأمان البيومتري لتأمين حساب المستخدم:
                       </p>
-                    )}
-                  </div>
+
+                      <div className="space-y-2">
+                        <label
+                          onClick={() => setSelectedMethod('Google Authenticator')}
+                          className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                            selectedMethod === 'Google Authenticator' ? 'border-black bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="2fa-method"
+                            checked={selectedMethod === 'Google Authenticator'}
+                            onChange={() => setSelectedMethod('Google Authenticator')}
+                            className="mt-1 accent-black"
+                          />
+                          <div>
+                            <span className="font-bold text-xs text-black flex items-center gap-1">
+                              <Smartphone className="w-3.5 h-3.5" />
+                              <span>تطبيق المصادقة (Google Authenticator / Authy / Microsoft)</span>
+                            </span>
+                            <span className="text-[11px] text-zinc-500 block mt-0.5">توليد رموز OTP مؤقتة متغير كل 30 ثانية بدون الحاجة لإنترنت.</span>
+                          </div>
+                        </label>
+
+                        <label
+                          onClick={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
+                          className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                            selectedMethod === 'بصمة بيومترية (FIDO2)' ? 'border-black bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="2fa-method"
+                            checked={selectedMethod === 'بصمة بيومترية (FIDO2)'}
+                            onChange={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
+                            className="mt-1 accent-black"
+                          />
+                          <div>
+                            <span className="font-bold text-xs text-black flex items-center gap-1">
+                              <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>البصمة البيومترية المشفرة (Touch ID / Face ID Passkey)</span>
+                            </span>
+                            <span className="text-[11px] text-zinc-500 block mt-0.5">مصادقة مباشرة عبر شريحة الأمان للأجهزة الداعمة لـ WebAuthn.</span>
+                          </div>
+                        </label>
+
+                        <label
+                          onClick={() => setSelectedMethod('SMS')}
+                          className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
+                            selectedMethod === 'SMS' ? 'border-black bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="2fa-method"
+                            checked={selectedMethod === 'SMS'}
+                            onChange={() => setSelectedMethod('SMS')}
+                            className="mt-1 accent-black"
+                          />
+                          <div>
+                            <span className="font-bold text-xs text-black flex items-center gap-1">
+                              <MessageSquare className="w-3.5 h-3.5" />
+                              <span>رسالة نصية قصيرة (SMS OTP)</span>
+                            </span>
+                            <span className="text-[11px] text-zinc-500 block mt-0.5">إرسال كود تحقق مكون من 6 أرقام إلى الهاتف المسجل ({selectedUser.phone}).</span>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                        <button className="button-outline-on-light" onClick={() => setShow2FAModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                          إلغاء
+                        </button>
+                        <button className="button-primary-pill" onClick={() => setStep(2)} style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                          <span>المتابعة وإظهار الرمز</span>
+                          <ArrowLeft className="w-4 h-4 mr-1" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 text-center">
+                      {selectedMethod === 'Google Authenticator' ? (
+                        <div>
+                          <p className="text-xs text-zinc-600 mb-3">
+                            امسح كود الـ QR التالي بواسطة تطبيق Google Authenticator على جوالك:
+                          </p>
+                          
+                          <div className="w-36 h-36 mx-auto mb-3 bg-zinc-100 border border-zinc-300 rounded-2xl flex flex-col items-center justify-center">
+                            <QrCode className="w-20 h-20 text-black" />
+                            <span className="text-[9px] text-zinc-500 font-mono mt-1 font-bold">ALSALIM 2FA KEY</span>
+                          </div>
+
+                          <div className="bg-zinc-100 p-2 rounded-xl text-xs font-mono font-bold text-black inline-block">
+                            SECRET KEY: JBSW-Y3DP-EHPK-3PXP
+                          </div>
+                        </div>
+                      ) : selectedMethod === 'بصمة بيومترية (FIDO2)' ? (
+                        <div>
+                          <Fingerprint className="w-12 h-12 text-emerald-600 mx-auto mb-2" />
+                          <p className="text-sm font-bold text-emerald-900">
+                            جاهز لتسجيل وتفويض البصمة البيومترية للمستخدم
+                          </p>
+                          <p className="text-xs text-zinc-500 mt-1">
+                            سيتم إنشاء مفتاح Passkey مشفر وتخزينه في Secure Storage للجهاز المعتمد.
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <MessageSquare className="w-10 h-10 text-black mx-auto mb-2" />
+                          <p className="text-xs font-bold text-black">
+                            سيتم إرسال رمز التحقق عند تسجيل الدخول القادم عبر {selectedMethod} إلى ({selectedUser.phone}).
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="space-y-2">
+                        <label className="block text-xs font-bold text-zinc-700">
+                          أدخل رمز التجربة (6 أرقام) للتأكيد وتفعيل الحماية *
+                        </label>
+                        <input
+                          type="text"
+                          maxLength={6}
+                          placeholder="123456"
+                          value={otpCode}
+                          onChange={e => setOtpCode(e.target.value)}
+                          className="text-center text-lg font-mono font-bold tracking-widest w-44 mx-auto block bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 focus:border-black focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                        <button className="button-outline-on-light" onClick={() => setStep(1)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                          رجوع
+                        </button>
+                        <button className="button-primary-pill" onClick={handleToggle2FA} style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                          <Check className="w-4 h-4 ml-1" />
+                          <span>تأكيد وتفعيل الحماية</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                  <button className="btn-odoo btn-odoo-secondary" onClick={() => setShow2FAModal(false)}>إغلاق</button>
-                  <button className="btn-odoo btn-odoo-danger" onClick={handleToggle2FA}>
-                    <i className="fa-solid fa-trash-can ml-1"></i> تعطيل المصادقة 2FA
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                {step === 1 ? (
-                  <div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                      اختر طريقة المصادقة الثنائية والأمان البيومتري لتأمين حساب المستخدم:
-                    </p>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px 16px',
-                        border: selectedMethod === 'Google Authenticator' ? '2px solid #000000' : '1px solid #e4e4e7',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        background: selectedMethod === 'Google Authenticator' ? '#fbfbf5' : '#FFFFFF'
-                      }}>
-                        <input
-                          type="radio"
-                          name="2fa-method"
-                          checked={selectedMethod === 'Google Authenticator'}
-                          onChange={() => setSelectedMethod('Google Authenticator')}
-                          style={{ accentColor: '#000000' }}
-                        />
-                        <div>
-                          <span style={{ fontWeight: '800', fontSize: '13.5px', color: '#181C1C', display: 'block' }}>
-                            <i className="fa-solid fa-mobile-screen-button text-purple ml-1"></i> تطبيق المصادقة (Google Authenticator / Authy / Microsoft)
-                          </span>
-                          <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>توليد رموز OTP مؤقتة متغير كل 30 ثانية بدون الحاجة لإنترنت.</span>
-                        </div>
-                      </label>
-
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px 16px',
-                        border: selectedMethod === 'بصمة بيومترية (FIDO2)' ? '2px solid #059669' : '1px solid #E2E8F0',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        background: selectedMethod === 'بصمة بيومترية (FIDO2)' ? '#ECFDF5' : '#FFFFFF'
-                      }}>
-                        <input
-                          type="radio"
-                          name="2fa-method"
-                          checked={selectedMethod === 'بصمة بيومترية (FIDO2)'}
-                          onChange={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
-                          style={{ accentColor: '#059669' }}
-                        />
-                        <div>
-                          <span style={{ fontWeight: '800', fontSize: '13.5px', color: '#065F46', display: 'block' }}>
-                            <i className="fa-solid fa-fingerprint text-emerald-600 ml-1"></i> البصمة البيومترية المشفرة (Touch ID / Face ID Passkey)
-                          </span>
-                          <span style={{ fontSize: '11.5px', color: '#047857' }}>مصادقة مباشرة عبر شريحة الأمان للأجهزة الداعمة لـ WebAuthn.</span>
-                        </div>
-                      </label>
-
-                      <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px 16px',
-                        border: selectedMethod === 'SMS' ? '2px solid #000000' : '1px solid #e4e4e7',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        background: selectedMethod === 'SMS' ? '#fbfbf5' : '#FFFFFF'
-                      }}>
-                        <input
-                          type="radio"
-                          name="2fa-method"
-                          checked={selectedMethod === 'SMS'}
-                          onChange={() => setSelectedMethod('SMS')}
-                          style={{ accentColor: '#000000' }}
-                        />
-                        <div>
-                          <span style={{ fontWeight: '800', fontSize: '13.5px', color: '#181C1C', display: 'block' }}>
-                            <i className="fa-solid fa-comment-sms text-primary ml-1"></i> رسالة نصية قصيرة (SMS OTP)
-                          </span>
-                          <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>إرسال كود تحقق مكون من 6 أرقام إلى الهاتف المسجل ({selectedUser.phone}).</span>
-                        </div>
-                      </label>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <button className="btn-odoo btn-odoo-secondary" onClick={() => setShow2FAModal(false)}>إلغاء</button>
-                      <button className="btn-odoo btn-odoo-purple" onClick={() => setStep(2)}>
-                        المتابعة وإظهار الرمز <i className="fa-solid fa-arrow-left mr-1"></i>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    {selectedMethod === 'Google Authenticator' ? (
-                      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                          امسح كود الـ QR التالي بواسطة تطبيق Google Authenticator على جوالك:
-                        </p>
-                        
-                        <div style={{
-                          width: '150px',
-                          height: '150px',
-                          margin: '0 auto 12px auto',
-                          background: '#fbfbf5',
-                          border: '2px dashed #000000',
-                          borderRadius: '12px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'column'
-                        }}>
-                          <i className="fa-solid fa-qrcode" style={{ fontSize: '80px', color: '#000000' }}></i>
-                          <span style={{ fontSize: '10px', color: '#000000', fontWeight: 600 }}>ALSALIM 2FA KEY</span>
-                        </div>
-
-                        <div style={{ background: '#F1F5F9', padding: '8px 12px', borderRadius: '6px', display: 'inline-block', fontSize: '12px', fontFamily: 'monospace', fontWeight: '800' }}>
-                          SECRET KEY: JBSW-Y3DP-EHPK-3PXP
-                        </div>
-                      </div>
-                    ) : selectedMethod === 'بصمة بيومترية (FIDO2)' ? (
-                      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <i className="fa-solid fa-fingerprint text-emerald-600" style={{ fontSize: '48px', marginBottom: '12px' }}></i>
-                        <p style={{ fontSize: '14px', fontWeight: '800', color: '#065F46' }}>
-                          جاهز لتسجيل وتفويض البصمة البيومترية للمستخدم
-                        </p>
-                        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                          سيتم إنشاء مفتاح Passkey مشفر وتخزينه في Secure Storage للجهاز المعتمد.
-                        </p>
-                      </div>
-                    ) : (
-                      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                        <i className="fa-solid fa-paper-plane text-purple" style={{ fontSize: '40px', marginBottom: '12px' }}></i>
-                        <p style={{ fontSize: '13.5px', fontWeight: '700' }}>
-                          سيتم إرسال رمز التحقق عند تسجيل الدخول القادم عبر {selectedMethod} إلى ({selectedUser.phone}).
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="filter-group" style={{ marginBottom: '20px' }}>
-                      <label className="filter-label" style={{ textAlign: 'center', display: 'block' }}>
-                        أدخل رمز التجربة (6 أرقام) للتأكيد وتفعيل الحماية *
-                      </label>
-                      <input
-                        type="text"
-                        maxLength={6}
-                        className="filter-input"
-                        placeholder="123456"
-                        value={otpCode}
-                        onChange={e => setOtpCode(e.target.value)}
-                        style={{ textAlign: 'center', fontSize: '20px', letterSpacing: '6px', fontWeight: '800', width: '200px', margin: '0 auto', display: 'block' }}
-                      />
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <button className="btn-odoo btn-odoo-secondary" onClick={() => setStep(1)}>رجوع</button>
-                      <button className="btn-odoo btn-odoo-purple" onClick={handleToggle2FA}>
-                        تأكيد وتفعيل الحماية
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 };
+
+export default UsersPage;

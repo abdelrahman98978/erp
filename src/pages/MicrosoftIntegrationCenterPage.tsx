@@ -2,12 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { MsProjectTask, PowerBiDashboardItem } from '../types';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { 
+  Building2, 
+  BarChart3, 
+  Network, 
+  CheckCircle2, 
+  Clock, 
+  Plus, 
+  ExternalLink, 
+  Sparkles,
+  GitFork
+} from 'lucide-react';
 
 const INITIAL_TASKS: MsProjectTask[] = [
   {
     id: 'MSP-101',
     taskName: 'حملة الاستقدام المكثف - 500 كادر فلبيني وهندي',
-    companyId: 'masi',
+    companyId: 'SAF',
     assignedResource: 'فهد العتيبي (مسؤول التوظيف)',
     startDate: '2026-07-01',
     endDate: '2026-09-30',
@@ -18,7 +29,7 @@ const INITIAL_TASKS: MsProjectTask[] = [
   {
     id: 'MSP-102',
     taskName: 'افتتاح فرع المنسكية والتجهيزات التقنية اللوجستية',
-    companyId: 'yaqoot',
+    companyId: 'YAQ',
     assignedResource: 'م. خالد السليم',
     startDate: '2026-06-15',
     endDate: '2026-08-15',
@@ -29,7 +40,7 @@ const INITIAL_TASKS: MsProjectTask[] = [
   {
     id: 'MSP-103',
     taskName: 'تحديث معايير الامتثال والربط الضريبي ZATCA Phase 2',
-    companyId: 'topaz',
+    companyId: 'TOP',
     assignedResource: 'أحمد المحاسب المالي',
     startDate: '2026-08-01',
     endDate: '2026-10-01',
@@ -48,7 +59,6 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
     realErpDataStore.getRecords<MsProjectTask>('ms_project_tasks', INITIAL_TASKS).then(data => setProjectTasks(data));
   }, []);
 
-  /* Power BI Dashboards Sample */
   const [powerbiDashboards] = useState<PowerBiDashboardItem[]>([
     {
       id: 'PBI-01',
@@ -80,7 +90,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
   ]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="space-y-6">
       {/* Banner */}
       <div
         className="card-feature-cinematic"
@@ -89,53 +99,53 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              MICROSOFT ENTERPRISE INTEGRATION
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Network className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  MICROSOFT ENTERPRISE INTEGRATION
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>M365 & Power BI</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                مركز تكامل ميكروسوفت المؤسسي (Project + Power BI + Visio)
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                ربط مباشر مع بيئة Microsoft 365 لإدارة المشاريع، التحليلات المتقدمة مع RLS، والهياكل التنظيمية الديناميكية
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <span className="pill-tag-mint flex items-center gap-1" style={{ fontSize: '11.5px', padding: '6px 14px' }}>
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Microsoft Entra ID Connected</span>
             </span>
           </div>
-          <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-            مركز تكامل ميكروسوفت المؤسسي (Project + Power BI + Visio)
-          </h1>
-          <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-            ربط مباشر مع بيئة Microsoft 365 لإدارة المشاريع، التحليلات المتقدمة مع RLS، والهياكل التنظيمية الديناميكية.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <span className="pill-tag-mint" style={{ fontSize: '12px' }}>
-            <i className="fa-solid fa-circle-check" style={{ marginLeft: '4px' }}></i>
-            Microsoft Entra ID Connected
-          </span>
         </div>
       </div>
 
       {/* Tabs Selector */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'project', label: 'Microsoft Project (المشاريع والمهام)', icon: 'fa-diagram-project' },
-          { id: 'powerbi', label: 'Power BI Analytics (التحليلات المؤسسية RLS)', icon: 'fa-chart-line' },
-          { id: 'visio', label: 'Visio Org Architect (الهيكل الإداري التفاعلي)', icon: 'fa-sitemap' },
+          { id: 'project', label: 'Microsoft Project (المشاريع والمهام)', icon: Clock },
+          { id: 'powerbi', label: 'Power BI Analytics (التحليلات RLS)', icon: BarChart3 },
+          { id: 'visio', label: 'Visio Org Architect (الهيكل الإداري)', icon: GitFork },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
           return (
             <button
               key={tab.id}
-              type="button"
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
@@ -146,10 +156,12 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
             </button>
           );
@@ -158,45 +170,49 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
       {/* Tab 1: MS Project */}
       {activeTab === 'project' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-              مزامنة مشاريع الاستقدام والتوسع اللوجستي (Microsoft Project Timeline & Gantt):
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
+            <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+              <Clock className="w-4 h-4 text-black" />
+              <span>مزامنة مشاريع الاستقدام والتوسع اللوجستي (Project Timeline)</span>
             </h3>
             <button type="button" className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
-              + مزامنة مشروع جديد من Project Online
+              <Plus className="w-3.5 h-3.5 ml-1" />
+              <span>مزامنة مشروع جديد</span>
             </button>
           </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '13px' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
-                  <th style={{ padding: '12px' }}>رقم المشروع</th>
-                  <th style={{ padding: '12px' }}>اسم المشروع / المبادرة</th>
-                  <th style={{ padding: '12px' }}>المسؤول المعتمد</th>
-                  <th style={{ padding: '12px' }}>تاريخ البدء والانتهاء</th>
-                  <th style={{ padding: '12px' }}>نسبة الإنجاز (Progress)</th>
-                  <th style={{ padding: '12px' }}>الحالة</th>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم المشروع</th>
+                  <th className="p-3.5">اسم المشروع / المبادرة</th>
+                  <th className="p-3.5">المسؤول المعتمد</th>
+                  <th className="p-3.5">تاريخ البدء والانتهاء</th>
+                  <th className="p-3.5">نسبة الإنجاز</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-zinc-100">
                 {projectTasks.map((t) => (
-                  <tr key={t.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                    <td style={{ padding: '12px', fontWeight: '800', color: '#2563EB' }}>{t.id}</td>
-                    <td style={{ padding: '12px', fontWeight: '700', color: '#0F172A' }}>
-                      {t.taskName} {t.milestone && <span style={{ backgroundColor: '#FEF3C7', color: '#D97706', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', marginLeft: '6px' }}>Milestone</span>}
+                  <tr key={t.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-mono font-bold text-black">{t.id}</td>
+                    <td className="p-3.5 font-bold text-black">
+                      {t.taskName} {t.milestone && <span className="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold ml-1">Milestone</span>}
                     </td>
-                    <td style={{ padding: '12px' }}>{t.assignedResource}</td>
-                    <td style={{ padding: '12px', fontSize: '11px', color: '#64748B' }}>{t.startDate} إلى {t.endDate}</td>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ width: '120px', backgroundColor: '#E2E8F0', height: '8px', borderRadius: '4px', overflow: 'hidden', display: 'inline-block', marginLeft: '8px' }}>
-                        <div style={{ width: `${t.progressPercent}%`, backgroundColor: t.progressPercent === 100 ? '#059669' : '#2563EB', height: '100%' }} />
+                    <td className="p-3.5 text-zinc-600">{t.assignedResource}</td>
+                    <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{t.startDate} إلى {t.endDate}</td>
+                    <td className="p-3.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 bg-zinc-100 h-2 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${t.progressPercent === 100 ? 'bg-emerald-600' : 'bg-black'}`} style={{ width: `${t.progressPercent}%` }} />
+                        </div>
+                        <span className="font-mono font-bold text-[11px]">{t.progressPercent}%</span>
                       </div>
-                      <span style={{ fontSize: '11px', fontWeight: '700' }}>{t.progressPercent}%</span>
                     </td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{ backgroundColor: t.status === 'مكتمل' ? '#ECFDF5' : '#EFF6FF', color: t.status === 'مكتمل' ? '#047857' : '#1D4ED8', padding: '3px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: '700' }}>
+                    <td className="p-3.5">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${t.status === 'مكتمل' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-zinc-100 text-zinc-800'}`}>
                         {t.status}
                       </span>
                     </td>
@@ -210,31 +226,36 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
       {/* Tab 2: Power BI */}
       {activeTab === 'powerbi' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {powerbiDashboards.map((dash) => (
-            <div key={dash.id} style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ backgroundColor: '#FEF3C7', color: '#D97706', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '800' }}>
+            <div key={dash.id} className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
+              <div className="flex justify-between items-center mb-3">
+                <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
                   {dash.category}
                 </span>
-                <span style={{ fontSize: '10px', color: '#64748B' }}>RLS: {dash.rlsApplied ? 'مفعل بحماية الأدوار' : 'عام'}</span>
+                <span className="text-[10px] text-zinc-400 font-medium">RLS: {dash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}</span>
               </div>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '8px' }}>
+              <h3 className="text-xs font-bold text-black mb-1">
                 {dash.title}
               </h3>
-              <div style={{ fontSize: '11px', color: '#64748B', marginBottom: '16px' }}>
-                مجموعة البيانات: <span style={{ fontFamily: 'monospace' }}>{dash.datasetName}</span> | آخر مزامنة: {dash.lastSyncTime}
+              <div className="text-[11px] text-zinc-400 mb-4 font-mono">
+                مجموعة البيانات: {dash.datasetName}
               </div>
 
               {/* Power BI Embed Simulation Box */}
-              <div style={{ backgroundColor: '#0F172A', borderRadius: '8px', height: '160px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', marginBottom: '16px', padding: '20px', textAlign: 'center' }}>
-                <i className="fa-solid fa-chart-area" style={{ fontSize: '32px', color: '#F59E0B', marginBottom: '8px' }}></i>
-                <span style={{ fontSize: '12px', color: '#F8FAFC', fontWeight: '700' }}>Power BI Embedded Service Ready</span>
-                <span style={{ fontSize: '10px' }}>التقرير مشفر ومربوط بنماذج Row-Level Security لقاعدتك الحالية.</span>
+              <div className="bg-black rounded-2xl p-6 text-center text-zinc-400 mb-4 flex flex-col items-center justify-center gap-2">
+                <BarChart3 className="w-8 h-8 text-amber-400" />
+                <span className="text-xs font-bold text-white">Power BI Embedded Service Ready</span>
+                <span className="text-[10px] text-zinc-400">التقرير مشفر ومربوط بنماذج Row-Level Security لقاعدتك.</span>
               </div>
 
-              <button type="button" style={{ width: '100%', backgroundColor: '#F59E0B', color: '#FFFFFF', border: 'none', borderRadius: '8px', padding: '10px', fontWeight: '800', fontSize: '12px', cursor: 'pointer' }}>
-                فتح لوحة Power BI المباشرة
+              <button
+                type="button"
+                className="button-primary-pill w-full flex items-center justify-center gap-2"
+                style={{ padding: '8px', fontSize: '12px' }}
+              >
+                <span>فتح لوحة Power BI المباشرة</span>
+                <ExternalLink className="w-3.5 h-3.5" />
               </button>
             </div>
           ))}
@@ -243,44 +264,43 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
       {/* Tab 3: Visio Org Chart */}
       {activeTab === 'visio' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '24px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '8px' }}>
-            الهيكل التنظيمي الخريطي الموحد (Visio Interactive Group Org Chart):
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="text-sm font-bold text-black mb-1 flex items-center gap-2">
+            <GitFork className="w-4 h-4 text-black" />
+            <span>الهيكل التنظيمي الخريطي الموحد (Visio Interactive Group Org Chart)</span>
           </h3>
-          <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '24px' }}>
+          <p className="text-xs text-zinc-500 mb-6">
             توليد ديناميكي للهيكل التنظيمي لمجموعة خالد السليم والشركات الأربع المعتمدة بناءً على بيانات HRIS الفعلية.
           </p>
 
           {/* Org Chart Visualization Tree */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-            {/* Top Node */}
-            <div style={{ backgroundColor: '#0F172A', color: '#FFF', padding: '14px 28px', borderRadius: '12px', textAlign: 'center', border: '2px solid #D4AF37', boxShadow: '0 4px 15px rgba(0,0,0,0.15)' }}>
-              <div style={{ fontSize: '16px', fontWeight: '900' }}>خالد السليم للاستقدام والتشغيل</div>
-              <div style={{ fontSize: '11px', color: '#D4AF37', fontWeight: '700' }}>مجلس الإدارة والمدير التنفيذي للمجموعة</div>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="bg-black text-white p-4 rounded-2xl text-center border-2 border-emerald-400 shadow-lg min-w-[240px]">
+              <div className="text-sm font-black">خالد السليم للاستقدام والتشغيل</div>
+              <div className="text-[11px] text-emerald-400 font-semibold mt-0.5">مجلس الإدارة والمدير التنفيذي للمجموعة</div>
             </div>
 
-            <div style={{ width: '2px', height: '24px', backgroundColor: '#CBD5E1' }} />
+            <div className="w-0.5 h-6 bg-zinc-300" />
 
-            {/* Companies Nodes Grid */}
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <div style={{ backgroundColor: '#EFF6FF', border: '1px solid #BFDBFE', padding: '12px 18px', borderRadius: '10px', textAlign: 'center', minWidth: '160px' }}>
-                <div style={{ fontSize: '13px', fontWeight: '800', color: '#1E40AF' }}>شركة السفير الماسي</div>
-                <div style={{ fontSize: '10px', color: '#64748B' }}>5 فروع | 120 موظف</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-3xl">
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
+                <div className="text-xs font-bold text-black">شركة السفير الماسي</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">5 فروع | 120 موظف</div>
               </div>
 
-              <div style={{ backgroundColor: '#ECFDF5', border: '1px solid #A7F3D0', padding: '12px 18px', borderRadius: '10px', textAlign: 'center', minWidth: '160px' }}>
-                <div style={{ fontSize: '13px', fontWeight: '800', color: '#047857' }}>شركة ياقوت نجد</div>
-                <div style={{ fontSize: '10px', color: '#64748B' }}>4 فروع | 95 موظف</div>
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
+                <div className="text-xs font-bold text-black">شركة ياقوت نجد</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">4 فروع | 95 موظف</div>
               </div>
 
-              <div style={{ backgroundColor: '#F5F3FF', border: '1px solid #DDD6FE', padding: '12px 18px', borderRadius: '10px', textAlign: 'center', minWidth: '160px' }}>
-                <div style={{ fontSize: '13px', fontWeight: '800', color: '#6D28D9' }}>شركة توباز للاستقدام</div>
-                <div style={{ fontSize: '10px', color: '#64748B' }}>6 فروع | 160 موظف</div>
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
+                <div className="text-xs font-bold text-black">شركة توباز للاستقدام</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">6 فروع | 160 موظف</div>
               </div>
 
-              <div style={{ backgroundColor: '#FFF7ED', border: '1px solid #FFEDD5', padding: '12px 18px', borderRadius: '10px', textAlign: 'center', minWidth: '160px' }}>
-                <div style={{ fontSize: '13px', fontWeight: '800', color: '#C2410C' }}>دار الرواد</div>
-                <div style={{ fontSize: '10px', color: '#64748B' }}>3 فروع | 75 موظف</div>
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
+                <div className="text-xs font-bold text-black">دار الرواد</div>
+                <div className="text-[10px] text-zinc-500 mt-0.5">3 فروع | 75 موظف</div>
               </div>
             </div>
           </div>
@@ -289,3 +309,5 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
     </div>
   );
 };
+
+export default MicrosoftIntegrationCenterPage;

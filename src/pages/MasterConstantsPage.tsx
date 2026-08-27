@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { 
+  Sliders, Plus, FileSpreadsheet, FileText, Globe, UserCheck, 
+  Moon, Star, Plane, Heart, GitCommit, Trash2, X, Check
+} from 'lucide-react';
 
 interface ConstantItem {
   id: string;
@@ -155,64 +159,79 @@ export const MasterConstantsPage: React.FC = () => {
   const activeList = getActiveList();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="space-y-6">
       {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <i className="fa-solid fa-sliders text-emerald-600"></i>
-            ثوابت وإعدادات الاستقدام والتشغيل (Master Constants)
-          </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
-            إدارة الجنسيات والدول، المهن المعتمدة، الأديان، المهارات، المطارات، الحالات الاجتماعية، ومراحل العقود
-          </p>
-        </div>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Sliders className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>MASTER CONSTANTS</span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>القاموس والمحددات الشاملة</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                ثوابت وإعدادات الاستقدام والتشغيل
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                إدارة الجنسيات والدول، المهن المعتمدة، الأديان، المهارات، المطارات، الحالات الاجتماعية، ومراحل العقود
+              </p>
+            </div>
+          </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'excel')}
-            className="button-outline-on-light"
-            style={{ padding: '6px 14px', fontSize: '12px', minHeight: '38px' }}
-          >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
-          </button>
-          <button
-            onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'pdf')}
-            className="button-outline-on-light"
-            style={{ padding: '6px 14px', fontSize: '12px', minHeight: '38px' }}
-          >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
-          </button>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="button-primary-pill"
-            style={{
-              padding: '6px 18px',
-              fontSize: '13px',
-              minHeight: '38px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <i className="fa-solid fa-plus text-xs"></i>
-            + إضافة بند جديد
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+            >
+              <Plus className="w-4 h-4 ml-1 text-black" />
+              <span>+ إضافة بند جديد</span>
+            </button>
+            <button
+              onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'excel')}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <span>Excel</span>
+            </button>
+            <button
+              onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'pdf')}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <span>PDF</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Tabs Navigation */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'nationalities', label: `الجنسيات (${nationalities.length})`, icon: 'fa-globe' },
-          { id: 'professions', label: `المهن المعتمدة (${professions.length})`, icon: 'fa-user-tie' },
-          { id: 'religions', label: `الأديان (${religions.length})`, icon: 'fa-kaaba' },
-          { id: 'skills', label: `المهارات (${skills.length})`, icon: 'fa-star' },
-          { id: 'airports', label: `المطارات (${airports.length})`, icon: 'fa-plane-departure' },
-          { id: 'social_statuses', label: `الحالات الاجتماعية (${socialStatuses.length})`, icon: 'fa-heart' },
-          { id: 'stages', label: `مراحل الاستقدام (${stages.length})`, icon: 'fa-timeline' },
+          { id: 'nationalities', label: `الجنسيات (${nationalities.length})`, icon: Globe },
+          { id: 'professions', label: `المهن (${professions.length})`, icon: UserCheck },
+          { id: 'religions', label: `الأديان (${religions.length})`, icon: Moon },
+          { id: 'skills', label: `المهارات (${skills.length})`, icon: Star },
+          { id: 'airports', label: `المطارات (${airports.length})`, icon: Plane },
+          { id: 'social_statuses', label: `الحالات الاجتماعية (${socialStatuses.length})`, icon: Heart },
+          { id: 'stages', label: `مراحل العقود (${stages.length})`, icon: GitCommit },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
           return (
             <button
               key={tab.id}
@@ -228,12 +247,12 @@ export const MasterConstantsPage: React.FC = () => {
                 fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
               }}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{ fontSize: '11px' }}></i>
+              <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
             </button>
           );
@@ -241,82 +260,57 @@ export const MasterConstantsPage: React.FC = () => {
       </div>
 
       {/* Search Input */}
-      <div style={{ maxWidth: '360px' }}>
+      <div className="max-w-xs">
         <input
           type="text"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder="بحث سريع في القائمة الحالية..."
-          className="filter-input"
-          style={{ width: '100%', padding: '8px 14px', borderRadius: '10px' }}
+          className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-4 text-xs text-black focus:outline-none focus:border-black"
         />
       </div>
 
       {/* Constants Data Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {activeList.map((item) => (
           <div
             key={item.id}
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: '12px',
-              padding: '16px',
-              border: '1px solid #E2E8F0',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-              opacity: item.status === 'معطل' ? 0.6 : 1
-            }}
+            className={`p-4 bg-white rounded-2xl border border-zinc-200 flex items-center justify-between transition-opacity ${item.status === 'معطل' ? 'opacity-50' : 'opacity-100'}`}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="flex items-center gap-3">
               {item.icon ? (
-                <span style={{ fontSize: '24px' }}>{item.icon}</span>
+                <span className="text-2xl">{item.icon}</span>
               ) : (
-                <div
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '9999px',
-                    backgroundColor: '#000000',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 600,
-                    fontSize: '12px',
-                  }}
-                >
-                  <i className="fa-solid fa-check"></i>
+                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+                  <Check className="w-4 h-4" />
                 </div>
               )}
               <div>
-                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>{item.title}</h4>
-                {item.subtext && <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: '#64748B' }}>{item.subtext}</p>}
+                <h4 className="text-xs font-bold text-black m-0">{item.title}</h4>
+                {item.subtext && <p className="text-[11px] text-zinc-500 m-0 mt-0.5">{item.subtext}</p>}
                 {item.code && (
-                  <span style={{ fontSize: '10px', color: '#94A3B8', fontFamily: 'monospace', fontWeight: '700' }}>
+                  <span className="text-[10px] text-zinc-400 font-mono block mt-0.5">
                     كود: {item.code}
                   </span>
                 )}
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => handleToggleStatus(item.id)}
-                style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: '2px' }}
-                title="تغيير الحالة"
+                className="cursor-pointer"
               >
                 <Badge text={item.status} type={item.status === 'نشط' ? 'success' : 'danger'} />
               </button>
               <button
                 type="button"
                 onClick={() => handleDeleteItem(item.id)}
-                style={{ border: 'none', background: 'transparent', color: '#EF4444', cursor: 'pointer', padding: '4px', fontSize: '12px' }}
+                className="p-1 rounded-full text-zinc-400 hover:text-rose-600 transition-colors"
                 title="حذف"
               >
-                <i className="fa-solid fa-trash-can"></i>
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -325,69 +319,58 @@ export const MasterConstantsPage: React.FC = () => {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', width: '100%', maxWidth: '480px', padding: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
-              إضافة بند جديد في القاموس
-            </h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-emerald-400" />
+                <span>إضافة بند جديد في القاموس</span>
+              </h3>
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <form onSubmit={handleAddItem}>
-              <div style={{ marginBottom: '14px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
-                  اسم البند / العنوان *
-                </label>
+            <form onSubmit={handleAddItem} className="p-6 space-y-4 bg-white text-black">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم البند / العنوان *</label>
                 <input
                   type="text"
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="مثال: إندونيسيا، رعاية صحية، مطار دبي"
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
-                  الكود الإنجليزي / الرمز (اختياري)
-                </label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الكود الإنجليزي / الرمز (اختياري)</label>
                 <input
                   type="text"
                   value={newCode}
                   onChange={(e) => setNewCode(e.target.value)}
                   placeholder="مثال: IDN, HEALTH_CARE, DXB"
-                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', boxSizing: 'border-box' }}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="button-outline-on-light"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
+                  style={{ padding: '6px 16px', fontSize: '13px', minHeight: '36px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="button-primary-pill"
-                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
+                  style={{ padding: '6px 20px', fontSize: '13px', minHeight: '36px' }}
                 >
-                  حفظ البند
+                  <Check className="w-4 h-4 ml-1" />
+                  <span>حفظ البند</span>
                 </button>
               </div>
             </form>
@@ -397,3 +380,5 @@ export const MasterConstantsPage: React.FC = () => {
     </div>
   );
 };
+
+export default MasterConstantsPage;

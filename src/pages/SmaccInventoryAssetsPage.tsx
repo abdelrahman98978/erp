@@ -4,7 +4,9 @@ import {
   Plus,
   Search,
   RefreshCw,
-  Box
+  Box,
+  Layers,
+  FileSpreadsheet
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 
@@ -54,19 +56,16 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
   const handleSaveAsset = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAssetModalOpen(false);
-    alert(`تم إضافة الأصل الثابت (${newAsset.name}) وتجهيز سجل الإهلاك الخاص به بنجاح!`);
   };
 
   const handleSaveItem = (e: React.FormEvent) => {
     e.preventDefault();
     setIsItemModalOpen(false);
-    alert(`تم إضافة الصنف الجديد (${newItem.name}) بسعر بيع ${newItem.salePrice} ر.س إلى دليل المخزون!`);
   };
 
   const handleSaveStockVoucher = (e: React.FormEvent) => {
     e.preventDefault();
     setIsStockVoucherModalOpen(false);
-    alert(`تم تنفيذ إذن ${newStockVoucher.type} المخزني رقم (${newStockVoucher.voucherNo}) بنجاح!`);
   };
 
   return (
@@ -80,94 +79,96 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
           padding: '28px',
           color: '#FFFFFF',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Building2 className="w-5 h-5" />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC ASSETS & STOCK</span>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Box className="w-5 h-5 text-emerald-400" />
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-              إدارة الأصول الثابتة والمخزون
-            </h1>
-            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              سجل الأصول والإهلاكات الدوري، دليل الأصناف والمنتجات، وأذونات الصرف والإضافة
-            </p>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC ASSETS & STOCK</span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الأصول والإهلاك والمخازن</span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                إدارة الأصول الثابتة والمخزون
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                سجل الأصول والإهلاكات الدوري، دليل الأصناف والمنتجات، وأذونات الصرف والإضافة
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setIsAssetModalOpen(true)}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+            >
+              <Plus className="w-3.5 h-3.5 ml-1 text-black" />
+              <span>+ أصل جديد</span>
+            </button>
+            <button
+              onClick={() => setIsItemModalOpen(true)}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
+            >
+              <Box className="w-3.5 h-3.5 ml-1" />
+              <span>+ صنف مخزون</span>
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Tab Buttons */}
-        <div className="flex flex-wrap items-center bg-white/10 p-1.5 rounded-full border border-white/15 gap-1 text-xs">
-          <button
-            onClick={() => setActiveTab('assets')}
-            style={{
-              padding: '6px 16px',
-              borderRadius: '9999px',
-              fontWeight: activeTab === 'assets' ? 550 : 420,
-              background: activeTab === 'assets' ? '#ffffff' : 'transparent',
-              color: activeTab === 'assets' ? '#000000' : '#d4d4d8',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            سجل الأصول الثابتة
-          </button>
-          <button
-            onClick={() => setActiveTab('inventory')}
-            style={{
-              padding: '6px 16px',
-              borderRadius: '9999px',
-              fontWeight: activeTab === 'inventory' ? 550 : 420,
-              background: activeTab === 'inventory' ? '#ffffff' : 'transparent',
-              color: activeTab === 'inventory' ? '#000000' : '#d4d4d8',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            دليل أصناف المخزون
-          </button>
-          <button
-            onClick={() => setActiveTab('stock-vouchers')}
-            style={{
-              padding: '6px 16px',
-              borderRadius: '9999px',
-              fontWeight: activeTab === 'stock-vouchers' ? 550 : 420,
-              background: activeTab === 'stock-vouchers' ? '#ffffff' : 'transparent',
-              color: activeTab === 'stock-vouchers' ? '#000000' : '#d4d4d8',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            أذونات الصرف والإضافة
-          </button>
-        </div>
+      {/* Tab Navigation Buttons */}
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
+        {[
+          { id: 'assets', label: 'سجل الأصول الثابتة', icon: Building2 },
+          { id: 'inventory', label: 'دليل أصناف المخزون', icon: Box },
+          { id: 'stock-vouchers', label: 'أذونات الصرف والإضافة', icon: Layers },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              style={{
+                padding: '6px 16px',
+                borderRadius: '9999px',
+                border: '1px solid',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
+                color: isActive ? '#ffffff' : '#27272a',
+                fontWeight: isActive ? 550 : 420,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* TAB 1: Fixed Assets */}
       {activeTab === 'assets' && (
-        <div className="space-y-6">
-          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="space-y-4">
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث في الأصول الثابتة..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="text-input"
-                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
               />
             </div>
 
@@ -175,71 +176,73 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               <button
                 onClick={() => setIsAssetModalOpen(true)}
                 className="button-primary-pill"
-                style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+                style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
               >
-                <Plus className="w-4 h-4 ml-1" />
-                <span>+ إضافة أصل ثابت جديد</span>
+                <Plus className="w-3.5 h-3.5 ml-1" />
+                <span>إضافة أصل ثابت</span>
               </button>
               <button
                 onClick={() => alert('تم تشغيل وإعادة احتساب الإهلاك التلقائي لجميع الأصول المسجلة وتوليد قيود اليومية!')}
                 className="button-outline-on-light"
-                style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+                style={{ fontSize: '12px', padding: '6px 14px', minHeight: '34px' }}
               >
-                <RefreshCw className="w-4 h-4 ml-1 text-emerald-600" />
+                <RefreshCw className="w-3.5 h-3.5 ml-1 text-emerald-600" />
                 <span>احتساب الإهلاك الدوري</span>
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-                <tr>
-                  <th className="p-3.5">رمز الأصل</th>
-                  <th className="p-3.5">اسم الأصل الثابت</th>
-                  <th className="p-3.5">الفئة / التصنيف</th>
-                  <th className="p-3.5">تاريخ الشراء</th>
-                  <th className="p-3.5">تكلفة الشراء</th>
-                  <th className="p-3.5">نسبة الإهلاك</th>
-                  <th className="p-3.5">مجمع الإهلاك</th>
-                  <th className="p-3.5">القيمة الدفترية الحالية</th>
-                  <th className="p-3.5 text-center">الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 font-sans">
-                <tr className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono text-black font-bold">AST-001</td>
-                  <td className="p-3.5 font-semibold text-black">سيارة تويوتا كامري 2024 (فرع الرياض)</td>
-                  <td className="p-3.5 text-zinc-600">وسائل النقل والسيارات</td>
-                  <td className="p-3.5 text-zinc-500 font-mono">2024-01-15</td>
-                  <td className="p-3.5 font-bold font-mono text-black">95,000 ر.س</td>
-                  <td className="p-3.5 text-black font-bold font-mono">20%</td>
-                  <td className="p-3.5 text-zinc-600 font-mono">19,000 ر.س</td>
-                  <td className="p-3.5 font-bold font-mono text-emerald-700">76,000 ر.س</td>
-                  <td className="p-3.5 text-center">
-                    <button className="button-outline-on-light" style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}>
-                      تفاصيل الأصل
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3.5">رمز الأصل</th>
+                    <th className="p-3.5">اسم الأصل الثابت</th>
+                    <th className="p-3.5">الفئة / التصنيف</th>
+                    <th className="p-3.5">تاريخ الشراء</th>
+                    <th className="p-3.5">تكلفة الشراء</th>
+                    <th className="p-3.5">نسبة الإهلاك</th>
+                    <th className="p-3.5">مجمع الإهلاك</th>
+                    <th className="p-3.5">القيمة الدفترية</th>
+                    <th className="p-3.5 text-center">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  <tr className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-mono text-black font-bold">AST-001</td>
+                    <td className="p-3.5 font-bold text-black">سيارة تويوتا كامري 2024 (فرع الرياض)</td>
+                    <td className="p-3.5 text-zinc-600">وسائل النقل والسيارات</td>
+                    <td className="p-3.5 text-zinc-500 font-mono">2024-01-15</td>
+                    <td className="p-3.5 font-bold font-mono text-black">95,000 ر.س</td>
+                    <td className="p-3.5 text-black font-bold font-mono">20%</td>
+                    <td className="p-3.5 text-zinc-600 font-mono">19,000 ر.س</td>
+                    <td className="p-3.5 font-bold font-mono text-emerald-700">76,000 ر.س</td>
+                    <td className="p-3.5 text-center">
+                      <button className="button-outline-on-light" style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}>
+                        تفاصيل الأصل
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {/* TAB 2: Inventory Items */}
       {activeTab === 'inventory' && (
-        <div className="space-y-6">
-          <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="space-y-4">
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث في أصناف المخزون..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-2 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
               />
             </div>
 
@@ -249,7 +252,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 className="button-primary-pill"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
-                <Plus className="w-4 h-4 ml-1" />
+                <Plus className="w-3.5 h-3.5 ml-1" />
                 <span>إضافة صنف جديد</span>
               </button>
               <button
@@ -257,43 +260,93 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
-                <Box className="w-4 h-4 ml-1" />
-                <span>إذن صرف / إضافة مخزني</span>
+                <Box className="w-3.5 h-3.5 ml-1" />
+                <span>إذن صرف / إضافة</span>
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-                <tr>
-                  <th className="p-3.5">رمز الصنف (SKU)</th>
-                  <th className="p-3.5">اسم الصنف / الخدمة</th>
-                  <th className="p-3.5">الفئة</th>
-                  <th className="p-3.5">وحدة القياس</th>
-                  <th className="p-3.5">سعر التكلفة</th>
-                  <th className="p-3.5">سعر البيع</th>
-                  <th className="p-3.5">الكمية الحالية</th>
-                  <th className="p-3.5">الحالة</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 font-sans">
-                <tr className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono text-black font-bold">INV-101</td>
-                  <td className="p-3.5 font-semibold text-black">عقد استقدام عاملة منزلية (الفلبين)</td>
-                  <td className="p-3.5 text-zinc-600">خدمات استقدام</td>
-                  <td className="p-3.5">عقد</td>
-                  <td className="p-3.5 text-zinc-500 font-mono">12,000 ر.س</td>
-                  <td className="p-3.5 font-bold font-mono text-emerald-700">17,500 ر.س</td>
-                  <td className="p-3.5 font-bold text-black">15 عقد</td>
-                  <td className="p-3.5">
-                    <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
-                      متوفر
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3.5">رمز الصنف (SKU)</th>
+                    <th className="p-3.5">اسم الصنف / الخدمة</th>
+                    <th className="p-3.5">الفئة</th>
+                    <th className="p-3.5">وحدة القياس</th>
+                    <th className="p-3.5">سعر التكلفة</th>
+                    <th className="p-3.5">سعر البيع</th>
+                    <th className="p-3.5">الكمية الحالية</th>
+                    <th className="p-3.5">الحالة</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  <tr className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-mono text-black font-bold">INV-101</td>
+                    <td className="p-3.5 font-bold text-black">عقد استقدام عاملة منزلية (الفلبين)</td>
+                    <td className="p-3.5 text-zinc-600">خدمات استقدام</td>
+                    <td className="p-3.5">عقد</td>
+                    <td className="p-3.5 text-zinc-500 font-mono">12,000 ر.س</td>
+                    <td className="p-3.5 font-bold font-mono text-emerald-700">17,500 ر.س</td>
+                    <td className="p-3.5 font-bold text-black">15 عقد</td>
+                    <td className="p-3.5">
+                      <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
+                        متوفر
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: Stock Vouchers */}
+      {activeTab === 'stock-vouchers' && (
+        <div className="space-y-4">
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+            <h3 className="text-sm font-bold text-black m-0">سجل أذونات الصرف والإضافة المخزنية</h3>
+            <button
+              onClick={() => setIsStockVoucherModalOpen(true)}
+              className="button-primary-pill"
+              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+            >
+              <Plus className="w-3.5 h-3.5 ml-1" />
+              <span>+ إذن مخزني جديد</span>
+            </button>
+          </div>
+
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3.5">رقم الإذن</th>
+                    <th className="p-3.5">النوع</th>
+                    <th className="p-3.5">التاريخ</th>
+                    <th className="p-3.5">الصنف</th>
+                    <th className="p-3.5">الكمية</th>
+                    <th className="p-3.5">السبب / الملاحظات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  <tr className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">STK-2026-001</td>
+                    <td className="p-3.5">
+                      <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                        إضافة (+)
+                      </span>
+                    </td>
+                    <td className="p-3.5 font-mono text-zinc-500">2026-08-01</td>
+                    <td className="p-3.5 font-bold text-black">INV-101 - استقدام الفلبين</td>
+                    <td className="p-3.5 font-bold font-mono">10 عقود</td>
+                    <td className="p-3.5 text-zinc-600">دفعة جديدة من الوكالة الخارجية</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -425,7 +478,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         </div>
       </SmaccFormModal>
 
-      {/* MODAL 3: Stock Voucher Modal (إذن إضافة/صرف مخزني) */}
+      {/* MODAL 3: Stock Voucher Modal */}
       <SmaccFormModal
         isOpen={isStockVoucherModalOpen}
         onClose={() => setIsStockVoucherModalOpen(false)}

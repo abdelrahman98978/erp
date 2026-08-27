@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { useLanguage } from '../i18n/LanguageContext';
 import { exportData } from '../services/exportService';
-import { realErpDataStore } from '../services/realErpDataStore';
+import { Network, Plus, FileSpreadsheet, FileText, Building2, Users, Check, X, Shield, Plane, Globe, Handshake, DollarSign, PhoneCall, Hotel, Stethoscope, Utensils, Archive, Gem, Landmark, Repeat, Crown, ShieldAlert } from 'lucide-react';
 
 export interface BranchEntity {
   id: string;
@@ -23,7 +22,7 @@ export interface SubDepartment {
   staff_count: number;
   status: 'مفعل' | 'قيد التطوير';
   kpi: string;
-  icon: string;
+  icon?: string;
 }
 
 const ALL_GROUP_ENTITIES: BranchEntity[] = [
@@ -37,10 +36,10 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'عبد الفتاح السليم (المدير العام)',
     staff_count: 14,
     departments: [
-      { id: 'd-101', name: 'إدارة القيادة العليا والتخطيط الإستراتيجي', description: 'لوحة الآدمن الـ 30 ميزة، الحوكمة، وكشوفات الأرباح المجمعة.', head: 'عبد الفتاح السليم', staff_count: 3, status: 'مفعل', kpi: 'نسبة النمو 99.8%', icon: 'fa-solid fa-user-shield' },
-      { id: 'd-102', name: 'إدارة الموارد البشرية والرواتب (HR & Payroll)', description: 'سجلات الموظفين، مسير الرواتب الشهرية، الحضور والانصراف.', head: 'سارة خالد', staff_count: 4, status: 'مفعل', kpi: 'مسير الرواتب 100%', icon: 'fa-solid fa-users-viewfinder' },
-      { id: 'd-103', name: 'الإدارة المالية والمحاسبة العامة (Central Finance)', description: 'شجرة الحسابات (336)، مراكز التكلفة، والربط الضريبي ZATCA.', head: 'محمد مصطفى', staff_count: 4, status: 'مفعل', kpi: 'مطابقة ضريبية 100%', icon: 'fa-solid fa-vault' },
-      { id: 'd-104', name: 'إدارة الأمن وحوكمة المصادقة 2FA', description: 'مصفوفة الصلاحيات RBAC، سياسات 2FA، وجدار الحماية.', head: 'مشرف الأمان', staff_count: 3, status: 'مفعل', kpi: 'تأمين 2FA بنسبة 100%', icon: 'fa-solid fa-lock' }
+      { id: 'd-101', name: 'إدارة القيادة العليا والتخطيط الإستراتيجي', description: 'لوحة الآدمن الـ 30 ميزة، الحوكمة، وكشوفات الأرباح المجمعة.', head: 'عبد الفتاح السليم', staff_count: 3, status: 'مفعل', kpi: 'نسبة النمو 99.8%' },
+      { id: 'd-102', name: 'إدارة الموارد البشرية والرواتب (HR & Payroll)', description: 'سجلات الموظفين، مسير الرواتب الشهرية، الحضور والانصراف.', head: 'سارة خالد', staff_count: 4, status: 'مفعل', kpi: 'مسير الرواتب 100%' },
+      { id: 'd-103', name: 'الإدارة المالية والمحاسبة العامة (Central Finance)', description: 'شجرة الحسابات (336)، مراكز التكلفة، والربط الضريبي ZATCA.', head: 'محمد مصطفى', staff_count: 4, status: 'مفعل', kpi: 'مطابقة ضريبية 100%' },
+      { id: 'd-104', name: 'إدارة الأمن وحوكمة المصادقة 2FA', description: 'مصفوفة الصلاحيات RBAC، سياسات 2FA، وجدار الحماية.', head: 'مشرف الأمان', staff_count: 3, status: 'مفعل', kpi: 'تأمين 2FA بنسبة 100%' }
     ]
   },
   {
@@ -52,9 +51,9 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'خالد العتيبي',
     staff_count: 8,
     departments: [
-      { id: 'd-201', name: 'إدارة الاستقبال والموانئ والمطارات', description: 'استقبال رحلات الوصول بمطار الملك عبد العزيز وتأكيد الجوازات.', head: 'أحمد الزهراني', staff_count: 2, status: 'مفعل', kpi: 'سرعة الاستلام 45 دقيقة', icon: 'fa-solid fa-plane-arrival' },
-      { id: 'd-202', name: 'إدارة عقود الاستقدام وتفاويض الإنجاز', description: 'عقود مساند، توثيق تفاويض الإنجاز الإلكترونية، وتتبع التفييز.', head: 'ماجد الغامدي', staff_count: 3, status: 'مفعل', kpi: '891 تفويض موثق', icon: 'fa-solid fa-passport' },
-      { id: 'd-203', name: 'قسم العلاقات مع الوكلاء الخارجيين', description: 'المتابعة مع مكاتب إثيوبيا DAMAS، الفلبين PLATINUM، والهند.', head: 'خالد العتيبي', staff_count: 3, status: 'مفعل', kpi: '18 مكتب خارجي', icon: 'fa-solid fa-globe' }
+      { id: 'd-201', name: 'إدارة الاستقبال والموانئ والمطارات', description: 'استقبال رحلات الوصول بمطار الملك عبد العزيز وتأكيد الجوازات.', head: 'أحمد الزهراني', staff_count: 2, status: 'مفعل', kpi: 'سرعة الاستلام 45 دقيقة' },
+      { id: 'd-202', name: 'إدارة عقود الاستقدام وتفاويض الإنجاز', description: 'عقود مساند، توثيق تفاويض الإنجاز الإلكترونية، وتتبع التفييز.', head: 'ماجد الغامدي', staff_count: 3, status: 'مفعل', kpi: '891 تفويض موثق' },
+      { id: 'd-203', name: 'قسم العلاقات مع الوكلاء الخارجيين', description: 'المتابعة مع مكاتب إثيوبيا DAMAS، الفلبين PLATINUM، والهند.', head: 'خالد العتيبي', staff_count: 3, status: 'مفعل', kpi: '18 مكتب خارجي' }
     ]
   },
   {
@@ -66,9 +65,9 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'عمر الدوسري',
     staff_count: 6,
     departments: [
-      { id: 'd-301', name: 'إدارة عقود التشغيل والتأجير للمؤسسات', description: 'إدارة عقود التأجير الشهرية والسنوية وباقات الكوادر.', head: 'عمر الدوسري', staff_count: 2, status: 'مفعل', kpi: '610 عقود تأجير', icon: 'fa-solid fa-handshake' },
-      { id: 'd-302', name: 'إدارة التحصيل والطلبات المالية بين الفروع', description: 'سندات القبض والصرف، وطلبات المناقلات المالية السريعة.', head: 'فهد الخالدي', staff_count: 2, status: 'مفعل', kpi: 'تحصيل 98%', icon: 'fa-solid fa-money-bill-wave' },
-      { id: 'd-303', name: 'مركز الاتصال والتسويق الرقمي CRM', description: 'متابعة زوار المنصة، محادثات الواتساب، والفرص البيعية.', head: 'نورة الشمري', staff_count: 2, status: 'مفعل', kpi: '241 عميل نشط', icon: 'fa-solid fa-phone-volume' }
+      { id: 'd-301', name: 'إدارة عقود التشغيل والتأجير للمؤسسات', description: 'إدارة عقود التأجير الشهرية والسنوية وباقات الكوادر.', head: 'عمر الدوسري', staff_count: 2, status: 'مفعل', kpi: '610 عقود تأجير' },
+      { id: 'd-302', name: 'إدارة التحصيل والطلبات المالية بين الفروع', description: 'سندات القبض والصرف، وطلبات المناقلات المالية السريعة.', head: 'فهد الخالدي', staff_count: 2, status: 'مفعل', kpi: 'تحصيل 98%' },
+      { id: 'd-303', name: 'مركز الاتصال والتسويق الرقمي CRM', description: 'متابعة زوار المنصة، محادثات الواتساب، والفرص البيعية.', head: 'نورة الشمري', staff_count: 2, status: 'مفعل', kpi: '241 عميل نشط' }
     ]
   },
   {
@@ -80,10 +79,10 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'سارة خالد',
     staff_count: 12,
     departments: [
-      { id: 'd-401', name: 'إدارة السكن والتسكين والغرف', description: 'تسجيل دخول وتسكين 61 عاملة بالنزل وتوزيع الغرف.', head: 'مريم العنزي', staff_count: 3, status: 'مفعل', kpi: 'سعة 120 أسرة', icon: 'fa-solid fa-hotel' },
-      { id: 'd-402', name: 'قسم الرعاية الطبية والفحوصات', description: 'الفحص الطبي الشامل، تأمين العيوب الخفية، واللياقة البدنية.', head: 'د. عادل القحطاني', staff_count: 3, status: 'مفعل', kpi: 'فحص 100% لائق', icon: 'fa-solid fa-stethoscope' },
-      { id: 'd-403', name: 'قسم التغذية والإعاشة والخدمات اللوجستية', description: 'الإعاشة اليومية وحافلات التوصيل اليومي بين الفروع.', head: 'سليمان الحربي', staff_count: 3, status: 'مفعل', kpi: '3 وجبات صحية/يوم', icon: 'fa-solid fa-utensils' },
-      { id: 'd-404', name: 'قسم فترة التجربة والترحيل (90 يوم)', description: 'متابعة فترة التجربة، حالات الباك أوت، وتذاكر المغادرة.', head: 'عبد الله الشهري', staff_count: 3, status: 'مفعل', kpi: 'ضمان 90 يوماً', icon: 'fa-solid fa-[#000] fa-box-archive' }
+      { id: 'd-401', name: 'إدارة السكن والتسكين والغرف', description: 'تسجيل دخول وتسكين 61 عاملة بالنزل وتوزيع الغرف.', head: 'مريم العنزي', staff_count: 3, status: 'مفعل', kpi: 'سعة 120 أسرة' },
+      { id: 'd-402', name: 'قسم الرعاية الطبية والفحوصات', description: 'الفحص الطبي الشامل، تأمين العيوب الخفية، واللياقة البدنية.', head: 'د. عادل القحطاني', staff_count: 3, status: 'مفعل', kpi: 'فحص 100% لائق' },
+      { id: 'd-403', name: 'قسم التغذية والإعاشة والخدمات اللوجستية', description: 'الإعاشة اليومية وحافلات التوصيل اليومي بين الفروع.', head: 'سليمان الحربي', staff_count: 3, status: 'مفعل', kpi: '3 وجبات صحية/يوم' },
+      { id: 'd-404', name: 'قسم فترة التجربة والترحيل (90 يوم)', description: 'متابعة فترة التجربة، حالات الباك أوت، وتذاكر المغادرة.', head: 'عبد الله الشهري', staff_count: 3, status: 'مفعل', kpi: 'ضمان 90 يوماً' }
     ]
   },
 
@@ -97,8 +96,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'المهندس أحمد السليم',
     staff_count: 18,
     departments: [
-      { id: 'd-topaz-1', name: 'إدارة الابتكار والحلول الصناعية المستقبلي', description: 'تطوير الحلول النوعية وتوجيه الاستقدام المتقدم للمؤسسات.', head: 'م. أحمد السليم', staff_count: 8, status: 'مفعل', kpi: 'ابتكار 100%', icon: 'fa-solid fa-gem' },
-      { id: 'd-topaz-2', name: 'إدارة المشروعات والتعاقدات الإستراتيجية', description: 'إدارة المشاريع الكبرى للمجموعة وتوفير الكوادر التخصصية.', head: 'فيصل القحطاني', staff_count: 10, status: 'مفعل', kpi: '42 مشروع نشط', icon: 'fa-solid fa-diagram-project' }
+      { id: 'd-topaz-1', name: 'إدارة الابتكار والحلول الصناعية المستقبلي', description: 'تطوير الحلول النوعية وتوجيه الاستقدام المتقدم للمؤسسات.', head: 'م. أحمد السليم', staff_count: 8, status: 'مفعل', kpi: 'ابتكار 100%' },
+      { id: 'd-topaz-2', name: 'إدارة المشروعات والتعاقدات الإستراتيجية', description: 'إدارة المشاريع الكبرى للمجموعة وتوفير الكوادر التخصصية.', head: 'فيصل القحطاني', staff_count: 10, status: 'مفعل', kpi: '42 مشروع نشط' }
     ]
   },
   {
@@ -110,8 +109,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'سليمان العتيبي',
     staff_count: 15,
     departments: [
-      { id: 'd-ruwad-1', name: 'إدارة التطوير العقاري والاستثمار النوعي', description: 'تطوير المقرات والمباني الإدارية ومجمعات الإيواء التابعة.', head: 'سليمان العتيبي', staff_count: 7, status: 'مفعل', kpi: 'استثمار عقاري 98%', icon: 'fa-solid fa-building' },
-      { id: 'd-ruwad-2', name: 'إدارة إدارة الأصول والأملاك التجارية', description: 'إدارة الأصول التأجيرية والمباني الاستثمارية لمجموعة السليم.', head: 'خالد المطيري', staff_count: 8, status: 'مفعل', kpi: 'عائد استثماري +14%', icon: 'fa-solid fa-landmark' }
+      { id: 'd-ruwad-1', name: 'إدارة التطوير العقاري والاستثمار النوعي', description: 'تطوير المقرات والمباني الإدارية ومجمعات الإيواء التابعة.', head: 'سليمان العتيبي', staff_count: 7, status: 'مفعل', kpi: 'استثمار عقاري 98%' },
+      { id: 'd-ruwad-2', name: 'إدارة إدارة الأصول والأملاك التجارية', description: 'إدارة الأصول التأجيرية والمباني الاستثمارية لمجموعة السليم.', head: 'خالد المطيري', staff_count: 8, status: 'مفعل', kpi: 'عائد استثماري +14%' }
     ]
   },
   {
@@ -123,8 +122,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'عبد العزيز السليم',
     staff_count: 12,
     departments: [
-      { id: 'd-saffir-1', name: 'إدارة خدمات نقل الكفالة والتنازل', description: 'إدارة طلبات نقل الخدمة والتنازل وفترة التجربة (10 أيام).', head: 'عبد العزيز السليم', staff_count: 6, status: 'مفعل', kpi: '42 نقل نهائي', icon: 'fa-solid fa-repeat' },
-      { id: 'd-saffir-2', name: 'قسم الدبلوماسية والتواصل الخارجي', description: 'التنسيق مع السفارات ومراكز التوثيق والقنصليات.', head: 'ناصر السبيعي', staff_count: 6, status: 'مفعل', kpi: 'اعتماد 100%', icon: 'fa-solid fa-handshake-angle' }
+      { id: 'd-saffir-1', name: 'إدارة خدمات نقل الكفالة والتنازل', description: 'إدارة طلبات نقل الخدمة والتنازل وفترة التجربة (10 أيام).', head: 'عبد العزيز السليم', staff_count: 6, status: 'مفعل', kpi: '42 نقل نهائي' },
+      { id: 'd-saffir-2', name: 'قسم الدبلوماسية والتواصل الخارجي', description: 'التنسيق مع السفارات ومراكز التوثيق والقنصليات.', head: 'ناصر السبيعي', staff_count: 6, status: 'مفعل', kpi: 'اعتماد 100%' }
     ]
   },
   {
@@ -136,8 +135,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'بندر الهويريني',
     staff_count: 10,
     departments: [
-      { id: 'd-masi-1', name: 'إدارة باقات التأجير والخدمات المنزلية VIP', description: 'تصميم باقات التأجير الفاخرة للكوادر المدربة وتأمين العيوب.', head: 'بندر الهويريني', staff_count: 5, status: 'مفعل', kpi: 'رضا العملاء 99%', icon: 'fa-solid fa-crown' },
-      { id: 'd-masi-2', name: 'قسم الضمان والبديل الفوري خلال 24 ساعة', description: 'توفير البديل الفوري وتغطية التأمين الشامل للنزل والعملاء.', head: 'هند العلي', staff_count: 5, status: 'مفعل', kpi: 'استبدال 24h', icon: 'fa-solid fa-shield-cat' }
+      { id: 'd-masi-1', name: 'إدارة باقات التأجير والخدمات المنزلية VIP', description: 'تصميم باقات التأجير الفاخرة للكوادر المدربة وتأمين العيوب.', head: 'بندر الهويريني', staff_count: 5, status: 'مفعل', kpi: 'رضا العملاء 99%' },
+      { id: 'd-masi-2', name: 'قسم الضمان والبديل الفوري خلال 24 ساعة', description: 'توفير البديل الفوري وتغطية التأمين الشامل للنزل والعملاء.', head: 'هند العلي', staff_count: 5, status: 'مفعل', kpi: 'استبدال 24h' }
     ]
   },
   {
@@ -149,8 +148,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'خالد السليم (الأيال)',
     staff_count: 9,
     departments: [
-      { id: 'd-ayal-1', name: 'إدارة حجز وتأكيد تذاكر الطيران (Ticketing)', description: 'إصدار حجوزات طيران الوصول والمغادرة للعمالة والعملاء.', head: 'خالد السليم', staff_count: 4, status: 'مفعل', kpi: '77 رحلة وصول', icon: 'fa-solid fa-plane-departure' },
-      { id: 'd-ayal-2', name: 'إدارة أسطول النقل البري والحافلات', description: 'إدارة الحافلات والسيارات الخاصة بنقل الكوادر من وإلى المطارات.', head: 'إبراهيم الفايز', staff_count: 5, status: 'مفعل', kpi: 'أسطول 12 حافلة', icon: 'fa-solid fa-bus' }
+      { id: 'd-ayal-1', name: 'إدارة حجز وتأكيد تذاكر الطيران (Ticketing)', description: 'إصدار حجوزات طيران الوصول والمغادرة للعمالة والعملاء.', head: 'خالد السليم', staff_count: 4, status: 'مفعل', kpi: '77 رحلة وصول' },
+      { id: 'd-ayal-2', name: 'إدارة أسطول النقل البري والحافلات', description: 'إدارة الحافلات والسيارات الخاصة بنقل الكوادر من وإلى المطارات.', head: 'إبراهيم الفايز', staff_count: 5, status: 'مفعل', kpi: 'أسطول 12 حافلة' }
     ]
   },
 
@@ -164,8 +163,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'Mr. Solomon Bekele',
     staff_count: 24,
     departments: [
-      { id: 'd-damas-1', name: 'قسم الفحص الطبي المقارن وتوثيق السفارة', description: 'إجراء الفحوصات الطبية واعتماد لياءة الكوادر بالسفارة السعودية.', head: 'Dr. Tadesse', staff_count: 12, status: 'مفعل', kpi: 'فحص لائق 100%', icon: 'fa-solid fa-hospital-user' },
-      { id: 'd-damas-2', name: 'قسم التدريب المنزلي واللغة العربية', description: 'تدريب العاملات على الطبخ والطهي الخليجي واللغة والأعراف.', head: 'Mrs. Aster', staff_count: 12, status: 'مفعل', kpi: 'تدريب 14 يوم', icon: 'fa-solid fa-graduation-cap' }
+      { id: 'd-damas-1', name: 'قسم الفحص الطبي المقارن وتوثيق السفارة', description: 'إجراء الفحوصات الطبية واعتماد لياءة الكوادر بالسفارة السعودية.', head: 'Dr. Tadesse', staff_count: 12, status: 'مفعل', kpi: 'فحص لائق 100%' },
+      { id: 'd-damas-2', name: 'قسم التدريب المنزلي واللغة العربية', description: 'تدريب العاملات على الطبخ والطهي الخليجي واللغة والأعراف.', head: 'Mrs. Aster', staff_count: 12, status: 'مفعل', kpi: 'تدريب 14 يوم' }
     ]
   },
   {
@@ -177,8 +176,8 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'Mr. Ricardo Santos',
     staff_count: 30,
     departments: [
-      { id: 'd-plt-1', name: 'قسم التدريب المهني والمهارات الفلبينية', description: 'اختبار مهارات التمريض والعناية بكبار السن والأطفال.', head: 'Maria Santos', staff_count: 15, status: 'مفعل', kpi: 'اعتماد POEA 100%', icon: 'fa-solid fa-user-nurse' },
-      { id: 'd-plt-2', name: 'قسم إنهاء إجراءات السفارة وتوثيق التأشيرات', description: 'تثبيت الفيزا والجوازات وإصدار تصاريح السفر الرسمية.', head: 'Juan Dela Cruz', staff_count: 15, status: 'مفعل', kpi: 'إنهاء خلال 7 أيام', icon: 'fa-solid fa-file-shield' }
+      { id: 'd-plt-1', name: 'قسم التدريب المهني والمهارات الفلبينية', description: 'اختبار مهارات التمريض والعناية بكبار السن والأطفال.', head: 'Maria Santos', staff_count: 15, status: 'مفعل', kpi: 'اعتماد POEA 100%' },
+      { id: 'd-plt-2', name: 'قسم إنهاء إجراءات السفارة وتوثيق التأشيرات', description: 'تثبيت الفيزا والجوازات وإصدار تصاريح السفر الرسمية.', head: 'Juan Dela Cruz', staff_count: 15, status: 'مفعل', kpi: 'إنهاء خلال 7 أيام' }
     ]
   },
   {
@@ -190,14 +189,13 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
     manager: 'Mr. Rajesh Kumar',
     staff_count: 22,
     departments: [
-      { id: 'd-vrst-1', name: 'قسم اختيار واختبار العمالة المهنية والسائقين', description: 'اختبار رخص القيادة المهنية والمهن الحرفية للمؤسسات.', head: 'Rajesh Kumar', staff_count: 11, status: 'مفعل', kpi: 'اختبار ميداني 100%', icon: 'fa-solid fa-id-card' },
-      { id: 'd-vrst-2', name: 'قسم الفحوصات الطبية والجوازات بالهند', description: 'المتابعة مع المراكز الطبية المعتمدة بـ WAMY والسفارة.', head: 'Amitabh Sharma', staff_count: 11, status: 'مفعل', kpi: 'اعتماد سفارة 100%', icon: 'fa-solid fa-stamp' }
+      { id: 'd-vrst-1', name: 'قسم اختيار واختبار العمالة المهنية والسائقين', description: 'اختبار رخص القيادة المهنية والمهن الحرفية للمؤسسات.', head: 'Rajesh Kumar', staff_count: 11, status: 'مفعل', kpi: 'اختبار ميداني 100%' },
+      { id: 'd-vrst-2', name: 'قسم الفحوصات الطبية والجوازات بالهند', description: 'المتابعة مع المراكز الطبية المعتمدة بـ WAMY والسفارة.', head: 'Amitabh Sharma', staff_count: 11, status: 'مفعل', kpi: 'اعتماد سفارة 100%' }
     ]
   }
 ];
 
 export const BranchDepartmentsPage: React.FC = () => {
-  const { t } = useLanguage();
   const [entities, setEntities] = useState<BranchEntity[]>(ALL_GROUP_ENTITIES);
   const [selectedEntityId, setSelectedEntityId] = useState<string>('b-1');
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<'all' | 'فرع منطقي' | 'شركة مجموعة' | 'مكتب خارجي'>('all');
@@ -220,10 +218,7 @@ export const BranchDepartmentsPage: React.FC = () => {
 
   const handleAddSubDepartment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!deptForm.name || !deptForm.description) {
-      alert('يرجى ملء كافة حقول القسم التخصصي الجديد');
-      return;
-    }
+    if (!deptForm.name || !deptForm.description) return;
 
     const newDept: SubDepartment = {
       id: `d-${Date.now()}`,
@@ -233,7 +228,6 @@ export const BranchDepartmentsPage: React.FC = () => {
       staff_count: 2,
       status: 'مفعل',
       kpi: deptForm.kpi,
-      icon: 'fa-solid fa-folder-plus'
     };
 
     setEntities(prev => prev.map(eItem => {
@@ -249,29 +243,55 @@ export const BranchDepartmentsPage: React.FC = () => {
 
     setShowAddDeptModal(false);
     setDeptForm({ name: '', description: '', head: '', kpi: 'أداء 100%' });
-    alert(`تمت إضافة وتفعيل قسم (${newDept.name}) بنجاح داخل ${selectedEntity.name}!`);
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Page Header Banner */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
-            <i className="fa-solid fa-sitemap text-black ml-2"></i> دليل الهيكلية والأقسام التخصصية الشاملة لجميع شركات المجموعة والمكاتب الخارجية
-          </h2>
-          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
-            مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر، الفروع الإقليمية، والمكاتب الخارجية (DAMAS, PLATINUM, VERSATILE)
-          </p>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Network className="w-5 h-5" />
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>ORGANIZATIONAL MATRIX</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              دليل الهيكلية والأقسام التخصصية للشركات والفروع
+            </h1>
+            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
+              مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر، الفروع الإقليمية، والمكاتب الخارجية
+            </p>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="button-primary-pill" onClick={() => setShowAddDeptModal(true)} style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}>
-            <i className="fa-solid fa-plus ml-1"></i> + إضافة قسم تخصصي لـ ({selectedEntity.code})
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            className="button-white-pill"
+            onClick={() => setShowAddDeptModal(true)}
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <Plus className="w-4 h-4 ml-1" />
+            <span>+ إضافة قسم تخصصي لـ ({selectedEntity.code})</span>
           </button>
           <button
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            className="button-outline-on-dark"
             onClick={() => {
               const exportRows = entities.flatMap(ent =>
                 ent.departments.map(d => ({
@@ -289,13 +309,13 @@ export const BranchDepartmentsPage: React.FC = () => {
               );
               exportData('branches', exportRows, 'excel', 'الهيكل التنظيمي وأقسام المجموعة');
             }}
-            title="تصدير Excel"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-excel text-emerald-600 ml-1"></i> Excel
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>Excel</span>
           </button>
           <button
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            className="button-outline-on-dark"
             onClick={() => {
               const exportRows = entities.flatMap(ent =>
                 ent.departments.map(d => ({
@@ -313,15 +333,16 @@ export const BranchDepartmentsPage: React.FC = () => {
               );
               exportData('branches', exportRows, 'pdf', 'الهيكل التنظيمي وأقسام المجموعة');
             }}
-            title="تصدير PDF"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <i className="fa-solid fa-file-pdf text-rose-600 ml-1"></i> PDF
+            <FileText className="w-4 h-4 ml-1 text-rose-400" />
+            <span>PDF</span>
           </button>
         </div>
       </div>
 
       {/* Category Filter Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', overflowX: 'auto' }}>
+      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'all', label: `جميع الكيانات والشركات والمكاتب (${entities.length})` },
           { id: 'فرع منطقي', label: '🏛️ الفروع الإقليمية والإيواء (4)' },
@@ -344,7 +365,6 @@ export const BranchDepartmentsPage: React.FC = () => {
                 fontSize: '12.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-                whiteSpace: 'nowrap',
               }}
             >
               {tab.label}
@@ -354,163 +374,166 @@ export const BranchDepartmentsPage: React.FC = () => {
       </div>
 
       {/* Group Entities Selector Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '12px', marginBottom: '20px' }}>
-        {filteredEntities.map(e => (
-          <div
-            key={e.id}
-            onClick={() => setSelectedEntityId(e.id)}
-            style={{
-              background: selectedEntityId === e.id ? '#000000' : '#FFFFFF',
-              color: selectedEntityId === e.id ? '#FFFFFF' : '#181C1C',
-              padding: '16px',
-              borderRadius: '16px',
-              cursor: 'pointer',
-              border: selectedEntityId === e.id ? '1px solid #000000' : '1px solid #e4e4e7',
-              boxShadow: selectedEntityId === e.id ? '0 4px 16px rgba(0,0,0,0.15)' : 'none',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 600, background: selectedEntityId === e.id ? 'rgba(255,255,255,0.2)' : '#f4f4f5', padding: '2px 8px', borderRadius: '9999px' }}>
-                {e.code}
-              </span>
-              <Badge text={e.category} type={e.category === 'شركة مجموعة' ? 'purple' : e.category === 'مكتب خارجي' ? 'success' : 'info'} />
-            </div>
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))' }}>
+        {filteredEntities.map(e => {
+          const isSelected = selectedEntityId === e.id;
+          return (
+            <div
+              key={e.id}
+              onClick={() => setSelectedEntityId(e.id)}
+              className={isSelected ? 'card-pricing-featured cursor-pointer' : 'card-pricing cursor-pointer'}
+              style={{
+                padding: '20px',
+                borderRadius: '16px',
+                background: isSelected ? '#000000' : '#ffffff',
+                color: isSelected ? '#ffffff' : '#000000',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div className="flex justify-between items-center mb-2">
+                <span className={isSelected ? 'pill-tag-mint text-[10px]' : 'pill-tag-shade text-[10px]'}>
+                  {e.code}
+                </span>
+                <Badge text={e.category} type={e.category === 'شركة مجموعة' ? 'purple' : e.category === 'مكتب خارجي' ? 'success' : 'info'} />
+              </div>
 
-            <h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 4px 0' }}>
-              {e.name}
-            </h4>
-            <span style={{ fontSize: '11.5px', opacity: 0.8, display: 'block' }}>المسؤول: {e.manager} • {e.departments.length} أقسام</span>
-          </div>
-        ))}
+              <h4 className="font-bold text-sm mb-1">{e.name}</h4>
+              <span className={`text-xs block ${isSelected ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                المسؤول: {e.manager} • {e.departments.length} أقسام
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* Selected Entity Overview Banner */}
-      <div className="table-card" style={{ padding: '20px', marginBottom: '24px', background: '#fbfbf5', border: '1px solid #e4e4e7' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+      <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+        <div className="flex justify-between items-center flex-wrap gap-3">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <div className="flex items-center gap-2 mb-2">
               <Badge text={selectedEntity.code} type="purple" />
               <Badge text={selectedEntity.category} type="info" />
-              <Badge text={`إجمالي الكادر: ${selectedEntity.staff_count} موظفين`} type="success" />
+              <span className="pill-tag-mint text-xs">إجمالي الكادر: {selectedEntity.staff_count} موظفين</span>
             </div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0 }}>
+            <h3 className="font-bold text-base text-black">
               {selectedEntity.name} - الموقع والفرع: {selectedEntity.location}
             </h3>
-            <p style={{ fontSize: '12.5px', color: '#71717a', margin: '4px 0 0 0' }}>
+            <p className="text-xs text-zinc-700 mt-1">
               المشرف / المدير المسؤول: <strong>{selectedEntity.manager}</strong>
             </p>
           </div>
 
-          <button className="button-primary-pill" onClick={() => setShowAddDeptModal(true)} style={{ padding: '6px 18px', fontSize: '12.5px', minHeight: '36px' }}>
-            <i className="fa-solid fa-folder-plus ml-1"></i> تطوير وإضافة قسم تخصصي
+          <button
+            className="button-primary-pill"
+            onClick={() => setShowAddDeptModal(true)}
+            style={{ padding: '6px 18px', fontSize: '12.5px', minHeight: '36px' }}
+          >
+            <Plus className="w-4 h-4 ml-1" />
+            <span>تطوير وإضافة قسم تخصصي</span>
           </button>
         </div>
       </div>
 
       {/* Sub-Departments Cards Grid */}
-      <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
-        <i className="fa-solid fa-diagram-project ml-2"></i> الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})
-      </h3>
+      <div>
+        <h3 className="text-base font-bold text-black mb-4 flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-black" />
+          <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
+        </h3>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-        {selectedEntity.departments.map(dept => (
-          <div key={dept.id} className="table-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #e4e4e7' }}>
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '9999px',
-                  background: '#000000',
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '18px'
-                }}>
-                  <i className={dept.icon}></i>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {selectedEntity.departments.map(dept => (
+            <div key={dept.id} className="card-pricing flex flex-col justify-between" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm">
+                    <Building2 className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <span className="pill-tag-mint text-[11px]">{dept.kpi}</span>
                 </div>
-                <Badge text={dept.kpi} type="purple" />
+
+                <h4 className="font-bold text-sm text-black mb-2">{dept.name}</h4>
+                <p className="text-xs text-zinc-600 leading-relaxed mb-4">{dept.description}</p>
               </div>
 
-              <h4 style={{ fontSize: '15px', fontWeight: 600, color: '#000000', marginBottom: '6px' }}>
-                {dept.name}
-              </h4>
-              <p style={{ fontSize: '12.5px', color: '#71717a', lineHeight: '1.6', margin: '0 0 12px 0' }}>
-                {dept.description}
-              </p>
+              <div className="pt-3 border-t border-zinc-100 flex justify-between items-center text-xs text-zinc-600">
+                <span>رئيس القسم: <strong className="text-black">{dept.head}</strong></span>
+                <span className="text-emerald-700 font-bold">{dept.staff_count} موظفين مفعلين</span>
+              </div>
             </div>
-
-            <div style={{ paddingTop: '12px', borderTop: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px' }}>
-              <span>رئيس القسم: <strong>{dept.head}</strong></span>
-              <span style={{ color: '#10B981', fontWeight: '700' }}>{dept.staff_count} موظفين مفعلين</span>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Add Sub-Department Modal */}
       {showAddDeptModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
-                إضافة قسم تخصصي جديد لـ ({selectedEntity.name})
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-emerald-400" />
+                <span>إضافة قسم تخصصي لـ ({selectedEntity.name})</span>
               </h3>
-              <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddDeptModal(false)}></i>
+              <button onClick={() => setShowAddDeptModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <form onSubmit={handleAddSubDepartment}>
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">اسم القسم التخصصي *</label>
+            <form onSubmit={handleAddSubDepartment} className="p-6 space-y-4 bg-white text-black">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم القسم التخصصي *</label>
                 <input
                   type="text"
-                  className="filter-input"
                   placeholder="مثال: إدارة الرعاية الطبية والفحوصات..."
                   value={deptForm.name}
                   onChange={e => setDeptForm({ ...deptForm, name: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">رئيس / مشرف القسم *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">رئيس / مشرف القسم *</label>
                 <input
                   type="text"
-                  className="filter-input"
                   placeholder="اسم مسؤول القسم..."
                   value={deptForm.head}
                   onChange={e => setDeptForm({ ...deptForm, head: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '12px' }}>
-                <label className="filter-label">الوصف المهني ومسؤوليات القسم *</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الوصف المهني ومسؤوليات القسم *</label>
                 <textarea
-                  className="filter-input"
                   rows={3}
                   placeholder="اكتب مهام وأهداف هذا القسم التخصصي..."
                   value={deptForm.description}
                   onChange={e => setDeptForm({ ...deptForm, description: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   required
                 />
               </div>
 
-              <div className="filter-group" style={{ marginBottom: '16px' }}>
-                <label className="filter-label">مؤشر الأداء المستهدف KPI</label>
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">مؤشر الأداء المستهدف KPI</label>
                 <input
                   type="text"
-                  className="filter-input"
                   value={deptForm.kpi}
                   onChange={e => setDeptForm({ ...deptForm, kpi: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e4e4e7' }}>
-                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowAddDeptModal(false)}>إلغاء</button>
-                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>اعتماد القسم التخصصي</button>
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                <button type="button" className="button-outline-on-light" onClick={() => setShowAddDeptModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                  إلغاء
+                </button>
+                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
+                  <Check className="w-4 h-4 ml-1" />
+                  <span>اعتماد القسم التخصصي</span>
+                </button>
               </div>
             </form>
           </div>
