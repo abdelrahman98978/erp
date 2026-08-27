@@ -1,11 +1,13 @@
-/* Odoo Enterprise Layout Styles */
+/* Shopifi Enterprise Layout Styles - Transactional Track */
 
 .app-container {
   display: flex;
   min-height: 100vh;
   width: 100%;
   position: relative;
-  background-color: var(--bg-body);
+  background-color: var(--color-canvas-cream);
+  font-family: var(--font-family-ui);
+  font-feature-settings: "ss03" 1;
 }
 
 /* Sidebar Base Styles - Clean White Surface */
@@ -16,20 +18,22 @@
   position: fixed;
   top: 0;
   z-index: 100;
-  background: var(--bg-surface);
-  color: var(--text-main);
+  background: var(--color-canvas-light);
+  color: var(--color-ink);
   display: flex;
   flex-direction: column;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
   transition: width var(--transition-normal), transform var(--transition-normal);
   overflow-y: auto;
+  font-family: var(--font-family-ui);
+  font-feature-settings: "ss03" 1;
 }
 
 /* RTL Mode Sidebar Positioning */
 html[dir="rtl"] .app-sidebar, [dir="rtl"] .app-sidebar {
   right: 0;
   left: auto;
-  border-left: 1px solid #E2E8F0;
+  border-left: 1px solid var(--color-hairline-light);
   border-right: none;
 }
 
@@ -37,17 +41,17 @@ html[dir="rtl"] .app-sidebar, [dir="rtl"] .app-sidebar {
 html[dir="ltr"] .app-sidebar, [dir="ltr"] .app-sidebar {
   left: 0;
   right: auto;
-  border-right: 1px solid #E2E8F0;
+  border-right: 1px solid var(--color-hairline-light);
   border-left: none;
 }
 
 .sidebar-header {
-  padding: 18px 20px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #E2E8F0;
-  background: var(--bg-surface);
+  border-bottom: 1px solid var(--color-hairline-light);
+  background: var(--color-canvas-light);
 }
 
 .brand-badge {
@@ -57,17 +61,16 @@ html[dir="ltr"] .app-sidebar, [dir="ltr"] .app-sidebar {
 }
 
 .brand-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--odoo-purple) 0%, var(--odoo-teal) 100%);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--rounded-md);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
-  box-shadow: 0 4px 12px rgba(113, 75, 103, 0.4);
 }
 
 .brand-title {
@@ -76,100 +79,104 @@ html[dir="ltr"] .app-sidebar, [dir="ltr"] .app-sidebar {
 }
 
 .brand-title-main {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: var(--text-main);
+  font-size: 14.5px;
+  font-weight: 550;
+  letter-spacing: 0.2px;
+  color: #000000;
 }
 
 .brand-title-sub {
   font-size: 11px;
-  color: var(--odoo-teal);
-  font-weight: 600;
+  color: var(--color-shade-50);
+  font-weight: 420;
 }
 
 /* Sidebar Navigation Items - Dark Text on Clean White Background */
 .sidebar-nav {
-  padding: 16px 12px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .nav-section-title {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--odoo-teal-dark);
-  padding: 8px 12px 4px 12px;
-  letter-spacing: 0.8px;
+  color: var(--color-shade-50);
+  padding: 10px 12px 4px 12px;
+  letter-spacing: 0.72px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  color: #334155;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: var(--rounded-md);
+  color: #27272a;
+  font-size: 13.5px;
+  font-weight: 420;
   transition: all var(--transition-fast);
   cursor: pointer;
   user-select: none;
 }
 
 .nav-item:hover {
-  background: #F1F5F9;
-  color: var(--odoo-teal-dark);
+  background: #f4f4f5;
+  color: #000000;
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, rgba(0, 160, 157, 0.12) 0%, rgba(113, 75, 103, 0.08) 100%);
-  color: var(--odoo-teal-dark);
-  font-weight: 800;
+  background: #000000;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 html[dir="rtl"] .nav-item.active, [dir="rtl"] .nav-item.active {
-  border-right: 3px solid var(--odoo-teal);
+  border-right: none;
   border-left: none;
 }
 
 html[dir="ltr"] .nav-item.active, [dir="ltr"] .nav-item.active {
-  border-left: 3px solid var(--odoo-teal);
+  border-left: none;
   border-right: none;
 }
 
 .nav-item-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .nav-icon {
-  width: 20px;
+  width: 18px;
   text-align: center;
-  font-size: 15px;
-  color: #64748B;
+  font-size: 14px;
+  color: var(--color-shade-50);
   transition: color var(--transition-fast);
 }
 
-.nav-item:hover .nav-icon, .nav-item.active .nav-icon {
-  color: var(--odoo-teal);
+.nav-item:hover .nav-icon {
+  color: #000000;
+}
+
+.nav-item.active .nav-icon {
+  color: #ffffff;
 }
 
 .nav-badge {
   padding: 2px 8px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--rounded-pill);
   font-size: 11px;
-  font-weight: 700;
-  background: #E2E8F0;
-  color: #334155;
+  font-weight: 500;
+  background: var(--color-shade-30);
+  color: #000000;
 }
 
 .nav-badge.primary {
-  background: var(--odoo-teal);
-  color: white;
+  background: var(--color-aloe-10);
+  color: #000000;
 }
 
 .submenu-list {
@@ -180,20 +187,20 @@ html[dir="ltr"] .nav-item.active, [dir="ltr"] .nav-item.active {
 }
 
 html[dir="rtl"] .submenu-list, [dir="rtl"] .submenu-list {
-  padding-right: 28px;
+  padding-right: 24px;
   padding-left: 0;
 }
 
 html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
-  padding-left: 28px;
+  padding-left: 24px;
   padding-right: 0;
 }
 
 .submenu-item {
-  padding: 8px 12px;
+  padding: 7px 12px;
   font-size: 13px;
-  color: #64748B;
-  border-radius: var(--radius-xs);
+  color: var(--color-shade-60);
+  border-radius: var(--rounded-md);
   transition: all var(--transition-fast);
   cursor: pointer;
   display: flex;
@@ -202,14 +209,14 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
 }
 
 .submenu-item:hover {
-  color: var(--odoo-teal-dark);
-  background: #F8FAFC;
+  color: #000000;
+  background: #f4f4f5;
 }
 
 .submenu-item.active {
-  color: var(--odoo-teal-dark);
-  font-weight: 700;
-  background: rgba(0, 160, 157, 0.1);
+  color: #000000;
+  font-weight: 600;
+  background: var(--color-aloe-10);
 }
 
 /* Main Content Area Layout Rules */
@@ -231,13 +238,13 @@ html[dir="ltr"] .main-wrapper, [dir="ltr"] .main-wrapper {
   margin-right: 0;
 }
 
-/* Odoo Header Navbar */
+/* Header Navbar - Light Transactional Track */
 .app-header {
   height: var(--header-height);
-  background: var(--bg-header);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #E5E7EB;
+  border-bottom: 1px solid var(--color-hairline-light);
   position: sticky;
   top: 0;
   z-index: 90;
@@ -245,7 +252,7 @@ html[dir="ltr"] .main-wrapper, [dir="ltr"] .main-wrapper {
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .header-right {

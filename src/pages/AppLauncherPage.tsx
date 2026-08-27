@@ -12,13 +12,9 @@ interface AppTile {
   faIcon: string;
   href: string;
   delay: string;
-  bgClass: string;
-  iconBg: string;
-  iconColor: string;
-  hoverBg: string;
-  hoverText: string;
-  iconSize: string;
-  titleSize: string;
+  isFeatured?: boolean;
+  isPistachio?: boolean;
+  category: string;
 }
 
 interface AppLauncherPageProps {
@@ -32,151 +28,107 @@ const APPS: AppTile[] = [
     titleKey: 'crm',
     defaultTitle: 'إدارة العملاء (CRM)',
     subKey: 'crmSub',
-    defaultSubtitle: 'تنظيم بيانات العملاء والمتابعات والرسائل الصادرة والواردة لمجموعة خالد السليم.',
+    defaultSubtitle: 'تنظيم بيانات العملاء والمتابعات والرسائل الصادرة والواردة للمجموعة.',
     materialIcon: 'groups',
     faIcon: 'fa-solid fa-users',
     href: 'clients',
     delay: '0.1s',
-    bgClass: '#ffffff',
-    iconBg: 'rgba(0, 81, 84, 0.1)',
-    iconColor: '#005154',
-    hoverBg: '#005154',
-    hoverText: '#ffffff',
-    iconSize: '40px',
-    titleSize: '20px'
+    isFeatured: true,
+    category: 'التسويق والمبيعات'
   },
   {
     id: 'cvs',
     gridClass: 'card-cvs',
     titleKey: 'cvs',
-    defaultTitle: 'إدارة السير الذاتية (CVs)',
+    defaultTitle: 'بنك السير الذاتية (CVs)',
     subKey: 'cvsSub',
-    defaultSubtitle: 'فلترة وتصنيف الكوادر البشرية المتاحة وعروض التوظيف.',
+    defaultSubtitle: 'فلترة وتصنيف الكوادر البشرية المتاحة وعروض الاستقدام والتشغيل.',
     materialIcon: 'description',
     faIcon: 'fa-solid fa-file-lines',
     href: 'cvs-recruitment',
     delay: '0.2s',
-    bgClass: '#f1f4f4',
-    iconBg: 'rgba(215, 227, 252, 0.6)',
-    iconColor: '#101c2e',
-    hoverBg: '#d7e3fc',
-    hoverText: '#101c2e',
-    iconSize: '34px',
-    titleSize: '18px'
+    category: 'الكوادر والتشغيل'
   },
   {
     id: 'recruitment-contracts',
     gridClass: 'card-contracts',
     titleKey: 'recruitment-contracts',
-    defaultTitle: 'عقود الاستقدام',
+    defaultTitle: 'عقود الاستقدام والتشغيل',
     subKey: 'recruitmentContractsSub',
-    defaultSubtitle: 'إدارة عقود العمالة وتتبع حالة التأشيرات لحظياً.',
+    defaultSubtitle: 'إدارة عقود العمالة وتتبع حالة التأشيرات والربط مع مساند.',
     materialIcon: 'handshake',
     faIcon: 'fa-solid fa-handshake-simple',
     href: 'recruitment-contracts',
     delay: '0.3s',
-    bgClass: '#eceeee',
-    iconBg: 'rgba(16, 28, 46, 0.1)',
-    iconColor: '#101c2e',
-    hoverBg: '#101c2e',
-    hoverText: '#ffffff',
-    iconSize: '40px',
-    titleSize: '20px'
+    isPistachio: true,
+    category: 'العمليات والعقود'
   },
   {
     id: 'shelter',
     gridClass: 'card-accommodation',
     titleKey: 'shelter',
-    defaultTitle: 'إدارة الإيواء والتغذية',
+    defaultTitle: 'مراكز الإيواء واللوجستيات',
     subKey: 'shelterSub',
-    defaultSubtitle: 'متابعة السكن وتوزيع العمالة بالمجموعة.',
+    defaultSubtitle: 'متابعة السكن، التغذية، والرحلات الجوية للعمالة.',
     materialIcon: 'apartment',
     faIcon: 'fa-solid fa-building-user',
     href: 'shelter',
     delay: '0.4s',
-    bgClass: '#f1f4f4',
-    iconBg: 'rgba(63, 73, 73, 0.1)',
-    iconColor: '#3f4949',
-    hoverBg: '#3f4949',
-    hoverText: '#ffffff',
-    iconSize: '34px',
-    titleSize: '18px'
+    category: 'الخدمات اللوجستية'
   },
   {
     id: 'hr',
     gridClass: 'card-hr',
     titleKey: 'hr',
-    defaultTitle: 'الموارد البشرية والرواتب',
+    defaultTitle: 'الموارد البشرية والرواتب (HR & WPS)',
     subKey: 'hrSub',
-    defaultSubtitle: 'ملفات الموظفين، الحضور والانصراف، وطلبات الإجازات للمجموعة.',
+    defaultSubtitle: 'ملفات الموظفين، الحضور، الإجازات، ومسيرات الرواتب المتوافقة مع حماية الأجور.',
     materialIcon: 'badge',
     faIcon: 'fa-solid fa-id-badge',
     href: 'employees',
     delay: '0.5s',
-    bgClass: '#ffffff',
-    iconBg: '#ffdbc9',
-    iconColor: '#6f3b18',
-    hoverBg: '#6f3b18',
-    hoverText: '#ffffff',
-    iconSize: '48px',
-    titleSize: '24px'
+    isFeatured: true,
+    category: 'الموارد البشرية'
   },
   {
     id: 'reports',
     gridClass: 'card-reports',
     titleKey: 'reports',
-    defaultTitle: 'مركز التقارير الموحد',
+    defaultTitle: 'مركز التقارير والذكاء المالي',
     subKey: 'reportsSub',
-    defaultSubtitle: 'إحصائيات الأداء الذكية والتحليلات البيانية المتقدمة.',
+    defaultSubtitle: 'إحصائيات الأداء الموحد، التحليلات البيانية، ومؤشرات KPI.',
     materialIcon: 'query_stats',
     faIcon: 'fa-solid fa-chart-line',
     href: 'reports',
     delay: '0.6s',
-    bgClass: '#e6e9e8',
-    iconBg: '#bbc7df',
-    iconColor: '#3c475b',
-    hoverBg: '#3c475b',
-    hoverText: '#ffffff',
-    iconSize: '40px',
-    titleSize: '20px'
+    category: 'التحليلات والمؤشرات'
   },
   {
     id: 'settings',
     gridClass: 'card-settings',
     titleKey: 'settings',
-    defaultTitle: 'إعدادات المنصة و CMS',
+    defaultTitle: 'إعدادات المنظومة والصلاحيات',
     subKey: 'settingsSub',
-    defaultSubtitle: 'الصلاحيات والتحكم.',
+    defaultSubtitle: 'حسابات المستخدمين، الأدوار الأمنية، وتكاملات API.',
     materialIcon: 'settings',
     faIcon: 'fa-solid fa-sliders',
     href: 'settings',
     delay: '0.7s',
-    bgClass: '#e0e3e3',
-    iconBg: 'rgba(63, 73, 73, 0.1)',
-    iconColor: '#3f4949',
-    hoverBg: '#3f4949',
-    hoverText: '#ffffff',
-    iconSize: '28px',
-    titleSize: '16px'
+    category: 'الحوكمة والأمان'
   },
   {
     id: 'finance',
     gridClass: 'card-finance',
     titleKey: 'finance',
-    defaultTitle: 'المحاسبة والمالية (ERP)',
+    defaultTitle: 'المحاسبة العامة (General Ledger)',
     subKey: 'financeSub',
-    defaultSubtitle: 'الحسابات والقيود.',
+    defaultSubtitle: 'شجرة الحسابات، قيود اليومية، موازين المراجعة، والفوترة ZATCA.',
     materialIcon: 'account_balance_wallet',
     faIcon: 'fa-solid fa-wallet',
     href: 'finance-home',
     delay: '0.8s',
-    bgClass: '#e6e9e8',
-    iconBg: '#c8e6c9',
-    iconColor: '#2e7d32',
-    hoverBg: '#2e7d32',
-    hoverText: '#ffffff',
-    iconSize: '28px',
-    titleSize: '16px'
+    isPistachio: true,
+    category: 'المالية والمحاسبة'
   }
 ];
 
@@ -192,223 +144,169 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
 
   return (
     <main style={{
-      position: 'relative',
-      height: '100vh',
+      minHeight: '100vh',
       width: '100vw',
-      overflow: 'hidden',
-      background: '#181c1c',
+      backgroundColor: 'var(--color-canvas-cream)',
       direction: 'rtl',
-      fontFamily: 'Tajawal, Cairo, sans-serif'
+      fontFamily: 'var(--font-family-ui)',
+      fontFeatureSettings: '"ss03" 1',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
-      <style>{`
-        .geometric-grid {
-          display: grid;
-          grid-template-columns: repeat(12, 1fr);
-          grid-template-rows: repeat(12, 1fr);
-          height: 100vh;
-          width: 100vw;
-          gap: 0;
-          background: #181c1c;
-        }
-
-        .nav-card-wall {
-          position: relative;
-          transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-          overflow: hidden;
-          border: 0.5px solid rgba(255, 255, 255, 0.05);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          padding: 1.5rem;
-          z-index: 1;
-          cursor: pointer;
-          user-select: none;
-        }
-
-        .card-crm { grid-area: 1 / 1 / 6 / 5; }
-        .card-cvs { grid-area: 1 / 5 / 5 / 9; }
-        .card-contracts { grid-area: 1 / 9 / 7 / 13; }
-        .card-accommodation { grid-area: 5 / 5 / 9 / 9; }
-        .card-hr { grid-area: 6 / 1 / 13 / 5; }
-        .card-reports { grid-area: 7 / 9 / 13 / 13; }
-        .card-settings { grid-area: 9 / 5 / 13 / 7; }
-        .card-finance { grid-area: 9 / 7 / 13 / 9; }
-
-        @media (max-width: 1024px) {
-          .geometric-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: auto;
-            overflow-y: auto;
-            height: auto;
-            min-height: 100vh;
-          }
-          .nav-card-wall {
-            grid-area: auto !important;
-            min-height: 220px;
-          }
-        }
-
-        .nav-card-wall:hover {
-          z-index: 20;
-          transform: scale(1.02);
-          box-shadow: 0 0 50px rgba(0, 0, 0, 0.6);
-          filter: brightness(1.05);
-        }
-
-        .geometric-grid:hover .nav-card-wall:not(:hover) {
-          opacity: 0.7;
-          filter: grayscale(0.2);
-        }
-
-        .wall-fade-in {
-          opacity: 0;
-          animation: wallFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes wallFadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        .inner-content {
-          transition: transform 0.5s ease;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-        }
-
-        .nav-card-wall:hover .inner-content {
-          transform: translateY(-4px);
-        }
-      `}</style>
-
-      {/* Floating Brand Header Bar */}
-      <div style={{
-        position: 'absolute',
-        top: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        background: 'rgba(24, 28, 28, 0.85)',
-        backdropFilter: 'blur(16px)',
-        padding: '10px 24px',
-        borderRadius: '9999px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
-      }}>
-        <img
-          src="/logo.png"
-          alt="ALSALIM GROUP LOGO"
-          style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid #D4AF37', background: '#FFFFFF', padding: '2px' }}
-        />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontFamily: 'Cairo, sans-serif', color: '#FFFFFF', fontSize: '15px', fontWeight: '800', lineHeight: 1.1 }}>
-            ALSALIM GROUP • مجموعة خالد السليم
-          </span>
-          <span style={{ fontSize: '11px', color: '#87d3d6', fontWeight: '600' }}>
-            {t('appLauncherTitle', 'مستكشف الأقسام السريع (Odoo 18 Enterprise Launcher)')}
-          </span>
+      {/* Top Light Nav Header */}
+      <header className="nav-bar-light" style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(12px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <img
+            src="/logo.png"
+            alt="ALSALIM GROUP LOGO"
+            style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #000000', padding: '2px', background: '#FFFFFF' }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontFamily: 'var(--font-family-display)', color: '#000000', fontSize: '16px', fontWeight: 500 }}>
+              مستكشف المنظومة المؤسسية
+            </span>
+            <span style={{ fontSize: '11px', color: '#71717a' }}>
+              Enterprise Application Launcher • Odoo 18 Multi-Entity Edition
+            </span>
+          </div>
         </div>
 
         {/* Search Bar Input */}
-        <div style={{ marginRight: '16px', position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <input
-            type="text"
-            id="app-search-input"
-            name="app-search-input"
-            placeholder={t('searchAppPlaceholder', 'ابحث...')}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '9999px',
-              padding: '6px 16px',
-              color: '#FFFFFF',
-              fontSize: '13px',
-              outline: 'none',
-              width: '160px',
-              fontFamily: 'Tajawal, sans-serif'
-            }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+            <input
+              type="text"
+              id="app-search-input"
+              name="app-search-input"
+              placeholder={t('searchAppPlaceholder', 'ابحث عن وحدة أو قسم...')}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="text-input"
+              style={{
+                borderRadius: '9999px',
+                paddingRight: '36px',
+                paddingLeft: '16px',
+                height: '38px',
+                minHeight: '38px',
+                width: '240px',
+                fontSize: '13px'
+              }}
+            />
+          </div>
+
+          <button
+            type="button"
+            className="button-outline-on-light"
+            onClick={() => onSelectApp('dashboard', 'لوحة المؤشرات التشغيلية')}
+            style={{ fontSize: '13px', padding: '6px 18px', minHeight: '36px' }}
+          >
+            لوحة التحكم
+          </button>
+        </div>
+      </header>
+
+      {/* Explorer Content Container */}
+      <div style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', padding: '48px 32px 80px 32px', flexGrow: 1 }}>
+        <div style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <span className="pill-tag-mint" style={{ marginBottom: '8px' }}>
+              SYSTEM MODULES
+            </span>
+            <h1 className="display-md" style={{ fontSize: '34px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              الوحدات والأنظمة التشغيلية
+            </h1>
+          </div>
+          <span className="caption" style={{ color: '#71717a' }}>
+            متاحة لكافة فروع وشركات المجموعة
+          </span>
+        </div>
+
+        {/* 8 Apps Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+          {filteredApps.map((app) => {
+            const title = t(app.titleKey, app.defaultTitle);
+            const subtitle = t(app.subKey, app.defaultSubtitle);
+
+            let cardClass = 'card-pricing';
+            if (app.isFeatured) cardClass = 'card-pricing-featured';
+            if (app.isPistachio) cardClass = 'card-pistachio-band';
+
+            return (
+              <div
+                key={app.id}
+                className={cardClass}
+                onClick={() => onSelectApp(app.href, title)}
+                style={{
+                  cursor: 'pointer',
+                  minHeight: '220px',
+                  borderRadius: '16px',
+                  padding: '28px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  position: 'relative',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '9999px',
+                        backgroundColor: app.isFeatured ? '#000000' : '#ffffff',
+                        color: app.isFeatured ? '#ffffff' : '#000000',
+                        border: '1px solid rgba(0,0,0,0.08)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.04)'
+                      }}
+                    >
+                      <i className={app.faIcon}></i>
+                    </div>
+                    <span className={app.isFeatured ? 'pill-tag-shade' : 'pill-tag-mint'} style={{ fontSize: '11px' }}>
+                      {app.category}
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '19px', fontWeight: 500, color: '#000000', marginBottom: '8px', fontFamily: 'var(--font-family-display)' }}>
+                    {title}
+                  </h3>
+
+                  <p style={{ fontSize: '13.5px', color: '#52525b', lineHeight: 1.5, margin: 0 }}>
+                    {subtitle}
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '24px', paddingTop: '14px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span>فتح التطبيق</span>
+                    <i className="fa-solid fa-arrow-left" style={{ fontSize: '11px' }}></i>
+                  </span>
+                  <span className="caption" style={{ color: '#71717a', fontSize: '12px' }}>
+                    مزامنة فورية
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 12x12 Interlocking Geometric Wall Grid */}
-      <div className="geometric-grid">
-        {filteredApps.map((app) => {
-          const title = t(app.titleKey, app.defaultTitle);
-          const subtitle = t(app.subKey, app.defaultSubtitle);
-          return (
-            <div
-              key={app.id}
-              className={`nav-card-wall ${app.gridClass} wall-fade-in`}
-              onClick={() => onSelectApp(app.href, title)}
-              style={{
-                animationDelay: app.delay,
-                background: app.bgClass
-              }}
-            >
-              <div className="inner-content">
-                {/* Icon Container */}
-                <div style={{
-                  width: app.id === 'hr' ? '80px' : app.id === 'crm' || app.id === 'recruitment-contracts' || app.id === 'reports' ? '70px' : '56px',
-                  height: app.id === 'hr' ? '80px' : app.id === 'crm' || app.id === 'recruitment-contracts' || app.id === 'reports' ? '70px' : '56px',
-                  borderRadius: '16px',
-                  background: app.iconBg,
-                  color: app.iconColor,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '16px',
-                  transition: 'all 0.5s ease'
-                }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: app.iconSize }}>
-                    {app.materialIcon}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3 style={{
-                  fontFamily: 'Cairo, sans-serif',
-                  fontSize: app.titleSize,
-                  fontWeight: '700',
-                  color: '#181c1c',
-                  margin: '0 0 8px 0'
-                }}>
-                  {title}
-                </h3>
-
-                {/* Subtitle */}
-                <p style={{
-                  fontFamily: 'Tajawal, sans-serif',
-                  fontSize: '13px',
-                  color: '#3f4949',
-                  margin: 0,
-                  lineHeight: '1.5',
-                  maxWidth: app.id === 'hr' ? '260px' : app.id === 'crm' || app.id === 'recruitment-contracts' || app.id === 'reports' ? '220px' : '180px'
-                }}>
-                  {subtitle}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* Footer */}
+      <footer className="footer-light" style={{ padding: '32px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <span style={{ fontSize: '13px', color: '#71717a' }}>
+          مجموعة خالد السليم للاستقدام والتشغيل • المنظومة السحابية الموحدة
+        </span>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>4 شركات مرتبطة</span>
+          <span className="pill-tag-shade" style={{ fontSize: '11px' }}>قواعد بيانات مستقلة</span>
+        </div>
+      </footer>
     </main>
   );
 };
+

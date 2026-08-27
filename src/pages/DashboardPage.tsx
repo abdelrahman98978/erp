@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { DASHBOARD_STATS_BY_PERIOD, MOCK_RECRUITMENT_CONTRACTS } from '../data/mockData';
+import { SmaccDashboardWidget } from '../components/smacc/SmaccDashboardWidget';
 
 interface DashboardPageProps {
   onNavigate: (href: string, title: string) => void;
@@ -14,6 +15,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* SMACC Structural Dashboard Replica */}
+      <SmaccDashboardWidget />
       {/* Top Welcome Hero Banner with Period Filter (Exact ClickERP Feature Set) */}
       <div
         style={{

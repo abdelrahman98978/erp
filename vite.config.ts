@@ -10,6 +10,7 @@ export default defineConfig({
     host: true
   },
   build: {
+    copyPublicDir: false,
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {

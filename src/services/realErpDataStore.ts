@@ -43,10 +43,13 @@ export const realErpDataStore = {
   ): Promise<T[]> {
     if (!isDummySupabase) {
       try {
-        const { data, error } = await supabase
-          .from(entityKey)
-          .select('*')
-          .order('created_at', { ascending: false });
+        const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+          setTimeout(() => resolve({ data: null, error: new Error('Supabase network timeout') }), 1500)
+        );
+        const { data, error } = await Promise.race([
+          supabase.from(entityKey).select('*').order('created_at', { ascending: false }),
+          timeoutPromise
+        ]);
         if (!error && data && data.length > 0) {
           saveLocalStore(entityKey, data as unknown as T[]);
           return data as unknown as T[];

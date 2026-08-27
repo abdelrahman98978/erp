@@ -1,128 +1,129 @@
-/* Khalid Al-Sulaim Corporate Identity Design Tokens */
+/* Shopifi Design System Design Tokens - Applied Down to the Millimeter */
 
 :root {
-  /* Corporate Identity Typography: Cairo for Headings & Tajawal for Body UI */
-  --font-family-heading: 'Cairo', sans-serif;
-  --font-family-body: 'Tajawal', sans-serif;
-  --font-family-sans: 'Tajawal', 'Cairo', sans-serif;
-  --font-family: var(--font-family-body);
+  /* Colors from DESIGN-shopify.md */
+  --color-primary: #000000;
+  --color-ink: #000000;
+  --color-on-primary: #ffffff;
+  --color-on-dark: #ffffff;
+  --color-canvas-night: #000000;
+  --color-canvas-night-elevated: #0a0a0a;
+  --color-canvas-light: #ffffff;
+  --color-canvas-cream: #fbfbf5;
+  --color-surface-elevated-dark: #1e2c31;
+  --color-shade-30: #d4d4d8;
+  --color-shade-40: #a1a1aa;
+  --color-shade-50: #71717a;
+  --color-shade-60: #52525b;
+  --color-shade-70: #3f3f46;
+  --color-hairline-light: #e4e4e7;
+  --color-hairline-dark: #1e2c31;
+  --color-aloe-10: #c1fbd4;
+  --color-pistachio-10: #d4f9e0;
+  --color-link-cool-1: #9dabad;
+  --color-link-cool-2: #9797a2;
+  --color-link-cool-3: #bdbdca;
+  --color-link-mint: #99b3ad;
 
-  /* Font Scale & Line Heights */
-  --font-xs: 12px;
-  --font-sm: 14px;
-  --font-base: 16px;
-  --font-md: 18px;
-  --font-lg: 24px;
-  --font-xl: 32px;
-  --font-2xl: 48px;
+  /* Aliases for theme integration */
+  --primary: var(--color-primary);
+  --ink: var(--color-ink);
+  --on-primary: var(--color-on-primary);
+  --on-dark: var(--color-on-dark);
+  --canvas-night: var(--color-canvas-night);
+  --canvas-night-elevated: var(--color-canvas-night-elevated);
+  --canvas-light: var(--color-canvas-light);
+  --canvas-cream: var(--color-canvas-cream);
+  --hairline-light: var(--color-hairline-light);
+  --hairline-dark: var(--color-hairline-dark);
+  --aloe-10: var(--color-aloe-10);
+  --pistachio-10: var(--color-pistachio-10);
+  --shade-30: var(--color-shade-30);
+  --shade-40: var(--color-shade-40);
+  --shade-50: var(--color-shade-50);
+  --shade-60: var(--color-shade-60);
+  --shade-70: var(--color-shade-70);
 
-  /* Official Brand Palette */
-  --primary: #00383b;
-  --on-primary: #ffffff;
-  --primary-container: #005154;
-  --on-primary-container: #83c2c5;
-  --inverse-primary: #92d1d4;
+  /* Background & Surface Aliases */
+  --background: var(--color-canvas-cream);
+  --bg-body: var(--color-canvas-cream);
+  --bg-surface: var(--color-canvas-light);
+  --on-background: var(--color-ink);
+  --on-surface: var(--color-ink);
+  --on-surface-variant: var(--color-shade-50);
+  --surface-container-lowest: var(--color-canvas-light);
+  --surface-container-low: #f4f4f0;
+  --surface-container: #ebeee8;
+  --surface-container-high: #e2e5df;
+  --outline-variant: var(--color-hairline-light);
+  --outline: var(--color-shade-50);
 
-  --secondary: #535f74;
-  --on-secondary: #ffffff;
-  --secondary-container: #d4e0f9;
-  --on-secondary-container: #576378;
-
-  --tertiary: #532504;
-  --on-tertiary: #ffffff;
-  --tertiary-container: #6f3b18;
-  --on-tertiary-container: #f1a77b;
-
-  --surface-tint: #25686a;
-  --surface: #f7faf9;
-  --surface-dim: #d7dbda;
-  --surface-bright: #f7faf9;
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #f1f4f3;
-  --surface-container: #ebeeed;
-  --surface-container-high: #e6e9e8;
-  --surface-container-highest: #e0e3e2;
-  --surface-variant: #e0e3e2;
-
-  --on-surface: #181c1c;
-  --on-surface-variant: #3f4849;
-  --inverse-surface: #2d3131;
-  --inverse-on-surface: #eef1f0;
-
-  --outline: #5a6363;
-  --outline-variant: #bfc8c8;
-
-  --error: #ba1a1a;
-  --on-error: #ffffff;
-  --error-container: #ffdad6;
-  --on-error-container: #93000a;
-
-  --background: #f7faf9;
-  --on-background: #181c1c;
-
-  /* Brand Accents & Gradients */
+  /* Legacy / Brand Accents */
   --gold-primary: #D4AF37;
-  --gold-gradient: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
-  --odoo-purple: #714B67;
   --odoo-teal: #005154;
-
-  /* ERP Surfaces & Backgrounds */
-  --bg-body: #f7faf9;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #ffffff;
-  --bg-subtle: #f1f4f3;
-  --bg-header: rgba(247, 250, 249, 0.95);
-
-  /* Status Colors */
+  --odoo-purple: #714B67;
   --status-success: #10B981;
-  --status-success-bg: #ECFDF5;
-  --status-success-border: #A7F3D0;
-  
+  --status-success-bg: #c1fbd4;
+  --status-success-border: #a7f3d0;
   --status-warning: #F59E0B;
   --status-warning-bg: #FFFBEB;
   --status-warning-border: #FDE68A;
-
   --status-danger: #ba1a1a;
   --status-danger-bg: #ffdad6;
   --status-danger-border: #fca5a5;
 
-  --status-info: #535f74;
-  --status-info-bg: #d4e0f9;
-  --status-info-border: #bfc8c8;
+  /* Typography Font Families */
+  --font-family-display: "NeueHaasGrotesk Display", "Inter Display", "Plus Jakarta Sans", Helvetica, Arial, sans-serif;
+  --font-family-ui: "Inter Variable", "Inter", "Tajawal", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-heading: "Cairo", "NeueHaasGrotesk Display", sans-serif;
+  --font-family-body: "Inter Variable", "Tajawal", "Inter", sans-serif;
+  --font-family-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --status-purple: #714B67;
-  --status-purple-bg: #f5f3ff;
+  /* Shapes & Radii Scale from DESIGN-shopify.md */
+  --rounded-xs: 4px;
+  --rounded-sm: 5px;
+  --rounded-md: 8px;
+  --rounded-lg: 12px;
+  --rounded-xl: 20px;
+  --rounded-pill: 9999px;
 
-  /* Text Colors */
-  --text-main: #181c1c;
-  --text-muted: #3f4849;
-  --text-light: #5a6363;
-  --text-on-dark: #ffffff;
-  --text-link: #005154;
+  /* Radius Aliases */
+  --radius-xs: var(--rounded-xs);
+  --radius-sm: var(--rounded-sm);
+  --radius-md: var(--rounded-md);
+  --radius-lg: var(--rounded-lg);
+  --radius-xl: var(--rounded-xl);
+  --radius-pill: var(--rounded-pill);
 
-  /* Layout Dimensions & Spacing */
-  --sidebar-width: 312px;
-  --header-height: 72px;
-  --spacing-base: 8px;
-  --spacing-gutter: 24px;
-  --spacing-container-max: 1280px;
+  /* Spacing Scale from DESIGN-shopify.md */
+  --spacing-xxs: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+  --spacing-huge: 64px;
 
-  /* Shapes & Radii */
-  --radius-xs: 0.25rem; /* 4px */
-  --radius-sm: 0.25rem; /* 4px */
-  --radius-md: 0.5rem;  /* 8px */
-  --radius-lg: 0.75rem; /* 12px */
-  --radius-xl: 1.5rem;  /* 24px */
-  --radius-pill: 9999px;
+  /* Layout dimensions */
+  --sidebar-width: 290px;
+  --header-height: 64px;
 
-  /* Shadows & Depth (Tonal Layering & Diffused Teal Shadow) */
-  --shadow-sm: 0 1px 3px rgba(0, 56, 59, 0.05);
-  --shadow-md: 0px 4px 20px rgba(0, 81, 84, 0.08);
-  --shadow-lg: 0px 10px 30px rgba(0, 81, 84, 0.12);
-  --shadow-card: 0px 4px 20px rgba(0, 81, 84, 0.08);
+  /* Elevation & Shadows from DESIGN-shopify.md */
+  --elevation-0: none;
+  --elevation-1: 0 1px 2px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --elevation-2: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 3px rgba(0, 0, 0, 0.3), 0 5px 10px rgba(0, 0, 0, 0.2);
+  --elevation-3: 0 8px 8px rgba(0, 0, 0, 0.08), 0 4px 4px rgba(0, 0, 0, 0.06), 0 2px 2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  --elevation-4: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  --shadow-card: var(--elevation-3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: var(--elevation-3);
+  --shadow-lg: var(--elevation-4);
 
   /* Transitions */
-  --transition-fast: 0.15s ease;
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-slow: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
+

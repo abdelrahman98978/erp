@@ -142,30 +142,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
   };
 
   return (
-    <aside className="app-sidebar" style={{ width: displayMode === 'compact' ? '90px' : '280px', transition: 'width 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+    <aside className="app-sidebar" style={{ width: displayMode === 'compact' ? '90px' : '280px', transition: 'width 0.3s cubic-bezier(0.16, 1, 0.3, 1)', borderInlineEnd: '1px solid #e4e4e7' }}>
       {/* Sidebar Header Brand Logo */}
-      <div className="sidebar-header" style={{ padding: '14px 16px', background: '#FFFFFF', borderBottom: '1px solid #E2E8F0' }}>
+      <div className="sidebar-header" style={{ padding: '16px', background: '#ffffff', borderBottom: '1px solid #e4e4e7' }}>
         <div className="brand-badge" style={{ gap: '12px', justifyContent: displayMode === 'compact' ? 'center' : 'flex-start' }}>
           <img
             src="/logo.png"
             alt="ALSALIM GROUP LOGO"
             style={{
-              width: '42px',
-              height: '42px',
+              width: '38px',
+              height: '38px',
               borderRadius: '50%',
               objectFit: 'cover',
               background: '#FFFFFF',
               padding: '2px',
-              border: '2px solid #D4AF37',
-              boxShadow: '0 4px 12px rgba(212, 175, 55, 0.25)',
+              border: '1.5px solid #000000',
             }}
           />
           {displayMode !== 'compact' && (
             <div className="brand-title">
-              <span className="brand-title-main" style={{ color: '#181C1C', letterSpacing: '0.5px', fontSize: '14px', fontWeight: '900' }}>
+              <span className="brand-title-main" style={{ color: '#000000', letterSpacing: '0.2px', fontSize: '14px', fontWeight: 600 }}>
                 ALSALIM GROUP
               </span>
-              <span className="brand-title-sub" style={{ color: '#005154', fontSize: '11px', fontWeight: '700' }}>
+              <span className="brand-title-sub" style={{ color: '#71717a', fontSize: '11px', fontWeight: 420 }}>
                 {t('sidebarTitle', 'مجموعة خالد السليم ERP')}
               </span>
             </div>
@@ -173,22 +172,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
         </div>
 
         {/* Display Mode Switcher Controls */}
-        <div style={{ marginTop: '12px', display: 'flex', backgroundColor: '#F1F5F9', borderRadius: '8px', padding: '3px', gap: '2px' }}>
+        <div style={{ marginTop: '12px', display: 'flex', backgroundColor: '#f4f4f5', borderRadius: '9999px', padding: '3px', gap: '2px', border: '1px solid #e4e4e7' }}>
           <button
             type="button"
-            title="القائمة الهرمية المعتادة"
+            title="القائمة الهرمية"
             onClick={() => setDisplayMode('tree')}
             style={{
               flex: 1,
-              padding: '5px',
+              padding: '4px',
               border: 'none',
-              borderRadius: '6px',
+              borderRadius: '9999px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
-              backgroundColor: displayMode === 'tree' ? '#FFFFFF' : 'transparent',
-              color: displayMode === 'tree' ? '#005154' : '#64748B',
-              boxShadow: displayMode === 'tree' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              backgroundColor: displayMode === 'tree' ? '#000000' : 'transparent',
+              color: displayMode === 'tree' ? '#ffffff' : '#71717a',
+              transition: 'all 0.15s ease',
             }}
           >
             <i className="fa-solid fa-list-tree" /> {displayMode !== 'compact' && 'هرمي'}
@@ -196,39 +195,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
 
           <button
             type="button"
-            title="الشريط المصغر السريع"
+            title="الشريط المصغر"
             onClick={() => setDisplayMode('compact')}
             style={{
               flex: 1,
-              padding: '5px',
+              padding: '4px',
               border: 'none',
-              borderRadius: '6px',
+              borderRadius: '9999px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
-              backgroundColor: displayMode === 'compact' ? '#FFFFFF' : 'transparent',
-              color: displayMode === 'compact' ? '#005154' : '#64748B',
-              boxShadow: displayMode === 'compact' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              backgroundColor: displayMode === 'compact' ? '#000000' : 'transparent',
+              color: displayMode === 'compact' ? '#ffffff' : '#71717a',
+              transition: 'all 0.15s ease',
             }}
           >
-            <i className="fa-solid fa-[#005154] fa-table-columns" /> {displayMode !== 'compact' && 'مصغر'}
+            <i className="fa-solid fa-table-columns" /> {displayMode !== 'compact' && 'مصغر'}
           </button>
 
           <button
             type="button"
-            title="نمط الكروت التفاعلية"
+            title="نمط الكروت"
             onClick={() => setDisplayMode('cards')}
             style={{
               flex: 1,
-              padding: '5px',
+              padding: '4px',
               border: 'none',
-              borderRadius: '6px',
+              borderRadius: '9999px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
-              backgroundColor: displayMode === 'cards' ? '#FFFFFF' : 'transparent',
-              color: displayMode === 'cards' ? '#005154' : '#64748B',
-              boxShadow: displayMode === 'cards' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              backgroundColor: displayMode === 'cards' ? '#000000' : 'transparent',
+              color: displayMode === 'cards' ? '#ffffff' : '#71717a',
+              transition: 'all 0.15s ease',
             }}
           >
             <i className="fa-solid fa-layer-group" /> {displayMode !== 'compact' && 'كروت'}

@@ -315,44 +315,46 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <div style={{
       minHeight: '100vh',
       width: '100vw',
-      background: '#F8FAFA',
+      backgroundColor: 'var(--color-canvas-cream)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
-      fontFamily: 'Tajawal, Cairo, sans-serif',
-      direction: currentLanguage.dir
+      fontFamily: 'var(--font-family-ui)',
+      direction: currentLanguage.dir,
+      fontFeatureSettings: '"ss03" 1'
     }}>
-      {/* Main Card Container */}
+      {/* Main Card Container with Level 3 Stacked Shadows */}
       <div style={{
         display: 'flex',
         flexDirection: isRtl ? 'row-reverse' : 'row',
         width: '100%',
-        maxWidth: '1150px',
-        minHeight: '720px',
+        maxWidth: '1120px',
+        minHeight: '680px',
         overflow: 'hidden',
-        borderRadius: '32px',
-        background: '#FFFFFF',
-        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.12)',
-        border: '1px solid rgba(224, 227, 227, 0.6)'
+        borderRadius: '20px',
+        backgroundColor: '#ffffff',
+        boxShadow: '0 8px 8px rgba(0,0,0,0.08), 0 4px 4px rgba(0,0,0,0.06), 0 2px 2px rgba(0,0,0,0.04), 0 0 0 1px #e4e4e7',
+        border: '1px solid #e4e4e7'
       }}>
 
         {/* Right Side: 3D Visual Hero Section */}
         <div style={{
           flex: 1,
           position: 'relative',
-          background: '#FFFFFF',
+          background: '#ffffff',
           overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          borderInlineEnd: '1px solid #e4e4e7'
         }}>
           {/* Light Gradient Overlay */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top right, #F1F4F4, #FFFFFF, #F8FAFA)',
-            opacity: 0.7
+            background: 'linear-gradient(to top right, #fbfbf5, #ffffff, #d4f9e0)',
+            opacity: 0.5
           }}></div>
 
           {/* Three.js 3D Animation Background Container */}
@@ -371,20 +373,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             }}
           ></div>
 
-          {/* Glassmorphism Floating Content Card */}
+          {/* Clean Light Card */}
           <div
             ref={visualCardRef}
             style={{
               position: 'relative',
               zIndex: 20,
-              maxWidth: '420px',
-              padding: '40px 32px',
-              borderRadius: '32px',
-              background: 'rgba(255, 255, 255, 0.75)',
+              maxWidth: '400px',
+              padding: '36px 28px',
+              borderRadius: '16px',
+              background: 'rgba(255, 255, 255, 0.92)',
               backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 15px 35px rgba(0, 81, 84, 0.08)',
+              border: '1px solid #e4e4e7',
+              boxShadow: '0 8px 8px rgba(0,0,0,0.06), 0 2px 2px rgba(0,0,0,0.04)',
               textAlign: 'center',
               transition: 'transform 0.2s ease-out'
             }}
@@ -393,22 +394,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               src="./logo.png"
               alt="شعار مجموعة خالد السليم"
               style={{
-                width: '100px',
-                height: '100px',
+                width: '84px',
+                height: '84px',
                 borderRadius: '50%',
-                margin: '0 auto 20px auto',
+                margin: '0 auto 16px auto',
                 objectFit: 'cover',
                 background: '#FFFFFF',
-                padding: '4px',
-                border: '3px solid #D4AF37',
-                boxShadow: '0 8px 24px rgba(212, 175, 55, 0.3)'
+                padding: '3px',
+                border: '2px solid #000000'
               }}
             />
-            <h2 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '28px', fontWeight: '800', color: '#005154', margin: '0 0 12px 0' }}>
+            <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '26px', fontWeight: '500', color: '#000000', margin: '0 0 10px 0' }}>
               {t('groupTitle', 'مجموعة خالد السليم')}
             </h2>
-            <div style={{ width: '60px', height: '4px', background: 'rgba(0, 81, 84, 0.3)', margin: '0 auto 20px auto', borderRadius: '9999px' }}></div>
-            <p style={{ fontFamily: 'Tajawal, sans-serif', fontSize: '15px', color: '#3f4949', lineHeight: '1.7', margin: 0 }}>
+            <div style={{ width: '40px', height: '3px', background: '#000000', margin: '0 auto 16px auto', borderRadius: '9999px' }}></div>
+            <p style={{ fontSize: '14px', color: '#52525b', lineHeight: '1.6', margin: 0, fontWeight: 420 }}>
               {t('loginVision', 'نحو مستقبل رقمي متكامل يعزز الكفاءة والابتكار في إدارة أعمالكم.')}
             </p>
 
@@ -416,22 +416,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '16px',
-              marginTop: '36px',
-              paddingTop: '24px',
-              borderTop: '1px solid rgba(0, 81, 84, 0.1)'
+              gap: '12px',
+              marginTop: '28px',
+              paddingTop: '20px',
+              borderTop: '1px solid #e4e4e7'
             }}>
               <div>
-                <span style={{ fontFamily: 'Cairo, sans-serif', fontSize: '18px', fontWeight: '800', color: '#005154', display: 'block' }}>{t('secure', 'آمن')}</span>
-                <span style={{ fontSize: '12px', color: '#5a6363' }}>{t('protection', 'حماية 2FA')}</span>
+                <span className="pill-tag-mint" style={{ display: 'block', margin: '0 auto 4px auto' }}>{t('secure', 'آمن')}</span>
+                <span style={{ fontSize: '12px', color: '#71717a' }}>{t('protection', 'حماية 2FA')}</span>
               </div>
               <div>
-                <span style={{ fontFamily: 'Cairo, sans-serif', fontSize: '18px', fontWeight: '800', color: '#005154', display: 'block' }}>{t('smart', 'ذكي')}</span>
-                <span style={{ fontSize: '12px', color: '#5a6363' }}>{t('solutions', 'حلول')}</span>
+                <span className="pill-tag-shade" style={{ display: 'block', margin: '0 auto 4px auto' }}>{t('smart', 'ذكي')}</span>
+                <span style={{ fontSize: '12px', color: '#71717a' }}>{t('solutions', 'حلول')}</span>
               </div>
               <div>
-                <span style={{ fontFamily: 'Cairo, sans-serif', fontSize: '18px', fontWeight: '800', color: '#005154', display: 'block' }}>{t('comprehensive', 'شامل')}</span>
-                <span style={{ fontSize: '12px', color: '#5a6363' }}>{t('coverage', 'تغطية')}</span>
+                <span className="pill-tag-mint" style={{ display: 'block', margin: '0 auto 4px auto' }}>{t('comprehensive', 'شامل')}</span>
+                <span style={{ fontSize: '12px', color: '#71717a' }}>{t('coverage', 'تغطية')}</span>
               </div>
             </div>
           </div>
@@ -440,7 +440,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         {/* Left Side: Login Form / 2FA Verification Section */}
         <div style={{
           width: '480px',
-          padding: '48px',
+          padding: '44px',
           background: '#FFFFFF',
           display: 'flex',
           flexDirection: 'column',
@@ -450,28 +450,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         }}>
           {/* Top Brand & Language Switcher */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '36px', position: 'relative' }}>
-              <img src="/logo.png" alt="شعار المكاتب" style={{ height: '48px', width: 'auto' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', position: 'relative' }}>
+              <img src="/logo.png" alt="شعار المكاتب" style={{ height: '42px', width: 'auto' }} />
 
               <div style={{ position: 'relative' }}>
                 <button
                   type="button"
+                  className="button-outline-on-light"
                   onClick={() => setShowLangMenu(!showLangMenu)}
                   aria-expanded={showLangMenu}
                   aria-haspopup="true"
                   aria-label="تغيير اللغة"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
                     padding: '6px 14px',
-                    borderRadius: '10px',
-                    border: '1px solid #bec9c8',
-                    background: '#f8fafa',
-                    color: '#181c1c',
                     fontSize: '13px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
+                    minHeight: '34px',
+                    borderRadius: '9999px'
                   }}
                 >
                   <span>{currentLanguage.flag}</span>
@@ -486,14 +480,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     left: isRtl ? 0 : 'auto',
                     right: !isRtl ? 0 : 'auto',
                     background: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
+                    border: '1px solid #e4e4e7',
                     borderRadius: '12px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
                     width: '180px',
                     maxHeight: '260px',
                     overflowY: 'auto',
                     zIndex: 100,
-                    padding: '4px'
+                    padding: '6px'
                   }}>
                     {LANGUAGES.map((lang: Language) => (
                       <button
@@ -507,14 +501,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                           width: '100%',
                           border: 'none',
                           padding: '8px 12px',
-                          borderRadius: '8px',
+                          borderRadius: '9999px',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '8px',
                           cursor: 'pointer',
-                          background: currentLanguage.code === lang.code ? 'rgba(0, 81, 84, 0.1)' : 'transparent',
-                          color: currentLanguage.code === lang.code ? '#005154' : '#181c1c',
-                          fontWeight: currentLanguage.code === lang.code ? '800' : '500',
+                          background: currentLanguage.code === lang.code ? '#c1fbd4' : 'transparent',
+                          color: '#000000',
+                          fontWeight: currentLanguage.code === lang.code ? '600' : '420',
                           fontSize: '13px'
                         }}
                       >
@@ -530,12 +524,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {displayedError && (
               <div style={{
                 padding: '12px 16px',
-                borderRadius: '12px',
-                background: '#FEF2F2',
-                border: '1px solid #FCA5A5',
-                color: '#991B1B',
+                borderRadius: '8px',
+                background: '#ffdad6',
+                border: '1px solid #fca5a5',
+                color: '#ba1a1a',
                 fontSize: '13.5px',
-                fontWeight: '600',
+                fontWeight: '500',
                 marginBottom: '20px',
                 display: 'flex',
                 alignItems: 'center',
@@ -549,42 +543,32 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {!is2FAStep ? (
               /* Step 1: Standard Username & Password Form */
               <div>
-                <div style={{ marginBottom: '32px' }}>
-                  <h1 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '28px', fontWeight: '800', color: '#181c1c', margin: '0 0 8px 0' }}>
+                <div style={{ marginBottom: '28px' }}>
+                  <h1 className="heading-xl" style={{ fontSize: '28px', fontWeight: '500', color: '#000000', margin: '0 0 6px 0' }}>
                     {t('loginHeaderTitle', 'تسجيل الدخول')}
                   </h1>
-                  <p style={{ fontSize: '14px', color: '#3f4949', margin: 0 }}>
+                  <p style={{ fontSize: '14px', color: '#71717a', margin: 0 }}>
                     {t('loginHeaderSub', 'مرحباً بك في المنصة الموحدة لمجموعة خالد السليم')}
                   </p>
                 </div>
 
-                <form onSubmit={handleInitialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <form onSubmit={handleInitialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                   {/* Username Input */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label htmlFor="login-username" style={{ fontSize: '13px', fontWeight: '700', color: '#3f4949' }}>
+                    <label htmlFor="login-username" style={{ fontSize: '13px', fontWeight: '550', color: '#000000' }}>
                       {t('username', 'اسم المستخدم أو البريد الإلكتروني')}
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-user" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '16px', color: '#5a6363', fontSize: '16px' }}></i>
+                      <i className="fa-solid fa-user" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '15px' }}></i>
                       <input
                         id="login-username"
                         type="text"
+                        className="text-input"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                         placeholder={t('usernamePlaceholder', 'أدخل اسم المستخدم... (الافتراضي: admin@alsulaim.sa)')}
                         style={{
-                          width: '100%',
-                          height: '52px',
-                          paddingInlineStart: '48px',
-                          paddingInlineEnd: '16px',
-                          borderRadius: '14px',
-                          background: '#f2f4f4',
-                          border: '1px solid transparent',
-                          outline: 'none',
-                          fontSize: '14px',
-                          color: '#181c1c',
-                          fontFamily: 'Tajawal, sans-serif',
-                          transition: 'all 0.3s ease'
+                          paddingInlineStart: '44px',
                         }}
                       />
                     </div>
@@ -592,30 +576,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
                   {/* Password Input */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label htmlFor="login-password" style={{ fontSize: '13px', fontWeight: '700', color: '#3f4949' }}>
+                    <label htmlFor="login-password" style={{ fontSize: '13px', fontWeight: '550', color: '#000000' }}>
                       {t('password', 'كلمة المرور')}
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-lock" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '16px', color: '#5a6363', fontSize: '16px' }}></i>
+                      <i className="fa-solid fa-lock" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '15px' }}></i>
                       <input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
+                        className="text-input"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         placeholder="•••••••• (الافتراضي: Alsulaim@2026)"
                         style={{
-                          width: '100%',
-                          height: '52px',
-                          paddingInlineStart: '48px',
-                          paddingInlineEnd: '48px',
-                          borderRadius: '14px',
-                          background: '#f2f4f4',
-                          border: '1px solid transparent',
-                          outline: 'none',
-                          fontSize: '14px',
-                          color: '#181c1c',
-                          fontFamily: 'Tajawal, sans-serif',
-                          transition: 'all 0.3s ease'
+                          paddingInlineStart: '44px',
+                          paddingInlineEnd: '44px',
                         }}
                       />
                       <button
@@ -623,7 +598,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
                         aria-pressed={showPassword}
-                        style={{ position: 'absolute', insetInlineEnd: '16px', border: 'none', background: 'transparent', color: '#5a6363', cursor: 'pointer' }}
+                        style={{ position: 'absolute', insetInlineEnd: '14px', border: 'none', background: 'transparent', color: '#71717a', cursor: 'pointer' }}
                       >
                         <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} aria-hidden="true"></i>
                       </button>
@@ -631,17 +606,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   </div>
 
                   {/* Remember & Forgot */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#3f4949' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#52525b' }}>
                       <input
                         type="checkbox"
                         checked={rememberMe}
                         onChange={e => setRememberMe(e.target.checked)}
-                        style={{ accentColor: '#005154', width: '16px', height: '16px' }}
+                        style={{ accentColor: '#000000', width: '16px', height: '16px' }}
                       />
                       <span>{t('rememberMe', 'تذكرني')}</span>
                     </label>
-                    <a href="#forgot" onClick={e => e.preventDefault()} style={{ fontSize: '13px', color: '#005154', fontWeight: '700' }}>
+                    <a href="#forgot" onClick={e => e.preventDefault()} style={{ fontSize: '13px', color: '#000000', fontWeight: '550' }}>
                       {t('forgotPassword', 'نسيت كلمة المرور؟')}
                     </a>
                   </div>
@@ -650,32 +625,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   <button
                     type="submit"
                     disabled={authLoading}
+                    className="button-primary-pill"
                     style={{
-                      height: '52px',
-                      marginTop: '8px',
                       width: '100%',
-                      background: authLoading ? '#00383b' : '#005154',
-                      color: '#FFFFFF',
-                      fontSize: '15px',
-                      fontWeight: '700',
-                      borderRadius: '14px',
-                      border: 'none',
-                      boxShadow: '0 8px 20px rgba(0, 81, 84, 0.25)',
-                      cursor: authLoading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
+                      marginTop: '6px',
                     }}
                   >
                     {authLoading ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
-                        <span>جاري التحقق...</span>
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <span>{t('loggingIn', 'جاري التحقق من الهوية...')}</span>
                       </>
                     ) : (
-                      t('loginButton', 'دخول للمنصة')
+                      <>
+                        <span>{t('loginSubmit', 'دخول المنظومة')}</span>
+                        <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                      </>
                     )}
                   </button>
                 </form>

@@ -136,30 +136,35 @@ export const Header: React.FC<HeaderProps> = ({
       )}
 
       <header
-        className="app-header"
+        className="nav-bar-light"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 20px',
-          height: '68px',
-          background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
-          borderBottom: '1px solid #E2E8F0',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
           position: 'sticky',
           top: 0,
           zIndex: 100,
+          height: '64px',
+          padding: '0 24px',
+          backgroundColor: '#ffffff',
+          borderBottom: '1px solid #e4e4e7',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+          fontFamily: 'var(--font-family-ui)',
+          fontFeatureSettings: '"ss03" 1',
         }}
       >
         {/* Right Section: App Switcher, Sidebar Toggle, Page Title, Branch & Company */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button className="odoo-app-switcher" onClick={onOpenAppLauncher} title={t('appLauncherTitle', 'بوابة الأقسام')}>
+          <button
+            className="button-outline-on-light"
+            onClick={onOpenAppLauncher}
+            title={t('appLauncherTitle', 'بوابة الأقسام')}
+            style={{ padding: '6px 12px', minHeight: '36px', borderRadius: '9999px', fontSize: '13px' }}
+          >
             <i className="fa-solid fa-grip"></i>
+            <span style={{ fontSize: '12px' }}>الأقسام</span>
           </button>
 
           <button
-            className="btn-odoo btn-odoo-secondary"
-            style={{ padding: '6px 10px', height: '36px' }}
+            className="button-outline-on-light"
+            style={{ padding: '6px 10px', minHeight: '36px', borderRadius: '9999px', width: '36px', justifyContent: 'center' }}
             onClick={onToggleSidebar}
             title="طي/توسيع القائمة"
           >
@@ -167,33 +172,28 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Current Page Title */}
-          <div className="header-title-box">
-            <h1 className="page-title" style={{ fontFamily: 'var(--font-family-cairo)', margin: 0, fontSize: '17px', fontWeight: '900', color: '#0F172A' }}>
+          <div className="header-title-box" style={{ marginInlineStart: '4px' }}>
+            <h1 className="heading-sm" style={{ margin: 0, fontSize: '16px', fontWeight: '500', color: '#000000', fontFamily: 'var(--font-family-display)' }}>
               {activeTabTitle}
             </h1>
           </div>
 
-          {/* Active Branch Switcher (ClickERP Style) */}
+          {/* Active Branch Switcher */}
           <div style={{ position: 'relative' }}>
             <button
               type="button"
               onClick={() => setShowBranchDropdown(!showBranchDropdown)}
+              className="pill-tag-mint"
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: 'rgba(0, 81, 84, 0.08)',
-                color: '#005154',
-                border: '1px solid rgba(0, 81, 84, 0.2)',
-                borderRadius: '8px',
-                padding: '6px 12px',
-                fontWeight: '800',
-                fontSize: '12px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                border: '1px solid rgba(0,0,0,0.08)',
+                padding: '5px 12px',
+                fontSize: '12px',
+                fontWeight: 500,
+                textTransform: 'none',
               }}
             >
-              <i className="fa-solid fa-location-dot" style={{ color: '#005154' }}></i>
+              <i className="fa-solid fa-location-dot" style={{ color: '#000000' }}></i>
               <span>{selectedBranch}</span>
               <i className="fa-solid fa-chevron-down" style={{ fontSize: '9px', opacity: 0.7 }}></i>
             </button>
@@ -346,20 +346,9 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             type="button"
-            onClick={() => setActiveTab('recruitment-contracts', 'منصة مساند برو')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              backgroundColor: '#ECFDF5',
-              color: '#047857',
-              border: '1px solid rgba(4, 120, 87, 0.2)',
-              borderRadius: '20px',
-              padding: '5px 12px',
-              fontSize: '11px',
-              fontWeight: '800',
-              cursor: 'pointer',
-            }}
+            onClick={() => window.open('https://musaned.com.sa', '_blank')}
+            className="pill-tag-mint"
+            style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.06)' }}
           >
             <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: '10px' }}></i>
             <span>مساند برو</span>
@@ -368,19 +357,8 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setShowTawtheeqModal(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              backgroundColor: '#EFF6FF',
-              color: '#1D4ED8',
-              border: '1px solid rgba(29, 78, 216, 0.2)',
-              borderRadius: '20px',
-              padding: '5px 12px',
-              fontSize: '11px',
-              fontWeight: '800',
-              cursor: 'pointer',
-            }}
+            className="pill-tag-shade"
+            style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.06)' }}
           >
             <i className="fa-solid fa-shield-check" style={{ fontSize: '11px' }}></i>
             <span>مساند توثيق</span>
@@ -389,19 +367,8 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('whatsapp-inbox', 'محادثات الدعم واللايف شات')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px',
-              backgroundColor: '#F0FDF4',
-              color: '#16A34A',
-              border: '1px solid rgba(22, 163, 74, 0.2)',
-              borderRadius: '20px',
-              padding: '5px 12px',
-              fontSize: '11px',
-              fontWeight: '800',
-              cursor: 'pointer',
-            }}
+            className="pill-tag-mint"
+            style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,0.06)' }}
           >
             <i className="fa-brands fa-whatsapp" style={{ fontSize: '12px' }}></i>
             <span>اللايف شات</span>
@@ -409,33 +376,32 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Left Section: Live System Uptime Timer, Hijri Clock, Search, Notifications, User */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* System Uptime Indicator (ClickERP Style) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* System Uptime Indicator */}
           <div
             className="hidden-mobile"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: '#F8FAFC',
-              border: '1px solid #E2E8F0',
-              borderRadius: '8px',
-              padding: '4px 10px',
+              backgroundColor: '#f4f4f5',
+              border: '1px solid #e4e4e7',
+              borderRadius: '9999px',
+              padding: '4px 12px',
               fontSize: '11px',
-              fontWeight: '700',
-              color: '#047857',
+              fontWeight: '500',
+              color: '#000000',
               fontFamily: 'monospace',
             }}
             title="المدة الزمنية منذ فتح النظام"
           >
-            <i className="fa-solid fa-clock-rotate-left text-emerald-600"></i>
+            <i className="fa-solid fa-clock-rotate-left"></i>
             <span>{formatUptime(uptimeSeconds)}</span>
-            <span style={{ color: '#64748B', fontFamily: 'Cairo, sans-serif' }}>منذ فتح النظام</span>
           </div>
 
           {/* Hijri/Gregorian Live Clock */}
-          <div className="hidden-mobile" style={{ textAlign: 'left', fontSize: '11px', color: '#475569', lineHeight: '1.3' }}>
-            <div style={{ fontWeight: '800', color: '#0F172A', fontFamily: 'monospace' }}>{currentTime}</div>
+          <div className="hidden-mobile" style={{ textAlign: 'left', fontSize: '11px', color: '#71717a', lineHeight: '1.3' }}>
+            <div style={{ fontWeight: '600', color: '#000000', fontFamily: 'monospace' }}>{currentTime}</div>
             <div style={{ fontSize: '10px' }}>{currentDate}</div>
           </div>
 
@@ -447,14 +413,14 @@ export const Header: React.FC<HeaderProps> = ({
             style={{
               width: '36px',
               height: '36px',
-              borderRadius: '8px',
+              borderRadius: '9999px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '#F1F5F9',
-              border: 'none',
+              backgroundColor: '#ffffff',
+              border: '1px solid #e4e4e7',
               cursor: 'pointer',
-              color: '#475569',
+              color: '#000000',
             }}
           >
             <i className="fa-solid fa-magnifying-glass"></i>
@@ -468,14 +434,14 @@ export const Header: React.FC<HeaderProps> = ({
             style={{
               width: '36px',
               height: '36px',
-              borderRadius: '8px',
+              borderRadius: '9999px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: '#F1F5F9',
-              border: 'none',
+              backgroundColor: '#ffffff',
+              border: '1px solid #e4e4e7',
               cursor: 'pointer',
-              color: '#475569',
+              color: '#000000',
             }}
           >
             <i className={`fa-solid ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
@@ -490,14 +456,14 @@ export const Header: React.FC<HeaderProps> = ({
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
+                borderRadius: '9999px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#F1F5F9',
-                border: 'none',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e4e4e7',
                 cursor: 'pointer',
-                color: '#475569',
+                color: '#000000',
                 position: 'relative',
               }}
             >
@@ -506,14 +472,14 @@ export const Header: React.FC<HeaderProps> = ({
                 <span
                   style={{
                     position: 'absolute',
-                    top: '-4px',
-                    right: '-4px',
-                    backgroundColor: '#EF4444',
+                    top: '-2px',
+                    right: '-2px',
+                    backgroundColor: '#ba1a1a',
                     color: '#FFFFFF',
-                    borderRadius: '10px',
+                    borderRadius: '9999px',
                     padding: '1px 5px',
                     fontSize: '10px',
-                    fontWeight: '900',
+                    fontWeight: '700',
                   }}
                 >
                   {unreadCount}

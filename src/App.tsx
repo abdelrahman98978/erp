@@ -88,6 +88,10 @@ const BranchCommunicationPage = lazyWithRetry(() => import('./pages/BranchCommun
 const GroupDispatchPage = lazyWithRetry(() => import('./pages/GroupDispatchPage').then(m => ({ default: m.GroupDispatchPage })));
 const BranchDepartmentsPage = lazyWithRetry(() => import('./pages/BranchDepartmentsPage').then(m => ({ default: m.BranchDepartmentsPage })));
 const DataImportWizardPage = lazyWithRetry(() => import('./pages/DataImportWizardPage').then(m => ({ default: m.DataImportWizardPage })));
+const SmaccModulesPage = lazyWithRetry(() => import('./pages/SmaccModulesPage').then(m => ({ default: m.SmaccModulesPage })));
+const SmaccAccountingPage = lazyWithRetry(() => import('./pages/SmaccAccountingPage').then(m => ({ default: m.SmaccAccountingPage })));
+const SmaccInventoryAssetsPage = lazyWithRetry(() => import('./pages/SmaccInventoryAssetsPage').then(m => ({ default: m.SmaccInventoryAssetsPage })));
+const SmaccEmployeesSettingsPage = lazyWithRetry(() => import('./pages/SmaccEmployeesSettingsPage').then(m => ({ default: m.SmaccEmployeesSettingsPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -300,6 +304,19 @@ const MainContent: React.FC = () => {
 
       case 'journals':
         return <JournalsPage />;
+
+      case 'smacc-accounting':
+        return <SmaccAccountingPage />;
+
+      case 'smacc-inventory-assets':
+        return <SmaccInventoryAssetsPage />;
+
+      case 'smacc-hr-settings':
+        return <SmaccEmployeesSettingsPage />;
+
+      case 'smacc-modules':
+      case 'sales-collectors':
+        return <SmaccModulesPage />;
 
       case 'clients':
       case 'client-list':
