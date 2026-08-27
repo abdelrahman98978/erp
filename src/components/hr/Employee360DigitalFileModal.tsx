@@ -106,7 +106,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               {employee.name.charAt(0)}
             </div>
             <div>
-              <div style={{ fontSize: '18px', fontWeight: '900', fontFamily: 'Cairo, sans-serif' }}>
+              <div style={{ fontSize: '18px', fontWeight: 600, color: '#ffffff' }}>
                 {employee.name} (كود: {employee.employee_code})
               </div>
               <div style={{ fontSize: '12px', color: '#CBD5E1' }}>

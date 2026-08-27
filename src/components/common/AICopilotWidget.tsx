@@ -124,23 +124,23 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           bottom: '24px',
           left: '24px',
           zIndex: 9999,
-          width: '56px',
-          height: '56px',
+          width: '52px',
+          height: '52px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #005154 0%, #101c2e 100%)',
+          background: '#000000',
           color: '#ffffff',
-          border: '2px solid #D4AF37',
-          boxShadow: '0 8px 24px rgba(0, 81, 84, 0.4)',
+          border: '1px solid #e4e4e7',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '22px',
+          fontSize: '20px',
           transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           transform: isOpen ? 'rotate(90deg) scale(0.95)' : 'rotate(0deg) scale(1)',
         }}
       >
-        <i className={isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-wand-magic-sparkles'} style={{ color: '#D4AF37' }}></i>
+        <i className={isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-wand-magic-sparkles'} style={{ color: '#c1fbd4' }}></i>
       </button>
 
       {/* Floating Chat Modal */}
@@ -156,12 +156,12 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             background: '#ffffff',
             borderRadius: '24px',
             boxShadow: '0 20px 50px rgba(0, 0, 0, 0.25)',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #e4e4e7',
             zIndex: 9999,
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            fontFamily: 'Tajawal, Cairo, sans-serif',
+            fontFamily: 'Inter, system-ui, sans-serif',
             direction: 'rtl',
             animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
@@ -170,12 +170,12 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           <div
             style={{
               padding: '16px 20px',
-              background: 'linear-gradient(135deg, #005154 0%, #101c2e 100%)',
+              background: '#000000',
               color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              borderBottom: '2px solid #D4AF37',
+              borderBottom: '1px solid #27272a',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -196,7 +196,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 <i className="fa-solid fa-robot"></i>
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
+                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
                   مساعد السليم الذكي (AI Copilot)
                 </h4>
                 <span style={{ fontSize: '11px', color: '#87d3d6' }}>
@@ -229,13 +229,13 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 key={idx}
                 onClick={() => handleSendMessage(qp.query)}
                 style={{
-                  padding: '5px 10px',
+                  padding: '5px 12px',
                   borderRadius: '9999px',
-                  border: '1px solid #cbd5e1',
-                  background: '#ffffff',
+                  border: '1px solid #e4e4e7',
+                  background: '#fbfbf5',
                   fontSize: '11px',
-                  fontWeight: '700',
-                  color: '#005154',
+                  fontWeight: 600,
+                  color: '#000000',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}
@@ -272,8 +272,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   style={{
                     padding: '10px 14px',
                     borderRadius: msg.sender === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    background: msg.sender === 'user' ? '#005154' : '#f1f5f9',
-                    color: msg.sender === 'user' ? '#ffffff' : '#1e293b',
+                    background: msg.sender === 'user' ? '#000000' : '#f4f4f5',
+                    color: msg.sender === 'user' ? '#ffffff' : '#000000',
                     fontSize: '13px',
                     lineHeight: '1.6',
                     whiteSpace: 'pre-wrap',
@@ -374,23 +374,22 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 background: '#ffffff',
                 fontSize: '13px',
                 outline: 'none',
-                fontFamily: 'Tajawal, sans-serif',
               }}
             />
             <button
               type="submit"
               style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '12px',
-                background: '#005154',
+                width: '38px',
+                height: '38px',
+                borderRadius: '9999px',
+                background: '#000000',
                 color: '#ffffff',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '14px',
+                fontSize: '13px',
               }}
             >
               <i className="fa-solid fa-paper-plane"></i>

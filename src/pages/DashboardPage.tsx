@@ -205,11 +205,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#005154';
+            e.currentTarget.style.borderColor = '#000000';
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#E2E8F0';
+            e.currentTarget.style.borderColor = '#e4e4e7';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
@@ -252,11 +252,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#005154';
+            e.currentTarget.style.borderColor = '#000000';
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#E2E8F0';
+            e.currentTarget.style.borderColor = '#e4e4e7';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
@@ -299,11 +299,11 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#005154';
+            e.currentTarget.style.borderColor = '#000000';
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#E2E8F0';
+            e.currentTarget.style.borderColor = '#e4e4e7';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
@@ -356,8 +356,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           <div style={{ fontSize: '26px', fontWeight: '900', color: '#0F172A', marginBottom: '8px' }}>
             {stats.recruitmentContracts.total}
           </div>
-          <div style={{ width: '100%', height: '4px', backgroundColor: '#F1F5F9', borderRadius: '2px', overflow: 'hidden', marginBottom: '8px' }}>
-            <div style={{ width: '65%', height: '100%', backgroundColor: '#005154', borderRadius: '2px' }}></div>
+          <div style={{ width: '100%', height: '4px', backgroundColor: '#f4f4f5', borderRadius: '2px', overflow: 'hidden', marginBottom: '8px' }}>
+            <div style={{ width: '65%', height: '100%', backgroundColor: '#000000', borderRadius: '2px' }}></div>
           </div>
           <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
             <span>قبل الوصول: <strong style={{ color: '#0F172A' }}>{stats.recruitmentContracts.beforeArrival}</strong></span>
@@ -701,22 +701,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 {MOCK_RECRUITMENT_CONTRACTS.map((contract) => (
                   <tr key={contract.id}>
                     <td>
-                      <strong style={{ color: '#005154' }}>{contract.contract_number}</strong>
-                      <div style={{ fontSize: '10px', color: '#94A3B8' }}>مساند: {contract.musaned_number}</div>
+                      <strong style={{ color: '#000000' }}>{contract.contract_number}</strong>
+                      <div style={{ fontSize: '10px', color: '#71717a' }}>مساند: {contract.musaned_number}</div>
                     </td>
                     <td>
-                      <div style={{ fontWeight: '800', color: '#0F172A' }}>{contract.client_name}</div>
-                      <div style={{ fontSize: '11px', color: '#64748B' }}>{contract.client_phone}</div>
+                      <div style={{ fontWeight: 550, color: '#000000' }}>{contract.client_name}</div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>{contract.client_phone}</div>
                     </td>
                     <td>
-                      <div style={{ fontWeight: '700' }}>{contract.maid_name}</div>
-                      <div style={{ fontSize: '11px', color: '#64748B' }}>{contract.nationality} • {contract.maid_passport}</div>
+                      <div style={{ fontWeight: 500 }}>{contract.maid_name}</div>
+                      <div style={{ fontSize: '11px', color: '#71717a' }}>{contract.nationality} • {contract.maid_passport}</div>
                     </td>
                     <td>
-                      <span style={{ fontSize: '12px', color: '#334155' }}>{contract.external_office}</span>
+                      <span style={{ fontSize: '12px', color: '#3f3f46' }}>{contract.external_office}</span>
                     </td>
                     <td>
-                      <span className="badge-odoo badge-secondary" style={{ fontSize: '11px' }}>{contract.branch}</span>
+                      <span className="pill-tag-shade" style={{ fontSize: '11px' }}>{contract.branch}</span>
                     </td>
                     <td>
                       <span
@@ -736,15 +736,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                     <td>
                       <button
                         onClick={() => onNavigate('recruitment-contracts', 'عقود الاستقدام')}
+                        className="button-outline-on-light"
                         style={{
-                          backgroundColor: 'rgba(0, 81, 84, 0.08)',
-                          color: '#005154',
-                          border: 'none',
-                          borderRadius: '6px',
-                          padding: '4px 10px',
+                          borderRadius: '9999px',
+                          padding: '4px 12px',
                           fontSize: '11px',
-                          fontWeight: '800',
+                          fontWeight: 550,
                           cursor: 'pointer',
+                          minHeight: '28px',
                         }}
                       >
                         عرض التفاصيل

@@ -76,8 +76,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             alignItems: 'center',
             justifyContent: 'center',
             padding: '24px',
-            background: '#f7faf9',
-            fontFamily: 'Tajawal, Cairo, sans-serif',
+            background: '#fbfbf5',
+            fontFamily: 'Inter, system-ui, sans-serif',
           }}
         >
           <div style={{
@@ -86,8 +86,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             background: '#ffffff',
             borderRadius: '20px',
             padding: '40px 32px',
-            boxShadow: '0 12px 32px rgba(0, 56, 59, 0.08)',
-            border: '1px solid #e2e8f0',
+            boxShadow: '0 16px 32px rgba(0, 0, 0, 0.08)',
+            border: '1px solid #e4e4e7',
             textAlign: 'center',
           }}>
             <div style={{
@@ -106,10 +106,9 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </div>
 
             <h2 style={{
-              fontFamily: 'Cairo, sans-serif',
-              fontSize: '24px',
-              fontWeight: 800,
-              color: '#181c1c',
+              fontSize: '22px',
+              fontWeight: 600,
+              color: '#000000',
               margin: '0 0 12px 0',
             }}>
               حدث خطأ غير متوقع
@@ -166,18 +165,13 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               </button>
               <button
                 type="button"
+                className="button-primary-pill"
                 onClick={this.handleReload}
                 style={{
                   height: '44px',
                   padding: '0 24px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: '#005154',
-                  color: '#ffffff',
                   fontSize: '14px',
-                  fontWeight: 700,
                   cursor: 'pointer',
-                  boxShadow: '0 6px 16px rgba(0, 81, 84, 0.25)',
                 }}
               >
                 إعادة تحميل الصفحة

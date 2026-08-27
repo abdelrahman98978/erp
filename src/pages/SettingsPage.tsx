@@ -115,29 +115,29 @@ export const SettingsPage: React.FC = () => {
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #E2E8F0' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fbfbf5', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #e4e4e7' }}>
                   <input
                     type="checkbox"
                     checked={require2FAAdmin}
                     onChange={e => setRequire2FAAdmin(e.target.checked)}
-                    style={{ accentColor: '#005154', width: '18px', height: '18px' }}
+                    style={{ accentColor: '#000000', width: '18px', height: '18px' }}
                   />
                   <div>
-                    <span style={{ fontWeight: '800', fontSize: '14px', color: '#181C1C', display: 'block' }}>
+                    <span style={{ fontWeight: 600, fontSize: '14px', color: '#000000', display: 'block' }}>
                       إلزامية المصادقة الثنائية (2FA) لجميع المديرين والمشرفين (Admins Only)
                     </span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '12px', color: '#71717a' }}>
                       منع تسجيل الدخول لأي حساب إداري ذو صلاحيات واسعة دون إدخال رمز التحقق الثنائي (TOTP / SMS).
                     </span>
                   </div>
                 </label>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #E2E8F0' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fbfbf5', padding: '16px', borderRadius: '10px', cursor: 'pointer', border: '1px solid #e4e4e7' }}>
                   <input
                     type="checkbox"
                     checked={allowOptional2FA}
                     onChange={e => setAllowOptional2FA(e.target.checked)}
-                    style={{ accentColor: '#005154', width: '18px', height: '18px' }}
+                    style={{ accentColor: '#000000', width: '18px', height: '18px' }}
                   />
                   <div>
                     <span style={{ fontWeight: '800', fontSize: '14px', color: '#181C1C', display: 'block' }}>

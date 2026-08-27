@@ -230,8 +230,8 @@ export const BranchCommunicationPage: React.FC = () => {
 
         {/* Right Messages & Direct Chat View */}
         <div className="table-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', minHeight: '500px' }}>
-          <div style={{ paddingBottom: '12px', borderBottom: '1px solid #E2E8F0', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', margin: 0 }}>
+          <div style={{ paddingBottom: '12px', borderBottom: '1px solid #e4e4e7', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
               قناة المحادثة: {activeChannel}
             </h3>
             <Badge text="تشفير مباشر آمن 256-bit" type="success" icon="fa-solid fa-lock" />
@@ -241,14 +241,14 @@ export const BranchCommunicationPage: React.FC = () => {
           <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px', maxHeight: '360px', paddingRight: '4px' }}>
             {filteredMessages.map(m => (
               <div key={m.id} style={{
-                background: m.priority === 'تعميم رسمي' ? '#EFF6FF' : m.priority === 'عاجل' ? '#FEF2F2' : '#F8FAFC',
-                border: m.priority === 'تعميم رسمي' ? '1px solid #BFDBFE' : m.priority === 'عاجل' ? '1px solid #FCA5A5' : '1px solid #E2E8F0',
+                background: m.priority === 'تعميم رسمي' ? '#fbfbf5' : m.priority === 'عاجل' ? '#FEF2F2' : '#FFFFFF',
+                border: m.priority === 'تعميم رسمي' ? '1px solid #000000' : m.priority === 'عاجل' ? '1px solid #FCA5A5' : '1px solid #e4e4e7',
                 padding: '12px 16px',
                 borderRadius: '12px'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: '800', fontSize: '13px', color: '#005154' }}>
-                    {m.sender_name} <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>({m.sender_branch} • {m.sender_role})</span>
+                  <span style={{ fontWeight: 600, fontSize: '13px', color: '#000000' }}>
+                    {m.sender_name} <span style={{ fontSize: '11px', color: '#71717a', fontWeight: 400 }}>({m.sender_branch} • {m.sender_role})</span>
                   </span>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{m.timestamp}</span>
                 </div>
@@ -278,7 +278,7 @@ export const BranchCommunicationPage: React.FC = () => {
 
       {/* Inter-Branch Transfer Requests Table */}
       <div className="table-card" style={{ padding: '24px', marginTop: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
           <i className="fa-solid fa-right-left ml-2"></i> سجل طلبات المناقلات والتنسيق بين الفروع (Inter-Branch Transfers Log)
         </h3>
 
@@ -314,8 +314,8 @@ export const BranchCommunicationPage: React.FC = () => {
       {showTransferModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 <i className="fa-solid fa-right-left ml-2"></i> تقديم طلب مناقلة وتنسيق بين الفروع
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowTransferModal(false)}></i>

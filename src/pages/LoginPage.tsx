@@ -648,12 +648,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 {/* Biometric Quick Login Options */}
                 <div style={{ margin: '20px 0 16px 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                    <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
-                    <span style={{ fontSize: '11.5px', fontWeight: '700', color: '#005154', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
+                    <span style={{ fontSize: '11.5px', fontWeight: 600, color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
                       <span>الدخول البيومتري السريع</span>
                     </span>
-                    <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
+                    <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
@@ -761,7 +761,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       fontWeight: '600'
                     }}
                   >
-                    <i className="fa-solid fa-building" style={{ color: '#005154' }} aria-hidden="true"></i>
+                    <i className="fa-solid fa-building" style={{ color: '#000000' }} aria-hidden="true"></i>
                     <span>{t('groupDirectory', 'دليل المجموعة')}</span>
                   </button>
                 </div>
@@ -776,8 +776,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     style={{
                       border: 'none',
                       background: 'none',
-                      color: '#005154',
-                      fontWeight: '700',
+                      color: '#000000',
+                      fontWeight: 600,
                       cursor: 'pointer',
                       fontSize: '13px',
                       padding: 0,
@@ -794,8 +794,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     width: '60px',
                     height: '60px',
                     borderRadius: '16px',
-                    background: 'rgba(0, 81, 84, 0.1)',
-                    color: '#005154',
+                    background: '#000000',
+                    color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -805,7 +805,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     <i className="fa-solid fa-shield-halved" aria-hidden="true"></i>
                   </div>
 
-                  <h1 id="otp-heading" style={{ fontFamily: 'Cairo, sans-serif', fontSize: '24px', fontWeight: '800', color: '#181c1c', margin: '0 0 8px 0' }}>
+                  <h1 id="otp-heading" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: '0 0 8px 0' }}>
                     المصادقة الثنائية (2FA Verification)
                   </h1>
                   <p style={{ fontSize: '13.5px', color: '#3f4949', margin: 0, lineHeight: '1.6' }}>
@@ -837,14 +837,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                           width: '50px',
                           height: '56px',
                           borderRadius: '12px',
-                          background: '#f2f4f4',
-                          border: val ? '2px solid #005154' : '1px solid #bec9c8',
+                          background: '#fbfbf5',
+                          border: val ? '2px solid #000000' : '1px solid #e4e4e7',
                           textAlign: 'center',
                           fontSize: '22px',
-                          fontWeight: '800',
-                          color: '#005154',
+                          fontWeight: 600,
+                          color: '#000000',
                           outline: 'none',
-                          boxShadow: val ? '0 4px 12px rgba(0, 81, 84, 0.15)' : 'none'
+                          boxShadow: val ? '0 4px 12px rgba(0, 0, 0, 0.1)' : 'none'
                         }}
                       />
                     ))}
@@ -852,7 +852,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
                   {/* Timer & Resend code */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                    <span style={{ fontSize: '12.5px', color: '#5a6363' }} aria-live="polite">
+                    <span style={{ fontSize: '12.5px', color: '#71717a' }} aria-live="polite">
                       <i className="fa-solid fa-clock me-1" aria-hidden="true"></i> ينتهي الرمز خلال: <strong>00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}</strong>
                     </span>
 
@@ -863,8 +863,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       style={{
                         border: 'none',
                         background: 'none',
-                        color: timerSeconds === 0 ? '#005154' : '#6b7a8e',
-                        fontWeight: '700',
+                        color: timerSeconds === 0 ? '#000000' : '#a1a1aa',
+                        fontWeight: 600,
                         fontSize: '12.5px',
                         cursor: timerSeconds === 0 ? 'pointer' : 'not-allowed'
                       }}
@@ -877,23 +877,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   <button
                     type="submit"
                     disabled={authLoading}
+                    className="button-primary-pill"
                     style={{
-                      height: '52px',
+                      height: '48px',
                       marginTop: '12px',
                       width: '100%',
-                      background: '#005154',
-                      color: '#FFFFFF',
-                      fontSize: '15px',
-                      fontWeight: '700',
-                      borderRadius: '14px',
-                      border: 'none',
-                      boxShadow: '0 8px 20px rgba(0, 81, 84, 0.25)',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      borderRadius: '9999px',
                       cursor: authLoading ? 'not-allowed' : 'pointer',
                       transition: 'all 0.3s ease',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px'
+                      gap: '8px',
                     }}
                   >
                     {authLoading ? (
@@ -955,19 +952,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           >
             {/* Top Security Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '20px' }}>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '4px 12px',
-                  borderRadius: '9999px',
-                  background: 'rgba(0, 81, 84, 0.08)',
-                  color: '#005154',
-                  fontSize: '11.5px',
-                  fontWeight: '800'
-                }}
-              >
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                 <i className="fa-solid fa-lock text-xs" aria-hidden="true"></i>
                 مصادقة بيومترية مشفرة (FIDO2 / WebAuthn)
               </span>
@@ -981,10 +966,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 height: '130px',
                 margin: '0 auto 24px auto',
                 borderRadius: '24px',
-                background: biometricModal === 'fingerprint'
-                  ? 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(255,255,255,1) 80%)'
-                  : 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(255,255,255,1) 80%)',
-                border: `2px dashed ${biometricStatus === 'success' ? '#10B981' : biometricModal === 'fingerprint' ? '#10B981' : '#8B5CF6'}`,
+                background: '#fbfbf5',
+                border: '2px dashed #000000',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1000,12 +983,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     left: 0,
                     right: 0,
                     height: '3px',
-                    background: biometricModal === 'fingerprint'
-                      ? 'linear-gradient(90deg, transparent, #10B981, transparent)'
-                      : 'linear-gradient(90deg, transparent, #8B5CF6, transparent)',
-                    boxShadow: biometricModal === 'fingerprint'
-                      ? '0 0 12px #10B981, 0 0 4px #10B981'
-                      : '0 0 12px #8B5CF6, 0 0 4px #8B5CF6',
+                    background: '#000000',
+                    boxShadow: '0 0 12px #000000',
                     transition: 'top 0.25s linear',
                     zIndex: 10
                   }}
@@ -1014,22 +993,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
               {/* Center Icon */}
               {biometricStatus === 'success' ? (
-                <div style={{ color: '#10B981', fontSize: '56px', animation: 'scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+                <div style={{ color: '#000000', fontSize: '56px' }}>
                   <i className="fa-solid fa-circle-check" aria-hidden="true"></i>
                 </div>
               ) : biometricModal === 'fingerprint' ? (
-                <div style={{ color: '#059669', fontSize: '56px', opacity: 0.9 }}>
+                <div style={{ color: '#000000', fontSize: '56px' }}>
                   <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
                 </div>
               ) : (
-                <div style={{ color: '#7C3AED', fontSize: '56px', opacity: 0.9 }}>
+                <div style={{ color: '#000000', fontSize: '56px' }}>
                   <i className="fa-solid fa-face-viewfinder" aria-hidden="true"></i>
                 </div>
               )}
             </div>
 
             {/* Title & Message */}
-            <h3 style={{ fontFamily: 'Cairo, sans-serif', fontSize: '20px', fontWeight: '800', color: '#005154', margin: '0 0 8px 0' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: '0 0 8px 0' }}>
               {biometricStatus === 'success'
                 ? 'تم التحقق بنجاح!'
                 : biometricModal === 'fingerprint'

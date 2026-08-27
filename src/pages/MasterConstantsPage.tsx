@@ -277,13 +277,13 @@ export const MasterConstantsPage: React.FC = () => {
                   style={{
                     width: '36px',
                     height: '36px',
-                    borderRadius: '8px',
-                    backgroundColor: '#F1F5F9',
-                    color: '#005154',
+                    borderRadius: '9999px',
+                    backgroundColor: '#000000',
+                    color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontWeight: '800',
+                    fontWeight: 600,
                     fontSize: '12px',
                   }}
                 >
@@ -377,13 +377,15 @@ export const MasterConstantsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-primary-pill"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
                 >
                   حفظ البند
                 </button>

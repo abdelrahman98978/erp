@@ -856,13 +856,15 @@ export const HRPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddEmpModal(false)}
-                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-primary-pill"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
                 >
                   حفظ الموظف
                 </button>

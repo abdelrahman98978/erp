@@ -244,23 +244,23 @@ export const TravelPage: React.FC = () => {
           <tbody>
             {currentDisplayList.map((f) => (
               <tr key={f.id}>
-                <td><strong style={{ color: '#005154' }}>{f.id}</strong></td>
+                <td><strong style={{ color: '#000000' }}>{f.id}</strong></td>
                 <td><Badge text={f.travel_type} type={f.travel_type === 'وصول' ? 'success' : 'danger'} /></td>
                 <td>
-                  <div style={{ fontWeight: '800', color: '#0F172A' }}>{f.maid_name}</div>
-                  <div style={{ fontSize: '10px', color: '#64748B', fontFamily: 'monospace' }}>{f.nationality} • {f.passport_number}</div>
+                  <div style={{ fontWeight: 600, color: '#000000' }}>{f.maid_name}</div>
+                  <div style={{ fontSize: '10px', color: '#71717a', fontFamily: 'monospace' }}>{f.nationality} • {f.passport_number}</div>
                 </td>
-                <td><span style={{ fontWeight: '700' }}>{f.client_name}</span></td>
+                <td><span style={{ fontWeight: 550 }}>{f.client_name}</span></td>
                 <td>
-                  <div style={{ fontWeight: '800', color: '#1E3A8A' }}>{f.airline}</div>
-                  <div style={{ fontSize: '10px', color: '#64748B', fontFamily: 'monospace' }}>{f.flight_number}</div>
+                  <div style={{ fontWeight: 600, color: '#000000' }}>{f.airline}</div>
+                  <div style={{ fontSize: '10px', color: '#71717a', fontFamily: 'monospace' }}>{f.flight_number}</div>
                 </td>
                 <td><span style={{ fontSize: '11px' }}>{f.arrival_airport}</span></td>
                 <td>
-                  <strong style={{ color: '#D97706' }}>{f.flight_date}</strong>
-                  <div style={{ fontSize: '10px', color: '#64748B' }}>{f.flight_time}</div>
+                  <strong style={{ color: '#000000' }}>{f.flight_date}</strong>
+                  <div style={{ fontSize: '10px', color: '#71717a' }}>{f.flight_time}</div>
                 </td>
-                <td><span style={{ fontSize: '11px', color: '#005154', fontWeight: '700' }}>{f.driver_assigned || 'غير مسند'}</span></td>
+                <td><span style={{ fontSize: '11px', color: '#000000', fontWeight: 600 }}>{f.driver_assigned || 'غير مسند'}</span></td>
                 <td><Badge text={f.status} type={f.status.includes('تم') ? 'success' : 'purple'} /></td>
               </tr>
             ))}
@@ -346,13 +346,15 @@ export const TravelPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-primary-pill"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
                 >
                   حفظ وجدولة الرحلة
                 </button>

@@ -257,10 +257,10 @@ export const BranchDepartmentsPage: React.FC = () => {
       {/* Page Header Banner */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-sitemap text-purple ml-2"></i> دليل الهيكلية والأقسام التخصصية الشاملة لجميع شركات المجموعة والمكاتب الخارجية
+          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
+            <i className="fa-solid fa-sitemap text-black ml-2"></i> دليل الهيكلية والأقسام التخصصية الشاملة لجميع شركات المجموعة والمكاتب الخارجية
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر، الفروع الإقليمية، والمكاتب الخارجية (DAMAS, PLATINUM, VERSATILE)
           </p>
         </div>
@@ -360,24 +360,24 @@ export const BranchDepartmentsPage: React.FC = () => {
             key={e.id}
             onClick={() => setSelectedEntityId(e.id)}
             style={{
-              background: selectedEntityId === e.id ? '#005154' : '#FFFFFF',
+              background: selectedEntityId === e.id ? '#000000' : '#FFFFFF',
               color: selectedEntityId === e.id ? '#FFFFFF' : '#181C1C',
               padding: '16px',
-              borderRadius: '12px',
+              borderRadius: '16px',
               cursor: 'pointer',
-              border: '1px solid #E2E8F0',
-              boxShadow: selectedEntityId === e.id ? '0 6px 16px rgba(0,81,84,0.25)' : 'none',
+              border: selectedEntityId === e.id ? '1px solid #000000' : '1px solid #e4e4e7',
+              boxShadow: selectedEntityId === e.id ? '0 4px 16px rgba(0,0,0,0.15)' : 'none',
               transition: 'all 0.3s ease'
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <span style={{ fontSize: '11px', fontWeight: '900', background: selectedEntityId === e.id ? 'rgba(255,255,255,0.2)' : '#E2E8F0', padding: '2px 8px', borderRadius: '4px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, background: selectedEntityId === e.id ? 'rgba(255,255,255,0.2)' : '#f4f4f5', padding: '2px 8px', borderRadius: '9999px' }}>
                 {e.code}
               </span>
               <Badge text={e.category} type={e.category === 'شركة مجموعة' ? 'purple' : e.category === 'مكتب خارجي' ? 'success' : 'info'} />
             </div>
 
-            <h4 style={{ fontSize: '14px', fontWeight: '800', margin: '0 0 4px 0', fontFamily: 'Cairo, sans-serif' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: 600, margin: '0 0 4px 0' }}>
               {e.name}
             </h4>
             <span style={{ fontSize: '11.5px', opacity: 0.8, display: 'block' }}>المسؤول: {e.manager} • {e.departments.length} أقسام</span>
@@ -386,7 +386,7 @@ export const BranchDepartmentsPage: React.FC = () => {
       </div>
 
       {/* Selected Entity Overview Banner */}
-      <div className="table-card" style={{ padding: '20px', marginBottom: '24px', background: 'linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%)' }}>
+      <div className="table-card" style={{ padding: '20px', marginBottom: '24px', background: '#fbfbf5', border: '1px solid #e4e4e7' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -394,36 +394,36 @@ export const BranchDepartmentsPage: React.FC = () => {
               <Badge text={selectedEntity.category} type="info" />
               <Badge text={`إجمالي الكادر: ${selectedEntity.staff_count} موظفين`} type="success" />
             </div>
-            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#005154', margin: 0 }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0 }}>
               {selectedEntity.name} - الموقع والفرع: {selectedEntity.location}
             </h3>
-            <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+            <p style={{ fontSize: '12.5px', color: '#71717a', margin: '4px 0 0 0' }}>
               المشرف / المدير المسؤول: <strong>{selectedEntity.manager}</strong>
             </p>
           </div>
 
-          <button className="btn-odoo btn-odoo-primary" onClick={() => setShowAddDeptModal(true)}>
+          <button className="button-primary-pill" onClick={() => setShowAddDeptModal(true)} style={{ padding: '6px 18px', fontSize: '12.5px', minHeight: '36px' }}>
             <i className="fa-solid fa-folder-plus ml-1"></i> تطوير وإضافة قسم تخصصي
           </button>
         </div>
       </div>
 
       {/* Sub-Departments Cards Grid */}
-      <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
+      <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
         <i className="fa-solid fa-diagram-project ml-2"></i> الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})
       </h3>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
         {selectedEntity.departments.map(dept => (
-          <div key={dept.id} className="table-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div key={dept.id} className="table-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #e4e4e7' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{
                   width: '42px',
                   height: '42px',
-                  borderRadius: '10px',
-                  background: 'rgba(0, 81, 84, 0.1)',
-                  color: '#005154',
+                  borderRadius: '9999px',
+                  background: '#000000',
+                  color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -434,10 +434,10 @@ export const BranchDepartmentsPage: React.FC = () => {
                 <Badge text={dept.kpi} type="purple" />
               </div>
 
-              <h4 style={{ fontSize: '15px', fontWeight: '800', color: '#181C1C', marginBottom: '6px', fontFamily: 'Cairo, sans-serif' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 600, color: '#000000', marginBottom: '6px' }}>
                 {dept.name}
               </h4>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', lineHeight: '1.6', margin: '0 0 12px 0' }}>
+              <p style={{ fontSize: '12.5px', color: '#71717a', lineHeight: '1.6', margin: '0 0 12px 0' }}>
                 {dept.description}
               </p>
             </div>
@@ -454,8 +454,8 @@ export const BranchDepartmentsPage: React.FC = () => {
       {showAddDeptModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 إضافة قسم تخصصي جديد لـ ({selectedEntity.name})
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddDeptModal(false)}></i>
@@ -508,9 +508,9 @@ export const BranchDepartmentsPage: React.FC = () => {
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddDeptModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">اعتماد القسم التخصصي</button>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e4e4e7' }}>
+                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowAddDeptModal(false)}>إلغاء</button>
+                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>اعتماد القسم التخصصي</button>
               </div>
             </form>
           </div>

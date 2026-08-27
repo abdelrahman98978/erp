@@ -224,9 +224,9 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 <div><i className="fa-solid fa-envelope ml-1.5 text-slate-400"></i> {office.email}</div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #F1F5F9', paddingTop: '12px', fontSize: '12px' }}>
-                <div>السير المتاحة: <strong style={{ color: '#005154' }}>{office.activeCandidatesCount}</strong></div>
-                <div>العمالة الواصلة: <strong style={{ color: '#047857' }}>{office.arrivedCountCount}</strong></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e4e4e7', paddingTop: '12px', fontSize: '12px' }}>
+                <div>السير المتاحة: <strong style={{ color: '#000000' }}>{office.activeCandidatesCount}</strong></div>
+                <div>العمالة الواصلة: <strong style={{ color: '#000000' }}>{office.arrivedCountCount}</strong></div>
               </div>
             </div>
           ))}
@@ -252,7 +252,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
               {MOCK_OFFICE_USERS.map((u, idx) => (
                 <tr key={u.id}>
                   <td><strong>{idx + 1}</strong></td>
-                  <td><strong style={{ color: '#005154' }}>{u.name}</strong></td>
+                  <td><strong style={{ color: '#000000' }}>{u.name}</strong></td>
                   <td>
                     <div>{u.phone}</div>
                     <div style={{ fontSize: '10px', color: '#64748B' }}>{u.email}</div>
@@ -287,13 +287,13 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
               {MOCK_OFFICE_FILES.map((f, idx) => (
                 <tr key={f.id}>
                   <td><strong>{idx + 1}</strong></td>
-                  <td><strong style={{ color: '#005154' }}>{f.office_name}</strong></td>
+                  <td><strong style={{ color: '#000000' }}>{f.office_name}</strong></td>
                   <td>{f.file_title}</td>
                   <td><Badge text={f.file_type} type="purple" /></td>
                   <td>{f.upload_date}</td>
                   <td>{f.file_size}</td>
                   <td>
-                    <button style={{ backgroundColor: '#005154', color: '#FFFFFF', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}>
+                    <button className="button-outline-on-light" style={{ borderRadius: '9999px', padding: '4px 12px', fontSize: '11px', fontWeight: 550, cursor: 'pointer', minHeight: '28px' }}>
                       <i className="fa-solid fa-download ml-1"></i> تحميل
                     </button>
                   </td>

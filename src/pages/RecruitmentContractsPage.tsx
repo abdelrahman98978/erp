@@ -269,7 +269,7 @@ export const RecruitmentContractsPage: React.FC = () => {
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
             متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ{' '}
-            <strong style={{ color: '#005154' }}>{activeCompany.name}</strong>
+            <strong style={{ color: '#000000' }}>{activeCompany.name}</strong>
           </p>
         </div>
 
@@ -460,18 +460,19 @@ export const RecruitmentContractsPage: React.FC = () => {
               {currentDisplayList.map((c) => (
                 <div key={c.id} style={{ backgroundColor: '#F8FAFC', borderRadius: '12px', border: '1px solid #E2E8F0', padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <strong style={{ color: '#005154', fontSize: '13px' }}>{c.contract_number}</strong>
+                    <strong style={{ color: '#000000', fontSize: '13px' }}>{c.contract_number}</strong>
                     <Badge text={c.stage} type="primary" />
                   </div>
                   <div>
-                    <div style={{ fontWeight: '800', fontSize: '14px', color: '#0F172A' }}>{c.client_name}</div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>العاملة: {c.maid_name} ({c.nationality})</div>
+                    <div style={{ fontWeight: 600, fontSize: '14px', color: '#000000' }}>{c.client_name}</div>
+                    <div style={{ fontSize: '11px', color: '#71717a' }}>العاملة: {c.maid_name} ({c.nationality})</div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #E2E8F0', paddingTop: '10px' }}>
-                    <strong style={{ color: '#047857', fontSize: '13px' }}>{(c.amount ?? 0).toLocaleString()} ر.س</strong>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e4e4e7', paddingTop: '10px' }}>
+                    <strong style={{ color: '#000000', fontSize: '13px' }}>{(c.amount ?? 0).toLocaleString()} ر.س</strong>
                     <button
                       onClick={() => setSelectedContractForPrint(c)}
-                      style={{ backgroundColor: '#005154', color: '#FFFFFF', border: 'none', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
+                      className="button-primary-pill"
+                      style={{ padding: '4px 14px', fontSize: '11px', minHeight: '28px' }}
                     >
                       طباعة
                     </button>
@@ -629,8 +630,8 @@ export const RecruitmentContractsPage: React.FC = () => {
 
             <form onSubmit={handleAddContract} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Section 1: Client Information */}
-              <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '800', color: '#005154' }}>
+              <div style={{ backgroundColor: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 600, color: '#000000' }}>
                   1. بيانات العميل صاحب الطلب
                 </h4>
 
@@ -692,8 +693,8 @@ export const RecruitmentContractsPage: React.FC = () => {
               </div>
 
               {/* Section 2: Maid & Office Information */}
-              <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '800', color: '#005154' }}>
+              <div style={{ backgroundColor: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 600, color: '#000000' }}>
                   2. بيانات العاملة والمكتب الخارجي
                 </h4>
 
@@ -761,13 +762,15 @@ export const RecruitmentContractsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  style={{ padding: '9px 18px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '9px 24px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,81,84,0.25)' }}
+                  className="button-primary-pill"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
                 >
                   اعتماد وحفظ العقد
                 </button>

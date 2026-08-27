@@ -173,9 +173,9 @@ export const FinancialRequestsPage: React.FC = () => {
             <i className="fa-solid fa-file-invoice-dollar text-emerald-600"></i>
             إدارة الطلبات المالية والتشغيلية (Financial Operational Requests)
           </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#71717a' }}>
             إصدار طلبات سداد الرسوم الحكومية، الجوازات، تذاكر الطيران، وتسويات المكاتب الخارجية لـ{' '}
-            <strong style={{ color: '#005154' }}>{activeCompany.name}</strong>
+            <strong style={{ color: '#000000' }}>{activeCompany.name}</strong>
           </p>
         </div>
 
@@ -267,14 +267,14 @@ export const FinancialRequestsPage: React.FC = () => {
           <tbody>
             {currentDisplayList.map((r) => (
               <tr key={r.id}>
-                <td><strong style={{ color: '#005154' }}>{r.request_number}</strong></td>
+                <td><strong style={{ color: '#000000' }}>{r.request_number}</strong></td>
                 <td>
-                  <div style={{ fontWeight: '800', color: '#0F172A' }}>{r.paid_to}</div>
-                  <div style={{ fontSize: '10px', color: '#64748B' }}>{r.accounting_name}</div>
+                  <div style={{ fontWeight: 600, color: '#000000' }}>{r.paid_to}</div>
+                  <div style={{ fontSize: '10px', color: '#71717a' }}>{r.accounting_name}</div>
                 </td>
                 <td><Badge text={r.request_type} type="purple" /></td>
                 <td>{r.branch}</td>
-                <td><strong style={{ color: '#047857' }}>{r.amount.toLocaleString()} ر.س</strong></td>
+                <td><strong style={{ color: '#000000' }}>{r.amount.toLocaleString()} ر.س</strong></td>
                 <td><span style={{ fontSize: '11px', color: '#475569' }}>{r.payment_method}</span></td>
                 <td><Badge text={r.escalation} type={r.escalation === 'شديد الأهمية' ? 'danger' : 'warning'} /></td>
                 <td><Badge text={r.status} type={r.status === 'تم السداد' ? 'success' : 'warning'} /></td>
@@ -401,13 +401,15 @@ export const FinancialRequestsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                  className="button-outline-on-light"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '8px 22px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,81,84,0.25)' }}
+                  className="button-primary-pill"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
                 >
                   حفظ وإرسال الطلب للاعتماد
                 </button>

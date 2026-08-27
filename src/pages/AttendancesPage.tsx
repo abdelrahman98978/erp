@@ -77,7 +77,7 @@ export const AttendancesPage: React.FC = () => {
     { header: 'التاريخ', accessor: (row) => <span style={{ fontSize: '12px' }}>{row.date}</span> },
     { header: 'وقت الحضور (Check-In)', accessor: (row) => <span style={{ fontFamily: 'monospace', color: 'var(--status-success)', fontWeight: '700' }}>{row.check_in}</span> },
     { header: 'وقت الانصراف (Check-Out)', accessor: (row) => <span style={{ fontFamily: 'monospace', color: 'var(--odoo-purple)', fontWeight: '700' }}>{row.check_out}</span> },
-    { header: 'ساعات العمل', accessor: (row) => <span style={{ fontWeight: '800', color: '#005154' }}>{row.work_hours} س</span> },
+    { header: 'ساعات العمل', accessor: (row) => <span style={{ fontWeight: 600, color: '#000000' }}>{row.work_hours} س</span> },
     { header: 'حالة الحضور', accessor: (row) => <Badge text={row.status} type={row.status === 'حاضر' ? 'success' : row.status === 'متأخر' ? 'warning' : 'danger'} /> }
   ];
 
@@ -89,10 +89,10 @@ export const AttendancesPage: React.FC = () => {
       {/* Top Banner Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-clipboard-user text-purple ml-2"></i> سجل الحضور والانصراف والبصمة (Biometric Attendance Hub)
+          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
+            <i className="fa-solid fa-clipboard-user text-black ml-2"></i> سجل الحضور والانصراف والبصمة (Biometric Attendance Hub)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             رفع واستيراد كشوف البصمة الإلكترونية الجماعية، تتبع التأخيرات، ومطابقة ساعات العمل
           </p>
         </div>

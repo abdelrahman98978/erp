@@ -165,8 +165,8 @@ export const CreateCVPage: React.FC = () => {
       <form onSubmit={handleSubmit}>
         {/* Step 1: Agency & Type */}
         {activeStep === 1 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800', color: '#005154' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
               القسم 1: نوع السيرة والوكالة الخارجية
             </h3>
 
@@ -236,7 +236,8 @@ export const CreateCVPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveStep(2)}
-                style={{ padding: '9px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '13px', cursor: 'pointer' }}
+                className="button-primary-pill"
+                style={{ padding: '8px 22px', fontSize: '12.5px', minHeight: '36px' }}
               >
                 التالي: البيانات الشخصية <i className="fa-solid fa-arrow-left mr-1"></i>
               </button>
@@ -246,8 +247,8 @@ export const CreateCVPage: React.FC = () => {
 
         {/* Step 2: Personal Information */}
         {activeStep === 2 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800', color: '#005154' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
               القسم 2: البيانات الشخصية وجواز السفر
             </h3>
 
@@ -336,14 +337,16 @@ export const CreateCVPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveStep(1)}
-                style={{ padding: '9px 18px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                className="button-outline-on-light"
+                style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
               >
                 السابق
               </button>
               <button
                 type="button"
                 onClick={() => setActiveStep(3)}
-                style={{ padding: '9px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '13px', cursor: 'pointer' }}
+                className="button-primary-pill"
+                style={{ padding: '8px 22px', fontSize: '12.5px', minHeight: '36px' }}
               >
                 التالي: المهارات واللغات <i className="fa-solid fa-arrow-left mr-1"></i>
               </button>
@@ -353,8 +356,8 @@ export const CreateCVPage: React.FC = () => {
 
         {/* Step 3: Skills & Experience */}
         {activeStep === 3 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800', color: '#005154' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
               القسم 3: المهارات والخبرات العملية واللغات
             </h3>
 
@@ -428,14 +431,16 @@ export const CreateCVPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveStep(2)}
-                style={{ padding: '9px 18px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                className="button-outline-on-light"
+                style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
               >
                 السابق
               </button>
               <button
                 type="button"
                 onClick={() => setActiveStep(4)}
-                style={{ padding: '9px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '800', fontSize: '13px', cursor: 'pointer' }}
+                className="button-primary-pill"
+                style={{ padding: '8px 22px', fontSize: '12.5px', minHeight: '36px' }}
               >
                 التالي: المرفقات والاعتماد <i className="fa-solid fa-arrow-left mr-1"></i>
               </button>
@@ -445,8 +450,8 @@ export const CreateCVPage: React.FC = () => {
 
         {/* Step 4: Media, Cost, & Submission */}
         {activeStep === 4 && (
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '800', color: '#005154' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', border: '1px solid #e4e4e7', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: 600, color: '#000000' }}>
               القسم 4: التكاليف، الوسائط، وحفظ السيرة
             </h3>
 
@@ -498,17 +503,19 @@ export const CreateCVPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #E2E8F0', paddingTop: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #e4e4e7', paddingTop: '16px' }}>
               <button
                 type="button"
                 onClick={() => setActiveStep(3)}
-                style={{ padding: '9px 18px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', color: '#64748B', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}
+                className="button-outline-on-light"
+                style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
               >
                 السابق
               </button>
               <button
                 type="submit"
-                style={{ padding: '10px 28px', borderRadius: '8px', border: 'none', backgroundColor: '#005154', color: '#FFFFFF', fontWeight: '900', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,81,84,0.25)' }}
+                className="button-primary-pill"
+                style={{ padding: '9px 24px', fontSize: '13px', minHeight: '38px' }}
               >
                 <i className="fa-solid fa-check ml-1"></i> حفظ ونشر السيرة الذاتية
               </button>

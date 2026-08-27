@@ -404,8 +404,8 @@
 }
 
 .table-card:hover {
-  box-shadow: 0 12px 30px rgba(0, 81, 84, 0.08);
-  border-color: rgba(0, 81, 84, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  border-color: #000000;
 }
 
 .btn-odoo {
@@ -483,11 +483,11 @@
 
 .finance-category-title {
   font-size: 11px;
-  font-weight: 800;
-  color: #64748b;
+  font-weight: 600;
+  color: #71717a;
   padding: 0 4px 4px 4px;
-  border-bottom: 1px dashed #cbd5e1;
-  font-family: 'Cairo', sans-serif;
+  border-bottom: 1px dashed #e4e4e7;
+  font-family: var(--font-family-ui);
 }
 
 .finance-tab-pill {
@@ -505,7 +505,7 @@
   align-items: center;
   justify-content: space-between;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-family-ui);
 }
 
 .finance-tab-pill:hover {
@@ -515,10 +515,10 @@
 }
 
 .finance-tab-pill.active {
-  background: linear-gradient(135deg, #005154 0%, #00796b 100%);
+  background: #000000;
   color: #ffffff;
-  border-color: #005154;
-  box-shadow: 0 4px 12px rgba(0, 81, 84, 0.25);
+  border-color: #000000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .finance-table {

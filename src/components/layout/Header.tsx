@@ -253,21 +253,15 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="hidden-mobile" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <button
             type="button"
+            className="button-primary-pill"
             onClick={() => setActiveTab('create-contract', 'إضافة عقد استقدام جديد')}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: '#005154',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '20px',
               padding: '5px 14px',
               fontSize: '12px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(0, 81, 84, 0.25)',
-              transition: 'transform 0.15s ease',
+              minHeight: '32px',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
             onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
@@ -508,14 +502,14 @@ export const Header: React.FC<HeaderProps> = ({
               <img
                 src="/avatar-admin.png"
                 onError={(e) => {
-                  (e.target as HTMLElement).setAttribute('src', 'https://ui-avatars.com/api/?name=Abdelftah&background=005154&color=fff');
+                  (e.target as HTMLElement).setAttribute('src', 'https://ui-avatars.com/api/?name=Abdelftah&background=000000&color=fff');
                 }}
                 alt="User Avatar"
                 style={{ width: '28px', height: '28px', borderRadius: '50%' }}
               />
               <div className="hidden-mobile" style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '12px', fontWeight: '800', color: '#0F172A' }}>عبد الفتاح (مشرف)</div>
-                <div style={{ fontSize: '10px', color: '#005154', fontWeight: '700' }}>دار الرواد للاستقدام</div>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: '#000000' }}>عبد الفتاح (مشرف)</div>
+                <div style={{ fontSize: '10px', color: '#71717a', fontWeight: 500 }}>دار الرواد للاستقدام</div>
               </div>
               <i className="fa-solid fa-chevron-down" style={{ fontSize: '9px', color: '#94A3B8' }}></i>
             </button>
@@ -536,9 +530,9 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
               >
                 <div style={{ padding: '8px 10px', borderBottom: '1px solid #F1F5F9', marginBottom: '6px' }}>
-                  <div style={{ fontWeight: '800', fontSize: '13px', color: '#0F172A' }}>عبد الفتاح (Super Admin)</div>
-                  <div style={{ fontSize: '11px', color: '#64748B' }}>abdelftah@daralrowad.sa</div>
-                  <div style={{ fontSize: '10px', color: '#005154', marginTop: '3px', fontWeight: '800' }}>
+                  <div style={{ fontWeight: 600, fontSize: '13px', color: '#000000' }}>عبد الفتاح (Super Admin)</div>
+                  <div style={{ fontSize: '11px', color: '#71717a' }}>abdelftah@daralrowad.sa</div>
+                  <div style={{ fontSize: '10px', color: '#000000', marginTop: '3px', fontWeight: 600 }}>
                     الفرع الحالي: {selectedBranch}
                   </div>
                 </div>

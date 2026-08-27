@@ -366,8 +366,8 @@ export const UsersPage: React.FC = () => {
               overflowY: 'auto'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#005154', margin: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 <i className="fa-solid fa-user-plus ml-2"></i> إنشاء مستخدم جديد وتعيين الصلاحيات
               </h3>
               <button
@@ -473,7 +473,7 @@ export const UsersPage: React.FC = () => {
                     type="checkbox"
                     checked={newUser.two_factor_enabled}
                     onChange={e => setNewUser({ ...newUser, two_factor_enabled: e.target.checked })}
-                    style={{ accentColor: '#005154' }}
+                    style={{ accentColor: '#000000' }}
                   />
                   <span>إلزام الحساب بالمصادقة الثنائية (2FA OTP) عند تسجيل الدخول</span>
                 </label>
@@ -517,7 +517,7 @@ export const UsersPage: React.FC = () => {
         }}>
           <div className="table-card" style={{ width: '540px', padding: '24px', background: '#FFFFFF', borderRadius: '14px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 <i className="fa-solid fa-shield-halved ml-2"></i> المصادقة الثنائية والأمان البيومتري (2FA & Biometrics)
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShow2FAModal(false)}></i>
@@ -564,17 +564,17 @@ export const UsersPage: React.FC = () => {
                         alignItems: 'center',
                         gap: '12px',
                         padding: '12px 16px',
-                        border: selectedMethod === 'Google Authenticator' ? '2px solid #005154' : '1px solid #E2E8F0',
+                        border: selectedMethod === 'Google Authenticator' ? '2px solid #000000' : '1px solid #e4e4e7',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        background: selectedMethod === 'Google Authenticator' ? 'rgba(0, 81, 84, 0.05)' : '#FFFFFF'
+                        background: selectedMethod === 'Google Authenticator' ? '#fbfbf5' : '#FFFFFF'
                       }}>
                         <input
                           type="radio"
                           name="2fa-method"
                           checked={selectedMethod === 'Google Authenticator'}
                           onChange={() => setSelectedMethod('Google Authenticator')}
-                          style={{ accentColor: '#005154' }}
+                          style={{ accentColor: '#000000' }}
                         />
                         <div>
                           <span style={{ fontWeight: '800', fontSize: '13.5px', color: '#181C1C', display: 'block' }}>
@@ -614,17 +614,17 @@ export const UsersPage: React.FC = () => {
                         alignItems: 'center',
                         gap: '12px',
                         padding: '12px 16px',
-                        border: selectedMethod === 'SMS' ? '2px solid #005154' : '1px solid #E2E8F0',
+                        border: selectedMethod === 'SMS' ? '2px solid #000000' : '1px solid #e4e4e7',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        background: selectedMethod === 'SMS' ? 'rgba(0, 81, 84, 0.05)' : '#FFFFFF'
+                        background: selectedMethod === 'SMS' ? '#fbfbf5' : '#FFFFFF'
                       }}>
                         <input
                           type="radio"
                           name="2fa-method"
                           checked={selectedMethod === 'SMS'}
                           onChange={() => setSelectedMethod('SMS')}
-                          style={{ accentColor: '#005154' }}
+                          style={{ accentColor: '#000000' }}
                         />
                         <div>
                           <span style={{ fontWeight: '800', fontSize: '13.5px', color: '#181C1C', display: 'block' }}>
@@ -654,16 +654,16 @@ export const UsersPage: React.FC = () => {
                           width: '150px',
                           height: '150px',
                           margin: '0 auto 12px auto',
-                          background: '#F1F5F9',
-                          border: '2px dashed #005154',
+                          background: '#fbfbf5',
+                          border: '2px dashed #000000',
                           borderRadius: '12px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           flexDirection: 'column'
                         }}>
-                          <i className="fa-solid fa-qrcode" style={{ fontSize: '80px', color: '#005154' }}></i>
-                          <span style={{ fontSize: '10px', color: '#005154', fontWeight: '700' }}>ALSALIM 2FA KEY</span>
+                          <i className="fa-solid fa-qrcode" style={{ fontSize: '80px', color: '#000000' }}></i>
+                          <span style={{ fontSize: '10px', color: '#000000', fontWeight: 600 }}>ALSALIM 2FA KEY</span>
                         </div>
 
                         <div style={{ background: '#F1F5F9', padding: '8px 12px', borderRadius: '6px', display: 'inline-block', fontSize: '12px', fontFamily: 'monospace', fontWeight: '800' }}>

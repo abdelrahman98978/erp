@@ -20,7 +20,7 @@ export interface GroupDispatchMemo {
 
 const GROUP_COMPANIES = [
   { id: 'topaz', name: 'شركة توباز (Topaz Group)', icon: 'diamond', color: '#0f6b6e' },
-  { id: 'ruwad', name: 'دار الرواد (Dar Al-Ruwad)', icon: 'architecture', color: '#005154' },
+  { id: 'ruwad', name: 'دار الرواد (Dar Al-Ruwad)', icon: 'architecture', color: '#000000' },
   { id: 'saffir', name: 'السفير (Al-Saffir)', icon: 'handshake', color: '#535f74' },
   { id: 'masi', name: 'الماسي (Al-Masi Luxury)', icon: 'token', color: '#181c1c' },
   { id: 'ayal', name: 'الأيال للسفر والسياحة (Al-Ayal Travel)', icon: 'flight_takeoff', color: '#6f3b18' },
@@ -141,8 +141,8 @@ export const GroupDispatchPage: React.FC = () => {
       header: 'الجهة المُرْسِلة والجهة المُسْتَلِمَة',
       accessor: (row: GroupDispatchMemo) => (
         <div>
-          <span style={{ fontWeight: '800', color: '#005154' }}>من: {row.source_entity}</span>
-          <div style={{ fontSize: '11.5px', fontWeight: '700', color: '#714B67', marginTop: '2px' }}>إلى: {row.target_entity}</div>
+          <span style={{ fontWeight: 600, color: '#000000' }}>من: {row.source_entity}</span>
+          <div style={{ fontSize: '11.5px', fontWeight: 500, color: '#71717a', marginTop: '2px' }}>إلى: {row.target_entity}</div>
         </div>
       )
     },
@@ -206,10 +206,10 @@ export const GroupDispatchPage: React.FC = () => {
       {/* Top Banner Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-paper-plane text-purple ml-2"></i> مركز التواصل والإرسال الموحد لشركات المجموعة والمكاتب الخارجية
+          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
+            <i className="fa-solid fa-paper-plane text-black ml-2"></i> مركز التواصل والإرسال الموحد لشركات المجموعة والمكاتب الخارجية
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر والسياحة، والمكاتب الخارجية (DAMAS, PLATINUM, VERSATILE)
           </p>
         </div>
@@ -232,16 +232,16 @@ export const GroupDispatchPage: React.FC = () => {
         <div
           onClick={() => setSelectedEntity('all')}
           style={{
-            background: selectedEntity === 'all' ? '#005154' : '#FFFFFF',
+            background: selectedEntity === 'all' ? '#000000' : '#FFFFFF',
             color: selectedEntity === 'all' ? '#FFFFFF' : '#181C1C',
             padding: '14px 16px',
-            borderRadius: '12px',
+            borderRadius: '9999px',
             cursor: 'pointer',
-            border: '1px solid #E2E8F0',
+            border: selectedEntity === 'all' ? '1px solid #000000' : '1px solid #e4e4e7',
             textAlign: 'center',
-            fontWeight: '800',
+            fontWeight: 600,
             fontSize: '13px',
-            boxShadow: selectedEntity === 'all' ? '0 4px 12px rgba(0,81,84,0.2)' : 'none'
+            boxShadow: selectedEntity === 'all' ? '0 2px 8px rgba(0,0,0,0.15)' : 'none'
           }}
         >
           <span className="material-symbols-outlined" style={{ display: 'block', fontSize: '28px', marginBottom: '4px' }}>domain</span>
@@ -274,7 +274,7 @@ export const GroupDispatchPage: React.FC = () => {
       {/* Data Table */}
       <div className="table-card" style={{ padding: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', margin: 0 }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
             سجل المراسلات والمعاملات الرسمية بين شركات المجموعة
           </h3>
           <Badge text={`${filteredDispatches.length} معاملة`} type="purple" />
@@ -304,8 +304,8 @@ export const GroupDispatchPage: React.FC = () => {
       {showDispatchModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="table-card" style={{ width: '560px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 <i className="fa-solid fa-paper-plane ml-2"></i> توجيه خطاب / معاملة رسمية بين الشركات
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowDispatchModal(false)}></i>
@@ -391,9 +391,9 @@ export const GroupDispatchPage: React.FC = () => {
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowDispatchModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">اعتماد وإرسال المعاملة</button>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', borderTop: '1px solid #e4e4e7', paddingTop: '12px' }}>
+                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowDispatchModal(false)}>إلغاء</button>
+                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>اعتماد وإرسال المعاملة</button>
               </div>
             </form>
           </div>
@@ -404,8 +404,8 @@ export const GroupDispatchPage: React.FC = () => {
       {selectedMemo && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="table-card" style={{ width: '560px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '2px solid #005154', paddingBottom: '8px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', margin: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 وثيقة الخطاب والمعاملة الرسمية {selectedMemo.dispatch_no}
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setSelectedMemo(null)}></i>

@@ -50,10 +50,10 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
             </span>
             <span style={{ fontSize: '13px', color: '#94A3B8' }}>مجموعة شركات خالد السليم</span>
           </div>
-          <h1 style={{ fontSize: '26px', fontWeight: '900', margin: '0 0 6px 0', fontFamily: 'Cairo, sans-serif' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', margin: '0 0 6px 0', color: '#ffffff' }}>
             بوابة اختيار الكيانات التشغيلية والشركات المستقلة
           </h1>
-          <p style={{ color: '#CBD5E1', fontSize: '14px', margin: 0, maxWidth: '650px' }}>
+          <p style={{ color: '#a1a1aa', fontSize: '13.5px', margin: 0, maxWidth: '650px' }}>
             اختر بيئة العمل الخاصة بالشركة للوصول إلى الدفاتر المحاسبية المستقلة، سجلات الموظفين، عقود الاستقدام، والتقارير التنفيذية مع الحفاظ التام على عزل البيانات.
           </p>
         </div>
@@ -62,23 +62,17 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
         <button
           type="button"
           onClick={() => handleChoose('all')}
+          className="button-white-pill"
           style={{
-            backgroundColor: '#059669',
-            color: '#FFFFFF',
-            border: 'none',
-            borderRadius: '12px',
-            padding: '14px 24px',
-            fontSize: '14px',
-            fontWeight: '800',
+            padding: '12px 24px',
+            fontSize: '13.5px',
             cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(5, 150, 105, 0.4)',
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            transition: 'all 0.2s ease',
           }}
         >
-          <i className="fa-solid fa-globe" style={{ fontSize: '18px' }}></i>
+          <i className="fa-solid fa-globe" style={{ fontSize: '16px' }}></i>
           <span>الدخول للإدارة المركزية للمجموعة (All Companies)</span>
         </button>
       </div>
@@ -138,10 +132,10 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0F172A', marginBottom: '4px', fontFamily: 'Cairo, sans-serif' }}>
+                <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#000000', marginBottom: '4px' }}>
                   {comp.name}
                 </h3>
-                <div style={{ fontSize: '12px', color: '#64748B', marginBottom: '16px', fontWeight: '600' }}>
+                <div style={{ fontSize: '12px', color: '#71717a', marginBottom: '16px', fontWeight: 500 }}>
                   {comp.nameEn}
                 </div>
 
@@ -180,15 +174,11 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
               <button
                 type="button"
                 onClick={() => handleChoose(comp.id as CompanyId)}
+                className={isCurrent ? 'button-aloe-pill' : 'button-primary-pill'}
                 style={{
                   width: '100%',
-                  padding: '12px',
-                  borderRadius: '10px',
-                  border: 'none',
-                  backgroundColor: isCurrent ? '#059669' : '#1E293B',
-                  color: '#FFFFFF',
-                  fontWeight: '800',
-                  fontSize: '13px',
+                  padding: '10px',
+                  fontSize: '12.5px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',

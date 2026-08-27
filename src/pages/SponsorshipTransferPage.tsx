@@ -164,7 +164,7 @@ export const SponsorshipTransferPage: React.FC = () => {
     },
     {
       header: 'رسوم التنازل',
-      accessor: (row) => <span style={{ fontWeight: '800', color: '#005154' }}>{(row.contract_amount ?? 0).toLocaleString()} ر.س</span>
+      accessor: (row) => <span style={{ fontWeight: 600, color: '#000000' }}>{(row.contract_amount ?? 0).toLocaleString()} ر.س</span>
     },
     {
       header: 'الحالة',
@@ -346,17 +346,19 @@ export const SponsorshipTransferPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-200">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 text-slate-600 font-bold text-xs hover:bg-slate-100 rounded-xl transition-all"
+                  className="button-outline-on-light"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs rounded-xl shadow-md transition-all"
+                  className="button-primary-pill"
+                  style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}
                 >
                   حفظ وتسجيل الطلب
                 </button>

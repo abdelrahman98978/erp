@@ -803,8 +803,8 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
   }).join('');
 
   const headersHtml = `
-    <th style="padding: 10px; background: #005154; color: white; border: 1px solid #003B3E; width: 40px;">#</th>
-    ${config.headers.map(h => `<th style="padding: 10px; background: #005154; color: white; border: 1px solid #003B3E; font-size: 12px;">${h}</th>`).join('')}
+    <th style="padding: 10px; background: #000000; color: white; border: 1px solid #27272a; width: 40px;">#</th>
+    ${config.headers.map(h => `<th style="padding: 10px; background: #000000; color: white; border: 1px solid #27272a; font-size: 12px;">${h}</th>`).join('')}
   `;
 
   printWindow.document.write(`
@@ -813,12 +813,12 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
     <head>
       <meta charset="utf-8">
       <title>${title} - ${GROUP_COMPANY_INFO.nameAr}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
       <style>
         body {
-          font-family: 'Cairo', sans-serif;
+          font-family: 'Inter', system-ui, sans-serif;
           margin: 20px;
-          color: #0F172A;
+          color: #000000;
           background: #FFF;
         }
         @media print {
@@ -830,7 +830,7 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 3px solid #005154;
+          border-bottom: 2px solid #000000;
           padding-bottom: 16px;
           margin-bottom: 20px;
         }
@@ -841,7 +841,7 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
           text-align: right;
         }
         .report-table th, .report-table td {
-          border: 1px solid #CBD5E1;
+          border: 1px solid #e4e4e7;
         }
         .footer-box {
           margin-top: 30px;
@@ -849,37 +849,37 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
           justify-content: space-between;
           align-items: center;
           padding-top: 15px;
-          border-top: 2px solid #E2E8F0;
+          border-top: 1px solid #e4e4e7;
           font-size: 11px;
-          color: #64748B;
+          color: #71717a;
         }
       </style>
     </head>
     <body>
       <div class="no-print" style="margin-bottom: 16px; display: flex; gap: 10px;">
-        <button onclick="window.print()" style="padding: 10px 20px; background: #005154; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">
+        <button onclick="window.print()" style="padding: 10px 24px; background: #000000; color: white; border: none; border-radius: 9999px; font-weight: 600; cursor: pointer;">
           🖨️ طباعة التقرير الفوري
         </button>
-        <button onclick="window.close()" style="padding: 10px 20px; background: #E2E8F0; color: #334155; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Cairo';">
+        <button onclick="window.close()" style="padding: 10px 24px; background: #f4f4f5; color: #000000; border: 1px solid #e4e4e7; border-radius: 9999px; font-weight: 600; cursor: pointer;">
           إغلاق
         </button>
       </div>
 
       <div class="header-box">
         <div>
-          <h1 style="font-size: 20px; font-weight: 900; color: #005154; margin: 0;">${GROUP_COMPANY_INFO.nameAr}</h1>
-          <div style="font-size: 11px; color: #64748B; font-weight: bold; margin-top: 2px;">${GROUP_COMPANY_INFO.nameEn}</div>
-          <div style="font-size: 11px; color: #475569; margin-top: 4px;">س.ت: ${GROUP_COMPANY_INFO.crNumber} • الرقم الضريبي: ${GROUP_COMPANY_INFO.taxNumber}</div>
+          <h1 style="font-size: 20px; font-weight: 600; color: #000000; margin: 0;">${GROUP_COMPANY_INFO.nameAr}</h1>
+          <div style="font-size: 11px; color: #71717a; font-weight: 500; margin-top: 2px;">${GROUP_COMPANY_INFO.nameEn}</div>
+          <div style="font-size: 11px; color: #71717a; margin-top: 4px;">س.ت: ${GROUP_COMPANY_INFO.crNumber} • الرقم الضريبي: ${GROUP_COMPANY_INFO.taxNumber}</div>
         </div>
 
         <div style="text-align: center;">
-          <h2 style="font-size: 17px; font-weight: 800; color: #714B67; margin: 0;">${title}</h2>
-          <div style="font-size: 12px; color: #64748B; margin-top: 4px;">تاريخ الاستخراج: ${now}</div>
+          <h2 style="font-size: 17px; font-weight: 600; color: #000000; margin: 0;">${title}</h2>
+          <div style="font-size: 12px; color: #71717a; margin-top: 4px;">تاريخ الاستخراج: ${now}</div>
         </div>
 
         <div style="text-align: left;">
-          <div style="font-size: 11px; font-weight: bold; color: #005154;">إجمالي السجلات المضمنة:</div>
-          <div style="font-size: 22px; font-weight: 900; color: #0F172A;">${data.length}</div>
+          <div style="font-size: 11px; font-weight: 600; color: #000000;">إجمالي السجلات المضمنة:</div>
+          <div style="font-size: 22px; font-weight: 330; color: #000000;">${data.length}</div>
         </div>
       </div>
 

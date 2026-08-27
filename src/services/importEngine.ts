@@ -95,7 +95,7 @@ export const IMPORT_TEMPLATES: ImportTemplate[] = [
     displayName: 'العملاء',
     icon: 'fa-solid fa-users',
     materialIcon: 'group',
-    color: '#005154',
+    color: '#000000',
     fields: [
       { systemField: 'name', label: 'اسم العميل', required: true, type: 'string' },
       { systemField: 'phone', label: 'رقم الجوال', required: true, type: 'phone' },

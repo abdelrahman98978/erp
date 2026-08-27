@@ -236,10 +236,10 @@ export const ComplaintsPage: React.FC = () => {
       {/* Header Banner */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-headset text-purple ml-2"></i> مركز الشكاوى والدعم الفني والنزاعات بين الشركات (Executive Support Hub)
+          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
+            <i className="fa-solid fa-headset text-black ml-2"></i> مركز الشكاوى والدعم الفني والنزاعات بين الشركات (Executive Support Hub)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             إدارة الشكاوى، الـ SLA، تصعيد البلاغات بين الشركات الـ 5 والمكاتب الخارجية الـ 3 لمكتب الإدارة العليا
           </p>
         </div>
@@ -492,10 +492,10 @@ export const ComplaintsPage: React.FC = () => {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ alignSelf: 'flex-start', background: '#F1F5F9', padding: '10px 14px', borderRadius: '12px', maxWidth: '75%', fontSize: '13px' }}>
+                  <div style={{ alignSelf: 'flex-start', background: '#fbfbf5', border: '1px solid #e4e4e7', padding: '10px 14px', borderRadius: '12px', maxWidth: '75%', fontSize: '13px', color: '#000000' }}>
                     السلام عليكم، العاملة ترغب بالامتناع عن العمل وتطالب بالتحويل للإيواء أو الترحيل. نأمل المعالجة عاجلاً.
                   </div>
-                  <div style={{ alignSelf: 'flex-end', background: '#005154', color: 'white', padding: '10px 14px', borderRadius: '12px', maxWidth: '75%', fontSize: '13px' }}>
+                  <div style={{ alignSelf: 'flex-end', background: '#000000', color: '#ffffff', padding: '10px 14px', borderRadius: '12px', maxWidth: '75%', fontSize: '13px' }}>
                     وعليكم السلام أستاذ بندر، تم استلام الطلب وتصعيد التذكرة مباشرة لمشرف الإيواء لمتابعة حالة العاملة.
                   </div>
                 </div>
@@ -513,7 +513,7 @@ export const ComplaintsPage: React.FC = () => {
       {/* Tab 4: Root Cause Analytics */}
       {activeTab === 'analytics' && (
         <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
             📊 تحليلات أسباب الشكاوى الجذرية (Root Cause Analysis - RCA)
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -659,8 +659,8 @@ export const ComplaintsPage: React.FC = () => {
       {showAddModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="table-card" style={{ width: '520px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 تسجيل وتوجيه شكوى / تذكرة جديدة
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
@@ -762,8 +762,8 @@ export const ComplaintsPage: React.FC = () => {
       {selectedTicket && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="table-card" style={{ width: '500px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 معالجة التذكرة رقم ({selectedTicket.ticket_no})
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setSelectedTicket(null)}></i>

@@ -83,7 +83,7 @@ export const CustodiesPage: React.FC = () => {
     },
     { header: 'الموظف المستلم', accessor: (row) => <span style={{ fontWeight: '600' }}>{row.employee_name}</span> },
     { header: 'المقر / الفرع', accessor: (row) => <Badge text={row.location} type="purple" /> },
-    { header: 'القيمة التقديرية', accessor: (row) => <span style={{ fontWeight: '700', color: '#005154' }}>{(row.estimated_value ?? 0).toLocaleString()} ر.س</span> },
+    { header: 'القيمة التقديرية', accessor: (row) => <span style={{ fontWeight: 600, color: '#000000' }}>{(row.estimated_value ?? 0).toLocaleString()} ر.س</span> },
     { header: 'تاريخ التسليم', accessor: (row) => <span style={{ fontSize: '12px' }}>{row.received_date}</span> },
     { header: 'الحالة', accessor: (row) => <Badge text={row.status} type={row.status === 'في حوزة الموظف' ? 'success' : row.status === 'تم الاسترجاع' ? 'purple' : 'warning'} /> },
     {
@@ -114,10 +114,10 @@ export const CustodiesPage: React.FC = () => {
       {/* Header Banner */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'Cairo, sans-serif' }}>
-            <i className="fa-solid fa-vault text-purple ml-2"></i> إدارة عُهد وأصول الموظفين (HR Assets & Custodies)
+          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0 }}>
+            <i className="fa-solid fa-vault text-black ml-2"></i> إدارة عُهد وأصول الموظفين (HR Assets & Custodies)
           </h2>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             تسليم الأصول، السيارات، الأجهزة الذكية، وتوليد سندات الاستلام الرسمية
           </p>
         </div>
@@ -148,8 +148,8 @@ export const CustodiesPage: React.FC = () => {
       {showAddModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div className="table-card" style={{ width: '500px', padding: '24px', background: 'white', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>تسليم عُهدة جديدة لموظف</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>تسليم عُهدة جديدة لموظف</h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowAddModal(false)}></i>
             </div>
             <form onSubmit={handleAddCustody}>
@@ -215,9 +215,9 @@ export const CustodiesPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowAddModal(false)}>إلغاء</button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">تسليم الأصل وحفظ العُهدة</button>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e4e4e7' }}>
+                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowAddModal(false)}>إلغاء</button>
+                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>تسليم الأصل وحفظ العُهدة</button>
               </div>
             </form>
           </div>
@@ -228,9 +228,9 @@ export const CustodiesPage: React.FC = () => {
       {selectedCustodyForDoc && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div className="table-card" style={{ width: '560px', padding: '24px', background: 'white', borderRadius: '12px' }}>
-            <div style={{ textAlign: 'center', borderBottom: '2px solid #005154', paddingBottom: '12px', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#005154', margin: 0 }}>مجموعة خالد السليم التجارية</h3>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: '#714B67' }}>سند تسلم واستلام عُهدة موظف رسمية</span>
+            <div style={{ textAlign: 'center', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0 }}>مجموعة خالد السليم التجارية</h3>
+              <span style={{ fontSize: '12px', fontWeight: 500, color: '#71717a' }}>سند تسلم واستلام عُهدة موظف رسمية</span>
             </div>
 
             <div style={{ fontSize: '13px', lineHeight: '1.8', marginBottom: '20px' }}>

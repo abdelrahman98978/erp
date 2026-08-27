@@ -158,12 +158,12 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
       {/* Tab 1: MS Project */}
       {activeTab === 'project' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '20px' }}>
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
               مزامنة مشاريع الاستقدام والتوسع اللوجستي (Microsoft Project Timeline & Gantt):
             </h3>
-            <button type="button" style={{ backgroundColor: '#2563EB', color: '#FFF', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+            <button type="button" className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
               + مزامنة مشروع جديد من Project Online
             </button>
           </div>
@@ -219,7 +219,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 </span>
                 <span style={{ fontSize: '10px', color: '#64748B' }}>RLS: {dash.rlsApplied ? 'مفعل بحماية الأدوار' : 'عام'}</span>
               </div>
-              <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#0F172A', marginBottom: '8px', fontFamily: 'Cairo, sans-serif' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '8px' }}>
                 {dash.title}
               </h3>
               <div style={{ fontSize: '11px', color: '#64748B', marginBottom: '16px' }}>
@@ -243,8 +243,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
       {/* Tab 3: Visio Org Chart */}
       {activeTab === 'visio' && (
-        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '24px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0F172A', marginBottom: '8px', fontFamily: 'Cairo, sans-serif' }}>
+        <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '24px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '8px' }}>
             الهيكل التنظيمي الخريطي الموحد (Visio Interactive Group Org Chart):
           </h3>
           <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '24px' }}>

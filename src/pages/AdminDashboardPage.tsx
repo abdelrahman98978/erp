@@ -318,18 +318,18 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {activeAdminTab === 'overview' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#005154', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
               <i className="fa-solid fa-list-check ml-2"></i> دليل ميزات الآدمن الإضافية 30 (Complete Admin Feature Matrix)
             </h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
+            <p style={{ fontSize: '13px', color: '#71717a', marginBottom: '20px' }}>
               لوحة التحكم توفر أدوات كاملة للمدير العام لإدارة وحماية المنظومة ERP:
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
               {/* Feature Cards 1 to 30 */}
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #005154' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#005154', display: 'block' }}>1. زر الطوارئ والإغلاق الفوري</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>تجميد الوصول للنظام فورياً عند أي تهجم سيبراني.</span>
+              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', borderRight: '4px solid #000000', border: '1px solid #e4e4e7' }}>
+                <span style={{ fontWeight: 600, fontSize: '14px', color: '#000000', display: 'block' }}>1. زر الطوارئ والإغلاق الفوري</span>
+                <span style={{ fontSize: '12px', color: '#71717a' }}>تجميد الوصول للنظام فورياً عند أي تهجم سيبراني.</span>
               </div>
 
               <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #714B67' }}>
@@ -357,9 +357,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>إرسال إشعارات نافذة عاجلة لجميع المستخدمين المتصلين.</span>
               </div>
 
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #005154' }}>
-                <span style={{ fontWeight: '800', fontSize: '14px', color: '#005154', display: 'block' }}>7. مستكشف سجلات السيرفر الحي Tail Logs</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>قراءة وفلترة أخطاء الخادم وقواعد البيانات مباشرة.</span>
+              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', borderRight: '4px solid #000000', border: '1px solid #e4e4e7' }}>
+                <span style={{ fontWeight: 600, fontSize: '14px', color: '#000000', display: 'block' }}>7. مستكشف سجلات السيرفر الحي Tail Logs</span>
+                <span style={{ fontSize: '12px', color: '#71717a' }}>قراءة وفلترة أخطاء الخادم وقواعد البيانات مباشرة.</span>
               </div>
 
               <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', borderRight: '4px solid #EF4444' }}>
@@ -395,19 +395,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {activeAdminTab === 'security' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
               <i className="fa-solid fa-shield-halved ml-2"></i> أدوات الأمان وحظر الـ IP وجدار الحماية (Features 1 to 6)
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: '800', marginBottom: '12px' }}>4. تقييد الدخول بعناوين الـ IP المعتمدة (IP Whitelisting)</h4>
+              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#000000' }}>4. تقييد الدخول بعناوين الـ IP المعتمدة (IP Whitelisting)</h4>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '12px' }}>
                   <input
                     type="checkbox"
                     checked={ipRestricted}
                     onChange={e => setIpRestricted(e.target.checked)}
-                    style={{ accentColor: '#005154', width: '16px', height: '16px' }}
+                    style={{ accentColor: '#000000', width: '16px', height: '16px' }}
                   />
                   <span style={{ fontSize: '13px', fontWeight: '700' }}>تفعيل حظر الدخول من الخارج وقصر الدخول على شريحة IP الشركة</span>
                 </label>
@@ -468,14 +468,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {activeAdminTab === 'devops' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
               <i className="fa-solid fa-server ml-2"></i> إدارة DevOps والنسخ الاحتياطي وسجلات السيرفر (Features 7 to 12)
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '700' }}>حجم قاعدة البيانات الحالية</span>
-                <div style={{ fontSize: '22px', fontWeight: '900', color: '#005154', marginTop: '4px' }}>1.42 GB</div>
+              <div style={{ background: '#fbfbf5', padding: '16px', borderRadius: '12px', border: '1px solid #e4e4e7' }}>
+                <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 600 }}>حجم قاعدة البيانات الحالية</span>
+                <div style={{ fontSize: '22px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>1.42 GB</div>
                 <span style={{ fontSize: '11px', color: '#10B981' }}>آخر نسخة: اليوم 03:00 ص</span>
               </div>
 
@@ -507,7 +507,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {activeAdminTab === 'rbac' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="table-card" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
               <i className="fa-solid fa-user-lock ml-2"></i> مصفوفة الصلاحيات وحجب البيانات الحساسة (Features 13 to 18)
             </h3>
 
@@ -543,7 +543,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.admin}
                         onChange={() => togglePermission(m.id, 'admin')}
-                        style={{ accentColor: '#005154', width: '18px', height: '18px' }}
+                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
                       />
                     </td>
                     <td style={{ textAlign: 'center' }}>
@@ -551,7 +551,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.manager}
                         onChange={() => togglePermission(m.id, 'manager')}
-                        style={{ accentColor: '#005154', width: '18px', height: '18px' }}
+                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
                       />
                     </td>
                     <td style={{ textAlign: 'center' }}>
@@ -559,7 +559,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.staff}
                         onChange={() => togglePermission(m.id, 'staff')}
-                        style={{ accentColor: '#005154', width: '18px', height: '18px' }}
+                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
                       />
                     </td>
                     <td style={{ textAlign: 'center' }}>
@@ -567,7 +567,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                         type="checkbox"
                         checked={!!permissionsState[m.id]?.agent}
                         onChange={() => togglePermission(m.id, 'agent')}
-                        style={{ accentColor: '#005154', width: '18px', height: '18px' }}
+                        style={{ accentColor: '#000000', width: '18px', height: '18px' }}
                       />
                     </td>
                   </tr>
@@ -581,7 +581,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {/* Tab 5: Government, Bank & API Gateways (Features 19-24) */}
       {activeAdminTab === 'gateways' && (
         <div className="table-card" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#005154', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '20px' }}>
             <i className="fa-solid fa-network-wired ml-2"></i> حالة الربط الحكومي، البنوك، وبوابات الرسائل (Features 19 to 24)
           </h3>
 
@@ -632,8 +632,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {/* Tab 6: AI Executive Insights, Broadcast & Subsidiaries (Features 25-30) */}
       {activeAdminTab === 'ai-insights' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="table-card" style={{ padding: '24px', background: 'linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%)' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#005154', marginBottom: '12px' }}>
+          <div className="table-card" style={{ padding: '24px', background: '#fbfbf5', border: '1px solid #e4e4e7' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', marginBottom: '12px' }}>
               <i className="fa-solid fa-wand-magic-sparkles ml-2"></i> 20. مساعد الذكاء الاصطناعي للإدارة العليا (AI Executive Assistant)
             </h3>
             <p style={{ fontSize: '13.5px', color: '#334155', lineHeight: '1.7', marginBottom: '16px' }}>

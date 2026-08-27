@@ -293,8 +293,8 @@ export const IngazPage: React.FC = () => {
           justifyContent: 'center'
         }}>
           <div className="table-card" style={{ width: '560px', padding: '24px', background: '#FFFFFF', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#005154' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
                 <i className="fa-solid fa-passport ml-2"></i> إصدار تفويض إنجاز إلكتروني جديد
               </h3>
               <i className="fa-solid fa-xmark" style={{ cursor: 'pointer', fontSize: '18px' }} onClick={() => setShowModal(false)}></i>
@@ -396,11 +396,11 @@ export const IngazPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button type="button" className="btn-odoo btn-odoo-secondary" onClick={() => setShowModal(false)}>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e4e4e7' }}>
+                <button type="button" className="button-outline-on-light" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 18px' }} onClick={() => setShowModal(false)}>
                   إلغاء
                 </button>
-                <button type="submit" className="btn-odoo btn-odoo-purple">
+                <button type="submit" className="button-primary-pill" style={{ borderRadius: '9999px', fontSize: '12px', minHeight: '36px', padding: '6px 22px' }}>
                   اعتماد وتوثيق التفويض
                 </button>
               </div>

@@ -250,7 +250,7 @@ export const DataImportWizardPage: React.FC = () => {
                   onChange={e => setSearchQuery(e.target.value)}
                   style={{
                     border: 'none', outline: 'none', background: 'transparent',
-                    fontSize: '12px', width: '100%', fontFamily: 'Tajawal, sans-serif'
+                    fontSize: '12px', width: '100%',
                   }}
                 />
                 {searchQuery && (
@@ -481,8 +481,8 @@ export const DataImportWizardPage: React.FC = () => {
       {step === 'mapping' && parsedData && selectedTemplate && (
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#334155' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '20px', verticalAlign: 'middle', marginLeft: '6px', color: '#005154' }}>swap_horiz</span>
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '20px', verticalAlign: 'middle', marginLeft: '6px', color: '#000000' }}>swap_horiz</span>
               تعيين الأعمدة — ربط أعمدة الملف بحقول النظام
             </h3>
             <div style={{ fontSize: '12px', color: '#64748B' }}>
@@ -596,8 +596,8 @@ export const DataImportWizardPage: React.FC = () => {
       {/* ═══ STEP 4: Review ═══ */}
       {step === 'review' && validationResult && selectedTemplate && (
         <div>
-          <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#334155', marginBottom: '16px' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '20px', verticalAlign: 'middle', marginLeft: '6px', color: '#005154' }}>fact_check</span>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '20px', verticalAlign: 'middle', marginLeft: '6px', color: '#000000' }}>fact_check</span>
             نتائج التحقق من البيانات
           </h3>
 
@@ -813,8 +813,8 @@ export const DataImportWizardPage: React.FC = () => {
       {/* ═══ HISTORY VIEW ═══ */}
       {step === 'history' && (
         <div>
-          <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#334155', marginBottom: '16px' }}>
-            <i className="fa-solid fa-clock-rotate-left" style={{ marginLeft: '6px', color: '#005154' }}></i>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
+            <i className="fa-solid fa-clock-rotate-left" style={{ marginLeft: '6px', color: '#000000' }}></i>
             سجل عمليات الاستيراد
           </h3>
 

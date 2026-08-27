@@ -97,8 +97,8 @@ export const GroupCommandCenterPage: React.FC = () => {
       </div>
 
       {/* Group Companies Comparison Matrix */}
-      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '20px', marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A', marginBottom: '16px', fontFamily: 'Cairo, sans-serif' }}>
+      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '20px', marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', marginBottom: '16px' }}>
           مصفوفة أداء الكيانات الأربعة (Consolidated Companies Matrix):
         </h3>
 
@@ -161,9 +161,9 @@ export const GroupCommandCenterPage: React.FC = () => {
       </div>
 
       {/* Audit Log Trail Section */}
-      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #E2E8F0', padding: '20px' }}>
+      <div style={{ backgroundColor: '#FFFFFF', borderRadius: '14px', border: '1px solid #e4e4e7', padding: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0 }}>
             سجلات التدقيق والحماية المركزية (Group Security Audit Trail):
           </h3>
           <span style={{ fontSize: '11px', color: '#64748B', fontWeight: '600' }}>سجلات غير قابلة للتعديل أو الحذف</span>
@@ -217,8 +217,8 @@ export const GroupCommandCenterPage: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', padding: '28px', width: '480px', maxWidth: '90%' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#991B1B', marginBottom: '16px', fontFamily: 'Cairo, sans-serif' }}>
+          <div style={{ backgroundColor: '#FFFFFF', borderRadius: '16px', padding: '28px', width: '480px', maxWidth: '90%', border: '1px solid #e4e4e7' }}>
+            <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#ba1a1a', marginBottom: '16px', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px' }}>
               <i className="fa-solid fa-user-secret" style={{ marginLeft: '8px' }}></i>
               تأكيد دخول النظام بصلاحيات موظف (Act As Employee)
             </h3>

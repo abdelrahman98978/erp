@@ -35,7 +35,7 @@ export const DualBrandingDocumentGenerator: React.FC<DualBrandingDocumentGenerat
           <CompanyLogo companyId={activeCompanyId} size={48} />
 
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#059669', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0 }}>
               {activeCompany.name}
             </h2>
             <div style={{ fontSize: '12px', color: '#64748B', fontWeight: '600' }}>
@@ -49,7 +49,7 @@ export const DualBrandingDocumentGenerator: React.FC<DualBrandingDocumentGenerat
 
         {/* Right Side: Document Title & QR Code */}
         <div style={{ textAlign: 'left' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#0F172A', margin: 0, fontFamily: 'Cairo, sans-serif' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0 }}>
             {documentTitle}
           </h3>
           <div style={{ fontSize: '12px', color: '#2563EB', fontWeight: '800', marginTop: '4px' }}>
