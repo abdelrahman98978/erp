@@ -39,18 +39,18 @@ export const SmaccFormModal: React.FC<SmaccFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in dir-rtl text-right">
-      <div className={`w-full ${sizeClasses} bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+      <div className={`w-full ${sizeClasses} bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]`}>
         {/* Modal Header */}
-        <div className="p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 flex items-center justify-between">
+        <div className="p-5 bg-black text-white flex items-center justify-between">
           <div>
             <h3 className="text-lg font-bold text-white">{title}</h3>
-            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+            {subtitle && <p className="text-xs text-zinc-400 mt-0.5">{subtitle}</p>}
           </div>
           <button
             onClick={onClose}
             type="button"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -58,25 +58,27 @@ export const SmaccFormModal: React.FC<SmaccFormModalProps> = ({
 
         {/* Modal Body */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="p-6 overflow-y-auto space-y-4 custom-scrollbar flex-1">
+          <div className="p-6 overflow-y-auto space-y-4 custom-scrollbar flex-1 bg-white text-black">
             {children}
           </div>
 
           {/* Modal Footer */}
-          <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-end gap-3">
+          <div className="p-4 bg-zinc-50 border-t border-zinc-100 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-colors"
+              className="button-outline-on-light"
+              style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
             >
               إلغاء
             </button>
             {onSubmit && (
               <button
                 type="submit"
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/30 transition-all flex items-center gap-1.5"
+                className="button-primary-pill"
+                style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
               >
-                <CheckCircle2 className="w-4 h-4" />
+                <CheckCircle2 className="w-4 h-4 ml-1" />
                 <span>{submitLabel}</span>
               </button>
             )}

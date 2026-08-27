@@ -506,27 +506,31 @@ export const FinancePage: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                className="button-outline-on-light"
+                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <i className="fa-solid fa-file-excel"></i> Excel
+                <i className="fa-solid fa-file-excel ml-1 text-emerald-600"></i> Excel
               </button>
               <button
                 onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'csv', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                className="button-outline-on-light"
+                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <i className="fa-solid fa-file-csv"></i> CSV
+                <i className="fa-solid fa-file-csv ml-1 text-zinc-600"></i> CSV
               </button>
               <button
                 onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                className="button-outline-on-light"
+                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <i className="fa-solid fa-file-pdf"></i> PDF
+                <i className="fa-solid fa-file-pdf ml-1 text-rose-600"></i> PDF
               </button>
               <button
                 onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'print', `ميزان المراجعة - ${activeCompany.name}`)}
-                className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                className="button-primary-pill"
+                style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
               >
-                <i className="fa-solid fa-print"></i> طباعة رسمية
+                <i className="fa-solid fa-print ml-1"></i> طباعة رسمية
               </button>
             </div>
           </div>

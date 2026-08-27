@@ -1,21 +1,10 @@
 import React, { useState } from 'react';
 import {
   Building2,
-  Package,
   Plus,
   Search,
-  Filter,
   RefreshCw,
-  FileSpreadsheet,
-  FileText,
-  CheckCircle2,
-  AlertTriangle,
-  Sliders,
-  DollarSign,
-  Box,
-  Layers,
-  ArrowDownLeft,
-  ArrowUpRight
+  Box
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 
@@ -171,7 +160,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         <div className="space-y-6">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-slate-400" />
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث في الأصول الثابتة..."
@@ -202,9 +191,9 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="card-pricing" style={{ padding: 0, borderRadius: '16px', background: '#ffffff', overflow: 'hidden' }}>
-            <table className="w-full text-right text-xs text-slate-300">
-              <thead className="bg-slate-900 text-slate-400 font-bold border-b border-slate-700">
+          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
                   <th className="p-3.5">رمز الأصل</th>
                   <th className="p-3.5">اسم الأصل الثابت</th>
@@ -217,18 +206,18 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                   <th className="p-3.5 text-center">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/60 font-sans">
-                <tr className="hover:bg-slate-700/40">
-                  <td className="p-3.5 font-mono text-blue-400 font-bold">AST-001</td>
-                  <td className="p-3.5 font-semibold text-white">سيارة تويوتا كامري 2024 (فرع الرياض)</td>
-                  <td className="p-3.5 text-slate-300">وسائل النقل والسيارات</td>
-                  <td className="p-3.5 text-slate-400">2024-01-15</td>
-                  <td className="p-3.5 font-bold text-white">95,000 ر.س</td>
-                  <td className="p-3.5 text-blue-400 font-bold">20%</td>
-                  <td className="p-3.5 text-amber-400 font-bold">19,000 ر.س</td>
-                  <td className="p-3.5 font-extrabold text-emerald-400">76,000 ر.س</td>
+              <tbody className="divide-y divide-zinc-100 font-sans">
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-mono text-black font-bold">AST-001</td>
+                  <td className="p-3.5 font-semibold text-black">سيارة تويوتا كامري 2024 (فرع الرياض)</td>
+                  <td className="p-3.5 text-zinc-600">وسائل النقل والسيارات</td>
+                  <td className="p-3.5 text-zinc-500 font-mono">2024-01-15</td>
+                  <td className="p-3.5 font-bold font-mono text-black">95,000 ر.س</td>
+                  <td className="p-3.5 text-black font-bold font-mono">20%</td>
+                  <td className="p-3.5 text-zinc-600 font-mono">19,000 ر.س</td>
+                  <td className="p-3.5 font-bold font-mono text-emerald-700">76,000 ر.س</td>
                   <td className="p-3.5 text-center">
-                    <button className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-semibold">
+                    <button className="button-outline-on-light" style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}>
                       تفاصيل الأصل
                     </button>
                   </td>
@@ -242,39 +231,41 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       {/* TAB 2: Inventory Items */}
       {activeTab === 'inventory' && (
         <div className="space-y-6">
-          <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-slate-400" />
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث في أصناف المخزون..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pr-9 pl-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-2 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
               />
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsItemModalOpen(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-500 shadow-md transition-all flex items-center gap-1.5"
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 ml-1" />
                 <span>إضافة صنف جديد</span>
               </button>
               <button
                 onClick={() => setIsStockVoucherModalOpen(true)}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+                className="button-outline-on-light"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
-                <Box className="w-4 h-4" />
+                <Box className="w-4 h-4 ml-1" />
                 <span>إذن صرف / إضافة مخزني</span>
               </button>
             </div>
           </div>
 
-          <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg">
-            <table className="w-full text-right text-xs text-slate-300">
-              <thead className="bg-slate-900 text-slate-400 font-bold border-b border-slate-700">
+          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
                   <th className="p-3.5">رمز الصنف (SKU)</th>
                   <th className="p-3.5">اسم الصنف / الخدمة</th>
@@ -286,17 +277,17 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                   <th className="p-3.5">الحالة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/60 font-sans">
-                <tr className="hover:bg-slate-700/40">
-                  <td className="p-3.5 font-mono text-blue-400 font-bold">INV-101</td>
-                  <td className="p-3.5 font-semibold text-white">عقد استقدام عاملة منزلية (الفلبين)</td>
-                  <td className="p-3.5">خدمات استقدام</td>
+              <tbody className="divide-y divide-zinc-100 font-sans">
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-mono text-black font-bold">INV-101</td>
+                  <td className="p-3.5 font-semibold text-black">عقد استقدام عاملة منزلية (الفلبين)</td>
+                  <td className="p-3.5 text-zinc-600">خدمات استقدام</td>
                   <td className="p-3.5">عقد</td>
-                  <td className="p-3.5 text-slate-400">12,000 ر.س</td>
-                  <td className="p-3.5 font-bold text-emerald-400">17,500 ر.س</td>
-                  <td className="p-3.5 font-bold text-white">15 عقد</td>
+                  <td className="p-3.5 text-zinc-500 font-mono">12,000 ر.س</td>
+                  <td className="p-3.5 font-bold font-mono text-emerald-700">17,500 ر.س</td>
+                  <td className="p-3.5 font-bold text-black">15 عقد</td>
                   <td className="p-3.5">
-                    <span className="px-2 py-0.5 rounded-full text-[11px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
                       متوفر
                     </span>
                   </td>
@@ -317,31 +308,31 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">كود الأصل (Asset Code)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">كود الأصل (Asset Code)</label>
             <input
               type="text"
               value={newAsset.code}
               onChange={e => setNewAsset({ ...newAsset, code: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">اسم الأصل الثابت</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم الأصل الثابت</label>
             <input
               type="text"
               required
               placeholder="مثال: سيارة تويوتا هايلوكس 2026"
               value={newAsset.name}
               onChange={e => setNewAsset({ ...newAsset, name: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white placeholder-slate-500"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">فئة الأصل</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">فئة الأصل</label>
             <select
               value={newAsset.category}
               onChange={e => setNewAsset({ ...newAsset, category: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
             >
               <option value="وسائل النقل والسيارات">وسائل النقل والسيارات</option>
               <option value="معدات وإلكترونيات">معدات وإلكترونيات</option>
@@ -350,32 +341,32 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">تاريخ الشراء والاستحواذ</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">تاريخ الشراء والاستحواذ</label>
             <input
               type="date"
               value={newAsset.purchaseDate}
               onChange={e => setNewAsset({ ...newAsset, purchaseDate: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">تكلفة الشراء (ر.س)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">تكلفة الشراء (ر.س)</label>
             <input
               type="number"
               required
               placeholder="0.00"
               value={newAsset.cost}
               onChange={e => setNewAsset({ ...newAsset, cost: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold text-emerald-400"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">نسبة الإهلاك السنوية (%)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">نسبة الإهلاك السنوية (%)</label>
             <input
               type="number"
               value={newAsset.depreciationRate}
               onChange={e => setNewAsset({ ...newAsset, depreciationRate: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
             />
           </div>
         </div>
@@ -391,44 +382,44 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">رمز الباركون / SKU</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">رمز الباركود / SKU</label>
             <input
               type="text"
               value={newItem.sku}
               onChange={e => setNewItem({ ...newItem, sku: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">اسم الصنف أو الخدمة</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم الصنف أو الخدمة</label>
             <input
               type="text"
               required
               placeholder="اسم الصنف بالكامل..."
               value={newItem.name}
               onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white placeholder-slate-500"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">سعر التكلفة (ر.س)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">سعر التكلفة (ر.س)</label>
             <input
               type="number"
               placeholder="0.00"
               value={newItem.costPrice}
               onChange={e => setNewItem({ ...newItem, costPrice: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">سعر البيع الموصى به (ر.س)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">سعر البيع الموصى به (ر.س)</label>
             <input
               type="number"
               required
               placeholder="0.00"
               value={newItem.salePrice}
               onChange={e => setNewItem({ ...newItem, salePrice: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold text-emerald-400"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold text-emerald-700 focus:border-black focus:outline-none"
             />
           </div>
         </div>
@@ -444,24 +435,24 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">نوع الإذن</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">نوع الإذن</label>
             <select
               value={newStockVoucher.type}
               onChange={e => setNewStockVoucher({ ...newStockVoucher, type: e.target.value as any })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
             >
               <option value="إضافة">إذن إضافة مخزنية (+)</option>
               <option value="صرف">إذن صرف مخزني (-)</option>
             </select>
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">الكمية</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الكمية</label>
             <input
               type="number"
               required
               value={newStockVoucher.qty}
               onChange={e => setNewStockVoucher({ ...newStockVoucher, qty: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
             />
           </div>
         </div>
@@ -469,3 +460,5 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
     </div>
   );
 };
+
+export default SmaccInventoryAssetsPage;

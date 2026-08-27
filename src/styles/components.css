@@ -195,6 +195,17 @@
   background: #a7f3d0;
 }
 
+.btn-odoo-danger {
+  background: #ffffff;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.btn-odoo-danger:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
 /* Data Table Element - Clean Hairlines and Inter Typography */
 .data-table-wrapper {
   width: 100%;

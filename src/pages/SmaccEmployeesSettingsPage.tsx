@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
 import {
   Users,
-  Settings,
   Plus,
   Search,
-  Filter,
-  Sliders,
-  DollarSign,
   Calculator,
-  ShieldCheck,
-  Building2,
-  CheckCircle2,
-  Lock,
-  UserCheck,
-  CreditCard
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 
@@ -180,7 +170,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
         <div className="space-y-6">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-slate-400" />
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
                 placeholder="البحث بالاسم أو رقم الهوية..."
@@ -211,9 +201,9 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-lg">
-            <table className="w-full text-right text-xs text-slate-300">
-              <thead className="bg-slate-900 text-slate-400 font-bold border-b border-slate-700">
+          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
                   <th className="p-3.5">اسم الموظف</th>
                   <th className="p-3.5">الهوية / الإقامة</th>
@@ -221,18 +211,18 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                   <th className="p-3.5">القسم</th>
                   <th className="p-3.5">الراتب الأساسي</th>
                   <th className="p-3.5">البدلات الشاملة</th>
-                  <th className="p-3.5">إجمالي الرف</th>
+                  <th className="p-3.5">إجمالي الراتب</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/60 font-sans">
-                <tr className="hover:bg-slate-700/40">
-                  <td className="p-3.5 font-bold text-white">أحمد محمود السعيد</td>
-                  <td className="p-3.5 font-mono text-slate-400">1098231456</td>
-                  <td className="p-3.5 text-indigo-300 font-semibold">بائع ومحصل مبيعات</td>
-                  <td className="p-3.5 text-slate-300">قسم المبيعات والتحصيل</td>
-                  <td className="p-3.5 font-bold text-white">4,500 ر.س</td>
-                  <td className="p-3.5 text-slate-400">1,500 ر.س</td>
-                  <td className="p-3.5 font-extrabold text-emerald-400">6,000.00 ر.س</td>
+              <tbody className="divide-y divide-zinc-100 font-sans">
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">أحمد محمود السعيد</td>
+                  <td className="p-3.5 font-mono text-zinc-500">1098231456</td>
+                  <td className="p-3.5 text-black font-semibold">بائع ومحصل مبيعات</td>
+                  <td className="p-3.5 text-zinc-600">قسم المبيعات والتحصيل</td>
+                  <td className="p-3.5 font-bold font-mono text-black">4,500 ر.س</td>
+                  <td className="p-3.5 text-zinc-500 font-mono">1,500 ر.س</td>
+                  <td className="p-3.5 font-bold font-mono text-emerald-700">6,000.00 ر.س</td>
                 </tr>
               </tbody>
             </table>
@@ -242,49 +232,50 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
 
       {/* TAB 2: General Settings */}
       {activeTab === 'settings' && (
-        <form onSubmit={handleSaveSettings} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-6 shadow-lg">
-          <h3 className="font-bold text-white text-base border-b border-slate-700 pb-3">إعدادات المنشأة والنظام الضريبي</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSaveSettings} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="font-bold text-black text-base border-b border-zinc-100 pb-3">إعدادات المنشأة والنظام الضريبي</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">اسم المنشأة / التجاري</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم المنشأة / التجاري</label>
               <input
                 type="text"
                 value={companySettings.companyName}
                 onChange={e => setCompanySettings({ ...companySettings, companyName: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">الرقم الضريبي (ZATCA 15%)</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">الرقم الضريبي (ZATCA 15%)</label>
               <input
                 type="text"
                 value={companySettings.taxNumber}
                 onChange={e => setCompanySettings({ ...companySettings, taxNumber: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">العملة الأساسية للنظام</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">العملة الأساسية للنظام</label>
               <input
                 type="text"
                 value={companySettings.currency}
                 readOnly
-                className="w-full bg-slate-950/60 border border-slate-700 rounded-xl py-2 px-3 text-xs text-slate-400 font-bold"
+                className="w-full bg-zinc-100 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-zinc-600 font-bold"
               />
             </div>
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">بداية السنة المالية</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">بداية السنة المالية</label>
               <input
                 type="date"
                 value={companySettings.fiscalYearStart}
                 onChange={e => setCompanySettings({ ...companySettings, fiscalYearStart: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
               />
             </div>
           </div>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg"
+            className="button-primary-pill mt-6"
+            style={{ padding: '8px 24px', fontSize: '13px', minHeight: '38px' }}
           >
             حفظ إعدادات المنشأة
           </button>
@@ -293,31 +284,32 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
 
       {/* TAB 3: Auto Numbering Rules */}
       {activeTab === 'numbering' && (
-        <form onSubmit={handleSaveSettings} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 space-y-6 shadow-lg">
-          <h3 className="font-bold text-white text-base border-b border-slate-700 pb-3">الترقيم التلقائي وتفويضات الاعتماد</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSaveSettings} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <h3 className="font-bold text-black text-base border-b border-zinc-100 pb-3">الترقيم التلقائي وتفويضات الاعتماد</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">بادئة سندات القبض والصرف</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">بادئة سندات القبض والصرف</label>
               <input
                 type="text"
                 value={numberingRules.voucherPrefix}
                 onChange={e => setNumberingRules({ ...numberingRules, voucherPrefix: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">بادئة قيود اليومية العامة</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">بادئة قيود اليومية العامة</label>
               <input
                 type="text"
                 value={numberingRules.journalPrefix}
                 onChange={e => setNumberingRules({ ...numberingRules, journalPrefix: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
               />
             </div>
           </div>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg"
+            className="button-primary-pill mt-6"
+            style={{ padding: '8px 24px', fontSize: '13px', minHeight: '38px' }}
           >
             حفظ قواعد الترقيم
           </button>
@@ -334,46 +326,46 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">الاسم الكامل للموظف</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الاسم الكامل للموظف</label>
             <input
               type="text"
               required
               placeholder="اسم الموظف..."
               value={newEmp.name}
               onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white placeholder-slate-500"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">رقم الهوية الوطنية / الإقامة</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الهوية الوطنية / الإقامة</label>
             <input
               type="text"
               required
               placeholder="10xxxxxxxx"
               value={newEmp.nationalId}
               onChange={e => setNewEmp({ ...newEmp, nationalId: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">الراتب الأساسي (ر.س)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الراتب الأساسي (ر.س)</label>
             <input
               type="number"
               required
               placeholder="0.00"
               value={newEmp.basicSalary}
               onChange={e => setNewEmp({ ...newEmp, basicSalary: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold text-emerald-400"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-slate-300 block mb-1 font-semibold">بدل السكن (ر.س)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">بدل السكن (ر.س)</label>
             <input
               type="number"
               placeholder="0.00"
               value={newEmp.housingAllowance}
               onChange={e => setNewEmp({ ...newEmp, housingAllowance: e.target.value })}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
             />
           </div>
         </div>
@@ -389,36 +381,37 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">عدد سنوات الخدمة</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">عدد سنوات الخدمة</label>
               <input
                 type="number"
                 value={eosbCalc.years}
                 onChange={e => setEosbCalc({ ...eosbCalc, years: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-mono"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
               />
             </div>
             <div>
-              <label className="text-xs text-slate-300 block mb-1 font-semibold">الراتب الأخير الشامل (ر.س)</label>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">الراتب الأخير الشامل (ر.س)</label>
               <input
                 type="number"
                 value={eosbCalc.lastSalary}
                 onChange={e => setEosbCalc({ ...eosbCalc, lastSalary: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white font-bold"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
               />
             </div>
           </div>
           <button
             type="button"
             onClick={calculateEosb}
-            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold"
+            className="button-primary-pill w-full"
+            style={{ padding: '8px 20px', fontSize: '13px', minHeight: '38px' }}
           >
             احسب المكافأة المستحقة
           </button>
 
           {eosbCalc.result > 0 && (
-            <div className="p-4 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-center">
-              <span className="text-xs text-slate-300 block">إجمالي المستحق لمكافأة نهاية الخدمة:</span>
-              <span className="text-2xl font-black text-emerald-400 mt-1 block">{eosbCalc.result.toLocaleString()} ر.س</span>
+            <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-center mt-3">
+              <span className="text-xs text-zinc-600 block">إجمالي المستحق لمكافأة نهاية الخدمة:</span>
+              <span className="text-2xl font-mono font-black text-emerald-700 mt-1 block">{eosbCalc.result.toLocaleString()} ر.س</span>
             </div>
           )}
         </div>
@@ -426,3 +419,5 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
     </div>
   );
 };
+
+export default SmaccEmployeesSettingsPage;

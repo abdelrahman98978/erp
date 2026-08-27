@@ -593,9 +593,10 @@ export const ZATCAPage: React.FC = () => {
                     link.click();
                     URL.revokeObjectURL(url);
                   }}
-                  className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-200 flex items-center gap-2"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 18px', fontSize: '13px' }}
                 >
-                  <i className="fa-solid fa-file-code"></i>
+                  <i className="fa-solid fa-file-code ml-1.5"></i>
                   تنزيل ملف XML (UBL 2.1)
                 </button>
                 <button
@@ -604,15 +605,17 @@ export const ZATCAPage: React.FC = () => {
                     navigator.clipboard.writeText(selectedInvoiceForXml.qr_code_payload || '');
                     alert('تم نسخ كود الـ QR Base64 المشفر بنجاح');
                   }}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold flex items-center gap-2"
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 18px', fontSize: '13px' }}
                 >
-                  <i className="fa-solid fa-copy"></i>
+                  <i className="fa-solid fa-copy ml-1.5"></i>
                   نسخ رمز TLV
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedInvoiceForXml(null)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 18px', fontSize: '13px' }}
                 >
                   إغلاق
                 </button>

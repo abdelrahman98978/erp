@@ -1035,11 +1035,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 style={{
                   height: '100%',
                   width: `${biometricProgress}%`,
-                  background: biometricStatus === 'success'
-                    ? '#10B981'
-                    : biometricModal === 'fingerprint'
-                    ? 'linear-gradient(90deg, #059669, #34D399)'
-                    : 'linear-gradient(90deg, #7C3AED, #A78BFA)',
+                  background: '#000000',
                   borderRadius: '9999px',
                   transition: 'width 0.25s ease-out'
                 }}
@@ -1050,16 +1046,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="button"
               onClick={() => setBiometricModal(null)}
+              className="button-outline-on-light"
               style={{
-                padding: '10px 24px',
-                borderRadius: '12px',
-                border: '1px solid #CBD5E1',
-                background: '#F8FAFC',
-                color: '#475569',
+                padding: '8px 24px',
                 fontSize: '13px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                minHeight: '38px',
+                margin: '0 auto',
+                display: 'inline-flex'
               }}
             >
               إلغاء والمتابعة بكلمة المرور
