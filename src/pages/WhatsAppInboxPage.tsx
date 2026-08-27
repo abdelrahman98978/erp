@@ -185,31 +185,32 @@ export const WhatsAppInboxPage: React.FC = () => {
                 className={`flex flex-col ${msg.sender === 'system' ? 'items-start' : 'items-end'}`}
               >
                 <div
-                  className={`max-w-[80%] p-3 rounded-2xl text-xs shadow-sm leading-relaxed ${
+                  className={`max-w-[80%] p-3.5 rounded-2xl text-xs leading-relaxed ${
                     msg.sender === 'system'
-                      ? 'bg-teal-900 text-white rounded-br-sm'
-                      : 'bg-white text-slate-900 rounded-bl-sm border border-slate-200'
+                      ? 'bg-black text-white rounded-br-sm shadow-sm'
+                      : 'bg-white text-black rounded-bl-sm border border-zinc-200'
                   }`}
                 >
                   {msg.text}
                 </div>
-                <span className="text-[10px] text-slate-400 mt-1 px-1 font-mono">{msg.time}</span>
+                <span className="text-[10px] text-zinc-400 mt-1 px-1 font-mono">{msg.time}</span>
               </div>
             ))}
           </div>
 
           {/* Reply Form */}
-          <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-200 bg-white flex items-center gap-2">
+          <form onSubmit={handleSendMessage} className="p-3 border-t border-zinc-200 bg-white flex items-center gap-2">
             <input
               type="text"
               placeholder="اكتب ردك للعميل أو اختر قالباً جاهزاً من الأعلى..."
               value={replyText}
               onChange={e => setReplyText(e.target.value)}
-              className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500"
+              className="flex-1 px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-medium focus:outline-none focus:border-black"
             />
             <button
               type="submit"
-              className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-200 transition-all flex items-center gap-1.5"
+              className="button-primary-pill"
+              style={{ padding: '6px 18px', minHeight: '38px', fontSize: '12px' }}
             >
               <i className="fa-solid fa-paper-plane"></i> إرسال واتساب
             </button>

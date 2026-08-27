@@ -273,15 +273,13 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('orders', 'الطلبات المباشرة (الحجوزات)')}
+            className="pill-tag-shade"
             style={{
-              backgroundColor: '#F1F5F9',
-              color: '#334155',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
               padding: '5px 12px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
+              border: '1px solid #e4e4e7',
             }}
           >
             الطلبات المباشرة
@@ -290,15 +288,13 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('branch-departments', 'إدارة الفرق والأقسام')}
+            className="pill-tag-shade"
             style={{
-              backgroundColor: '#F1F5F9',
-              color: '#334155',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
               padding: '5px 12px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
+              border: '1px solid #e4e4e7',
             }}
           >
             إدارة الفرق
@@ -307,15 +303,13 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('reports', 'مركز التقارير الموحد')}
+            className="pill-tag-shade"
             style={{
-              backgroundColor: '#F1F5F9',
-              color: '#334155',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
               padding: '5px 12px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
+              border: '1px solid #e4e4e7',
             }}
           >
             التقارير
@@ -324,15 +318,13 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('finance-home', 'لوحة التحكم المالية')}
+            className="pill-tag-shade"
             style={{
-              backgroundColor: '#F1F5F9',
-              color: '#334155',
-              border: '1px solid #E2E8F0',
-              borderRadius: '20px',
               padding: '5px 12px',
               fontSize: '11px',
-              fontWeight: '700',
+              fontWeight: 500,
               cursor: 'pointer',
+              border: '1px solid #e4e4e7',
             }}
           >
             المالية

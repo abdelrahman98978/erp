@@ -339,7 +339,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   gap: '6px',
                 }}
               >
-                <i className="fa-solid fa-circle-notch fa-spin text-teal-700"></i>
+                <i className="fa-solid fa-circle-notch fa-spin text-black"></i>
                 جاري التحليل واستخراج البيانات...
               </div>
             )}

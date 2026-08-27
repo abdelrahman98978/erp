@@ -335,7 +335,7 @@ export const JournalsPage: React.FC = () => {
                     <td className="py-3.5 px-4 font-bold text-slate-900 max-w-xs truncate" title={j.description}>
                       {j.description}
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-teal-700">{j.total_debit.toLocaleString()} ر.س</td>
+                    <td className="py-3.5 px-4 font-bold text-black">{j.total_debit.toLocaleString()} ر.س</td>
                     <td className="py-3.5 px-4 font-bold text-rose-700">{j.total_credit.toLocaleString()} ر.س</td>
                     <td className="py-3.5 px-4 text-xs text-slate-600">
                       <div>{j.branch_name}</div>
@@ -473,14 +473,14 @@ export const JournalsPage: React.FC = () => {
                       </div>
 
                       <div className="col-span-3">
-                        <label className="block text-[10px] text-teal-600 font-bold mb-1">مدين (Debit)</label>
+                        <label className="block text-[10px] text-zinc-700 font-bold mb-1">مدين (Debit)</label>
                         <input
                           type="number"
                           step="0.01"
                           value={line.debit === 0 ? '' : line.debit}
                           onChange={(e) => handleLineChange(idx, 'debit', e.target.value)}
                           placeholder="0.00"
-                          className="w-full px-2.5 py-1.5 bg-teal-50/50 border border-teal-200 rounded-lg text-xs font-bold text-teal-900 outline-none"
+                          className="w-full px-2.5 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-black outline-none focus:border-black"
                         />
                       </div>
 

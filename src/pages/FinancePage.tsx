@@ -228,13 +228,13 @@ export const FinancePage: React.FC = () => {
       {/* Top Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
-            <i className="fa-solid fa-scale-balanced text-teal-700"></i>
+          <h2 style={{ fontSize: '20px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <i className="fa-solid fa-scale-balanced" style={{ color: '#000000' }}></i>
             الإدارة المالية والقوائم الختامية (Enterprise Financial Suite)
           </h2>
-          <p className="text-sm text-slate-500 mt-1">
+          <p style={{ fontSize: '13px', color: '#71717a', margin: '4px 0 0 0' }}>
             المركز المالي، ميزان المراجعة، قائمة الدخل، قيود اليومية، وتسويات مساند لـ{' '}
-            <strong className="text-slate-700">{activeCompany.name}</strong>
+            <strong style={{ color: '#000000', fontWeight: 600 }}>{activeCompany.name}</strong>
           </p>
         </div>
 
@@ -496,11 +496,11 @@ export const FinancePage: React.FC = () => {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                <i className="fa-solid fa-table-list text-teal-700"></i>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fa-solid fa-table-list" style={{ color: '#000000' }}></i>
                 ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
+              <p style={{ fontSize: '12px', color: '#71717a', margin: '4px 0 0 0' }}>مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -542,22 +542,22 @@ export const FinancePage: React.FC = () => {
                   <th className="py-3 px-3">افتتاحي دائن</th>
                   <th className="py-3 px-3">حركة مدين</th>
                   <th className="py-3 px-3">حركة دائن</th>
-                  <th className="py-3 px-3 font-black text-teal-900">الرصيد النهائي (ر.س)</th>
+                  <th className="py-3 px-3 font-bold text-black">الرصيد النهائي (ر.س)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+              <tbody className="divide-y divide-zinc-100 font-medium text-zinc-700">
                 {TRIAL_BALANCE_DATA.map((row) => (
                   <tr
                     key={row.code}
                     onClick={() => setSelectedAccountForDrilldown(row)}
-                    className="hover:bg-teal-50/60 cursor-pointer transition-colors"
+                    className="hover:bg-zinc-50 cursor-pointer transition-colors"
                     title="انقر هنا لمعاينة كشف الحساب والقيود المكونة لهذا الرصيد"
                   >
-                    <td className="py-2.5 px-3 font-mono font-bold text-purple-700 flex items-center gap-1.5">
-                      <i className="fa-solid fa-magnifying-glass-chart text-[10px] text-teal-600 opacity-60"></i>
+                    <td className="py-2.5 px-3 font-mono font-bold text-black flex items-center gap-1.5">
+                      <i className="fa-solid fa-magnifying-glass-chart text-[10px] text-zinc-500 opacity-60"></i>
                       <span>{row.code}</span>
                     </td>
-                    <td className="py-2.5 px-3 font-bold text-slate-900">{row.name}</td>
+                    <td className="py-2.5 px-3 font-bold text-black">{row.name}</td>
                     <td className="py-2.5 px-3">
                       <Badge text={row.type} type="purple" />
                     </td>
@@ -565,7 +565,7 @@ export const FinancePage: React.FC = () => {
                     <td className="py-2.5 px-3 font-mono">{row.opening_credit.toLocaleString()}</td>
                     <td className="py-2.5 px-3 font-mono text-emerald-700 font-bold">{row.period_debit.toLocaleString()}</td>
                     <td className="py-2.5 px-3 font-mono text-rose-700 font-bold">{row.period_credit.toLocaleString()}</td>
-                    <td className={`py-2.5 px-3 font-mono font-black ${row.balance >= 0 ? 'text-teal-800' : 'text-purple-800'}`}>
+                    <td className={`py-2.5 px-3 font-mono font-bold ${row.balance >= 0 ? 'text-black' : 'text-zinc-600'}`}>
                       {Math.abs(row.balance).toLocaleString()} {row.balance >= 0 ? 'مدين' : 'دائن'}
                     </td>
                   </tr>
@@ -581,11 +581,11 @@ export const FinancePage: React.FC = () => {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
-                <i className="fa-solid fa-scale-balanced text-teal-700"></i>
+              <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fa-solid fa-scale-balanced" style={{ color: '#000000' }}></i>
                 قائمة المركز المالي الموحدة (Statement of Financial Position / Balance Sheet)
               </h3>
-              <p className="text-xs text-slate-500 mt-1">مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
+              <p style={{ fontSize: '12px', color: '#71717a', margin: '4px 0 0 0' }}>مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -612,8 +612,8 @@ export const FinancePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Assets */}
-            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-              <h4 className="font-black text-teal-900 border-b-2 border-teal-700 pb-2 text-sm flex justify-between">
+            <div className="bg-zinc-50 p-5 rounded-2xl border border-zinc-200 space-y-4">
+              <h4 className="font-bold text-black border-b border-zinc-200 pb-2 text-sm flex justify-between">
                 <span>1. الأصول (Assets)</span>
                 <span>2,132,971.20 ر.س</span>
               </h4>
@@ -745,9 +745,9 @@ export const FinancePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-between py-3 bg-teal-900 text-white px-4 rounded-xl font-black text-base shadow-md">
+            <div className="flex justify-between py-3.5 bg-black text-white px-5 rounded-2xl font-bold text-base shadow-sm">
               <span>صافي الربح للفترة (Net Income):</span>
-              <span className="font-mono">304,971.20 ر.س</span>
+              <span className="font-mono" style={{ color: '#c1fbd4' }}>304,971.20 ر.س</span>
             </div>
           </div>
         </div>
@@ -1020,38 +1020,48 @@ export const FinancePage: React.FC = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowAddAccountModal(true)}
-                className="px-4 py-2 bg-teal-800 hover:bg-teal-900 text-white rounded-xl text-xs font-bold shadow-md shadow-teal-200 transition-all flex items-center gap-1.5"
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
                 <i className="fa-solid fa-plus"></i> إضافة حساب محاسبي فرعي
               </button>
               <button
                 onClick={() => useAppStore.getState().setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
-                className="px-3 py-2 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
                 title="استيراد دليل الحسابات من Excel / CSV"
               >
-                <i className="fa-solid fa-file-import text-purple-600"></i> استيراد الدليل (Excel)
+                <i className="fa-solid fa-file-import"></i> استيراد الدليل (Excel)
               </button>
               <button
                 onClick={() => exportData('trial-balance', chartOfAccountsService.getAccountsByCompany(activeCompany.id as any), 'excel', `دليل_الحسابات_${activeCompany.name}`)}
-                className="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
               >
-                <i className="fa-solid fa-file-excel"></i> تصدير الدليل
+                <i className="fa-solid fa-file-excel text-emerald-600"></i> تصدير الدليل
               </button>
             </div>
           </div>
 
           {/* Filters & Search */}
-          <div className="flex items-center justify-between flex-wrap gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <div className="flex items-center gap-1 flex-wrap">
+          <div className="flex items-center justify-between flex-wrap gap-3 bg-zinc-50 p-3 rounded-2xl border border-zinc-200">
+            <div className="flex items-center gap-1.5 flex-wrap">
               {['ALL', 'أصول', 'خصوم', 'حقوق ملكية', 'إيرادات', 'مصروفات'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCoaCategoryFilter(cat)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    coaCategoryFilter === cat
-                      ? 'bg-teal-800 text-white shadow-sm'
-                      : 'bg-white text-slate-600 hover:bg-slate-200'
-                  }`}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: '9999px',
+                    fontSize: '11.5px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    border: '1px solid',
+                    borderColor: coaCategoryFilter === cat ? '#000000' : '#e4e4e7',
+                    backgroundColor: coaCategoryFilter === cat ? '#000000' : '#ffffff',
+                    color: coaCategoryFilter === cat ? '#ffffff' : '#27272a',
+                  }}
                 >
                   {cat === 'ALL' ? 'جميع الحسابات' : cat}
                 </button>
@@ -1102,18 +1112,18 @@ export const FinancePage: React.FC = () => {
                         account.isHeader ? 'bg-slate-50 font-bold' : ''
                       }`}
                     >
-                      <td className="py-3 px-4 font-mono font-bold text-purple-700">
+                      <td className="py-3 px-4 font-mono font-bold text-black">
                         {account.code}
                       </td>
-                      <td className="py-3 px-4 font-bold text-slate-900 flex items-center gap-2">
+                      <td className="py-3 px-4 font-bold text-black flex items-center gap-2">
                         {account.isHeader ? (
-                          <i className="fa-solid fa-folder text-amber-500"></i>
+                          <i className="fa-solid fa-folder text-zinc-500"></i>
                         ) : (
-                          <i className="fa-solid fa-file-invoice text-teal-600"></i>
+                          <i className="fa-solid fa-file-invoice text-zinc-600"></i>
                         )}
                         <span>{account.nameAr}</span>
                       </td>
-                      <td className="py-3 px-4 font-mono text-slate-500">{account.nameEn}</td>
+                      <td className="py-3 px-4 font-mono text-zinc-500">{account.nameEn}</td>
                       <td className="py-3 px-4">
                         <Badge
                           text={account.category}
@@ -1128,10 +1138,10 @@ export const FinancePage: React.FC = () => {
                           }
                         />
                       </td>
-                      <td className="py-3 px-4 font-mono font-bold text-teal-900">
+                      <td className="py-3 px-4 font-mono font-bold text-black">
                         {account.balance.toLocaleString()} {account.currency}
                       </td>
-                      <td className="py-3 px-4 font-bold text-slate-600">
+                      <td className="py-3 px-4 font-bold text-zinc-600">
                         {account.category === 'أصول' || account.category === 'مصروفات' ? 'مدين بطبيعته' : 'دائن بطبيعته'}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -1142,7 +1152,8 @@ export const FinancePage: React.FC = () => {
                             type: account.category,
                             balance: account.balance
                           })}
-                          className="px-2.5 py-1 bg-slate-100 hover:bg-teal-100 text-teal-800 rounded-lg text-xs font-bold transition-all"
+                          className="button-outline-on-light"
+                          style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
                         >
                           <i className="fa-solid fa-eye"></i> كشف الحساب
                         </button>
@@ -1374,17 +1385,19 @@ export const FinancePage: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowAddVoucherModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-bold"
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-sm font-bold shadow-md shadow-teal-200"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ واعتماد السند
                 </button>
