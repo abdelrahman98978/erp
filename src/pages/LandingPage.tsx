@@ -114,15 +114,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           </button>
           <button
             type="button"
-            className="button-primary-pill"
+            className="button-white-pill"
             onClick={() => onSelectCompany('login')}
             style={{
-              backgroundColor: '#ffffff',
-              color: '#000000',
               fontSize: '14px',
               padding: '8px 22px',
               minHeight: '38px',
-              fontWeight: 550,
             }}
           >
             تسجيل الدخول
@@ -178,14 +175,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </button>
             <button
               type="button"
-              className="button-primary-pill"
+              className="button-white-pill"
               onClick={() => onSelectCompany('login')}
               style={{
-                backgroundColor: '#ffffff',
-                color: '#000000',
                 minWidth: '200px',
                 fontSize: '16px',
-                fontWeight: 550,
               }}
             >
               تسجيل الدخول المباشر

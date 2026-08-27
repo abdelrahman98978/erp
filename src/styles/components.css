@@ -558,7 +558,7 @@
   justify-content: center;
   gap: 8px;
   background-color: var(--color-primary);
-  color: var(--color-on-primary) !important;
+  color: var(--color-on-primary);
   font-family: var(--font-family-ui);
   font-size: 16px;
   font-weight: 420;
@@ -576,10 +576,43 @@
 
 .button-primary-pill:hover {
   background-color: #27272a;
+  color: var(--color-on-primary);
 }
 
 .button-primary-pill:active, .button-primary-pill-pressed {
   background-color: var(--color-shade-70);
+  transform: scale(0.985);
+}
+
+/* button-white-pill: Solid white pill with black text for dark backgrounds */
+.button-white-pill, button.button-white-pill, a.button-white-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  font-family: var(--font-family-ui);
+  font-size: 16px;
+  font-weight: 550;
+  line-height: 1.5;
+  border-radius: var(--rounded-pill);
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  text-decoration: none;
+  font-feature-settings: "ss03" 1;
+  transition: all var(--transition-fast);
+  user-select: none;
+  min-height: 44px;
+}
+
+.button-white-pill:hover {
+  background-color: #f4f4f5 !important;
+  color: #000000 !important;
+}
+
+.button-white-pill:active {
   transform: scale(0.985);
 }
 
