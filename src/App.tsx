@@ -198,6 +198,8 @@ const MainContent: React.FC = () => {
       case 'contract-extension-requests':
       case 'contract-return-requests':
       case 'musaned-pipeline':
+      case 'musaned-sync':
+      case 'contract-insurance':
         return <RecruitmentContractsPage />;
 
       case 'rent-contracts':
@@ -208,6 +210,8 @@ const MainContent: React.FC = () => {
       case 'transferred-rent':
       case 'completed-rent':
       case 'rent-contract-terms':
+      case 'rental-drivers':
+      case 'rental-domestic':
         return <RentContractsPage />;
 
       case 'rent-packages':
@@ -219,6 +223,7 @@ const MainContent: React.FC = () => {
       case 'cvs-backout':
       case 'cvs-deleted':
       case 'cvs-pending':
+      case 'cvs-reserved':
       case 'cvs':
         return <CreateCVPage />;
 
@@ -228,6 +233,8 @@ const MainContent: React.FC = () => {
       case 'in-progress-orders':
       case 'contracted-orders':
       case 'incomplete-orders':
+      case 'urgent-orders':
+      case 'create-order':
       case 'professional-requests':
       case 'special-requests':
       case 'renew-contracts':
@@ -238,6 +245,8 @@ const MainContent: React.FC = () => {
       case 'ingaz':
       case 'create-ingaz':
       case 'ingaz-delegations':
+      case 'chamber-commerce':
+      case 'visa-issuance':
         return <IngazPage />;
 
       case 'shelter':
@@ -247,6 +256,8 @@ const MainContent: React.FC = () => {
       case 'available-transfer':
       case 'deportation-stage':
       case 'shelter-places':
+      case 'room-management':
+      case 'food-catering':
         return <ShelterPage />;
 
       case 'sponsorship-transfer':
@@ -262,12 +273,14 @@ const MainContent: React.FC = () => {
       case 'deportation-flights':
       case 'deportation-travel':
       case 'logistics':
+      case 'airport-reception':
         return <TravelPage />;
 
       case 'complaints':
       case 'complaints-list':
       case 'create-complaint':
       case 'complaint-types':
+      case 'compensation-claims':
         return <ComplaintsPage />;
 
       case 'offices':
@@ -275,12 +288,14 @@ const MainContent: React.FC = () => {
       case 'office-list':
       case 'add-office':
       case 'office-transfers':
+      case 'agent-accounts':
         return <OfficesPage />;
 
       case 'financial-requests':
       case 'cash-custody':
       case 'all-fin-requests':
       case 'create-fin-request':
+      case 'petty-cash':
         return <FinancialRequestsPage />;
 
       case 'finance-home':
@@ -293,8 +308,11 @@ const MainContent: React.FC = () => {
       case 'invoices':
       case 'receipts':
       case 'vouchers':
-      case 'banks-boxes':
+      case 'receipt-vouchers':
       case 'payment-vouchers':
+      case 'banks-boxes':
+      case 'bank-reconciliation':
+      case 'vat-declaration':
       case 'tax-returns':
       case 'chart-accounts':
         return <FinancePage />;
@@ -308,10 +326,12 @@ const MainContent: React.FC = () => {
       case 'smacc-accounting':
         return <SmaccAccountingPage />;
 
+      case 'smacc-inventory':
       case 'smacc-inventory-assets':
         return <SmaccInventoryAssetsPage />;
 
       case 'smacc-hr-settings':
+      case 'smacc-employees':
         return <SmaccEmployeesSettingsPage />;
 
       case 'smacc-modules':
@@ -322,21 +342,27 @@ const MainContent: React.FC = () => {
       case 'client-list':
       case 'new-client':
       case 'black-list':
+      case 'client-blacklist':
+      case 'client-categories':
       case 'crm':
         return <ClientsPage />;
 
       case 'employees':
       case 'employee-list':
+      case 'add-employee':
       case 'maids-hr':
       case 'payroll':
       case 'payrolls':
       case 'wps':
+      case 'wps-generator':
       case 'salary':
       case 'leave-requests':
       case 'employee-advances':
       case 'employee-sanctions':
       case 'employee-permissions':
       case 'employee-rewards':
+      case 'end-of-service':
+      case 'gosi-insurance':
       case 'salaries':
       case 'hr':
         return <HRPage />;
@@ -354,6 +380,7 @@ const MainContent: React.FC = () => {
       case 'company-profile':
       case 'integrations':
       case 'quick-links-settings':
+      case 'system-backup':
         return <SettingsPage />;
 
       case 'master-constants':
