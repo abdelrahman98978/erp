@@ -392,11 +392,11 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
   }
 
   .display-sm {
-    font-size: clamp(24px, 7vw, 32px) !important;
+    font-size: clamp(20px, 6vw, 28px) !important;
   }
 
   .header-title-box h1 {
-    font-size: 13.5px !important;
+    font-size: 13px !important;
     max-width: 140px;
     white-space: nowrap;
     overflow: hidden;
@@ -418,6 +418,50 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
     border-radius: 20px !important;
   }
 }
+
+/* Tablet (640px - 1023px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .content-body {
+    padding: 20px 18px !important;
+  }
+
+  .stat-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+}
+
+/* Standard Desktop (1024px - 1535px) */
+@media (min-width: 1024px) and (max-width: 1535px) {
+  .content-body {
+    padding: 24px 28px !important;
+  }
+
+  .stat-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 20px !important;
+  }
+}
+
+/* Large Displays & Ultra-wide Monitors (1536px+) */
+@media (min-width: 1536px) {
+  .content-body {
+    padding: 32px 40px !important;
+    max-width: 1920px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .stat-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+  }
+
+  .display-sm {
+    font-size: 32px !important;
+  }
+}
+
 
 /* Tablets (640px to 1023px) */
 @media (min-width: 640px) and (max-width: 1023px) {

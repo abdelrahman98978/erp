@@ -7,7 +7,8 @@ import { NotificationDropdown } from '../common/NotificationDropdown';
 import { 
   Menu, Grid, Search, Bell, Maximize, Minimize, MapPin, 
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
-  MessageSquare, ShieldCheck, Settings, LogOut, Check, X
+  MessageSquare, ShieldCheck, Settings, LogOut, Check, X,
+  Globe, Languages as LanguagesIcon
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -23,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAppLauncher,
   onLogout,
 }) => {
-  const { currentLanguage, t } = useLanguage();
+  const { currentLanguage, availableLanguages, setLanguage, t } = useLanguage();
   const { activeCompany } = useCompany();
   const { impersonatedState, stopImpersonation } = useImpersonation();
   const { unreadCount, setQuickSearchOpen, setActiveTab } = useAppStore();
@@ -33,10 +34,11 @@ export const Header: React.FC<HeaderProps> = ({
   const [uptimeSeconds, setUptimeSeconds] = useState<number>(64250);
   const [selectedBranch, setSelectedBranch] = useState<string>('الفرع الرئيسي');
   const [showBranchDropdown, setShowBranchDropdown] = useState<boolean>(false);
+  const [showLangDropdown, setShowLangDropdown] = useState<boolean>(false);
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState<boolean>(false);
-  const [showTawtheeqModal, setShowTawtheeqModal] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [langSearch, setLangSearch] = useState<string>('');
 
   useEffect(() => {
     const updateClock = () => {
@@ -90,6 +92,12 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'online', name: 'الموقع الخارجي (البوابة)', city: 'أونلاين' },
   ];
 
+  const filteredLanguages = availableLanguages.filter(l => 
+    l.name.toLowerCase().includes(langSearch.toLowerCase()) || 
+    l.nativeName.toLowerCase().includes(langSearch.toLowerCase()) ||
+    l.code.toLowerCase().includes(langSearch.toLowerCase())
+  );
+
   return (
     <>
       {/* Impersonation Banner */}
@@ -108,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
 
-      <header className="nav-bar-light h-16 bg-white border-b border-zinc-200 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-[90] shadow-sm">
+      <header className="nav-bar-light h-16 bg-white border-b border-zinc-200 px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-[90] shadow-sm">
         {/* Right Section: App Switcher, Sidebar Toggle, Page Title, Branch */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* Mobile/Desktop Hamburger Sidebar Toggle */}
@@ -222,14 +230,79 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* Left Section: Search, Notifications, User */}
+        {/* Left Section: 25 Languages Switcher, Search, Notifications, User */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* System Uptime Indicator */}
-          <div
-            className="hidden lg:flex items-center gap-1.5 bg-zinc-100 border border-zinc-200 rounded-full px-2.5 py-1 text-[11px] font-mono text-zinc-700"
-            title="المدة الزمنية منذ فتح النظام"
-          >
-            <span>{formatUptime(uptimeSeconds)}</span>
+          {/* 25 Languages Selector Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowLangDropdown(!showLangDropdown)}
+              className="flex items-center gap-1 px-2.5 py-1 bg-zinc-50 border border-zinc-200 rounded-full hover:bg-zinc-100 transition-colors text-xs font-semibold text-zinc-800"
+              title="تغيير لغة المنظومة (25 لغة)"
+            >
+              <span className="text-sm leading-none">{currentLanguage.flag}</span>
+              <span className="hidden sm:inline text-[11.5px]">{currentLanguage.nativeName}</span>
+              <ChevronDown className="w-3 h-3 text-zinc-400" />
+            </button>
+
+            {showLangDropdown && (
+              <div className="absolute top-full mt-2 left-0 sm:right-auto bg-white border border-zinc-200 rounded-2xl shadow-2xl w-64 max-w-[calc(100vw-32px)] z-[300] p-2 space-y-2 font-sans text-right">
+                <div className="px-2 pt-1 pb-2 border-b border-zinc-100 flex items-center justify-between">
+                  <span className="text-xs font-bold text-black flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>لغات النظام (25 لغة عالمية)</span>
+                  </span>
+                  <button 
+                    onClick={() => setShowLangDropdown(false)}
+                    className="text-zinc-400 hover:text-black p-0.5 rounded-md"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="relative px-1">
+                  <Search className="w-3.5 h-3.5 text-zinc-400 absolute right-3 top-2.5" />
+                  <input
+                    type="text"
+                    placeholder="ابحث عن لغة..."
+                    value={langSearch}
+                    onChange={e => setLangSearch(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pr-7 pl-3 py-1 text-xs text-black focus:border-black outline-none"
+                  />
+                </div>
+
+                <div className="max-h-60 overflow-y-auto space-y-0.5 pr-1 scrollbar-thin">
+                  {filteredLanguages.map((lang) => {
+                    const isSelected = currentLanguage.code === lang.code;
+                    return (
+                      <button
+                        key={lang.code}
+                        type="button"
+                        onClick={() => {
+                          setLanguage(lang);
+                          setShowLangDropdown(false);
+                          setLangSearch('');
+                        }}
+                        className={`w-full text-right px-2.5 py-1.5 rounded-xl text-xs flex items-center justify-between transition-colors ${
+                          isSelected
+                            ? 'bg-emerald-50 text-emerald-900 font-bold'
+                            : 'hover:bg-zinc-50 text-zinc-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-base leading-none">{lang.flag}</span>
+                          <div>
+                            <div className="font-semibold leading-tight">{lang.nativeName}</div>
+                            <div className="text-[10px] text-zinc-400 leading-none">{lang.name} ({lang.code.toUpperCase()})</div>
+                          </div>
+                        </div>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Quick Search Button */}
@@ -303,13 +376,27 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => {
                     setShowUserDropdown(false);
-                    setActiveTab('settings', 'إعدادات النظام');
+                    setActiveTab('profile', 'الملف الشخصي والحساب');
                   }}
-                  className="w-full text-right px-3 py-2 rounded-xl text-xs font-semibold text-zinc-700 hover:bg-zinc-50 flex items-center gap-2"
+                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-zinc-50 text-zinc-700 flex items-center gap-2"
                 >
-                  <Settings className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>إعدادات النظام</span>
+                  <Settings className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>إعدادات الحساب</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUserDropdown(false);
+                    onOpenAppLauncher();
+                  }}
+                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-zinc-50 text-zinc-700 flex items-center gap-2"
+                >
+                  <Grid className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>بوابة الأقسام (App Launcher)</span>
+                </button>
+
+                <div className="border-t border-zinc-100 my-1"></div>
 
                 <button
                   type="button"
@@ -317,9 +404,9 @@ export const Header: React.FC<HeaderProps> = ({
                     setShowUserDropdown(false);
                     if (onLogout) onLogout();
                   }}
-                  className="w-full text-right px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2"
+                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-rose-50 text-rose-600 flex items-center gap-2 font-bold"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                  <LogOut className="w-3.5 h-3.5" />
                   <span>تسجيل الخروج</span>
                 </button>
               </div>
@@ -330,5 +417,3 @@ export const Header: React.FC<HeaderProps> = ({
     </>
   );
 };
-
-export default Header;

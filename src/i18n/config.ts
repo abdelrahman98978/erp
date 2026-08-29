@@ -2,13 +2,15 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { TRANSLATIONS } from './languages';
 
+const resources: Record<string, { translation: Record<string, string> }> = {};
+Object.keys(TRANSLATIONS).forEach(lang => {
+  resources[lang] = { translation: TRANSLATIONS[lang] };
+});
+
 i18n
   .use(initReactI18next)
   .init({
-    resources: Object.keys(TRANSLATIONS).reduce((acc, lang) => {
-      acc[lang] = { translation: TRANSLATIONS[lang] };
-      return acc;
-    }, {} as Record<string, { translation: Record<string, string> }>),
+    resources,
     lng: 'ar',
     fallbackLng: 'ar',
     interpolation: {

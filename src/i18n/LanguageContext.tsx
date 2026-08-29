@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { LANGUAGES, Language, TRANSLATIONS } from './languages';
 import i18n from './config';
 
 interface LanguageContextType {
   currentLanguage: Language;
+  availableLanguages: Language[];
   theme: 'light' | 'dark';
   setLanguage: (lang: Language) => void;
   toggleTheme: () => void;
@@ -12,6 +13,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType>({
   currentLanguage: LANGUAGES[0],
+  availableLanguages: LANGUAGES,
   theme: 'light',
   setLanguage: () => {},
   toggleTheme: () => {},
@@ -63,7 +65,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCurrentLanguage(lang);
   };
 
-  const t = (key: string, defaultText?: string): string => {
+  const t = useCallback((key: string, defaultText?: string): string => {
     const langDict = TRANSLATIONS[currentLanguage.code];
     if (langDict && langDict[key]) {
       return langDict[key];
@@ -77,10 +79,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return arabicDict[key];
     }
     return defaultText || key;
-  };
+  }, [currentLanguage]);
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, theme, setLanguage: handleSetLanguage, toggleTheme, t }}>
+    <LanguageContext.Provider value={{ 
+      currentLanguage, 
+      availableLanguages: LANGUAGES,
+      theme, 
+      setLanguage: handleSetLanguage, 
+      toggleTheme, 
+      t 
+    }}>
       {children}
     </LanguageContext.Provider>
   );
