@@ -87,7 +87,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'rent-packages',
     titleKey: 'rent-packages',
-    defaultTitle: 'باقات وعروض التأجير',
+    defaultTitle: 'باقات وأسعار التأجير',
     subKey: 'rentPackagesSub',
     defaultSubtitle: 'تسعير مدد التأجير (شهر، 3 أشهر، سنة) واحتساب ضريبة القيمة المضافة.',
     icon: PackageCheck,
@@ -113,7 +113,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'shelter',
     titleKey: 'shelter',
-    defaultTitle: 'مراكز الإيواء والإعاشة',
+    defaultTitle: 'مراكز الإيواء والتغذية',
     subKey: 'shelterSub',
     defaultSubtitle: 'متابعة السكن، التغذية اليومية، الفرز الطبي، وإدارة الطاقة الاستيعابية.',
     icon: Hotel,
@@ -152,7 +152,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'agent-imports',
     titleKey: 'agent-imports',
-    defaultTitle: 'استيراد السير من الوكلاء بالخارج',
+    defaultTitle: 'ملفات السير الذاتية بالدفعة',
     subKey: 'agentImportsSub',
     defaultSubtitle: 'استعراض الدفعات المرفوعة من المكاتب الدولية واعتمادها في بنك السير.',
     icon: FolderSync,
@@ -180,7 +180,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'zatca',
     titleKey: 'zatca',
-    defaultTitle: 'الفوترة الإلكترونية (ZATCA Fatoora)',
+    defaultTitle: 'الفوترة الإلكترونية (ZATCA)',
     subKey: 'zatcaSub',
     defaultSubtitle: 'إصدار الفواتير الضريبية والمبسطة المتوافقة مع متطلبات المرحلة الثانية لهيئة الزكاة.',
     icon: QrCode,
@@ -193,7 +193,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'journals',
     titleKey: 'journals',
-    defaultTitle: 'سجل قيود اليومية والسندات',
+    defaultTitle: 'قيود اليومية والسندات',
     subKey: 'journalsSub',
     defaultSubtitle: 'إنشاء ومراجعة القيود المحاسبية وسندات القبض والصرف وترحيلها.',
     icon: BookOpen,
@@ -206,7 +206,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'cost-centers',
     titleKey: 'cost-centers',
-    defaultTitle: 'مراكز التكلفة وتحليل الأرباح',
+    defaultTitle: 'مراكز التكلفة والأرباح',
     subKey: 'costCentersSub',
     defaultSubtitle: 'توزيع المصروفات والإيرادات على الفروع والمشاريع واستخراج تقارير الربحية.',
     icon: Network,
@@ -219,7 +219,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'financial-requests',
     titleKey: 'financial-requests',
-    defaultTitle: 'الطلبات المالية ومصروفات التشغيل',
+    defaultTitle: 'الطلبات المالية والتشغيلية',
     subKey: 'financialRequestsSub',
     defaultSubtitle: 'طلبات سداد مساند، رسوم الإقامات والجوازات، ودفعات الوكلاء الخارجيين.',
     icon: CreditCard,
@@ -232,14 +232,14 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'custodies',
     titleKey: 'custodies',
-    defaultTitle: 'العهد النقدية وصناديق الفروع',
+    defaultTitle: 'العهد النقدية والأصول',
     subKey: 'custodiesSub',
     defaultSubtitle: 'متابعة العهد المسلمة للموظفين والمشرفين وتسويتها مع الحسابات.',
     icon: PiggyBank,
     href: 'custodies',
     theme: 'white',
     category: 'finance',
-    categoryLabel: 'المالية والمدفوعات',
+    categoryLabel: 'المالية والمصروفات',
     metricBadge: '6 عهد جارية'
   },
 
@@ -260,7 +260,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'complaints',
     titleKey: 'complaints',
-    defaultTitle: 'مركز الشكاوى وتذاكر النزاعات',
+    defaultTitle: 'إدارة الشكاوى والدعم الفني',
     subKey: 'complaintsSub',
     defaultSubtitle: 'إدارة بلاغات رفض العمل، تأخير الاستقدام، تذاكر SLA، والنزاعات البينية.',
     icon: Headphones,
@@ -273,7 +273,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'whatsapp-inbox',
     titleKey: 'whatsapp-inbox',
-    defaultTitle: 'صندوق الواتساب والرد الذكي',
+    defaultTitle: 'صندوق الواتساب والرد الآلي',
     subKey: 'whatsappInboxSub',
     defaultSubtitle: 'مراسلة العملاء عبر قنوات واتساب الرسمية، الردود التلقائية، وإرسال العقود.',
     icon: MessageSquare,
@@ -286,7 +286,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'sent-messages',
     titleKey: 'sent-messages',
-    defaultTitle: 'سجل الرسائل والحملات التسويقية',
+    defaultTitle: 'سجل الرسائل والحملات',
     subKey: 'sentMessagesSub',
     defaultSubtitle: 'سجل إرسال الإشعارات التلقائية عبر SMS والواتساب، وحملات العروض.',
     icon: Send,
@@ -299,7 +299,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'website-visitors',
     titleKey: 'website-visitors',
-    defaultTitle: 'زوار الموقع واستمارات الطلب',
+    defaultTitle: 'زوار الموقع والطلبات',
     subKey: 'websiteVisitorsSub',
     defaultSubtitle: 'تتبع طلبات الاستقدام والتأجير القادمة من البوابة الإلكترونية وتحويلها لـ Leads.',
     icon: Globe,
@@ -314,7 +314,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'hr',
     titleKey: 'hr',
-    defaultTitle: 'الموارد البشرية والرواتب (HR & WPS)',
+    defaultTitle: 'الموارد البشرية والرواتب (HR)',
     subKey: 'hrSub',
     defaultSubtitle: 'ملفات الموظفين، الحضور، الإجازات، والمسيرات المتوافقة مع نظام حماية الأجور.',
     icon: IdCard,
@@ -327,7 +327,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'attendances',
     titleKey: 'attendances',
-    defaultTitle: 'الحضور والانصراف وأجهزة البصمة',
+    defaultTitle: 'الحضور والانصراف والبصمة',
     subKey: 'attendancesSub',
     defaultSubtitle: 'مزامنة سجلات البصمة الحيوية، التأخيرات، ساعات العمل الإضافية، والغياب.',
     icon: UserCheck,
@@ -368,7 +368,7 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'dashboard',
     titleKey: 'dashboard',
-    defaultTitle: 'لوحة القيادة والمؤشرات العامة',
+    defaultTitle: 'لوحة القيادة والمؤشرات',
     subKey: 'dashboardSub',
     defaultSubtitle: 'نظرة شاملة ومؤشرات أداء KPI لعمليات الاستقدام والمالية والعملاء في لمحة واحدة.',
     icon: LayoutDashboard,
@@ -407,20 +407,20 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'ats-pipeline',
     titleKey: 'ats-pipeline',
-    defaultTitle: 'نظام ATS لفرز وتتبع المتقدمين',
+    defaultTitle: 'نظام ATS لفرز وتدقيق المرشحات',
     subKey: 'atsPipelineSub',
     defaultSubtitle: '12 مرحلة مؤتمتة لفرز وتدقيق المرشحات من مرحلة الاستقبال وحتى التوثيق.',
     icon: GitPullRequest,
     href: 'ats-pipeline',
     theme: 'pistachio',
     category: 'governance',
-    categoryLabel: 'الحوكمة المركزية',
+    categoryLabel: 'الحوكمة والفرز',
     metricBadge: '12 مرحلة ATS'
   },
   {
     id: 'reports',
     titleKey: 'reports',
-    defaultTitle: 'مركز التقارير والذكاء التشغيلي',
+    defaultTitle: 'مركز التقارير والذكاء المالي',
     subKey: 'reportsSub',
     defaultSubtitle: 'استخراج تقارير الأداء المالي، معدلات وصول العمالة، ونسب الربحية لكل فرع.',
     icon: TrendingUp,
@@ -511,13 +511,13 @@ const ALL_SYSTEM_APPS: AppTile[] = [
     metricBadge: 'RBAC Security'
   },
   {
-    id: 'settings',
-    titleKey: 'settings',
-    defaultTitle: 'إعدادات المنظومة والثوابت',
-    subKey: 'settingsSub',
+    id: 'master-constants',
+    titleKey: 'master-constants',
+    defaultTitle: 'الثوابت وإعدادات النظام',
+    subKey: 'masterConstantsSub',
     defaultSubtitle: 'إعدادات المنشأة، الشعار، اللغات، الهوية البصرية، والربط الحكومي API.',
     icon: Settings,
-    href: 'settings',
+    href: 'master-constants',
     theme: 'white',
     category: 'tech',
     categoryLabel: 'إعدادات النظام',
@@ -577,7 +577,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
               مستكشف الأقسام والأنظمة التشغيلية
             </div>
             <div className="text-[11px] text-zinc-400 font-medium hidden sm:block">
-              Enterprise Application Launcher • Multi-Entity Edition • 36 وحدة متكاملة
+              Enterprise Application Launcher • Multi-Entity Edition • 37 وحدة متكاملة
             </div>
           </div>
         </div>
@@ -609,38 +609,8 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
       {/* Explorer Content Container - Full Widescreen Width */}
       <div className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 flex-1 space-y-6">
         
-        {/* Banner Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-white border border-zinc-200 p-6 sm:p-8 rounded-3xl shadow-xs">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="pill-tag-mint text-[11px] font-bold">
-                SYSTEM MODULES & APPS ({ALL_SYSTEM_APPS.length} وحدة)
-              </span>
-              <span className="text-xs text-zinc-400">•</span>
-              <span className="text-xs text-zinc-500 font-semibold">
-                منظومة سحابية متوافقة 100% مع اللوائح والأنظمة
-              </span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl font-light text-black font-display m-0 leading-tight">
-              كافة الوحدات والأنظمة التشغيلية للمجموعة
-            </h1>
-            <p className="text-xs sm:text-sm text-zinc-500 font-medium mt-1.5 mb-0">
-              وصول فوري ومباشر لكافة الأقسام، العمليات، الحسابات، والمكاتب الخارجية لكافة فروع وشركات المجموعة
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span className="pill-tag-mint text-xs">
-              الشركات: 4 كيانات
-            </span>
-            <span className="pill-tag-shade text-xs">
-              المعروض: {filteredApps.length} قسم
-            </span>
-          </div>
-        </div>
-
         {/* Category Filter Pills */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
           {CATEGORIES.map(cat => {
             const isActive = selectedCategory === cat.id;
             const count = countsByCategory[cat.id] || 0;
@@ -668,8 +638,8 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
           })}
         </div>
 
-        {/* Dynamic Multi-Column Grid - Fills Full Screen Width */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6 gap-4 sm:gap-5">
+        {/* Seamless Gapless Connected Bento Grid */}
+        <div className="bg-zinc-200/90 border border-zinc-200/90 rounded-3xl overflow-hidden shadow-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6 gap-[1px]">
           {filteredApps.map((app) => {
             const title = t(app.titleKey, app.defaultTitle);
             const subtitle = t(app.subKey, app.defaultSubtitle);
@@ -678,18 +648,18 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
             const isDark = app.theme === 'dark';
             const isPistachio = app.theme === 'pistachio';
 
-            let cardClasses = "bg-white border-zinc-200 text-zinc-900 hover:border-black shadow-xs hover:shadow-md";
+            let cellBg = "bg-white text-zinc-900 hover:bg-zinc-50/90";
             if (isDark) {
-              cardClasses = "bg-zinc-950 border-zinc-900 text-white hover:border-zinc-700 shadow-sm";
+              cellBg = "bg-[#09090b] text-white hover:bg-zinc-900";
             } else if (isPistachio) {
-              cardClasses = "bg-[#f0fdf4] border-emerald-300/80 text-zinc-900 hover:border-emerald-500 shadow-xs hover:shadow-md";
+              cellBg = "bg-[#f4fbf6] text-zinc-900 hover:bg-[#e8f7ec]";
             }
 
             return (
               <div
                 key={app.id}
                 onClick={() => onSelectApp(app.href, title)}
-                className={`card-pricing rounded-3xl p-5 sm:p-5 flex flex-col justify-between cursor-pointer border transition-all group min-h-[230px] ${cardClasses}`}
+                className={`p-5 sm:p-6 flex flex-col justify-between cursor-pointer transition-all duration-200 group relative min-h-[225px] ${cellBg}`}
               >
                 <div className="space-y-3">
                   {/* Top Badges & Metric Row */}
@@ -709,11 +679,11 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                     <div className="flex items-center gap-1.5">
                       {app.metricBadge && (
                         <span 
-                          className={`text-[9.5px] px-2 py-0.5 rounded-full font-bold font-mono ${
+                          className={`text-[9.5px] px-2.5 py-0.5 rounded-full font-bold font-mono ${
                             isDark 
                               ? 'bg-zinc-800 text-emerald-400 border border-zinc-700' 
                               : isPistachio
-                                ? 'bg-emerald-200/80 text-emerald-900'
+                                ? 'bg-emerald-200/80 text-emerald-950 font-bold'
                                 : 'bg-zinc-100 text-zinc-700 border border-zinc-200'
                           }`}
                         >
@@ -739,7 +709,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
 
                 {/* Card Action Footer */}
                 <div className={`pt-3 mt-3 border-t flex items-center justify-between text-xs font-bold ${isDark ? 'border-zinc-800/80 text-zinc-300' : isPistachio ? 'border-emerald-200/80 text-emerald-900' : 'border-zinc-100 text-zinc-700'}`}>
-                  <span className="inline-flex items-center gap-1.5 group-hover:text-emerald-500 transition-colors">
+                  <span className="inline-flex items-center gap-1.5 group-hover:text-emerald-600 transition-colors">
                     <span>فتح القسم</span>
                     <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
                   </span>
