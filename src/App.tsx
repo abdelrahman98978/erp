@@ -10,6 +10,7 @@ import { RBACProvider } from './contexts/RBACContext';
 import { useAppStore } from './stores/appStore';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AICopilotWidget } from './components/common/AICopilotWidget';
+import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
 
 import './styles/index.css';
 import './styles/layout.css';
@@ -92,6 +93,7 @@ const SmaccModulesPage = lazyWithRetry(() => import('./pages/SmaccModulesPage').
 const SmaccAccountingPage = lazyWithRetry(() => import('./pages/SmaccAccountingPage').then(m => ({ default: m.SmaccAccountingPage })));
 const SmaccInventoryAssetsPage = lazyWithRetry(() => import('./pages/SmaccInventoryAssetsPage').then(m => ({ default: m.SmaccInventoryAssetsPage })));
 const SmaccEmployeesSettingsPage = lazyWithRetry(() => import('./pages/SmaccEmployeesSettingsPage').then(m => ({ default: m.SmaccEmployeesSettingsPage })));
+const LegalCompliancePage = lazyWithRetry(() => import('./pages/LegalCompliancePage').then(m => ({ default: m.LegalCompliancePage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -102,6 +104,28 @@ const PageFallback: React.FC = () => (
 
 const MainContent: React.FC = () => {
   const { flowState, setFlowState, activeTab, activeTabTitle, setActiveTab } = useAppStore();
+
+  const [showLegalModal, setShowLegalModal] = useState(false);
+  const [currentUserForLegal] = useState({
+    name: 'مشرف admin (خالد السليم)',
+    username: 'admin',
+    department: 'التشغيل والاستقدام',
+    job_title: 'الرئيس التنفيذي / مدير النظام',
+    branch: 'الفرع الرئيسي',
+    national_id: '1012345678',
+    role: 'Administrator'
+  });
+
+  useEffect(() => {
+    // Check if user acknowledged legal policy on first login
+    if (flowState === 'workspace' || flowState === 'launcher') {
+      const key = `alsulaim_legal_acknowledged_${currentUserForLegal.username}`;
+      const isSigned = localStorage.getItem(key);
+      if (!isSigned) {
+        setShowLegalModal(true);
+      }
+    }
+  }, [flowState, currentUserForLegal.username]);
 
   const handleSelectTab = (href: string, title: string) => {
     if (href === 'logout') {
@@ -427,6 +451,11 @@ const MainContent: React.FC = () => {
       case 'activity-log':
         return <ActivityLogPage />;
 
+      case 'legal-compliance':
+      case 'legal-disclaimers':
+      case 'legal-policies':
+        return <LegalCompliancePage />;
+
       case 'custodies':
         return <CustodiesPage />;
 
@@ -450,6 +479,13 @@ const MainContent: React.FC = () => {
       </AppShell>
       <QuickSearchModal onNavigate={handleSelectTab} />
       <AICopilotWidget onNavigate={handleSelectTab} />
+      {showLegalModal && (
+        <LegalDisclaimerModal
+          user={currentUserForLegal}
+          onAcceptAndContinue={() => setShowLegalModal(false)}
+          onLogout={handleLogout}
+        />
+      )}
     </>
   );
 };

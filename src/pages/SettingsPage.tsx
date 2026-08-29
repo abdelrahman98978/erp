@@ -1066,6 +1066,24 @@ export const SettingsPage: React.FC = () => {
                   className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
                 />
               </div>
+
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between flex-wrap gap-3 mt-4">
+                <div>
+                  <h4 className="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
+                    <span>مواثيق التبرئة القانونية وسياسة استخدام النظام المخصصة لكل قسم</span>
+                  </h4>
+                  <p className="text-[11px] text-emerald-800 mt-0.5">
+                    الاطلاع على مواثيق الأقسام وسجلات التواقيع الرقمية للموظفين وإقرارات الدخول لأول مرة.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('alsulaim_navigate', { detail: { tab: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية' } }))}
+                  className="button-primary-pill text-xs py-1.5 px-4"
+                >
+                  فتح بوابة الامتثال والتواقيع
+                </button>
+              </div>
             </div>
           )}
 

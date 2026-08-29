@@ -9,7 +9,7 @@ import {
   CreditCard, PiggyBank, UserCheck, MapPin, 
   SlidersHorizontal, GitPullRequest, Radio, FolderSync,
   Cloud, UploadCloud, Clock, UserCog, Settings,
-  MessageSquare, Send, Globe, PackageCheck, LucideIcon
+  MessageSquare, Send, Globe, PackageCheck, LucideIcon, Scale
 } from 'lucide-react';
 
 interface AppTile {
@@ -484,6 +484,18 @@ const ALL_SYSTEM_APPS: AppTile[] = [
     category: 'tech',
     categoryLabel: 'ثوابت النظام',
     metricBadge: '7 قوائم'
+  },
+  {
+    id: 'legal-compliance',
+    titleKey: 'legal-compliance',
+    defaultTitle: 'الامتثال القانوني والتبرئة والتواقيع الرقمية',
+    subKey: 'legalComplianceSub',
+    defaultSubtitle: 'سياسات استخدام النظام المخصصة لكل قسم، التواقيع الإلكترونية، وإقرارات إبراء الذمة وفق الأنظمة السعودية.',
+    icon: Scale,
+    href: 'legal-compliance',
+    category: 'tech',
+    categoryLabel: 'الأمان والامتثال',
+    metricBadge: 'أنظمة وقوانين KSA'
   },
   {
     id: 'settings',

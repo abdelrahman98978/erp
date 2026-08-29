@@ -89,6 +89,8 @@ const TEST_MODULES = [
   { id: 'system-backup', name: 'النسخ الاحتياطي والأرشفة السحابية', category: 'Security' },
   { id: 'master-constants', name: 'الثوابت والمتغيرات العامة', category: 'Settings' },
   { id: 'users', name: 'إدارة المستخدمين والصلاحيات (RBAC)', category: 'Security' },
+  { id: 'employee-promotions', name: 'ترقيات وسلّم درجات الموظفين والتقييم', category: 'HR' },
+  { id: 'legal-compliance', name: 'الامتثال القانوني والتبرئة والتواقيع الرقمية', category: 'Legal' },
   { id: 'settings', name: 'الإعدادات العامة والربط التقني', category: 'Settings' }
 ];
 
