@@ -5,12 +5,13 @@ import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { useAppStore } from '../stores/appStore';
+import { BudgetVsActualWidget } from '../components/finance/BudgetVsActualWidget';
 import { 
   Scale, Plus, FileSpreadsheet, FileText, Printer, FileCheck, 
   TrendingUp, TrendingDown, ShieldCheck, Lock, Unlock, Search, 
   Eye, X, ArrowLeft, ArrowRight, FolderTree, Receipt, PieChart, 
   Building2, Globe, DollarSign, Calculator, ChevronRight, Check,
-  BookOpen, Landmark, Coins, AlertCircle
+  BookOpen, Landmark, Coins, AlertCircle, Clock, BarChart3, AlertTriangle
 } from 'lucide-react';
 
 export interface JournalEntry {
@@ -71,11 +72,29 @@ const SUPPLIERS_ACCOUNTS = [
   { id: '3', name: 'Supreme Link Employment Agency', country: 'أوغندا - كمبالا', cv_count: 38, balance_usd: 11800, balance_sar: 44250, status: 'مطابق وموثق' },
 ];
 
+export type FinanceTab = 
+  | 'overview' 
+  | 'financial-position' 
+  | 'trial-balance' 
+  | 'income-statement' 
+  | 'cash-flow'
+  | 'journals' 
+  | 'vouchers' 
+  | 'transfers' 
+  | 'suppliers-agents' 
+  | 'aging'
+  | 'musaned-escrow' 
+  | 'eosb-zakat' 
+  | 'chart-of-accounts' 
+  | 'budget'
+  | 'period-closing' 
+  | 'tax';
+
 export const FinancePage: React.FC = () => {
   const { activeCompany } = useCompany();
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'chart-of-accounts' | 'period-closing' | 'tax' => {
+  const getMappedTab = (tabKey: string): FinanceTab => {
     switch (tabKey) {
       case 'chart-accounts':
       case 'chart-of-accounts':
@@ -93,6 +112,12 @@ export const FinancePage: React.FC = () => {
         return 'income-statement';
       case 'financial-position':
         return 'financial-position';
+      case 'cash-flow':
+        return 'cash-flow';
+      case 'aging':
+        return 'aging';
+      case 'budget':
+        return 'budget';
       case 'period-closing':
         return 'period-closing';
       case 'musaned-escrow':
@@ -106,7 +131,7 @@ export const FinancePage: React.FC = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'financial-position' | 'trial-balance' | 'income-statement' | 'journals' | 'vouchers' | 'transfers' | 'suppliers-agents' | 'musaned-escrow' | 'eosb-zakat' | 'chart-of-accounts' | 'period-closing' | 'tax'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<FinanceTab>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -308,6 +333,7 @@ export const FinancePage: React.FC = () => {
               { id: 'trial-balance', label: 'ميزان المراجعة (Trial Balance)', icon: Scale },
               { id: 'income-statement', label: 'قائمة الدخل والأرباح (P&L)', icon: TrendingUp },
               { id: 'financial-position', label: 'قائمة المركز المالي (Balance Sheet)', icon: Landmark },
+              { id: 'cash-flow', label: 'قائمة التدفقات النقدية (Cash Flow)', icon: Coins },
             ].map(t => {
               const isActive = activeTab === t.id;
               const IconComp = t.icon;
@@ -371,6 +397,7 @@ export const FinancePage: React.FC = () => {
             {[
               { id: 'musaned-escrow', label: 'أمانات مساند (90 يوماً)', icon: ShieldCheck },
               { id: 'suppliers-agents', label: 'حسابات الوكلاء (SAR / $)', icon: Globe },
+              { id: 'aging', label: 'أعمار الذمم والتقادم (Aging)', icon: Clock },
               { id: 'eosb-zakat', label: 'نهاية الخدمة والزكاة', icon: Calculator },
             ].map(t => {
               const isActive = activeTab === t.id;
@@ -402,6 +429,7 @@ export const FinancePage: React.FC = () => {
           <div className="space-y-1.5">
             {[
               { id: 'chart-of-accounts', label: 'شجرة الحسابات والدليل', icon: FolderTree },
+              { id: 'budget', label: 'الميزانية التقديرية vs الفعلي', icon: BarChart3 },
               { id: 'period-closing', label: 'إقفال الفترات والسنوات', icon: Lock },
             ].map(t => {
               const isActive = activeTab === t.id;
@@ -732,6 +760,107 @@ export const FinancePage: React.FC = () => {
         </div>
       )}
 
+      {/* TAB: CASH FLOW STATEMENT */}
+      {activeTab === 'cash-flow' && (
+        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
+            <div>
+              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+                <Coins className="w-4 h-4 text-emerald-600" />
+                <span>قائمة التدفقات النقدية (Cash Flow Statement)</span>
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                حركة السيولة النقدية من الأنشطة التشغيلية والاستثمارية والتمويلية لـ {activeCompany.name}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-mint text-xs font-bold">
+                صافي التغير النقدي: +155,000.00 ر.س
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200">
+              <div className="text-xs font-bold text-emerald-900 mb-1">صافي التدفقات التشغيلية</div>
+              <div className="text-xl font-bold font-mono text-emerald-950">+200,000.00 ر.س</div>
+              <div className="text-[10px] text-emerald-700 mt-1">مقبوضات العقود ناقص الرواتب والتشغيل</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <div className="text-xs font-bold text-zinc-800 mb-1">صافي التدفقات الاستثمارية</div>
+              <div className="text-xl font-bold font-mono text-rose-700">-45,000.00 ر.س</div>
+              <div className="text-[10px] text-zinc-500 mt-1">تجهيزات ومعدات إيواء وسيارات</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <div className="text-xs font-bold text-zinc-800 mb-1">صافي التدفقات التمويلية</div>
+              <div className="text-xl font-bold font-mono text-zinc-700">0.00 ر.س</div>
+              <div className="text-[10px] text-zinc-500 mt-1">لا توجد قروض أو توزيعات نقدية</div>
+            </div>
+          </div>
+
+          {/* Detailed Statement Table */}
+          <div className="max-w-3xl mx-auto bg-zinc-50 rounded-2xl border border-zinc-200 p-6 space-y-4 text-xs">
+            <div>
+              <div className="font-bold text-zinc-900 pb-2 border-b border-zinc-300">1. التدفقات النقدية من الأنشطة التشغيلية:</div>
+              <div className="space-y-2 pt-2">
+                <div className="flex justify-between text-zinc-700">
+                  <span>صافي الربح للفترة:</span>
+                  <span className="font-mono font-bold">304,971.20 ر.س</span>
+                </div>
+                <div className="flex justify-between text-zinc-700">
+                  <span>(+) استهلاك الأصول الثابتة (غير نقدي):</span>
+                  <span className="font-mono font-bold">+12,500.00 ر.س</span>
+                </div>
+                <div className="flex justify-between text-zinc-700">
+                  <span>(-) الزيادة في المدينين وحسابات مساند المعلقة:</span>
+                  <span className="font-mono font-bold text-rose-600">-62,471.20 ر.س</span>
+                </div>
+                <div className="flex justify-between text-zinc-700">
+                  <span>(-) سداد مستحقات الوكلاء الخارجيين:</span>
+                  <span className="font-mono font-bold text-rose-600">-55,000.00 ر.س</span>
+                </div>
+                <div className="flex justify-between bg-emerald-100/60 p-2 rounded-lg font-bold text-emerald-950">
+                  <span>صافي النقد المتوفر من الأنشطة التشغيلية:</span>
+                  <span className="font-mono">200,000.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="font-bold text-zinc-900 pb-2 border-b border-zinc-300">2. التدفقات النقدية من الأنشطة الاستثمارية:</div>
+              <div className="space-y-2 pt-2">
+                <div className="flex justify-between text-zinc-700">
+                  <span>شراء أصول ثابتة وتجهيزات فروع:</span>
+                  <span className="font-mono font-bold text-rose-600">-45,000.00 ر.س</span>
+                </div>
+                <div className="flex justify-between bg-zinc-200/60 p-2 rounded-lg font-bold text-zinc-900">
+                  <span>صافي النقد المستخدم في الأنشطة الاستثمارية:</span>
+                  <span className="font-mono">-45,000.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t-2 border-zinc-300 pt-3 space-y-2">
+              <div className="flex justify-between text-zinc-800 font-bold">
+                <span>رصيد النقدية وما في حكمها في بداية الفترة:</span>
+                <span className="font-mono">750,000.00 ر.س</span>
+              </div>
+              <div className="flex justify-between text-emerald-700 font-bold">
+                <span>صافي الزيادة في النقدية خلال الفترة:</span>
+                <span className="font-mono">+155,000.00 ر.س</span>
+              </div>
+              <div className="flex justify-between bg-black text-white p-4 rounded-xl font-bold text-sm">
+                <span>رصيد النقدية وما في حكمها في نهاية الفترة (البنوك والصناديق):</span>
+                <span className="font-mono text-emerald-400">905,000.00 ر.س</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TAB 5: JOURNALS */}
       {activeTab === 'journals' && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
@@ -952,6 +1081,126 @@ export const FinancePage: React.FC = () => {
         </div>
       )}
 
+      {/* TAB: AGING REPORT (تقرير أعمار الذمم والتقادم) */}
+      {activeTab === 'aging' && (
+        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
+            <div>
+              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-emerald-600" />
+                <span>تقرير أعمار الذمم والتقادم المالي (Accounts Aging Report)</span>
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                توزيع مستحقات العملاء المدينة والتزامات الموردين الدائنة حسب فترات الاستحقاق لمتابعة التحصيل والسيولة
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-mint text-xs font-bold">
+                إجمالي الذمم المدينة: 149,550.00 ر.س
+              </span>
+            </div>
+          </div>
+
+          {/* Aging Summary Buckets */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
+              <div className="text-[11px] font-bold text-emerald-800 mb-1">0 - 30 يوماً (ساري)</div>
+              <div className="text-lg font-bold font-mono text-emerald-950">13,800.00 ر.س</div>
+              <div className="text-[10px] text-emerald-600 mt-0.5">عميل واحد (تحصيل ممتاز)</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-200 text-center">
+              <div className="text-[11px] font-bold text-sky-800 mb-1">31 - 60 يوماً (مستحق)</div>
+              <div className="text-lg font-bold font-mono text-sky-950">28,750.00 ر.س</div>
+              <div className="text-[10px] text-sky-600 mt-0.5">عميل واحد (ضمن فترة السماح)</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-center">
+              <div className="text-[11px] font-bold text-amber-800 mb-1">61 - 90 يوماً (تنبيه متأخر)</div>
+              <div className="text-lg font-bold font-mono text-amber-950">42,000.00 ر.س</div>
+              <div className="text-[10px] text-amber-700 mt-0.5">عميل واحد (يتطلب متابعة فورية)</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-red-50/70 border border-red-200 text-center">
+              <div className="text-[11px] font-bold text-red-800 mb-1">+90 يوماً (حرج / ديون مشكوك فيها)</div>
+              <div className="text-lg font-bold font-mono text-red-950">65,000.00 ر.س</div>
+              <div className="text-[10px] text-red-700 mt-0.5">عميل واحد (تحت الإجراء القانوني)</div>
+            </div>
+          </div>
+
+          {/* Accounts Receivable Table */}
+          <div className="bg-zinc-50/60 rounded-2xl border border-zinc-200 p-4 space-y-3">
+            <h4 className="text-xs font-bold text-zinc-900 flex items-center justify-between">
+              <span>أعمار ذمم العملاء المدينة (Accounts Receivable)</span>
+              <span className="text-[11px] font-mono text-zinc-500">4 حسابات عملاء نشطة</span>
+            </h4>
+
+            <div className="overflow-x-auto bg-white rounded-xl border border-zinc-200">
+              <table className="w-full text-xs text-right">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3">اسم العميل / الجهة</th>
+                    <th className="p-3 text-center">إجمالي الرصيد</th>
+                    <th className="p-3 text-center">0 - 30 يوم</th>
+                    <th className="p-3 text-center">31 - 60 يوم</th>
+                    <th className="p-3 text-center">61 - 90 يوم</th>
+                    <th className="p-3 text-center">+90 يوم</th>
+                    <th className="p-3 text-center">حالة التحصيل</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100 font-mono">
+                  <tr className="hover:bg-zinc-50">
+                    <td className="p-3 font-sans font-bold text-zinc-900">بندر صالح الهويريني</td>
+                    <td className="p-3 text-center font-bold">13,800.00</td>
+                    <td className="p-3 text-center text-emerald-700 font-bold">13,800.00</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center font-sans">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">منتظم</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-zinc-50">
+                    <td className="p-3 font-sans font-bold text-zinc-900">شركة دار الرواد للمقاولات</td>
+                    <td className="p-3 text-center font-bold">28,750.00</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-sky-700 font-bold">28,750.00</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center font-sans">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">فترة سماح</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-zinc-50">
+                    <td className="p-3 font-sans font-bold text-zinc-900">مؤسسة أفق المستقبل للتجارة</td>
+                    <td className="p-3 text-center font-bold">42,000.00</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-amber-700 font-bold">42,000.00</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center font-sans">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">إشعار مطالبة</span>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-zinc-50">
+                    <td className="p-3 font-sans font-bold text-zinc-900">شركة البناء الحديث المحدودة</td>
+                    <td className="p-3 text-center font-bold text-red-700">65,000.00</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-red-700 font-bold">65,000.00</td>
+                    <td className="p-3 text-center font-sans">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">تحت التحصيل القانوني</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TAB 11: CHART OF ACCOUNTS */}
       {activeTab === 'chart-of-accounts' && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
@@ -1088,6 +1337,25 @@ export const FinancePage: React.FC = () => {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* TAB: BUDGET VS ACTUAL */}
+      {activeTab === 'budget' && (
+        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
+            <div>
+              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-emerald-600" />
+                <span>الموازنة التقديرية مقابل الفعلي (Budget vs. Actual Variance)</span>
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                مقارنة المخصصات المعتمدة بالمصروفات الفعلية والالتزامات لكل قطاع في {activeCompany.name}
+              </p>
+            </div>
+          </div>
+
+          <BudgetVsActualWidget />
         </div>
       )}
 

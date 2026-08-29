@@ -301,7 +301,8 @@ export type RoleType =
   | 'EMPLOYEE'
   | 'AUDITOR'
   | 'EXTERNAL_OFFICE'
-  | 'AGENT';
+  | 'AGENT'
+  | 'PROCUREMENT_MANAGER';
 
 export type PermissionScope = 'GROUP' | 'COMPANY' | 'BRANCH' | 'DEPARTMENT' | 'OWN';
 
@@ -316,13 +317,25 @@ export type PermissionAction =
   | 'print'
   | 'download'
   | 'share'
-  | 'delete';
+  | 'delete'
+  | 'multi_approve';
 
 export interface UserPermission {
   module: string;
   actions: PermissionAction[];
   scope: PermissionScope;
   companyId?: CompanyId;
+}
+
+/* Multi-Approval Rule */
+export interface ApprovalRule {
+  id: string;
+  module: string;
+  condition: string; // e.g. 'amount > 100000'
+  requiredApprovers: number;
+  approverRoles: RoleType[];
+  currentApprovals: { userId: string; userName: string; approvedAt: string }[];
+  status: 'pending' | 'partially_approved' | 'fully_approved' | 'rejected';
 }
 
 /* Document Numbering & Sequence Config */

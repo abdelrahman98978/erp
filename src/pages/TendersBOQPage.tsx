@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
 import { tafqeet } from '../services/tafqeetService';
+import { computeTenderKPIs, DEFAULT_SUPPLIERS, SupplierRecord } from '../services/tenderAnalyticsService';
 import { 
   Building2, Plus, FileSpreadsheet, FileText, Search, Printer, 
   Trash2, Edit3, CheckCircle2, AlertCircle, TrendingUp, DollarSign,
   Download, Eye, Calculator, ArrowRightLeft, Sparkles, Layers, 
-  ShieldCheck, X, RefreshCw, Landmark, Tag, Check, Award
+  ShieldCheck, X, RefreshCw, Landmark, Tag, Check, Award, BarChart3,
+  Users, Star, MapPin, Phone, Mail, PieChart, Activity
 } from 'lucide-react';
 
 export interface BOQItem {
@@ -238,13 +240,17 @@ export const TendersBOQPage: React.FC = () => {
 
   const [tendersList, setTendersList] = useState<TenderRecord[]>(DEFAULT_MOCK_TENDERS);
   const [selectedTender, setSelectedTender] = useState<TenderRecord>(DEFAULT_MOCK_TENDERS[0]);
-  const [activeTab, setActiveTab] = useState<'excel-boq' | 'directory' | 'awards' | 'suppliers'>('excel-boq');
+  const [activeTab, setActiveTab] = useState<'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>('excel-boq');
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [showNewTenderModal, setShowNewTenderModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suppliers, setSuppliers] = useState<SupplierRecord[]>(DEFAULT_SUPPLIERS);
 
   // Editing state for active BOQ
   const [currentItems, setCurrentItems] = useState<BOQItem[]>(selectedTender.items);
+
+  // Computed KPIs
+  const kpis = useMemo(() => computeTenderKPIs(tendersList), [tendersList]);
 
   const handleSelectTender = (tender: TenderRecord) => {
     setSelectedTender(tender);
@@ -504,6 +510,8 @@ export const TendersBOQPage: React.FC = () => {
         {[
           { id: 'excel-boq', label: 'محرر جدول الكميات والأسعار (Excel Live)', icon: FileSpreadsheet },
           { id: 'directory', label: `سجل المنافسات والعقود (${tendersList.length})`, icon: Layers },
+          { id: 'analytics', label: 'لوحة مؤشرات المناقصات (KPIs)', icon: BarChart3 },
+          { id: 'suppliers', label: `سجل الموردين المعتمدين (${suppliers.length})`, icon: Users },
           { id: 'awards', label: 'محاضر الترسية والربط المالي', icon: Award },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
@@ -760,7 +768,219 @@ export const TendersBOQPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 3: Awards & Financial Settlement */}
+      {/* Tab 3: Analytics Dashboard */}
+      {activeTab === 'analytics' && (
+        <div className="space-y-6">
+          {/* KPI Summary Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'إجمالي المناقصات', value: kpis.totalTenders, icon: Layers, color: '#0f172a', bg: '#f1f5f9' },
+              { label: 'المرسّاة والمعتمدة', value: kpis.totalAwarded, icon: CheckCircle2, color: '#059669', bg: '#ecfdf5' },
+              { label: 'نسبة الفوز (Win Rate)', value: `${kpis.winRate}%`, icon: TrendingUp, color: '#0284c7', bg: '#f0f9ff' },
+              { label: 'إجمالي الإيرادات شامل الضريبة', value: `${kpis.totalRevenueWithVat.toLocaleString()} ر.س`, icon: DollarSign, color: '#7c3aed', bg: '#f5f3ff' },
+            ].map((kpi, idx) => {
+              const Icon = kpi.icon;
+              return (
+                <div key={idx} className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: kpi.bg }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className="w-4 h-4" style={{ color: kpi.color }} />
+                    <span className="text-[11px] font-medium text-zinc-600">{kpi.label}</span>
+                  </div>
+                  <div className="text-xl font-bold" style={{ color: kpi.color }}>{kpi.value}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Status Distribution */}
+            <div className="card-pricing" style={{ padding: '24px', borderRadius: '20px', background: '#ffffff' }}>
+              <h4 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+                <PieChart className="w-4 h-4 text-violet-600" />
+                <span>توزيع المنافسات حسب الحالة</span>
+              </h4>
+              <div className="space-y-3">
+                {kpis.statusDistribution.map((status, idx) => {
+                  const percentage = kpis.totalTenders > 0 ? ((status.count / kpis.totalTenders) * 100).toFixed(0) : '0';
+                  return (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: status.color }} />
+                      <span className="text-xs font-medium text-zinc-700 flex-grow">{status.status}</span>
+                      <span className="text-xs font-mono font-bold" style={{ color: status.color }}>{status.count}</span>
+                      <div className="w-24 h-2 bg-zinc-100 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${percentage}%`, backgroundColor: status.color }} />
+                      </div>
+                      <span className="text-[10px] text-zinc-500 w-8 text-left">{percentage}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Category Breakdown */}
+            <div className="card-pricing" style={{ padding: '24px', borderRadius: '20px', background: '#ffffff' }}>
+              <h4 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-sky-600" />
+                <span>توزيع المنافسات حسب الفئة</span>
+              </h4>
+              <div className="space-y-3">
+                {kpis.categoryBreakdown.map((cat, idx) => {
+                  const maxVal = Math.max(...kpis.categoryBreakdown.map(c => c.value), 1);
+                  const barWidth = ((cat.value / maxVal) * 100).toFixed(0);
+                  const colors = ['#059669', '#0284c7', '#d97706', '#7c3aed', '#dc2626'];
+                  return (
+                    <div key={idx}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-zinc-700">{cat.category}</span>
+                        <span className="text-xs font-mono font-bold text-zinc-900">{cat.value.toLocaleString()} ر.س ({cat.count})</span>
+                      </div>
+                      <div className="w-full h-3 bg-zinc-100 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${barWidth}%`, backgroundColor: colors[idx % colors.length] }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Additional KPIs */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
+              <h4 className="text-xs font-bold text-zinc-500 mb-2">🏆 أعلى عميل بالقيمة</h4>
+              <div className="text-sm font-bold text-black">{kpis.topClient.name}</div>
+              <div className="text-xs text-zinc-600 mt-1">{kpis.topClient.value.toLocaleString()} ر.س — {kpis.topClient.count} منافسة</div>
+            </div>
+            <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
+              <h4 className="text-xs font-bold text-zinc-500 mb-2">📊 متوسط قيمة المنافسة</h4>
+              <div className="text-sm font-bold text-black">{kpis.avgTenderValue.toLocaleString()} ر.س</div>
+              <div className="text-xs text-zinc-600 mt-1">شامل الضريبة 15%</div>
+            </div>
+            <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
+              <h4 className="text-xs font-bold text-zinc-500 mb-2">📋 حالة المنافسات</h4>
+              <div className="flex gap-3 mt-1">
+                <span className="text-xs"><span className="font-bold text-amber-600">{kpis.totalDraft}</span> مسودة</span>
+                <span className="text-xs"><span className="font-bold text-sky-600">{kpis.totalSubmitted}</span> مقدمة</span>
+                <span className="text-xs"><span className="font-bold text-violet-600">{kpis.totalInvoiced}</span> مفوترة</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 4: Suppliers Registry */}
+      {activeTab === 'suppliers' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+            <div className="border-b border-zinc-100 pb-3 mb-4 flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-emerald-600" />
+                  <span>سجل الموردين والمقاولين المعتمدين — كاس للتجارة</span>
+                </h3>
+                <p className="text-xs text-zinc-500 mt-1">قاعدة بيانات الموردين مع التقييم والأداء وسجل التوريدات السابقة</p>
+              </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
+                <div className="text-lg font-bold text-emerald-800">{suppliers.filter(s => s.status === 'معتمد').length}</div>
+                <div className="text-[10px] text-emerald-700">موردين معتمدين</div>
+              </div>
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-center">
+                <div className="text-lg font-bold text-amber-800">{suppliers.filter(s => s.status === 'تحت التقييم').length}</div>
+                <div className="text-[10px] text-amber-700">تحت التقييم</div>
+              </div>
+              <div className="p-3 rounded-xl bg-sky-50 border border-sky-200 text-center">
+                <div className="text-lg font-bold text-sky-800">{suppliers.reduce((s, sup) => s + sup.totalDeals, 0)}</div>
+                <div className="text-[10px] text-sky-700">إجمالي التعاملات</div>
+              </div>
+              <div className="p-3 rounded-xl bg-violet-50 border border-violet-200 text-center">
+                <div className="text-lg font-bold text-violet-800">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
+                <div className="text-[10px] text-violet-700">إجمالي القيمة (ر.س)</div>
+              </div>
+            </div>
+
+            {/* Suppliers Table */}
+            <div className="overflow-x-auto" style={{ borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+              <table className="w-full text-xs" style={{ borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                    <th className="p-2.5 text-right border-r border-zinc-200">اسم المورد</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-28">الفئة</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-20">المدينة</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-16">التقييم</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-16">الجودة</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-16">الالتزام</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-16">السعر</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-16">التعاملات</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-24">إجمالي القيمة</th>
+                    <th className="p-2.5 text-center w-20">الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {suppliers.map((sup) => {
+                    const statusColor = sup.status === 'معتمد' ? '#059669' : sup.status === 'تحت التقييم' ? '#d97706' : '#dc2626';
+                    const statusBg = sup.status === 'معتمد' ? '#ecfdf5' : sup.status === 'تحت التقييم' ? '#fffbeb' : '#fef2f2';
+                    return (
+                      <tr key={sup.id} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
+                        <td className="p-2.5 border-r border-zinc-100">
+                          <div className="font-bold text-black">{sup.name}</div>
+                          <div className="text-[10px] text-zinc-500 flex items-center gap-1 mt-0.5">
+                            <Phone className="w-3 h-3" /> {sup.phone}
+                            <span className="mx-1">|</span>
+                            <Mail className="w-3 h-3" /> {sup.email}
+                          </div>
+                        </td>
+                        <td className="p-2 border-r border-zinc-100 text-center text-[10px]">{sup.category}</td>
+                        <td className="p-2 border-r border-zinc-100 text-center">
+                          <span className="flex items-center justify-center gap-1"><MapPin className="w-3 h-3 text-zinc-400" />{sup.city}</span>
+                        </td>
+                        <td className="p-2 border-r border-zinc-100 text-center">
+                          <div className="flex items-center justify-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map(s => (
+                              <Star key={s} className="w-3 h-3" style={{ color: s <= sup.rating ? '#f59e0b' : '#e4e4e7', fill: s <= sup.rating ? '#f59e0b' : 'none' }} />
+                            ))}
+                          </div>
+                        </td>
+                        <td className="p-2 border-r border-zinc-100 text-center">
+                          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${sup.qualityScore}%`, backgroundColor: sup.qualityScore >= 90 ? '#059669' : sup.qualityScore >= 70 ? '#d97706' : '#dc2626' }} />
+                          </div>
+                          <span className="text-[9px] text-zinc-500">{sup.qualityScore}%</span>
+                        </td>
+                        <td className="p-2 border-r border-zinc-100 text-center">
+                          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${sup.commitmentScore}%`, backgroundColor: sup.commitmentScore >= 90 ? '#059669' : sup.commitmentScore >= 70 ? '#d97706' : '#dc2626' }} />
+                          </div>
+                          <span className="text-[9px] text-zinc-500">{sup.commitmentScore}%</span>
+                        </td>
+                        <td className="p-2 border-r border-zinc-100 text-center">
+                          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                            <div className="h-full rounded-full" style={{ width: `${sup.priceCompetitiveness}%`, backgroundColor: sup.priceCompetitiveness >= 90 ? '#059669' : sup.priceCompetitiveness >= 70 ? '#0284c7' : '#d97706' }} />
+                          </div>
+                          <span className="text-[9px] text-zinc-500">{sup.priceCompetitiveness}%</span>
+                        </td>
+                        <td className="p-2 border-r border-zinc-100 text-center font-mono font-bold">{sup.totalDeals}</td>
+                        <td className="p-2 border-r border-zinc-100 text-center font-mono font-bold">{sup.totalValue.toLocaleString()}</td>
+                        <td className="p-2 text-center">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ color: statusColor, backgroundColor: statusBg }}>
+                            {sup.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab 5: Awards & Financial Settlement */}
       {activeTab === 'awards' && (
         <div className="space-y-6">
           <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>

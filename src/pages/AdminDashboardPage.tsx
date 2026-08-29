@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { IPWhitelistManager } from '../components/security/IPWhitelistManager';
+import { generateSecurityReport, detectAnomalies, SecurityEvent } from '../services/securityAuditService';
 import { 
   Shield, ShieldAlert, Database, Radio, Server, Lock, Key, 
-  Sparkles, Download, Check, X, AlertTriangle, UserX, Cpu, Network
+  Sparkles, Download, Check, X, AlertTriangle, UserX, Cpu, Network,
+  ShieldCheck, Activity, Terminal
 } from 'lucide-react';
 
 export interface AdminDashboardPageProps {
@@ -403,6 +406,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-8 pt-6 border-t border-zinc-200">
+              <IPWhitelistManager />
             </div>
           </div>
         </div>

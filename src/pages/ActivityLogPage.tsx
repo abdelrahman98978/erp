@@ -101,6 +101,7 @@ export const ActivityLogPage: React.FC = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [selectedModule, setSelectedModule] = useState<string>('الكل');
   const [selectedAction, setSelectedAction] = useState<string>('الكل');
+  const [selectedSeverity, setSelectedSeverity] = useState<string>('الكل');
   const [searchTerm, setSearchTerm] = useState('');
 
   const loadActivities = async () => {
@@ -134,10 +135,12 @@ export const ActivityLogPage: React.FC = () => {
 
   const modules = ['الكل', 'عقود الاستقدام', 'عقود التأجير', 'المالية والمحاسبة', 'الموارد البشرية', 'الفاتورة الإلكترونية ZATCA', 'إدارة المستخدمين'];
   const actions = ['الكل', 'إنشاء', 'تعديل', 'حذف', 'تسجيل دخول', 'اعتماد مالي', 'تصدير بيانات'];
+  const severities = ['الكل', 'عادي', 'تنبيه', 'حرج'];
 
   const filteredActivities = activities.filter(act => {
     if (selectedModule !== 'الكل' && act.module !== selectedModule) return false;
     if (selectedAction !== 'الكل' && act.action_type !== selectedAction) return false;
+    if (selectedSeverity !== 'الكل' && act.severity !== selectedSeverity) return false;
     if (searchTerm && !act.user_name.includes(searchTerm) && !act.details.includes(searchTerm) && !act.ip_address.includes(searchTerm)) return false;
     return true;
   });
@@ -273,6 +276,17 @@ export const ActivityLogPage: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <select
+            value={selectedSeverity}
+            onChange={(e) => setSelectedSeverity(e.target.value)}
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+          >
+            <option value="الكل">مستوى الخطورة: الكل</option>
+            <option value="عادي">عادي</option>
+            <option value="تنبيه">تنبيه</option>
+            <option value="حرج">حرج</option>
+          </select>
+
+          <select
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
             className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -300,6 +314,7 @@ export const ActivityLogPage: React.FC = () => {
               <tr>
                 <th className="p-3.5">كود السجل</th>
                 <th className="p-3.5">المستخدم والدور</th>
+                <th className="p-3.5">مستوى الخطورة</th>
                 <th className="p-3.5">نوع الإجراء</th>
                 <th className="p-3.5">القسم</th>
                 <th className="p-3.5">تفاصيل العملية والتغييرات</th>
@@ -314,6 +329,19 @@ export const ActivityLogPage: React.FC = () => {
                   <td className="p-3.5">
                     <div className="font-bold text-black">{row.user_name}</div>
                     <div className="text-[10px] text-zinc-400">{row.role}</div>
+                  </td>
+                  <td className="p-3.5">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        row.severity === 'حرج'
+                          ? 'bg-red-100 text-red-800 border border-red-300'
+                          : row.severity === 'تنبيه'
+                          ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                          : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                      }`}
+                    >
+                      {row.severity}
+                    </span>
                   </td>
                   <td className="p-3.5">
                     <span

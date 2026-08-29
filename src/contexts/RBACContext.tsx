@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { CompanyId, RoleType, PermissionAction, UserPermission } from '../types';
+import { CompanyId, RoleType, PermissionAction, UserPermission, ApprovalRule } from '../types';
 import { useCompany } from './CompanyContext';
 
 export interface UserRoleProfile {
@@ -16,7 +16,7 @@ const DEFAULT_SUPER_ADMIN_PROFILE: UserRoleProfile = {
   name: 'سليمان خالد السليم',
   role: 'SUPER_ADMIN',
   primaryCompanyId: 'all',
-  allowedCompanyIds: ['all', 'SAF', 'YAQ', 'TOP', 'DAR'],
+  allowedCompanyIds: ['all', 'SAF', 'YAQ', 'TOP', 'DAR', 'KAS'],
   permissions: [
     { module: '*', actions: ['view', 'create', 'edit', 'approve', 'post', 'cancel', 'export', 'print', 'download', 'share', 'delete'], scope: 'GROUP' },
   ],
@@ -27,6 +27,7 @@ interface RBACContextType {
   setRoleProfile: (profile: UserRoleProfile) => void;
   hasPermission: (module: string, action: PermissionAction, targetCompanyId?: CompanyId) => boolean;
   canAccessCompany: (companyId: CompanyId) => boolean;
+  requiresMultiApproval: (module: string, amount?: number) => boolean;
   isSuperAdmin: boolean;
   isGroupLevel: boolean;
 }
@@ -71,6 +72,15 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
+  const requiresMultiApproval = (module: string, amount?: number): boolean => {
+    if (isSuperAdmin) return false;
+    // Tenders > 100,000 SAR require multi-approval
+    if (module === 'tenders' && amount && amount > 100000) return true;
+    // Financial postings > 50,000 SAR require multi-approval
+    if (module === 'finance' && amount && amount > 50000) return true;
+    return false;
+  };
+
   return (
     <RBACContext.Provider
       value={{
@@ -78,6 +88,7 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setRoleProfile,
         hasPermission,
         canAccessCompany,
+        requiresMultiApproval,
         isSuperAdmin,
         isGroupLevel,
       }}
