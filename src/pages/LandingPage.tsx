@@ -65,6 +65,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'شبكة الشراكات العالمية مع مكاتب الاستقدام في أكثر من 14 دولة حول العالم.',
       image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
       stats: '38 مكتب دولي'
+    },
+    {
+      id: 'KAS' as CompanyId,
+      code: 'COMPANY 05 [KAS]',
+      nameAr: 'شركة كاس للتجارة',
+      nameEn: 'KAS Trading Co. (Khalid Al-Sulaim)',
+      badge: 'المناقصات والتوريدات وجداول الكميات',
+      desc: 'مؤسسة خالد عبدالعزيز السليم للتجارة: إدارة المنافسات، جداول الكميات والأسعار (BOQ)، والتوريدات والفعاليات الوطنية.',
+      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
+      stats: 'مناقصات وتوريدات BOQ'
     }
   ];
 
@@ -260,7 +270,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
           {companies.map((comp) => (
             <div
               key={comp.id}

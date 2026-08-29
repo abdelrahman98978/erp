@@ -104,7 +104,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
   }
 
   // 4. Dar Al-Ruwad (Blue Globe + Stylized 'R' Logo)
-  if (companyId === 'ruwad') {
+  if (companyId === 'ruwad' || companyId === 'DAR') {
     return (
       <svg
         width={size}
@@ -130,6 +130,30 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      </svg>
+    );
+  }
+
+  // 5. KAS Trading (Emerald Green & Gold Emblem Logo)
+  if (companyId === 'kas' || companyId === 'KAS') {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 200 200"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ borderRadius: '8px', ...style }}
+      >
+        <rect width="200" height="200" rx="28" fill="#064E3B" />
+        <circle cx="100" cy="100" r="72" fill="none" stroke="#34D399" strokeWidth="4" strokeDasharray="6 4" />
+        <polygon points="100,38 152,68 152,132 100,162 48,132 48,68" fill="none" stroke="#F59E0B" strokeWidth="5" />
+        <text x="100" y="112" textAnchor="middle" fill="#FFFFFF" fontSize="38" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
+          KAS
+        </text>
+        <text x="100" y="132" textAnchor="middle" fill="#34D399" fontSize="12" fontWeight="700" fontFamily="sans-serif">
+          TRADING
+        </text>
       </svg>
     );
   }
