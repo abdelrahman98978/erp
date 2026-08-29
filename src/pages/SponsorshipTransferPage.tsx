@@ -3,7 +3,7 @@ import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { RefreshCw, Plus, FileSpreadsheet, FileText, Search, Clock, Check, X } from 'lucide-react';
+import { RefreshCw, Plus, FileSpreadsheet, FileText, Search, Clock, Check, X, Trash2 } from 'lucide-react';
 
 interface TransferRequest {
   id: string;
@@ -52,6 +52,7 @@ const MOCK_TRANSFERS: TransferRequest[] = [
 ];
 
 export const SponsorshipTransferPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const storeActiveTab = useAppStore(state => state.activeTab);
   const [transfers, setTransfers] = useState<TransferRequest[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -94,6 +95,23 @@ export const SponsorshipTransferPage: React.FC = () => {
       MOCK_TRANSFERS
     );
     setTransfers(updated);
+    addNotification({
+      title: 'تأكيد نقل الكفالة',
+      message: `تم اعتماد نقل كفالة (${row.maid_name}) إلى الكفيل (${row.new_sponsor}) بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteTransfer = async (row: TransferRequest) => {
+    if (window.confirm(`هل أنت متأكد من حذف طلب نقل كفالة (${row.maid_name})؟`)) {
+      await realErpDataStore.deleteRecord('sponsorship_transfers', row.id);
+      setTransfers(transfers.filter(t => t.id !== row.id));
+      addNotification({
+        title: 'حذف طلب نقل الكفالة',
+        message: `تم حذف الطلب #${row.contract_number} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const handleAddTransfer = async (e: React.FormEvent) => {
@@ -117,6 +135,11 @@ export const SponsorshipTransferPage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord<TransferRequest>('sponsorship_transfers', newRec, MOCK_TRANSFERS);
     setTransfers(updated);
+    addNotification({
+      title: 'تسجيل طلب تنازل جديد',
+      message: `تم تسجيل طلب نقل كفالة (${newForm.maid_name}) وبدء فترة التجربة (10 أيام).`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setNewForm({
       maid_name: '',
@@ -298,6 +321,13 @@ export const SponsorshipTransferPage: React.FC = () => {
                         style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
                       >
                         طباعة
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTransfer(row)}
+                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        title="حذف الطلب"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>

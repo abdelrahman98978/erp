@@ -4,7 +4,7 @@ import { useAppStore } from '../stores/appStore';
 import { FileText, FileSpreadsheet, ArrowRight, ArrowLeft, Check, Upload, User, Award, Paperclip } from 'lucide-react';
 
 export const CreateCVPage: React.FC = () => {
-  const { setActiveTab } = useAppStore();
+  const { setActiveTab, addNotification } = useAppStore();
   const [activeStep, setActiveStep] = useState<number>(1);
 
   const [formData, setFormData] = useState({
@@ -64,13 +64,18 @@ export const CreateCVPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.full_name_en || !formData.passport_number) {
-      alert('يرجى ملء الاسم الكامل ورقم جواز السفر');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إكمال الاسم الكامل ورقم جواز السفر لحفظ السيرة الذاتية.',
+        type: 'warning',
+      });
       return;
     }
 
+    const cvCode = `CV-${Math.floor(1000 + Math.random() * 9000)}`;
     const newCV = {
       id: `cv-${Date.now()}`,
-      cv_code: `CV-${Math.floor(1000 + Math.random() * 9000)}`,
+      cv_code: cvCode,
       maid_name: formData.full_name_en,
       maid_name_ar: formData.full_name_ar,
       nationality: formData.nationality_id,
@@ -85,7 +90,11 @@ export const CreateCVPage: React.FC = () => {
     };
 
     await realErpDataStore.addRecord('cvs', newCV);
-    alert('تم حفظ ونشر السيرة الذاتية بنجاح بنظام ERP الموحد!');
+    addNotification({
+      title: 'حفظ السيرة الذاتية بنجاح',
+      message: `تم حفظ السيرة الذاتية #${cvCode} للعاملة (${formData.full_name_en}) ونشرها في المنظومة.`,
+      type: 'success',
+    });
     setActiveTab('operations-cv-recruitment', 'السير الذاتية المتاحة للاستقدام');
   };
 

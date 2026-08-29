@@ -4,7 +4,7 @@ import { exportData } from '../services/exportService';
 import { useShelterRecords, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
-import { Hotel, Plus, FileSpreadsheet, FileText, Search, Utensils, X } from 'lucide-react';
+import { Hotel, Plus, FileSpreadsheet, FileText, Search, Utensils, X, Trash2 } from 'lucide-react';
 
 export interface ShelterRecordItem {
   id: string;
@@ -73,7 +73,8 @@ const DEFAULT_MOCK_SHELTER: ShelterRecordItem[] = [
 export const ShelterPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawShelter = [], isLoading } = useShelterRecords();
-  const { createItem, updateItem } = useTableMutation('shelter_records');
+  const { createItem, updateItem, deleteItem } = useTableMutation('shelter_records');
+  const { addNotification } = useAppStore();
 
   const shelterItems: ShelterRecordItem[] = rawShelter.length > 0 ? (rawShelter as ShelterRecordItem[]) : DEFAULT_MOCK_SHELTER;
 
@@ -132,6 +133,11 @@ export const ShelterPage: React.FC = () => {
     };
 
     await createItem.mutateAsync(newRecord);
+    addNotification({
+      title: 'تسكين نزيلة جديدة',
+      message: `تم تسكين النزيلة (${maidName}) بمقر (${shelterLocation}) بنجاح.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setMaidName('');
     setPassport('');
@@ -143,13 +149,35 @@ export const ShelterPage: React.FC = () => {
       id: item.id,
       data: { status: newStatus },
     });
+    addNotification({
+      title: 'تحديث حالة النزيلة',
+      message: `تم تغيير حالة (${item.maid_name}) إلى (${newStatus}).`,
+      type: 'info',
+    });
   };
 
   const handleAddMeal = async (item: ShelterRecordItem) => {
+    const newCount = (item.catering_meals_count || 0) + 1;
     await updateItem.mutateAsync({
       id: item.id,
-      data: { catering_meals_count: (item.catering_meals_count || 0) + 1 },
+      data: { catering_meals_count: newCount },
     });
+    addNotification({
+      title: 'تسجيل وجبة إعاشة',
+      message: `تم تسجيل وجبة إضافية للنزيلة (${item.maid_name}) - الإجمالي: ${newCount} وجبة.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteShelter = async (item: ShelterRecordItem) => {
+    if (window.confirm(`هل أنت متأكد من حذف سجل تسكين (${item.maid_name})؟`)) {
+      await deleteItem.mutateAsync(item.id);
+      addNotification({
+        title: 'حذف سجل الإيواء',
+        message: `تم حذف السجل #${item.id} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const filteredItems = shelterItems.filter((item) => {
@@ -391,17 +419,26 @@ export const ShelterPage: React.FC = () => {
                       />
                     </td>
                     <td className="p-3.5 text-center">
-                      <select
-                        value={item.status}
-                        onChange={(e) => handleUpdateStatus(item, e.target.value as any)}
-                        className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1 px-2.5 text-xs font-bold text-black focus:border-black focus:outline-none"
-                      >
-                        <option value="داخل الإيواء">داخل الإيواء</option>
-                        <option value="متاح للنقل">متاح للنقل</option>
-                        <option value="مرحلة الترحيل">مرحلة الترحيل</option>
-                        <option value="خارج الإيواء">خارج الإيواء (تسليم)</option>
-                        <option value="تم الترحيل">تم الترحيل</option>
-                      </select>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <select
+                          value={item.status}
+                          onChange={(e) => handleUpdateStatus(item, e.target.value as any)}
+                          className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1 px-2.5 text-xs font-bold text-black focus:border-black focus:outline-none"
+                        >
+                          <option value="داخل الإيواء">داخل الإيواء</option>
+                          <option value="متاح للنقل">متاح للنقل</option>
+                          <option value="مرحلة الترحيل">مرحلة الترحيل</option>
+                          <option value="خارج الإيواء">خارج الإيواء (تسليم)</option>
+                          <option value="تم الترحيل">تم الترحيل</option>
+                        </select>
+                        <button
+                          onClick={() => handleDeleteShelter(item)}
+                          className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                          title="حذف السجل"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

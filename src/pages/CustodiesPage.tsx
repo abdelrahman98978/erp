@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
-import { Vault, Plus, FileSpreadsheet, FileText, Search, Printer, RotateCcw, X, ShieldCheck } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { Vault, Plus, FileSpreadsheet, FileText, Search, Printer, RotateCcw, X, ShieldCheck, Trash2 } from 'lucide-react';
 
 interface Custody {
   id: string;
@@ -23,6 +24,7 @@ const INITIAL_CUSTODIES: Custody[] = [
 ];
 
 export const CustodiesPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [custodies, setCustodies] = useState<Custody[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -57,18 +59,38 @@ export const CustodiesPage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord('custodies', newC, INITIAL_CUSTODIES);
     setCustodies(updated);
+    addNotification({
+      title: 'تسليم عهدة جديدة',
+      message: `تم تسليم (${addForm.item_name}) للموظف (${addForm.employee_name}) بنجاح.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setAddForm({ item_name: '', employee_name: '', location: 'فرع الرياض الرئيسي', serial_number: '', estimated_value: '' });
   };
 
-  const toggleCustodyStatus = (id: string) => {
-    setCustodies(custodies.map(c => {
-      if (c.id === id) {
-        const nextStatus = c.status === 'في حوزة الموظف' ? 'تم الاسترجاع' : 'في حوزة الموظف';
-        return { ...c, status: nextStatus };
-      }
-      return c;
-    }));
+  const toggleCustodyStatus = async (id: string) => {
+    const target = custodies.find(c => c.id === id);
+    if (!target) return;
+    const nextStatus = target.status === 'في حوزة الموظف' ? 'تم الاسترجاع' : 'في حوزة الموظف';
+    const updated = await realErpDataStore.updateRecord<Custody>('custodies', id, { status: nextStatus }, INITIAL_CUSTODIES);
+    setCustodies(updated);
+    addNotification({
+      title: 'تحديث حالة العهدة',
+      message: `تم تغيير حالة (${target.item_name}) إلى (${nextStatus}).`,
+      type: 'info',
+    });
+  };
+
+  const handleDeleteCustody = async (row: Custody) => {
+    if (window.confirm(`هل أنت متأكد من حذف سجل عهدة (${row.item_name}) للموظف (${row.employee_name})؟`)) {
+      await realErpDataStore.deleteRecord('custodies', row.id);
+      setCustodies(custodies.filter(c => c.id !== row.id));
+      addNotification({
+        title: 'حذف سجل عهدة',
+        message: `تم حذف سجل العهدة #${row.id} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const filteredCustodies = custodies.filter(c =>
@@ -196,6 +218,13 @@ export const CustodiesPage: React.FC = () => {
                       >
                         <FileText className="w-3 h-3 ml-1" />
                         <span>سند التسليم</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCustody(row)}
+                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        title="حذف العهدة"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>

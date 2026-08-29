@@ -133,7 +133,8 @@ const MOCK_RETURNS: ReturnRequest[] = [
 export const RecruitmentContractsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawContracts = [] } = useRecruitmentContracts();
-  const { createItem, updateItem } = useTableMutation('contracts');
+  const { createItem, updateItem, deleteItem } = useTableMutation('contracts');
+  const { addNotification } = useAppStore();
 
   const contracts: RecruitmentContractItem[] = rawContracts as RecruitmentContractItem[];
 
@@ -164,6 +165,7 @@ export const RecruitmentContractsPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-contract');
+  const [editingContract, setEditingContract] = useState<RecruitmentContractItem | null>(null);
   const [selectedContractForPrint, setSelectedContractForPrint] = useState<RecruitmentContractItem | null>(null);
 
   // Add Contract Form State
@@ -190,6 +192,7 @@ export const RecruitmentContractsPage: React.FC = () => {
     const tax = amt * 0.15;
 
     const newRecord = {
+      id: contractNumber,
       company_id: companyCode,
       contract_number: contractNumber,
       musaned_number: musanedNumber,
@@ -212,11 +215,43 @@ export const RecruitmentContractsPage: React.FC = () => {
     };
 
     await createItem.mutateAsync(newRecord);
+    addNotification({
+      title: 'إضافة عقد استقدام جديد',
+      message: `تم توثيق العقد #${contractNumber} للعميل (${clientName}) بنجاح.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setClientName('');
     setClientPhone('');
     setMaidName('');
     setMaidPassport('');
+  };
+
+  const handleUpdateContract = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingContract) return;
+
+    await updateItem.mutateAsync({
+      id: editingContract.id,
+      data: editingContract,
+    });
+    addNotification({
+      title: 'تحديث بيانات العقد',
+      message: `تم تحديث العقد #${editingContract.contract_number} بنجاح.`,
+      type: 'info',
+    });
+    setEditingContract(null);
+  };
+
+  const handleDeleteContract = async (contract: RecruitmentContractItem) => {
+    if (window.confirm(`هل أنت متأكد من حذف العقد #${contract.contract_number}؟`)) {
+      await deleteItem.mutateAsync(contract.id);
+      addNotification({
+        title: 'حذف العقد',
+        message: `تم حذف العقد #${contract.contract_number} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const handleAdvanceStage = async (contract: RecruitmentContractItem) => {
@@ -226,6 +261,11 @@ export const RecruitmentContractsPage: React.FC = () => {
       await updateItem.mutateAsync({
         id: contract.id,
         data: { stage: nextStage },
+      });
+      addNotification({
+        title: 'تقدم مرحلة العقد',
+        message: `تم نقل العقد #${contract.contract_number} إلى مرحلة (${nextStage}).`,
+        type: 'success',
       });
     }
   };

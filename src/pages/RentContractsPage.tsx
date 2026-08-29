@@ -123,7 +123,8 @@ const DEFAULT_MOCK_RENT_CONTRACTS: RentContractRecord[] = [
 export const RentContractsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawRentContracts = [] } = useRentContracts();
-  const { createItem } = useTableMutation('rent_contracts');
+  const { createItem, updateItem, deleteItem } = useTableMutation('rent_contracts');
+  const { addNotification } = useAppStore();
 
   const rentContracts: RentContractRecord[] =
     rawRentContracts.length > 0 ? (rawRentContracts as RentContractRecord[]) : DEFAULT_MOCK_RENT_CONTRACTS;
@@ -151,6 +152,7 @@ export const RentContractsPage: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-rent');
+  const [editingContract, setEditingContract] = useState<RentContractRecord | null>(null);
   const [selectedContractForPrint, setSelectedContractForPrint] = useState<RentContractRecord | null>(null);
 
   // Form State
@@ -176,6 +178,7 @@ export const RentContractsPage: React.FC = () => {
     const contractNumber = `${companyCode}-RENT-${new Date().getFullYear()}-${String(rentContracts.length + 1).padStart(4, '0')}`;
 
     const newRecord = {
+      id: contractNumber,
       company_id: companyCode,
       contract_number: contractNumber,
       client_name: clientName,
@@ -195,10 +198,26 @@ export const RentContractsPage: React.FC = () => {
     };
 
     await createItem.mutateAsync(newRecord);
+    addNotification({
+      title: 'إضافة عقد تأجير جديد',
+      message: `تم إنشاء عقد التأجير #${contractNumber} للعميل (${clientName}) بنجاح.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setClientName('');
     setClientPhone('');
     setMaidName('');
+  };
+
+  const handleDeleteContract = async (contract: RentContractRecord) => {
+    if (window.confirm(`هل أنت متأكد من حذف عقد التأجير #${contract.contract_number}؟`)) {
+      await deleteItem.mutateAsync(contract.id);
+      addNotification({
+        title: 'حذف عقد التأجير',
+        message: `تم حذف عقد التأجير #${contract.contract_number} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const getFilteredContracts = () => {

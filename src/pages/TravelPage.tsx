@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
-import { Plane, Plus, FileSpreadsheet, Search, X } from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
+import { Plane, Plus, FileSpreadsheet, Search, X, Check, CheckCircle, Trash2 } from 'lucide-react';
 
 export interface FlightRecord {
   id: string;
@@ -78,10 +80,17 @@ const MOCK_FLIGHTS: FlightRecord[] = [
 
 export const TravelPage: React.FC = () => {
   const { activeCompany } = useCompany();
-  const [flights, setFlights] = useState<FlightRecord[]>(MOCK_FLIGHTS);
+  const { addNotification } = useAppStore();
+  const [flights, setFlights] = useState<FlightRecord[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'arrivals' | 'deportations'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<FlightRecord>('flights', MOCK_FLIGHTS).then(data => {
+      setFlights(data);
+    });
+  }, []);
 
   // Form State
   const [travelType, setTravelType] = useState<'وصول' | 'ترحيل'>('وصول');
@@ -96,7 +105,7 @@ export const TravelPage: React.FC = () => {
   const [flightTime, setFlightTime] = useState('12:00');
   const [ticketNumber, setTicketNumber] = useState('');
 
-  const handleAddFlight = (e: React.FormEvent) => {
+  const handleAddFlight = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!maidName || !flightNumber) return;
 
@@ -118,10 +127,39 @@ export const TravelPage: React.FC = () => {
       status: 'مؤكد ومجدول',
     };
 
+    await realErpDataStore.addRecord('flights', newFlight);
     setFlights([newFlight, ...flights]);
+    addNotification({
+      title: 'جدولة رحلة طيران جديدة',
+      message: `تمت جدولة رحلة العاملة (${maidName}) برقم الرحلة ${flightNumber} بنجاح.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setMaidName('');
     setFlightNumber('');
+  };
+
+  const handleUpdateStatus = async (flight: FlightRecord, newStatus: FlightRecord['status']) => {
+    const updated = { ...flight, status: newStatus };
+    await realErpDataStore.updateRecord<FlightRecord>('flights', flight.id, { status: newStatus });
+    setFlights(flights.map(f => f.id === flight.id ? updated : f));
+    addNotification({
+      title: 'تحديث حالة الرحلة',
+      message: `تم تحديث حالة رحلة العاملة (${flight.maid_name}) إلى (${newStatus}).`,
+      type: 'info',
+    });
+  };
+
+  const handleDeleteFlight = async (flight: FlightRecord) => {
+    if (window.confirm(`هل أنت متأكد من حذف جدول رحلة (${flight.maid_name})؟`)) {
+      await realErpDataStore.deleteRecord('flights', flight.id);
+      setFlights(flights.filter(f => f.id !== flight.id));
+      addNotification({
+        title: 'حذف الرحلة',
+        message: `تم حذف الرحلة #${flight.id} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const getFilteredFlights = () => {
@@ -265,6 +303,7 @@ export const TravelPage: React.FC = () => {
                 <th className="p-3.5">تاريخ وتوقيت الرحلة</th>
                 <th className="p-3.5">سائق الاستقبال</th>
                 <th className="p-3.5">الحالة</th>
+                <th className="p-3.5 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -291,6 +330,28 @@ export const TravelPage: React.FC = () => {
                   <td className="p-3.5 font-semibold text-black">{f.driver_assigned || 'غير مسند'}</td>
                   <td className="p-3.5">
                     <Badge text={f.status} type={f.status.includes('تم') ? 'success' : 'purple'} />
+                  </td>
+                  <td className="p-3.5 text-center">
+                    <div className="flex items-center justify-center gap-1.5">
+                      {f.status !== 'تم الوصول والاستقبال' && (
+                        <button
+                          onClick={() => handleUpdateStatus(f, 'تم الوصول والاستقبال')}
+                          className="button-primary-pill"
+                          style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '26px' }}
+                          title="تأكيد الاستقبال"
+                        >
+                          <Check className="w-3 h-3 ml-1" />
+                          <span>استقبال</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteFlight(f)}
+                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        title="حذف الرحلة"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

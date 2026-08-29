@@ -4,7 +4,7 @@ import { exportData } from '../services/exportService';
 import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
-import { Headphones, Plus, FileSpreadsheet, FileText, Search, Clock, AlertTriangle, MessageSquare, Building2, Check, X, ShieldAlert, Send } from 'lucide-react';
+import { Headphones, Plus, FileSpreadsheet, FileText, Search, Clock, AlertTriangle, MessageSquare, Building2, Check, X, ShieldAlert, Send, Trash2 } from 'lucide-react';
 
 export interface ComplaintTicket {
   id: string;
@@ -101,7 +101,8 @@ const MOCK_INTER_DISPUTES: InterCompanyDispute[] = [
 export const ComplaintsPage: React.FC = () => {
   const { activeCompanyId } = useCompany();
   const { data: rawComplaints = [], isLoading } = useComplaints();
-  const { createItem, updateItem } = useTableMutation('complaints');
+  const { createItem, updateItem, deleteItem } = useTableMutation('complaints');
+  const { addNotification } = useAppStore();
 
   const complaints: ComplaintTicket[] = rawComplaints.length > 0 ? (rawComplaints as any[]) : MOCK_COMPLAINTS;
   const [interDisputes, setInterDisputes] = useState<InterCompanyDispute[]>(MOCK_INTER_DISPUTES);
@@ -166,10 +167,11 @@ export const ComplaintsPage: React.FC = () => {
     e.preventDefault();
     if (!addForm.client_name || !addForm.client_phone || !addForm.description) return;
 
+    const ticketNo = `TK-2026-00${42 + complaints.length}`;
     const newTicket = {
       id: `c-${Date.now()}`,
       company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
-      ticket_no: `TK-2026-00${42 + complaints.length}`,
+      ticket_no: ticketNo,
       client_name: addForm.client_name,
       client_phone: addForm.client_phone,
       category: addForm.category,
@@ -183,6 +185,11 @@ export const ComplaintsPage: React.FC = () => {
     };
 
     await createItem.mutateAsync(newTicket);
+    addNotification({
+      title: 'تسجيل تذكرة شكوى جديدة',
+      message: `تم فتح التذكرة #${ticketNo} للعميل (${addForm.client_name}) وبدء مؤقت معالجة SLA.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setAddForm({ client_name: '', client_phone: '', category: 'رفض عمل', contract_ref: '', priority: 'عادي', branch: 'فرع الرياض', description: '' });
   };
@@ -191,9 +198,10 @@ export const ComplaintsPage: React.FC = () => {
     e.preventDefault();
     if (!disputeForm.subject || !disputeForm.details) return;
 
+    const disputeNo = `EXEC-2026-00${interDisputes.length + 1}`;
     const newDispute: InterCompanyDispute = {
       id: `disp-${Date.now()}`,
-      dispute_no: `EXEC-2026-00${interDisputes.length + 1}`,
+      dispute_no: disputeNo,
       sender_entity: disputeForm.sender_entity,
       target_entity: disputeForm.target_entity,
       subject: disputeForm.subject,
@@ -205,6 +213,11 @@ export const ComplaintsPage: React.FC = () => {
     };
 
     setInterDisputes([newDispute, ...interDisputes]);
+    addNotification({
+      title: 'رفع نزاع بين الشركات',
+      message: `تم تسجيل النزاع #${disputeNo} ورفعه للإدارة العليا.`,
+      type: 'warning',
+    });
     setShowAddDisputeModal(false);
     setDisputeForm({ sender_entity: '💎 شركة توباز (Topaz Group)', target_entity: '🇵🇭 مكتب بلاتينيوم الفلبيني (PLATINUM)', subject: '', amount_claimed: '', priority: 'عالي جداً VIP', details: '' });
   };
@@ -215,7 +228,23 @@ export const ComplaintsPage: React.FC = () => {
       id: selectedTicket.id,
       data: { status },
     });
+    addNotification({
+      title: 'تحديث حالة الشكوى',
+      message: `تم تغيير حالة التذكرة #${selectedTicket.ticket_no} إلى (${status}).`,
+      type: status === 'تم الحل وإغلاق الشكوى' ? 'success' : 'info',
+    });
     setSelectedTicket(null);
+  };
+
+  const handleDeleteTicket = async (ticket: ComplaintTicket) => {
+    if (window.confirm(`هل أنت متأكد من حذف تذكرة الشكوى #${ticket.ticket_no}؟`)) {
+      await deleteItem.mutateAsync(ticket.id);
+      addNotification({
+        title: 'حذف التذكرة',
+        message: `تم حذف التذكرة #${ticket.ticket_no} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const filteredTickets = complaints.filter(ticket => {
@@ -515,13 +544,22 @@ export const ComplaintsPage: React.FC = () => {
                       />
                     </td>
                     <td className="p-3.5 text-center">
-                      <button
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => setSelectedTicket(ticket)}
-                      >
-                        معاينة ومعالجة
-                      </button>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          className="button-outline-on-light"
+                          style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                          onClick={() => setSelectedTicket(ticket)}
+                        >
+                          معاينة ومعالجة
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTicket(ticket)}
+                          className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                          title="حذف الشكوى"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

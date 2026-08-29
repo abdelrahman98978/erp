@@ -28,18 +28,11 @@ export function useTableData<T = any>(
   return useQuery({
     queryKey: [tableName, effectiveCompanyId, options],
     queryFn: async () => {
-      const res = await getTableRecords(tableName, {
-        ...options,
-        companyId: effectiveCompanyId,
-      });
-      if (res.error || !res.data || res.data.length === 0) {
-        // Return fallback mock data filtered by company if applicable
-        if (effectiveCompanyId && fallbackData.length > 0) {
-          return fallbackData.filter((item: any) => !item.companyId || item.companyId === effectiveCompanyId || item.companyId === 'all');
-        }
-        return fallbackData;
+      const records = await realErpDataStore.getRecords<any>(tableName, fallbackData);
+      if (effectiveCompanyId && records.length > 0) {
+        return records.filter((item: any) => !item.company_id && !item.companyId || item.company_id === effectiveCompanyId || item.companyId === effectiveCompanyId || item.companyId === 'all') as T[];
       }
-      return res.data as T[];
+      return records as T[];
     },
   });
 }
@@ -98,15 +91,22 @@ export function useVouchers(options: ListOptions = {}) {
   return useTableData('vouchers', options, []);
 }
 
+import { realErpDataStore } from '../../services/realErpDataStore';
+
 // --- Generic Mutation Hook for Real-time CRUD ---
 export function useTableMutation<T = any>(tableName: string) {
   const queryClient = useQueryClient();
 
   const createItem = useMutation({
     mutationFn: async (newRecord: Record<string, any>) => {
-      const res = await insertTableRecord(tableName, newRecord);
-      if (res.error) throw new Error(res.error);
-      return res.data as T;
+      // 1. Always persist to realErpDataStore (dual local + Supabase engine)
+      const recordWithId = {
+        id: newRecord.id || `${tableName.slice(0, 3).toUpperCase()}-${Date.now()}`,
+        created_at: newRecord.created_at || new Date().toISOString(),
+        ...newRecord,
+      };
+      await realErpDataStore.addRecord(tableName, recordWithId);
+      return recordWithId as unknown as T;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [tableName] });
@@ -115,9 +115,8 @@ export function useTableMutation<T = any>(tableName: string) {
 
   const updateItem = useMutation({
     mutationFn: async ({ id, data }: { id: string | number; data: Record<string, any> }) => {
-      const res = await updateTableRecord(tableName, id, data);
-      if (res.error) throw new Error(res.error);
-      return res.data as T;
+      await realErpDataStore.updateRecord(tableName, id, data);
+      return { id, ...data } as unknown as T;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [tableName] });
@@ -126,9 +125,8 @@ export function useTableMutation<T = any>(tableName: string) {
 
   const deleteItem = useMutation({
     mutationFn: async (id: string | number) => {
-      const res = await deleteTableRecord(tableName, id);
-      if (res.error) throw new Error(res.error);
-      return res.success;
+      await realErpDataStore.deleteRecord(tableName, id);
+      return true;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [tableName] });

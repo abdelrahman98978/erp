@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
-import { Building, Plus, FileSpreadsheet, FileText, Search, FileSignature, Key, X, DollarSign } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { Building, Plus, FileSpreadsheet, FileText, Search, FileSignature, Key, X, DollarSign, Trash2 } from 'lucide-react';
 
 export interface ForeignOffice {
   id: string;
@@ -121,6 +122,7 @@ const MOCK_OFFICES: ForeignOffice[] = [
 ];
 
 export const OfficesPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [offices, setOffices] = useState<ForeignOffice[]>([]);
   const [countryFilter, setCountryFilter] = useState<string>('الكل');
   const [searchQuery, setSearchQuery] = useState('');
@@ -164,6 +166,11 @@ export const OfficesPage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord<ForeignOffice>('offices', newOffice, MOCK_OFFICES);
     setOffices(updated);
+    addNotification({
+      title: 'إضافة وكالة خارجية جديدة',
+      message: `تم اعتماد الوكالة (${newOffice.name}) في المنظومة وربطها بالدليل المحاسبي.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setFormData({
       name: '',
@@ -175,6 +182,18 @@ export const OfficesPage: React.FC = () => {
       email: '',
       cost_usd: 1200
     });
+  };
+
+  const handleDeleteOffice = async (office: ForeignOffice) => {
+    if (window.confirm(`هل أنت متأكد من حذف الوكالة (${office.name})؟`)) {
+      await realErpDataStore.deleteRecord('offices', office.id);
+      setOffices(offices.filter(o => o.id !== office.id));
+      addNotification({
+        title: 'حذف وكالة خارجية',
+        message: `تم حذف الوكالة (${office.name}) بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const countries = ['الكل', 'الفلبين', 'إثيوبيا', 'أوغندا', 'سيريلانكا', 'كينيا'];
@@ -386,10 +405,21 @@ export const OfficesPage: React.FC = () => {
                       <button
                         className="button-outline-on-light"
                         style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => alert(`إعادة ضبط وتفعيل بوابة الوكيل لـ ${row.name}`)}
+                        onClick={() => addNotification({
+                          title: 'بوابة الوكيل الخارجي',
+                          message: `تم إعادة إرسال بيانات الدخول لبوابة الوكيل لـ (${row.name}) بنجاح.`,
+                          type: 'info'
+                        })}
                         title="البوابة"
                       >
                         <Key className="w-3 h-3" />
+                      </button>
+                      <button
+                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        onClick={() => handleDeleteOffice(row)}
+                        title="حذف الوكالة"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>

@@ -5,7 +5,7 @@ import { useEmployees, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { Employee360DigitalFileModal } from '../components/hr/Employee360DigitalFileModal';
 import { useAppStore } from '../stores/appStore';
-import { Users, Plus, FileSpreadsheet, FileText, Search, UserCheck, CalendarMinus, DollarSign, AlertCircle, Clock, Award, ShieldCheck, X } from 'lucide-react';
+import { Users, Plus, FileSpreadsheet, FileText, Search, UserCheck, CalendarMinus, DollarSign, AlertCircle, Clock, Award, ShieldCheck, X, Trash2 } from 'lucide-react';
 
 export interface EmployeeRecord {
   id: string;
@@ -138,7 +138,8 @@ const DEFAULT_MOCK_EMPLOYEES: EmployeeRecord[] = [
 export const HRPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawEmployees = [], isLoading } = useEmployees();
-  const { createItem } = useTableMutation('employees');
+  const { createItem, updateItem, deleteItem } = useTableMutation('employees');
+  const { addNotification } = useAppStore();
 
   const employees: EmployeeRecord[] = rawEmployees.length > 0 ? (rawEmployees as EmployeeRecord[]) : DEFAULT_MOCK_EMPLOYEES;
 
@@ -176,11 +177,69 @@ export const HRPage: React.FC = () => {
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'add-employee') {
+      setShowAddEmpModal(true);
+    }
   }, [storeActiveTab]);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddEmpModal, setShowAddEmpModal] = useState(false);
+  const [showAddEmpModal, setShowAddEmpModal] = useState(() => storeActiveTab === 'add-employee');
   const [selectedEmpFor360, setSelectedEmpFor360] = useState<EmployeeRecord | null>(null);
+
+  // Form State for Adding Employee
+  const [name, setName] = useState('');
+  const [nationalId, setNationalId] = useState('');
+  const [jobTitle, setJobTitle] = useState('أخصائي خدمة عملاء');
+  const [department, setDepartment] = useState('إدارة العمليات');
+  const [branch, setBranch] = useState('فرع الرياض الرئيسي');
+  const [salary, setSalary] = useState('8000');
+
+  const handleAddEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !nationalId || !salary) return;
+
+    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
+    const employeeCode = `EMP-2026-${String(employees.length + 1).padStart(3, '0')}`;
+    const sal = parseFloat(salary) || 8000;
+
+    const newRecord = {
+      id: employeeCode,
+      company_id: companyCode,
+      employee_code: employeeCode,
+      name,
+      national_id: nationalId,
+      job_title: jobTitle,
+      department,
+      branch,
+      hire_date: new Date().toISOString().slice(0, 10),
+      basic_salary: sal * 0.7,
+      allowances: sal * 0.3,
+      salary: sal,
+      leave_balance: 30,
+      status: 'نشط' as const,
+    };
+
+    await createItem.mutateAsync(newRecord);
+    addNotification({
+      title: 'إضافة موظف جديد',
+      message: `تم تسجيل الموظف (${name}) بكود #${employeeCode} في منظومة الموارد البشرية.`,
+      type: 'success',
+    });
+    setShowAddEmpModal(false);
+    setName('');
+    setNationalId('');
+  };
+
+  const handleDeleteEmployee = async (emp: EmployeeRecord) => {
+    if (window.confirm(`هل أنت متأكد من حذف ملف الموظف (${emp.name})؟`)) {
+      await deleteItem.mutateAsync(emp.id);
+      addNotification({
+        title: 'حذف ملف موظف',
+        message: `تم حذف ملف الموظف (${emp.name}) بنجاح.`,
+        type: 'error',
+      });
+    }
+  };
 
   // Vacations Data
   const [vacations] = useState<VacationRequest[]>([
@@ -261,44 +320,6 @@ export const HRPage: React.FC = () => {
       status: 'معتمد',
     },
   ]);
-
-  // Employee Add Form State
-  const [name, setName] = useState('');
-  const [nationalId, setNationalId] = useState('');
-  const [jobTitle, setJobTitle] = useState('أخصائي استقدام');
-  const [department, setDepartment] = useState('التشغيل والاستقدام');
-  const [branch, setBranch] = useState('فرع الرياض الرئيسي');
-  const [salary, setSalary] = useState('8000');
-
-  const handleAddEmployee = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !nationalId || !salary) return;
-
-    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
-    const employeeCode = `EMP-2026-${String(employees.length + 1).padStart(3, '0')}`;
-    const sal = parseFloat(salary) || 8000;
-
-    const newRecord = {
-      company_id: companyCode,
-      employee_code: employeeCode,
-      name,
-      national_id: nationalId,
-      job_title: jobTitle,
-      department,
-      branch,
-      hire_date: new Date().toISOString().slice(0, 10),
-      basic_salary: sal * 0.7,
-      allowances: sal * 0.3,
-      salary: sal,
-      leave_balance: 30,
-      status: 'نشط' as const,
-    };
-
-    await createItem.mutateAsync(newRecord);
-    setShowAddEmpModal(false);
-    setName('');
-    setNationalId('');
-  };
 
   const handleExportWPS = () => {
     const headers = [
@@ -501,14 +522,23 @@ export const HRPage: React.FC = () => {
                     <td className="p-3.5 font-mono font-bold text-emerald-700">{(emp.salary ?? 0).toLocaleString()} ر.س</td>
                     <td className="p-3.5"><Badge text={emp.status} type={emp.status === 'نشط' ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
-                      <button
-                        onClick={() => setSelectedEmpFor360(emp)}
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                      >
-                        <UserCheck className="w-3 h-3 ml-1" />
-                        <span>الملف الرقمي</span>
-                      </button>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => setSelectedEmpFor360(emp)}
+                          className="button-outline-on-light"
+                          style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        >
+                          <UserCheck className="w-3 h-3 ml-1" />
+                          <span>الملف الرقمي</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEmployee(emp)}
+                          className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                          title="حذف ملف الموظف"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

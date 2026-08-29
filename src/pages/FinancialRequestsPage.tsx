@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
-import { FileText, Plus, FileSpreadsheet, Search, X } from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
+import { FileText, Plus, FileSpreadsheet, Search, X, Check, CheckCircle2, Trash2 } from 'lucide-react';
 
 export interface FinancialReq {
   id: string;
@@ -94,10 +96,17 @@ const MOCK_FIN_REQUESTS: FinancialReq[] = [
 
 export const FinancialRequestsPage: React.FC = () => {
   const { activeCompany } = useCompany();
-  const [requests, setRequests] = useState<FinancialReq[]>(MOCK_FIN_REQUESTS);
+  const { addNotification } = useAppStore();
+  const [requests, setRequests] = useState<FinancialReq[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'incomplete' | 'paid'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+
+  useEffect(() => {
+    realErpDataStore.getRecords<FinancialReq>('financial_requests', MOCK_FIN_REQUESTS).then(data => {
+      setRequests(data);
+    });
+  }, []);
 
   // Form State
   const [paidTo, setPaidTo] = useState('');
@@ -114,7 +123,7 @@ export const FinancialRequestsPage: React.FC = () => {
   const [accountNumber, setAccountNumber] = useState('');
   const [iban, setIban] = useState('');
 
-  const handleCreateRequest = (e: React.FormEvent) => {
+  const handleCreateRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!paidTo || !amount) return;
 
@@ -137,14 +146,43 @@ export const FinancialRequestsPage: React.FC = () => {
       account_number: accountNumber || '10000000',
       iban: iban || 'SA0000000000000000',
       status: 'بانتظار الاعتماد',
-      applicant: 'المستخدم الحالي',
+      applicant: 'عبد الفتاح (مشرف عام)',
     };
 
+    await realErpDataStore.addRecord('financial_requests', newReq);
     setRequests([newReq, ...requests]);
+    addNotification({
+      title: 'إنشاء طلب مالي',
+      message: `تم رفع الطلب المالي #${newReq.request_number} للمستفيد (${paidTo}) بمبلغ ${newReq.amount} ر.س.`,
+      type: 'success',
+    });
     setShowAddModal(false);
     setPaidTo('');
     setAmount('');
     setDescription('');
+  };
+
+  const handleApproveRequest = async (req: FinancialReq) => {
+    const updated = { ...req, status: 'تم السداد' as const };
+    await realErpDataStore.updateRecord<FinancialReq>('financial_requests', req.id, { status: 'تم السداد' });
+    setRequests(requests.map(r => r.id === req.id ? updated : r));
+    addNotification({
+      title: 'اعتماد وسداد الطلب المالي',
+      message: `تم سداد الطلب #${req.request_number} بنجاح وترحيل القيد المحاسبي.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteRequest = async (req: FinancialReq) => {
+    if (window.confirm(`هل أنت متأكد من حذف الطلب المالي #${req.request_number}؟`)) {
+      await realErpDataStore.deleteRecord('financial_requests', req.id);
+      setRequests(requests.filter(r => r.id !== req.id));
+      addNotification({
+        title: 'حذف الطلب المالي',
+        message: `تم حذف الطلب #${req.request_number} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const getFilteredRequests = () => {
@@ -288,6 +326,7 @@ export const FinancialRequestsPage: React.FC = () => {
                 <th className="p-3.5">الأولوية والتصعيد</th>
                 <th className="p-3.5">الحالة</th>
                 <th className="p-3.5">مقدم الطلب</th>
+                <th className="p-3.5 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -305,6 +344,28 @@ export const FinancialRequestsPage: React.FC = () => {
                   <td className="p-3.5"><Badge text={r.escalation} type={r.escalation === 'شديد الأهمية' ? 'danger' : 'warning'} /></td>
                   <td className="p-3.5"><Badge text={r.status} type={r.status === 'تم السداد' ? 'success' : 'warning'} /></td>
                   <td className="p-3.5 font-semibold text-black">{r.applicant}</td>
+                  <td className="p-3.5 text-center">
+                    <div className="flex items-center justify-center gap-1.5">
+                      {r.status !== 'تم السداد' && (
+                        <button
+                          onClick={() => handleApproveRequest(r)}
+                          className="button-primary-pill"
+                          style={{ padding: '2px 10px', fontSize: '11px', minHeight: '26px' }}
+                          title="اعتماد وسداد الطلب"
+                        >
+                          <Check className="w-3 h-3 ml-1" />
+                          <span>سداد</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteRequest(r)}
+                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        title="حذف الطلب"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
