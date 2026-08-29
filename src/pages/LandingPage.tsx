@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { CompanyLogo } from '../components/common/CompanyLogo';
 import { CompanyId } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
-import { ArrowLeft, Network, TrendingUp, Bot, ShieldCheck } from 'lucide-react';
+import { 
+  ArrowLeft, Network, TrendingUp, Bot, ShieldCheck, 
+  Menu, X, Building2, ChevronDown, Sparkles, LogIn
+} from 'lucide-react';
 
 interface LandingPageProps {
   onSelectCompany: (companyId: string) => void;
@@ -12,9 +15,13 @@ interface LandingPageProps {
 export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => {
   const { currentLanguage } = useLanguage();
   const { setActiveCompanyId } = useCompany();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-  const handleSelect = (id: CompanyId) => {
-    setActiveCompanyId(id);
+  const handleSelect = (id: CompanyId | string) => {
+    if (id !== 'login') {
+      setActiveCompanyId(id as CompanyId);
+    }
+    setMobileMenuOpen(false);
     onSelectCompany(id);
   };
 
@@ -63,125 +70,175 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
   return (
     <div
+      className="bg-black text-white min-h-screen w-full overflow-x-hidden font-sans selection:bg-emerald-500 selection:text-white"
+      dir={currentLanguage.dir}
       style={{
-        backgroundColor: '#000000',
-        color: '#ffffff',
-        minHeight: '100vh',
-        width: '100%',
-        overflowX: 'hidden',
         fontFamily: 'var(--font-family-ui)',
-        direction: currentLanguage.dir,
         fontFeatureSettings: '"ss03" 1',
       }}
     >
-      {/* 1. Cinematic Top Nav Bar */}
-      <header className="nav-bar-dark" style={{ position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(16px)', backgroundColor: 'rgba(0,0,0,0.85)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      {/* 1. Top Navigation Bar (Fully Responsive) */}
+      <header className="sticky top-0 z-[100] backdrop-blur-md bg-black/85 border-b border-white/10 px-4 sm:px-8 py-3.5 flex items-center justify-between transition-all">
+        {/* Brand / Logo */}
+        <div className="flex items-center gap-3">
           <img
             src="/logo.png"
             alt="Logo"
-            style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid #ffffff', padding: '2px', background: '#000000' }}
+            className="w-9 h-9 rounded-full border border-white/30 p-0.5 bg-black object-cover"
           />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'var(--font-family-display)', fontSize: '18px', fontWeight: 500, letterSpacing: '0.4px' }}>
+          <div className="flex flex-col">
+            <span className="font-bold text-sm sm:text-base tracking-tight text-white font-display">
               مجموعة خالد السليم
             </span>
-            <span style={{ fontSize: '11px', color: '#a1a1aa', letterSpacing: '0.72px', textTransform: 'uppercase' }}>
+            <span className="text-[10px] text-zinc-400 tracking-wider uppercase font-medium">
               COMMERCE & ENTERPRISE OS
             </span>
           </div>
         </div>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '32px' }} className="hidden md:flex">
-          <a href="#companies" className="link-on-dark" style={{ fontSize: '14px', fontWeight: 420 }}>
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8">
+          <a href="#companies" className="text-zinc-300 hover:text-white text-sm font-medium transition-colors">
             الشركات التابعة
           </a>
-          <a href="#capabilities" className="link-on-dark" style={{ fontSize: '14px', fontWeight: 420 }}>
+          <a href="#capabilities" className="text-zinc-300 hover:text-white text-sm font-medium transition-colors">
             القدرات التشغيلية
           </a>
-          <a href="#governance" className="link-on-dark" style={{ fontSize: '14px', fontWeight: 420 }}>
+          <a href="#governance" className="text-zinc-300 hover:text-white text-sm font-medium transition-colors">
             الحوكمة والربط الحكومي
           </a>
         </nav>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Desktop Action Buttons */}
+        <div className="hidden md:flex items-center gap-3">
           <button
             type="button"
-            className="button-outline-on-dark"
+            className="button-outline-on-dark text-xs px-4 py-2 rounded-full"
             onClick={() => handleSelect('all')}
-            style={{ fontSize: '14px', padding: '8px 20px', minHeight: '38px' }}
           >
             دخول الإدارة المركزية
           </button>
           <button
             type="button"
-            className="button-white-pill"
-            onClick={() => onSelectCompany('login')}
-            style={{
-              fontSize: '14px',
-              padding: '8px 22px',
-              minHeight: '38px',
-            }}
+            className="button-white-pill text-xs px-4 py-2 rounded-full font-bold"
+            onClick={() => handleSelect('login')}
           >
             تسجيل الدخول
           </button>
         </div>
+
+        {/* Mobile Hamburger Toggle Button */}
+        <div className="flex md:hidden items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-full bg-zinc-900 border border-white/15 text-white hover:bg-zinc-800 transition-colors"
+            aria-label="القائمة"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </header>
 
-      {/* 2. Hero Section: Cinematic Thin-Display & Negative Space */}
-      <section style={{ maxWidth: '1440px', margin: '0 auto', padding: '120px 32px 80px 32px' }}>
-        <div style={{ maxWidth: '980px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <span className="eyebrow-cap" style={{ color: '#c1fbd4', letterSpacing: '1.2px', fontSize: '13px', fontWeight: 500 }}>
+      {/* Mobile Drawer Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 top-[61px] z-50 bg-black/95 backdrop-blur-lg border-b border-white/10 p-6 flex flex-col justify-between overflow-y-auto animate-fadeIn md:hidden">
+          <div className="space-y-6">
+            <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
+              التنقل والأقسام
+            </div>
+            <div className="space-y-4">
+              <a
+                href="#companies"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-lg font-bold text-white hover:text-emerald-400 transition-colors py-1"
+              >
+                الشركات التابعة للمجموعة
+              </a>
+              <a
+                href="#capabilities"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-lg font-bold text-white hover:text-emerald-400 transition-colors py-1"
+              >
+                القدرات والأنظمة التشغيلية
+              </a>
+              <a
+                href="#governance"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-lg font-bold text-white hover:text-emerald-400 transition-colors py-1"
+              >
+                الحوكمة والربط الحكومي
+              </a>
+            </div>
+
+            <div className="pt-4 border-t border-white/10 space-y-3">
+              <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">
+                الدخول السريع للشركات
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {companies.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => handleSelect(c.id)}
+                    className="p-2.5 bg-zinc-900/80 border border-white/10 rounded-xl text-right text-xs font-semibold hover:border-emerald-500 transition-all text-white"
+                  >
+                    {c.nameAr}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-white/10 space-y-3 mt-6">
+            <button
+              type="button"
+              className="w-full button-outline-on-dark py-3 text-sm rounded-full font-bold flex items-center justify-center gap-2"
+              onClick={() => handleSelect('all')}
+            >
+              <Building2 className="w-4 h-4" />
+              <span>دخول الإدارة المركزية</span>
+            </button>
+            <button
+              type="button"
+              className="w-full button-white-pill py-3 text-sm rounded-full font-bold flex items-center justify-center gap-2"
+              onClick={() => handleSelect('login')}
+            >
+              <LogIn className="w-4 h-4" />
+              <span>تسجيل الدخول المباشر</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Hero Section: Cinematic Negative Space */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-28 text-center">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <div>
+            <span className="eyebrow-cap inline-block text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-medium tracking-widest">
               ENTERPRISE COMMERCE & HUMAN CAPITAL SYSTEM
             </span>
           </div>
 
-          <h1
-            className="display-xxl"
-            style={{
-              fontSize: 'clamp(44px, 5.8vw, 92px)',
-              fontWeight: 330,
-              lineHeight: 1.05,
-              letterSpacing: '2px',
-              marginBottom: '28px',
-              color: '#ffffff',
-            }}
-          >
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-white leading-tight font-display">
             بوابة التشغيل الذكي للمجموعة
           </h1>
 
-          <p
-            className="body-lg"
-            style={{
-              fontSize: 'clamp(17px, 1.8vw, 20px)',
-              color: '#a1a1aa',
-              lineHeight: 1.6,
-              maxWidth: '780px',
-              margin: '0 auto 48px auto',
-              fontWeight: 420,
-            }}
-          >
+          <p className="text-sm sm:text-lg text-zinc-400 leading-relaxed max-w-2xl mx-auto font-normal">
             منظومة سحابية متقدمة تدير 4 شركات رائدة باستقلالية كاملة وقواعد بيانات منفصلة مع مركز قيادة وتحكم موحد للأداء والمالية والربط الحكومي.
           </p>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
             <button
               type="button"
-              className="button-outline-on-dark"
+              className="w-full sm:w-auto button-outline-on-dark px-6 py-3 text-sm rounded-full font-bold"
               onClick={() => handleSelect('all')}
-              style={{ minWidth: '220px', fontSize: '16px' }}
             >
               دخول الإدارة المركزية (Super Admin)
             </button>
             <button
               type="button"
-              className="button-white-pill"
-              onClick={() => onSelectCompany('login')}
-              style={{
-                minWidth: '200px',
-                fontSize: '16px',
-              }}
+              className="w-full sm:w-auto button-white-pill px-6 py-3 text-sm rounded-full font-bold"
+              onClick={() => handleSelect('login')}
             >
               تسجيل الدخول المباشر
             </button>
@@ -189,90 +246,67 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         </div>
       </section>
 
-      {/* 3. Companies Grid: Full-Bleed Editorial Photography Cards */}
-      <section id="companies" style={{ maxWidth: '1440px', margin: '0 auto', padding: '40px 32px 100px 32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+      {/* 3. Companies Grid: Full-Bleed Editorial Cards */}
+      <section id="companies" className="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-20">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-2">
           <div>
-            <span className="eyebrow-cap" style={{ color: '#9dabad' }}>COMPANIES & ENTITIES</span>
-            <h2 className="display-md" style={{ fontSize: '36px', fontWeight: 330, marginTop: '6px' }}>
+            <span className="eyebrow-cap text-zinc-500 text-xs tracking-widest">COMPANIES & ENTITIES</span>
+            <h2 className="text-2xl sm:text-4xl font-light text-white mt-1 font-display">
               الشركات التابعة للمجموعة
             </h2>
           </div>
-          <span className="caption" style={{ color: '#71717a' }}>
+          <span className="text-xs sm:text-sm text-zinc-400">
             اختر الشركة للانتقال إلى مساحة العمل الخاصة بها
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {companies.map((comp) => (
             <div
               key={comp.id}
               onClick={() => handleSelect(comp.id)}
-              className="card-feature-cinematic"
-              style={{
-                minHeight: '440px',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: '0',
-                borderRadius: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-              }}
+              className="card-feature-cinematic bg-zinc-950 border border-white/10 rounded-3xl overflow-hidden cursor-pointer flex flex-col justify-between hover:border-white/30 transition-all group"
             >
               {/* Image Frame Top */}
-              <div style={{ height: '220px', position: 'relative', overflow: 'hidden' }}>
+              <div className="h-44 sm:h-48 relative overflow-hidden">
                 <img
                   src={comp.image}
                   alt={comp.nameAr}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  onMouseEnter={(e) => ((e.target as HTMLElement).style.transform = 'scale(1.08)')}
-                  onMouseLeave={(e) => ((e.target as HTMLElement).style.transform = 'scale(1.0)')}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(10,10,10,0.95) 100%)',
-                  }}
-                />
-                <div style={{ position: 'absolute', top: '16px', right: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span className="eyebrow-cap" style={{ backgroundColor: 'rgba(0,0,0,0.7)', border: '1px solid rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '9999px', color: '#ffffff' }}>
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+                <div className="absolute top-3 right-3">
+                  <span className="text-[10px] bg-black/80 border border-white/20 px-2.5 py-0.5 rounded-full text-white font-mono">
                     {comp.code}
                   </span>
                 </div>
               </div>
 
               {/* Card Content Bottom */}
-              <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                    <CompanyLogo companyId={comp.id} size={48} />
+              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <CompanyLogo companyId={comp.id} size={40} />
                     <div>
-                      <h3 style={{ fontSize: '22px', fontWeight: 500, margin: 0, color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+                      <h3 className="text-lg font-bold text-white leading-tight font-display">
                         {comp.nameAr}
                       </h3>
-                      <span style={{ fontSize: '12px', color: '#a1a1aa' }}>{comp.nameEn}</span>
+                      <span className="text-[11px] text-zinc-400">{comp.nameEn}</span>
                     </div>
                   </div>
 
-                  <p style={{ fontSize: '14px', color: '#a1a1aa', lineHeight: 1.5, margin: '8px 0 16px 0' }}>
+                  <p className="text-xs text-zinc-400 leading-relaxed line-clamp-3">
                     {comp.desc}
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                  <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                  <span className="pill-tag-mint text-[10px]">
                     {comp.stats}
                   </span>
-                  <span style={{ fontSize: '13px', color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <span className="text-xs text-white inline-flex items-center gap-1.5 group-hover:text-emerald-400 transition-colors font-medium">
                     <span>دخول المنظومة</span>
-                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <ArrowLeft className="w-3 h-3" />
                   </span>
                 </div>
               </div>
@@ -282,48 +316,48 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       </section>
 
       {/* 4. Enterprise Capabilities Section */}
-      <section id="capabilities" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', backgroundColor: '#0a0a0a', padding: '100px 32px' }}>
-        <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
-          <div style={{ maxWidth: '720px', marginBottom: '64px' }}>
-            <span className="eyebrow-cap" style={{ color: '#c1fbd4' }}>CAPABILITIES & INFRASTRUCTURE</span>
-            <h2 className="display-xl" style={{ fontSize: 'clamp(32px, 4vw, 56px)', fontWeight: 330, marginTop: '8px', color: '#ffffff' }}>
+      <section id="capabilities" className="border-t border-white/10 bg-zinc-950/60 py-16 sm:py-24 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-12 sm:mb-16">
+            <span className="eyebrow-cap text-emerald-400 text-xs tracking-widest">CAPABILITIES & INFRASTRUCTURE</span>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-light text-white mt-2 font-display">
               بنية تحتية موحدة بمقاييس عالمية
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
-            <div className="card-feature-cinematic" style={{ padding: '36px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                <Network className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="card-feature-cinematic bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                <Network className="w-6 h-6" />
               </div>
-              <h3 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '12px', color: '#ffffff' }}>
+              <h3 className="text-lg sm:text-xl font-bold text-white">
                 الربط والامتثال الحكومي الشامل
               </h3>
-              <p style={{ fontSize: '15px', color: '#a1a1aa', lineHeight: 1.6 }}>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                 تكامل مباشر مع منصة مساند، الفوترة الإلكترونية للمرحلة الثانية من هيئة الزكاة والضريبة والجمارك (ZATCA)، ومنصة مقيم ونظام التأمينات الاجتماعية.
               </p>
             </div>
 
-            <div className="card-feature-cinematic" style={{ padding: '36px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                <TrendingUp className="w-5 h-5" />
+            <div className="card-feature-cinematic bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                <TrendingUp className="w-6 h-6" />
               </div>
-              <h3 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '12px', color: '#ffffff' }}>
+              <h3 className="text-lg sm:text-xl font-bold text-white">
                 المحاسبة المتقدمة وقياس الأداء
               </h3>
-              <p style={{ fontSize: '15px', color: '#a1a1aa', lineHeight: 1.6 }}>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                 نظام محاسبي شجري كامل مع مراكز التكلفة، موازين المراجعة، الحسابات الختامية، وتقارير تفاعلية فورية لأرباح وعوائد كل فرع وشركة.
               </p>
             </div>
 
-            <div className="card-feature-cinematic" style={{ padding: '36px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '9999px', backgroundColor: '#1e2c31', color: '#c1fbd4', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                <Bot className="w-5 h-5" />
+            <div className="card-feature-cinematic bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+                <Bot className="w-6 h-6" />
               </div>
-              <h3 style={{ fontSize: '22px', fontWeight: 500, marginBottom: '12px', color: '#ffffff' }}>
+              <h3 className="text-lg sm:text-xl font-bold text-white">
                 مساعد الذكاء الاصطناعي المؤسسي
               </h3>
-              <p style={{ fontSize: '15px', color: '#a1a1aa', lineHeight: 1.6 }}>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                 مساعد آلي ذكي (Copilot) مدمج لتحليل البيانات، إنشاء العقود الفورية، تدقيق السجلات، وتقديم التوصيات التشغيلية لقيادة المجموعة.
               </p>
             </div>
@@ -332,57 +366,57 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       </section>
 
       {/* 5. Footer */}
-      <footer className="footer-dark" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '48px', marginBottom: '64px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <img src="/logo.png" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid #ffffff' }} />
-              <span style={{ fontWeight: 500, fontSize: '16px', color: '#ffffff' }}>مجموعة خالد السليم</span>
+      <footer className="border-t border-white/10 bg-black py-12 sm:py-16 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-12">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full border border-white/30" />
+              <span className="font-bold text-base text-white font-display">مجموعة خالد السليم</span>
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--color-link-cool-2)', lineHeight: 1.6 }}>
+            <p className="text-xs text-zinc-400 leading-relaxed">
               المنظومة الرقمية المركزية الرائدة لإدارة وتطوير قطاع الاستقدام والتشغيل في المملكة العربية السعودية.
             </p>
           </div>
 
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff', marginBottom: '16px' }}>الشركات والمؤسسات</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <button type="button" onClick={() => handleSelect('SAF')} className="link-on-dark link-cool-1" style={{ textAlign: 'right', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px' }}>شركة السفير الماسي</button>
-              <button type="button" onClick={() => handleSelect('YAQ')} className="link-on-dark link-cool-1" style={{ textAlign: 'right', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px' }}>شركة ياقوت نجد</button>
-              <button type="button" onClick={() => handleSelect('TOP')} className="link-on-dark link-cool-1" style={{ textAlign: 'right', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px' }}>شركة توباز للاستقدام</button>
-              <button type="button" onClick={() => handleSelect('DAR')} className="link-on-dark link-cool-1" style={{ textAlign: 'right', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: '13px' }}>دار الرواد</button>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">الشركات والمؤسسات</h4>
+            <div className="space-y-2.5 text-xs text-zinc-400">
+              <button type="button" onClick={() => handleSelect('SAF')} className="block hover:text-white text-right">شركة السفير الماسي</button>
+              <button type="button" onClick={() => handleSelect('YAQ')} className="block hover:text-white text-right">شركة ياقوت نجد</button>
+              <button type="button" onClick={() => handleSelect('TOP')} className="block hover:text-white text-right">شركة توباز للاستقدام</button>
+              <button type="button" onClick={() => handleSelect('DAR')} className="block hover:text-white text-right">دار الرواد</button>
             </div>
           </div>
 
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff', marginBottom: '16px' }}>الأنظمة والروابط</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span className="link-cool-2" style={{ fontSize: '13px' }}>منصة مساند الحكومية</span>
-              <span className="link-cool-2" style={{ fontSize: '13px' }}>هيئة الزكاة والضريبة (ZATCA)</span>
-              <span className="link-cool-2" style={{ fontSize: '13px' }}>مركز القيادة الموحد (Command Center)</span>
-              <span className="link-cool-2" style={{ fontSize: '13px' }}>بوابة المزامنة السحابية</span>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">الأنظمة والروابط</h4>
+            <div className="space-y-2.5 text-xs text-zinc-400">
+              <div>منصة مساند الحكومية</div>
+              <div>هيئة الزكاة والضريبة (ZATCA)</div>
+              <div>مركز القيادة الموحد (Command Center)</div>
+              <div>بوابة المزامنة السحابية</div>
             </div>
           </div>
 
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff', marginBottom: '16px' }}>الدعم والأمان</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span className="link-cool-3" style={{ fontSize: '13px' }}>حماية البيانات والتشفير</span>
-              <span className="link-cool-3" style={{ fontSize: '13px' }}>سجل النشاطات والأحداث</span>
-              <span className="link-cool-3" style={{ fontSize: '13px' }}>الدعم الفني والتقني 24/7</span>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">الدعم والأمان</h4>
+            <div className="space-y-2.5 text-xs text-zinc-400">
+              <div>حماية البيانات والتشفير</div>
+              <div>سجل النشاطات والأحداث</div>
+              <div>الدعم الفني والتقني 24/7</div>
             </div>
           </div>
         </div>
 
-        <div style={{ maxWidth: '1440px', margin: '0 auto', paddingTop: '32px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-          <span style={{ fontSize: '13px', color: 'var(--color-link-cool-2)' }}>
+        <div className="max-w-7xl mx-auto pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <span>
             © {new Date().getFullYear()} مجموعة خالد السليم للاستقدام والتشغيل. جميع الحقوق محفوظة ومحمية.
           </span>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+          <div className="flex gap-2">
+            <span className="pill-tag-mint text-[10px]">
               Shopifi Engine Active
             </span>
-            <span className="pill-tag-shade" style={{ fontSize: '11px' }}>
+            <span className="pill-tag-shade text-[10px]">
               Version 3.4.2
             </span>
           </div>

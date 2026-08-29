@@ -314,41 +314,28 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   return (
     <div style={{
       minHeight: '100vh',
-      width: '100vw',
+      width: '100%',
       backgroundColor: 'var(--color-canvas-cream)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px',
+      padding: 'clamp(12px, 3vw, 24px)',
       fontFamily: 'var(--font-family-ui)',
       direction: currentLanguage.dir,
       fontFeatureSettings: '"ss03" 1'
     }}>
       {/* Main Card Container with Level 3 Stacked Shadows */}
-      <div style={{
-        display: 'flex',
-        flexDirection: isRtl ? 'row-reverse' : 'row',
-        width: '100%',
-        maxWidth: '1120px',
-        minHeight: '680px',
-        overflow: 'hidden',
-        borderRadius: '20px',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 8px 8px rgba(0,0,0,0.08), 0 4px 4px rgba(0,0,0,0.06), 0 2px 2px rgba(0,0,0,0.04), 0 0 0 1px #e4e4e7',
-        border: '1px solid #e4e4e7'
-      }}>
+      <div 
+        className="w-full max-w-5xl rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden flex flex-col lg:flex-row"
+        style={{
+          flexDirection: isRtl ? 'row-reverse' : 'row',
+        }}
+      >
 
-        {/* Right Side: 3D Visual Hero Section */}
-        <div style={{
-          flex: 1,
-          position: 'relative',
-          background: '#ffffff',
-          overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderInlineEnd: '1px solid #e4e4e7'
-        }}>
+        {/* Right Side: 3D Visual Hero Section (Hidden on mobile/tablet) */}
+        <div 
+          className="hidden lg:flex flex-1 relative bg-white overflow-hidden items-center justify-center border-inline-end border-zinc-200 min-h-[580px]"
+        >
           {/* Light Gradient Overlay */}
           <div style={{
             position: 'absolute',
@@ -438,16 +425,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Left Side: Login Form / 2FA Verification Section */}
-        <div style={{
-          width: '480px',
-          padding: '44px',
-          background: '#FFFFFF',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          position: 'relative',
-          zIndex: 10
-        }}>
+        <div 
+          className="w-full lg:w-[480px] p-6 sm:p-10 bg-white flex flex-col justify-between relative z-10 mx-auto"
+        >
           {/* Top Brand & Language Switcher */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', position: 'relative' }}>
