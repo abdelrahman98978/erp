@@ -2,18 +2,23 @@ import React, { useState, useMemo } from 'react';
 import { SIDEBAR_MENU } from '../../data/sidebarMenu';
 import { NavItem } from '../../types';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { 
+  X, Search, ChevronDown, ChevronLeft, ChevronRight, 
+  ListTree, Columns, LayoutGrid, CircleDot, Folder
+} from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
   onSelectTab: (href: string, title: string) => void;
+  onClose?: () => void;
 }
 
 export type SidebarDisplayMode = 'tree' | 'compact' | 'cards';
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
-  const { t } = useLanguage();
+export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClose }) => {
+  const { t, currentLanguage } = useLanguage();
+  const isRtl = currentLanguage.dir === 'rtl';
   const [displayMode, setDisplayMode] = useState<SidebarDisplayMode>('tree');
-  const [activeHoverCategory, setActiveHoverCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
@@ -61,90 +66,45 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = searchQuery.trim().length > 0 ? true : !!expandedItems[item.id];
     const isDirectActive = item.href === activeTab;
-
-    const checkActiveChild = (children?: NavItem[]): boolean => {
-      if (!children) return false;
-      return children.some((c) => c.href === activeTab || checkActiveChild(c.children));
-    };
-
-    const hasActiveChild = checkActiveChild(item.children);
     const translatedTitle = t(item.id, item.title);
 
     // Level 0 Group Header
     if (level === 0 && hasChildren) {
       return (
-        <div key={item.id} style={{ marginBottom: '8px' }}>
+        <div key={item.id} className="mb-2">
           <div
             onClick={(e) => toggleExpand(item.id, e)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '8px 12px',
-              borderRadius: '10px',
-              backgroundColor: isExpanded ? '#f4f4f5' : 'transparent',
-              border: '1px solid',
-              borderColor: isExpanded ? '#e4e4e7' : 'transparent',
-              cursor: 'pointer',
-              userSelect: 'none',
-              transition: 'all 0.15s ease',
-              marginBottom: isExpanded ? '4px' : '0',
-            }}
+            className={`flex items-center justify-between px-3 py-2 rounded-2xl cursor-pointer select-none transition-all ${
+              isExpanded ? 'bg-zinc-100/80 text-black font-bold' : 'hover:bg-zinc-50 text-zinc-800'
+            }`}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div
-                style={{
-                  width: '26px',
-                  height: '26px',
-                  borderRadius: '50%',
-                  backgroundColor: '#000000',
-                  color: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.12)',
-                }}
-              >
-                <i className={item.icon || 'fa-solid fa-folder'} />
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs flex-shrink-0">
+                <i className={item.icon || 'fa-solid fa-folder'} style={{ fontSize: '11px' }} />
               </div>
-              <span
-                style={{
-                  fontWeight: 550,
-                  fontSize: '13px',
-                  color: '#000000',
-                  fontFamily: 'var(--font-family-ui)',
-                }}
-              >
+              <span className="text-xs font-bold text-black truncate">
                 {translatedTitle}
               </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {item.badge && (
-                <span className="pill-tag-mint" style={{ fontSize: '10px', padding: '1px 7px' }}>
+                <span className="pill-tag-mint" style={{ fontSize: '9.5px', padding: '1px 6px' }}>
                   {item.badge}
                 </span>
               )}
-              <i
-                className={`fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-left'}`}
-                style={{ fontSize: '10px', color: '#71717a', transition: 'transform 0.2s ease' }}
-              />
+              {isExpanded ? (
+                <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+              ) : isRtl ? (
+                <ChevronLeft className="w-3.5 h-3.5 text-zinc-400" />
+              ) : (
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
+              )}
             </div>
           </div>
 
           {isExpanded && (
-            <div
-              style={{
-                paddingRight: '10px',
-                borderRight: '1.5px solid #e4e4e7',
-                marginRight: '12px',
-                marginTop: '3px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '2px',
-              }}
-            >
+            <div className={`space-y-0.5 mt-1 ${isRtl ? 'pr-3 border-r-2 border-zinc-200 mr-2' : 'pl-3 border-l-2 border-zinc-200 ml-2'}`}>
               {item.children!.map((child) => renderTreeItem(child, level + 1))}
             </div>
           )}
@@ -154,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
 
     // Leaf / Submenu Item
     return (
-      <div key={item.id} style={{ marginBottom: '2px' }}>
+      <div key={item.id} className="mb-0.5">
         <div
           onClick={(e) => {
             if (hasChildren) {
@@ -163,80 +123,48 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
               onSelectTab(item.href, item.title);
             }
           }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: level > 1 ? '6px 12px' : '7px 12px',
-            borderRadius: '9999px',
-            backgroundColor: isDirectActive ? '#000000' : 'transparent',
-            color: isDirectActive ? '#ffffff' : '#27272a',
-            fontSize: level > 1 ? '12px' : '13px',
-            fontWeight: isDirectActive ? 550 : 420,
-            cursor: 'pointer',
-            userSelect: 'none',
-            transition: 'all 0.15s ease',
-            fontFamily: 'var(--font-family-ui)',
-            fontFeatureSettings: '"ss03" 1',
-          }}
-          onMouseEnter={(e) => {
-            if (!isDirectActive) {
-              e.currentTarget.style.backgroundColor = '#f4f4f5';
-              e.currentTarget.style.color = '#000000';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isDirectActive) {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#27272a';
-            }
-          }}
+          className={`flex items-center justify-between px-3 py-1.5 rounded-full text-xs cursor-pointer select-none transition-all ${
+            isDirectActive
+              ? 'bg-black text-white font-bold shadow-sm'
+              : 'hover:bg-zinc-100 text-zinc-700 font-medium'
+          }`}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex items-center gap-2 min-w-0">
             <i
               className={item.icon || 'fa-solid fa-circle-dot'}
               style={{
-                fontSize: level > 1 ? '9px' : '12px',
-                color: isDirectActive ? '#c1fbd4' : '#71717a',
+                fontSize: level > 1 ? '8px' : '11px',
+                color: isDirectActive ? '#34d399' : '#a1a1aa',
                 width: '14px',
                 textAlign: 'center',
               }}
             />
-            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {translatedTitle}
-            </span>
+            <span className="truncate">{translatedTitle}</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div className="flex items-center gap-1 flex-shrink-0">
             {item.badge && (
               <span
                 className={isDirectActive ? 'pill-tag-shade' : 'pill-tag-mint'}
-                style={{ fontSize: '10px', padding: '1px 6px' }}
+                style={{ fontSize: '9px', padding: '1px 5px' }}
               >
                 {item.badge}
               </span>
             )}
             {hasChildren && (
-              <i
-                className={`fa-solid ${isExpanded ? 'fa-chevron-down' : 'fa-chevron-left'}`}
-                style={{ fontSize: '9px', color: isDirectActive ? '#ffffff' : '#71717a' }}
-              />
+              isExpanded ? (
+                <ChevronDown className="w-3 h-3 text-zinc-400" />
+              ) : isRtl ? (
+                <ChevronLeft className="w-3 h-3 text-zinc-400" />
+              ) : (
+                <ChevronRight className="w-3 h-3 text-zinc-400" />
+              )
             )}
           </div>
         </div>
 
         {hasChildren && isExpanded && (
-          <div
-            style={{
-              paddingRight: '10px',
-              borderRight: '1.5px dashed #e4e4e7',
-              marginRight: '12px',
-              marginTop: '2px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '2px',
-            }}
-          >
+          <div className={`space-y-0.5 mt-0.5 ${isRtl ? 'pr-2 border-r border-dashed border-zinc-200 mr-2' : 'pl-2 border-l border-dashed border-zinc-200 ml-2'}`}>
             {item.children!.map((child) => renderTreeItem(child, level + 1))}
           </div>
         )}
@@ -245,183 +173,94 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
   };
 
   return (
-    <aside
-      className="app-sidebar"
-      style={{
-        width: displayMode === 'compact' ? '80px' : '280px',
-        transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-        backgroundColor: '#ffffff',
-        borderInlineEnd: '1px solid #e4e4e7',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        position: 'fixed',
-        top: 0,
-        zIndex: 100,
-        boxShadow: '1px 0 12px rgba(0, 0, 0, 0.03)',
-      }}
-    >
-      {/* Sidebar Header Brand Logo */}
-      <div
-        className="sidebar-header"
-        style={{
-          padding: '16px 14px',
-          background: '#ffffff',
-          borderBottom: '1px solid #e4e4e7',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-        }}
-      >
-        <div
-          className="brand-badge"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            justifyContent: displayMode === 'compact' ? 'center' : 'flex-start',
-          }}
-        >
-          <img
-            src="/logo.png"
-            alt="ALSALIM GROUP LOGO"
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '50%',
-              objectFit: 'cover',
-              background: '#FFFFFF',
-              padding: '1px',
-              border: '1.5px solid #000000',
-              flexShrink: 0,
-            }}
-          />
-          {displayMode !== 'compact' && (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span
-                style={{
-                  color: '#000000',
-                  letterSpacing: '0.2px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  fontFamily: 'var(--font-family-display)',
-                }}
-              >
-                ALSALIM GROUP
-              </span>
-              <span style={{ color: '#71717a', fontSize: '11px', fontWeight: 420 }}>
-                {t('sidebarTitle', 'مجموعة خالد السليم ERP')}
-              </span>
-            </div>
+    <div className="h-full flex flex-col bg-white text-zinc-900 select-none">
+      {/* Sidebar Header */}
+      <div className="p-4 border-b border-zinc-200 space-y-3 bg-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/logo.png"
+              alt="ALSALIM GROUP"
+              className="w-9 h-9 rounded-full object-cover p-0.5 border border-black"
+            />
+            {displayMode !== 'compact' && (
+              <div>
+                <div className="text-xs font-black text-black tracking-tight leading-tight">
+                  ALSALIM GROUP
+                </div>
+                <div className="text-[10px] text-zinc-400 font-medium">
+                  {t('sidebarTitle', 'مجموعة خالد السليم ERP')}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Close button on Mobile */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1.5 rounded-full hover:bg-zinc-100 text-zinc-500 hover:text-black transition-colors"
+              title="إغلاق القائمة"
+              aria-label="إغلاق القائمة"
+            >
+              <X className="w-5 h-5" />
+            </button>
           )}
         </div>
 
         {/* Display Mode Switcher Controls */}
-        <div
-          style={{
-            display: 'flex',
-            backgroundColor: '#f4f4f5',
-            borderRadius: '9999px',
-            padding: '2px',
-            gap: '2px',
-            border: '1px solid #e4e4e7',
-          }}
-        >
+        <div className="flex bg-zinc-100 rounded-full p-0.5 border border-zinc-200">
           <button
             type="button"
             title="القائمة الهرمية"
             onClick={() => setDisplayMode('tree')}
-            style={{
-              flex: 1,
-              padding: '4px 6px',
-              border: 'none',
-              borderRadius: '9999px',
-              fontSize: '11px',
-              fontWeight: displayMode === 'tree' ? 550 : 420,
-              cursor: 'pointer',
-              backgroundColor: displayMode === 'tree' ? '#000000' : 'transparent',
-              color: displayMode === 'tree' ? '#ffffff' : '#71717a',
-              transition: 'all 0.15s ease',
-            }}
+            className={`flex-1 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1 transition-all ${
+              displayMode === 'tree' ? 'bg-black text-white shadow-sm' : 'text-zinc-500 hover:text-black'
+            }`}
           >
-            <i className="fa-solid fa-list-tree" /> {displayMode !== 'compact' && 'هرمي'}
+            <ListTree className="w-3 h-3" />
+            {displayMode !== 'compact' && <span>هرمي</span>}
           </button>
 
           <button
             type="button"
             title="الشريط المصغر"
             onClick={() => setDisplayMode('compact')}
-            style={{
-              flex: 1,
-              padding: '4px 6px',
-              border: 'none',
-              borderRadius: '9999px',
-              fontSize: '11px',
-              fontWeight: displayMode === 'compact' ? 550 : 420,
-              cursor: 'pointer',
-              backgroundColor: displayMode === 'compact' ? '#000000' : 'transparent',
-              color: displayMode === 'compact' ? '#ffffff' : '#71717a',
-              transition: 'all 0.15s ease',
-            }}
+            className={`flex-1 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1 transition-all ${
+              displayMode === 'compact' ? 'bg-black text-white shadow-sm' : 'text-zinc-500 hover:text-black'
+            }`}
           >
-            <i className="fa-solid fa-table-columns" /> {displayMode !== 'compact' && 'مصغر'}
+            <Columns className="w-3 h-3" />
+            {displayMode !== 'compact' && <span>مصغر</span>}
           </button>
 
           <button
             type="button"
             title="نمط الكروت"
             onClick={() => setDisplayMode('cards')}
-            style={{
-              flex: 1,
-              padding: '4px 6px',
-              border: 'none',
-              borderRadius: '9999px',
-              fontSize: '11px',
-              fontWeight: displayMode === 'cards' ? 550 : 420,
-              cursor: 'pointer',
-              backgroundColor: displayMode === 'cards' ? '#000000' : 'transparent',
-              color: displayMode === 'cards' ? '#ffffff' : '#71717a',
-              transition: 'all 0.15s ease',
-            }}
+            className={`flex-1 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1 transition-all ${
+              displayMode === 'cards' ? 'bg-black text-white shadow-sm' : 'text-zinc-500 hover:text-black'
+            }`}
           >
-            <i className="fa-solid fa-layer-group" /> {displayMode !== 'compact' && 'كروت'}
+            <LayoutGrid className="w-3 h-3" />
+            {displayMode !== 'compact' && <span>كروت</span>}
           </button>
         </div>
 
-        {/* Quick Menu Search (when not in compact mode) */}
+        {/* Quick Menu Search */}
         {displayMode !== 'compact' && (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: '#fbfbf5',
-              border: '1px solid #e4e4e7',
-              borderRadius: '9999px',
-              padding: '0 12px',
-              height: '32px',
-            }}
-          >
-            <i className="fa-solid fa-magnifying-glass" style={{ fontSize: '11px', color: '#71717a' }} />
+          <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-full px-3 py-1 text-xs">
+            <Search className="w-3.5 h-3.5 text-zinc-400" />
             <input
               type="text"
               placeholder="بحث سريع في القائمة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                border: 'none',
-                outline: 'none',
-                background: 'transparent',
-                fontSize: '11.5px',
-                color: '#000000',
-                width: '100%',
-                fontFamily: 'var(--font-family-ui)',
-              }}
+              className="w-full bg-transparent border-none outline-none text-xs text-black placeholder-zinc-400"
             />
             {searchQuery && (
-              <i
-                className="fa-solid fa-xmark"
-                style={{ fontSize: '11px', color: '#71717a', cursor: 'pointer' }}
+              <X
+                className="w-3.5 h-3.5 text-zinc-400 cursor-pointer hover:text-black"
                 onClick={() => setSearchQuery('')}
               />
             )}
@@ -430,185 +269,50 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
       </div>
 
       {/* Navigation Content */}
-      <div
-        className="sidebar-nav"
-        style={{
-          padding: displayMode === 'compact' ? '10px 8px' : '12px 10px',
-          flex: 1,
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px',
-        }}
-      >
+      <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {/* MODE 1: HIERARCHICAL TREE VIEW */}
         {displayMode === 'tree' && filteredMenu.map((item) => renderTreeItem(item, 0))}
 
-        {/* MODE 2: COMPACT ICON RAIL WITH HOVER FLYOUT MENU */}
+        {/* MODE 2: COMPACT ICON RAIL */}
         {displayMode === 'compact' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <div className="flex flex-col items-center gap-2 py-2">
             {filteredMenu.map((item) => {
               const isDirectActive = item.href === activeTab;
               return (
-                <div
+                <button
                   key={item.id}
-                  onMouseEnter={() => setActiveHoverCategory(item.id)}
-                  onMouseLeave={() => setActiveHoverCategory(null)}
-                  style={{ position: 'relative' }}
+                  onClick={() => {
+                    if (item.href) onSelectTab(item.href, item.title);
+                  }}
+                  title={item.title}
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
+                    isDirectActive ? 'bg-black text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-700'
+                  }`}
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (item.href) onSelectTab(item.href, item.title);
-                    }}
-                    style={{
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '50%',
-                      backgroundColor: isDirectActive ? '#000000' : '#ffffff',
-                      color: isDirectActive ? '#ffffff' : '#27272a',
-                      border: '1px solid',
-                      borderColor: isDirectActive ? '#000000' : '#e4e4e7',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      boxShadow: isDirectActive ? '0 4px 8px rgba(0,0,0,0.12)' : 'none',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <i className={item.icon || 'fa-solid fa-folder'} style={{ fontSize: '15px' }} />
-                  </button>
-
-                  {/* Flyout Submenu Panel on Hover */}
-                  {activeHoverCategory === item.id && item.children && item.children.length > 0 && (
-                    <div
-                      className="card-pricing"
-                      style={{
-                        position: 'absolute',
-                        right: '56px',
-                        top: 0,
-                        width: '260px',
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '16px',
-                        boxShadow: '0 16px 32px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04), 0 0 0 1px #e4e4e7',
-                        border: '1px solid #e4e4e7',
-                        padding: '14px',
-                        zIndex: 9999,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '4px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: 600,
-                          fontSize: '13px',
-                          color: '#000000',
-                          borderBottom: '1px solid #e4e4e7',
-                          paddingBottom: '8px',
-                          marginBottom: '4px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                        }}
-                      >
-                        <i className={item.icon || 'fa-solid fa-folder'} style={{ fontSize: '12px' }} />
-                        <span>{item.title}</span>
-                      </div>
-                      {item.children.map((child) => {
-                        const isChildActive = child.href === activeTab;
-                        return (
-                          <div
-                            key={child.id}
-                            onClick={() => {
-                              if (child.href) onSelectTab(child.href, child.title);
-                            }}
-                            style={{
-                              padding: '7px 12px',
-                              borderRadius: '9999px',
-                              fontSize: '12px',
-                              fontWeight: isChildActive ? 550 : 420,
-                              color: isChildActive ? '#ffffff' : '#27272a',
-                              backgroundColor: isChildActive ? '#000000' : 'transparent',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              transition: 'all 0.15s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isChildActive) {
-                                e.currentTarget.style.backgroundColor = '#f4f4f5';
-                                e.currentTarget.style.color = '#000000';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isChildActive) {
-                                e.currentTarget.style.backgroundColor = 'transparent';
-                                e.currentTarget.style.color = '#27272a';
-                              }
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <i
-                                className={child.icon || 'fa-solid fa-circle-dot'}
-                                style={{ fontSize: '9px', color: isChildActive ? '#c1fbd4' : '#71717a' }}
-                              />
-                              <span>{child.title}</span>
-                            </div>
-                            {child.badge && (
-                              <span className="pill-tag-mint" style={{ fontSize: '10px', padding: '1px 6px' }}>
-                                {child.badge}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                  <i className={item.icon || 'fa-solid fa-folder'} style={{ fontSize: '13px' }} />
+                </button>
               );
             })}
           </div>
         )}
 
-        {/* MODE 3: CARDS & MODULE BLOCKS VIEW */}
+        {/* MODE 3: CARD VIEW */}
         {displayMode === 'cards' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div className="space-y-2 p-1">
             {filteredMenu.map((item) => (
               <div
                 key={item.id}
-                className="card-pricing"
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '14px',
-                  padding: '12px',
-                  border: '1px solid #e4e4e7',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
-                }}
+                className="p-3 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2"
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <div
-                    style={{
-                      width: '26px',
-                      height: '26px',
-                      borderRadius: '50%',
-                      backgroundColor: '#000000',
-                      color: '#FFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '11px',
-                    }}
-                  >
-                    <i className={item.icon || 'fa-solid fa-layer-group'} />
+                <div className="flex items-center gap-2 text-xs font-bold text-black">
+                  <div className="w-5 h-5 rounded-full bg-black text-white flex items-center justify-center text-[10px]">
+                    <i className={item.icon || 'fa-solid fa-folder'} />
                   </div>
-                  <span style={{ fontWeight: 550, fontSize: '12.5px', color: '#000000' }}>{item.title}</span>
+                  <span>{item.title}</span>
                 </div>
 
                 {item.children && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                  <div className="flex flex-wrap gap-1">
                     {item.children.map((child) => {
                       const isChildActive = child.href === activeTab;
                       return (
@@ -618,18 +322,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
                           onClick={() => {
                             if (child.href) onSelectTab(child.href, child.title);
                           }}
-                          style={{
-                            backgroundColor: isChildActive ? '#000000' : '#f4f4f5',
-                            color: isChildActive ? '#FFFFFF' : '#27272a',
-                            border: '1px solid',
-                            borderColor: isChildActive ? '#000000' : '#e4e4e7',
-                            borderRadius: '9999px',
-                            padding: '4px 10px',
-                            fontSize: '11px',
-                            fontWeight: isChildActive ? 550 : 420,
-                            cursor: 'pointer',
-                            transition: 'all 0.15s ease',
-                          }}
+                          className={`px-2.5 py-1 rounded-full text-[10.5px] transition-all ${
+                            isChildActive
+                              ? 'bg-black text-white font-bold'
+                              : 'bg-white hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
+                          }`}
                         >
                           {child.title}
                         </button>
@@ -642,6 +339,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab }) => {
           </div>
         )}
       </div>
-    </aside>
+    </div>
   );
 };
+
+export default Sidebar;
