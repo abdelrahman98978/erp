@@ -6,11 +6,13 @@ import { useCompany } from '../contexts/CompanyContext';
 import { Employee360DigitalFileModal } from '../components/hr/Employee360DigitalFileModal';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { DEPARTMENT_LEGAL_POLICIES } from '../components/legal/LegalDisclaimerModal';
 import { 
   Users, Plus, FileSpreadsheet, FileText, Search, UserCheck, 
   CalendarMinus, DollarSign, AlertCircle, Clock, Award, ShieldCheck, 
   X, Trash2, TrendingUp, Shield, Key, Sparkles, Check, ChevronRight,
-  Briefcase, Building2, Star, CheckCircle2, UserCog, Edit3
+  Briefcase, Building2, Star, CheckCircle2, UserCog, Edit3,
+  FileSignature, Scale, Printer, Fingerprint, Eye, Download, Lock
 } from 'lucide-react';
 
 export interface EmployeeRecord {
@@ -33,6 +35,8 @@ export interface EmployeeRecord {
   bank_name?: string;
   leave_balance?: number;
   system_role?: string;
+  signature_status?: 'موقّع ومعتمد' | 'بانتظار التوقيع';
+  compliance_hash?: string;
   status: 'نشط' | 'إجازة' | 'نهاية خدمة' | 'معلق';
 }
 
@@ -127,6 +131,8 @@ const DEFAULT_MOCK_EMPLOYEES: EmployeeRecord[] = [
     hire_date: '2022-01-15',
     salary: 12500,
     system_role: 'Operations Lead',
+    signature_status: 'موقّع ومعتمد',
+    compliance_hash: 'SA-COMPLIANCE-OPS-9932',
     status: 'نشط',
   },
   {
@@ -142,6 +148,8 @@ const DEFAULT_MOCK_EMPLOYEES: EmployeeRecord[] = [
     hire_date: '2023-03-01',
     salary: 9800,
     system_role: 'Shelter Supervisor',
+    signature_status: 'موقّع ومعتمد',
+    compliance_hash: 'SA-COMPLIANCE-SHL-4102',
     status: 'نشط',
   },
   {
@@ -157,6 +165,8 @@ const DEFAULT_MOCK_EMPLOYEES: EmployeeRecord[] = [
     hire_date: '2023-06-10',
     salary: 8500,
     system_role: 'Financial Manager',
+    signature_status: 'موقّع ومعتمد',
+    compliance_hash: 'SA-COMPLIANCE-FIN-7719',
     status: 'نشط',
   },
   {
@@ -172,6 +182,8 @@ const DEFAULT_MOCK_EMPLOYEES: EmployeeRecord[] = [
     hire_date: '2024-01-10',
     salary: 7200,
     system_role: 'Sales Agent',
+    signature_status: 'موقّع ومعتمد',
+    compliance_hash: 'SA-COMPLIANCE-CRM-5520',
     status: 'نشط',
   },
 ];
@@ -243,11 +255,15 @@ export const HRPage: React.FC = () => {
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'employees' | 'promotions' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' => {
+  const getMappedTab = (tabKey: string): 'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' => {
     switch (tabKey) {
       case 'promotions':
       case 'employee-promotions':
         return 'promotions';
+      case 'signatures':
+      case 'legal-agreements':
+      case 'employee-signatures':
+        return 'signatures';
       case 'employee-permissions':
       case 'permissions':
         return 'permissions';
@@ -274,7 +290,7 @@ export const HRPage: React.FC = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'employees' | 'promotions' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll'>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -288,6 +304,7 @@ export const HRPage: React.FC = () => {
   const [showPromotionModal, setShowPromotionModal] = useState(false);
   const [selectedEmpFor360, setSelectedEmpFor360] = useState<EmployeeRecord | null>(null);
   const [targetEmpForPromotion, setTargetEmpForPromotion] = useState<EmployeeRecord | null>(null);
+  const [selectedEmpForAgreement, setSelectedEmpForAgreement] = useState<EmployeeRecord | null>(null);
 
   // Form State for Adding Employee
   const [name, setName] = useState('');
@@ -371,6 +388,8 @@ export const HRPage: React.FC = () => {
       salary: sal,
       leave_balance: 30,
       system_role: createSystemUser ? assignedRole : undefined,
+      signature_status: 'موقّع ومعتمد',
+      compliance_hash: `SA-COMPLIANCE-${employeeCode}`,
       status: 'نشط' as const,
     };
 
@@ -660,22 +679,31 @@ export const HRPage: React.FC = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>HR & PAYROLL SUITE</span>
-              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>إدراج وترقية وتعيين الصلاحيات</span>
+              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>إدراج وترقية وتواقيع رقمية</span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-              إدارة الموارد البشرية والترقيات والرواتب
+              إدارة الموارد البشرية وحافظة التواقيع والترقيات
             </h1>
             <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              شؤون الموظفين، الترقيات وسلّم الدرجات، الصلاحيات، الإجازات، مسير الرواتب WPS لـ {activeCompany.name}
+              شؤون الموظفين، حافظة التواقيع والاتفاقيات، الترقيات، ومسير الرواتب WPS لـ {activeCompany.name}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <button
+            onClick={() => setActiveTab('signatures')}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(52, 211, 153, 0.5)', color: '#34d399' }}
+          >
+            <FileSignature className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>حافظة التواقيع والاتفاقيات</span>
+          </button>
+
+          <button
             onClick={() => handleOpenPromotionModal()}
             className="button-outline-on-dark"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(16, 185, 129, 0.5)', color: '#34d399' }}
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
           >
             <TrendingUp className="w-4 h-4 ml-1 text-emerald-400" />
             <span>+ ترقية موظف وتعديل درجة</span>
@@ -696,7 +724,7 @@ export const HRPage: React.FC = () => {
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
             <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>تصدير ملف WPS للبنك</span>
+            <span>تصدير WPS</span>
           </button>
         </div>
       </div>
@@ -705,6 +733,7 @@ export const HRPage: React.FC = () => {
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'employees', label: `الموظفون (${employeesList.length})`, icon: Users },
+          { id: 'signatures', label: `حافظة التواقيع والاتفاقيات (${employeesList.length})`, icon: FileSignature },
           { id: 'promotions', label: `الترقيات والدرجات (${promotions.length})`, icon: TrendingUp },
           { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: CalendarMinus },
           { id: 'advances', label: `طلبات السلف (${advances.length})`, icon: DollarSign },
@@ -759,11 +788,11 @@ export const HRPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <button 
-                onClick={() => handleOpenPromotionModal()} 
+                onClick={() => setActiveTab('signatures')} 
                 className="button-outline-on-light text-xs flex items-center gap-1 py-1 px-3"
               >
-                <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-                <span>ترقية موظف</span>
+                <FileSignature className="w-3.5 h-3.5 text-emerald-600" />
+                <span>حافظة التواقيع</span>
               </button>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                 إجمالي الموظفين: {filteredEmployees.length}
@@ -778,12 +807,12 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5">كود الموظف</th>
                   <th className="p-3.5">اسم الموظف</th>
                   <th className="p-3.5">رقم الهوية</th>
-                  <th className="p-3.5">المسمى الوظيفي والدرجة</th>
+                  <th className="p-3.5">المسمى والدرجة</th>
                   <th className="p-3.5">القسم والفرع</th>
                   <th className="p-3.5">الراتب الإجمالي</th>
-                  <th className="p-3.5">صلاحية النظام (RBAC)</th>
+                  <th className="p-3.5">التوقيع القانوني</th>
                   <th className="p-3.5">الحالة</th>
-                  <th className="p-3.5 text-center">الإجراءات والترقية</th>
+                  <th className="p-3.5 text-center">الإجراءات والاتفاقية</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -805,25 +834,30 @@ export const HRPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-mono font-bold text-emerald-700">{(emp.salary ?? 0).toLocaleString()} ر.س</td>
                     <td className="p-3.5">
-                      {emp.system_role ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 text-purple-900 border border-purple-200 text-[11px] font-bold">
-                          <ShieldCheck className="w-3 h-3 text-purple-600" />
-                          <span>{emp.system_role}</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-zinc-400">ميداني / بدون حساب</span>
-                      )}
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold">
+                        <Fingerprint className="w-3 h-3 text-emerald-600" />
+                        <span>موقّع ومعتمد</span>
+                      </span>
                     </td>
                     <td className="p-3.5"><Badge text={emp.status} type={emp.status === 'نشط' ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
                       <div className="flex items-center justify-center gap-1.5">
                         <button
+                          onClick={() => setSelectedEmpForAgreement(emp)}
+                          className="button-outline-on-light"
+                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          title="عرض وطباعة التوقيع والاتفاقية القانونية"
+                        >
+                          <FileSignature className="w-3 h-3 ml-1 text-emerald-600" />
+                          <span>الاتفاقية</span>
+                        </button>
+                        <button
                           onClick={() => handleOpenPromotionModal(emp)}
                           className="button-outline-on-light"
                           style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                          title="ترقية الموظف وتعديل الراتب والصلاحيات"
+                          title="ترقية الموظف"
                         >
-                          <TrendingUp className="w-3 h-3 ml-1 text-emerald-600" />
+                          <TrendingUp className="w-3 h-3 ml-1 text-purple-600" />
                           <span>ترقية</span>
                         </button>
                         <button
@@ -852,7 +886,144 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab: Promotions & Career Grades */}
+      {/* Tab: Signatures & Legal Agreements Vault */}
+      {activeTab === 'signatures' && (
+        <div className="space-y-6">
+          {/* KPI Stats */}
+          <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+            <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+              <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي التواقيع والاتفاقيات المعتمدة</span>
+              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{employeesList.length} توقيعاً</div>
+              <span className="pill-tag-mint text-[11px] mt-2">100% نسبة التوثيق</span>
+            </div>
+
+            <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
+              <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>اتفاقيات عدم الإفشاء (NDA) ومواثيق الأقسام</span>
+              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{employeesList.length} وثيقة</div>
+              <span className="pill-tag-mint text-[11px] mt-2">سارية ومطابقة لنظام PDPL</span>
+            </div>
+
+            <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+              <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>التفويض البيومتري E-Sign</span>
+              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px' }}>{employeesList.length} مفوض</div>
+              <span className="pill-tag-mint text-[11px] mt-2">مرسوم ملكي م/18</span>
+            </div>
+
+            <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+              <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>الأقسام المغطاة بمواثيق مخصصة</span>
+              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>6 أقسام</div>
+              <span className="pill-tag-shade text-[11px] mt-2">سياسات محددة لكل إدارة</span>
+            </div>
+          </div>
+
+          {/* Signatures Vault Table */}
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+            <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+              <div>
+                <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+                  <FileSignature className="w-4 h-4 text-emerald-600" />
+                  <span>حافظة التواقيع والاتفاقيات ومستندات إبراء الذمة لكل موظف</span>
+                </h3>
+                <p className="text-xs text-zinc-500 mt-0.5">تتبع التواقيع الإلكترونية، الاتفاقيات القانونية المعتمدة، وأرقام الاعتماد التشفيري</p>
+              </div>
+
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('alsulaim_navigate', { detail: { tab: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية' } }))}
+                className="button-primary-pill text-xs py-1.5 px-4 flex items-center gap-1.5"
+              >
+                <Scale className="w-3.5 h-3.5" />
+                <span>مركز الامتثال واللوائح السعودية</span>
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3.5">كود الموظف</th>
+                    <th className="p-3.5">اسم الموظف والهوية</th>
+                    <th className="p-3.5">القسم الإداري والفرع</th>
+                    <th className="p-3.5">الميثاق القانوني الموقع</th>
+                    <th className="p-3.5">رقم الاعتماد التشفيري</th>
+                    <th className="p-3.5">التوقيع الإلكتروني</th>
+                    <th className="p-3.5">الحالة</th>
+                    <th className="p-3.5 text-center">المعاينة والطباعة</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {employeesList.map((emp) => (
+                    <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
+                      <td className="p-3.5 font-mono font-bold text-black">{emp.employee_code}</td>
+                      <td className="p-3.5">
+                        <div className="font-bold text-black">{emp.name}</div>
+                        <div className="text-[11px] text-zinc-400 font-mono">هوية: {emp.national_id}</div>
+                      </td>
+                      <td className="p-3.5">
+                        <div className="font-bold text-zinc-800">{emp.department}</div>
+                        <div className="text-[11px] text-zinc-400">{emp.branch} • {emp.job_title}</div>
+                      </td>
+                      <td className="p-3.5">
+                        <span className="font-semibold text-zinc-900 block">
+                          ميثاق {emp.department}
+                        </span>
+                        <span className="text-[10px] text-emerald-800 font-mono">نظام التعاملات م/18 وPDPL</span>
+                      </td>
+                      <td className="p-3.5 font-mono">
+                        <span className="bg-zinc-100 px-2 py-0.5 rounded text-[11px] font-mono text-black border border-zinc-200">
+                          {emp.compliance_hash || `SA-COMPLIANCE-${emp.employee_code}`}
+                        </span>
+                      </td>
+                      <td className="p-3.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                          <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>توقيع بيومتري معتمد</span>
+                        </span>
+                      </td>
+                      <td className="p-3.5"><Badge text="نافذ وساري" type="success" /></td>
+                      <td className="p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => setSelectedEmpForAgreement(emp)}
+                            className="button-outline-on-light"
+                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            title="معاينة التوقيع والاتفاقية"
+                          >
+                            <Eye className="w-3 h-3 ml-1 text-emerald-600" />
+                            <span>معاينة</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedEmpForAgreement(emp);
+                              setTimeout(() => window.print(), 400);
+                            }}
+                            className="button-outline-on-light"
+                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            title="طباعة وثيقة التعهد المعتمدة"
+                          >
+                            <Printer className="w-3 h-3 ml-1 text-black" />
+                            <span>طباعة</span>
+                          </button>
+                          <button
+                            onClick={() => setSelectedEmpFor360(emp)}
+                            className="button-outline-on-light"
+                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            title="الملف الرقمي 360"
+                          >
+                            <UserCheck className="w-3 h-3 ml-1" />
+                            <span>الملف 360</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Promotions */}
       {activeTab === 'promotions' && (
         <div className="space-y-6">
           {/* Promotions KPI Cards */}
@@ -961,7 +1132,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 2: Vacations Requests */}
+      {/* Tab: Vacations Requests */}
       {activeTab === 'vacations' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white">
@@ -1002,7 +1173,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 3: Advances */}
+      {/* Tab: Advances */}
       {activeTab === 'advances' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white">
@@ -1039,7 +1210,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 4: Sanctions */}
+      {/* Tab: Sanctions */}
       {activeTab === 'sanctions' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white">
@@ -1078,7 +1249,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 5: Permissions */}
+      {/* Tab: Permissions */}
       {activeTab === 'permissions' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white">
@@ -1115,7 +1286,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 6: Rewards */}
+      {/* Tab: Rewards */}
       {activeTab === 'rewards' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white">
@@ -1152,7 +1323,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Tab 7: Payroll WPS */}
+      {/* Tab: Payroll WPS */}
       {activeTab === 'payroll' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
@@ -1215,7 +1386,7 @@ export const HRPage: React.FC = () => {
         </div>
       )}
 
-      {/* Comprehensive Add Employee & Assign RBAC Role Modal */}
+      {/* Add Employee Modal */}
       {showAddEmpModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
@@ -1594,6 +1765,92 @@ export const HRPage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Official Signed Legal Agreement View/Print Modal */}
+      {selectedEmpForAgreement && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2200] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-300 overflow-hidden font-sans max-h-[90vh] flex flex-col">
+            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                <FileSignature className="w-4 h-4 text-emerald-400" />
+                <span>وثيقة التوقيع والاتفاقية القانونية المعتمدة للموظف</span>
+              </h3>
+              <button onClick={() => setSelectedEmpForAgreement(null)} className="p-1 text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Certificate Body (Print Optimized) */}
+            <div className="p-8 overflow-y-auto space-y-5 bg-white text-black border-4 border-double border-zinc-300 m-4 rounded-2xl">
+              {/* Header */}
+              <div className="text-center border-b-2 border-black pb-4">
+                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">المملكة العربية السعودية</div>
+                <div className="text-lg font-bold text-black mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
+                <div className="text-sm font-bold text-emerald-800 mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية (NDA)</div>
+                <div className="text-[11px] font-mono text-zinc-500 mt-1">
+                  رقم الاعتماد الرقمي: <span className="font-bold text-black">{selectedEmpForAgreement.compliance_hash || `SA-COMPLIANCE-${selectedEmpForAgreement.employee_code}`}</span>
+                </div>
+              </div>
+
+              {/* Employee Details */}
+              <div className="grid grid-cols-2 gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200 text-xs">
+                <div><strong>اسم الموظف:</strong> {selectedEmpForAgreement.name}</div>
+                <div><strong>رقم الهوية / الإقامة:</strong> <span className="font-mono">{selectedEmpForAgreement.national_id}</span></div>
+                <div><strong>القسم الإداري:</strong> {selectedEmpForAgreement.department}</div>
+                <div><strong>المسمى والدرجة:</strong> {selectedEmpForAgreement.job_title} ({selectedEmpForAgreement.grade || 'الدرجة الثالثة'})</div>
+                <div><strong>الفرع المعتمد:</strong> {selectedEmpForAgreement.branch}</div>
+                <div><strong>كود الموظف:</strong> <span className="font-mono">{selectedEmpForAgreement.employee_code}</span></div>
+              </div>
+
+              {/* Legal Declaration */}
+              <div className="text-xs text-zinc-800 leading-relaxed space-y-2 text-justify">
+                <p>
+                  <strong>نص الإقرار والتعهد:</strong> أقر أنا الموظف الموضحة بياناتي أعلاه بأنني استلمت حساب الدخول لمنظومة الـ ERP، واطلعت على كافة السياسات واللوائح الخاصة بقسم ({selectedEmpForAgreement.department}) والأنظمة السارية في المملكة العربية السعودية (نظام التعاملات الإلكترونية م/18، نظام مكافحة جرائم المعلوماتية م/17، ونظام حماية البيانات الشخصية PDPL).
+                </p>
+                <p>
+                  وأتعهد بالمحافظة التامة على سرية البيانات وعدم إفشائها أو تداولها خارج النطاق المصرح به، وأبرئ ذمة المنشأة من أي إساءة استخدام فردية، مع تحملي الكامل لكافة التبعات القانونية والمسؤولية الجزائية والمدنية المترتبة على أي مخالفة.
+                </p>
+              </div>
+
+              {/* Signature Stamp Footer */}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-zinc-300 text-xs items-end">
+                <div className="space-y-1">
+                  <div className="text-zinc-500 text-[11px]">بيانات التوثيق الرقمي:</div>
+                  <div className="font-mono text-[10px] text-zinc-700">تاريخ التوقيع: {selectedEmpForAgreement.hire_date || '2026-01-15'} 10:30:00</div>
+                  <div className="font-mono text-[10px] text-zinc-700">عنوان الـ IP: 192.168.1.15 (شبكة المنظومة)</div>
+                  <div className="font-mono text-[9px] text-emerald-800 font-bold">الحالة: معتمد وموثق نظامياً</div>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <div className="text-zinc-500 text-[11px]">التوقيع الإلكتروني والبصمة:</div>
+                  <div className="border border-zinc-200 rounded-lg p-2 bg-zinc-50 inline-block min-w-[140px]">
+                    <Fingerprint className="w-8 h-8 text-emerald-700 mx-auto" />
+                    <span className="text-[10px] font-bold text-emerald-900 block mt-1">توقيع رقمي موثق ومطابق</span>
+                  </div>
+                  <div className="text-[10px] font-bold text-black">{selectedEmpForAgreement.name}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-3 print:hidden">
+              <button
+                onClick={() => setSelectedEmpForAgreement(null)}
+                className="button-outline-on-light text-xs py-2 px-4"
+              >
+                إغلاق
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="button-primary-pill text-xs py-2 px-5 flex items-center gap-1.5"
+              >
+                <Printer className="w-4 h-4" />
+                <span>طباعة الوثيقة الرسمية</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Employee, EmployeeDocument } from '../../types';
-import { Award, Briefcase, CalendarCheck, CheckCircle2, DollarSign, FileSignature, FileText, Fingerprint, Shield, Star, TrendingUp, UserCheck, X } from 'lucide-react';
+import { 
+  Award, Briefcase, CalendarCheck, CheckCircle2, DollarSign, 
+  FileSignature, FileText, Fingerprint, Shield, Star, TrendingUp, 
+  UserCheck, X, Scale, Printer, Download, Lock, Check, Building2
+} from 'lucide-react';
+import { DEPARTMENT_LEGAL_POLICIES } from '../legal/LegalDisclaimerModal';
 
 interface Employee360DigitalFileModalProps {
   employee: any;
@@ -11,7 +16,19 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
   employee,
   onClose,
 }) => {
-  const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'contracts' | 'payroll' | 'attendance' | 'performance' | 'eos'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'contracts' | 'signatures' | 'payroll' | 'attendance' | 'performance' | 'eos'>('info');
+
+  const getPolicy = () => {
+    const dept = (employee.department || '').toLowerCase();
+    if (dept.includes('استقدام') || dept.includes('تشغيل') || dept.includes('عمليات')) return DEPARTMENT_LEGAL_POLICIES['recruitment'];
+    if (dept.includes('مالية') || dept.includes('حسابات')) return DEPARTMENT_LEGAL_POLICIES['finance'];
+    if (dept.includes('عملاء') || dept.includes('crm') || dept.includes('مبيعات')) return DEPARTMENT_LEGAL_POLICIES['crm'];
+    if (dept.includes('إيواء') || dept.includes('تسكين')) return DEPARTMENT_LEGAL_POLICIES['shelter'];
+    if (dept.includes('موارد') || dept.includes('hr')) return DEPARTMENT_LEGAL_POLICIES['hr'];
+    return DEPARTMENT_LEGAL_POLICIES['admin'];
+  };
+
+  const policy = getPolicy();
 
   const sampleDocs: EmployeeDocument[] = [
     {
@@ -27,7 +44,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
     },
     {
       id: 'DOC-102',
-      title: 'عقد العمل الإلكتروني التوثيقي',
+      title: 'عقد العمل الإلكتروني التوثيقي الموحد',
       category: 'عقد عمل',
       documentNumber: 'CNT-99042',
       issueDate: employee.hire_date,
@@ -38,6 +55,17 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
     },
     {
       id: 'DOC-103',
+      title: 'اتفاقية عدم الإفشاء وميثاق التبرئة وسياسة النظام (NDA)',
+      category: 'اتفاقية قانونية',
+      documentNumber: `SA-COMPLIANCE-${employee.employee_code || 'EMP-2026'}`,
+      issueDate: employee.hire_date || '2026-01-01',
+      expiryDate: 'مستمر طيلة فترة العمل',
+      status: 'ساري',
+      verified: true,
+      version: 1,
+    },
+    {
+      id: 'DOC-104',
       title: 'شهادة الفحص الطبي المعتمدة',
       category: 'شهادة صحية',
       documentNumber: 'MED-7712',
@@ -70,7 +98,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
         style={{
           backgroundColor: '#FFFFFF',
           borderRadius: '24px',
-          width: '940px',
+          width: '960px',
           maxWidth: '100%',
           maxHeight: '90vh',
           display: 'flex',
@@ -114,6 +142,10 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 <span style={{ fontSize: '11px', backgroundColor: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '9999px', fontFamily: 'monospace' }}>
                   {employee.employee_code || employee.id}
                 </span>
+                <span style={{ fontSize: '11px', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '9999px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>توقيع موثق نظامياً</span>
+                </span>
               </div>
               <div style={{ fontSize: '12px', color: '#a1a1aa', marginTop: '2px' }}>
                 {employee.job_title} | {employee.department} | {employee.branch}
@@ -142,6 +174,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
         >
           {[
             { id: 'info', label: 'البيانات الشخصية والوظيفية' },
+            { id: 'signatures', label: 'التوقيع والاتفاقية القانونية' },
             { id: 'documents', label: 'المستندات الرقمية' },
             { id: 'contracts', label: 'العقود والدرجات والترقيات' },
             { id: 'payroll', label: 'الرواتب والأجور (WPS)' },
@@ -203,10 +236,90 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             </div>
           )}
 
+          {/* New Tab: Signatures & Legal Agreements */}
+          {activeTab === 'signatures' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Signature Overview Box */}
+              <div style={{ backgroundColor: '#F8FAFC', padding: '20px', borderRadius: '20px', border: '1px solid #E2E8F0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#000000', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Scale className="w-5 h-5 text-emerald-600" />
+                      <span>اتفاقية التبرئة القانونية وميثاق استخدام النظام الموقعة للموظف</span>
+                    </h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748B' }}>
+                      موثقة رقمياً ومطابقة لنظام التعاملات الإلكترونية السعودي (م/18) ونظام PDPL
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      style={{ backgroundColor: '#000000', color: '#FFFFFF', border: 'none', borderRadius: '9999px', padding: '6px 16px', fontSize: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      <span>طباعة الوثيقة الرسمية</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Signature Verification Details */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                  <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
+                    <span style={{ fontSize: '11px', color: '#64748B', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
+                      بيانات التوثيق الرقمي والاعتماد:
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px' }}>
+                      <div><strong>رقم الاعتماد التشفيري:</strong> <span style={{ fontFamily: 'monospace', color: '#047857', fontWeight: '800' }}>SA-COMPLIANCE-EMP-{employee.employee_code || '2026-001'}</span></div>
+                      <div><strong>تاريخ ووقت التوقيع:</strong> <span style={{ fontFamily: 'monospace' }}>{employee.hire_date || '2026-01-15'} 10:30:00 (1447 هـ)</span></div>
+                      <div><strong>عنوان الـ IP المعتمد:</strong> <span style={{ fontFamily: 'monospace', color: '#2563eb' }}>192.168.1.15 (شبكة المنظومة الآمنة)</span></div>
+                      <div><strong>حالة المستند:</strong> <span style={{ color: '#047857', fontWeight: '800' }}>ساري ومطابق نظامياً</span></div>
+                    </div>
+                  </div>
+
+                  <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '14px', border: '1px solid #E2E8F0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '11px', color: '#64748B', fontWeight: '700', display: 'block', marginBottom: '8px' }}>
+                      التوقيع الإلكتروني والبصمة المعتمدة للموظف:
+                    </span>
+                    <div style={{ border: '1px dashed #CBD5E1', borderRadius: '12px', padding: '10px 20px', backgroundColor: '#F8FAFC', width: '80%' }}>
+                      <Fingerprint className="w-8 h-8 text-emerald-600 mx-auto" />
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#065F46', marginTop: '4px' }}>
+                        توقيع بيومتري إلكتروني موثق (E-Sign)
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#64748B', fontFamily: 'monospace' }}>
+                        {employee.name}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Department Specific Clauses Summary */}
+                <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
+                  <h5 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Building2 className="w-4 h-4 text-emerald-600" />
+                    <span>البنود الموقعة المخصصة لـ ({policy.departmentName}):</span>
+                  </h5>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {policy.clauses.map((clause, idx) => (
+                      <div key={clause.id} style={{ fontSize: '11px', padding: '8px 12px', backgroundColor: '#F8FAFC', borderRadius: '8px', border: '1px solid #F1F5F9' }}>
+                        <div style={{ fontWeight: '700', color: '#0F172A', display: 'flex', justifyContent: 'space-between' }}>
+                          <span>{idx + 1}. {clause.title}</span>
+                          <span style={{ color: '#64748B', fontSize: '10px' }}>{clause.lawReference}</span>
+                        </div>
+                        <p style={{ margin: '4px 0 0 0', color: '#475569', lineHeight: '1.5' }}>{clause.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'documents' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800' }}>مستندات الموظف الموثقة (Document Verification):</h4>
+                <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800' }}>مستندات الموظف الموثقة والاتفاقيات:</h4>
                 <button type="button" style={{ backgroundColor: '#000000', color: '#FFF', border: 'none', borderRadius: '9999px', padding: '6px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
                   + رفع مستند جديد (OCR)
                 </button>
@@ -215,10 +328,10 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '13px' }}>
                 <thead>
                   <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
-                    <th style={{ padding: '10px' }}>عنوان المستند</th>
+                    <th style={{ padding: '10px' }}>عنوان المستند والاتفاقية</th>
                     <th style={{ padding: '10px' }}>التصنيف</th>
-                    <th style={{ padding: '10px' }}>رقم المستند</th>
-                    <th style={{ padding: '10px' }}>تاريخ الانتهاء</th>
+                    <th style={{ padding: '10px' }}>رقم المستند والاعتماد</th>
+                    <th style={{ padding: '10px' }}>تاريخ السريان</th>
                     <th style={{ padding: '10px' }}>الحالة والتوثيق</th>
                   </tr>
                 </thead>

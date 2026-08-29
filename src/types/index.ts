@@ -137,7 +137,7 @@ export interface ShelterItem {
 export interface EmployeeDocument {
   id: string;
   title: string;
-  category: 'هوية/إقامة' | 'جواز سفر' | 'عقد عمل' | 'مؤهل دراسي' | 'شهادة صحية' | 'ترخيص عمل' | 'بنكي' | 'أخرى';
+  category: 'هوية/إقامة' | 'جواز سفر' | 'عقد عمل' | 'مؤهل دراسي' | 'شهادة صحية' | 'ترخيص عمل' | 'بنكي' | 'اتفاقية قانونية' | 'أخرى';
   documentNumber: string;
   issueDate: string;
   expiryDate: string;
