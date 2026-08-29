@@ -91,6 +91,7 @@ const TEST_MODULES = [
   { id: 'users', name: 'إدارة المستخدمين والصلاحيات (RBAC)', category: 'Security' },
   { id: 'employee-promotions', name: 'ترقيات وسلّم درجات الموظفين والتقييم', category: 'HR' },
   { id: 'legal-compliance', name: 'الامتثال القانوني والتبرئة والتواقيع الرقمية', category: 'Legal' },
+  { id: 'tenders-boq', name: 'المناقصات وجداول الكميات والتوريدات (BOQ)', category: 'Procurement' },
   { id: 'settings', name: 'الإعدادات العامة والربط التقني', category: 'Settings' }
 ];
 

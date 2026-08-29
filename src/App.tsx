@@ -94,6 +94,7 @@ const SmaccAccountingPage = lazyWithRetry(() => import('./pages/SmaccAccountingP
 const SmaccInventoryAssetsPage = lazyWithRetry(() => import('./pages/SmaccInventoryAssetsPage').then(m => ({ default: m.SmaccInventoryAssetsPage })));
 const SmaccEmployeesSettingsPage = lazyWithRetry(() => import('./pages/SmaccEmployeesSettingsPage').then(m => ({ default: m.SmaccEmployeesSettingsPage })));
 const LegalCompliancePage = lazyWithRetry(() => import('./pages/LegalCompliancePage').then(m => ({ default: m.LegalCompliancePage })));
+const TendersBOQPage = lazyWithRetry(() => import('./pages/TendersBOQPage').then(m => ({ default: m.TendersBOQPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -455,6 +456,13 @@ const MainContent: React.FC = () => {
       case 'legal-disclaimers':
       case 'legal-policies':
         return <LegalCompliancePage />;
+
+      case 'tenders-boq':
+      case 'tenders':
+      case 'boq':
+      case 'kas-tenders':
+      case 'boq-analytics':
+        return <TendersBOQPage />;
 
       case 'custodies':
         return <CustodiesPage />;

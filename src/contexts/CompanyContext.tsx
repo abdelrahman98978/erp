@@ -133,9 +133,35 @@ export const COMPANIES_LIST: CompanyEntity[] = [
       reportHeaderTemplate: 'دار الرواد للاستقدام - سجل تجاري 1010456789',
     },
   },
+  {
+    id: 'KAS',
+    code: 'KAS',
+    name: 'شركة كاس للتجارة',
+    nameEn: 'KAS Trading Company',
+    logo: '/logos/kas.png',
+    taxNumber: '310567890100003',
+    crNumber: '1010567890',
+    address: 'الرياض - طريق الملك فهد - برج كاس التجاري',
+    phone: '0114995566',
+    email: 'info@kas.com.sa',
+    branchesCount: 3,
+    employeesCount: 85,
+    activeOrdersCount: 210,
+    revenueYTD: 5400000,
+    vatRate: 0.15,
+    currency: 'ر.س',
+    branding: {
+      primaryColor: '#d97706',
+      secondaryColor: '#b45309',
+      accentColor: '#f59e0b',
+      logoUrl: '/logos/kas.png',
+      headerLogoUrl: '/logos/kas.png',
+      reportHeaderTemplate: 'شركة كاس للتجارة - سجل تجاري 1010567890',
+    },
+  },
 ];
 
-// Helper to normalize legacy IDs (masi, yaqoot, topaz, ruwad) to official codes
+// Helper to normalize legacy IDs (masi, yaqoot, topaz, ruwad, kas) to official codes
 export const normalizeCompanyId = (id: CompanyId | string): CompanyId => {
   switch (id) {
     case 'masi':
@@ -146,6 +172,8 @@ export const normalizeCompanyId = (id: CompanyId | string): CompanyId => {
       return 'TOP';
     case 'ruwad':
       return 'DAR';
+    case 'kas':
+      return 'KAS';
     default:
       return id as CompanyId;
   }

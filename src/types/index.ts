@@ -1,6 +1,6 @@
 /* TypeScript Types for Enterprise ERP - Khalid Al-Sulaim Group */
 
-export type CompanyId = 'all' | 'SAF' | 'YAQ' | 'TOP' | 'DAR' | 'masi' | 'yaqoot' | 'topaz' | 'ruwad';
+export type CompanyId = 'all' | 'SAF' | 'YAQ' | 'TOP' | 'DAR' | 'KAS' | 'masi' | 'yaqoot' | 'topaz' | 'ruwad' | 'kas';
 
 export interface CompanyBranding {
   primaryColor: string;
@@ -14,7 +14,7 @@ export interface CompanyBranding {
 
 export interface CompanyEntity {
   id: CompanyId;
-  code: 'SAF' | 'YAQ' | 'TOP' | 'DAR' | 'GRP';
+  code: 'SAF' | 'YAQ' | 'TOP' | 'DAR' | 'KAS' | 'GRP';
   name: string;
   nameEn: string;
   logo: string;

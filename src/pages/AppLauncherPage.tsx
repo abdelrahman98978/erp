@@ -80,6 +80,18 @@ const ALL_SYSTEM_APPS: AppTile[] = [
     metricBadge: '34 عقد إيجار'
   },
   {
+    id: 'tenders-boq',
+    titleKey: 'tenders-boq',
+    defaultTitle: 'المناقصات وجداول الكميات (BOQ)',
+    subKey: 'tendersBoqSub',
+    defaultSubtitle: 'محاكاة إكسيل الذكية، التسعير، الضريبة 15%، التفقيط التلقائي، ومنافسات كاس للتجارة.',
+    icon: Building2,
+    href: 'tenders-boq',
+    category: 'operations',
+    categoryLabel: 'المناقصات والتوريدات',
+    metricBadge: 'شركة كاس للتجارة'
+  },
+  {
     id: 'rent-packages',
     titleKey: 'rent-packages',
     defaultTitle: 'باقات وأسعار التأجير',

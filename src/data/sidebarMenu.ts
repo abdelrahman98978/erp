@@ -240,6 +240,7 @@ export const SIDEBAR_MENU: NavItem[] = [
     children: [
       { id: 'group-command-center', title: 'مركز القيادة الموحد للمجموعة', icon: 'Radio', href: 'group-command-center' },
       { id: 'company-selector', title: 'واجهة اختيار الشركات الموحدة', icon: 'Building2', href: 'company-selector' },
+      { id: 'tenders-boq', title: 'المناقصات وجداول الكميات (BOQ)', icon: 'Building2', href: 'tenders-boq' },
       { id: 'admin-dashboard', title: 'لوحة تحكم الآدمن وتدقيق الأمان', icon: 'ShieldAlert', href: 'admin-dashboard' },
       { id: 'ats-pipeline', title: 'نظام ATS وتتبع المتقدمين والتوظيف', icon: 'GitPullRequest', href: 'ats-pipeline' },
       { id: 'external-offices', title: 'المكاتب الخارجية والوكلاء الدوليون', icon: 'Globe', href: 'external-offices' },
