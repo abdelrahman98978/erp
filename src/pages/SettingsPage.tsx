@@ -4,10 +4,30 @@ import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
   Sliders, Fingerprint, Shield, Building2, Phone, Image, Link, 
-  Key, Search, MessageSquare, FileText, Check, Save, ExternalLink
+  Key, Search, MessageSquare, FileText, Check, Save, ExternalLink,
+  Plus, Trash2, Globe, ShieldAlert, Sparkles, RefreshCw, Eye
 } from 'lucide-react';
 
+interface QuickLinkItem {
+  id: string;
+  name: string;
+  url: string;
+  category: string;
+  status: 'مفعل' | 'معطل';
+}
+
+const DEFAULT_QUICK_LINKS: QuickLinkItem[] = [
+  { id: 'ql-1', name: 'منصة مساند برو (Musaned Pros)', url: 'https://pros.musaned.com.sa/login', category: 'الاستقدام والعمالة', status: 'مفعل' },
+  { id: 'ql-2', name: 'منصة مساند توثيق العقود', url: 'https://tawtheeq.musaned.com.sa/', category: 'الاستقدام والعمالة', status: 'مفعل' },
+  { id: 'ql-3', name: 'اللايف شات والدعم (Zoho SalesIQ)', url: 'https://salesiq.zoho.sa/platinumeastern/liveview', category: 'خدمة العملاء', status: 'مفعل' },
+  { id: 'ql-4', name: 'منصة إنجاز والتأشيرات الخارجية', url: 'https://visa.mofa.gov.sa/enjaz/getvisainformation/', category: 'الربط الحكومي', status: 'مفعل' },
+  { id: 'ql-5', name: 'بوابة تأشير (KSA Visa Portal)', url: 'https://ksavisa.sa/', category: 'الربط الحكومي', status: 'مفعل' },
+  { id: 'ql-6', name: 'هيئة الزكاة والضريبة والجمارك (ZATCA)', url: 'https://zatca.gov.sa/', category: 'المالية والضرائب', status: 'مفعل' },
+  { id: 'ql-7', name: 'منصة قوى (Qiwa Platform)', url: 'https://qiwa.sa/', category: 'الموارد البشرية', status: 'مفعل' }
+];
+
 export const SettingsPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const storeActiveTab = useAppStore(state => state.activeTab);
 
   const getMappedSection = (tabKey: string): string => {
@@ -29,32 +49,165 @@ export const SettingsPage: React.FC = () => {
     setActiveSection(getMappedSection(storeActiveTab));
   }, [storeActiveTab]);
 
+  // Section 1: Security & 2FA State
   const [require2FAAdmin, setRequire2FAAdmin] = useState(true);
   const [allowOptional2FA, setAllowOptional2FA] = useState(true);
   const [allowBiometrics, setAllowBiometrics] = useState(true);
   const [allowFaceId, setAllowFaceId] = useState(true);
   const [otpExpiryMinutes, setOtpExpiryMinutes] = useState(5);
+  const [defaultOtpChannel, setDefaultOtpChannel] = useState('Google Authenticator');
+
+  // Section 2: RBAC Matrix State
+  const [rolesPermissions, setRolesPermissions] = useState([
+    { role: 'مدير النظام العام (Super Admin)', r: true, c: true, e: true, d: true, a: true, x: true, locked: true },
+    { role: 'مدير الفرع (Branch Manager)', r: true, c: true, e: true, d: false, a: true, x: true, locked: false },
+    { role: 'المحاسب المالي (Senior Accountant)', r: true, c: true, e: true, d: false, a: true, x: true, locked: false },
+    { role: 'أخصائي الموارد البشرية (HR Specialist)', r: true, c: true, e: true, d: false, a: false, x: true, locked: false },
+    { role: 'مشرف مركز الإيواء (Shelter Supervisor)', r: true, c: true, e: true, d: false, a: false, x: false, locked: false },
+    { role: 'مسؤول المبيعات والعملاء (Sales Agent)', r: true, c: true, e: false, d: false, a: false, x: false, locked: false },
+  ]);
+
+  // Section 3: General Information State
+  const [siteNameAr, setSiteNameAr] = useState('مجموعة خالد السليم للاستقدام والتشغيل');
+  const [siteNameEn, setSiteNameEn] = useState('MAJMOAT KHALID ALSALIM ERP');
+  const [crNumber, setCrNumber] = useState('1010123456');
+  const [taxNumber, setTaxNumber] = useState('310123456700003');
+  const [nationalAddress, setNationalAddress] = useState('اليرموك، طريق الصحابة، الرياض 13251، المملكة العربية السعودية');
+  const [officialEmail, setOfficialEmail] = useState('info@alsalim-group.sa');
+  const [supportPhone, setSupportPhone] = useState('+966594249640');
+  const [portalSlogan, setPortalSlogan] = useState('المنظومة السحابية الموحدة لإدارة الاستقدام والتشغيل وخدمات الأفراد وقطاع الأعمال');
+
+  // Section 4: Contacts & Social Media State
+  const [whatsappNumber, setWhatsappNumber] = useState('+966594249640');
+  const [supportHotline, setSupportHotline] = useState('920000000');
+  const [twitterUrl, setTwitterUrl] = useState('https://x.com/alsalim_group');
+  const [instagramUrl, setInstagramUrl] = useState('https://instagram.com/alsalim_group');
+  const [linkedinUrl, setLinkedinUrl] = useState('https://linkedin.com/company/alsalim-group');
+  const [tiktokUrl, setTiktokUrl] = useState('https://tiktok.com/@alsalim_group');
+  const [googleMapsEmbedUrl, setGoogleMapsEmbedUrl] = useState('https://maps.google.com/?q=24.774265,46.738586');
+
+  // Section 5: Media & Branding State
+  const [logoLightUrl, setLogoLightUrl] = useState('/logo.png');
+  const [logoDarkUrl, setLogoDarkUrl] = useState('/logo.png');
+  const [faviconUrl, setFaviconUrl] = useState('/logo.png');
+  const [watermarkText, setWatermarkText] = useState('مجموعة خالد السليم - نسخة إلكترونية معتمدة');
+  const [brandColorPrimary, setBrandColorPrimary] = useState('#000000');
+  const [brandColorAccent, setBrandColorAccent] = useState('#10B981');
+
+  // Section 6: Quick Links State
+  const [quickLinks, setQuickLinks] = useState<QuickLinkItem[]>(DEFAULT_QUICK_LINKS);
+  const [newLinkName, setNewLinkName] = useState('');
+  const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [newLinkCategory, setNewLinkCategory] = useState('الاستقدام والعمالة');
+
+  // Section 7: External Login Config State
+  const [allowOtpLogin, setAllowOtpLogin] = useState(true);
+  const [allowPasswordLogin, setAllowPasswordLogin] = useState(true);
+  const [allowNafathSso, setAllowNafathSso] = useState(true);
+  const [sessionTimeoutMinutes, setSessionTimeoutMinutes] = useState(30);
+  const [allowGuestBrowsing, setAllowGuestBrowsing] = useState(true);
+
+  // Section 8: SEO & Analytics State
+  const [metaTitle, setMetaTitle] = useState('مجموعة خالد السليم للاستقدام والتشغيل | المنظومة الإدارية السحابية الموحدة');
+  const [metaDescription, setMetaDescription] = useState('بوابة متكاملة لإدارة عقود الاستقدام، التأجير المرن، حماية الأجور WPS، الفاتورة الإلكترونية ZATCA، وإدارة الفروع بالمملكة.');
+  const [metaKeywords, setMetaKeywords] = useState('استقدام, مساند, تأجير عمالة, خادمات, سائق خاص, زاتكا, الموارد البشرية');
+  const [ga4MeasurementId, setGa4MeasurementId] = useState('G-ALSALIM2026');
+  const [gtmId, setGtmId] = useState('GTM-KSA9921');
+  const [metaPixelId, setMetaPixelId] = useState('FB-PIXEL-2026-90');
+
+  // Section 9: Zoho SalesIQ Live Chat State
+  const [enableSalesIq, setEnableSalesIq] = useState(true);
+  const [zohoSalesIqCode, setZohoSalesIqCode] = useState('<script type="text/javascript" id="zsiqchat">var $zoho=$zoho || {};$zoho.salesiq = $zoho.salesiq || {widgetcode: "siq987alsalim2026", values:{},ready:function(){}};</script>');
+  const [welcomeMessage, setWelcomeMessage] = useState('مرحباً بك في مجموعة خالد السليم! كيف يمكننا مساعدتك في اختيار السيرة الذاتية أو استفسارات العقود؟');
+  const [chatDepartment, setChatDepartment] = useState('قسم خدمة العملاء والمبيعات');
+
+  // Section 10: Policies, Warranties & Stipulations State
+  const [musanedWarrantyTerms, setMusanedWarrantyTerms] = useState(`1. تضمن المجموعة العاملة المنزلية لمدة 90 يوماً من تاريخ استلام العميل حسب اللائحة التنفيذية لمنصة مساند.
+2. يشمل الضمان حالات (رفض العمل، المرض، الحمل، أو هروب العاملة) دون تحميل العميل أي رسوم إضافية.
+3. يتم تأمين بديل مماثل في المواصفات أو إعادة المبالغ المستحقة حسب تسوية منصة مساند الرقمية خلال المدة القانونية.`);
+  const [rentalGuaranteeTerms, setRentalGuaranteeTerms] = useState(`1. عقود التأجير والتشغيل المرن مشمولة بالاستبدال الفوري خلال 48 ساعة في حال عدم التوافق.
+2. تتحمل الشركة كافة الالتزامات النظامية (التأمين الطبي، تذاكر السفر، والإقامة النظامية).`);
+  const [privacyPolicyText, setPrivacyPolicyText] = useState(`نلتزم بحماية بيانات العملاء والمستفيدين طبقاً لنظام حماية البيانات الشخصية الصادر بالمرسوم الملكي في المملكة العربية السعودية.`);
 
   const SECTIONS = [
     { id: 'security-2fa', name: 'أمان المصادقة والبصمة البيومترية', icon: Fingerprint },
     { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: Shield },
-    { id: 'general', name: 'البيانات الأساسية', icon: Building2 },
-    { id: 'contacts', name: 'روابط التواصل والموقع', icon: Phone },
-    { id: 'media', name: 'الهوية والوسائط والشعار', icon: Image },
+    { id: 'general', name: 'البيانات الأساسية والهوية الرسمية', icon: Building2 },
+    { id: 'contacts', name: 'روابط التواصل والموقع الجغرافي', icon: Phone },
+    { id: 'media', name: 'الشعارات والوسائط والعلامة المائية', icon: Image },
     { id: 'quick-links', name: 'إدارة الروابط السريعة (Quick Links)', icon: Link },
-    { id: 'login-config', name: 'تسجيل دخول الموقع الخارجي', icon: Key },
-    { id: 'seo', name: 'إعدادات SEO & Tags', icon: Search },
-    { id: 'zoho', name: 'إعدادات Zoho SalesIQ Live Chat', icon: MessageSquare },
-    { id: 'stipulations', name: 'السياسات والشروط والضمان', icon: FileText }
+    { id: 'login-config', name: 'بوابة تسجيل دخول العملاء والموقع', icon: Key },
+    { id: 'seo', name: 'تهيئة محركات البحث (SEO & Analytics)', icon: Search },
+    { id: 'zoho', name: 'اللايف شات المباشر (Zoho SalesIQ)', icon: MessageSquare },
+    { id: 'stipulations', name: 'السياسات والشروط وضمان مساند', icon: FileText }
   ];
 
+  // Save full settings payload to store
   const handleSaveSettings = async () => {
+    const fullPayload = {
+      security2fa: { require2FAAdmin, allowOptional2FA, allowBiometrics, allowFaceId, otpExpiryMinutes, defaultOtpChannel },
+      general: { siteNameAr, siteNameEn, crNumber, taxNumber, nationalAddress, officialEmail, supportPhone, portalSlogan },
+      contacts: { whatsappNumber, supportHotline, twitterUrl, instagramUrl, linkedinUrl, tiktokUrl, googleMapsEmbedUrl },
+      media: { logoLightUrl, logoDarkUrl, faviconUrl, watermarkText, brandColorPrimary, brandColorAccent },
+      quickLinks,
+      loginConfig: { allowOtpLogin, allowPasswordLogin, allowNafathSso, sessionTimeoutMinutes, allowGuestBrowsing },
+      seo: { metaTitle, metaDescription, metaKeywords, ga4MeasurementId, gtmId, metaPixelId },
+      zoho: { enableSalesIq, zohoSalesIqCode, welcomeMessage, chatDepartment },
+      stipulations: { musanedWarrantyTerms, rentalGuaranteeTerms, privacyPolicyText },
+      updatedAt: new Date().toISOString()
+    };
+
     await realErpDataStore.addRecord('system_settings', {
-      id: String(Date.now()),
-      setting_key: 'SECURITY_2FA_CONFIG',
-      setting_value: JSON.stringify({ require2FAAdmin, allowOptional2FA, allowBiometrics, allowFaceId, otpExpiryMinutes }),
-      description: 'إعدادات المصادقة الثنائية والبصمة البيومترية'
+      id: `SETTING-${Date.now()}`,
+      setting_key: 'FULL_ENTERPRISE_SETTINGS',
+      setting_value: JSON.stringify(fullPayload),
+      description: 'إعدادات النظام الشاملة ومحتوى المنصة والأمان'
     });
+
+    addNotification({
+      title: 'حفظ الإعدادات بنجاح',
+      message: 'تم حفظ وتطبيق كافة إعدادات النظام، ومصفوفة الصلاحيات، ومحتوى المنصة بنجاح.',
+      type: 'success',
+    });
+  };
+
+  const handleAddQuickLink = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newLinkName || !newLinkUrl) return;
+
+    const newLink: QuickLinkItem = {
+      id: `ql-${Date.now()}`,
+      name: newLinkName,
+      url: newLinkUrl,
+      category: newLinkCategory,
+      status: 'مفعل'
+    };
+
+    setQuickLinks([...quickLinks, newLink]);
+    setNewLinkName('');
+    setNewLinkUrl('');
+    addNotification({
+      title: 'إضافة رابط سريع',
+      message: `تمت إضافة الرابط (${newLinkName}) إلى قائمة الروابط الحكومية والخدمية.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteQuickLink = (id: string) => {
+    const target = quickLinks.find(q => q.id === id);
+    setQuickLinks(quickLinks.filter(q => q.id !== id));
+    addNotification({
+      title: 'حذف الرابط السريع',
+      message: `تم حذف الرابط (${target?.name || id}) بنجاح.`,
+      type: 'error',
+    });
+  };
+
+  const handleToggleRolePerm = (roleIndex: number, field: 'r' | 'c' | 'e' | 'd' | 'a' | 'x') => {
+    const updated = [...rolesPermissions];
+    if (updated[roleIndex].locked) return;
+    updated[roleIndex][field] = !updated[roleIndex][field];
+    setRolesPermissions(updated);
   };
 
   return (
@@ -139,17 +292,24 @@ export const SettingsPage: React.FC = () => {
 
         {/* Right Side Settings Form View */}
         <div className="card-pricing md:col-span-3" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+          
+          {/* 1. Security & 2FA */}
           {activeSection === 'security-2fa' && (
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
-                إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
-              </h3>
-              <p className="text-xs text-zinc-500">
-                تعديل وتحديد سياسات الأمان والحماية لحسابات مديري النظام والموظفين بالفروع.
-              </p>
+            <div className="space-y-5">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-black m-0">
+                    إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    تعديل وتحديد سياسات الأمان والحماية لحسابات مديري النظام والموظفين بالفروع.
+                  </p>
+                </div>
+                <span className="pill-tag-mint text-[11px]">Zero-Trust Security</span>
+              </div>
 
               <div className="space-y-3">
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
                   <input
                     type="checkbox"
                     checked={require2FAAdmin}
@@ -166,7 +326,7 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
                   <input
                     type="checkbox"
                     checked={allowOptional2FA}
@@ -183,7 +343,7 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 cursor-pointer">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 cursor-pointer hover:border-emerald-500 transition-colors">
                   <input
                     type="checkbox"
                     checked={allowBiometrics}
@@ -201,7 +361,7 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
                   <input
                     type="checkbox"
                     checked={allowFaceId}
@@ -222,64 +382,119 @@ export const SettingsPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">صلاحية رمز التحقق OTP بالدقائق</label>
-                  <select className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" value={otpExpiryMinutes} onChange={e => setOtpExpiryMinutes(Number(e.target.value))}>
+                  <select 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    value={otpExpiryMinutes} 
+                    onChange={e => setOtpExpiryMinutes(Number(e.target.value))}
+                  >
                     <option value={3}>3 دقائق</option>
-                    <option value={5}>5 دقائق (مستحسن)</option>
+                    <option value={5}>5 دقائق (مستحسن للأمان)</option>
                     <option value={10}>10 دقائق</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">وسيلة الإرسال الافتراضية للرموز</label>
-                  <select className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="Google Authenticator">
-                    <option>تطبيق Google Authenticator (TOTP)</option>
-                    <option>رسالة SMS نصية قصيرة</option>
-                    <option>إشعار عبر الواتساب الرسمي</option>
+                  <select 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    value={defaultOtpChannel}
+                    onChange={e => setDefaultOtpChannel(e.target.value)}
+                  >
+                    <option value="Google Authenticator">تطبيق Google Authenticator (TOTP)</option>
+                    <option value="SMS">رسالة SMS نصية قصيرة</option>
+                    <option value="WhatsApp">إشعار عبر الواتساب الرسمي</option>
                   </select>
                 </div>
               </div>
             </div>
           )}
 
+          {/* 2. RBAC Matrix */}
           {activeSection === 'rbac-matrix' && (
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
-                مصفوفة الصلاحيات والأدوار (Role-Based Access Control - RBAC Matrix)
-              </h3>
-              <p className="text-xs text-zinc-500">
-                تحديد دقيق لصلاحيات القراءة، الإنشاء، التعديل، الحذف، والاعتماد المالي لكل دور وظيفي.
-              </p>
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-black m-0">
+                    مصفوفة الصلاحيات والأدوار (Role-Based Access Control - RBAC Matrix)
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    تحديد دقيق لصلاحيات القراءة، الإنشاء، التعديل، الحذف، والاعتماد المالي لكل دور وظيفي.
+                  </p>
+                </div>
+                <span className="pill-tag-shade text-[11px]">محدثة 2026</span>
+              </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-right text-xs text-zinc-700">
                   <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                     <tr>
                       <th className="p-3.5">الدور الوظيفي (Role)</th>
-                      <th className="p-3.5 text-center">عرض</th>
-                      <th className="p-3.5 text-center">إنشاء</th>
-                      <th className="p-3.5 text-center">تعديل</th>
-                      <th className="p-3.5 text-center">حذف</th>
+                      <th className="p-3.5 text-center">عرض (Read)</th>
+                      <th className="p-3.5 text-center">إنشاء (Create)</th>
+                      <th className="p-3.5 text-center">تعديل (Edit)</th>
+                      <th className="p-3.5 text-center">حذف (Delete)</th>
                       <th className="p-3.5 text-center">اعتماد مالي</th>
-                      <th className="p-3.5 text-center">تصدير</th>
+                      <th className="p-3.5 text-center">تصدير (Export)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
-                    {[
-                      { role: 'مدير النظام العام (Super Admin)', r: true, c: true, e: true, d: true, a: true, x: true, locked: true },
-                      { role: 'مدير الفرع (Branch Manager)', r: true, c: true, e: true, d: false, a: true, x: true, locked: false },
-                      { role: 'المحاسب المالي (Senior Accountant)', r: true, c: true, e: true, d: false, a: true, x: true, locked: false },
-                      { role: 'أخصائي الموارد البشرية (HR Specialist)', r: true, c: true, e: true, d: false, a: false, x: true, locked: false },
-                      { role: 'مشرف مركز الإيواء (Shelter Supervisor)', r: true, c: true, e: true, d: false, a: false, x: false, locked: false },
-                      { role: 'مسؤول المبيعات (Sales Agent)', r: true, c: true, e: false, d: false, a: false, x: false, locked: false },
-                    ].map((row, idx) => (
+                    {rolesPermissions.map((row, idx) => (
                       <tr key={idx} className="hover:bg-zinc-50">
                         <td className="p-3.5 font-bold text-black">{row.role}</td>
-                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.r} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
-                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.c} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
-                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.e} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
-                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.d} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
-                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.a} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
-                        <td className="p-3.5 text-center"><input type="checkbox" defaultChecked={row.x} disabled={row.locked} className="rounded text-black focus:ring-0" /></td>
+                        <td className="p-3.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={row.r} 
+                            disabled={row.locked} 
+                            onChange={() => handleToggleRolePerm(idx, 'r')}
+                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                          />
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={row.c} 
+                            disabled={row.locked} 
+                            onChange={() => handleToggleRolePerm(idx, 'c')}
+                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                          />
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={row.e} 
+                            disabled={row.locked} 
+                            onChange={() => handleToggleRolePerm(idx, 'e')}
+                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                          />
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={row.d} 
+                            disabled={row.locked} 
+                            onChange={() => handleToggleRolePerm(idx, 'd')}
+                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                          />
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={row.a} 
+                            disabled={row.locked} 
+                            onChange={() => handleToggleRolePerm(idx, 'a')}
+                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                          />
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <input 
+                            type="checkbox" 
+                            checked={row.x} 
+                            disabled={row.locked} 
+                            onChange={() => handleToggleRolePerm(idx, 'x')}
+                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -288,66 +503,318 @@ export const SettingsPage: React.FC = () => {
             </div>
           )}
 
+          {/* 3. General Information */}
           {activeSection === 'general' && (
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
-                1. البيانات الأساسية واسم المنصة
-              </h3>
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">البيانات الأساسية للمنظومة والهوية الرسمية</h3>
+                <p className="text-xs text-zinc-500 mt-1">تعديل الأسماء الرسمية، أرقام السجلات والتراخيص، والعنوان المعتمد للتقارير والسندات.</p>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموقع بالعربية *</label>
-                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="مجموعة خالد السليم للاستقدام والتشغيل" />
+                  <input 
+                    type="text" 
+                    value={siteNameAr} 
+                    onChange={e => setSiteNameAr(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموقع بالإنجليزية *</label>
-                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="MAJMOAT KHALID ALSALIM ERP" />
+                  <input 
+                    type="text" 
+                    value={siteNameEn} 
+                    onChange={e => setSiteNameEn(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-sans focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم السجل التجاري الرئيسي (CR)</label>
+                  <input 
+                    type="text" 
+                    value={crNumber} 
+                    onChange={e => setCrNumber(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الرقم الضريبي (VAT Number)</label>
+                  <input 
+                    type="text" 
+                    value={taxNumber} 
+                    onChange={e => setTaxNumber(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">العنوان الوطني والرسمي *</label>
-                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="اليرموك، الرياض 13251، المملكة العربية السعودية" />
+                  <input 
+                    type="text" 
+                    value={nationalAddress} 
+                    onChange={e => setNationalAddress(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">البريد الإلكتروني الرسمي</label>
-                  <input type="email" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="info@alsalim-group.sa" />
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">البريد الإلكتروني الرسمي للمراسلات</label>
+                  <input 
+                    type="email" 
+                    value={officialEmail} 
+                    onChange={e => setOfficialEmail(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الهاتف الرئيسي</label>
-                  <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" defaultValue="+966594249640" />
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الهاتف وخدمة العملاء</label>
+                  <input 
+                    type="text" 
+                    value={supportPhone} 
+                    onChange={e => setSupportPhone(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">شعار المنظومة / الشعار الترويجي (Slogan)</label>
+                  <input 
+                    type="text" 
+                    value={portalSlogan} 
+                    onChange={e => setPortalSlogan(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
                 </div>
               </div>
             </div>
           )}
 
-          {activeSection === 'quick-links' && (
+          {/* 4. Contacts & Social */}
+          {activeSection === 'contacts' && (
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
-                4. إعدادات الروابط السريعة (Quick Links Bar)
-              </h3>
-              <p className="text-xs text-zinc-500">
-                الروابط الظاهرة في الشريط العلوي للانتقال المباشر للمنصات الحكومية والخدمية
-              </p>
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">قنوات التواصل والشبكات الاجتماعية والموقع الجغرافي</h3>
+                <p className="text-xs text-zinc-500 mt-1">تحديد روابط السوشيال ميديا وربط الخريطة الحية للمقر الرئيسي وفروعه.</p>
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الواتساب الرسمي (WhatsApp API)</label>
+                  <input 
+                    type="text" 
+                    value={whatsappNumber} 
+                    onChange={e => setWhatsappNumber(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الرقم الموحد المجاني (Hotline)</label>
+                  <input 
+                    type="text" 
+                    value={supportHotline} 
+                    onChange={e => setSupportHotline(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">حساب منصة إكس (Twitter / X)</label>
+                  <input 
+                    type="url" 
+                    value={twitterUrl} 
+                    onChange={e => setTwitterUrl(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">حساب إنستغرام (Instagram)</label>
+                  <input 
+                    type="url" 
+                    value={instagramUrl} 
+                    onChange={e => setInstagramUrl(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">حساب لينكد إن (LinkedIn)</label>
+                  <input 
+                    type="url" 
+                    value={linkedinUrl} 
+                    onChange={e => setLinkedinUrl(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">حساب تيك توك (TikTok)</label>
+                  <input 
+                    type="url" 
+                    value={tiktokUrl} 
+                    onChange={e => setTiktokUrl(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رابط موقع المقر في خرائط جوجل (Google Maps Link)</label>
+                  <input 
+                    type="url" 
+                    value={googleMapsEmbedUrl} 
+                    onChange={e => setGoogleMapsEmbedUrl(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 5. Media & Branding */}
+          {activeSection === 'media' && (
+            <div className="space-y-4">
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">الشعارات والهوية البصرية والعلامة المائية</h3>
+                <p className="text-xs text-zinc-500 mt-1">تحديد مسارات الشعارات المعتمدة للمنصة، الأيقونات المصغرة، ونصوص الختم والطباعة.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-white p-2 border border-zinc-200 flex items-center justify-center mb-3 shadow-sm">
+                    <img src={logoLightUrl} alt="Logo Light" className="max-h-full max-w-full object-contain" />
+                  </div>
+                  <label className="text-xs font-bold text-black mb-1">شعار المنظومة الرئيسي</label>
+                  <input 
+                    type="text" 
+                    value={logoLightUrl} 
+                    onChange={e => setLogoLightUrl(e.target.value)} 
+                    className="w-full bg-white border border-zinc-200 rounded-xl py-1.5 px-2 text-[11px] text-zinc-700 text-center font-mono mt-2" 
+                  />
+                </div>
+
+                <div className="p-4 rounded-2xl border border-zinc-200 bg-zinc-900 text-white flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-zinc-800 p-2 border border-zinc-700 flex items-center justify-center mb-3 shadow-sm">
+                    <img src={logoDarkUrl} alt="Logo Dark" className="max-h-full max-w-full object-contain" />
+                  </div>
+                  <label className="text-xs font-bold text-white mb-1">شعار النمط الليلي (Dark Mode)</label>
+                  <input 
+                    type="text" 
+                    value={logoDarkUrl} 
+                    onChange={e => setLogoDarkUrl(e.target.value)} 
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-xl py-1.5 px-2 text-[11px] text-white text-center font-mono mt-2" 
+                  />
+                </div>
+
+                <div className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center text-center">
+                  <div className="w-12 h-12 rounded-xl bg-white p-2 border border-zinc-200 flex items-center justify-center mb-3 shadow-sm">
+                    <img src={faviconUrl} alt="Favicon" className="max-h-full max-w-full object-contain" />
+                  </div>
+                  <label className="text-xs font-bold text-black mb-1">أيقونة المتصفح (Favicon)</label>
+                  <input 
+                    type="text" 
+                    value={faviconUrl} 
+                    onChange={e => setFaviconUrl(e.target.value)} 
+                    className="w-full bg-white border border-zinc-200 rounded-xl py-1.5 px-2 text-[11px] text-zinc-700 text-center font-mono mt-2" 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">العلامة المائية المطبوعة على العقود والسندات</label>
+                  <input 
+                    type="text" 
+                    value={watermarkText} 
+                    onChange={e => setWatermarkText(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اللون الرئيسي للعلامة التجارية (Primary Hex Color)</label>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="color" 
+                      value={brandColorPrimary} 
+                      onChange={e => setBrandColorPrimary(e.target.value)} 
+                      className="w-10 h-9 p-0.5 rounded-xl border border-zinc-200 cursor-pointer" 
+                    />
+                    <input 
+                      type="text" 
+                      value={brandColorPrimary} 
+                      onChange={e => setBrandColorPrimary(e.target.value)} 
+                      className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 6. Quick Links */}
+          {activeSection === 'quick-links' && (
+            <div className="space-y-5">
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">إدارة الروابط السريعة الحكومية والخدمية (Quick Links Bar)</h3>
+                <p className="text-xs text-zinc-500 mt-1">الروابط المباشرة الظاهرة في القائمة والشريط العلوي لتسريع وصول الموظفين للبوابات الحكومية.</p>
+              </div>
+
+              {/* Add Quick Link Form */}
+              <form onSubmit={handleAddQuickLink} className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الرابط *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="مثال: مساند توثيق"
+                    value={newLinkName}
+                    onChange={e => setNewLinkName(e.target.value)}
+                    className="w-full bg-white border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الرابط المباشر (URL) *</label>
+                  <input 
+                    type="url" 
+                    required 
+                    placeholder="https://example.com"
+                    value={newLinkUrl}
+                    onChange={e => setNewLinkUrl(e.target.value)}
+                    className="w-full bg-white border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                  />
+                </div>
+                <button type="submit" className="button-primary-pill w-full flex items-center justify-center gap-1 text-xs py-2">
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>إضافة رابط</span>
+                </button>
+              </form>
+
+              {/* Quick Links Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-right text-xs text-zinc-700">
                   <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                     <tr>
-                      <th className="p-3.5">اسم الرابط Quick Link</th>
-                      <th className="p-3.5">الرابط المباشر URL</th>
-                      <th className="p-3.5">الحالة</th>
+                      <th className="p-3.5">اسم البوابة / الرابط</th>
+                      <th className="p-3.5">الرابط المباشر</th>
+                      <th className="p-3.5">التصنيف</th>
+                      <th className="p-3.5 text-center">الحالة</th>
+                      <th className="p-3.5 text-center">إجراءات</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
-                    {[
-                      { name: 'مساند برو', url: 'https://pros.musaned.com.sa/login' },
-                      { name: 'مساند توثيق', url: 'https://tawtheeq.musaned.com.sa/' },
-                      { name: 'اللايف شات (Zoho)', url: 'https://salesiq.zoho.sa/platinumeastern/liveview' },
-                      { name: 'منصة إنجاز', url: 'https://visa.mofa.gov.sa/enjaz/getvisainformation/' },
-                      { name: 'منصة تأشير', url: 'https://ksavisa.sa/' },
-                    ].map((link, idx) => (
-                      <tr key={idx} className="hover:bg-zinc-50">
+                    {quickLinks.map((link) => (
+                      <tr key={link.id} className="hover:bg-zinc-50">
                         <td className="p-3.5 font-bold text-black">{link.name}</td>
-                        <td className="p-3.5 font-mono text-zinc-500 text-[11px]">{link.url}</td>
-                        <td className="p-3.5"><Badge text="مفعل" type="success" /></td>
+                        <td className="p-3.5 font-mono text-zinc-500 text-[11px]">
+                          <a href={link.url} target="_blank" rel="noreferrer" className="text-emerald-700 hover:underline flex items-center gap-1">
+                            <span>{link.url}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </td>
+                        <td className="p-3.5 text-zinc-500">{link.category}</td>
+                        <td className="p-3.5 text-center"><Badge text={link.status} type="success" /></td>
+                        <td className="p-3.5 text-center">
+                          <button 
+                            onClick={() => handleDeleteQuickLink(link.id)}
+                            className="p-1 rounded-full text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                            title="حذف الرابط"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -356,20 +823,252 @@ export const SettingsPage: React.FC = () => {
             </div>
           )}
 
-          {activeSection !== 'security-2fa' && activeSection !== 'rbac-matrix' && activeSection !== 'general' && activeSection !== 'quick-links' && (
+          {/* 7. Client Portal Login Config */}
+          {activeSection === 'login-config' && (
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
-                إعدادات {SECTIONS.find(s => s.id === activeSection)?.name}
-              </h3>
-              <p className="text-xs text-zinc-500">
-                يتم إدارة وتحديث هذه المحددات بصورة مستمرة وتطبيقها على كامل الموقع والموديلات المرتبطة.
-              </p>
-              <div className="p-8 text-center bg-zinc-50 rounded-2xl border border-zinc-200">
-                <Check className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
-                <span className="text-xs font-bold text-black block">الإعدادات محدثة ومتوافقة مع المعايير</span>
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">إعدادات بوابة تسجيل دخول العملاء والموقع الخارجي</h3>
+                <p className="text-xs text-zinc-500 mt-1">تحديد بوابات الدخول المعتمدة للعملاء والزوار وطرق التحقق من الهوية.</p>
+              </div>
+
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={allowNafathSso}
+                    onChange={e => setAllowNafathSso(e.target.checked)}
+                    className="rounded text-black focus:ring-0 w-4 h-4"
+                  />
+                  <div>
+                    <span className="font-bold text-xs text-black block">
+                      تفعيل تسجيل الدخول بالنفاذ الوطني الموحد (Nafath SSO)
+                    </span>
+                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                      مطابقة هويات العملاء إلكترونياً وتوثيق طلبات الاستقدام والتأجير عبر تطبيق نفاذ.
+                    </span>
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={allowOtpLogin}
+                    onChange={e => setAllowOtpLogin(e.target.checked)}
+                    className="rounded text-black focus:ring-0 w-4 h-4"
+                  />
+                  <div>
+                    <span className="font-bold text-xs text-black block">
+                      السماح بالدخول برقم الجوال ورمز التحقق الفوري (SMS OTP Login)
+                    </span>
+                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                      تمكين العملاء من تصفح ومتابعة حجوزاتهم دون الحاجة لكلمة مرور عبر رسالة تحقق سريعة.
+                    </span>
+                  </div>
+                </label>
+
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={allowGuestBrowsing}
+                    onChange={e => setAllowGuestBrowsing(e.target.checked)}
+                    className="rounded text-black focus:ring-0 w-4 h-4"
+                  />
+                  <div>
+                    <span className="font-bold text-xs text-black block">
+                      السماح للزوار بتصفح السير الذاتية وحجز الموعد دون تسجيل مسبق
+                    </span>
+                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                      عرض الكوادر المتاحة مع إخفاء الأرقام السرية والجواز حتى مرحلة التعاقد.
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              <div className="pt-2">
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الحد الأقصى لانتهاء جلسة العميل غير النشطة (بالدقائق)</label>
+                <input 
+                  type="number" 
+                  value={sessionTimeoutMinutes} 
+                  onChange={e => setSessionTimeoutMinutes(Number(e.target.value))}
+                  className="w-full md:w-60 bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                />
               </div>
             </div>
           )}
+
+          {/* 8. SEO & Tags */}
+          {activeSection === 'seo' && (
+            <div className="space-y-4">
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">تهيئة محركات البحث والإحصائيات (SEO & Analytics Tags)</h3>
+                <p className="text-xs text-zinc-500 mt-1">تحديد وسوم الميتا تاغ، ومعرفات Google Analytics وميتا بيكسل لتحسين الظهور الرقمي.</p>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">عنوان الصفحة الرئيسي (Meta Title)</label>
+                  <input 
+                    type="text" 
+                    value={metaTitle} 
+                    onChange={e => setMetaTitle(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الوصف العام (Meta Description)</label>
+                  <textarea 
+                    rows={2} 
+                    value={metaDescription} 
+                    onChange={e => setMetaDescription(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">الكلمات الدلالية المفتاحية (Meta Keywords)</label>
+                  <input 
+                    type="text" 
+                    value={metaKeywords} 
+                    onChange={e => setMetaKeywords(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">معرف Google Analytics (GA4)</label>
+                    <input 
+                      type="text" 
+                      value={ga4MeasurementId} 
+                      onChange={e => setGa4MeasurementId(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">Google Tag Manager (GTM)</label>
+                    <input 
+                      type="text" 
+                      value={gtmId} 
+                      onChange={e => setGtmId(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">معرف Meta Pixel</label>
+                    <input 
+                      type="text" 
+                      value={metaPixelId} 
+                      onChange={e => setMetaPixelId(e.target.value)}
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 9. Zoho SalesIQ Live Chat */}
+          {activeSection === 'zoho' && (
+            <div className="space-y-4">
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">إعدادات الشات المباشر (Zoho SalesIQ Live Chat)</h3>
+                <p className="text-xs text-zinc-500 mt-1">تضمين ويدجت المحادثة الحية لدعم العملاء على مدار الساعة.</p>
+              </div>
+
+              <label className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={enableSalesIq}
+                  onChange={e => setEnableSalesIq(e.target.checked)}
+                  className="rounded text-emerald-600 focus:ring-0 w-4 h-4"
+                />
+                <div>
+                  <span className="font-bold text-xs text-emerald-900 block">
+                    تفعيل نافذة المحادثة الفورية في الموقع الخارجي وبوابة العملاء
+                  </span>
+                  <span className="text-[11px] text-emerald-700 block mt-0.5">
+                    إظهار زر الشات المباشر للزوار للرد التلقائي وتوزيع المحادثات على موظفي خدمة العملاء.
+                  </span>
+                </div>
+              </label>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">كود التضمين (Zoho SalesIQ Embed Script)</label>
+                <textarea 
+                  rows={4} 
+                  value={zohoSalesIqCode} 
+                  onChange={e => setZohoSalesIqCode(e.target.value)}
+                  className="w-full bg-zinc-900 text-emerald-400 font-mono text-[11px] rounded-2xl p-3 border border-zinc-700 focus:outline-none" 
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">القسم المستلم للمحادثات</label>
+                  <select 
+                    value={chatDepartment} 
+                    onChange={e => setChatDepartment(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black"
+                  >
+                    <option>قسم خدمة العملاء والمبيعات</option>
+                    <option>قسم الدعم الفني والشكاوى</option>
+                    <option>قسم إدارة المكاتب الخارجية</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رسالة الترحيب التلقائية</label>
+                  <input 
+                    type="text" 
+                    value={welcomeMessage} 
+                    onChange={e => setWelcomeMessage(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black" 
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 10. Policies & Warranty Stipulations */}
+          {activeSection === 'stipulations' && (
+            <div className="space-y-4">
+              <div className="border-b border-zinc-100 pb-3">
+                <h3 className="text-sm font-bold text-black m-0">السياسات والشروط وبنود ضمان مساند</h3>
+                <p className="text-xs text-zinc-500 mt-1">صياغة وتعديل الشروط الملحقة بعقود الاستقدام والتأجير وسياسة الضمان 90 يوماً.</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">شروط وبنود ضمان الاستقدام (Musaned 90 Days Warranty)</label>
+                <textarea 
+                  rows={4} 
+                  value={musanedWarrantyTerms} 
+                  onChange={e => setMusanedWarrantyTerms(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">شروط عقود التأجير والتشغيل المرن</label>
+                <textarea 
+                  rows={3} 
+                  value={rentalGuaranteeTerms} 
+                  onChange={e => setRentalGuaranteeTerms(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">سياسة الخصوصية وحماية البيانات الشخصية</label>
+                <textarea 
+                  rows={3} 
+                  value={privacyPolicyText} 
+                  onChange={e => setPrivacyPolicyText(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
+                />
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
     </div>

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 import { 
   Sliders, Plus, FileSpreadsheet, FileText, Globe, UserCheck, 
-  Moon, Star, Plane, Heart, GitCommit, Trash2, X, Check
+  Moon, Star, Plane, Heart, GitCommit, Trash2, X, Check, Search
 } from 'lucide-react';
 
 interface ConstantItem {
@@ -15,7 +17,77 @@ interface ConstantItem {
   icon?: string;
 }
 
+const INITIAL_NATIONALITIES: ConstantItem[] = [
+  { id: '1', title: 'إثيوبيا', code: 'ETH', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇪🇹' },
+  { id: '2', title: 'الفلبين', code: 'PHL', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇵🇭' },
+  { id: '3', title: 'الهند', code: 'IND', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇮🇳' },
+  { id: '4', title: 'أوغندا', code: 'UGA', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇺🇬' },
+  { id: '5', title: 'بنغلاديش', code: 'BGD', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇧🇩' },
+  { id: '6', title: 'كينيا', code: 'KEN', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇰🇪' },
+  { id: '7', title: 'سيريلانكا', code: 'LKA', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇱🇰' },
+  { id: '8', title: 'ألبانيا', code: 'ALB', subtext: 'متاحة للاستقدام والتنازل', status: 'نشط', icon: '🇦🇱' },
+];
+
+const INITIAL_PROFESSIONS: ConstantItem[] = [
+  { id: 'p1', title: 'عاملة منزلية', code: 'DOMESTIC', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
+  { id: 'p2', title: 'سائق خاص', code: 'DRIVER', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
+  { id: 'p3', title: 'طباخ منزلي / طباخة', code: 'COOK', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
+  { id: 'p4', title: 'مربية أطفال', code: 'NANNY', subtext: 'رعاية أطفال', status: 'نشط' },
+  { id: 'p5', title: 'ممرض منزلي / ممرضة', code: 'NURSE', subtext: 'رعاية طبية', status: 'نشط' },
+  { id: 'p6', title: 'حارس منزلي', code: 'GUARD', subtext: 'أمن وحراسة', status: 'نشط' },
+  { id: 'p7', title: 'عامل مهني', code: 'PROFESSIONAL', subtext: 'عمالة مهنية مؤسسات', status: 'نشط' },
+];
+
+const INITIAL_RELIGIONS: ConstantItem[] = [
+  { id: 'r1', title: 'الإسلام', code: 'MUSLIM', subtext: 'مسلم / مسلمة', status: 'نشط' },
+  { id: 'r2', title: 'المسيحية', code: 'CHRISTIAN', subtext: 'مسيحي / مسيحية', status: 'نشط' },
+  { id: 'r3', title: 'أخرى / غير محدد', code: 'OTHER', subtext: 'ديانات أخرى', status: 'نشط' },
+];
+
+const INITIAL_SKILLS: ConstantItem[] = [
+  { id: 's1', title: 'رعاية الأطفال والرضع', code: 'CHILD_CARE', subtext: 'خبرة متقدمة', status: 'نشط' },
+  { id: 's2', title: 'رعاية كبار السن وذوي الاحتياجات', code: 'ELDER_CARE', subtext: 'مهارة معتمدة', status: 'نشط' },
+  { id: 's3', title: 'الطبخ الخليجي والعربي', code: 'COOKING_ARABIC', subtext: 'إجادة الأكلات الشعبية', status: 'نشط' },
+  { id: 's4', title: 'التنظيف والترتيب الفندقي', code: 'CLEANING', subtext: 'إتقان عالي', status: 'نشط' },
+  { id: 's5', title: 'الغسيل وكي الملابس الدقيقة', code: 'LAUNDRY', subtext: 'إتقان', status: 'نشط' },
+  { id: 's6', title: 'التحدث باللغة العربية', code: 'ARABIC_LANG', subtext: 'مستوى جيد فما فوق', status: 'نشط' },
+  { id: 's7', title: 'التحدث باللغة الإنجليزية', code: 'ENGLISH_LANG', subtext: 'مستوى محادثة', status: 'نشط' },
+  { id: 's8', title: 'قيادة السيارات (رخصة سارية)', code: 'DRIVING', subtext: 'رخصة سعودية / دولية', status: 'نشط' },
+];
+
+const INITIAL_AIRPORTS: ConstantItem[] = [
+  { id: 'a1', title: 'مطار الملك خالد الدولي (RUH)', code: 'RUH', subtext: 'السعودية - الرياض', status: 'نشط' },
+  { id: 'a2', title: 'مطار الملك عبدالعزيز الدولي (JED)', code: 'JED', subtext: 'السعودية - جدة', status: 'نشط' },
+  { id: 'a3', title: 'مطار الملك فهد الدولي (DMM)', code: 'DMM', subtext: 'السعودية - الدمام', status: 'نشط' },
+  { id: 'a4', title: 'مطار الأمير محمد بن عبدالعزيز (MED)', code: 'MED', subtext: 'السعودية - المدينة المنورة', status: 'نشط' },
+  { id: 'a5', title: 'مطار أبها الإقليمي (AHB)', code: 'AHB', subtext: 'السعودية - أبها / خميس مشيط', status: 'نشط' },
+  { id: 'a6', title: 'مطار نينوي أكينو الدولي - مانيلا (MNL)', code: 'MNL', subtext: 'الفلبين - مانيلا', status: 'نشط' },
+  { id: 'a7', title: 'مطار بولي الدولي - أديس أبابا (ADD)', code: 'ADD', subtext: 'إثيوبيا - أديس أبابا', status: 'نشط' },
+  { id: 'a8', title: 'مطار باندارانايكي - كولمبو (CMB)', code: 'CMB', subtext: 'سريلانكا - كولمبو', status: 'نشط' },
+  { id: 'a9', title: 'مطار جومو كينياتا - نيروبي (NBO)', code: 'NBO', subtext: 'كينيا - نيروبي', status: 'نشط' },
+  { id: 'a10', title: 'مطار عنتيبي الدولي (EBB)', code: 'EBB', subtext: 'أوغندا - كامبالا', status: 'نشط' },
+  { id: 'a11', title: 'مطار حضرة شاه جلال - دكا (DAC)', code: 'DAC', subtext: 'بنغلاديش - دكا', status: 'نشط' },
+];
+
+const INITIAL_SOCIAL_STATUSES: ConstantItem[] = [
+  { id: 'soc1', title: 'عزباء / أعزب', code: 'SINGLE', subtext: 'غير متزوج/ة', status: 'نشط' },
+  { id: 'soc2', title: 'متزوجة / متزوج', code: 'MARRIED', subtext: 'لديه/ا عائلة', status: 'نشط' },
+  { id: 'soc3', title: 'مطلقة / مطلق', code: 'DIVORCED', subtext: 'منفصل/ة', status: 'نشط' },
+  { id: 'soc4', title: 'أرملة / أرمل', code: 'WIDOWED', subtext: 'أرمل/ة', status: 'نشط' },
+];
+
+const INITIAL_STAGES: ConstantItem[] = [
+  { id: 'stg1', title: 'عقود جديدة (بانتظار مساند)', code: 'NEW', subtext: 'المرحلة 1', status: 'نشط' },
+  { id: 'stg2', title: 'توثيق مساند والتفويض الإلكتروني', code: 'MUSANED', subtext: 'المرحلة 2', status: 'نشط' },
+  { id: 'stg3', title: 'حجز تساهيل والفحص الطبي الخارجي', code: 'MEDICAL_EXT', subtext: 'المرحلة 3', status: 'نشط' },
+  { id: 'stg4', title: 'إصدار التأشيرة والتفييز بالسفارة', code: 'VISA_ISSUED', subtext: 'المرحلة 4', status: 'نشط' },
+  { id: 'stg5', title: 'تصريح العمل وتذكرة الطيران', code: 'TICKET_BOOKED', subtext: 'المرحلة 5', status: 'نشط' },
+  { id: 'stg6', title: 'الوصول للمملكة والفحص الطبي الداخلي', code: 'ARRIVED_KSA', subtext: 'المرحلة 6', status: 'نشط' },
+  { id: 'stg7', title: 'التسليم النهائي وبدء فترة الضمان', code: 'DELIVERED', subtext: 'المرحلة 7', status: 'نشط' },
+];
+
 export const MasterConstantsPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<
     'nationalities' | 'professions' | 'religions' | 'skills' | 'airports' | 'social_statuses' | 'stages'
   >('nationalities');
@@ -24,76 +96,25 @@ export const MasterConstantsPage: React.FC = () => {
   const [newCode, setNewCode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const [nationalities, setNationalities] = useState<ConstantItem[]>([
-    { id: '1', title: 'إثيوبيا', code: 'ETH', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇪🇹' },
-    { id: '2', title: 'الفلبين', code: 'PHL', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇵🇭' },
-    { id: '3', title: 'الهند', code: 'IND', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇮🇳' },
-    { id: '4', title: 'أوغندا', code: 'UGA', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇺🇬' },
-    { id: '5', title: 'بنغلاديش', code: 'BGD', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇧🇩' },
-    { id: '6', title: 'كينيا', code: 'KEN', subtext: 'متاحة للاستقدام والتأجير', status: 'نشط', icon: '🇰🇪' },
-    { id: '7', title: 'سيريلانكا', code: 'LKA', subtext: 'متاحة للاستقدام', status: 'نشط', icon: '🇱🇰' },
-    { id: '8', title: 'ألبانيا', code: 'ALB', subtext: 'متاحة للاستقدام والتنازل', status: 'نشط', icon: '🇦🇱' },
-  ]);
+  const [nationalities, setNationalities] = useState<ConstantItem[]>(INITIAL_NATIONALITIES);
+  const [professions, setProfessions] = useState<ConstantItem[]>(INITIAL_PROFESSIONS);
+  const [religions, setReligions] = useState<ConstantItem[]>(INITIAL_RELIGIONS);
+  const [skills, setSkills] = useState<ConstantItem[]>(INITIAL_SKILLS);
+  const [airports, setAirports] = useState<ConstantItem[]>(INITIAL_AIRPORTS);
+  const [socialStatuses, setSocialStatuses] = useState<ConstantItem[]>(INITIAL_SOCIAL_STATUSES);
+  const [stages, setStages] = useState<ConstantItem[]>(INITIAL_STAGES);
 
-  const [professions, setProfessions] = useState<ConstantItem[]>([
-    { id: 'p1', title: 'عاملة منزلية', code: 'DOMESTIC', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
-    { id: 'p2', title: 'سائق خاص', code: 'DRIVER', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
-    { id: 'p3', title: 'طباخ منزلي / طباخة', code: 'COOK', subtext: 'عمالة منزلية أفراد', status: 'نشط' },
-    { id: 'p4', title: 'مربية أطفال', code: 'NANNY', subtext: 'رعاية أطفال', status: 'نشط' },
-    { id: 'p5', title: 'ممرض منزلي / ممرضة', code: 'NURSE', subtext: 'رعاية طبية', status: 'نشط' },
-    { id: 'p6', title: 'حارس منزلي', code: 'GUARD', subtext: 'أمن وحراسة', status: 'نشط' },
-    { id: 'p7', title: 'عامل مهني', code: 'PROFESSIONAL', subtext: 'عمالة مهنية مؤسسات', status: 'نشط' },
-  ]);
+  useEffect(() => {
+    realErpDataStore.getRecords<ConstantItem>('constants_nationalities', INITIAL_NATIONALITIES).then(d => setNationalities(d));
+    realErpDataStore.getRecords<ConstantItem>('constants_professions', INITIAL_PROFESSIONS).then(d => setProfessions(d));
+    realErpDataStore.getRecords<ConstantItem>('constants_religions', INITIAL_RELIGIONS).then(d => setReligions(d));
+    realErpDataStore.getRecords<ConstantItem>('constants_skills', INITIAL_SKILLS).then(d => setSkills(d));
+    realErpDataStore.getRecords<ConstantItem>('constants_airports', INITIAL_AIRPORTS).then(d => setAirports(d));
+    realErpDataStore.getRecords<ConstantItem>('constants_social_statuses', INITIAL_SOCIAL_STATUSES).then(d => setSocialStatuses(d));
+    realErpDataStore.getRecords<ConstantItem>('constants_stages', INITIAL_STAGES).then(d => setStages(d));
+  }, []);
 
-  const [religions, setReligions] = useState<ConstantItem[]>([
-    { id: 'r1', title: 'الإسلام', code: 'MUSLIM', subtext: 'مسلم / مسلمة', status: 'نشط' },
-    { id: 'r2', title: 'المسيحية', code: 'CHRISTIAN', subtext: 'مسيحي / مسيحية', status: 'نشط' },
-    { id: 'r3', title: 'أخرى / غير محدد', code: 'OTHER', subtext: 'ديانات أخرى', status: 'نشط' },
-  ]);
-
-  const [skills, setSkills] = useState<ConstantItem[]>([
-    { id: 's1', title: 'رعاية الأطفال والرضع', code: 'CHILD_CARE', subtext: 'خبرة متقدمة', status: 'نشط' },
-    { id: 's2', title: 'رعاية كبار السن وذوي الاحتياجات', code: 'ELDER_CARE', subtext: 'مهارة معتمدة', status: 'نشط' },
-    { id: 's3', title: 'الطبخ الخليجي والعربي', code: 'COOKING_ARABIC', subtext: 'إجادة الأكلات الشعبية', status: 'نشط' },
-    { id: 's4', title: 'التنظيف والترتيب الفندقي', code: 'CLEANING', subtext: 'إتقان عالي', status: 'نشط' },
-    { id: 's5', title: 'الغسيل وكي الملابس الدقيقة', code: 'LAUNDRY', subtext: 'إتقان', status: 'نشط' },
-    { id: 's6', title: 'التحدث باللغة العربية', code: 'ARABIC_LANG', subtext: 'مستوى جيد فما فوق', status: 'نشط' },
-    { id: 's7', title: 'التحدث باللغة الإنجليزية', code: 'ENGLISH_LANG', subtext: 'مستوى محادثة', status: 'نشط' },
-    { id: 's8', title: 'قيادة السيارات (رخصة سارية)', code: 'DRIVING', subtext: 'رخصة سعودية / دولية', status: 'نشط' },
-  ]);
-
-  const [airports, setAirports] = useState<ConstantItem[]>([
-    { id: 'a1', title: 'مطار الملك خالد الدولي (RUH)', code: 'RUH', subtext: 'السعودية - الرياض', status: 'نشط' },
-    { id: 'a2', title: 'مطار الملك عبدالعزيز الدولي (JED)', code: 'JED', subtext: 'السعودية - جدة', status: 'نشط' },
-    { id: 'a3', title: 'مطار الملك فهد الدولي (DMM)', code: 'DMM', subtext: 'السعودية - الدمام', status: 'نشط' },
-    { id: 'a4', title: 'مطار الأمير محمد بن عبدالعزيز (MED)', code: 'MED', subtext: 'السعودية - المدينة المنورة', status: 'نشط' },
-    { id: 'a5', title: 'مطار أبها الإقليمي (AHB)', code: 'AHB', subtext: 'السعودية - أبها / خميس مشيط', status: 'نشط' },
-    { id: 'a6', title: 'مطار نينوي أكينو الدولي - مانيلا (MNL)', code: 'MNL', subtext: 'الفلبين - مانيلا', status: 'نشط' },
-    { id: 'a7', title: 'مطار بولي الدولي - أديس أبابا (ADD)', code: 'ADD', subtext: 'إثيوبيا - أديس أبابا', status: 'نشط' },
-    { id: 'a8', title: 'مطار باندارانايكي - كولمبو (CMB)', code: 'CMB', subtext: 'سريلانكا - كولمبو', status: 'نشط' },
-    { id: 'a9', title: 'مطار جومو كينياتا - نيروبي (NBO)', code: 'NBO', subtext: 'كينيا - نيروبي', status: 'نشط' },
-    { id: 'a10', title: 'مطار عنتيبي الدولي (EBB)', code: 'EBB', subtext: 'أوغندا - كامبالا', status: 'نشط' },
-    { id: 'a11', title: 'مطار حضرة شاه جلال - دكا (DAC)', code: 'DAC', subtext: 'بنغلاديش - دكا', status: 'نشط' },
-  ]);
-
-  const [socialStatuses, setSocialStatuses] = useState<ConstantItem[]>([
-    { id: 'soc1', title: 'عزباء / أعزب', code: 'SINGLE', subtext: 'غير متزوج/ة', status: 'نشط' },
-    { id: 'soc2', title: 'متزوجة / متزوج', code: 'MARRIED', subtext: 'لديه/ا عائلة', status: 'نشط' },
-    { id: 'soc3', title: 'مطلقة / مطلق', code: 'DIVORCED', subtext: 'منفصل/ة', status: 'نشط' },
-    { id: 'soc4', title: 'أرملة / أرمل', code: 'WIDOWED', subtext: 'أرمل/ة', status: 'نشط' },
-  ]);
-
-  const [stages, setStages] = useState<ConstantItem[]>([
-    { id: 'stg1', title: 'عقود جديدة (بانتظار مساند)', code: 'NEW', subtext: 'المرحلة 1', status: 'نشط' },
-    { id: 'stg2', title: 'توثيق مساند والتفويض الإلكتروني', code: 'MUSANED', subtext: 'المرحلة 2', status: 'نشط' },
-    { id: 'stg3', title: 'حجز تساهيل والفحص الطبي الخارجي', code: 'MEDICAL_EXT', subtext: 'المرحلة 3', status: 'نشط' },
-    { id: 'stg4', title: 'إصدار التأشيرة والتفييز بالسفارة', code: 'VISA_ISSUED', subtext: 'المرحلة 4', status: 'نشط' },
-    { id: 'stg5', title: 'تصريح العمل وتذكرة الطيران', code: 'TICKET_BOOKED', subtext: 'المرحلة 5', status: 'نشط' },
-    { id: 'stg6', title: 'الوصول للمملكة والفحص الطبي الداخلي', code: 'ARRIVED_KSA', subtext: 'المرحلة 6', status: 'نشط' },
-    { id: 'stg7', title: 'التسليم النهائي وبدء فترة الضمان', code: 'DELIVERED', subtext: 'المرحلة 7', status: 'نشط' },
-  ]);
-
-  const handleAddItem = (e: React.FormEvent) => {
+  const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
 
@@ -104,21 +125,34 @@ export const MasterConstantsPage: React.FC = () => {
       status: 'نشط',
     };
 
-    if (activeTab === 'nationalities') setNationalities([...nationalities, newItem]);
-    if (activeTab === 'professions') setProfessions([...professions, newItem]);
-    if (activeTab === 'religions') setReligions([...religions, newItem]);
-    if (activeTab === 'skills') setSkills([...skills, newItem]);
-    if (activeTab === 'airports') setAirports([...airports, newItem]);
-    if (activeTab === 'social_statuses') setSocialStatuses([...socialStatuses, newItem]);
-    if (activeTab === 'stages') setStages([...stages, newItem]);
+    const storeKey = `constants_${activeTab}`;
+    let currentList: ConstantItem[] = [];
+
+    if (activeTab === 'nationalities') { currentList = [...nationalities, newItem]; setNationalities(currentList); }
+    if (activeTab === 'professions') { currentList = [...professions, newItem]; setProfessions(currentList); }
+    if (activeTab === 'religions') { currentList = [...religions, newItem]; setReligions(currentList); }
+    if (activeTab === 'skills') { currentList = [...skills, newItem]; setSkills(currentList); }
+    if (activeTab === 'airports') { currentList = [...airports, newItem]; setAirports(currentList); }
+    if (activeTab === 'social_statuses') { currentList = [...socialStatuses, newItem]; setSocialStatuses(currentList); }
+    if (activeTab === 'stages') { currentList = [...stages, newItem]; setStages(currentList); }
+
+    await realErpDataStore.addRecord(storeKey, newItem);
+
+    addNotification({
+      title: 'إضافة بند ثوابت جديد',
+      message: `تمت إضافة (${newTitle}) إلى ثوابت النظام بنجاح.`,
+      type: 'success',
+    });
 
     setNewTitle('');
     setNewCode('');
     setShowAddModal(false);
   };
 
-  const handleDeleteItem = (id: string) => {
+  const handleDeleteItem = async (id: string) => {
     if (!confirm('هل أنت متأكد من حذف هذا البند من الثوابت؟')) return;
+    const storeKey = `constants_${activeTab}`;
+
     if (activeTab === 'nationalities') setNationalities(nationalities.filter(i => i.id !== id));
     if (activeTab === 'professions') setProfessions(professions.filter(i => i.id !== id));
     if (activeTab === 'religions') setReligions(religions.filter(i => i.id !== id));
@@ -126,19 +160,39 @@ export const MasterConstantsPage: React.FC = () => {
     if (activeTab === 'airports') setAirports(airports.filter(i => i.id !== id));
     if (activeTab === 'social_statuses') setSocialStatuses(socialStatuses.filter(i => i.id !== id));
     if (activeTab === 'stages') setStages(stages.filter(i => i.id !== id));
+
+    await realErpDataStore.deleteRecord(storeKey, id);
+
+    addNotification({
+      title: 'حذف البند',
+      message: 'تم حذف البند من قائمة الثوابت بنجاح.',
+      type: 'error',
+    });
   };
 
-  const handleToggleStatus = (id: string) => {
+  const handleToggleStatus = async (id: string) => {
     const toggle = (list: ConstantItem[]) =>
       list.map(i => i.id === id ? { ...i, status: (i.status === 'نشط' ? 'معطل' : 'نشط') as any } : i);
 
-    if (activeTab === 'nationalities') setNationalities(toggle(nationalities));
-    if (activeTab === 'professions') setProfessions(toggle(professions));
-    if (activeTab === 'religions') setReligions(toggle(religions));
-    if (activeTab === 'skills') setSkills(toggle(skills));
-    if (activeTab === 'airports') setAirports(toggle(airports));
-    if (activeTab === 'social_statuses') setSocialStatuses(toggle(socialStatuses));
-    if (activeTab === 'stages') setStages(toggle(stages));
+    const storeKey = `constants_${activeTab}`;
+    let targetItem: ConstantItem | undefined;
+
+    if (activeTab === 'nationalities') { const u = toggle(nationalities); setNationalities(u); targetItem = u.find(i => i.id === id); }
+    if (activeTab === 'professions') { const u = toggle(professions); setProfessions(u); targetItem = u.find(i => i.id === id); }
+    if (activeTab === 'religions') { const u = toggle(religions); setReligions(u); targetItem = u.find(i => i.id === id); }
+    if (activeTab === 'skills') { const u = toggle(skills); setSkills(u); targetItem = u.find(i => i.id === id); }
+    if (activeTab === 'airports') { const u = toggle(airports); setAirports(u); targetItem = u.find(i => i.id === id); }
+    if (activeTab === 'social_statuses') { const u = toggle(socialStatuses); setSocialStatuses(u); targetItem = u.find(i => i.id === id); }
+    if (activeTab === 'stages') { const u = toggle(stages); setStages(u); targetItem = u.find(i => i.id === id); }
+
+    if (targetItem) {
+      await realErpDataStore.updateRecord<ConstantItem>(storeKey, id, { status: targetItem.status });
+      addNotification({
+        title: 'تحديث حالة البند',
+        message: `تم تغيير حالة (${targetItem.title}) إلى (${targetItem.status}).`,
+        type: 'info',
+      });
+    }
   };
 
   const getActiveList = () => {

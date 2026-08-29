@@ -137,6 +137,17 @@ export const realErpDataStore = {
   },
 
   /**
+   * Save or overwrite a list of records permanently
+   */
+  async saveRecords<T extends { id: string | number }>(
+    entityKey: string,
+    data: T[]
+  ): Promise<T[]> {
+    saveLocalStore(entityKey, data);
+    return data;
+  },
+
+  /**
    * Trigger double-entry accounting posting & cross-module synchronization automatically
    */
   triggerAccountingIntegration(entityKey: string, record: any) {

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
-import { UserCheck, ShieldCheck, Plus, FileSpreadsheet, FileText, Search, Fingerprint, Lock, Shield, X, Check, QrCode, Smartphone, MessageSquare, Mail, ArrowLeft } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { UserCheck, ShieldCheck, Plus, FileSpreadsheet, FileText, Search, Fingerprint, Lock, Shield, X, Check, QrCode, Smartphone, MessageSquare, Mail, ArrowLeft, Trash2, UserX } from 'lucide-react';
 
 export interface UserAdmin {
   id: string;
@@ -97,6 +98,7 @@ const MOCK_USERS: UserAdmin[] = [
 ];
 
 export const UsersPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [users, setUsers] = useState<UserAdmin[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserAdmin | null>(null);
   const [show2FAModal, setShow2FAModal] = useState(false);
@@ -145,6 +147,12 @@ export const UsersPage: React.FC = () => {
     const updated = await realErpDataStore.updateRecord<UserAdmin>('system_users', selectedUser.id, patch, MOCK_USERS);
     setUsers(updated);
     setShow2FAModal(false);
+
+    addNotification({
+      title: isEnabling ? 'تفعيل 2FA بنجاح' : 'تعطيل 2FA',
+      message: `تم ${isEnabling ? 'تفعيل' : 'إلغاء'} المصادقة الثنائية للمستخدم (${selectedUser.name}) بنجاح.`,
+      type: isEnabling ? 'success' : 'info',
+    });
   };
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -170,6 +178,13 @@ export const UsersPage: React.FC = () => {
     const updated = await realErpDataStore.addRecord<UserAdmin>('system_users', createdRecord, MOCK_USERS);
     setUsers(updated);
     setShowAddUserModal(false);
+
+    addNotification({
+      title: 'إنشاء حساب مستخدم جديد',
+      message: `تم إنشاء حساب المستخدم (${newUser.name}) بنجاح وتعيين الدور (${newUser.role}).`,
+      type: 'success',
+    });
+
     setNewUser({
       name: '',
       username: '',
@@ -181,6 +196,28 @@ export const UsersPage: React.FC = () => {
       two_factor_enabled: true,
       biometric_enabled: true,
       biometric_type: 'Touch ID (بصمة إصبع)'
+    });
+  };
+
+  const handleDeleteUser = async (id: string, name: string) => {
+    if (!confirm(`هل أنت متأكد من حذف حساب المستخدم (${name})؟`)) return;
+    const updated = await realErpDataStore.deleteRecord<UserAdmin>('system_users', id, MOCK_USERS);
+    setUsers(updated);
+    addNotification({
+      title: 'حذف مستخدم',
+      message: `تم حذف حساب المستخدم (${name}) من النظام.`,
+      type: 'error',
+    });
+  };
+
+  const handleToggleUserStatus = async (user: UserAdmin) => {
+    const nextStatus = user.status === 'نشط' ? 'محظور' : 'نشط';
+    const updated = await realErpDataStore.updateRecord<UserAdmin>('system_users', user.id, { status: nextStatus }, MOCK_USERS);
+    setUsers(updated);
+    addNotification({
+      title: 'تغيير حالة المستخدم',
+      message: `تم تعديل حالة (${user.name}) إلى (${nextStatus}).`,
+      type: nextStatus === 'نشط' ? 'success' : 'warning',
     });
   };
 
@@ -351,14 +388,31 @@ export const UsersPage: React.FC = () => {
                   </td>
                   <td className="p-3.5"><Badge text={u.status} type={u.status === 'نشط' ? 'success' : 'danger'} /></td>
                   <td className="p-3.5 text-center">
-                    <button
-                      onClick={() => handleOpen2FAModal(u)}
-                      className="button-outline-on-light"
-                      style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                    >
-                      <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
-                      <span>{u.two_factor_enabled ? 'إدارة الأمان' : 'تفعيل 2FA'}</span>
-                    </button>
+                    <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                      <button
+                        onClick={() => handleOpen2FAModal(u)}
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        title="إعدادات المصادقة الثنائية والبصمة"
+                      >
+                        <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
+                        <span>{u.two_factor_enabled ? 'إدارة الأمان' : 'تفعيل 2FA'}</span>
+                      </button>
+                      <button
+                        onClick={() => handleToggleUserStatus(u)}
+                        className={`p-1 rounded-lg border transition-colors ${u.status === 'نشط' ? 'border-amber-200 text-amber-700 hover:bg-amber-50' : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'}`}
+                        title={u.status === 'نشط' ? 'حظر المستخدم' : 'تفعيل المستخدم'}
+                      >
+                        {u.status === 'نشط' ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(u.id, u.name)}
+                        className="p-1 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition-colors"
+                        title="حذف المستخدم نهائياً"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

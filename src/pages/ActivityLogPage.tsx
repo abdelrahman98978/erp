@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 import { 
   ShieldAlert, ShieldCheck, FileSpreadsheet, FileText, Search, 
-  Clock, Laptop, User, Check, RefreshCw
+  Clock, Laptop, User, Check, RefreshCw, Trash2
 } from 'lucide-react';
 
 export interface ActivityItem {
@@ -96,14 +97,40 @@ const MOCK_ACTIVITIES: ActivityItem[] = [
 ];
 
 export const ActivityLogPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [selectedModule, setSelectedModule] = useState<string>('الكل');
   const [selectedAction, setSelectedAction] = useState<string>('الكل');
   const [searchTerm, setSearchTerm] = useState('');
 
+  const loadActivities = async () => {
+    const data = await realErpDataStore.getRecords<ActivityItem>('activity_log', MOCK_ACTIVITIES);
+    setActivities(data);
+  };
+
   useEffect(() => {
-    realErpDataStore.getRecords<ActivityItem>('activity_log', MOCK_ACTIVITIES).then(data => setActivities(data));
+    loadActivities();
   }, []);
+
+  const handleExport = (type: 'excel' | 'pdf') => {
+    exportData('activity_log', filteredActivities, type);
+    addNotification({
+      title: 'تصدير سجل النشاط الأمني',
+      message: `تم تصدير (${filteredActivities.length}) سجل بنجاح بصيغة ${type.toUpperCase()}.`,
+      type: 'success',
+    });
+  };
+
+  const handleClearLogs = async () => {
+    if (!confirm('هل أنت متأكد من مسح وتفريغ سجل النشاط القديم؟')) return;
+    await realErpDataStore.saveRecords('activity_log', []);
+    setActivities([]);
+    addNotification({
+      title: 'تفريغ سجل النشاط',
+      message: 'تم تفريغ السجل بنجاح وبدء تسجيل جلسة جديدة.',
+      type: 'info',
+    });
+  };
 
   const modules = ['الكل', 'عقود الاستقدام', 'عقود التأجير', 'المالية والمحاسبة', 'الموارد البشرية', 'الفاتورة الإلكترونية ZATCA', 'إدارة المستخدمين'];
   const actions = ['الكل', 'إنشاء', 'تعديل', 'حذف', 'تسجيل دخول', 'اعتماد مالي', 'تصدير بيانات'];
@@ -152,7 +179,16 @@ export const ActivityLogPage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               className="button-outline-on-dark"
-              onClick={() => exportData('activity_log', filteredActivities, 'excel')}
+              onClick={() => loadActivities()}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+              title="تحديث السجلات"
+            >
+              <RefreshCw className="w-3.5 h-3.5 ml-1 text-cyan-400" />
+              <span>تحديث</span>
+            </button>
+            <button
+              className="button-outline-on-dark"
+              onClick={() => handleExport('excel')}
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
               <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
@@ -160,11 +196,20 @@ export const ActivityLogPage: React.FC = () => {
             </button>
             <button
               className="button-outline-on-dark"
-              onClick={() => exportData('activity_log', filteredActivities, 'pdf')}
+              onClick={() => handleExport('pdf')}
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
               <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
               <span>PDF</span>
+            </button>
+            <button
+              className="button-outline-on-dark"
+              onClick={handleClearLogs}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(244, 63, 94, 0.4)', color: '#fda4af' }}
+              title="تفريغ السجل"
+            >
+              <Trash2 className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <span>تفريغ السجل</span>
             </button>
           </div>
         </div>
