@@ -3,7 +3,11 @@ import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { UserCheck, ShieldCheck, Plus, FileSpreadsheet, FileText, Search, Fingerprint, Lock, Shield, X, Check, QrCode, Smartphone, MessageSquare, Mail, ArrowLeft, Trash2, UserX } from 'lucide-react';
+import { 
+  UserCheck, ShieldCheck, Plus, FileSpreadsheet, FileText, Search, 
+  Fingerprint, Lock, Shield, X, Check, QrCode, Smartphone, MessageSquare, 
+  Mail, ArrowLeft, Trash2, UserX, UserCog, Edit3, Key, Star
+} from 'lucide-react';
 
 export interface UserAdmin {
   id: string;
@@ -24,9 +28,9 @@ export interface UserAdmin {
 const MOCK_USERS: UserAdmin[] = [
   {
     id: '1',
-    name: 'مشرف admin',
+    name: 'مشرف admin (خالد السليم)',
     username: 'admin',
-    user_type: 'الإدارة العليا',
+    user_type: 'الإدارة العليا والتنفيذية',
     role: 'Administrator',
     branch: 'الفرع الرئيسي',
     phone: '0512344321',
@@ -103,6 +107,8 @@ export const UsersPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<UserAdmin | null>(null);
   const [show2FAModal, setShow2FAModal] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showEditRoleModal, setShowEditRoleModal] = useState(false);
+  const [userToEditRole, setUserToEditRole] = useState<UserAdmin | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<'Google Authenticator' | 'SMS' | 'WhatsApp' | 'Email' | 'بصمة بيومترية (FIDO2)'>('Google Authenticator');
   const [otpCode, setOtpCode] = useState('');
   const [step, setStep] = useState<1 | 2>(1);
@@ -113,13 +119,21 @@ export const UsersPage: React.FC = () => {
     name: '',
     username: '',
     role: 'Operations Lead',
-    user_type: 'إدارة العمليات',
+    user_type: 'إدارة العمليات والتشغيل',
     branch: 'الفرع الرئيسي',
     phone: '',
     email: '',
     two_factor_enabled: true,
     biometric_enabled: true,
     biometric_type: 'Touch ID (بصمة إصبع)' as const
+  });
+
+  // Edit Role Form State
+  const [editRoleForm, setEditRoleForm] = useState({
+    role: 'Operations Lead',
+    user_type: 'إدارة العمليات والتشغيل',
+    branch: 'الفرع الرئيسي',
+    status: 'نشط' as 'نشط' | 'محظور'
   });
 
   useEffect(() => {
@@ -132,6 +146,53 @@ export const UsersPage: React.FC = () => {
     setOtpCode('');
     setStep(1);
     setShow2FAModal(true);
+  };
+
+  const handleOpenEditRoleModal = (user: UserAdmin) => {
+    setUserToEditRole(user);
+    setEditRoleForm({
+      role: user.role,
+      user_type: user.user_type,
+      branch: user.branch,
+      status: user.status
+    });
+    setShowEditRoleModal(true);
+  };
+
+  const handleSaveRoleChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userToEditRole) return;
+
+    const patch = {
+      role: editRoleForm.role,
+      user_type: editRoleForm.user_type,
+      branch: editRoleForm.branch,
+      status: editRoleForm.status
+    };
+
+    const updated = await realErpDataStore.updateRecord<UserAdmin>('system_users', userToEditRole.id, patch, MOCK_USERS);
+    setUsers(updated);
+    setShowEditRoleModal(false);
+
+    // Audit log
+    await realErpDataStore.addRecord('activity_log', {
+      id: `LOG-${Date.now()}`,
+      user_name: 'مدير النظام العام',
+      role: 'Super Admin',
+      action_type: 'تعديل',
+      module: 'إدارة المستخدمين',
+      details: `تعديل وترقية صلاحية المستخدم (${userToEditRole.name}) إلى دور (${editRoleForm.role}) بقسم (${editRoleForm.user_type})`,
+      severity: 'تنبيه',
+      ip_address: '192.168.1.1',
+      device: 'Super Admin Terminal / Edge',
+      created_at: new Date().toISOString().slice(0, 16).replace('T', ' ')
+    });
+
+    addNotification({
+      title: 'تحديث صلاحيات ودور المستخدم',
+      message: `تم تعديل دور وصلاحيات المستخدم (${userToEditRole.name}) إلى (${editRoleForm.role}) بنجاح.`,
+      type: 'success',
+    });
   };
 
   const handleToggle2FA = async () => {
@@ -189,7 +250,7 @@ export const UsersPage: React.FC = () => {
       name: '',
       username: '',
       role: 'Operations Lead',
-      user_type: 'إدارة العمليات',
+      user_type: 'إدارة العمليات والتشغيل',
       branch: 'الفرع الرئيسي',
       phone: '',
       email: '',
@@ -225,7 +286,8 @@ export const UsersPage: React.FC = () => {
     u.name.includes(searchQuery) ||
     u.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
     u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    u.branch.includes(searchQuery)
+    u.branch.includes(searchQuery) ||
+    u.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -254,12 +316,13 @@ export const UsersPage: React.FC = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>RBAC & ZERO TRUST AUTH</span>
+              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>إدارة المستخدمين والصلاحيات</span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
               مستخدمو النظام والتحكم بالصلاحيات
             </h1>
             <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              إدارة موظفي الفروع، الأدوار، وتفعيل حماية البصمة البيومترية والمصادقة الثنائية 2FA
+              إدارة حسابات الموظفين، تعيين الأدوار والصلاحيات، المصادقة الثنائية (2FA)، وتفويض البصمات البيومترية
             </p>
           </div>
         </div>
@@ -271,68 +334,58 @@ export const UsersPage: React.FC = () => {
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
             <Plus className="w-4 h-4 ml-1" />
-            <span>+ إضافة مستخدم جديد</span>
+            <span>+ مستخدم جديد</span>
           </button>
           <button
             className="button-outline-on-dark"
-            onClick={() => exportData('users', users, 'excel')}
+            onClick={() => exportData('system_users', filteredUsers, 'excel')}
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
             <span>Excel</span>
-          </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('users', users, 'pdf')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
           </button>
         </div>
       </div>
 
-      {/* 2FA & Biometrics Stats Cards */}
+      {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المستخدمين</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{users.length}</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>كافة الفروع</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{users.length} مستخدمين</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>حسابات معتمدة</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المصادقة 2FA مفعلة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {users.filter(u => u.two_factor_enabled).length}
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المصادقة الثنائية (2FA)</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {users.filter(u => u.two_factor_enabled).length} مفعلين
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>حسابات مؤمنة</span>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>حماية فائقة</span>
         </div>
 
         <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الدخول بالبصمة مسجل</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {users.filter(u => u.biometric_enabled).length}
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>البصمة البيومترية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {users.filter(u => u.biometric_enabled).length} مسجلين
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>FIDO2 / WebAuthn</span>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>Touch ID & Face ID</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>حسابات بانتظار التوثيق</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {users.filter(u => !u.two_factor_enabled).length}
-          </div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>غير محمية بـ 2FA</span>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>الصلاحيات النشطة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>6 أدوار</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>RBAC Matrix</span>
         </div>
       </div>
 
-      {/* Table Card */}
+      {/* Users Table Card */}
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
-              placeholder="ابحث بالاسم، اسم المستخدم، البريد، أو الفرع..."
+              placeholder="البحث بالاسم، اسم المستخدم، الفرع، أو الدور..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="text-input"
@@ -340,7 +393,7 @@ export const UsersPage: React.FC = () => {
             />
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-            المستخدمون: {filteredUsers.length}
+            المستخدمين المتاحين: {filteredUsers.length}
           </span>
         </div>
 
@@ -348,13 +401,13 @@ export const UsersPage: React.FC = () => {
           <table className="w-full text-right text-xs text-zinc-700">
             <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
               <tr>
-                <th className="p-3.5">الاسم واسم المستخدم</th>
-                <th className="p-3.5">الدور الوظيفي والصلاحيات</th>
+                <th className="p-3.5">المستخدم</th>
+                <th className="p-3.5">الدور الوظيفي (Role)</th>
                 <th className="p-3.5">الفرع المخصص</th>
                 <th className="p-3.5">المصادقة الثنائية (2FA)</th>
                 <th className="p-3.5">البصمة البيومترية</th>
                 <th className="p-3.5">الحالة</th>
-                <th className="p-3.5 text-center">الأمان</th>
+                <th className="p-3.5 text-center">إدارة الصلاحيات والأمان</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -390,13 +443,22 @@ export const UsersPage: React.FC = () => {
                   <td className="p-3.5 text-center">
                     <div className="flex items-center justify-center gap-1.5 flex-wrap">
                       <button
+                        onClick={() => handleOpenEditRoleModal(u)}
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                        title="تعديل وترقية الدور والصلاحيات"
+                      >
+                        <UserCog className="w-3 h-3 ml-1 text-purple-600" />
+                        <span>الصلاحيات</span>
+                      </button>
+                      <button
                         onClick={() => handleOpen2FAModal(u)}
                         className="button-outline-on-light"
-                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                         title="إعدادات المصادقة الثنائية والبصمة"
                       >
                         <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
-                        <span>{u.two_factor_enabled ? 'إدارة الأمان' : 'تفعيل 2FA'}</span>
+                        <span>{u.two_factor_enabled ? '2FA' : 'تفعيل 2FA'}</span>
                       </button>
                       <button
                         onClick={() => handleToggleUserStatus(u)}
@@ -469,12 +531,13 @@ export const UsersPage: React.FC = () => {
                     onChange={e => setNewUser({ ...newUser, role: e.target.value })}
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
                   >
-                    <option value="Administrator">Administrator (مدير نظام)</option>
+                    <option value="Administrator">Administrator (مدير نظام عام)</option>
                     <option value="HR Director">HR Director (مدير موارد بشرية)</option>
-                    <option value="Financial Manager">Financial Manager (مدير مالي)</option>
+                    <option value="Financial Manager">Financial Manager (مدير مالي واعتمادات)</option>
                     <option value="Branch Manager">Branch Manager (مدير فرع)</option>
                     <option value="Operations Lead">Operations Lead (مشرف تشغيل وعقود)</option>
-                    <option value="Customer Care Lead">Customer Care Lead (خدمة عملاء)</option>
+                    <option value="Shelter Supervisor">Shelter Supervisor (مشرف إيواء)</option>
+                    <option value="Sales Agent">Sales Agent (مسؤول مبيعات وعملاء)</option>
                   </select>
                 </div>
 
@@ -495,13 +558,13 @@ export const UsersPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الجوال</label>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الجوال للتحقق OTP</label>
                   <input
-                    type="tel"
+                    type="text"
                     value={newUser.phone}
                     onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
                     placeholder="05XXXXXXXX"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
                 <div>
@@ -511,41 +574,47 @@ export const UsersPage: React.FC = () => {
                     value={newUser.email}
                     onChange={e => setNewUser({ ...newUser, email: e.target.value })}
                     placeholder="user@alsulaim.sa"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
 
-              {/* Security Toggles */}
-              <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-200 space-y-2 text-xs">
-                <label className="flex items-center gap-2 cursor-pointer font-semibold text-zinc-800">
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={newUser.two_factor_enabled}
                     onChange={e => setNewUser({ ...newUser, two_factor_enabled: e.target.checked })}
-                    className="accent-black rounded"
+                    className="rounded text-black focus:ring-0"
                   />
-                  <span>إلزام الحساب بالمصادقة الثنائية (2FA OTP) عند تسجيل الدخول</span>
+                  <span className="text-xs font-semibold text-black">تفعيل التحقق الثنائي (2FA) عند أول تسجيل دخول</span>
                 </label>
-
-                <label className="flex items-center gap-2 cursor-pointer font-semibold text-zinc-800">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={newUser.biometric_enabled}
                     onChange={e => setNewUser({ ...newUser, biometric_enabled: e.target.checked })}
-                    className="accent-emerald-600 rounded"
+                    className="rounded text-emerald-600 focus:ring-0"
                   />
-                  <span>تسجيل صلاحية الدخول بالبصمة الحيوية وبصمة الوجه (WebAuthn)</span>
+                  <span className="text-xs font-semibold text-emerald-900">تمكين الدخول بالبصمة البيومترية (Touch ID / Face ID)</span>
                 </label>
               </div>
 
               <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
-                <button type="button" className="button-outline-on-light" onClick={() => setShowAddUserModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddUserModal(false)}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
+                >
                   إلغاء
                 </button>
-                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
-                  <Check className="w-4 h-4 ml-1" />
-                  <span>حفظ وإنشاء الحساب</span>
+                <button
+                  type="submit"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
+                >
+                  حفظ وإنشاء المستخدم
                 </button>
               </div>
             </form>
@@ -553,14 +622,104 @@ export const UsersPage: React.FC = () => {
         </div>
       )}
 
-      {/* 2FA & Biometric Configuration Modal */}
-      {show2FAModal && selectedUser && (
+      {/* Edit Role & Permissions Modal */}
+      {showEditRoleModal && userToEditRole && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Shield className="w-4 h-4 text-emerald-400" />
-                <span>المصادقة الثنائية والأمان البيومتري (2FA & Biometrics)</span>
+                <UserCog className="w-4 h-4 text-purple-400" />
+                <span>تعديل وترقية دور المستخدم الصلاحيات</span>
+              </h3>
+              <button onClick={() => setShowEditRoleModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveRoleChange} className="p-6 space-y-4 bg-white text-black">
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200">
+                <span className="text-[11px] text-zinc-500 font-semibold block">المستخدم المحدد:</span>
+                <div className="font-bold text-sm text-black mt-0.5">{userToEditRole.name}</div>
+                <div className="text-[11px] text-zinc-400 font-mono">@{userToEditRole.username} • {userToEditRole.email}</div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الدور الوظيفي في الـ ERP (RBAC Role) *</label>
+                <select
+                  value={editRoleForm.role}
+                  onChange={e => setEditRoleForm({ ...editRoleForm, role: e.target.value })}
+                  className="w-full bg-purple-50/50 border border-purple-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
+                >
+                  <option value="Administrator">Administrator (مدير نظام عام - كافة الصلاحيات)</option>
+                  <option value="Branch Manager">Branch Manager (مدير فرع)</option>
+                  <option value="Financial Manager">Financial Manager (مدير مالي واعتمادات)</option>
+                  <option value="HR Director">HR Director (مدير الموارد البشرية)</option>
+                  <option value="Operations Lead">Operations Lead (مشرف تشغيل وعقود)</option>
+                  <option value="Shelter Supervisor">Shelter Supervisor (مشرف إيواء)</option>
+                  <option value="Sales Agent">Sales Agent (مسؤول مبيعات وعملاء)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">القسم الإداري *</label>
+                <select
+                  value={editRoleForm.user_type}
+                  onChange={e => setEditRoleForm({ ...editRoleForm, user_type: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                >
+                  <option value="الإدارة العليا والتنفيذية">الإدارة العليا والتنفيذية</option>
+                  <option value="إدارة العمليات والتشغيل">إدارة العمليات والتشغيل</option>
+                  <option value="الإدارة المالية">الإدارة المالية</option>
+                  <option value="الموارد البشرية">الموارد البشرية</option>
+                  <option value="خدمة العملاء والـ CRM">خدمة العملاء والـ CRM</option>
+                  <option value="إدارة الإيواء والتسكين">إدارة الإيواء والتسكين</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع المخصص</label>
+                <select
+                  value={editRoleForm.branch}
+                  onChange={e => setEditRoleForm({ ...editRoleForm, branch: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                >
+                  <option value="الفرع الرئيسي">الفرع الرئيسي - الرياض</option>
+                  <option value="فرع الرياض - اليرموك">فرع الرياض - اليرموك</option>
+                  <option value="فرع جدة - التحلية">فرع جدة - التحلية</option>
+                  <option value="فرع الخبر - الكورنيش">فرع الخبر - الكورنيش</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowEditRoleModal(false)}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
+                >
+                  حفظ وتطبيق الدور
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 2FA & Biometric Management Modal */}
+      {show2FAModal && selectedUser && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-base text-white flex items-center gap-2">
+                <Fingerprint className="w-4 h-4 text-emerald-400" />
+                <span>إعدادات المصادقة الثنائية والبصمة ({selectedUser.name})</span>
               </h3>
               <button onClick={() => setShow2FAModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
@@ -568,42 +727,47 @@ export const UsersPage: React.FC = () => {
             </div>
 
             <div className="p-6 space-y-4 bg-white text-black">
-              <div className="bg-zinc-50 p-3 rounded-2xl border border-zinc-100 text-xs">
-                <div className="font-bold text-black">المستخدم: {selectedUser.name} (@{selectedUser.username})</div>
-                <div className="text-zinc-500 font-mono mt-0.5">البريد: {selectedUser.email} • الهاتف: {selectedUser.phone}</div>
-              </div>
-
               {selectedUser.two_factor_enabled ? (
-                <div className="space-y-4">
-                  <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center gap-3">
-                    <ShieldCheck className="w-8 h-8 text-emerald-600 shrink-0" />
-                    <div>
-                      <h4 className="font-bold text-sm text-emerald-900">المصادقة الثنائية مفعلة حالياً</h4>
-                      <p className="text-xs text-emerald-700 mt-0.5">وسيلة التحقق النشطة: {selectedUser.two_factor_method || 'Google Authenticator'}</p>
-                      {selectedUser.biometric_enabled && (
-                        <p className="text-xs text-emerald-800 font-bold mt-1 flex items-center gap-1">
-                          <Fingerprint className="w-3.5 h-3.5" />
-                          <span>البصمة الحيوية: {selectedUser.biometric_type || 'Touch ID / Face ID'}</span>
-                        </p>
-                      )}
-                    </div>
+                <div className="space-y-4 text-center">
+                  <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 mx-auto flex items-center justify-center">
+                    <ShieldCheck className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-black">المصادقة الثنائية مفعلة بنجاح</h4>
+                    <p className="text-xs text-zinc-500 mt-1">
+                      الوسيلة الحالية: <span className="font-bold text-black">{selectedUser.two_factor_method || 'Google Authenticator'}</span>
+                    </p>
+                    {selectedUser.biometric_enabled && (
+                      <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                        <Fingerprint className="w-3.5 h-3.5" />
+                        <span>مفوض بالبصمة البيومترية ({selectedUser.biometric_type})</span>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
-                    <button className="button-outline-on-light" onClick={() => setShow2FAModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
-                      إغلاق
+                  <div className="flex gap-3 justify-center pt-2">
+                    <button
+                      onClick={handleToggle2FA}
+                      className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50"
+                      style={{ minHeight: '36px', padding: '6px 16px', fontSize: '12px' }}
+                    >
+                      إلغاء تفعيل المصادقة الثنائية
                     </button>
-                    <button className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50" onClick={handleToggle2FA} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
-                      تعطيل المصادقة 2FA
+                    <button
+                      onClick={() => setShow2FAModal(false)}
+                      className="button-primary-pill"
+                      style={{ minHeight: '36px', padding: '6px 20px', fontSize: '12px' }}
+                    >
+                      إغلاق
                     </button>
                   </div>
                 </div>
               ) : (
-                <div>
+                <div className="space-y-4">
                   {step === 1 ? (
                     <div className="space-y-3">
                       <p className="text-xs text-zinc-600">
-                        اختر طريقة المصادقة الثنائية والأمان البيومتري لتأمين حساب المستخدم:
+                        اختر وسيلة التحقق الإضافية لتأمين حساب الموظف ومنع الوصول غير المصرح:
                       </p>
 
                       <div className="space-y-2">
@@ -623,16 +787,16 @@ export const UsersPage: React.FC = () => {
                           <div>
                             <span className="font-bold text-xs text-black flex items-center gap-1">
                               <Smartphone className="w-3.5 h-3.5" />
-                              <span>تطبيق المصادقة (Google Authenticator / Authy / Microsoft)</span>
+                              <span>تطبيق المصادقة (Google / Microsoft Authenticator)</span>
                             </span>
-                            <span className="text-[11px] text-zinc-500 block mt-0.5">توليد رموز OTP مؤقتة متغير كل 30 ثانية بدون الحاجة لإنترنت.</span>
+                            <span className="text-[11px] text-zinc-500 block mt-0.5">رموز زمنية مشفرة (TOTP) تتغير كل 30 ثانية دون الحاجة للاتصال.</span>
                           </div>
                         </label>
 
                         <label
                           onClick={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
                           className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
-                            selectedMethod === 'بصمة بيومترية (FIDO2)' ? 'border-black bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
+                            selectedMethod === 'بصمة بيومترية (FIDO2)' ? 'border-emerald-600 bg-emerald-50/40' : 'border-zinc-200 hover:bg-zinc-50'
                           }`}
                         >
                           <input
@@ -640,12 +804,12 @@ export const UsersPage: React.FC = () => {
                             name="2fa-method"
                             checked={selectedMethod === 'بصمة بيومترية (FIDO2)'}
                             onChange={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
-                            className="mt-1 accent-black"
+                            className="mt-1 accent-emerald-600"
                           />
                           <div>
-                            <span className="font-bold text-xs text-black flex items-center gap-1">
+                            <span className="font-bold text-xs text-emerald-950 flex items-center gap-1">
                               <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>البصمة البيومترية المشفرة (Touch ID / Face ID Passkey)</span>
+                              <span>بصمة الإصبع أو الوجه (Touch ID / Face ID / Windows Hello)</span>
                             </span>
                             <span className="text-[11px] text-zinc-500 block mt-0.5">مصادقة مباشرة عبر شريحة الأمان للأجهزة الداعمة لـ WebAuthn.</span>
                           </div>
