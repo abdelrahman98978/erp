@@ -116,12 +116,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
 
-      <header className="nav-bar-light h-16 bg-white border-b border-zinc-200 px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-[90] shadow-sm">
+      <header className="nav-bar-light h-16 bg-white border-b border-zinc-200 px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-[90] shadow-sm flex-nowrap gap-3">
         {/* Right Section: App Switcher, Sidebar Toggle, Page Title, Branch */}
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 shrink-0 flex-nowrap">
           {/* Mobile/Desktop Hamburger Sidebar Toggle */}
           <button
-            className="button-outline-on-light flex items-center justify-center p-2 rounded-full w-9 h-9 min-h-[36px]"
+            className="button-outline-on-light flex items-center justify-center p-2 rounded-full w-9 h-9 min-h-[36px] shrink-0"
             onClick={onToggleSidebar}
             title="القائمة الجانبية"
             aria-label="القائمة الجانبية"
@@ -130,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           <button
-            className="button-outline-on-light hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-[36px]"
+            className="button-outline-on-light hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-[36px] shrink-0 whitespace-nowrap"
             onClick={onOpenAppLauncher}
             title={t('appLauncherTitle', 'بوابة الأقسام')}
           >
@@ -139,18 +139,18 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Current Page Title */}
-          <div className="header-title-box min-w-0">
-            <h1 className="text-xs sm:text-sm font-bold text-black m-0 truncate max-w-[120px] sm:max-w-[200px] md:max-w-none">
+          <div className="header-title-box min-w-0 shrink-0">
+            <h1 className="text-xs sm:text-sm font-bold text-black m-0 truncate max-w-[120px] sm:max-w-[200px] md:max-w-none whitespace-nowrap">
               {activeTabTitle}
             </h1>
           </div>
 
           {/* Active Branch Switcher */}
-          <div className="relative hidden md:block">
+          <div className="relative hidden md:block shrink-0">
             <button
               type="button"
               onClick={() => setShowBranchDropdown(!showBranchDropdown)}
-              className="pill-tag-mint cursor-pointer flex items-center gap-1 text-[11px] font-medium"
+              className="pill-tag-mint cursor-pointer flex items-center gap-1 text-[11px] font-medium whitespace-nowrap shrink-0"
             >
               <MapPin className="w-3 h-3 text-black" />
               <span>{selectedBranch}</span>
@@ -186,10 +186,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Center Quick Action Pills (Hidden on small mobile) */}
-        <div className="hidden xl:flex items-center gap-1.5">
+        <div className="hidden 2xl:flex items-center gap-1.5 flex-nowrap shrink-0">
           <button
             type="button"
-            className="button-primary-pill flex items-center gap-1 px-3 py-1 text-xs min-h-[30px]"
+            className="button-primary-pill flex items-center gap-1 px-3 py-1 text-xs min-h-[30px] whitespace-nowrap shrink-0"
             onClick={() => setActiveTab('create-contract', 'إضافة عقد استقدام جديد')}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -199,7 +199,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('orders', 'الطلبات المباشرة (الحجوزات)')}
-            className="pill-tag-shade cursor-pointer border border-zinc-200"
+            className="pill-tag-shade cursor-pointer border border-zinc-200 whitespace-nowrap shrink-0"
           >
             الطلبات المباشرة
           </button>
@@ -207,7 +207,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('reports', 'مركز التقارير الموحد')}
-            className="pill-tag-shade cursor-pointer border border-zinc-200"
+            className="pill-tag-shade cursor-pointer border border-zinc-200 whitespace-nowrap shrink-0"
           >
             التقارير
           </button>
@@ -215,7 +215,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('finance-home', 'لوحة التحكم المالية')}
-            className="pill-tag-shade cursor-pointer border border-zinc-200"
+            className="pill-tag-shade cursor-pointer border border-zinc-200 whitespace-nowrap shrink-0"
           >
             المالية
           </button>
@@ -223,7 +223,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('whatsapp-inbox', 'محادثات الدعم واللايف شات')}
-            className="pill-tag-mint cursor-pointer"
+            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0"
           >
             <MessageSquare className="w-3 h-3 text-black" />
             <span>اللايف شات</span>

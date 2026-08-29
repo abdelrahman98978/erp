@@ -184,9 +184,10 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <span>{isCurrent ? 'الشركة الحالية (مفعلة)' : 'ENTER COMPANY (الدخول بيئة العمل)'}</span>
+                <span>{isCurrent ? 'الشركة الحالية (مفعلة)' : 'دخول بيئة العمل'}</span>
                 <i className="fa-solid fa-arrow-left"></i>
               </button>
             </div>
