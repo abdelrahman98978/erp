@@ -350,14 +350,9 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setShowUserDropdown(!showUserDropdown)}
               className="flex items-center gap-1.5 bg-white border border-zinc-200 rounded-full p-1 pl-2.5 sm:pl-3 hover:bg-zinc-50 transition-colors"
             >
-              <img
-                src="/avatar-admin.png"
-                onError={(e) => {
-                  (e.target as HTMLElement).setAttribute('src', 'https://ui-avatars.com/api/?name=Abdelftah&background=000000&color=fff');
-                }}
-                alt="User Avatar"
-                className="w-7 h-7 rounded-full object-cover"
-              />
+              <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                ع
+              </div>
               <div className="hidden sm:block text-right">
                 <div className="text-[11px] font-bold text-black leading-tight">عبد الفتاح</div>
                 <div className="text-[9.5px] text-zinc-400 font-medium">مشرف عام</div>

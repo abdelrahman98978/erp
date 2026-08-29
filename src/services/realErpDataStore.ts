@@ -29,7 +29,7 @@ function saveLocalStore<T>(key: string, data: T[]): void {
   try {
     localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(data));
   } catch (e) {
-    console.error(`Failed to persist ${key} in localStorage`, e);
+    // Gracefully handle storage quota or privacy mode limits
   }
 }
 

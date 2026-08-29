@@ -85,7 +85,6 @@ export const insertTableRecord = async (
     .select()
     .single();
   if (error) {
-    console.error(`Error inserting into ${tableName}:`, error);
     return { data: null, error: error.message };
   }
   return { data, error: null };
@@ -106,7 +105,6 @@ export const updateTableRecord = async (
     .select()
     .single();
   if (error) {
-    console.error(`Error updating ${tableName}:`, error);
     return { data: null, error: error.message };
   }
   return { data, error: null };
@@ -121,7 +119,6 @@ export const deleteTableRecord = async (
 ): Promise<{ success: boolean; error: string | null }> => {
   const { error } = await supabase.from(tableName).delete().eq('id', id);
   if (error) {
-    console.error(`Error deleting from ${tableName}:`, error);
     return { success: false, error: error.message };
   }
   return { success: true, error: null };

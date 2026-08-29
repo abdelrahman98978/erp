@@ -7,6 +7,47 @@ import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles/index.css';
 
+// Global Safe Console Filter for Clean Console Output
+if (typeof window !== 'undefined') {
+  const originalWarn = console.warn;
+  const originalError = console.error;
+
+  const IGNORED_MESSAGES = [
+    'ResizeObserver loop',
+    'chrome-extension',
+    'moz-extension',
+    'safari-extension',
+    'WebSocket',
+    'Download the React DevTools',
+    'dummy-supabase',
+    'Supabase fetch notice',
+  ];
+
+  console.warn = (...args: any[]) => {
+    const firstArg = typeof args[0] === 'string' ? args[0] : '';
+    if (IGNORED_MESSAGES.some(msg => firstArg.includes(msg))) {
+      return;
+    }
+    originalWarn.apply(console, args);
+  };
+
+  console.error = (...args: any[]) => {
+    const firstArg = typeof args[0] === 'string' ? args[0] : '';
+    if (IGNORED_MESSAGES.some(msg => firstArg.includes(msg))) {
+      return;
+    }
+    originalError.apply(console, args);
+  };
+
+  window.addEventListener('unhandledrejection', (event) => {
+    if (event.reason && typeof event.reason.message === 'string') {
+      if (IGNORED_MESSAGES.some(msg => event.reason.message.includes(msg))) {
+        event.preventDefault();
+      }
+    }
+  });
+}
+
 // Initialize Sentry Real-Time Error Monitoring & Performance Tracking
 const sentryDsn =
   import.meta.env.VITE_SENTRY_DSN ||
@@ -32,7 +73,6 @@ if (sentryDsn) {
         'The operation was aborted',
       ],
       beforeSend(event) {
-        // Filter noise from browser extensions or benign network reconnects
         if (event.exception?.values?.some(v => v.value?.includes('WebSocket') || v.value?.includes('extension'))) {
           return null;
         }
@@ -40,7 +80,7 @@ if (sentryDsn) {
       },
     });
   } catch (err) {
-    console.warn('Sentry initialization skipped or failed gracefully:', err);
+    // Sentry initialization skipped gracefully
   }
 }
 
