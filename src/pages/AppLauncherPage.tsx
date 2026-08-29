@@ -476,14 +476,26 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'master-constants',
     titleKey: 'master-constants',
-    defaultTitle: 'الثوابت وإعدادات النظام',
+    defaultTitle: 'الثوابت والمتغيرات العامة',
     subKey: 'masterConstantsSub',
-    defaultSubtitle: 'إعدادات المنشأة، الشعار، اللغات، الهوية البصرية، والربط الحكومي API.',
+    defaultSubtitle: 'إدارة الجنسيات، المهن، المطارات، والمهارات المعتمدة للاستقدام.',
     icon: Settings,
     href: 'master-constants',
     category: 'tech',
-    categoryLabel: 'إعدادات النظام',
-    metricBadge: 'تهيئة عامة'
+    categoryLabel: 'ثوابت النظام',
+    metricBadge: '7 قوائم'
+  },
+  {
+    id: 'settings',
+    titleKey: 'settings',
+    defaultTitle: 'إعدادات النظام ومحتوى المنصة والأمان',
+    subKey: 'settingsSub',
+    defaultSubtitle: 'ضبط سياسات 2FA، بيانات المنشأة، الروابط السريعة، SEO، واللايف شات Zoho.',
+    icon: Sliders,
+    href: 'settings',
+    category: 'tech',
+    categoryLabel: 'إعدادات المنظومة',
+    metricBadge: '10 أقسام'
   }
 ];
 
