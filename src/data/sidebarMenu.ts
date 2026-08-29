@@ -185,6 +185,7 @@ export const SIDEBAR_MENU: NavItem[] = [
       { id: 'branch-departments', title: 'الهيكل التنظيمي والأقسام', icon: 'Network', href: 'branch-departments' },
       { id: 'employees', title: 'سجل الموظفين والكادر الوظيفي', icon: 'UserCheck', href: 'employees' },
       { id: 'add-employee', title: 'إضافة موظف جديد للمنظومة', icon: 'UserPlus', href: 'add-employee' },
+      { id: 'employee-promotions', title: 'ترقيات وسلّم درجات الموظفين والتقييم', icon: 'TrendingUp', href: 'employee-promotions' },
       { id: 'payrolls', title: 'مسير الرواتب وحماية الأجور (WPS)', icon: 'CreditCard', href: 'payrolls' },
       { id: 'wps-generator', title: 'توليد ملفات نظام حماية الأجور', icon: 'FileSpreadsheet', href: 'wps-generator' },
       { id: 'attendances', title: 'الحضور والانصراف والبصمة الذكية', icon: 'Clock', href: 'attendances' },
@@ -253,6 +254,7 @@ export const SIDEBAR_MENU: NavItem[] = [
     icon: 'Settings',
     children: [
       { id: 'users', title: 'التحكم بالوصول والمستخدمين (RBAC)', icon: 'ShieldCheck', href: 'users' },
+      { id: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية', icon: 'Scale', href: 'legal-compliance' },
       { id: 'master-constants', title: 'الثوابت (الجنسيات والمهن والدول)', icon: 'Sliders', href: 'master-constants' },
       { id: 'activity-log', title: 'سجل النشاط والحركات والتدقيق الأمني', icon: 'History', href: 'activity-log' },
       { id: 'system-backup', title: 'النسخ الاحتياطي والأرشفة السحابية', icon: 'HardDrive', href: 'system-backup' },
