@@ -247,11 +247,21 @@ export const TendersBOQPage: React.FC = () => {
   // Modals state
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [showNewTenderModal, setShowNewTenderModal] = useState(false);
+  const [showEditTenderModal, setShowEditTenderModal] = useState(false);
+  const [editingTender, setEditingTender] = useState<TenderRecord | null>(null);
+
   const [showNewSupplierModal, setShowNewSupplierModal] = useState(false);
+  const [showEditSupplierModal, setShowEditSupplierModal] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<SupplierRecord | null>(null);
+  const [showPrintSupplierModal, setShowPrintSupplierModal] = useState(false);
+  const [selectedSupplierForPrint, setSelectedSupplierForPrint] = useState<SupplierRecord | null>(null);
+
   const [showComparisonModal, setShowComparisonModal] = useState(false);
   const [showZatcaModal, setShowZatcaModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showMarginModal, setShowMarginModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportContext, setExportContext] = useState<'boq' | 'suppliers' | 'directory' | 'awards'>('boq');
 
   // Filter & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -516,89 +526,114 @@ export const TendersBOQPage: React.FC = () => {
     });
   };
 
-  const handleDeleteTender = () => {
-    if (tendersList.length <= 1) {
-      alert('لا يمكن حذف آخر منافسة متبقية.');
-      return;
-    }
-    if (!confirm(`هل أنت متأكد من حذف منافسة (${selectedTender.title})؟`)) return;
-
-    const remaining = tendersList.filter(t => t.id !== selectedTender.id);
-    setTendersList(remaining);
-    setSelectedTender(remaining[0]);
-    setCurrentItems(remaining[0].items);
-
-    addNotification({
-      title: 'حذف المنافسة',
-      message: 'تم حذف المنافسة بنجاح.',
-      type: 'info',
-    });
+  // --- Export Helpers for All Formats ---
+  const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + content], { type: `${mimeType};charset=utf-8;` });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
-  const handleStatusChange = (newStatus: TenderRecord['status']) => {
-    const updated: TenderRecord = { ...selectedTender, status: newStatus };
-    setSelectedTender(updated);
-    setTendersList(tendersList.map(t => t.id === updated.id ? updated : t));
-
-    addNotification({
-      title: 'تحديث حالة المنافسة',
-      message: `تم تغيير حالة المنافسة (${selectedTender.referenceNumber}) إلى: ${newStatus}`,
-      type: 'success',
-    });
+  // 1. BOQ Item Exports
+  const handleExportBOQCSV = () => {
+    const headers = [
+      'الرقم التسلسلي', 'وصف البند', 'وحدة القياس', 'الكمية', 'سعر الوحدة',
+      'سعر الوحدة كتابة', 'السعر الإجمالي', 'السعر الإجمالي كتابة',
+      'الضريبة (15%)', 'السعر الإجمالي شامل الضريبة', 'السعر الإجمالي شامل الضريبة كتابة'
+    ];
+    const rows = currentItems.map(it => [
+      it.itemNumber, `"${it.description}"`, `"${it.unit}"`, it.quantity,
+      it.unitPrice.toFixed(2), `"${it.unitPriceInWords}"`, it.totalPrice.toFixed(2),
+      `"${it.totalPriceInWords}"`, it.vat.toFixed(2), it.totalWithVat.toFixed(2),
+      `"${it.totalWithVatInWords}"`
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    downloadFile(csv, `BOQ_${selectedTender.referenceNumber}_KAS_Trading.csv`, 'text/csv');
+    addNotification({ title: 'تصدير CSV', message: 'تم تصدير ملف جدول الكميات بصيغة CSV بنجاح.', type: 'success' });
   };
 
-  const handleImportBOQFromText = () => {
-    if (!importText.trim()) return;
+  const handleExportBOQExcel = () => {
+    handleExportBOQCSV();
+    addNotification({ title: 'تصدير Excel', message: 'تم تصدير ملف جدول الكميات المتوافق مع Excel بنجاح.', type: 'success' });
+  };
 
-    const lines = importText.trim().split('\n');
-    const parsedItems: BOQItem[] = [];
+  const handleExportBOQJSON = () => {
+    const payload = JSON.stringify({ tender: selectedTender, items: currentItems, exportedAt: new Date().toISOString() }, null, 2);
+    downloadFile(payload, `BOQ_${selectedTender.referenceNumber}_KAS_Trading.json`, 'application/json');
+    addNotification({ title: 'تصدير JSON', message: 'تم تصدير بيانات المنافسة وجدول الكميات بصيغة JSON بنجاح.', type: 'success' });
+  };
 
-    lines.forEach((line, idx) => {
-      // Split by tab or comma
-      const parts = line.includes('\t') ? line.split('\t') : line.split(',');
-      if (parts.length >= 3) {
-        const desc = parts[0]?.trim() || `بند مستورد #${idx + 1}`;
-        const unit = parts[1]?.trim() || 'عدد';
-        const qty = parseFloat(parts[2]?.trim()) || 1;
-        const price = parseFloat(parts[3]?.trim()) || 100;
+  // 2. Suppliers Registry Exports
+  const handleExportSuppliersCSV = () => {
+    const headers = ['اسم المورد', 'الفئة', 'المدينة', 'المسؤول', 'الهاتف', 'البريد الإلكتروني', 'التقييم', 'الجودة', 'الالتزام', 'السعر', 'التعاملات', 'إجمالي القيمة (ر.س)', 'الحالة'];
+    const rows = suppliers.map(s => [
+      `"${s.name}"`, `"${s.category}"`, `"${s.city}"`, `"${s.contactPerson}"`, `"${s.phone}"`, `"${s.email}"`,
+      s.rating, `${s.qualityScore}%`, `${s.commitmentScore}%`, `${s.priceCompetitiveness}%`, s.totalDeals, s.totalValue, `"${s.status}"`
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    downloadFile(csv, `KAS_Suppliers_Registry_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+    addNotification({ title: 'تصدير سجل الموردين CSV', message: 'تم تصدير قائمة الموردين المعتمدين بنجاح.', type: 'success' });
+  };
 
-        const tot = qty * price;
-        const vat = Number((tot * 0.15).toFixed(2));
-        const totWithVat = Number((tot + vat).toFixed(2));
+  const handleExportSuppliersExcel = () => {
+    handleExportSuppliersCSV();
+    addNotification({ title: 'تصدير سجل الموردين Excel', message: 'تم تصدير سجل الموردين بصيغة إكسيل بنجاح.', type: 'success' });
+  };
 
-        parsedItems.push({
-          id: `item-imp-${Date.now()}-${idx}`,
-          itemNumber: currentItems.length + idx + 1,
-          description: desc,
-          unit: unit,
-          quantity: qty,
-          unitPrice: price,
-          unitPriceInWords: tafqeet(price),
-          totalPrice: tot,
-          totalPriceInWords: tafqeet(tot),
-          vat: vat,
-          totalWithVat: totWithVat,
-          totalWithVatInWords: tafqeet(totWithVat),
-        });
-      }
-    });
+  const handleExportSuppliersJSON = () => {
+    const payload = JSON.stringify({ company: 'مؤسسة خالد عبدالعزيز السليم للتجارة (كاس)', suppliers, exportedAt: new Date().toISOString() }, null, 2);
+    downloadFile(payload, `KAS_Suppliers_Registry_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+    addNotification({ title: 'تصدير JSON', message: 'تم تصدير سجل الموردين بصيغة JSON بنجاح.', type: 'success' });
+  };
 
-    if (parsedItems.length === 0) {
-      alert('لم يتم التعرف على بنود صحيحة. يرجى التأكد من التنسيق: (الوصف | الوحدة | الكمية | السعر)');
-      return;
-    }
+  // 3. Tenders Directory Exports
+  const handleExportDirectoryCSV = () => {
+    const headers = ['الرقم المرجعي', 'عنوان المنافسة', 'الجهة المستفيدة', 'التصنيف', 'تاريخ التقديم', 'مدة التوريد', 'مدة الالتزام', 'عدد البنود', 'الإجمالي قبل الضريبة', 'الضريبة (15%)', 'الإجمالي شامل الضريبة', 'الحالة'];
+    const rows = tendersList.map(t => [
+      `"${t.referenceNumber}"`, `"${t.title}"`, `"${t.clientName}"`, `"${t.category}"`, t.submissionDate, `"${t.supplyDuration}"`,
+      t.commitmentDays, t.itemsCount, t.subtotal.toFixed(2), t.vatAmount.toFixed(2), t.grandTotal.toFixed(2), `"${t.status}"`
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    downloadFile(csv, `KAS_Tenders_Directory_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+    addNotification({ title: 'تصدير سجل المنافسات CSV', message: 'تم تصدير سجل المنافسات والعقود بنجاح.', type: 'success' });
+  };
 
-    const merged = [...currentItems, ...parsedItems];
-    setCurrentItems(merged);
+  const handleExportDirectoryExcel = () => {
+    handleExportDirectoryCSV();
+    addNotification({ title: 'تصدير سجل المنافسات Excel', message: 'تم تصدير سجل المنافسات بصيغة إكسيل بنجاح.', type: 'success' });
+  };
 
-    const newSubtotal = merged.reduce((sum, it) => sum + it.totalPrice, 0);
+  const handleExportDirectoryJSON = () => {
+    const payload = JSON.stringify({ company: 'مؤسسة خالد عبدالعزيز السليم للتجارة (كاس)', tenders: tendersList, exportedAt: new Date().toISOString() }, null, 2);
+    downloadFile(payload, `KAS_Tenders_Directory_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+    addNotification({ title: 'تصدير JSON', message: 'تم تصدير سجل المنافسات بصيغة JSON بنجاح.', type: 'success' });
+  };
+
+  // --- Item Level CRUD ---
+  const handleDuplicateItem = (index: number) => {
+    const target = currentItems[index];
+    const nextNum = currentItems.length + 1;
+    const cloned: BOQItem = {
+      ...target,
+      id: `item-${Date.now()}-${Math.random()}`,
+      itemNumber: nextNum,
+      description: `${target.description} (مكرر)`,
+    };
+    const updated = [...currentItems, cloned];
+    setCurrentItems(updated);
+
+    const newSubtotal = updated.reduce((sum, it) => sum + it.totalPrice, 0);
     const newVat = Number((newSubtotal * 0.15).toFixed(2));
     const newGrandTotal = Number((newSubtotal + newVat).toFixed(2));
 
     const updatedTender: TenderRecord = {
       ...selectedTender,
-      items: merged,
-      itemsCount: merged.length,
+      items: updated,
+      itemsCount: updated.length,
       subtotal: newSubtotal,
       subtotalInWords: tafqeet(newSubtotal),
       vatAmount: newVat,
@@ -609,43 +644,223 @@ export const TendersBOQPage: React.FC = () => {
 
     setSelectedTender(updatedTender);
     setTendersList(tendersList.map(t => t.id === updatedTender.id ? updatedTender : t));
-    setShowImportModal(false);
-    setImportText('');
 
     addNotification({
-      title: 'استيراد بنود BOQ',
-      message: `تم استيراد ${parsedItems.length} بند بنجاح وحساب الضريبة والتفقيط التلقائي.`,
+      title: 'نسخ البند',
+      message: `تم تكرار البند #${target.itemNumber} بنجاح.`,
+      type: 'success'
+    });
+  };
+
+  const handleClearAllItems = () => {
+    if (!confirm('هل أنت متأكد من تفريغ كافة بنود جدول الكميات للمنافسة الحالية؟')) return;
+    const initialItem: BOQItem = {
+      id: `item-${Date.now()}`,
+      itemNumber: 1,
+      description: 'بند جديد',
+      unit: 'عدد',
+      quantity: 1,
+      unitPrice: 0,
+      unitPriceInWords: 'صفر ريال',
+      totalPrice: 0,
+      totalPriceInWords: 'صفر ريال',
+      vat: 0,
+      totalWithVat: 0,
+      totalWithVatInWords: 'صفر ريال',
+    };
+    setCurrentItems([initialItem]);
+    const updatedTender: TenderRecord = {
+      ...selectedTender,
+      items: [initialItem],
+      itemsCount: 1,
+      subtotal: 0,
+      subtotalInWords: 'صفر ريال',
+      vatAmount: 0,
+      vatInWords: 'صفر ريال',
+      grandTotal: 0,
+      grandTotalInWords: 'صفر ريال',
+    };
+    setSelectedTender(updatedTender);
+    setTendersList(tendersList.map(t => t.id === updatedTender.id ? updatedTender : t));
+    addNotification({
+      title: 'تفريغ الجدول',
+      message: 'تم تفريغ بنود جدول الكميات بنجاح.',
+      type: 'info'
+    });
+  };
+
+  // --- Supplier Level CRUD ---
+  const handleOpenEditSupplier = (sup: SupplierRecord) => {
+    setEditingSupplier(sup);
+    setShowEditSupplierModal(true);
+  };
+
+  const handleUpdateSupplier = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSupplier) return;
+    setSuppliers(suppliers.map(s => s.id === editingSupplier.id ? editingSupplier : s));
+    setShowEditSupplierModal(false);
+    addNotification({
+      title: 'تعديل بيانات المورد',
+      message: `تم تحديث بيانات المورد (${editingSupplier.name}) بنجاح.`,
       type: 'success',
     });
   };
 
-  const handleApplyMargin = () => {
-    const margin = parseFloat(targetMarginPct) || 20;
-    const factor = 1 + (margin / 100);
+  const handleDeleteSupplier = (supId: string) => {
+    const target = suppliers.find(s => s.id === supId);
+    if (!confirm(`هل أنت متأكد من حذف المورد (${target?.name || supId}) من السجل المعتمد؟`)) return;
+    setSuppliers(suppliers.filter(s => s.id !== supId));
+    addNotification({
+      title: 'حذف المورد',
+      message: `تم حذف المورد (${target?.name}) من السجل.`,
+      type: 'info',
+    });
+  };
 
+  const handlePrintSupplierCard = (sup: SupplierRecord) => {
+    setSelectedSupplierForPrint(sup);
+    setShowPrintSupplierModal(true);
+  };
+
+  // --- Tender Level CRUD ---
+  const handleOpenEditTender = (tender: TenderRecord) => {
+    setEditingTender(tender);
+    setShowEditTenderModal(true);
+  };
+
+  const handleUpdateTender = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingTender) return;
+    const updated: TenderRecord = { ...editingTender };
+    setTendersList(tendersList.map(t => t.id === updated.id ? updated : t));
+    if (selectedTender.id === updated.id) {
+      setSelectedTender(updated);
+    }
+    setShowEditTenderModal(false);
+    addNotification({
+      title: 'تعديل بيانات المنافسة',
+      message: `تم تحديث بيانات منافسة (${updated.referenceNumber}) بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteTender = (tenderId?: string) => {
+    const idToDelete = tenderId || selectedTender.id;
+    if (tendersList.length <= 1) {
+      alert('لا يمكن حذف المنافسة الوحيدة المتبقية في النظام.');
+      return;
+    }
+    const target = tendersList.find(t => t.id === idToDelete);
+    if (!confirm(`هل أنت متأكد من حذف المنافسة (${target?.referenceNumber} - ${target?.title}) نهائياً؟`)) return;
+    const remaining = tendersList.filter(t => t.id !== idToDelete);
+    setTendersList(remaining);
+    if (selectedTender.id === idToDelete) {
+      setSelectedTender(remaining[0]);
+      setCurrentItems(remaining[0].items);
+    }
+    addNotification({
+      title: 'حذف المنافسة',
+      message: `تم حذف المنافسة (${target?.referenceNumber}) بنجاح.`,
+      type: 'info',
+    });
+  };
+
+  const handleStatusChange = (newStatus: TenderRecord['status']) => {
+    const updated: TenderRecord = { ...selectedTender, status: newStatus };
+    setSelectedTender(updated);
+    setTendersList(tendersList.map(t => t.id === updated.id ? updated : t));
+    addNotification({
+      title: 'تحديث حالة المنافسة',
+      message: `تم تغيير حالة المنافسة (${selectedTender.referenceNumber}) إلى (${newStatus}).`,
+      type: 'success',
+    });
+  };
+
+  const handleImportBOQFromText = () => {
+    if (!importText.trim()) return;
+    const lines = importText.trim().split('\n');
+    const imported: BOQItem[] = [];
+    lines.forEach((line, idx) => {
+      const parts = line.split(/[\t,|]/).map(p => p.trim());
+      if (parts.length >= 2) {
+        const desc = parts[0] || `بند مورد ${idx + 1}`;
+        const unit = parts[1] || 'عدد';
+        const qty = parseFloat(parts[2]) || 1;
+        const price = parseFloat(parts[3]) || 0;
+        const total = Number((qty * price).toFixed(2));
+        const vat = Number((total * 0.15).toFixed(2));
+        const totalWithVat = Number((total + vat).toFixed(2));
+        imported.push({
+          id: `item-import-${Date.now()}-${idx}`,
+          itemNumber: currentItems.length + idx + 1,
+          description: desc,
+          unit: unit,
+          quantity: qty,
+          unitPrice: price,
+          unitPriceInWords: tafqeet(price),
+          totalPrice: total,
+          totalPriceInWords: tafqeet(total),
+          vat: vat,
+          totalWithVat: totalWithVat,
+          totalWithVatInWords: tafqeet(totalWithVat),
+        });
+      }
+    });
+
+    if (imported.length > 0) {
+      const updated = [...currentItems, ...imported];
+      setCurrentItems(updated);
+      const newSubtotal = updated.reduce((sum, it) => sum + it.totalPrice, 0);
+      const newVat = Number((newSubtotal * 0.15).toFixed(2));
+      const newGrandTotal = Number((newSubtotal + newVat).toFixed(2));
+      const updatedTender: TenderRecord = {
+        ...selectedTender,
+        items: updated,
+        itemsCount: updated.length,
+        subtotal: newSubtotal,
+        subtotalInWords: tafqeet(newSubtotal),
+        vatAmount: newVat,
+        vatInWords: tafqeet(newVat),
+        grandTotal: newGrandTotal,
+        grandTotalInWords: tafqeet(newGrandTotal),
+      };
+      setSelectedTender(updatedTender);
+      setTendersList(tendersList.map(t => t.id === updatedTender.id ? updatedTender : t));
+      setShowImportModal(false);
+      setImportText('');
+      addNotification({
+        title: 'استيراد كراسة BOQ',
+        message: `تم استيراد ${imported.length} بند بنجاح إلى جدول الكميات.`,
+        type: 'success',
+      });
+    }
+  };
+
+  const handleApplyMargin = () => {
+    const margin = parseFloat(targetMarginPct) || 0;
+    const factor = 1 + (margin / 100);
     const updated = currentItems.map(it => {
-      const newPrice = Math.round(it.unitPrice * factor);
-      const tot = it.quantity * newPrice;
-      const vat = Number((tot * 0.15).toFixed(2));
-      const totWithVat = Number((tot + vat).toFixed(2));
+      const newUnitPrice = Number((it.unitPrice * factor).toFixed(2));
+      const newTotal = Number((newUnitPrice * it.quantity).toFixed(2));
+      const newVat = Number((newTotal * 0.15).toFixed(2));
+      const newTotalWithVat = Number((newTotal + newVat).toFixed(2));
       return {
         ...it,
-        unitPrice: newPrice,
-        unitPriceInWords: tafqeet(newPrice),
-        totalPrice: tot,
-        totalPriceInWords: tafqeet(tot),
-        vat: vat,
-        totalWithVat: totWithVat,
-        totalWithVatInWords: tafqeet(totWithVat),
+        unitPrice: newUnitPrice,
+        unitPriceInWords: tafqeet(newUnitPrice),
+        totalPrice: newTotal,
+        totalPriceInWords: tafqeet(newTotal),
+        vat: newVat,
+        totalWithVat: newTotalWithVat,
+        totalWithVatInWords: tafqeet(newTotalWithVat),
       };
     });
 
     setCurrentItems(updated);
-
     const newSubtotal = updated.reduce((sum, it) => sum + it.totalPrice, 0);
     const newVat = Number((newSubtotal * 0.15).toFixed(2));
     const newGrandTotal = Number((newSubtotal + newVat).toFixed(2));
-
     const updatedTender: TenderRecord = {
       ...selectedTender,
       items: updated,
@@ -656,61 +871,13 @@ export const TendersBOQPage: React.FC = () => {
       grandTotal: newGrandTotal,
       grandTotalInWords: tafqeet(newGrandTotal),
     };
-
     setSelectedTender(updatedTender);
     setTendersList(tendersList.map(t => t.id === updatedTender.id ? updatedTender : t));
     setShowMarginModal(false);
-
     addNotification({
       title: 'تطبيق هامش الربح',
-      message: `تم تطبيق هامش ربح ${margin}% وتحديث تسعيرات جميع بنود المنافسة.`,
+      message: `تم تطبيق هامش ربح (+${margin}%) على كافة بنود المنافسة بنجاح.`,
       type: 'success',
-    });
-  };
-
-  const handleExportBOQExcel = () => {
-    const headers = [
-      'الرقم التسلسلي',
-      'وصف البند',
-      'وحدة القياس',
-      'الكمية',
-      'سعر الوحدة',
-      'سعر الوحدة كتابة',
-      'السعر الإجمالي',
-      'السعر الإجمالي كتابة',
-      'الضريبة (15%)',
-      'السعر الإجمالي شامل الضريبة',
-      'السعر الإجمالي شامل الضريبة كتابة'
-    ];
-
-    const rows = currentItems.map(it => [
-      it.itemNumber,
-      `"${it.description}"`,
-      `"${it.unit}"`,
-      it.quantity,
-      it.unitPrice.toFixed(2),
-      `"${it.unitPriceInWords}"`,
-      it.totalPrice.toFixed(2),
-      `"${it.totalPriceInWords}"`,
-      it.vat.toFixed(2),
-      it.totalWithVat.toFixed(2),
-      `"${it.totalWithVatInWords}"`
-    ]);
-
-    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `BOQ_${selectedTender.referenceNumber}_KAS_Trading.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-
-    addNotification({
-      title: 'تصدير جدول الكميات',
-      message: `تم تصدير ملف جدول الكميات والأسعار (${selectedTender.referenceNumber}) بنجاح.`,
-      type: 'success'
     });
   };
 
@@ -762,6 +929,16 @@ export const TendersBOQPage: React.FC = () => {
           </button>
 
           <button
+            onClick={() => handleOpenEditTender(selectedTender)}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(255,255,255,0.3)', color: '#ffffff' }}
+            title="تعديل بيانات المنافسة النشطة"
+          >
+            <Edit3 className="w-3.5 h-3.5 ml-1 text-amber-300" />
+            <span>تعديل المنافسة</span>
+          </button>
+
+          <button
             onClick={() => setShowComparisonModal(true)}
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
@@ -788,14 +965,36 @@ export const TendersBOQPage: React.FC = () => {
             <span>طباعة العرض الرسمي</span>
           </button>
 
-          <button
-            onClick={handleExportBOQExcel}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(52, 211, 153, 0.5)', color: '#34d399' }}
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
-            <span>تصدير Excel</span>
-          </button>
+          {/* Multi-Format Export Group */}
+          <div className="flex items-center bg-black/40 rounded-xl p-0.5 border border-emerald-500/40">
+            <span className="text-[10px] text-emerald-300 font-bold px-2 flex items-center gap-1">
+              <Download className="w-3 h-3" />
+              <span>تصدير:</span>
+            </span>
+            <button
+              onClick={handleExportBOQExcel}
+              className="px-2.5 py-1 text-[11px] font-bold text-emerald-300 hover:bg-emerald-800/60 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              title="تصدير بصيغة Excel"
+            >
+              <FileSpreadsheet className="w-3 h-3" />
+              <span>Excel</span>
+            </button>
+            <button
+              onClick={handleExportBOQCSV}
+              className="px-2.5 py-1 text-[11px] font-bold text-sky-300 hover:bg-sky-800/60 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              title="تصدير بصيغة CSV"
+            >
+              <FileText className="w-3 h-3" />
+              <span>CSV</span>
+            </button>
+            <button
+              onClick={handleExportBOQJSON}
+              className="px-2.5 py-1 text-[11px] font-bold text-amber-300 hover:bg-amber-800/60 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+              title="تصدير بصيغة JSON"
+            >
+              <span>JSON</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -842,6 +1041,15 @@ export const TendersBOQPage: React.FC = () => {
           </div>
 
           <button
+            onClick={() => handleOpenEditTender(selectedTender)}
+            className="button-outline-on-light text-xs py-1.5 px-3 flex items-center gap-1"
+            title="تعديل بيانات المنافسة الحالية"
+          >
+            <Edit3 className="w-3.5 h-3.5 text-amber-600" />
+            <span>تعديل</span>
+          </button>
+
+          <button
             onClick={handleDuplicateTender}
             className="button-outline-on-light text-xs py-1.5 px-3 flex items-center gap-1"
             title="إنشاء نسخة مطابقة من كراسة المنافسة الحالية"
@@ -860,7 +1068,7 @@ export const TendersBOQPage: React.FC = () => {
           </button>
 
           <button
-            onClick={handleDeleteTender}
+            onClick={() => handleDeleteTender()}
             className="button-outline-on-light text-xs py-1.5 px-2.5 text-red-600 border-red-200 hover:bg-red-50"
             title="حذف هذه المنافسة"
           >
@@ -927,28 +1135,84 @@ export const TendersBOQPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Quick Details Sub-strip */}
-            <div className="bg-emerald-50 text-emerald-950 px-4 py-2 flex items-center justify-between text-xs border-b border-emerald-200 flex-wrap gap-2 font-semibold">
-              <div>
-                <span>الجهة الطالبة: </span>
-                <span className="font-bold text-black">{selectedTender.clientName}</span>
+            {/* Quick Details Sub-strip & Action Toolbar */}
+            <div className="bg-emerald-50 text-emerald-950 px-4 py-2.5 flex items-center justify-between text-xs border-b border-emerald-200 flex-wrap gap-2 font-semibold">
+              <div className="flex items-center gap-4 flex-wrap">
+                <div>
+                  <span>الجهة الطالبة: </span>
+                  <span className="font-bold text-black">{selectedTender.clientName}</span>
+                </div>
+                <div>
+                  <span>مدة التوريد: </span>
+                  <span className="font-bold text-black">{selectedTender.supplyDuration}</span>
+                </div>
+                <div>
+                  <span>مدة الالتزام بالعرض: </span>
+                  <span className="font-bold text-black">{selectedTender.commitmentDays} يوماً</span>
+                </div>
               </div>
-              <div>
-                <span>مدة التوريد: </span>
-                <span className="font-bold text-black">{selectedTender.supplyDuration}</span>
-              </div>
-              <div>
-                <span>مدة الالتزام بالعرض: </span>
-                <span className="font-bold text-black">{selectedTender.commitmentDays} يوماً</span>
-              </div>
-              <div className="flex items-center gap-2">
+
+              {/* Action Buttons for Items & Export */}
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={handleAddNewItem}
-                  className="bg-[#107c41] text-white px-3 py-1 rounded-full text-xs font-bold hover:bg-emerald-800 flex items-center gap-1"
+                  className="bg-[#107c41] text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-emerald-800 flex items-center gap-1 cursor-pointer transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>+ إضافة بند جديد</span>
                 </button>
+
+                <button
+                  onClick={() => setShowMarginModal(true)}
+                  className="bg-emerald-100 text-emerald-900 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-emerald-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <Percent className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>هامش الربح</span>
+                </button>
+
+                <button
+                  onClick={handleClearAllItems}
+                  className="bg-red-50 text-red-700 border border-red-200 px-2.5 py-1.5 rounded-xl text-xs font-bold hover:bg-red-100 flex items-center gap-1 cursor-pointer"
+                  title="تفريغ كافة بنود الجدول"
+                >
+                  <Trash2 className="w-3 h-3 text-red-600" />
+                  <span>تفريغ</span>
+                </button>
+
+                {/* Export Buttons Group */}
+                <div className="flex items-center bg-white border border-emerald-300 rounded-xl p-0.5 shadow-2xs">
+                  <button
+                    onClick={handleExportBOQExcel}
+                    className="px-2 py-1 text-[11px] font-bold text-emerald-800 hover:bg-emerald-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="تصدير جدول الكميات كـ Excel"
+                  >
+                    <FileSpreadsheet className="w-3 h-3 text-emerald-600" />
+                    <span>Excel</span>
+                  </button>
+                  <button
+                    onClick={handleExportBOQCSV}
+                    className="px-2 py-1 text-[11px] font-bold text-sky-800 hover:bg-sky-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="تصدير كـ CSV"
+                  >
+                    <FileText className="w-3 h-3 text-sky-600" />
+                    <span>CSV</span>
+                  </button>
+                  <button
+                    onClick={handleExportBOQJSON}
+                    className="px-2 py-1 text-[11px] font-bold text-amber-800 hover:bg-amber-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="تصدير كـ JSON"
+                  >
+                    <span>JSON</span>
+                  </button>
+                  <button
+                    onClick={() => setShowPrintModal(true)}
+                    className="px-2 py-1 text-[11px] font-bold text-purple-800 hover:bg-purple-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="طباعة / تصدير PDF"
+                  >
+                    <Printer className="w-3 h-3 text-purple-600" />
+                    <span>PDF</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -968,7 +1232,7 @@ export const TendersBOQPage: React.FC = () => {
                     <th className="p-2 border-r border-emerald-300 w-20">الضريبة (15%)</th>
                     <th className="p-2 border-r border-emerald-300 w-28">الإجمالي شامل الضريبة</th>
                     <th className="p-2 border-r border-emerald-300 min-w-[200px]">السعر شامل الضريبة كتابة</th>
-                    <th className="p-2 w-10">إجراء</th>
+                    <th className="p-2 w-16 text-center">الإجراءات</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1014,13 +1278,22 @@ export const TendersBOQPage: React.FC = () => {
                       <td className="p-2 border-r border-zinc-200 font-mono font-bold text-emerald-900 bg-emerald-50/50 text-center">{item.totalWithVat.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                       <td className="p-2 border-r border-zinc-200 text-[11px] text-emerald-950 font-medium leading-snug">{item.totalWithVatInWords}</td>
                       <td className="p-1 text-center">
-                        <button
-                          onClick={() => handleDeleteItem(idx)}
-                          className="p-1 text-zinc-400 hover:text-rose-600 rounded-full hover:bg-rose-50 transition-colors"
-                          title="حذف البند"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => handleDuplicateItem(idx)}
+                            className="p-1 text-zinc-500 hover:text-emerald-700 rounded-full hover:bg-emerald-50 transition-colors cursor-pointer"
+                            title="نسخ البند"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteItem(idx)}
+                            className="p-1 text-zinc-400 hover:text-rose-600 rounded-full hover:bg-rose-50 transition-colors cursor-pointer"
+                            title="حذف البند"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1077,13 +1350,45 @@ export const TendersBOQPage: React.FC = () => {
                 <FileUp className="w-3.5 h-3.5 text-amber-600" />
                 <span>استيراد كراسة BOQ</span>
               </button>
-              <button
-                onClick={() => setShowComparisonModal(true)}
-                className="button-outline-on-light text-xs py-1.5 px-3 flex items-center gap-1"
-              >
-                <ArrowRightLeft className="w-3.5 h-3.5 text-sky-600" />
-                <span>مقارنة الأسعار</span>
-              </button>
+
+              {/* Multi-Format Export Group */}
+              <div className="flex items-center bg-zinc-50 border border-zinc-200 rounded-xl p-0.5 shadow-2xs">
+                <span className="text-[10px] text-zinc-500 font-bold px-1.5 flex items-center gap-1">
+                  <Download className="w-3 h-3 text-zinc-600" />
+                  <span>تصدير:</span>
+                </span>
+                <button
+                  onClick={handleExportDirectoryExcel}
+                  className="px-2 py-1 text-[11px] font-bold text-emerald-800 hover:bg-emerald-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  title="تصدير كـ Excel"
+                >
+                  <FileSpreadsheet className="w-3 h-3 text-emerald-600" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={handleExportDirectoryCSV}
+                  className="px-2 py-1 text-[11px] font-bold text-sky-800 hover:bg-sky-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  title="تصدير كـ CSV"
+                >
+                  <FileText className="w-3 h-3 text-sky-600" />
+                  <span>CSV</span>
+                </button>
+                <button
+                  onClick={handleExportDirectoryJSON}
+                  className="px-2 py-1 text-[11px] font-bold text-amber-800 hover:bg-amber-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  title="تصدير كـ JSON"
+                >
+                  <span>JSON</span>
+                </button>
+                <button
+                  onClick={() => window.print()}
+                  className="px-2 py-1 text-[11px] font-bold text-purple-800 hover:bg-purple-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  title="طباعة السجل / PDF"
+                >
+                  <Printer className="w-3 h-3 text-purple-600" />
+                  <span>PDF</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1099,7 +1404,7 @@ export const TendersBOQPage: React.FC = () => {
                   <th className="p-3.5">الضريبة (15%)</th>
                   <th className="p-3.5">الإجمالي شامل الضريبة</th>
                   <th className="p-3.5">الحالة</th>
-                  <th className="p-3.5 text-center">الإجراءات</th>
+                  <th className="p-3.5 text-center min-w-[200px]">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -1132,6 +1437,13 @@ export const TendersBOQPage: React.FC = () => {
                           <span>فتح BOQ</span>
                         </button>
                         <button
+                          onClick={() => handleOpenEditTender(t)}
+                          className="button-outline-on-light text-xs py-1 px-2 text-amber-700 border-amber-200 hover:bg-amber-50"
+                          title="تعديل بيانات المنافسة"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
+                        <button
                           onClick={() => {
                             handleSelectTender(t);
                             setShowPrintModal(true);
@@ -1150,6 +1462,16 @@ export const TendersBOQPage: React.FC = () => {
                           title="نسخ المنافسة"
                         >
                           <Copy className="w-3 h-3 text-zinc-600" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleSelectTender(t);
+                            handleDeleteTender();
+                          }}
+                          className="button-outline-on-light text-xs py-1 px-2 text-red-600 border-red-200 hover:bg-red-50"
+                          title="حذف المنافسة"
+                        >
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
                     </td>
@@ -1266,24 +1588,63 @@ export const TendersBOQPage: React.FC = () => {
       {activeTab === 'suppliers' && (
         <div className="space-y-6">
           <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-            {/* Suppliers Header & Add Button */}
+            {/* Suppliers Header & Add / Export Buttons */}
             <div className="border-b border-zinc-100 pb-3 mb-4 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
                   <Users className="w-5 h-5 text-emerald-600" />
                   <span>سجل الموردين والمقاولين المعتمدين — كاس للتجارة</span>
                 </h3>
-                <p className="text-xs text-zinc-500 mt-1">قاعدة بيانات الموردين مع التقييم والأداء وسجل التوريدات السابقة</p>
+                <p className="text-xs text-zinc-500 mt-1">قاعدة بيانات الموردين مع التقييم والأداء وسجل التوريدات السابقة وإجراءات التعديل والحذف والتصدير</p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setShowNewSupplierModal(true)}
-                  className="button-primary-pill text-xs px-4 py-2 flex items-center gap-1.5"
+                  className="button-primary-pill text-xs px-4 py-2 flex items-center gap-1.5 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>+ إضافة مورد معتمد جديد</span>
                 </button>
+
+                {/* Multi-Format Export Group */}
+                <div className="flex items-center bg-zinc-50 border border-zinc-200 rounded-xl p-0.5 shadow-2xs">
+                  <span className="text-[10px] text-zinc-500 font-bold px-1.5 flex items-center gap-1">
+                    <Download className="w-3 h-3 text-zinc-600" />
+                    <span>تصدير:</span>
+                  </span>
+                  <button
+                    onClick={handleExportSuppliersExcel}
+                    className="px-2 py-1 text-[11px] font-bold text-emerald-800 hover:bg-emerald-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="تصدير كـ Excel"
+                  >
+                    <FileSpreadsheet className="w-3 h-3 text-emerald-600" />
+                    <span>Excel</span>
+                  </button>
+                  <button
+                    onClick={handleExportSuppliersCSV}
+                    className="px-2 py-1 text-[11px] font-bold text-sky-800 hover:bg-sky-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="تصدير كـ CSV"
+                  >
+                    <FileText className="w-3 h-3 text-sky-600" />
+                    <span>CSV</span>
+                  </button>
+                  <button
+                    onClick={handleExportSuppliersJSON}
+                    className="px-2 py-1 text-[11px] font-bold text-amber-800 hover:bg-amber-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="تصدير كـ JSON"
+                  >
+                    <span>JSON</span>
+                  </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="px-2 py-1 text-[11px] font-bold text-purple-800 hover:bg-purple-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    title="طباعة سجل الموردين / PDF"
+                  >
+                    <Printer className="w-3 h-3 text-purple-600" />
+                    <span>PDF</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1321,7 +1682,8 @@ export const TendersBOQPage: React.FC = () => {
                     <th className="p-2.5 text-center border-r border-zinc-200 w-16">السعر</th>
                     <th className="p-2.5 text-center border-r border-zinc-200 w-16">التعاملات</th>
                     <th className="p-2.5 text-center border-r border-zinc-200 w-24">إجمالي القيمة</th>
-                    <th className="p-2.5 text-center w-20">الحالة</th>
+                    <th className="p-2.5 text-center border-r border-zinc-200 w-20">الحالة</th>
+                    <th className="p-2.5 text-center w-28">الإجراءات</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1369,10 +1731,35 @@ export const TendersBOQPage: React.FC = () => {
                         </td>
                         <td className="p-2 border-r border-zinc-100 text-center font-mono font-bold">{sup.totalDeals}</td>
                         <td className="p-2 border-r border-zinc-100 text-center font-mono font-bold">{sup.totalValue.toLocaleString()}</td>
-                        <td className="p-2 text-center">
+                        <td className="p-2 border-r border-zinc-100 text-center">
                           <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ color: statusColor, backgroundColor: statusBg }}>
                             {sup.status}
                           </span>
+                        </td>
+                        <td className="p-2 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => handleOpenEditSupplier(sup)}
+                              className="p-1.5 text-zinc-600 hover:text-amber-700 rounded-lg hover:bg-amber-50 border border-zinc-200 transition-colors cursor-pointer"
+                              title="تعديل بيانات المورد"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handlePrintSupplierCard(sup)}
+                              className="p-1.5 text-zinc-600 hover:text-emerald-700 rounded-lg hover:bg-emerald-50 border border-zinc-200 transition-colors cursor-pointer"
+                              title="طباعة بطاقة المورد الرسمية"
+                            >
+                              <Printer className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSupplier(sup.id)}
+                              className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-red-50 border border-zinc-200 transition-colors cursor-pointer"
+                              title="حذف المورد"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -2104,6 +2491,364 @@ export const TendersBOQPage: React.FC = () => {
               >
                 <Printer className="w-4 h-4" />
                 <span>طباعة الوثيقة (Print)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. Modal: Edit Supplier */}
+      {showEditSupplierModal && editingSupplier && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2300] flex items-center justify-center p-4">
+          <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-amber-400" />
+                <span>تعديل بيانات المورد المعتمد — ({editingSupplier.name})</span>
+              </h3>
+              <button onClick={() => setShowEditSupplierModal(false)} className="p-1 text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateSupplier} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">اسم المورد / الشركة</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingSupplier.name}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, name: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">فئة التوريد</label>
+                  <select
+                    value={editingSupplier.category}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, category: e.target.value as any })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  >
+                    <option value="مواد غذائية وضيافة">مواد غذائية وضيافة</option>
+                    <option value="دعاية وإعلان ومطبوعات">دعاية وإعلان ومطبوعات</option>
+                    <option value="تجهيزات صوتية ومرئية">تجهيزات صوتية ومرئية</option>
+                    <option value="نقل ولوجستيات">نقل ولوجستيات</option>
+                    <option value="خدمات عمالية وتشغيل">خدمات عمالية وتشغيل</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">المدينة / المقر</label>
+                  <input
+                    type="text"
+                    value={editingSupplier.city}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, city: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">الشخص المسؤول</label>
+                  <input
+                    type="text"
+                    value={editingSupplier.contactPerson}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, contactPerson: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">رقم الهاتف / الجوال</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingSupplier.phone}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, phone: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-mono focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">البريد الإلكتروني</label>
+                  <input
+                    type="email"
+                    value={editingSupplier.email}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, email: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-mono focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">حالة الاعتماد</label>
+                  <select
+                    value={editingSupplier.status}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, status: e.target.value as any })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-bold focus:outline-hidden focus:border-zinc-500"
+                  >
+                    <option value="معتمد">معتمد</option>
+                    <option value="تحت التقييم">تحت التقييم</option>
+                    <option value="موقوف">موقوف</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">تقييم الجودة (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={editingSupplier.qualityScore}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, qualityScore: parseInt(e.target.value) || 0 })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-mono focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">تقييم الالتزام بالمواعيد (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={editingSupplier.commitmentScore}
+                    onChange={e => setEditingSupplier({ ...editingSupplier, commitmentScore: parseInt(e.target.value) || 0 })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-mono focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditSupplierModal(false)}
+                  className="button-outline-on-light text-xs px-4 py-2 cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs px-5 py-2 cursor-pointer"
+                >
+                  حفظ التعديلات
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 9. Modal: Edit Tender Metadata */}
+      {showEditTenderModal && editingTender && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2300] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                <Edit3 className="w-4 h-4 text-amber-400" />
+                <span>تعديل بيانات كراسة المنافسة ({editingTender.referenceNumber})</span>
+              </h3>
+              <button onClick={() => setShowEditTenderModal(false)} className="p-1 text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateTender} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">الرقم المرجعي للمنافسة / منصة اعتماد</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingTender.referenceNumber}
+                    onChange={e => setEditingTender({ ...editingTender, referenceNumber: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-mono focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">تصنيف المنافسة</label>
+                  <select
+                    value={editingTender.category}
+                    onChange={e => setEditingTender({ ...editingTender, category: e.target.value as any })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  >
+                    <option value="احتفالات ومواسم وطنية">احتفالات ومواسم وطنية</option>
+                    <option value="توريدات حكومية وتجهيزات">توريدات حكومية وتجهيزات</option>
+                    <option value="معارض ومؤتمرات">معارض ومؤتمرات</option>
+                    <option value="تقنية واتصالات">تقنية واتصالات</option>
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">عنوان المنافسة / المشروع</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingTender.title}
+                    onChange={e => setEditingTender({ ...editingTender, title: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">الجهة الحكومية المستفيدة / العميل</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingTender.clientName}
+                    onChange={e => setEditingTender({ ...editingTender, clientName: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">مدة التوريد والتنفيذ</label>
+                  <input
+                    type="text"
+                    value={editingTender.supplyDuration}
+                    onChange={e => setEditingTender({ ...editingTender, supplyDuration: e.target.value })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">مدة الالتزام بالعرض (أيام)</label>
+                  <input
+                    type="number"
+                    value={editingTender.commitmentDays}
+                    onChange={e => setEditingTender({ ...editingTender, commitmentDays: parseInt(e.target.value) || 90 })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-mono focus:outline-hidden focus:border-zinc-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-700 mb-1">حالة المنافسة</label>
+                  <select
+                    value={editingTender.status}
+                    onChange={e => setEditingTender({ ...editingTender, status: e.target.value as any })}
+                    className="w-full p-2.5 text-xs bg-zinc-50 border border-zinc-300 rounded-xl font-bold focus:outline-hidden focus:border-zinc-500"
+                  >
+                    <option value="مسودة قيد الدراسة">مسودة قيد الدراسة</option>
+                    <option value="مقدمة ومسعرة">مقدمة ومسعرة</option>
+                    <option value="ترسية واعتماد">ترسية واعتماد</option>
+                    <option value="مكتملة ومفوترة">مكتملة ومفوترة</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditTenderModal(false)}
+                  className="button-outline-on-light text-xs px-4 py-2 cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs px-5 py-2 cursor-pointer"
+                >
+                  حفظ وتحديث الكراسة
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 10. Modal: Supplier Profile Print Card */}
+      {showPrintSupplierModal && selectedSupplierForPrint && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2300] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-300 overflow-hidden font-sans max-h-[95vh] flex flex-col">
+            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                <Printer className="w-4 h-4 text-emerald-400" />
+                <span>بطاقة اعتماد المورد الرسمية — مؤسسة خالد عبدالعزيز السليم للتجارة</span>
+              </h3>
+              <button onClick={() => setShowPrintSupplierModal(false)} className="p-1 text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 bg-white text-black">
+              <div className="border-2 border-emerald-800 rounded-2xl overflow-hidden p-6 space-y-4">
+                <div className="flex items-center justify-between border-b-2 border-emerald-700 pb-3">
+                  <div>
+                    <h2 className="text-base font-bold text-emerald-950 m-0">مؤسسة خالد عبدالعزيز السليم للتجارة (كاس)</h2>
+                    <p className="text-xs text-zinc-500 m-0 mt-0.5">بطاقة تقييم واعتماد مورد معتمد — إدارة المشتريات والتوريدات</p>
+                  </div>
+                  <div className="text-left font-mono">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                      {selectedSupplierForPrint.status}
+                    </span>
+                    <div className="text-[10px] text-zinc-500 mt-1">{selectedSupplierForPrint.id}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <span className="text-zinc-500">اسم المنشأة / المورد:</span>
+                    <div className="font-bold text-sm text-black mt-0.5">{selectedSupplierForPrint.name}</div>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500">فئة التوريد:</span>
+                    <div className="font-bold text-black mt-0.5">{selectedSupplierForPrint.category}</div>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500">المدينة / المقر:</span>
+                    <div className="font-bold text-black mt-0.5">{selectedSupplierForPrint.city}</div>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500">المسؤول:</span>
+                    <div className="font-bold text-black mt-0.5">{selectedSupplierForPrint.contactPerson}</div>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500">الهاتف:</span>
+                    <div className="font-bold font-mono text-black mt-0.5">{selectedSupplierForPrint.phone}</div>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500">البريد الإلكتروني:</span>
+                    <div className="font-bold font-mono text-black mt-0.5">{selectedSupplierForPrint.email}</div>
+                  </div>
+                </div>
+
+                {/* Score Grid */}
+                <div className="grid grid-cols-3 gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-center text-xs">
+                  <div>
+                    <div className="text-zinc-600 text-[11px]">مؤشر الجودة</div>
+                    <div className="font-bold text-emerald-800 text-base mt-0.5 font-mono">{selectedSupplierForPrint.qualityScore}%</div>
+                  </div>
+                  <div>
+                    <div className="text-zinc-600 text-[11px]">الالتزام بالتسليم</div>
+                    <div className="font-bold text-emerald-800 text-base mt-0.5 font-mono">{selectedSupplierForPrint.commitmentScore}%</div>
+                  </div>
+                  <div>
+                    <div className="text-zinc-600 text-[11px]">تنافسية الأسعار</div>
+                    <div className="font-bold text-emerald-800 text-base mt-0.5 font-mono">{selectedSupplierForPrint.priceCompetitiveness}%</div>
+                  </div>
+                </div>
+
+                {/* Financial Summary */}
+                <div className="flex justify-between items-center text-xs p-3 bg-zinc-50 rounded-xl border border-zinc-200">
+                  <div>إجمالي العمليات السابقة: <strong className="font-mono">{selectedSupplierForPrint.totalDeals} توريدات</strong></div>
+                  <div>إجمالي حجم التعاملات: <strong className="font-mono text-emerald-800">{selectedSupplierForPrint.totalValue.toLocaleString()} ر.س</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-3 print:hidden">
+              <button
+                onClick={() => setShowPrintSupplierModal(false)}
+                className="button-outline-on-light text-xs py-2 px-4 cursor-pointer"
+              >
+                إغلاق
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="button-primary-pill text-xs py-2 px-5 flex items-center gap-1.5 cursor-pointer"
+              >
+                <Printer className="w-4 h-4" />
+                <span>طباعة بطاقة المورد</span>
               </button>
             </div>
           </div>
