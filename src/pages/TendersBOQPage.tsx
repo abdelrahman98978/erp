@@ -6,6 +6,8 @@ import { useAppStore } from '../stores/appStore';
 import { tafqeet } from '../services/tafqeetService';
 import { computeTenderKPIs, DEFAULT_SUPPLIERS, SupplierRecord } from '../services/tenderAnalyticsService';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
+import { KasMonafasatSpreadsheetView } from '../components/tenders/KasMonafasatSpreadsheetView';
+import { KasTenderItem } from '../types/kasMonafasat';
 import { 
   Building2, Plus, FileSpreadsheet, FileText, Search, Printer, 
   Trash2, Edit3, CheckCircle2, AlertCircle, TrendingUp, DollarSign,
@@ -242,7 +244,7 @@ export const TendersBOQPage: React.FC = () => {
 
   const [tendersList, setTendersList] = useState<TenderRecord[]>(DEFAULT_MOCK_TENDERS);
   const [selectedTender, setSelectedTender] = useState<TenderRecord>(DEFAULT_MOCK_TENDERS[0]);
-  const [activeTab, setActiveTab] = useState<'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>('excel-boq');
+  const [activeTab, setActiveTab] = useState<'kas-sheet' | 'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>('kas-sheet');
   
   // Modals state
   const [showPrintModal, setShowPrintModal] = useState(false);
@@ -344,6 +346,58 @@ export const TendersBOQPage: React.FC = () => {
 
     setSelectedTender(updatedTender);
     setTendersList(tendersList.map(t => t.id === updatedTender.id ? updatedTender : t));
+  };
+
+  const handleConvertKasItemToBOQ = (kasItem: KasTenderItem) => {
+    const rawVal = kasItem.bidValue || 10000;
+    const vatVal = Number((rawVal * 0.15).toFixed(2));
+    const totalVal = Number((rawVal + vatVal).toFixed(2));
+
+    const newTender: TenderRecord = {
+      id: `TND-${Date.now()}`,
+      referenceNumber: kasItem.referenceNumber || kasItem.tenderCode || `2608${Math.floor(10000000 + Math.random() * 90000000)}`,
+      title: kasItem.title,
+      entityName: kasItem.company || 'مؤسسة خالد عبدالعزيز السليم للتجارة (شركة كاس للتجارة)',
+      clientName: kasItem.entity || 'الجهة الحكومية المعتمدة',
+      category: 'توريدات حكومية وتجهيزات',
+      status: (kasItem.notes || '').includes('تم الترسية') ? 'ترسية واعتماد' : 'مسودة قيد الدراسة',
+      submissionDate: kasItem.deadlineDate || new Date().toISOString().split('T')[0],
+      supplyDuration: kasItem.executionDuration || 'خلال 14 يوم من استلام التعميد',
+      commitmentDays: 90,
+      itemsCount: 1,
+      subtotal: rawVal,
+      subtotalInWords: tafqeet(rawVal),
+      vatAmount: vatVal,
+      vatInWords: tafqeet(vatVal),
+      grandTotal: totalVal,
+      grandTotalInWords: tafqeet(totalVal),
+      items: [
+        {
+          id: `item-${Date.now()}`,
+          itemNumber: 1,
+          description: kasItem.title,
+          unit: 'بند إجمالي',
+          quantity: 1,
+          unitPrice: rawVal,
+          unitPriceInWords: tafqeet(rawVal),
+          totalPrice: rawVal,
+          totalPriceInWords: tafqeet(rawVal),
+          vat: vatVal,
+          totalWithVat: totalVal,
+          totalWithVatInWords: tafqeet(totalVal),
+        }
+      ]
+    };
+
+    setTendersList(prev => [newTender, ...prev]);
+    setSelectedTender(newTender);
+    setCurrentItems(newTender.items);
+    setActiveTab('excel-boq');
+    addNotification({
+      title: 'تم تحويل المنافسة إلى كراسة BOQ',
+      message: `تم فتح كراسة المنافسة "${kasItem.title}" في محرر جداول الكميات والتفقيط بنجاح.`,
+      type: 'success',
+    });
   };
 
   const handleAddNewItem = () => {
@@ -1084,8 +1138,9 @@ export const TendersBOQPage: React.FC = () => {
       {/* Main Tabs Navigation */}
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'excel-boq', label: 'محرر جدول الكميات والأسعار (Excel Live)', icon: FileSpreadsheet },
-          { id: 'directory', label: `سجل المنافسات والعقود (${tendersList.length})`, icon: Layers },
+          { id: 'kas-sheet', label: 'سجل منافسات كاس الشامل (11,700+ منافسة Google Sheet)', icon: FileSpreadsheet },
+          { id: 'excel-boq', label: 'محرر جدول الكميات والأسعار (Excel Live)', icon: Calculator },
+          { id: 'directory', label: `كراسات BOQ النشطة (${tendersList.length})`, icon: Layers },
           { id: 'analytics', label: 'لوحة مؤشرات المناقصات (KPIs)', icon: BarChart3 },
           { id: 'suppliers', label: `سجل الموردين المعتمدين (${suppliers.length})`, icon: Users },
           { id: 'awards', label: 'محاضر الترسية والربط المالي', icon: Award },
@@ -1103,8 +1158,8 @@ export const TendersBOQPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#059669' : '#e4e4e7',
+                backgroundColor: isActive ? '#059669' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -1118,6 +1173,11 @@ export const TendersBOQPage: React.FC = () => {
           );
         })}
       </div>
+
+      {/* Tab 0: Comprehensive Google Sheet / Monafasat Master View */}
+      {activeTab === 'kas-sheet' && (
+        <KasMonafasatSpreadsheetView onConvertToBOQ={handleConvertKasItemToBOQ} />
+      )}
 
       {/* Tab 1: Live Interactive Excel-Style BOQ Table */}
       {activeTab === 'excel-boq' && (
