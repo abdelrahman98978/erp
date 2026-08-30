@@ -7,6 +7,7 @@ import { tafqeet } from '../services/tafqeetService';
 import { computeTenderKPIs, DEFAULT_SUPPLIERS, SupplierRecord } from '../services/tenderAnalyticsService';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
 import { KasMonafasatSpreadsheetView } from '../components/tenders/KasMonafasatSpreadsheetView';
+import { KasEtimadCloudPage } from './KasEtimadCloudPage';
 import { KasTenderItem } from '../types/kasMonafasat';
 import { 
   Building2, Plus, FileSpreadsheet, FileText, Search, Printer, 
@@ -14,7 +15,8 @@ import {
   Download, Eye, Calculator, ArrowRightLeft, Sparkles, Layers, 
   ShieldCheck, X, RefreshCw, Landmark, Tag, Check, Award, BarChart3,
   Users, Star, MapPin, Phone, Mail, PieChart, Activity, Copy,
-  Upload, FileUp, QrCode, Percent, ArrowUpRight, Shield, CheckSquare
+  Upload, FileUp, QrCode, Percent, ArrowUpRight, Shield, CheckSquare,
+  CloudLightning
 } from 'lucide-react';
 
 export interface BOQItem {
@@ -244,7 +246,7 @@ export const TendersBOQPage: React.FC = () => {
 
   const [tendersList, setTendersList] = useState<TenderRecord[]>(DEFAULT_MOCK_TENDERS);
   const [selectedTender, setSelectedTender] = useState<TenderRecord>(DEFAULT_MOCK_TENDERS[0]);
-  const [activeTab, setActiveTab] = useState<'kas-sheet' | 'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>('kas-sheet');
+  const [activeTab, setActiveTab] = useState<'kas-sheet' | 'etmad-cloud' | 'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>('kas-sheet');
   
   // Modals state
   const [showPrintModal, setShowPrintModal] = useState(false);
@@ -1139,6 +1141,7 @@ export const TendersBOQPage: React.FC = () => {
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'kas-sheet', label: 'سجل منافسات كاس الشامل (11,700+ منافسة Google Sheet)', icon: FileSpreadsheet },
+          { id: 'etmad-cloud', label: 'منظومة سحابة اعتماد (Inova Etmad Cloud Suite)', icon: CloudLightning },
           { id: 'excel-boq', label: 'محرر جدول الكميات والأسعار (Excel Live)', icon: Calculator },
           { id: 'directory', label: `كراسات BOQ النشطة (${tendersList.length})`, icon: Layers },
           { id: 'analytics', label: 'لوحة مؤشرات المناقصات (KPIs)', icon: BarChart3 },
@@ -1177,6 +1180,11 @@ export const TendersBOQPage: React.FC = () => {
       {/* Tab 0: Comprehensive Google Sheet / Monafasat Master View */}
       {activeTab === 'kas-sheet' && (
         <KasMonafasatSpreadsheetView onConvertToBOQ={handleConvertKasItemToBOQ} />
+      )}
+
+      {/* Tab 0.5: Cloned Inova Etmad Cloud Suite */}
+      {activeTab === 'etmad-cloud' && (
+        <KasEtimadCloudPage />
       )}
 
       {/* Tab 1: Live Interactive Excel-Style BOQ Table */}

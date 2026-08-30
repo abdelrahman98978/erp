@@ -95,6 +95,7 @@ const SmaccInventoryAssetsPage = lazyWithRetry(() => import('./pages/SmaccInvent
 const SmaccEmployeesSettingsPage = lazyWithRetry(() => import('./pages/SmaccEmployeesSettingsPage').then(m => ({ default: m.SmaccEmployeesSettingsPage })));
 const LegalCompliancePage = lazyWithRetry(() => import('./pages/LegalCompliancePage').then(m => ({ default: m.LegalCompliancePage })));
 const TendersBOQPage = lazyWithRetry(() => import('./pages/TendersBOQPage').then(m => ({ default: m.TendersBOQPage })));
+const KasEtimadCloudPage = lazyWithRetry(() => import('./pages/KasEtimadCloudPage').then(m => ({ default: m.KasEtimadCloudPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -463,6 +464,13 @@ const MainContent: React.FC = () => {
       case 'kas-tenders':
       case 'boq-analytics':
         return <TendersBOQPage />;
+
+      case 'kas-etmad':
+      case 'kas-etmad-cloud':
+      case 'etmad-cloud':
+      case 'etmad':
+      case 'kas-cloud-suite':
+        return <KasEtimadCloudPage />;
 
       case 'custodies':
         return <CustodiesPage />;
