@@ -17,7 +17,8 @@ import {
   KasEtmadPayment, KasEtmadItem, KasEtmadClient, KasEtmadLead, 
   KasEtmadProject, KasEtmadTask, KasEtmadContract, KasEtmadExpense,
   KasEtmadTicket, KasEtmadKnowledgeArticle, KasEtmadCategory,
-  KasEtmadStaff, EtmadModuleTab
+  KasEtmadStaff, KasEtmadProposal, KasEtmadSubscription, KasEtmadCreditNote,
+  KasEtmadEstimateRequest, KasEtmadEmailTemplate, EtmadModuleTab
 } from '../types/kasEtmadSuite';
 import { kasEtmadSuiteService } from '../services/kasEtmadSuiteService';
 import { useAppStore } from '../stores/appStore';
@@ -61,6 +62,19 @@ export const KasEtimadCloudPage: React.FC = () => {
   // Client 360 Modal
   const [selectedClientProfile, setSelectedClientProfile] = useState<KasEtmadClient | null>(null);
   const [clientProfileTab, setClientProfileTab] = useState<'info' | 'invoices' | 'estimates' | 'contracts' | 'projects'>('info');
+
+  // Calendar State
+  const [calendarMonth, setCalendarMonth] = useState<number>(7); // 0-indexed: 7 is August 2026
+  const [calendarYear, setCalendarYear] = useState<number>(2026);
+  const [calendarFilter, setCalendarFilter] = useState<'all' | 'competitions' | 'invoices' | 'tasks' | 'contracts'>('all');
+  const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(30);
+
+  // Reports State
+  const [reportsTimeframe, setReportsTimeframe] = useState<'ytd' | 'q3' | 'q2' | 'q1' | 'month'>('ytd');
+
+  // Quick Payment Modal
+  const [showQuickPayModal, setShowQuickPayModal] = useState<boolean>(false);
+  const [quickPayInvoice, setQuickPayInvoice] = useState<KasEtmadInvoice | null>(null);
 
   // Detail / Print Preview Modal
   const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
@@ -114,6 +128,11 @@ export const KasEtimadCloudPage: React.FC = () => {
   const expenses = useMemo(() => kasEtmadSuiteService.getExpenses(), [reloadKey]);
   const tickets = useMemo(() => kasEtmadSuiteService.getTickets(), [reloadKey]);
   const knowledge = useMemo(() => kasEtmadSuiteService.getKnowledgeArticles(), [reloadKey]);
+  const proposals = useMemo(() => kasEtmadSuiteService.getProposals(), [reloadKey]);
+  const creditNotes = useMemo(() => kasEtmadSuiteService.getCreditNotes(), [reloadKey]);
+  const subscriptions = useMemo(() => kasEtmadSuiteService.getSubscriptions(), [reloadKey]);
+  const estimateRequests = useMemo(() => kasEtmadSuiteService.getEstimateRequests(), [reloadKey]);
+  const emailTemplates = useMemo(() => kasEtmadSuiteService.getEmailTemplates(), [reloadKey]);
   const stats = useMemo(() => kasEtmadSuiteService.getDashboardStats(), [reloadKey]);
 
   // Filtered Competitions
@@ -596,7 +615,10 @@ export const KasEtimadCloudPage: React.FC = () => {
           { id: 'competitions', label: `المنافسات (${competitions.length})`, icon: Award, badge: 'اعتماد' },
           { id: 'invoices', label: `الفواتير (${invoices.length})`, icon: DollarSign },
           { id: 'estimates', label: `عروض الأسعار (${estimates.length})`, icon: FileSpreadsheet },
+          { id: 'proposals', label: `العروض (${proposals.length})`, icon: Send },
+          { id: 'credit-notes', label: `إشعارات الائتمان (${creditNotes.length})`, icon: ArrowDownRight },
           { id: 'payments', label: `المدفوعات (${payments.length})`, icon: Receipt },
+          { id: 'subscriptions', label: `الاشتراكات (${subscriptions.length})`, icon: RefreshCw },
           { id: 'items', label: `جدول الكميات (${items.length})`, icon: Layers },
           { id: 'clients', label: `العملاء (${clients.length})`, icon: Users },
           { id: 'leads', label: `العملاء المحتملين (${leads.length})`, icon: UserPlus },
@@ -605,8 +627,11 @@ export const KasEtimadCloudPage: React.FC = () => {
           { id: 'contracts', label: `العقود (${contracts.length})`, icon: FileCheck },
           { id: 'expenses', label: `المصروفات (${expenses.length})`, icon: CreditCard },
           { id: 'tickets', label: `الدعم (${tickets.length})`, icon: HelpCircle },
+          { id: 'estimate-requests', label: `طلب عرض سعر (${estimateRequests.length})`, icon: FilePlus },
           { id: 'staff', label: `الطاقم (${staff.length})`, icon: UserCheck },
           { id: 'knowledge-base', label: `قاعدة المعرفة (${knowledge.length})`, icon: BookOpen },
+          { id: 'email-templates', label: `قوالب البريد (${emailTemplates.length})`, icon: Mail },
+          { id: 'utilities', label: 'الأدوات المساعدة', icon: Calculator },
           { id: 'calendar', label: 'التقويم', icon: Calendar },
           { id: 'reports', label: 'التقارير المالية', icon: TrendingUp },
           { id: 'settings', label: `تصنيفات المنافسات (${categories.length})`, icon: Settings },
@@ -636,72 +661,228 @@ export const KasEtimadCloudPage: React.FC = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. DASHBOARD VIEW */}
+      {/* 1. DASHBOARD VIEW (لوحة التحكم التفاعلية والشاملة) */}
       {/* ========================================================================= */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-muted-foreground text-xs">
-                <span>المنافسات النشطة</span>
+          {/* Top KPI Grid (8 Cards) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-emerald-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>المنافسات</span>
                 <Award className="w-4 h-4 text-emerald-500" />
               </div>
-              <div className="mt-2 text-2xl font-bold text-foreground">{stats.totalCompetitions}</div>
-              <div className="text-[11px] text-emerald-600 font-semibold mt-1">{stats.wonCompetitions} ترسية فائزة ({stats.winRate}%)</div>
+              <div className="mt-1.5 text-xl font-bold text-foreground font-mono">{stats.totalCompetitions}</div>
+              <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">{stats.wonCompetitions} ترسية ({stats.winRate}%)</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-muted-foreground text-xs">
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-sky-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
                 <span>إجمالي الفواتير</span>
                 <DollarSign className="w-4 h-4 text-sky-500" />
               </div>
-              <div className="mt-2 text-xl font-bold text-sky-600 truncate">{stats.totalInvoicesAmount.toLocaleString()} ر.س</div>
-              <div className="text-[11px] text-muted-foreground mt-1">مبيعات كاس المعتمدة</div>
+              <div className="mt-1.5 text-sm font-bold text-sky-600 truncate font-mono">{stats.totalInvoicesAmount.toLocaleString()} ر.س</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">مبيعات كاس</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-muted-foreground text-xs">
-                <span>المبالغ المحصلة</span>
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-emerald-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>المحصل</span>
                 <CheckCircle className="w-4 h-4 text-emerald-500" />
               </div>
-              <div className="mt-2 text-xl font-bold text-emerald-600 truncate">{stats.paidAmount.toLocaleString()} ر.س</div>
-              <div className="text-[11px] text-emerald-600 font-medium mt-1">مدفوعة بحسابات كاس</div>
+              <div className="mt-1.5 text-sm font-bold text-emerald-600 truncate font-mono">{stats.paidAmount.toLocaleString()} ر.س</div>
+              <div className="text-[10px] text-emerald-600 font-medium mt-0.5">في الحسابات</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-muted-foreground text-xs">
-                <span>فواتير قيد التحصيل</span>
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-rose-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>غير محصل</span>
                 <Clock className="w-4 h-4 text-rose-500" />
               </div>
-              <div className="mt-2 text-xl font-bold text-rose-600 truncate">{stats.unpaidAmount.toLocaleString()} ر.س</div>
-              <div className="text-[11px] text-muted-foreground mt-1">مستحقة الدفع</div>
+              <div className="mt-1.5 text-sm font-bold text-rose-600 truncate font-mono">{stats.unpaidAmount.toLocaleString()} ر.س</div>
+              <div className="text-[10px] text-rose-500 mt-0.5">مستحق السداد</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-muted-foreground text-xs">
-                <span>المشاريع الجارية</span>
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-violet-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>العروض</span>
+                <Send className="w-4 h-4 text-violet-500" />
+              </div>
+              <div className="mt-1.5 text-sm font-bold text-violet-600 truncate font-mono">{stats.totalProposalsValue.toLocaleString()} ر.س</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">{proposals.length} عرض تجاري</div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-teal-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>الاشتراكات</span>
+                <RefreshCw className="w-4 h-4 text-teal-500" />
+              </div>
+              <div className="mt-1.5 text-sm font-bold text-teal-600 truncate font-mono">{stats.totalSubscriptionsRevenue.toLocaleString()} ر.س</div>
+              <div className="text-[10px] text-teal-600 mt-0.5">إيراد دوري</div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-indigo-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>المشاريع</span>
                 <Briefcase className="w-4 h-4 text-indigo-500" />
               </div>
-              <div className="mt-2 text-2xl font-bold text-indigo-600">{stats.activeProjects}</div>
-              <div className="text-[11px] text-muted-foreground mt-1">عقود ومشاريع كاس</div>
+              <div className="mt-1.5 text-xl font-bold text-indigo-600 font-mono">{stats.activeProjects}</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">جارية التنفيذ</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-muted-foreground text-xs">
-                <span>المهام النشطة</span>
+            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-amber-500/40 transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
+                <span>المهام</span>
                 <CheckSquare className="w-4 h-4 text-amber-500" />
               </div>
-              <div className="mt-2 text-2xl font-bold text-amber-600">{stats.activeTasks}</div>
-              <div className="text-[11px] text-muted-foreground mt-1">مهام فريق العمل</div>
+              <div className="mt-1.5 text-xl font-bold text-amber-600 font-mono">{stats.activeTasks}</div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">قيد المتابعة</div>
             </div>
           </div>
 
+          {/* Interactive Visual Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Monthly Invoicing & Cashflow SVG Chart */}
+            <div className="lg:col-span-2 p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-emerald-600" />
+                    <span>حركة المبيعات والتحصيلات الشهرية (2026)</span>
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">مقارنة الفواتير الصادرة والمبالغ المحصلة عبر منصة اعتماد</p>
+                </div>
+                <div className="flex items-center gap-3 text-xs font-semibold">
+                  <span className="flex items-center gap-1.5 text-emerald-600">
+                    <span className="w-3 h-3 rounded-sm bg-emerald-500 inline-block" />
+                    الفواتير الصادرة
+                  </span>
+                  <span className="flex items-center gap-1.5 text-sky-600">
+                    <span className="w-3 h-3 rounded-sm bg-sky-500 inline-block" />
+                    التحصيلات النقدية
+                  </span>
+                </div>
+              </div>
+
+              {/* SVG Bar & Curve Chart */}
+              <div className="h-56 w-full flex items-end justify-between gap-3 pt-6 pb-2 px-2">
+                {[
+                  { month: 'يناير', invoiced: 85000, collected: 80000 },
+                  { month: 'فبراير', invoiced: 201341, collected: 144760 },
+                  { month: 'مارس', invoiced: 165000, collected: 120000 },
+                  { month: 'أبريل', invoiced: 110000, collected: 95000 },
+                  { month: 'مايو', invoiced: 140000, collected: 130000 },
+                  { month: 'يونيو', invoiced: 175000, collected: 150000 },
+                  { month: 'يوليو', invoiced: 130000, collected: 115000 },
+                  { month: 'أغسطس', invoiced: 220000, collected: 185000 },
+                ].map((item, idx) => {
+                  const maxVal = 250000;
+                  const invHeight = Math.round((item.invoiced / maxVal) * 100);
+                  const colHeight = Math.round((item.collected / maxVal) * 100);
+                  return (
+                    <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group cursor-pointer">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded-lg pointer-events-none mb-1 shadow-lg text-center z-10">
+                        <div>صادر: {item.invoiced.toLocaleString()} ر.س</div>
+                        <div className="text-emerald-400">محصل: {item.collected.toLocaleString()} ر.س</div>
+                      </div>
+                      <div className="w-full flex items-end justify-center gap-1 h-36">
+                        <div 
+                          className="w-3.5 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md transition-all group-hover:brightness-110" 
+                          style={{ height: `${invHeight}%` }} 
+                        />
+                        <div 
+                          className="w-3.5 bg-gradient-to-t from-sky-600 to-sky-400 rounded-t-md transition-all group-hover:brightness-110" 
+                          style={{ height: `${colHeight}%` }} 
+                        />
+                      </div>
+                      <span className="text-[10px] text-muted-foreground font-medium truncate group-hover:text-foreground transition-colors">{item.month}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Competitions Funnel & Win Rate Card */}
+            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <Award className="w-4 h-4 text-emerald-600" />
+                    <span>مسار ترسية المنافسات الحكومية</span>
+                  </h3>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-0.5 rounded-full font-mono">
+                    {stats.winRate}% معدل الفوز
+                  </span>
+                </div>
+
+                <div className="space-y-3 mt-4 text-xs">
+                  <div>
+                    <div className="flex justify-between font-semibold mb-1">
+                      <span className="text-foreground">1. تم رفع العرض الفني والمالي</span>
+                      <span className="font-mono text-sky-600">2 منافسة (33%)</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                      <div className="bg-sky-500 h-2 rounded-full" style={{ width: '33%' }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between font-semibold mb-1">
+                      <span className="text-foreground">2. تمت الترسية بنجاح (فائز)</span>
+                      <span className="font-mono text-emerald-600">2 منافسة (33%)</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                      <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '33%' }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between font-semibold mb-1">
+                      <span className="text-foreground">3. تحت الدراسة والتسعير</span>
+                      <span className="font-mono text-amber-600">1 منافسة (17%)</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                      <div className="bg-amber-500 h-2 rounded-full" style={{ width: '17%' }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between font-semibold mb-1">
+                      <span className="text-foreground">4. لم يتم التسعير (لاغي)</span>
+                      <span className="font-mono text-rose-500">1 منافسة (17%)</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                      <div className="bg-rose-500 h-2 rounded-full" style={{ width: '17%' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-border flex items-center gap-2">
+                <button
+                  onClick={() => setShowAddCompModal(true)}
+                  className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ إضافة منافسة</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('competitions')}
+                  className="py-2 px-3 rounded-xl bg-secondary hover:bg-secondary/80 text-xs font-bold text-foreground"
+                >
+                  عرض الكل
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Tasks & Recent Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-emerald-600" />
-                  <span>نظرة عامة على حالات الفواتير</span>
+                  <span>حالات الفواتير والتحصيل</span>
                 </h3>
                 <span className="text-xs font-bold text-muted-foreground font-mono">2026</span>
               </div>
@@ -709,27 +890,27 @@ export const KasEtimadCloudPage: React.FC = () => {
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-rose-600">غير مدفوع (50%)</span>
-                    <span className="font-mono">1 / 2</span>
+                    <span className="text-rose-600">غير مدفوع (33%)</span>
+                    <span className="font-mono">1 / 3</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                    <div className="bg-rose-500 h-2 rounded-full" style={{ width: '50%' }} />
+                    <div className="bg-rose-500 h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-amber-600">مدفوع جزئياً (50%)</span>
-                    <span className="font-mono">1 / 2</span>
+                    <span className="text-amber-600">مدفوع جزئياً (33%)</span>
+                    <span className="font-mono">1 / 3</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                    <div className="bg-amber-500 h-2 rounded-full" style={{ width: '50%' }} />
+                    <div className="bg-amber-500 h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-emerald-600">مدفوع بالكامل (100%)</span>
+                    <span className="text-emerald-600">مدفوع بالكامل (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
@@ -960,16 +1141,45 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <td className="p-3 font-mono text-muted-foreground">{inv.dueDate}</td>
                     <td className="p-3">{getStatusPill(inv.status)}</td>
                     <td className="p-3 text-center">
-                      <button
-                        onClick={() => {
-                          setSelectedDetail(inv);
-                          setDetailType('invoice');
-                          setShowDetailModal(true);
-                        }}
-                        className="text-emerald-600 hover:underline text-[11px] font-bold"
-                      >
-                        عرض / طباعة ZATCA
-                      </button>
+                      <div className="flex items-center justify-center gap-1.5 text-[11px]">
+                        <button
+                          onClick={() => {
+                            setSelectedDetail(inv);
+                            setDetailType('invoice');
+                            setShowDetailModal(true);
+                          }}
+                          className="text-emerald-600 hover:underline font-bold"
+                        >
+                          عرض / ZATCA
+                        </button>
+                        {inv.status !== 'مدفوع' && (
+                          <>
+                            <span className="text-muted-foreground">|</span>
+                            <button
+                              onClick={() => {
+                                setQuickPayInvoice(inv);
+                                setShowQuickPayModal(true);
+                              }}
+                              className="text-sky-600 hover:underline font-bold"
+                            >
+                              تسجيل سداد
+                            </button>
+                          </>
+                        )}
+                        <span className="text-muted-foreground">|</span>
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`حذف الفاتورة "${inv.invoiceNumber}"؟`)) {
+                              kasEtmadSuiteService.deleteInvoice(inv.id);
+                              setReloadKey(k => k + 1);
+                              addNotification({ title: 'تم حذف الفاتورة', message: `تم حذف ${inv.invoiceNumber} بنجاح`, type: 'info' });
+                            }
+                          }}
+                          className="text-rose-600 hover:underline"
+                        >
+                          حذف
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -1522,55 +1732,335 @@ export const KasEtimadCloudPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* 14. CALENDAR VIEW (التقويم) */}
+      {/* 14. CALENDAR VIEW (التقويم التفاعلي لمنافسات وعقود كاس) */}
       {/* ========================================================================= */}
       {activeTab === 'calendar' && (
-        <div className="space-y-4">
-          <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-emerald-600" />
-            <span>تقويم مواعيد المنافسات وتواريخ استحقاق العطاءات (2026)</span>
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {competitions.map(c => (
-              <div key={c.id} className="p-4 rounded-2xl bg-card border border-border shadow-sm space-y-2">
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-emerald-600 font-bold">📅 {c.deadlineDate}</span>
-                  {getStatusPill(c.status)}
-                </div>
-                <h4 className="font-bold text-xs text-foreground leading-snug">{c.title}</h4>
-                <div className="text-[11px] text-muted-foreground">الجهة: {c.governmentEntity}</div>
+        <div className="space-y-6">
+          {/* Calendar Header with Navigation and Filter */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                <Calendar className="w-5 h-5" />
               </div>
-            ))}
+              <div>
+                <h3 className="text-base font-bold text-foreground">
+                  تقويم المواعيد والاستحقاقات
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][calendarMonth]} {calendarYear}
+                </p>
+              </div>
+            </div>
+
+            {/* Month Switcher */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (calendarMonth === 0) {
+                    setCalendarMonth(11);
+                    setCalendarYear(y => y - 1);
+                  } else {
+                    setCalendarMonth(m => m - 1);
+                  }
+                }}
+                className="p-2 rounded-xl bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold flex items-center gap-1"
+              >
+                <ChevronRight className="w-4 h-4" />
+                <span>الشهر السابق</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setCalendarMonth(7); // August
+                  setCalendarYear(2026);
+                  setSelectedCalendarDay(30);
+                }}
+                className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold"
+              >
+                اليوم
+              </button>
+
+              <button
+                onClick={() => {
+                  if (calendarMonth === 11) {
+                    setCalendarMonth(0);
+                    setCalendarYear(y => y + 1);
+                  } else {
+                    setCalendarMonth(m => m + 1);
+                  }
+                }}
+                className="p-2 rounded-xl bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold flex items-center gap-1"
+              >
+                <span>الشهر التالي</span>
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Event Category Filter */}
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              {[
+                { id: 'all', label: 'الكل' },
+                { id: 'competitions', label: 'المنافسات (أخضر)' },
+                { id: 'invoices', label: 'الفواتير (أزرق)' },
+                { id: 'tasks', label: 'المهام (برتقالي)' },
+                { id: 'contracts', label: 'العقود (بنفسجي)' }
+              ].map(f => (
+                <button
+                  key={f.id}
+                  onClick={() => setCalendarFilter(f.id as any)}
+                  className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                    calendarFilter === f.id
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'bg-secondary text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* 7-Day Monthly Grid */}
+            <div className="lg:col-span-3 bg-card border border-border rounded-2xl shadow-sm p-5 space-y-4">
+              {/* Day names header */}
+              <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-muted-foreground border-b border-border pb-3">
+                {['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'].map(day => (
+                  <div key={day}>{day}</div>
+                ))}
+              </div>
+
+              {/* Day cells */}
+              <div className="grid grid-cols-7 gap-2">
+                {Array.from({ length: 35 }).map((_, idx) => {
+                  const dayNum = idx - 5; // Offset for August 2026 starting on Saturday
+                  const isValidDay = dayNum >= 1 && dayNum <= 31;
+                  const isSelected = selectedCalendarDay === dayNum;
+                  const isToday = dayNum === 30 && calendarMonth === 7;
+
+                  // Scheduled events for this day
+                  const dayComp = isValidDay && (dayNum === 2 || dayNum === 4 || dayNum === 5 || dayNum === 30);
+                  const dayInv = isValidDay && (dayNum === 10 || dayNum === 18 || dayNum === 20 || dayNum === 30);
+                  const dayTask = isValidDay && (dayNum === 2 || dayNum === 5 || dayNum === 28 || dayNum === 30);
+
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => isValidDay && setSelectedCalendarDay(dayNum)}
+                      className={`min-h-[85px] p-2 rounded-xl border transition-all text-xs flex flex-col justify-between ${
+                        !isValidDay 
+                          ? 'opacity-20 border-transparent bg-secondary/10 pointer-events-none' 
+                          : isSelected
+                          ? 'border-emerald-500 bg-emerald-500/10 shadow-sm'
+                          : isToday
+                          ? 'border-emerald-500/50 bg-emerald-500/5 hover:border-emerald-500'
+                          : 'border-border/60 bg-secondary/20 hover:border-border hover:bg-secondary/40 cursor-pointer'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold font-mono text-xs ${
+                          isToday ? 'bg-emerald-600 text-white' : isSelected ? 'font-black text-emerald-600' : 'text-foreground'
+                        }`}>
+                          {isValidDay ? dayNum : ''}
+                        </span>
+                        {isToday && <span className="text-[9px] font-bold text-emerald-600">اليوم</span>}
+                      </div>
+
+                      {isValidDay && (
+                        <div className="space-y-1 mt-1">
+                          {dayComp && (calendarFilter === 'all' || calendarFilter === 'competitions') && (
+                            <div className="text-[9px] font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded truncate">
+                              🏆 منافسة اعتماد
+                            </div>
+                          )}
+                          {dayInv && (calendarFilter === 'all' || calendarFilter === 'invoices') && (
+                            <div className="text-[9px] font-semibold bg-sky-500/20 text-sky-700 dark:text-sky-300 px-1.5 py-0.5 rounded truncate">
+                              💰 استحقاق فاتورة
+                            </div>
+                          )}
+                          {dayTask && (calendarFilter === 'all' || calendarFilter === 'tasks') && (
+                            <div className="text-[9px] font-semibold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded truncate">
+                              📋 تسليم مهمة
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Selected Day Agenda Side Panel */}
+            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
+              <div className="border-b border-border pb-3">
+                <div className="text-xs text-muted-foreground font-semibold">تفاصيل اليوم المختار</div>
+                <h4 className="text-lg font-bold text-foreground mt-0.5">
+                  {selectedCalendarDay || 30} {['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'][calendarMonth]} {calendarYear}
+                </h4>
+              </div>
+
+              <div className="space-y-3 text-xs">
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-emerald-600">
+                    <span>🏆 موعد تقديم منافسة</span>
+                    <span className="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded-full">معتمد</span>
+                  </div>
+                  <div className="font-semibold text-foreground">توريد وتركيب أنظمة إنارة لمستشفى الملك سلمان بالطائف</div>
+                  <div className="text-[11px] text-muted-foreground font-mono">الجهة: الشؤون الصحية بالحرس الوطني</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-sky-600">
+                    <span>💰 استحقاق سداد فاتورة</span>
+                    <span className="text-[10px] bg-sky-500/20 px-2 py-0.5 rounded-full">ZATCA</span>
+                  </div>
+                  <div className="font-semibold text-foreground">فاتورة رقم INV-000001 (قيمة: 106,006 ر.س)</div>
+                  <div className="text-[11px] text-muted-foreground">العميل: مؤسسة خالد السليم للتجارة</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-amber-600">
+                    <span>📋 موعد إنجاز مهمة تشغيل</span>
+                    <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded-full">عاجل</span>
+                  </div>
+                  <div className="font-semibold text-foreground">إدارة مشتريات الدمام – توريد مضخات غاطسة</div>
+                  <div className="text-[11px] text-muted-foreground font-mono">المسؤول: محمد خالد</div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowAddTaskModal(true)}
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ جدولة حدث أو مهمة جديدة</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* 15. REPORTS VIEW (التقارير المالية) */}
+      {/* 15. REPORTS VIEW (التقارير المالية وإقرارات ZATCA لشركة كاس) */}
       {/* ========================================================================= */}
       {activeTab === 'reports' && (
-        <div className="space-y-4">
-          <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-emerald-600" />
-            <span>التقارير المالية والإقرارات الضريبية لشركة كاس</span>
-          </h3>
+        <div className="space-y-6">
+          {/* Header & Controls */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                <span>التقارير المالية والإقرارات الضريبية ZATCA</span>
+              </h3>
+              <p className="text-xs text-muted-foreground">شركة كاس للتجارة والمقاولات • السجل الضريبي 310245879600003</p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-secondary rounded-xl p-1 text-xs font-bold">
+                {[
+                  { id: 'ytd', label: 'كامل عام 2026' },
+                  { id: 'q3', label: 'الربع الثالث Q3' },
+                  { id: 'q2', label: 'الربع الثاني Q2' }
+                ].map(tf => (
+                  <button
+                    key={tf.id}
+                    onClick={() => setReportsTimeframe(tf.id as any)}
+                    className={`px-3 py-1.5 rounded-lg transition-all ${
+                      reportsTimeframe === tf.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {tf.label}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => window.print()}
+                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>طباعة التقرير</span>
+              </button>
+            </div>
+          </div>
+
+          {/* KPI Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
-              <span className="text-xs text-muted-foreground">إجمالي مبيعات المنافسات</span>
+              <span className="text-xs text-muted-foreground font-semibold">إجمالي المبيعات والفواتير</span>
               <div className="text-2xl font-bold font-mono text-emerald-600">{stats.totalInvoicesAmount.toLocaleString()} ر.س</div>
-              <div className="text-xs text-muted-foreground">ضريبة القيمة المضافة: {(stats.totalInvoicesAmount * 0.15).toLocaleString()} ر.س</div>
+              <div className="text-xs text-muted-foreground">ضريبة القيمة المضافة 15%: {(stats.totalInvoicesAmount * 0.15).toLocaleString()} ر.س</div>
             </div>
+
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
-              <span className="text-xs text-muted-foreground">إجمالي العقود السارية</span>
-              <div className="text-2xl font-bold font-mono text-sky-600">{stats.totalContracts.toLocaleString()} ر.س</div>
-              <div className="text-xs text-muted-foreground">عقود معتمدة لدى الجهات الحكومية</div>
+              <span className="text-xs text-muted-foreground font-semibold">المبالغ المحصلة فعلياً</span>
+              <div className="text-2xl font-bold font-mono text-sky-600">{stats.paidAmount.toLocaleString()} ر.س</div>
+              <div className="text-xs text-sky-600 font-semibold">{Math.round((stats.paidAmount / (stats.totalInvoicesAmount || 1)) * 100)}% من إجمالي المستحقات</div>
             </div>
+
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
-              <span className="text-xs text-muted-foreground">المصروفات والتشغيل</span>
+              <span className="text-xs text-muted-foreground font-semibold">تكاليف التشغيل والمصروفات</span>
               <div className="text-2xl font-bold font-mono text-rose-600">{stats.totalExpenses.toLocaleString()} ر.س</div>
-              <div className="text-xs text-muted-foreground">صافي الأرباح: {(stats.totalInvoicesAmount - stats.totalExpenses).toLocaleString()} ر.س</div>
+              <div className="text-xs text-muted-foreground">ضريبة المدخلات المستردة: {(stats.totalExpenses * 0.15).toLocaleString()} ر.س</div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
+              <span className="text-xs text-muted-foreground font-semibold">صافي الربح التشغيلي</span>
+              <div className="text-2xl font-bold font-mono text-foreground">{(stats.totalInvoicesAmount - stats.totalExpenses).toLocaleString()} ر.س</div>
+              <div className="text-xs text-emerald-600 font-bold">هامش ربح تقديري: {Math.round(((stats.totalInvoicesAmount - stats.totalExpenses) / (stats.totalInvoicesAmount || 1)) * 100)}%</div>
+            </div>
+          </div>
+
+          {/* Official ZATCA VAT 15% Return Table */}
+          <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div>
+                <h4 className="text-sm font-bold text-foreground">
+                  نموذج إقرار ضريبة القيمة المضافة (15%) - هيئة الزكاة والضريبة والجمارك ZATCA
+                </h4>
+                <p className="text-xs text-muted-foreground mt-0.5">الحساب الضريبي الموحد لمؤسسة خالد عبدالعزيز السليم (كاس)</p>
+              </div>
+              <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full font-bold text-xs font-mono">
+                جاهز للإقرار
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-right border-collapse">
+                <thead className="bg-secondary text-foreground font-bold border-b border-border">
+                  <tr>
+                    <th className="p-3">البند الضريبي</th>
+                    <th className="p-3 text-left">المبلغ الخاضع (ر.س)</th>
+                    <th className="p-3 text-left">نسبة الضريبة</th>
+                    <th className="p-3 text-left">مبلغ الضريبة (ر.س)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40 font-mono">
+                  <tr>
+                    <td className="p-3 font-semibold text-foreground">1. المبيعات الخاضعة للنسبة الأساسية (15%)</td>
+                    <td className="p-3 text-left font-bold">{stats.totalInvoicesAmount.toLocaleString()}</td>
+                    <td className="p-3 text-left">15%</td>
+                    <td className="p-3 text-left font-bold text-emerald-600">{(stats.totalInvoicesAmount * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-semibold text-foreground">2. المشتريات الخاضعة للنسبة الأساسية (ضريبة المدخلات)</td>
+                    <td className="p-3 text-left font-bold">{stats.totalExpenses.toLocaleString()}</td>
+                    <td className="p-3 text-left">15%</td>
+                    <td className="p-3 text-left font-bold text-rose-600">{(stats.totalExpenses * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                  <tr className="bg-emerald-500/5 font-extrabold text-foreground border-t-2 border-emerald-500">
+                    <td className="p-3 text-sm">صافي ضريبة القيمة المضافة المستحقة للسداد للهيئة (1 - 2)</td>
+                    <td className="p-3 text-left">{(stats.totalInvoicesAmount - stats.totalExpenses).toLocaleString()}</td>
+                    <td className="p-3 text-left">15%</td>
+                    <td className="p-3 text-left text-sm text-emerald-600">{((stats.totalInvoicesAmount - stats.totalExpenses) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="p-3 rounded-xl bg-secondary/50 text-[11px] text-muted-foreground">
+              * تم احتساب المبالغ تلقائياً بموجب الفواتير المعتمدة والمصروفات المسجلة في منظومة سحابة كاس.
             </div>
           </div>
         </div>
@@ -1743,6 +2233,413 @@ export const KasEtimadCloudPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* PROPOSALS VIEW (العروض) */}
+      {/* ========================================================================= */}
+      {activeTab === 'proposals' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Send className="w-4 h-4 text-violet-600" />
+              <span>العروض التجارية</span>
+              <span className="text-xs text-muted-foreground">({proposals.length} عرض)</span>
+            </h3>
+            <div className="flex items-center gap-2">
+              <button onClick={() => {
+                setFormData({});
+                setItemLines([{ description: '', qty: 1, rate: 0, taxPct: 15, total: 0 }]);
+                setShowAddEstimateModal(true);
+              }} className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs flex items-center gap-1.5">
+                <Plus className="w-3.5 h-3.5" /><span>عرض جديد</span>
+              </button>
+              <button onClick={() => kasEtmadSuiteService.exportProposalsToXLSX()} className="px-3 py-2 rounded-xl bg-secondary text-xs font-bold flex items-center gap-1">
+                <Download className="w-3.5 h-3.5" /><span>تصدير</span>
+              </button>
+            </div>
+          </div>
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-secondary/50 text-muted-foreground">
+                  <th className="px-4 py-3 text-right font-bold">عرض #</th>
+                  <th className="px-4 py-3 text-right font-bold">الموضوع</th>
+                  <th className="px-4 py-3 text-right font-bold">إلى</th>
+                  <th className="px-4 py-3 text-right font-bold">الإجمالي</th>
+                  <th className="px-4 py-3 text-right font-bold">التاريخ</th>
+                  <th className="px-4 py-3 text-right font-bold">مفتوح حتى</th>
+                  <th className="px-4 py-3 text-right font-bold">المشروع</th>
+                  <th className="px-4 py-3 text-right font-bold">الحالة</th>
+                  <th className="px-4 py-3 text-right font-bold">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {proposals.length === 0 ? (
+                  <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">لا توجد عروض بعد</td></tr>
+                ) : proposals.map(p => (
+                  <tr key={p.id} className="hover:bg-secondary/20 transition-colors">
+                    <td className="px-4 py-3 font-mono font-bold text-violet-600">{p.proposalNumber}</td>
+                    <td className="px-4 py-3 font-semibold text-foreground max-w-[200px] truncate">{p.subject}</td>
+                    <td className="px-4 py-3 text-foreground">{p.toClient}</td>
+                    <td className="px-4 py-3 font-mono font-bold text-emerald-600">{p.totalAmount.toLocaleString()} ر.س</td>
+                    <td className="px-4 py-3 font-mono text-muted-foreground">{p.date}</td>
+                    <td className="px-4 py-3 font-mono text-muted-foreground">{p.openTill}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{p.project || '—'}</td>
+                    <td className="px-4 py-3">{getStatusPill(p.status)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => { setSelectedDetail(p); setDetailType('estimate'); setShowDetailModal(true); }} className="p-1.5 rounded-lg hover:bg-secondary text-sky-600"><Eye className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => kasEtmadSuiteService.deleteProposal(p.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* CREDIT NOTES VIEW (إشعارات الائتمان) */}
+      {/* ========================================================================= */}
+      {activeTab === 'credit-notes' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <ArrowDownRight className="w-4 h-4 text-orange-600" />
+              <span>إشعارات الائتمان</span>
+              <span className="text-xs text-muted-foreground">({creditNotes.length} إشعار)</span>
+            </h3>
+            <button onClick={() => {
+              kasEtmadSuiteService.addCreditNote({
+                creditNoteNumber: `CN-${String(creditNotes.length + 1).padStart(6, '0')}`,
+                clientName: clients[0]?.company || 'عميل جديد',
+                date: new Date().toISOString().split('T')[0],
+                status: 'مسودة', project: '', remainingAmount: 0, totalAmount: 0, invoiceRef: ''
+              });
+              setReloadKey(k => k + 1);
+              addNotification({ title: 'تم إنشاء إشعار ائتمان', message: 'يمكنك تعديل التفاصيل من القائمة.', type: 'success' });
+            }} className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5">
+              <Plus className="w-3.5 h-3.5" /><span>إشعار ائتمان جديد</span>
+            </button>
+          </div>
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-secondary/50 text-muted-foreground">
+                  <th className="px-4 py-3 text-right font-bold">إشعار #</th>
+                  <th className="px-4 py-3 text-right font-bold">العميل</th>
+                  <th className="px-4 py-3 text-right font-bold">التاريخ</th>
+                  <th className="px-4 py-3 text-right font-bold">فاتورة مرجعية</th>
+                  <th className="px-4 py-3 text-right font-bold">المشروع</th>
+                  <th className="px-4 py-3 text-right font-bold">المبلغ المتبقي</th>
+                  <th className="px-4 py-3 text-right font-bold">الإجمالي</th>
+                  <th className="px-4 py-3 text-right font-bold">الحالة</th>
+                  <th className="px-4 py-3 text-right font-bold">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {creditNotes.length === 0 ? (
+                  <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">لا توجد إشعارات ائتمان</td></tr>
+                ) : creditNotes.map(cn => (
+                  <tr key={cn.id} className="hover:bg-secondary/20 transition-colors">
+                    <td className="px-4 py-3 font-mono font-bold text-orange-600">{cn.creditNoteNumber}</td>
+                    <td className="px-4 py-3 font-semibold text-foreground">{cn.clientName}</td>
+                    <td className="px-4 py-3 font-mono text-muted-foreground">{cn.date}</td>
+                    <td className="px-4 py-3 font-mono text-sky-600">{cn.invoiceRef || '—'}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{cn.project || '—'}</td>
+                    <td className="px-4 py-3 font-mono font-bold text-amber-600">{cn.remainingAmount.toLocaleString()} ر.س</td>
+                    <td className="px-4 py-3 font-mono font-bold text-foreground">{cn.totalAmount.toLocaleString()} ر.س</td>
+                    <td className="px-4 py-3">{getStatusPill(cn.status)}</td>
+                    <td className="px-4 py-3">
+                      <button onClick={() => kasEtmadSuiteService.deleteCreditNote(cn.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* SUBSCRIPTIONS VIEW (الاشتراكات) */}
+      {/* ========================================================================= */}
+      {activeTab === 'subscriptions' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <RefreshCw className="w-4 h-4 text-teal-600" />
+              <span>الاشتراكات الدورية</span>
+              <span className="text-xs text-muted-foreground">({subscriptions.length} اشتراك)</span>
+            </h3>
+            <button onClick={() => {
+              kasEtmadSuiteService.addSubscription({
+                subscriptionName: 'اشتراك جديد', clientName: clients[0]?.company || 'عميل',
+                billingInterval: 'شهري', amount: 0, status: 'نشط',
+                startDate: new Date().toISOString().split('T')[0],
+                nextBillingDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
+              });
+              setReloadKey(k => k + 1);
+              addNotification({ title: 'تم إنشاء اشتراك جديد', message: 'يمكنك تعديل التفاصيل.', type: 'success' });
+            }} className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5">
+              <Plus className="w-3.5 h-3.5" /><span>اشتراك جديد</span>
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subscriptions.map(sub => (
+              <div key={sub.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h4 className="text-sm font-bold text-foreground leading-relaxed">{sub.subscriptionName}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{sub.clientName}</p>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${sub.status === 'نشط' ? 'bg-emerald-100 text-emerald-700' : sub.status === 'متوقف' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'}`}>{sub.status}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2 rounded-xl bg-secondary/50">
+                    <span className="text-muted-foreground block">المبلغ</span>
+                    <span className="font-bold font-mono text-foreground">{sub.amount.toLocaleString()} ر.س</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-secondary/50">
+                    <span className="text-muted-foreground block">الفترة</span>
+                    <span className="font-bold text-foreground">{sub.billingInterval}</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-secondary/50">
+                    <span className="text-muted-foreground block">بدء</span>
+                    <span className="font-mono text-foreground">{sub.startDate}</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-secondary/50">
+                    <span className="text-muted-foreground block">الفوترة القادمة</span>
+                    <span className="font-mono text-foreground">{sub.nextBillingDate}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+                  <button onClick={() => { kasEtmadSuiteService.updateSubscription(sub.id, { status: sub.status === 'نشط' ? 'متوقف' : 'نشط' }); setReloadKey(k => k + 1); }} className="flex-1 py-1.5 rounded-lg bg-secondary text-xs font-bold text-foreground hover:bg-secondary/80">
+                    {sub.status === 'نشط' ? 'إيقاف' : 'تفعيل'}
+                  </button>
+                  <button onClick={() => kasEtmadSuiteService.deleteSubscription(sub.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* ESTIMATE REQUESTS VIEW (طلب عرض سعر) */}
+      {/* ========================================================================= */}
+      {activeTab === 'estimate-requests' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <FilePlus className="w-4 h-4 text-indigo-600" />
+              <span>طلبات عروض الأسعار</span>
+              <span className="text-xs text-muted-foreground">({estimateRequests.length} طلب)</span>
+            </h3>
+            <button onClick={() => {
+              kasEtmadSuiteService.addEstimateRequest({
+                requestNumber: `EREQ-${String(estimateRequests.length + 1).padStart(6, '0')}`,
+                clientName: '', description: '', requestedDate: new Date().toISOString().split('T')[0], status: 'جديد'
+              });
+              setReloadKey(k => k + 1);
+              addNotification({ title: 'تم إنشاء طلب عرض سعر', message: 'يمكنك تعديل التفاصيل.', type: 'info' });
+            }} className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5">
+              <Plus className="w-3.5 h-3.5" /><span>طلب جديد</span>
+            </button>
+          </div>
+          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-secondary/50 text-muted-foreground">
+                  <th className="px-4 py-3 text-right font-bold">طلب #</th>
+                  <th className="px-4 py-3 text-right font-bold">العميل</th>
+                  <th className="px-4 py-3 text-right font-bold">الوصف</th>
+                  <th className="px-4 py-3 text-right font-bold">التاريخ</th>
+                  <th className="px-4 py-3 text-right font-bold">الحالة</th>
+                  <th className="px-4 py-3 text-right font-bold">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {estimateRequests.length === 0 ? (
+                  <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">لا توجد طلبات</td></tr>
+                ) : estimateRequests.map(req => (
+                  <tr key={req.id} className="hover:bg-secondary/20 transition-colors">
+                    <td className="px-4 py-3 font-mono font-bold text-indigo-600">{req.requestNumber}</td>
+                    <td className="px-4 py-3 font-semibold text-foreground">{req.clientName || '—'}</td>
+                    <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{req.description || '—'}</td>
+                    <td className="px-4 py-3 font-mono text-muted-foreground">{req.requestedDate}</td>
+                    <td className="px-4 py-3">{getStatusPill(req.status)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1">
+                        {req.status === 'جديد' && (
+                          <button onClick={() => {
+                            kasEtmadSuiteService.updateEstimateRequest(req.id, { status: 'تم التحويل لعرض سعر' });
+                            setReloadKey(k => k + 1);
+                            addNotification({ title: 'تم تحويل الطلب', message: 'تم تحويله لعرض سعر بنجاح.', type: 'success' });
+                          }} className="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-bold hover:bg-emerald-200">
+                            تحويل لعرض سعر
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* EMAIL TEMPLATES VIEW (قوالب البريد الإلكتروني) */}
+      {/* ========================================================================= */}
+      {activeTab === 'email-templates' && (
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Mail className="w-4 h-4 text-pink-600" />
+              <span>قوالب البريد الإلكتروني</span>
+              <span className="text-xs text-muted-foreground">({emailTemplates.length} قالب)</span>
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {emailTemplates.map(tmpl => (
+              <div key={tmpl.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        tmpl.category === 'فاتورة' ? 'bg-sky-100 text-sky-700' :
+                        tmpl.category === 'عرض سعر' ? 'bg-violet-100 text-violet-700' :
+                        tmpl.category === 'إشعار دفع' ? 'bg-emerald-100 text-emerald-700' :
+                        tmpl.category === 'متابعة' ? 'bg-amber-100 text-amber-700' :
+                        'bg-pink-100 text-pink-700'
+                      }`}>{tmpl.category}</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-foreground mt-2">{tmpl.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-1 font-mono">الموضوع: {tmpl.subject}</p>
+                  </div>
+                  <button onClick={() => kasEtmadSuiteService.deleteEmailTemplate(tmpl.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-400"><Trash2 className="w-3.5 h-3.5" /></button>
+                </div>
+                <div className="p-3 rounded-xl bg-secondary/50 text-xs text-foreground leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto font-mono">{tmpl.body}</div>
+                <div className="flex flex-wrap gap-1">
+                  {tmpl.variables.map((v, i) => (
+                    <span key={i} className="px-2 py-0.5 rounded-full bg-secondary text-[10px] font-mono text-muted-foreground">{v}</span>
+                  ))}
+                </div>
+                <div className="text-[10px] text-muted-foreground">آخر تعديل: {tmpl.lastModified}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* UTILITIES VIEW (الأدوات المساعدة) */}
+      {/* ========================================================================= */}
+      {activeTab === 'utilities' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* VAT Calculator */}
+            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-emerald-600" />
+                <span>حاسبة ضريبة القيمة المضافة (15%)</span>
+              </h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ قبل الضريبة</label>
+                  <input type="number" placeholder="أدخل المبلغ..." value={formData.vatAmount || ''} onChange={e => setFormData({ ...formData, vatAmount: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-secondary/50 border rounded-xl text-sm font-mono" />
+                </div>
+                {formData.vatAmount && parseFloat(formData.vatAmount) > 0 && (
+                  <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">المبلغ قبل الضريبة:</span>
+                      <span className="font-bold font-mono">{parseFloat(formData.vatAmount).toLocaleString()} ر.س</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">ضريبة 15%:</span>
+                      <span className="font-bold font-mono text-amber-600">{(parseFloat(formData.vatAmount) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    </div>
+                    <div className="flex justify-between text-sm border-t border-emerald-200 dark:border-emerald-800 pt-2">
+                      <span className="font-bold text-emerald-700">الإجمالي شامل الضريبة:</span>
+                      <span className="font-extrabold font-mono text-emerald-700">{(parseFloat(formData.vatAmount) * 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Reverse VAT Calculator */}
+            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <ArrowRightLeft className="w-5 h-5 text-sky-600" />
+                <span>حاسبة عكسية (استخراج المبلغ من الإجمالي)</span>
+              </h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ شامل الضريبة</label>
+                  <input type="number" placeholder="أدخل الإجمالي..." value={formData.reverseVat || ''} onChange={e => setFormData({ ...formData, reverseVat: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-secondary/50 border rounded-xl text-sm font-mono" />
+                </div>
+                {formData.reverseVat && parseFloat(formData.reverseVat) > 0 && (
+                  <div className="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">المبلغ قبل الضريبة:</span>
+                      <span className="font-bold font-mono">{(parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">قيمة الضريبة 15%:</span>
+                      <span className="font-bold font-mono text-amber-600">{(parseFloat(formData.reverseVat) - parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    </div>
+                    <div className="flex justify-between text-sm border-t border-sky-200 dark:border-sky-800 pt-2">
+                      <span className="font-bold text-sky-700">الإجمالي شامل الضريبة:</span>
+                      <span className="font-extrabold font-mono text-sky-700">{parseFloat(formData.reverseVat).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Stats Summary */}
+            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <PieChart className="w-5 h-5 text-violet-600" />
+                <span>ملخص الأداء السريع</span>
+              </h3>
+              <div className="space-y-2.5">
+                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
+                  <span className="text-muted-foreground">إجمالي الإيرادات</span>
+                  <span className="font-bold font-mono text-emerald-600">{stats.totalInvoicesAmount.toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
+                  <span className="text-muted-foreground">إجمالي المصروفات</span>
+                  <span className="font-bold font-mono text-rose-600">{stats.totalExpenses.toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
+                  <span className="text-muted-foreground">صافي الربح التقديري</span>
+                  <span className="font-bold font-mono text-foreground">{(stats.paidAmount - stats.totalExpenses).toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
+                  <span className="text-muted-foreground">فواتير معلقة</span>
+                  <span className="font-bold font-mono text-amber-600">{stats.unpaidAmount.toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
+                  <span className="text-muted-foreground">إيرادات الاشتراكات الدورية</span>
+                  <span className="font-bold font-mono text-teal-600">{stats.totalSubscriptionsRevenue.toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
+                  <span className="text-muted-foreground">نسبة فوز المنافسات</span>
+                  <span className="font-bold text-foreground">{stats.winRate}%</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -2299,6 +3196,311 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddStaffModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
               <button onClick={handleSaveStaff} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ العضو</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: CLIENT 360 PROFILE (ملف العميل المتكامل) */}
+      {/* ========================================================================= */}
+      {selectedClientProfile && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-3xl max-w-4xl w-full p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-border pb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center font-bold text-xl shadow-lg">
+                  {selectedClientProfile.company.slice(0, 2)}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-foreground">{selectedClientProfile.company}</h3>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600">
+                      عميل معتمد
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    الرقم الضريبي: <span className="font-mono">{selectedClientProfile.vatNumber || '310245879600003'}</span> • المدينة: {selectedClientProfile.city}
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedClientProfile(null)} 
+                className="p-1.5 rounded-xl text-muted-foreground hover:bg-secondary"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Quick Metrics */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
+                <span className="text-[11px] text-muted-foreground block">إجمالي التعاملات</span>
+                <span className="text-base font-bold font-mono text-foreground mt-0.5 block">
+                  {invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + i.amount, 0).toLocaleString()} ر.س
+                </span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
+                <span className="text-[11px] text-muted-foreground block">المسدد</span>
+                <span className="text-base font-bold font-mono text-emerald-600 mt-0.5 block">
+                  {invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + (i.paidAmount || 0), 0).toLocaleString()} ر.س
+                </span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
+                <span className="text-[11px] text-muted-foreground block">المتبقي</span>
+                <span className="text-base font-bold font-mono text-rose-500 mt-0.5 block">
+                  {(invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + i.amount, 0) - invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + (i.paidAmount || 0), 0)).toLocaleString()} ر.س
+                </span>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
+                <span className="text-[11px] text-muted-foreground block">العقود النشطة</span>
+                <span className="text-base font-bold font-mono text-indigo-600 mt-0.5 block">
+                  {contracts.filter(c => c.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(c.clientName)).length} عقد
+                </span>
+              </div>
+            </div>
+
+            {/* Profile Tabs */}
+            <div className="flex items-center gap-1 border-b border-border text-xs font-bold">
+              {[
+                { id: 'info', label: 'معلومات الجهة والاتصال' },
+                { id: 'invoices', label: 'سجل الفواتير' },
+                { id: 'estimates', label: 'عروض الأسعار' },
+                { id: 'contracts', label: 'العقود والاتفاقيات' },
+                { id: 'projects', label: 'المشاريع المرتبطة' }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setClientProfileTab(tab.id as any)}
+                  className={`px-4 py-2 border-b-2 transition-all ${
+                    clientProfileTab === tab.id
+                      ? 'border-emerald-600 text-emerald-600'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Contents */}
+            {clientProfileTab === 'info' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="space-y-3 p-4 rounded-2xl bg-secondary/30 border border-border/60">
+                  <h4 className="font-bold text-foreground text-sm">بيانات الاتصال والتواصل</h4>
+                  <div className="space-y-2 text-muted-foreground">
+                    <div>المسؤول الرئيسي: <span className="font-semibold text-foreground">{selectedClientProfile.primaryContact}</span></div>
+                    <div>الهاتف / الجوال: <span className="font-mono text-foreground">{selectedClientProfile.phone}</span></div>
+                    <div>البريد الإلكتروني: <span className="font-mono text-foreground">{selectedClientProfile.email}</span></div>
+                    <div>المدينة / المقر: <span className="text-foreground">{selectedClientProfile.city}</span></div>
+                    <div>العنوان: <span className="text-foreground">{selectedClientProfile.address || 'شارع الملك فهد، الرياض'}</span></div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-4 rounded-2xl bg-secondary/30 border border-border/60">
+                  <h4 className="font-bold text-foreground text-sm">التصنيف والمجموعات</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedClientProfile.groups.map((g, idx) => (
+                      <span key={idx} className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold text-[11px]">
+                        {g}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="pt-3 border-t text-muted-foreground">
+                    تاريخ التسجيل: <span className="font-mono text-foreground">{selectedClientProfile.createdAt}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {clientProfileTab === 'invoices' && (
+              <div className="border border-border rounded-2xl overflow-hidden">
+                <table className="w-full text-xs text-right border-collapse">
+                  <thead className="bg-secondary text-foreground font-semibold">
+                    <tr>
+                      <th className="p-3">رقم الفاتورة</th>
+                      <th className="p-3 text-left">المبلغ</th>
+                      <th className="p-3">التاريخ</th>
+                      <th className="p-3">تاريخ الاستحقاق</th>
+                      <th className="p-3">الحالة</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).map(inv => (
+                      <tr key={inv.id} className="hover:bg-emerald-500/5">
+                        <td className="p-3 font-mono font-bold text-emerald-600">{inv.invoiceNumber}</td>
+                        <td className="p-3 text-left font-mono font-bold">{inv.amount.toLocaleString()} ر.س</td>
+                        <td className="p-3 font-mono text-muted-foreground">{inv.date}</td>
+                        <td className="p-3 font-mono text-muted-foreground">{inv.dueDate}</td>
+                        <td className="p-3">{getStatusPill(inv.status)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {clientProfileTab === 'contracts' && (
+              <div className="space-y-3">
+                {contracts.filter(c => c.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(c.clientName)).map(cnt => (
+                  <div key={cnt.id} className="p-4 rounded-2xl bg-secondary/30 border border-border/60 flex items-center justify-between text-xs">
+                    <div>
+                      <h5 className="font-bold text-foreground">{cnt.subject}</h5>
+                      <div className="text-muted-foreground mt-0.5 font-mono">{cnt.startDate} إلى {cnt.endDate} • {cnt.contractType}</div>
+                    </div>
+                    <div className="text-left font-mono font-bold text-emerald-600">
+                      {cnt.contractValue.toLocaleString()} ر.س
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {clientProfileTab === 'projects' && (
+              <div className="space-y-3">
+                {projects.filter(p => p.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(p.clientName)).map(proj => (
+                  <div key={proj.id} className="p-4 rounded-2xl bg-secondary/30 border border-border/60 space-y-2 text-xs">
+                    <div className="flex justify-between font-bold">
+                      <span>{proj.projectName}</span>
+                      <span className="font-mono text-emerald-600">{proj.progress}%</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-1.5">
+                      <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${proj.progress}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Modal Footer */}
+            <div className="flex justify-between items-center pt-3 border-t border-border">
+              <button
+                onClick={() => setSelectedClientProfile(null)}
+                className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold text-foreground"
+              >
+                إغلاق
+              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setFormData({ clientName: selectedClientProfile.company });
+                    setShowAddInvoiceModal(true);
+                  }}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>إنشاء فاتورة لهذا العميل</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: QUICK PAYMENT RECORDING */}
+      {/* ========================================================================= */}
+      {showQuickPayModal && quickPayInvoice && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-emerald-600" />
+                <span>تسجيل دفعة سداد للفاتورة</span>
+              </h3>
+              <button onClick={() => setShowQuickPayModal(false)} className="p-1 text-muted-foreground"><X className="w-5 h-5" /></button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 rounded-xl bg-secondary/50 space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">رقم الفاتورة:</span>
+                  <span className="font-mono font-bold text-foreground">{quickPayInvoice.invoiceNumber}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">العميل:</span>
+                  <span className="font-bold text-foreground">{quickPayInvoice.clientName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">المبلغ المستحق:</span>
+                  <span className="font-mono font-bold text-rose-500">{(quickPayInvoice.amount - (quickPayInvoice.paidAmount || 0)).toLocaleString()} ر.س</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium mb-1">مبلغ السداد المدفوع (ر.س) *</label>
+                <input
+                  type="number"
+                  placeholder="المبلغ..."
+                  defaultValue={quickPayInvoice.amount - (quickPayInvoice.paidAmount || 0)}
+                  id="quickPayAmountInput"
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium mb-1">طريقة السداد</label>
+                <select id="quickPayModeInput" defaultValue="تحويل بنكي" className="w-full px-3 py-2 bg-secondary/50 border rounded-xl">
+                  <option value="تحويل بنكي">تحويل بنكي (الراجحي / الإنماء)</option>
+                  <option value="سداد">نظام سداد للمدفوعات الحكومية</option>
+                  <option value="بطاقة مدى / ائتمان">بطاقة مدى / ائتمان</option>
+                  <option value="شيك مصدّق">شيك مصرفي مصدّق</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-medium mb-1">الرقم المرجعي / رقم المعاملة</label>
+                <input
+                  type="text"
+                  placeholder="TXN-..."
+                  id="quickPayTxnInput"
+                  defaultValue={`TXN-${Date.now().toString().slice(-6)}`}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowQuickPayModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
+              <button
+                onClick={() => {
+                  const amtInput = document.getElementById('quickPayAmountInput') as HTMLInputElement;
+                  const modeInput = document.getElementById('quickPayModeInput') as HTMLSelectElement;
+                  const txnInput = document.getElementById('quickPayTxnInput') as HTMLInputElement;
+                  const amt = parseFloat(amtInput?.value) || (quickPayInvoice.amount - (quickPayInvoice.paidAmount || 0));
+
+                  kasEtmadSuiteService.addPayment({
+                    paymentNumber: `PAY-${String(payments.length + 1).padStart(6, '0')}`,
+                    invoiceNumber: quickPayInvoice.invoiceNumber,
+                    paymentMode: (modeInput?.value || 'تحويل بنكي') as any,
+                    transactionId: txnInput?.value || `TXN-${Date.now()}`,
+                    clientName: quickPayInvoice.clientName,
+                    amount: amt,
+                    date: new Date().toISOString().split('T')[0],
+                    notes: `سداد مسجل عبر منظومة سحابة كاس`
+                  });
+
+                  const newPaid = (quickPayInvoice.paidAmount || 0) + amt;
+                  const newStatus = newPaid >= quickPayInvoice.amount ? 'مدفوع' : 'مدفوع جزئيًا';
+                  kasEtmadSuiteService.updateInvoice(quickPayInvoice.id, {
+                    paidAmount: newPaid,
+                    status: newStatus as any
+                  });
+
+                  addNotification({
+                    title: 'تم تسجيل السداد بنجاح',
+                    message: `تم قيد دفعة بمبلغ ${amt.toLocaleString()} ر.س للفاتورة ${quickPayInvoice.invoiceNumber}`,
+                    type: 'success'
+                  });
+
+                  setShowQuickPayModal(false);
+                  setReloadKey(k => k + 1);
+                }}
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs"
+              >
+                تأكيد وقيد السداد
+              </button>
             </div>
           </div>
         </div>

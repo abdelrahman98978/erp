@@ -66,6 +66,21 @@ export interface KasEtmadEstimate {
   items: { description: string; qty: number; rate: number; taxPct: number; total: number }[];
 }
 
+export interface KasEtmadProposal {
+  id: string;
+  proposalNumber: string;
+  subject: string;
+  toClient: string;
+  totalAmount: number;
+  date: string;
+  openTill: string;
+  project?: string;
+  tags?: string[];
+  createdAt: string;
+  status: 'مسودة' | 'مرسل' | 'مفتوح' | 'مُعدّل' | 'مقبول' | 'مرفوض';
+  items: { description: string; qty: number; rate: number; taxPct: number; total: number }[];
+}
+
 export interface KasEtmadPayment {
   id: string;
   paymentNumber: string;
@@ -87,6 +102,8 @@ export interface KasEtmadCreditNote {
   project?: string;
   remainingAmount: number;
   totalAmount: number;
+  invoiceRef?: string;
+  items?: { description: string; qty: number; rate: number; taxPct: number; total: number }[];
 }
 
 export interface KasEtmadItem {
@@ -207,6 +224,28 @@ export interface KasEtmadKnowledgeArticle {
   viewsCount: number;
 }
 
+export interface KasEtmadEstimateRequest {
+  id: string;
+  requestNumber: string;
+  clientName: string;
+  description: string;
+  requestedDate: string;
+  status: 'جديد' | 'قيد المراجعة' | 'تم التحويل لعرض سعر' | 'مرفوض';
+  convertedEstimateId?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+}
+
+export interface KasEtmadEmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  category: 'فاتورة' | 'عرض سعر' | 'عرض' | 'متابعة' | 'ترحيب' | 'إشعار دفع';
+  variables: string[];
+  lastModified: string;
+}
+
 export type EtmadModuleTab = 
   | 'dashboard'
   | 'competitions'
@@ -214,6 +253,7 @@ export type EtmadModuleTab =
   | 'invoices'
   | 'payments'
   | 'credit-notes'
+  | 'proposals'
   | 'items'
   | 'clients'
   | 'leads'
@@ -224,6 +264,9 @@ export type EtmadModuleTab =
   | 'expenses'
   | 'tickets'
   | 'knowledge-base'
+  | 'estimate-requests'
+  | 'email-templates'
+  | 'utilities'
   | 'calendar'
   | 'reports'
   | 'staff'
