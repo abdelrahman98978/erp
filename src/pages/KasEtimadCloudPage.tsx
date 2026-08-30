@@ -2391,179 +2391,543 @@ export const KasEtimadCloudPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* PROPOSALS VIEW (العروض) */}
+      {/* 5. PROPOSALS VIEW (العروض التجارية) */}
       {/* ========================================================================= */}
       {activeTab === 'proposals' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Send className="w-4 h-4 text-violet-600" />
-              <span>العروض التجارية</span>
-              <span className="text-xs text-muted-foreground">({proposals.length} عرض)</span>
-            </h3>
+        <div className="space-y-6">
+          {/* Top KPI Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-violet-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">إجمالي العروض التجارية</span>
+                <span className="text-2xl font-bold font-mono text-foreground block mt-1">{proposals.length}</span>
+                <span className="text-[10px] text-muted-foreground">عرض مسجل بالنظام</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-600">
+                <Send className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">عروض مقبولة ومعتمدة</span>
+                <span className="text-2xl font-bold font-mono text-emerald-600 block mt-1">
+                  {proposals.filter(p => p.status === 'مقبول').length}
+                </span>
+                <span className="text-[10px] text-emerald-600 font-medium">
+                  {proposals.length ? Math.round((proposals.filter(p => p.status === 'مقبول').length / proposals.length) * 100) : 0}% نسبة القبول
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">إجمالي القيمة التقديرية</span>
+                <span className="text-xl font-bold font-mono text-sky-600 block mt-1 truncate">
+                  {proposals.reduce((sum, p) => sum + (p.totalAmount || 0), 0).toLocaleString()} ر.س
+                </span>
+                <span className="text-[10px] text-muted-foreground">قيمة العروض الجارية</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+                <DollarSign className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">عروض قيد الانتظار</span>
+                <span className="text-2xl font-bold font-mono text-amber-600 block mt-1">
+                  {proposals.filter(p => p.status === 'مرسل' || p.status === 'مسودة').length}
+                </span>
+                <span className="text-[10px] text-amber-600 font-medium">بانتظار موافقة العميل</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+                <Clock className="w-6 h-6" />
+              </div>
+            </div>
+          </div>
+
+          {/* Action & Filter Toolbar */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+              {['all', 'مسودة', 'مرسل', 'مقبول', 'مرفوض'].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setStatusFilter(st)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                    statusFilter === st
+                      ? 'bg-violet-600 text-white shadow-xs'
+                      : 'bg-secondary text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {st === 'all' ? 'جميع العروض' : st}
+                  <span className="mr-1.5 text-[10px] opacity-80">
+                    ({st === 'all' ? proposals.length : proposals.filter(p => p.status === st).length})
+                  </span>
+                </button>
+              ))}
+            </div>
+
             <div className="flex items-center gap-2">
-              <button onClick={() => {
-                setFormData({});
-                setItemLines([{ description: '', qty: 1, rate: 0, taxPct: 15, total: 0 }]);
-                setShowAddProposalModal(true);
-              }} className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
-                <Plus className="w-3.5 h-3.5" /><span>عرض تجاري جديد</span>
+              <button
+                onClick={() => {
+                  setFormData({});
+                  setItemLines([{ description: 'بند توريد/خدمات كاس', qty: 1, rate: 1000, taxPct: 15, total: 1150 }]);
+                  setShowAddProposalModal(true);
+                }}
+                className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-violet-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>إنشاء عرض تجاري جديد</span>
               </button>
-              <button onClick={() => kasEtmadSuiteService.exportProposalsToXLSX()} className="px-3 py-2 rounded-xl bg-secondary text-xs font-bold flex items-center gap-1 cursor-pointer">
-                <Download className="w-3.5 h-3.5" /><span>تصدير</span>
+
+              <button
+                onClick={() => kasEtmadSuiteService.exportProposalsToXLSX()}
+                className="px-3.5 py-2 rounded-xl bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold flex items-center gap-1.5 border border-border/60 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5 text-muted-foreground" />
+                <span>تصدير إكسل</span>
               </button>
             </div>
           </div>
-          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-secondary/50 text-muted-foreground">
-                  <th className="px-4 py-3 text-right font-bold">عرض #</th>
-                  <th className="px-4 py-3 text-right font-bold">الموضوع</th>
-                  <th className="px-4 py-3 text-right font-bold">إلى</th>
-                  <th className="px-4 py-3 text-right font-bold">الإجمالي</th>
-                  <th className="px-4 py-3 text-right font-bold">التاريخ</th>
-                  <th className="px-4 py-3 text-right font-bold">مفتوح حتى</th>
-                  <th className="px-4 py-3 text-right font-bold">المشروع</th>
-                  <th className="px-4 py-3 text-right font-bold">الحالة</th>
-                  <th className="px-4 py-3 text-right font-bold">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {proposals.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">لا توجد عروض بعد</td></tr>
-                ) : proposals.map(p => (
-                  <tr key={p.id} className="hover:bg-secondary/20 transition-colors">
-                    <td className="px-4 py-3 font-mono font-bold text-violet-600">{p.proposalNumber}</td>
-                    <td className="px-4 py-3 font-semibold text-foreground max-w-[200px] truncate">{p.subject}</td>
-                    <td className="px-4 py-3 text-foreground">{p.toClient}</td>
-                    <td className="px-4 py-3 font-mono font-bold text-emerald-600">{p.totalAmount.toLocaleString()} ر.س</td>
-                    <td className="px-4 py-3 font-mono text-muted-foreground">{p.date}</td>
-                    <td className="px-4 py-3 font-mono text-muted-foreground">{p.openTill}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{p.project || '—'}</td>
-                    <td className="px-4 py-3">{getStatusPill(p.status)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => { setSelectedDetail(p); setDetailType('estimate'); setShowDetailModal(true); }} className="p-1.5 rounded-lg hover:bg-secondary text-sky-600 cursor-pointer"><Eye className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => kasEtmadSuiteService.deleteProposal(p.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                      </div>
-                    </td>
+
+          {/* Proposals Data Table */}
+          <div className="bg-card border border-border rounded-3xl shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-secondary/60 text-muted-foreground border-b border-border/60">
+                    <th className="px-4 py-3.5 text-right font-bold">عرض #</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الموضوع والوصف</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الجهة / العميل المستهدف</th>
+                    <th className="px-4 py-3.5 text-right font-bold">إجمالي القيمة</th>
+                    <th className="px-4 py-3.5 text-right font-bold">تاريخ العرض</th>
+                    <th className="px-4 py-3.5 text-right font-bold">صلاحية العرض</th>
+                    <th className="px-4 py-3.5 text-right font-bold">المشروع</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الحالة</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الإجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {proposals.filter(p => statusFilter === 'all' || p.status === statusFilter).length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                        <Send className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+                        <span>لا توجد عروض تجارية مطابقة لهذا الفلتر</span>
+                      </td>
+                    </tr>
+                  ) : (
+                    proposals
+                      .filter(p => statusFilter === 'all' || p.status === statusFilter)
+                      .map((p) => (
+                        <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
+                          <td className="px-4 py-3 font-mono font-bold text-violet-600 dark:text-violet-400">
+                            {p.proposalNumber}
+                          </td>
+                          <td className="px-4 py-3 font-semibold text-foreground max-w-[240px] truncate">
+                            {p.subject}
+                          </td>
+                          <td className="px-4 py-3 text-foreground font-medium">
+                            <span className="px-2.5 py-1 rounded-lg bg-secondary text-foreground text-[11px] font-medium inline-block">
+                              {p.toClient}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            {p.totalAmount.toLocaleString()} ر.س
+                          </td>
+                          <td className="px-4 py-3 font-mono text-muted-foreground">
+                            {p.date}
+                          </td>
+                          <td className="px-4 py-3 font-mono text-muted-foreground">
+                            {p.openTill}
+                          </td>
+                          <td className="px-4 py-3 text-muted-foreground">
+                            {p.project ? (
+                              <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 text-[10px] font-medium">
+                                {p.project}
+                              </span>
+                            ) : (
+                              '—'
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            {getStatusPill(p.status)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => {
+                                  setSelectedDetail(p);
+                                  setDetailType('estimate');
+                                  setShowDetailModal(true);
+                                }}
+                                className="p-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 transition-colors cursor-pointer"
+                                title="عرض وتفاصيل العرض"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  kasEtmadSuiteService.deleteProposal(p.id);
+                                  setReloadKey(k => k + 1);
+                                  addNotification({ title: 'تم الحذف', message: 'تم حذف العرض التجاري بنجاح.', type: 'info' });
+                                }}
+                                className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                                title="حذف العرض"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* CREDIT NOTES VIEW (إشعارات الائتمان) */}
+      {/* 6. CREDIT NOTES VIEW (إشعارات الائتمان) */}
       {/* ========================================================================= */}
       {activeTab === 'credit-notes' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="space-y-6">
+          {/* Top KPI Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-orange-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">إجمالي إشعارات الائتمان</span>
+                <span className="text-2xl font-bold font-mono text-foreground block mt-1">{creditNotes.length}</span>
+                <span className="text-[10px] text-muted-foreground">إشعار قيد مالي</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-600">
+                <ArrowDownRight className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">المبالغ الدائنة المتبقية</span>
+                <span className="text-xl font-bold font-mono text-amber-600 block mt-1 truncate">
+                  {creditNotes.reduce((sum, cn) => sum + (cn.remainingAmount || 0), 0).toLocaleString()} ر.س
+                </span>
+                <span className="text-[10px] text-amber-600 font-medium">رصيد دائن للعملاء</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+                <CreditCard className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">إجمالي المبالغ المقيدة</span>
+                <span className="text-xl font-bold font-mono text-emerald-600 block mt-1 truncate">
+                  {creditNotes.reduce((sum, cn) => sum + (cn.totalAmount || 0), 0).toLocaleString()} ر.س
+                </span>
+                <span className="text-[10px] text-muted-foreground">إجمالي قيود الخصم</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <DollarSign className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-blue-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">إشعارات سارية</span>
+                <span className="text-2xl font-bold font-mono text-blue-600 block mt-1">
+                  {creditNotes.filter(cn => cn.status === 'مفتوح' || cn.status === 'مسودة').length}
+                </span>
+                <span className="text-[10px] text-blue-600 font-medium">جاهزة للتسوية</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Toolbar */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <ArrowDownRight className="w-4 h-4 text-orange-600" />
-              <span>إشعارات الائتمان</span>
-              <span className="text-xs text-muted-foreground">({creditNotes.length} إشعار)</span>
+              <span>جدول إشعارات الائتمان المقيدة</span>
+              <span className="text-xs text-muted-foreground font-mono">({creditNotes.length})</span>
             </h3>
-            <button onClick={() => {
-              setFormData({});
-              setShowAddCreditNoteModal(true);
-            }} className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
-              <Plus className="w-3.5 h-3.5" /><span>إشعار ائتمان جديد</span>
+
+            <button
+              onClick={() => {
+                setFormData({});
+                setShowAddCreditNoteModal(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-orange-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>إصدار إشعار ائتمان جديد</span>
             </button>
           </div>
-          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-secondary/50 text-muted-foreground">
-                  <th className="px-4 py-3 text-right font-bold">إشعار #</th>
-                  <th className="px-4 py-3 text-right font-bold">العميل</th>
-                  <th className="px-4 py-3 text-right font-bold">التاريخ</th>
-                  <th className="px-4 py-3 text-right font-bold">فاتورة مرجعية</th>
-                  <th className="px-4 py-3 text-right font-bold">المشروع</th>
-                  <th className="px-4 py-3 text-right font-bold">المبلغ المتبقي</th>
-                  <th className="px-4 py-3 text-right font-bold">الإجمالي</th>
-                  <th className="px-4 py-3 text-right font-bold">الحالة</th>
-                  <th className="px-4 py-3 text-right font-bold">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {creditNotes.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">لا توجد إشعارات ائتمان</td></tr>
-                ) : creditNotes.map(cn => (
-                  <tr key={cn.id} className="hover:bg-secondary/20 transition-colors">
-                    <td className="px-4 py-3 font-mono font-bold text-orange-600">{cn.creditNoteNumber}</td>
-                    <td className="px-4 py-3 font-semibold text-foreground">{cn.clientName}</td>
-                    <td className="px-4 py-3 font-mono text-muted-foreground">{cn.date}</td>
-                    <td className="px-4 py-3 font-mono text-sky-600">{cn.invoiceRef || '—'}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{cn.project || '—'}</td>
-                    <td className="px-4 py-3 font-mono font-bold text-amber-600">{cn.remainingAmount.toLocaleString()} ر.س</td>
-                    <td className="px-4 py-3 font-mono font-bold text-foreground">{cn.totalAmount.toLocaleString()} ر.س</td>
-                    <td className="px-4 py-3">{getStatusPill(cn.status)}</td>
-                    <td className="px-4 py-3">
-                      <button onClick={() => kasEtmadSuiteService.deleteCreditNote(cn.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                    </td>
+
+          {/* Credit Notes Table */}
+          <div className="bg-card border border-border rounded-3xl shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-secondary/60 text-muted-foreground border-b border-border/60">
+                    <th className="px-4 py-3.5 text-right font-bold">إشعار #</th>
+                    <th className="px-4 py-3.5 text-right font-bold">العميل</th>
+                    <th className="px-4 py-3.5 text-right font-bold">التاريخ</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الفاتورة المرجعية</th>
+                    <th className="px-4 py-3.5 text-right font-bold">المشروع</th>
+                    <th className="px-4 py-3.5 text-right font-bold">المبلغ المتبقي</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الإجمالي</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الحالة</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الإجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {creditNotes.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">
+                        <ArrowDownRight className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+                        <span>لا توجد إشعارات ائتمان مسجلة حالياً</span>
+                      </td>
+                    </tr>
+                  ) : (
+                    creditNotes.map((cn) => (
+                      <tr key={cn.id} className="hover:bg-secondary/30 transition-colors">
+                        <td className="px-4 py-3 font-mono font-bold text-orange-600 dark:text-orange-400">
+                          {cn.creditNoteNumber}
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-foreground">
+                          {cn.clientName}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-muted-foreground">
+                          {cn.date}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-sky-600 dark:text-sky-400 font-bold">
+                          {cn.invoiceRef || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {cn.project ? (
+                            <span className="px-2 py-0.5 rounded-md bg-secondary text-foreground text-[10px]">
+                              {cn.project}
+                            </span>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+                        <td className="px-4 py-3 font-mono font-bold text-amber-600 dark:text-amber-400">
+                          {cn.remainingAmount.toLocaleString()} ر.س
+                        </td>
+                        <td className="px-4 py-3 font-mono font-bold text-foreground">
+                          {cn.totalAmount.toLocaleString()} ر.س
+                        </td>
+                        <td className="px-4 py-3">
+                          {getStatusPill(cn.status)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => {
+                              kasEtmadSuiteService.deleteCreditNote(cn.id);
+                              setReloadKey(k => k + 1);
+                              addNotification({ title: 'تم الحذف', message: 'تم حذف إشعار الائتمان بنجاح.', type: 'info' });
+                            }}
+                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                            title="حذف الإشعار"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* SUBSCRIPTIONS VIEW (الاشتراكات) */}
+      {/* 7. SUBSCRIPTIONS VIEW (الاشتراكات الدورية) */}
       {/* ========================================================================= */}
       {activeTab === 'subscriptions' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="space-y-6">
+          {/* Top KPI Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-teal-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">الاشتراكات النشطة</span>
+                <span className="text-2xl font-bold font-mono text-teal-600 block mt-1">
+                  {subscriptions.filter(s => s.status === 'نشط').length}
+                </span>
+                <span className="text-[10px] text-muted-foreground">من أصل {subscriptions.length} اشتراك</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-600">
+                <RefreshCw className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">الإيراد المتكرر (MRR)</span>
+                <span className="text-xl font-bold font-mono text-emerald-600 block mt-1 truncate">
+                  {subscriptions.filter(s => s.status === 'نشط').reduce((sum, s) => sum + s.amount, 0).toLocaleString()} ر.س
+                </span>
+                <span className="text-[10px] text-emerald-600 font-medium">فوترة دورية شهرية</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">الإيراد السنوي التقديري (ARR)</span>
+                <span className="text-xl font-bold font-mono text-sky-600 block mt-1 truncate">
+                  {(subscriptions.filter(s => s.status === 'نشط').reduce((sum, s) => sum + s.amount, 0) * 12).toLocaleString()} ر.س
+                </span>
+                <span className="text-[10px] text-muted-foreground">توقع التدفقات السنوية</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+                <DollarSign className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">اشتراكات متوقفة</span>
+                <span className="text-2xl font-bold font-mono text-amber-600 block mt-1">
+                  {subscriptions.filter(s => s.status === 'متوقف').length}
+                </span>
+                <span className="text-[10px] text-amber-600 font-medium">تحتاج إلى تجديد</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+                <Clock className="w-6 h-6" />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Toolbar */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <RefreshCw className="w-4 h-4 text-teal-600" />
-              <span>الاشتراكات الدورية</span>
-              <span className="text-xs text-muted-foreground">({subscriptions.length} اشتراك)</span>
+              <span>بطاقات الاشتراكات وعقود الصيانة الدورية</span>
+              <span className="text-xs text-muted-foreground font-mono">({subscriptions.length})</span>
             </h3>
-            <button onClick={() => {
-              setFormData({});
-              setShowAddSubscriptionModal(true);
-            }} className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
-              <Plus className="w-3.5 h-3.5" /><span>اشتراك دوري جديد</span>
+
+            <button
+              onClick={() => {
+                setFormData({});
+                setShowAddSubscriptionModal(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-teal-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>تسجيل اشتراك دوري جديد</span>
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subscriptions.map(sub => (
-              <div key={sub.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-foreground leading-relaxed">{sub.subscriptionName}</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">{sub.clientName}</p>
+
+          {/* Subscriptions Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {subscriptions.map((sub) => (
+              <div
+                key={sub.id}
+                className="p-5 rounded-3xl bg-card border border-border shadow-xs space-y-4 hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-400 font-bold text-[10px] border border-teal-500/20">
+                        {sub.billingInterval}
+                      </span>
+                      <h4 className="text-base font-bold text-foreground mt-2 leading-snug">
+                        {sub.subscriptionName}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mt-0.5 font-medium">
+                        العميل: {sub.clientName}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                        sub.status === 'نشط'
+                          ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
+                          : 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
+                      }`}
+                    >
+                      {sub.status === 'نشط' ? '● ساري ونشط' : '○ متوقف'}
+                    </span>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${sub.status === 'نشط' ? 'bg-emerald-100 text-emerald-700' : sub.status === 'متوقف' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700'}`}>{sub.status}</span>
+
+                  {/* 4-Cell Stats Grid */}
+                  <div className="grid grid-cols-2 gap-2 mt-4 text-xs">
+                    <div className="p-2.5 rounded-2xl bg-secondary/50 border border-border/40">
+                      <span className="text-[11px] text-muted-foreground block">المبلغ الدوري</span>
+                      <span className="font-bold font-mono text-sm text-foreground block mt-0.5">
+                        {sub.amount.toLocaleString()} ر.س
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-2xl bg-secondary/50 border border-border/40">
+                      <span className="text-[11px] text-muted-foreground block">دورة الفوترة</span>
+                      <span className="font-bold text-sm text-foreground block mt-0.5">
+                        {sub.billingInterval}
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-2xl bg-secondary/50 border border-border/40">
+                      <span className="text-[11px] text-muted-foreground block">تاريخ البدء</span>
+                      <span className="font-mono text-muted-foreground block mt-0.5 text-[11px]">
+                        {sub.startDate}
+                      </span>
+                    </div>
+
+                    <div className="p-2.5 rounded-2xl bg-secondary/50 border border-border/40">
+                      <span className="text-[11px] text-muted-foreground block">الفوترة القادمة</span>
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold block mt-0.5 text-[11px]">
+                        {sub.nextBillingDate}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2 rounded-xl bg-secondary/50">
-                    <span className="text-muted-foreground block">المبلغ</span>
-                    <span className="font-bold font-mono text-foreground">{sub.amount.toLocaleString()} ر.س</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-secondary/50">
-                    <span className="text-muted-foreground block">الفترة</span>
-                    <span className="font-bold text-foreground">{sub.billingInterval}</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-secondary/50">
-                    <span className="text-muted-foreground block">بدء</span>
-                    <span className="font-mono text-foreground">{sub.startDate}</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-secondary/50">
-                    <span className="text-muted-foreground block">الفوترة القادمة</span>
-                    <span className="font-mono text-foreground">{sub.nextBillingDate}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 pt-2 border-t border-border/40">
-                  <button onClick={() => { kasEtmadSuiteService.updateSubscription(sub.id, { status: sub.status === 'نشط' ? 'متوقف' : 'نشط' }); setReloadKey(k => k + 1); }} className="flex-1 py-1.5 rounded-lg bg-secondary text-xs font-bold text-foreground hover:bg-secondary/80 cursor-pointer">
-                    {sub.status === 'نشط' ? 'إيقاف' : 'تفعيل'}
+
+                {/* Card Actions */}
+                <div className="flex items-center gap-2 pt-3 border-t border-border/60">
+                  <button
+                    onClick={() => {
+                      const nextStatus = sub.status === 'نشط' ? 'متوقف' : 'نشط';
+                      kasEtmadSuiteService.updateSubscription(sub.id, { status: nextStatus });
+                      setReloadKey(k => k + 1);
+                      addNotification({
+                        title: 'تحديث حالة الاشتراك',
+                        message: `تم تحويل حالة الاشتراك إلى (${nextStatus}).`,
+                        type: 'info'
+                      });
+                    }}
+                    className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      sub.status === 'نشط'
+                        ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
+                        : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
+                    }`}
+                  >
+                    {sub.status === 'نشط' ? 'إيقاف الاشتراك مؤقتاً' : 'تفعيل الاشتراك الآن'}
                   </button>
-                  <button onClick={() => kasEtmadSuiteService.deleteSubscription(sub.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+
+                  <button
+                    onClick={() => {
+                      kasEtmadSuiteService.deleteSubscription(sub.id);
+                      setReloadKey(k => k + 1);
+                      addNotification({ title: 'تم الحذف', message: 'تم حذف الاشتراك بنجاح.', type: 'info' });
+                    }}
+                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                    title="حذف الاشتراك"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -2572,111 +2936,258 @@ export const KasEtimadCloudPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* ESTIMATE REQUESTS VIEW (طلب عرض سعر) */}
+      {/* 8. ESTIMATE REQUESTS VIEW (طلبات عروض الأسعار) */}
       {/* ========================================================================= */}
       {activeTab === 'estimate-requests' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="space-y-6">
+          {/* Top KPI Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-indigo-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">إجمالي الطلبات</span>
+                <span className="text-2xl font-bold font-mono text-foreground block mt-1">{estimateRequests.length}</span>
+                <span className="text-[10px] text-muted-foreground">طلب تسعير مستلم</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600">
+                <FilePlus className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">طلبات جديدة</span>
+                <span className="text-2xl font-bold font-mono text-emerald-600 block mt-1">
+                  {estimateRequests.filter(r => r.status === 'جديد').length}
+                </span>
+                <span className="text-[10px] text-emerald-600 font-medium">بانتظار دراسة التسعير</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <Clock className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">تم تحويلها لعروض أسعار</span>
+                <span className="text-2xl font-bold font-mono text-sky-600 block mt-1">
+                  {estimateRequests.filter(r => r.status === 'تم التحويل لعرض سعر').length}
+                </span>
+                <span className="text-[10px] text-muted-foreground">عروض أسعار معتمدة</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-violet-500/40 transition-all flex items-center justify-between">
+              <div>
+                <span className="text-xs text-muted-foreground block font-medium">نسبة إنجاز التسعير</span>
+                <span className="text-2xl font-bold font-mono text-violet-600 block mt-1">
+                  {estimateRequests.length
+                    ? Math.round((estimateRequests.filter(r => r.status === 'تم التحويل لعرض سعر').length / estimateRequests.length) * 100)
+                    : 100}%
+                </span>
+                <span className="text-[10px] text-muted-foreground">معدل الاستجابة</span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-600">
+                <Award className="w-6 h-6" />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Toolbar */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <FilePlus className="w-4 h-4 text-indigo-600" />
-              <span>طلبات عروض الأسعار</span>
-              <span className="text-xs text-muted-foreground">({estimateRequests.length} طلب)</span>
+              <span>سجل طلبات عروض الأسعار والمواصفات المستلمة</span>
+              <span className="text-xs text-muted-foreground font-mono">({estimateRequests.length})</span>
             </h3>
-            <button onClick={() => {
-              setFormData({});
-              setShowAddEstimateRequestModal(true);
-            }} className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
-              <Plus className="w-3.5 h-3.5" /><span>طلب عرض سعر جديد</span>
+
+            <button
+              onClick={() => {
+                setFormData({});
+                setShowAddEstimateRequestModal(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-indigo-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>تسجيل طلب عرض سعر جديد</span>
             </button>
           </div>
-          <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-secondary/50 text-muted-foreground">
-                  <th className="px-4 py-3 text-right font-bold">طلب #</th>
-                  <th className="px-4 py-3 text-right font-bold">العميل</th>
-                  <th className="px-4 py-3 text-right font-bold">الوصف</th>
-                  <th className="px-4 py-3 text-right font-bold">التاريخ</th>
-                  <th className="px-4 py-3 text-right font-bold">الحالة</th>
-                  <th className="px-4 py-3 text-right font-bold">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {estimateRequests.length === 0 ? (
-                  <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">لا توجد طلبات</td></tr>
-                ) : estimateRequests.map(req => (
-                  <tr key={req.id} className="hover:bg-secondary/20 transition-colors">
-                    <td className="px-4 py-3 font-mono font-bold text-indigo-600">{req.requestNumber}</td>
-                    <td className="px-4 py-3 font-semibold text-foreground">{req.clientName || '—'}</td>
-                    <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{req.description || '—'}</td>
-                    <td className="px-4 py-3 font-mono text-muted-foreground">{req.requestedDate}</td>
-                    <td className="px-4 py-3">{getStatusPill(req.status)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        {req.status === 'جديد' && (
-                          <button onClick={() => {
-                            kasEtmadSuiteService.updateEstimateRequest(req.id, { status: 'تم التحويل لعرض سعر' });
-                            setReloadKey(k => k + 1);
-                            addNotification({ title: 'تم تحويل الطلب', message: 'تم تحويله لعرض سعر بنجاح.', type: 'success' });
-                          }} className="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-bold hover:bg-emerald-200 cursor-pointer">
-                            تحويل لعرض سعر
-                          </button>
-                        )}
-                        <button onClick={() => kasEtmadSuiteService.deleteEstimateRequest(req.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                      </div>
-                    </td>
+
+          {/* Estimate Requests Table */}
+          <div className="bg-card border border-border rounded-3xl shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-secondary/60 text-muted-foreground border-b border-border/60">
+                    <th className="px-4 py-3.5 text-right font-bold">طلب #</th>
+                    <th className="px-4 py-3.5 text-right font-bold">العميل / الجهة الطالبة</th>
+                    <th className="px-4 py-3.5 text-right font-bold">المواصفات والمتطلبات المطلوبة</th>
+                    <th className="px-4 py-3.5 text-right font-bold">تاريخ الطلب</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الحالة</th>
+                    <th className="px-4 py-3.5 text-right font-bold">الإجراءات والتحويل</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {estimateRequests.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
+                        <FilePlus className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+                        <span>لا توجد طلبات عروض أسعار مسجلة</span>
+                      </td>
+                    </tr>
+                  ) : (
+                    estimateRequests.map((req) => (
+                      <tr key={req.id} className="hover:bg-secondary/30 transition-colors">
+                        <td className="px-4 py-3 font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                          {req.requestNumber}
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-foreground">
+                          {req.clientName}
+                        </td>
+                        <td className="px-4 py-3 text-foreground max-w-[340px] truncate leading-relaxed">
+                          {req.description}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-muted-foreground">
+                          {req.requestedDate}
+                        </td>
+                        <td className="px-4 py-3">
+                          {getStatusPill(req.status)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {req.status === 'جديد' && (
+                              <button
+                                onClick={() => {
+                                  kasEtmadSuiteService.updateEstimateRequest(req.id, { status: 'تم التحويل لعرض سعر' });
+                                  setReloadKey(k => k + 1);
+                                  addNotification({
+                                    title: 'تم تحويل الطلب',
+                                    message: `تم تحويل طلب (${req.clientName}) لعرض سعر بنجاح.`,
+                                    type: 'success'
+                                  });
+                                }}
+                                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                              >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>تحويل لعرض سعر</span>
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => {
+                                kasEtmadSuiteService.deleteEstimateRequest(req.id);
+                                setReloadKey(k => k + 1);
+                                addNotification({ title: 'تم الحذف', message: 'تم حذف الطلب بنجاح.', type: 'info' });
+                              }}
+                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                              title="حذف الطلب"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* EMAIL TEMPLATES VIEW (قوالب البريد الإلكتروني) */}
+      {/* 9. EMAIL TEMPLATES VIEW (قوالب البريد الإلكتروني) */}
       {/* ========================================================================= */}
       {activeTab === 'email-templates' && (
-        <div className="space-y-4">
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="space-y-6">
+          {/* Action Toolbar */}
+          <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <Mail className="w-4 h-4 text-pink-600" />
-              <span>قوالب البريد الإلكتروني</span>
-              <span className="text-xs text-muted-foreground">({emailTemplates.length} قالب)</span>
+              <span>قوالب الرسائل والبريد الإلكتروني المعتمدة</span>
+              <span className="text-xs text-muted-foreground font-mono">({emailTemplates.length} قالب)</span>
             </h3>
-            <button onClick={() => {
-              setFormData({});
-              setShowAddTemplateModal(true);
-            }} className="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
-              <Plus className="w-3.5 h-3.5" /><span>قالب بريد جديد</span>
+
+            <button
+              onClick={() => {
+                setFormData({});
+                setShowAddTemplateModal(true);
+              }}
+              className="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-pink-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>إنشاء قالب بريد جديد</span>
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {emailTemplates.map(tmpl => (
-              <div key={tmpl.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        tmpl.category === 'فاتورة' ? 'bg-sky-100 text-sky-700' :
-                        tmpl.category === 'عرض سعر' ? 'bg-violet-100 text-violet-700' :
-                        tmpl.category === 'إشعار دفع' ? 'bg-emerald-100 text-emerald-700' :
-                        tmpl.category === 'متابعة' ? 'bg-amber-100 text-amber-700' :
-                        'bg-pink-100 text-pink-700'
-                      }`}>{tmpl.category}</span>
+
+          {/* Templates Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {emailTemplates.map((tmpl) => (
+              <div
+                key={tmpl.id}
+                className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4 hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/10 text-pink-600 border border-pink-500/20">
+                        {tmpl.category}
+                      </span>
+                      <h4 className="text-base font-bold text-foreground mt-2">
+                        {tmpl.name}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mt-1 font-mono">
+                        الموضوع: {tmpl.subject}
+                      </p>
                     </div>
-                    <h4 className="text-sm font-bold text-foreground mt-2">{tmpl.name}</h4>
-                    <p className="text-xs text-muted-foreground mt-1 font-mono">الموضوع: {tmpl.subject}</p>
+
+                    <button
+                      onClick={() => {
+                        kasEtmadSuiteService.deleteEmailTemplate(tmpl.id);
+                        setReloadKey(k => k + 1);
+                        addNotification({ title: 'تم الحذف', message: 'تم حذف القالب بنجاح.', type: 'info' });
+                      }}
+                      className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                      title="حذف القالب"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
-                  <button onClick={() => kasEtmadSuiteService.deleteEmailTemplate(tmpl.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-400 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+
+                  {/* Body Preview */}
+                  <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border/40 text-xs text-foreground leading-relaxed whitespace-pre-wrap max-h-36 overflow-y-auto font-mono mt-3">
+                    {tmpl.body}
+                  </div>
+
+                  {/* Variables Badges */}
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {tmpl.variables.map((v, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-0.5 rounded-md bg-secondary text-[10px] font-mono text-muted-foreground border border-border/50"
+                      >
+                        {v}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="p-3 rounded-xl bg-secondary/50 text-xs text-foreground leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto font-mono">{tmpl.body}</div>
-                <div className="flex flex-wrap gap-1">
-                  {tmpl.variables.map((v, i) => (
-                    <span key={i} className="px-2 py-0.5 rounded-full bg-secondary text-[10px] font-mono text-muted-foreground">{v}</span>
-                  ))}
+
+                <div className="flex items-center justify-between pt-3 border-t border-border/60 text-[11px] text-muted-foreground">
+                  <span>آخر تحديث: {tmpl.lastModified}</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard?.writeText(tmpl.body);
+                      addNotification({ title: 'تم النسخ', message: 'تم نسخ نص القالب للحافظة.', type: 'success' });
+                    }}
+                    className="px-3 py-1 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground font-bold text-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <Copy className="w-3 h-3" />
+                    <span>نسخ القالب</span>
+                  </button>
                 </div>
-                <div className="text-[10px] text-muted-foreground">آخر تعديل: {tmpl.lastModified}</div>
               </div>
             ))}
           </div>
@@ -2684,104 +3195,152 @@ export const KasEtimadCloudPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* UTILITIES VIEW (الأدوات المساعدة) */}
+      {/* 10. UTILITIES VIEW (الأدوات المساعدة والحاسبات) */}
       {/* ========================================================================= */}
       {activeTab === 'utilities' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* VAT Calculator */}
-            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                <Calculator className="w-5 h-5 text-emerald-600" />
-                <span>حاسبة ضريبة القيمة المضافة (15%)</span>
-              </h3>
+            {/* 1. VAT Calculator */}
+            <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                  <Calculator className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">حاسبة ضريبة القيمة المضافة (15%)</h3>
+                  <p className="text-[11px] text-muted-foreground">إضافة الضريبة على المبلغ الأساسي</p>
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ قبل الضريبة</label>
-                  <input type="number" placeholder="أدخل المبلغ..." value={formData.vatAmount || ''} onChange={e => setFormData({ ...formData, vatAmount: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-secondary/50 border rounded-xl text-sm font-mono" />
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ الأساسي (قبل الضريبة)</label>
+                  <input
+                    type="number"
+                    placeholder="أدخل المبلغ..."
+                    value={formData.vatAmount || ''}
+                    onChange={e => setFormData({ ...formData, vatAmount: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-secondary/50 border border-border rounded-xl text-sm font-mono font-bold"
+                  />
                 </div>
+
                 {formData.vatAmount && parseFloat(formData.vatAmount) > 0 && (
-                  <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 space-y-2">
+                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2.5">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">المبلغ قبل الضريبة:</span>
+                      <span className="text-muted-foreground">المبلغ الأساسي:</span>
                       <span className="font-bold font-mono">{parseFloat(formData.vatAmount).toLocaleString()} ر.س</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">ضريبة 15%:</span>
-                      <span className="font-bold font-mono text-amber-600">{(parseFloat(formData.vatAmount) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                      <span className="font-bold font-mono text-emerald-600">
+                        {(parseFloat(formData.vatAmount) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س
+                      </span>
                     </div>
-                    <div className="flex justify-between text-sm border-t border-emerald-200 dark:border-emerald-800 pt-2">
-                      <span className="font-bold text-emerald-700">الإجمالي شامل الضريبة:</span>
-                      <span className="font-extrabold font-mono text-emerald-700">{(parseFloat(formData.vatAmount) * 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    <div className="flex justify-between text-sm border-t border-emerald-500/20 pt-2 font-bold">
+                      <span className="text-emerald-700 dark:text-emerald-400">الإجمالي النهائي:</span>
+                      <span className="font-mono text-emerald-700 dark:text-emerald-400">
+                        {(parseFloat(formData.vatAmount) * 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground pt-1 border-t border-emerald-500/10 leading-relaxed">
+                      فقط {tafqeet(Math.round(parseFloat(formData.vatAmount) * 1.15))} لا غير
                     </div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Reverse VAT Calculator */}
-            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                <ArrowRightLeft className="w-5 h-5 text-sky-600" />
-                <span>حاسبة عكسية (استخراج المبلغ من الإجمالي)</span>
-              </h3>
+            {/* 2. Reverse VAT Calculator */}
+            <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+                  <ArrowRightLeft className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">الحاسبة العكسية للضريبة</h3>
+                  <p className="text-[11px] text-muted-foreground">استخراج أصل المبلغ من الإجمالي الشامل</p>
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ شامل الضريبة</label>
-                  <input type="number" placeholder="أدخل الإجمالي..." value={formData.reverseVat || ''} onChange={e => setFormData({ ...formData, reverseVat: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-secondary/50 border rounded-xl text-sm font-mono" />
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ الإجمالي (شامل الضريبة)</label>
+                  <input
+                    type="number"
+                    placeholder="أدخل الإجمالي..."
+                    value={formData.reverseVat || ''}
+                    onChange={e => setFormData({ ...formData, reverseVat: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-secondary/50 border border-border rounded-xl text-sm font-mono font-bold"
+                  />
                 </div>
+
                 {formData.reverseVat && parseFloat(formData.reverseVat) > 0 && (
-                  <div className="p-4 rounded-xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800 space-y-2">
+                  <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 space-y-2.5">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">المبلغ قبل الضريبة:</span>
-                      <span className="font-bold font-mono">{(parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                      <span className="text-muted-foreground">أصل المبلغ (قبل الضريبة):</span>
+                      <span className="font-bold font-mono">
+                        {(parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س
+                      </span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">قيمة الضريبة 15%:</span>
-                      <span className="font-bold font-mono text-amber-600">{(parseFloat(formData.reverseVat) - parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                      <span className="text-muted-foreground">قيمة الضريبة المقتطعة:</span>
+                      <span className="font-bold font-mono text-sky-600">
+                        {(parseFloat(formData.reverseVat) - parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س
+                      </span>
                     </div>
-                    <div className="flex justify-between text-sm border-t border-sky-200 dark:border-sky-800 pt-2">
-                      <span className="font-bold text-sky-700">الإجمالي شامل الضريبة:</span>
-                      <span className="font-extrabold font-mono text-sky-700">{parseFloat(formData.reverseVat).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س</span>
+                    <div className="flex justify-between text-sm border-t border-sky-500/20 pt-2 font-bold">
+                      <span className="text-sky-700 dark:text-sky-400">الإجمالي المدخل:</span>
+                      <span className="font-mono text-sky-700 dark:text-sky-400">
+                        {parseFloat(formData.reverseVat).toLocaleString(undefined, { minimumFractionDigits: 2 })} ر.س
+                      </span>
                     </div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Quick Stats Summary */}
-            <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                <PieChart className="w-5 h-5 text-violet-600" />
-                <span>ملخص الأداء السريع</span>
-              </h3>
-              <div className="space-y-2.5">
-                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
-                  <span className="text-muted-foreground">إجمالي الإيرادات</span>
-                  <span className="font-bold font-mono text-emerald-600">{stats.totalInvoicesAmount.toLocaleString()} ر.س</span>
+            {/* 3. Fast Tafqeet Tool */}
+            <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-600">
+                  <FileText className="w-5 h-5" />
                 </div>
-                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
-                  <span className="text-muted-foreground">إجمالي المصروفات</span>
-                  <span className="font-bold font-mono text-rose-600">{stats.totalExpenses.toLocaleString()} ر.س</span>
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">محول الأرقام إلى نصوص (التفقيط)</h3>
+                  <p className="text-[11px] text-muted-foreground">توليد الصياغة الرسمية للعقود والفواتير</p>
                 </div>
-                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
-                  <span className="text-muted-foreground">صافي الربح التقديري</span>
-                  <span className="font-bold font-mono text-foreground">{(stats.paidAmount - stats.totalExpenses).toLocaleString()} ر.س</span>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-muted-foreground mb-1">المبلغ الرقمي بالريال</label>
+                  <input
+                    type="number"
+                    placeholder="مثال: 1250000..."
+                    value={formData.tafqeetNumber || ''}
+                    onChange={e => setFormData({ ...formData, tafqeetNumber: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-secondary/50 border border-border rounded-xl text-sm font-mono font-bold"
+                  />
                 </div>
-                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
-                  <span className="text-muted-foreground">فواتير معلقة</span>
-                  <span className="font-bold font-mono text-amber-600">{stats.unpaidAmount.toLocaleString()} ر.س</span>
-                </div>
-                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
-                  <span className="text-muted-foreground">إيرادات الاشتراكات الدورية</span>
-                  <span className="font-bold font-mono text-teal-600">{stats.totalSubscriptionsRevenue.toLocaleString()} ر.س</span>
-                </div>
-                <div className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-secondary/50">
-                  <span className="text-muted-foreground">نسبة فوز المنافسات</span>
-                  <span className="font-bold text-foreground">{stats.winRate}%</span>
-                </div>
+
+                {formData.tafqeetNumber && parseFloat(formData.tafqeetNumber) > 0 && (
+                  <div className="p-4 rounded-2xl bg-violet-500/10 border border-violet-500/30 space-y-2">
+                    <span className="text-[11px] text-muted-foreground block font-medium">الصيغة النصية المعتمدة:</span>
+                    <p className="text-xs font-bold text-foreground leading-relaxed">
+                      فقط {tafqeet(parseFloat(formData.tafqeetNumber))} لا غير.
+                    </p>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard?.writeText(`فقط ${tafqeet(parseFloat(formData.tafqeetNumber))} لا غير.`);
+                        addNotification({ title: 'تم النسخ', message: 'تم نسخ النص المفقّط.', type: 'success' });
+                      }}
+                      className="px-3 py-1 rounded-lg bg-violet-600 text-white font-bold text-[10px] flex items-center gap-1 mt-2 cursor-pointer"
+                    >
+                      <Copy className="w-3 h-3" />
+                      <span>نسخ النص</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
