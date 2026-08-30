@@ -1,14 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
 import { tafqeet } from '../services/tafqeetService';
-import { computeTenderKPIs, DEFAULT_SUPPLIERS, SupplierRecord } from '../services/tenderAnalyticsService';
+import { computeTenderKPIs, DEFAULT_SUPPLIERS } from '../services/tenderAnalyticsService';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
+import { kasEtmadRealService } from '../services/kasEtmadRealService';
+import { RealBoqEngine } from '../services/realBoqEngine';
+import { RealZatcaEngine } from '../services/realZatcaEngine';
 import { KasMonafasatSpreadsheetView } from '../components/tenders/KasMonafasatSpreadsheetView';
 import { KasEtimadCloudPage } from './KasEtimadCloudPage';
 import { KasTenderItem } from '../types/kasMonafasat';
+import { BOQItem, TenderRecord, SupplierRecord } from '../types/tenders';
 import { 
   Building2, Plus, FileSpreadsheet, FileText, Search, Printer, 
   Trash2, Edit3, CheckCircle2, AlertCircle, TrendingUp, DollarSign,
@@ -18,42 +22,6 @@ import {
   Upload, FileUp, QrCode, Percent, ArrowUpRight, Shield, CheckSquare,
   CloudLightning
 } from 'lucide-react';
-
-export interface BOQItem {
-  id: string;
-  itemNumber: number;
-  description: string;
-  unit: string;
-  quantity: number;
-  unitPrice: number;
-  unitPriceInWords: string;
-  totalPrice: number;
-  totalPriceInWords: string;
-  vat: number;
-  totalWithVat: number;
-  totalWithVatInWords: string;
-}
-
-export interface TenderRecord {
-  id: string;
-  referenceNumber: string;
-  title: string;
-  entityName: string;
-  clientName: string;
-  category: 'احتفالات ومواسم وطنية' | 'توريدات حكومية وتجهيزات' | 'معارض ومؤتمرات' | 'تقنية واتصالات';
-  status: 'ترسية واعتماد' | 'مقدمة ومسعرة' | 'مسودة قيد الدراسة' | 'مكتملة ومفوترة';
-  submissionDate: string;
-  supplyDuration: string;
-  commitmentDays: number;
-  itemsCount: number;
-  subtotal: number;
-  subtotalInWords: string;
-  vatAmount: number;
-  vatInWords: string;
-  grandTotal: number;
-  grandTotalInWords: string;
-  items: BOQItem[];
-}
 
 const DEFAULT_MOCK_TENDERS: TenderRecord[] = [
   {
@@ -304,9 +272,36 @@ export const TendersBOQPage: React.FC = () => {
   // Computed KPIs
   const kpis = useMemo(() => computeTenderKPIs(tendersList), [tendersList]);
 
+  // Real Database Data Loading from Supabase
+  useEffect(() => {
+    let isMounted = true;
+    const fetchRealData = async () => {
+      try {
+        const [realTenders, realSuppliers] = await Promise.all([
+          kasEtmadRealService.getTenders(),
+          kasEtmadRealService.getSuppliers(),
+        ]);
+        if (isMounted) {
+          if (realTenders && realTenders.length > 0) {
+            setTendersList(realTenders);
+            setSelectedTender(realTenders[0]);
+            setCurrentItems(realTenders[0].items || []);
+          }
+          if (realSuppliers && realSuppliers.length > 0) {
+            setSuppliers(realSuppliers);
+          }
+        }
+      } catch (err) {
+        console.warn('Real data loading fallback:', err);
+      }
+    };
+    fetchRealData();
+    return () => { isMounted = false; };
+  }, []);
+
   const handleSelectTender = (tender: TenderRecord) => {
     setSelectedTender(tender);
-    setCurrentItems(tender.items);
+    setCurrentItems(tender.items || []);
   };
 
   const handleItemChange = (index: number, field: 'description' | 'unit' | 'quantity' | 'unitPrice', val: any) => {
@@ -613,8 +608,21 @@ export const TendersBOQPage: React.FC = () => {
   };
 
   const handleExportBOQExcel = () => {
-    handleExportBOQCSV();
-    addNotification({ title: 'تصدير Excel', message: 'تم تصدير ملف جدول الكميات المتوافق مع Excel بنجاح.', type: 'success' });
+    try {
+      const buffer = RealBoqEngine.exportToExcelWithFormulas(selectedTender, currentItems);
+      const blob = new Blob([buffer as any], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `BOQ_${selectedTender.referenceNumber}_KAS_Trading.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      addNotification({ title: 'تصدير Excel حقيقي بالمعادلات', message: 'تم توليد وتصدير ملف Excel رسمي يتضمن كافة المعادلات والصيغ الحسابية والتفقيط بنجاح.', type: 'success' });
+    } catch (err: any) {
+      handleExportBOQCSV();
+    }
   };
 
   const handleExportBOQJSON = () => {

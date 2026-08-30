@@ -4,6 +4,7 @@ import { AppShell } from './components/layout/AppShell';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CompanyProvider } from './contexts/CompanyContext';
+import { IamSessionProvider } from './contexts/IamSessionContext';
 import { CompanyId } from './types';
 import { ImpersonationProvider } from './contexts/ImpersonationContext';
 import { RBACProvider } from './contexts/RBACContext';
@@ -97,6 +98,7 @@ const SmaccEmployeesSettingsPage = lazyWithRetry(() => import('./pages/SmaccEmpl
 const LegalCompliancePage = lazyWithRetry(() => import('./pages/LegalCompliancePage').then(m => ({ default: m.LegalCompliancePage })));
 const TendersBOQPage = lazyWithRetry(() => import('./pages/TendersBOQPage').then(m => ({ default: m.TendersBOQPage })));
 const KasEtimadCloudPage = lazyWithRetry(() => import('./pages/KasEtimadCloudPage').then(m => ({ default: m.KasEtimadCloudPage })));
+const IdentityAccessManagementPage = lazyWithRetry(() => import('./pages/IdentityAccessManagementPage').then(m => ({ default: m.IdentityAccessManagementPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -428,7 +430,12 @@ const MainContent: React.FC = () => {
       case 'users-list':
       case 'roles-permissions':
       case 'users-access':
-        return <UsersPage />;
+      case 'iam':
+      case 'identity-access':
+      case 'access-control':
+      case 'iam-control':
+      case 'multi-company-iam':
+        return <IdentityAccessManagementPage />;
 
       case 'whatsapp-inbox':
         return <WhatsAppInboxPage />;
@@ -522,11 +529,13 @@ export const App: React.FC = () => {
     <LanguageProvider>
       <AuthProvider>
         <CompanyProvider>
-          <RBACProvider>
-            <ImpersonationProvider>
-              <MainContent />
-            </ImpersonationProvider>
-          </RBACProvider>
+          <IamSessionProvider>
+            <RBACProvider>
+              <ImpersonationProvider>
+                <MainContent />
+              </ImpersonationProvider>
+            </RBACProvider>
+          </IamSessionProvider>
         </CompanyProvider>
       </AuthProvider>
     </LanguageProvider>

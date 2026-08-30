@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useImpersonation } from '../../contexts/ImpersonationContext';
+import { useIamSession } from '../../contexts/IamSessionContext';
 import { useAppStore } from '../../stores/appStore';
 import { NotificationDropdown } from '../common/NotificationDropdown';
 import { 
   Menu, Grid, Search, Bell, Maximize, Minimize, MapPin, 
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
   MessageSquare, ShieldCheck, Settings, LogOut, Check, X,
-  Globe, Languages as LanguagesIcon
+  Globe, Languages as LanguagesIcon, Building2, ArrowLeftRight
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -26,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { currentLanguage, availableLanguages, setLanguage, t } = useLanguage();
   const { activeCompany } = useCompany();
+  const { currentUser: iamUser, activeCompany: iamCompany, canSwitchCompany, switchCompany } = useIamSession();
   const { impersonatedState, stopImpersonation } = useImpersonation();
   const { unreadCount, setQuickSearchOpen, setActiveTab } = useAppStore();
 
@@ -350,22 +352,43 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setShowUserDropdown(!showUserDropdown)}
               className="flex items-center gap-1.5 bg-white border border-zinc-200 rounded-full p-1 pl-2.5 sm:pl-3 hover:bg-zinc-50 transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shadow-sm">
-                ع
+              <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs font-black shadow-sm">
+                {(iamUser?.fullName || 'خ').slice(0, 1)}
               </div>
               <div className="hidden sm:block text-right">
-                <div className="text-[11px] font-bold text-black leading-tight">عبد الفتاح</div>
-                <div className="text-[9.5px] text-zinc-400 font-medium">مشرف عام</div>
+                <div className="text-[11px] font-bold text-black leading-tight">
+                  {iamUser?.fullName?.split(' ')[0] || 'خالد السليم'}
+                </div>
+                <div className="text-[9.5px] text-emerald-700 font-bold">
+                  {iamUser?.accountType || 'Group Super Admin'}
+                </div>
               </div>
               <ChevronDown className="w-3 h-3 text-zinc-400" />
             </button>
 
             {showUserDropdown && (
-              <div className="absolute top-full mt-2 left-0 bg-white border border-zinc-200 rounded-2xl shadow-xl w-56 max-w-[calc(100vw-32px)] z-[250] p-2 space-y-1">
-                <div className="p-2 border-b border-zinc-100 mb-1">
-                  <div className="font-bold text-xs text-black">عبد الفتاح (Super Admin)</div>
-                  <div className="text-[10.5px] text-zinc-400">abdelftah@daralrowad.sa</div>
+              <div className="absolute top-full mt-2 left-0 bg-white border border-zinc-200 rounded-2xl shadow-xl w-60 max-w-[calc(100vw-32px)] z-[250] p-2 space-y-1">
+                <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 mb-1">
+                  <div className="font-bold text-xs text-black">{iamUser?.fullName || 'خالد بن عبدالعزيز السليم'}</div>
+                  <div className="text-[10px] text-zinc-500 font-mono">{iamUser?.email || 'khalid@alsulaim.sa'}</div>
+                  <div className="mt-1 flex items-center gap-1">
+                    <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded">
+                      {iamCompany?.commercialName || 'شركة كاس للتجارة والمقاولات'}
+                    </span>
+                  </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUserDropdown(false);
+                    setActiveTab('users', 'إدارة الهوية والصلاحيات متعددة الشركات (IAM)');
+                  }}
+                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-emerald-50 text-emerald-900 font-bold flex items-center gap-2"
+                >
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span>إدارة الهوية والصلاحيات (IAM)</span>
+                </button>
 
                 <button
                   type="button"

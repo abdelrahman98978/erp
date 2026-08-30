@@ -255,7 +255,7 @@ export const SIDEBAR_MENU: NavItem[] = [
     title: 'إعدادات النظام والحوكمة والأمان',
     icon: 'Settings',
     children: [
-      { id: 'users', title: 'التحكم بالوصول والمستخدمين (RBAC)', icon: 'ShieldCheck', href: 'users' },
+      { id: 'users', title: 'إدارة الهوية والصلاحيات متعددة الشركات (IAM)', icon: 'ShieldCheck', href: 'users', badge: 'IAM v2', badgeType: 'success' },
       { id: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية', icon: 'Scale', href: 'legal-compliance' },
       { id: 'master-constants', title: 'الثوابت (الجنسيات والمهن والدول)', icon: 'Sliders', href: 'master-constants' },
       { id: 'activity-log', title: 'سجل النشاط والحركات والتدقيق الأمني', icon: 'History', href: 'activity-log' },

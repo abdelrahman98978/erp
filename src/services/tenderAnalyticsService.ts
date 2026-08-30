@@ -1,4 +1,6 @@
-import { TenderRecord } from '../pages/TendersBOQPage';
+import { TenderRecord, SupplierRecord } from '../types/tenders';
+
+export type { SupplierRecord };
 
 export interface TenderKPI {
   totalTenders: number;
@@ -59,21 +61,32 @@ export function computeTenderKPIs(tenders: TenderRecord[]): TenderKPI {
   // Monthly trend
   const monthMap = new Map<string, { count: number; value: number }>();
   tenders.forEach(t => {
-    const month = t.submissionDate.slice(0, 7); // YYYY-MM
+    const month = t.submissionDate ? t.submissionDate.substring(0, 7) : '2026-08';
     const existing = monthMap.get(month) || { count: 0, value: 0 };
     monthMap.set(month, { count: existing.count + 1, value: existing.value + t.grandTotal });
   });
-  const monthlyTrend = Array.from(monthMap.entries())
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([month, data]) => ({ month, count: data.count, value: data.value }));
+  const monthlyTrend = Array.from(monthMap.entries()).map(([month, data]) => ({
+    month,
+    count: data.count,
+    value: data.value,
+  }));
 
   // Status distribution
-  const statusDistribution = [
-    { status: 'ترسية واعتماد', count: awarded.length, color: '#059669' },
-    { status: 'مقدمة ومسعرة', count: submitted.length, color: '#0284C7' },
-    { status: 'مسودة قيد الدراسة', count: draft.length, color: '#D97706' },
-    { status: 'مكتملة ومفوترة', count: invoiced.length, color: '#7C3AED' },
-  ];
+  const statusColors: Record<string, string> = {
+    'مسودة قيد الدراسة': '#eab308',
+    'مقدمة ومسعرة': '#06b6d4',
+    'ترسية واعتماد': '#10b981',
+    'مكتملة ومفوترة': '#8b5cf6',
+  };
+  const statusCounts = new Map<string, number>();
+  tenders.forEach(t => {
+    statusCounts.set(t.status, (statusCounts.get(t.status) || 0) + 1);
+  });
+  const statusDistribution = Array.from(statusCounts.entries()).map(([status, count]) => ({
+    status,
+    count,
+    color: statusColors[status] || '#64748b',
+  }));
 
   return {
     totalTenders,
@@ -92,24 +105,6 @@ export function computeTenderKPIs(tenders: TenderRecord[]): TenderKPI {
   };
 }
 
-export interface SupplierRecord {
-  id: string;
-  name: string;
-  category: 'مواد غذائية وضيافة' | 'طباعة ودعاية' | 'إنتاج وفعاليات' | 'تقنية ولوجستيات' | 'أخرى';
-  contactPerson: string;
-  phone: string;
-  email: string;
-  city: string;
-  rating: number; // 1-5
-  qualityScore: number; // 0-100
-  commitmentScore: number; // 0-100
-  priceCompetitiveness: number; // 0-100
-  totalDeals: number;
-  totalValue: number;
-  lastDealDate: string;
-  status: 'معتمد' | 'تحت التقييم' | 'محظور';
-  notes: string;
-}
 
 export const DEFAULT_SUPPLIERS: SupplierRecord[] = [
   {
