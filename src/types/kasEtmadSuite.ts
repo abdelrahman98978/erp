@@ -6,7 +6,7 @@ export interface KasEtmadCompetition {
   isWinner: 'Yes' | 'No';
   dueDate: string;
   deadlineDate: string;
-  category: 'التجارة' | 'دعاية وإعلان' | 'معارض ومؤتمرات' | 'مقاولات' | 'سياحة وضيافة' | 'تقنية';
+  category: string;
   governmentEntity: string;
   createdAt: string;
   totalItemsValue: number;
@@ -16,6 +16,25 @@ export interface KasEtmadCompetition {
   contactName?: string;
   contactPhone?: string;
   contactEmail?: string;
+}
+
+export interface KasEtmadCategory {
+  id: string;
+  seq: number;
+  name: string;
+  code: string;
+  description?: string;
+  updatedAt: string;
+}
+
+export interface KasEtmadStaff {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  lastLogin: string;
+  active: boolean;
+  phone?: string;
 }
 
 export interface KasEtmadInvoice {
@@ -91,6 +110,7 @@ export interface KasEtmadClient {
   city: string;
   vatNumber: string;
   createdAt: string;
+  address?: string;
 }
 
 export interface KasEtmadLead {
@@ -206,4 +226,5 @@ export type EtmadModuleTab =
   | 'knowledge-base'
   | 'calendar'
   | 'reports'
+  | 'staff'
   | 'settings';

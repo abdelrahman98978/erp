@@ -1,6 +1,8 @@
 import * as XLSX from 'xlsx';
 import {
   KasEtmadCompetition,
+  KasEtmadCategory,
+  KasEtmadStaff,
   KasEtmadInvoice,
   KasEtmadEstimate,
   KasEtmadPayment,
@@ -17,7 +19,27 @@ import {
   KasEtmadKnowledgeArticle
 } from '../types/kasEtmadSuite';
 
-const STORAGE_KEY = 'kas_etmad_suite_data_v2';
+const STORAGE_KEY = 'kas_etmad_suite_data_v3';
+
+export const INITIAL_CATEGORIES: KasEtmadCategory[] = [
+  { id: 'cat-1', seq: 1, name: 'المعارض والمؤتمرات', code: '9987', description: 'تنظيم وتجهيز المعارض والفعاليات', updatedAt: '2026-03-03 14:05:17' },
+  { id: 'cat-2', seq: 2, name: 'دعاية وإعلان', code: '8899', description: 'الهويات البصرية والحملات الإعلامية واللوحات', updatedAt: '2026-03-03 14:04:16' },
+  { id: 'cat-3', seq: 3, name: 'التعليم والتدريب', code: '06', description: 'الحقائب التدريبية ومستلزمات المعاهد', updatedAt: '2025-11-13 09:56:20' },
+  { id: 'cat-4', seq: 4, name: 'العقارات والأراضي', code: '05', description: 'التطوير العقاري والمرافق', updatedAt: '2025-11-13 09:55:56' },
+  { id: 'cat-5', seq: 5, name: 'التشغيل والصيانة والنظافة للمنشآت', code: '04', description: 'الصيانة الوقائية وخدمات المرافق', updatedAt: '2025-11-13 09:55:42' },
+  { id: 'cat-6', seq: 6, name: 'المقاولات', code: '3', description: 'أعمال الإنشاءات والترميم والتشطيب', updatedAt: '2025-11-13 09:55:19' },
+  { id: 'cat-7', seq: 7, name: 'التجارة', code: '02', description: 'التوريدات العامة والأغذية والتمور والضيافة', updatedAt: '2025-11-13 09:55:13' },
+  { id: 'cat-8', seq: 8, name: 'قطاع الاتصالات وتقنية المعلومات', code: '01', description: 'الأنظمة البرمجية، الأجهزة، والشبكات', updatedAt: '2025-11-13 09:54:17' },
+];
+
+export const INITIAL_STAFF: KasEtmadStaff[] = [
+  { id: 'st-1', name: 'Ahmed Gamal', email: 'mr.ahmed.elbashir@gmail.com', role: 'Employee / مدير العمليات', lastLogin: 'الآن', active: true, phone: '0554166722' },
+  { id: 'st-2', name: 'خالد عبدالعزيز السليم', email: 'khaled@alsulaim.sa', role: 'Super_Admin / رئيس مجلس الإدارة', lastLogin: 'منذ يوم', active: true, phone: '0508987888' },
+  { id: 'st-3', name: 'Mohammed Khaled', email: 'accmohamedkhaled1996@gmail.com', role: 'المحاسب المالي المعتمد', lastLogin: 'منذ 3 ساعات', active: true, phone: '0550001122' },
+  { id: 'st-4', name: 'abdallah mohamed', email: 'abdallahobya@gmail.com', role: 'Super_Admin', lastLogin: 'منذ يومين', active: true },
+  { id: 'st-5', name: 'abdulfattah farahat', email: 'abdulfattahft@gmail.com', role: 'Super_Admin', lastLogin: 'منذ أسبوع', active: true },
+  { id: 'st-6', name: 'omar ahmad', email: 'omar@asd.com', role: 'مسؤول دراسة المنافسات', lastLogin: 'منذ يومين', active: true }
+];
 
 export const INITIAL_COMPETITIONS: KasEtmadCompetition[] = [
   {
@@ -286,6 +308,7 @@ export const INITIAL_CLIENTS: KasEtmadClient[] = [
     groups: ['المجموعة الرئيسية', 'توريدات حكومية'],
     city: 'الرياض',
     vatNumber: '310245879600003',
+    address: 'شارع التخصصي - مبنى كاس التجاري',
     createdAt: '2025-01-01'
   },
   {
@@ -298,6 +321,7 @@ export const INITIAL_CLIENTS: KasEtmadClient[] = [
     groups: ['جهات حكومية', 'صحة'],
     city: 'الرياض',
     vatNumber: '300000000000003',
+    address: 'مدينة الملك عبدالعزيز الطبية',
     createdAt: '2025-02-15'
   },
   {
@@ -310,6 +334,7 @@ export const INITIAL_CLIENTS: KasEtmadClient[] = [
     groups: ['تجمعات صحية', 'توريدات طبية'],
     city: 'الدمام',
     vatNumber: '300000000000004',
+    address: 'البرج الطبي بالدمام',
     createdAt: '2025-03-10'
   },
   {
@@ -322,6 +347,7 @@ export const INITIAL_CLIENTS: KasEtmadClient[] = [
     groups: ['موانئ ولوجستيات', 'فعاليات وطنية'],
     city: 'جدة',
     vatNumber: '300000000000005',
+    address: 'ميناء جدة الإسلامي - إدارة المشتريات',
     createdAt: '2025-05-20'
   }
 ];
@@ -510,6 +536,8 @@ export const INITIAL_TASKS: KasEtmadTask[] = [
 
 class KasEtmadSuiteService {
   private competitions: KasEtmadCompetition[] = [];
+  private categories: KasEtmadCategory[] = [];
+  private staff: KasEtmadStaff[] = [];
   private invoices: KasEtmadInvoice[] = [];
   private estimates: KasEtmadEstimate[] = [];
   private payments: KasEtmadPayment[] = [];
@@ -535,6 +563,8 @@ class KasEtmadSuiteService {
       if (raw) {
         const parsed = JSON.parse(raw);
         this.competitions = parsed.competitions || INITIAL_COMPETITIONS;
+        this.categories = parsed.categories || INITIAL_CATEGORIES;
+        this.staff = parsed.staff || INITIAL_STAFF;
         this.invoices = parsed.invoices || INITIAL_INVOICES;
         this.estimates = parsed.estimates || INITIAL_ESTIMATES;
         this.payments = parsed.payments || INITIAL_PAYMENTS;
@@ -554,6 +584,8 @@ class KasEtmadSuiteService {
     } catch {}
 
     this.competitions = INITIAL_COMPETITIONS;
+    this.categories = INITIAL_CATEGORIES;
+    this.staff = INITIAL_STAFF;
     this.invoices = INITIAL_INVOICES;
     this.estimates = INITIAL_ESTIMATES;
     this.payments = INITIAL_PAYMENTS;
@@ -572,6 +604,8 @@ class KasEtmadSuiteService {
     try {
       const data = {
         competitions: this.competitions,
+        categories: this.categories,
+        staff: this.staff,
         invoices: this.invoices,
         estimates: this.estimates,
         payments: this.payments,
@@ -595,6 +629,8 @@ class KasEtmadSuiteService {
 
   // Getters
   public getCompetitions(): KasEtmadCompetition[] { return this.competitions; }
+  public getCategories(): KasEtmadCategory[] { return this.categories; }
+  public getStaff(): KasEtmadStaff[] { return this.staff; }
   public getInvoices(): KasEtmadInvoice[] { return this.invoices; }
   public getEstimates(): KasEtmadEstimate[] { return this.estimates; }
   public getPayments(): KasEtmadPayment[] { return this.payments; }
@@ -634,6 +670,44 @@ class KasEtmadSuiteService {
     this.competitions.splice(idx, 1);
     this.saveToStorage();
     return true;
+  }
+
+  // Categories CRUD
+  public addCategory(cat: { name: string; code: string; description?: string }): KasEtmadCategory {
+    const newCat: KasEtmadCategory = {
+      id: `cat-${Date.now()}`,
+      seq: this.categories.length + 1,
+      name: cat.name,
+      code: cat.code,
+      description: cat.description || '',
+      updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19)
+    };
+    this.categories.push(newCat);
+    this.saveToStorage();
+    return newCat;
+  }
+  public deleteCategory(id: string): boolean {
+    const idx = this.categories.findIndex(c => c.id === id);
+    if (idx === -1) return false;
+    this.categories.splice(idx, 1);
+    this.saveToStorage();
+    return true;
+  }
+
+  // Staff CRUD
+  public addStaff(s: { name: string; email: string; role: string; phone?: string }): KasEtmadStaff {
+    const newStaff: KasEtmadStaff = {
+      id: `st-${Date.now()}`,
+      name: s.name,
+      email: s.email,
+      role: s.role,
+      lastLogin: 'Never',
+      active: true,
+      phone: s.phone
+    };
+    this.staff.push(newStaff);
+    this.saveToStorage();
+    return newStaff;
   }
 
   // Invoices CRUD
@@ -866,7 +940,9 @@ class KasEtmadSuiteService {
       activeTasks,
       activeProjects,
       totalLeadsValue,
-      totalClients: this.clients.length
+      totalClients: this.clients.length,
+      totalStaff: this.staff.length,
+      totalCategories: this.categories.length
     };
   }
 

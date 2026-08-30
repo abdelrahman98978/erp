@@ -9,19 +9,20 @@ import {
   Clock, Hash, Filter, Calendar, FolderSync, CreditCard, ChevronDown,
   Briefcase, Send, HelpCircle, FileCheck, CheckCircle, Flame, ExternalLink,
   MessageSquare, UserPlus, FilePlus, Play, Square, Settings, MoreVertical,
-  ChevronRight, ChevronLeft, Receipt, BookOpen, AlertTriangle, CheckCheck
+  ChevronRight, ChevronLeft, Receipt, BookOpen, AlertTriangle, CheckCheck,
+  UserCheck, ShieldAlert
 } from 'lucide-react';
 import { 
   KasEtmadCompetition, KasEtmadInvoice, KasEtmadEstimate, 
   KasEtmadPayment, KasEtmadItem, KasEtmadClient, KasEtmadLead, 
   KasEtmadProject, KasEtmadTask, KasEtmadContract, KasEtmadExpense,
-  KasEtmadTicket, KasEtmadKnowledgeArticle, EtmadModuleTab
+  KasEtmadTicket, KasEtmadKnowledgeArticle, KasEtmadCategory,
+  KasEtmadStaff, EtmadModuleTab
 } from '../types/kasEtmadSuite';
 import { kasEtmadSuiteService } from '../services/kasEtmadSuiteService';
 import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { tafqeet } from '../services/tafqeetService';
-import { generateZatcaQR } from '../services/zatcaPhase2Service';
 
 export const KasEtimadCloudPage: React.FC = () => {
   const { addNotification } = useAppStore();
@@ -51,11 +52,22 @@ export const KasEtimadCloudPage: React.FC = () => {
   const [showAddContractModal, setShowAddContractModal] = useState<boolean>(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState<boolean>(false);
   const [showAddTicketModal, setShowAddTicketModal] = useState<boolean>(false);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState<boolean>(false);
+  const [showAddStaffModal, setShowAddStaffModal] = useState<boolean>(false);
+
+  // Client 360 Modal
+  const [selectedClientProfile, setSelectedClientProfile] = useState<KasEtmadClient | null>(null);
+  const [clientProfileTab, setClientProfileTab] = useState<'info' | 'invoices' | 'estimates' | 'contracts' | 'projects'>('info');
 
   // Detail / Print Modal
   const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
   const [selectedDetail, setSelectedDetail] = useState<any>(null);
   const [detailType, setDetailType] = useState<'competition' | 'invoice' | 'estimate' | 'contract'>('competition');
+
+  // Dynamic Item Lines for Invoice / Estimate Modal
+  const [itemLines, setItemLines] = useState<Array<{ description: string; qty: number; rate: number; taxPct: number; total: number }>>([
+    { description: 'بند توريد معتمد', qty: 1, rate: 1000, taxPct: 15, total: 1150 }
+  ]);
 
   // Form State
   const [formData, setFormData] = useState<any>({});
@@ -85,6 +97,8 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   // Data lists from Service
   const competitions = useMemo(() => kasEtmadSuiteService.getCompetitions(), [reloadKey]);
+  const categories = useMemo(() => kasEtmadSuiteService.getCategories(), [reloadKey]);
+  const staff = useMemo(() => kasEtmadSuiteService.getStaff(), [reloadKey]);
   const invoices = useMemo(() => kasEtmadSuiteService.getInvoices(), [reloadKey]);
   const estimates = useMemo(() => kasEtmadSuiteService.getEstimates(), [reloadKey]);
   const payments = useMemo(() => kasEtmadSuiteService.getPayments(), [reloadKey]);
@@ -144,15 +158,17 @@ export const KasEtimadCloudPage: React.FC = () => {
   };
 
   const handleSaveInvoice = () => {
-    if (!formData.clientName || !formData.amount) {
-      alert('يرجى تحديد العميل وقيمة الفاتورة');
+    if (!formData.clientName) {
+      alert('يرجى تحديد العميل');
       return;
     }
-    const amount = parseFloat(formData.amount) || 0;
-    const taxAmount = Number((amount * 0.15).toFixed(2));
+    const subtotal = itemLines.reduce((s, it) => s + (it.qty * it.rate), 0);
+    const taxAmount = Number((subtotal * 0.15).toFixed(2));
+    const totalWithTax = Number((subtotal + taxAmount).toFixed(2));
+
     kasEtmadSuiteService.addInvoice({
       invoiceNumber: `INV-${String(invoices.length + 1).padStart(6, '0')}`,
-      amount,
+      amount: subtotal,
       taxAmount,
       date: formData.date || new Date().toISOString().split('T')[0],
       dueDate: formData.dueDate || new Date().toISOString().split('T')[0],
@@ -161,19 +177,11 @@ export const KasEtimadCloudPage: React.FC = () => {
       tags: ['كاس للتجارة', 'ZATCA مرحلة 2'],
       status: formData.status || 'غير مدفوع',
       paidAmount: parseFloat(formData.paidAmount) || 0,
-      items: [
-        {
-          description: formData.itemDescription || 'بند توريد معتمد',
-          qty: 1,
-          rate: amount,
-          taxPct: 15,
-          total: Number((amount + taxAmount).toFixed(2))
-        }
-      ]
+      items: itemLines
     });
     addNotification({
       title: 'تم إنشاء الفاتورة',
-      message: `تم إصدار الفاتورة للعميل ${formData.clientName} بنجاح.`,
+      message: `تم إصدار الفاتورة للعميل ${formData.clientName} بقيمة ${totalWithTax.toLocaleString()} ر.س شاملة الضريبة.`,
       type: 'success'
     });
     setShowAddInvoiceModal(false);
@@ -182,15 +190,16 @@ export const KasEtimadCloudPage: React.FC = () => {
   };
 
   const handleSaveEstimate = () => {
-    if (!formData.clientName || !formData.totalAmount) {
-      alert('يرجى إدخال اسم العميل والقيمة');
+    if (!formData.clientName) {
+      alert('يرجى إدخال اسم العميل');
       return;
     }
-    const totalAmount = parseFloat(formData.totalAmount) || 0;
-    const taxAmount = Number((totalAmount * 0.15).toFixed(2));
+    const subtotal = itemLines.reduce((s, it) => s + (it.qty * it.rate), 0);
+    const taxAmount = Number((subtotal * 0.15).toFixed(2));
+
     kasEtmadSuiteService.addEstimate({
       estimateNumber: `EST-${String(estimates.length + 1).padStart(6, '0')}`,
-      totalAmount,
+      totalAmount: subtotal,
       taxAmount,
       date: formData.date || new Date().toISOString().split('T')[0],
       expiryDate: formData.expiryDate || new Date().toISOString().split('T')[0],
@@ -198,15 +207,7 @@ export const KasEtimadCloudPage: React.FC = () => {
       project: formData.project || '',
       reference: formData.reference || 'REF-KAS',
       status: formData.status || 'مسودة',
-      items: [
-        {
-          description: formData.itemDescription || 'بند عرض سعر',
-          qty: 1,
-          rate: totalAmount,
-          taxPct: 15,
-          total: Number((totalAmount + taxAmount).toFixed(2))
-        }
-      ]
+      items: itemLines
     });
     addNotification({
       title: 'تم حفظ عرض السعر',
@@ -320,6 +321,37 @@ export const KasEtimadCloudPage: React.FC = () => {
     setReloadKey(k => k + 1);
   };
 
+  const handleSaveCategory = () => {
+    if (!formData.catName || !formData.catCode) {
+      alert('يرجى إدخال اسم التصنيف والرمز');
+      return;
+    }
+    kasEtmadSuiteService.addCategory({
+      name: formData.catName,
+      code: formData.catCode,
+      description: formData.catDesc
+    });
+    setShowAddCategoryModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveStaff = () => {
+    if (!formData.staffName || !formData.staffEmail) {
+      alert('يرجى إدخال الاسم والبريد الإلكتروني');
+      return;
+    }
+    kasEtmadSuiteService.addStaff({
+      name: formData.staffName,
+      email: formData.staffEmail,
+      role: formData.staffRole || 'Employee',
+      phone: formData.staffPhone
+    });
+    setShowAddStaffModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
   // Status Badge Helper
   const getStatusPill = (status: string) => {
     if (status.includes('تمت الترسية') || status === 'مدفوع' || status === 'مقبول' || status === 'مكتمل' || status === 'مكتملة' || status === 'ساري') {
@@ -393,6 +425,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                 else if (activeTab === 'contracts') setShowAddContractModal(true);
                 else if (activeTab === 'expenses') setShowAddExpenseModal(true);
                 else if (activeTab === 'tickets') setShowAddTicketModal(true);
+                else if (activeTab === 'settings') setShowAddCategoryModal(true);
+                else if (activeTab === 'staff') setShowAddStaffModal(true);
                 else setShowAddCompModal(true);
               }}
               className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02]"
@@ -446,9 +480,11 @@ export const KasEtimadCloudPage: React.FC = () => {
           { id: 'contracts', label: `العقود (${contracts.length})`, icon: FileCheck },
           { id: 'expenses', label: `المصروفات (${expenses.length})`, icon: CreditCard },
           { id: 'tickets', label: `الدعم (${tickets.length})`, icon: HelpCircle },
+          { id: 'staff', label: `الطاقم (${staff.length})`, icon: UserCheck },
           { id: 'knowledge-base', label: `قاعدة المعرفة (${knowledge.length})`, icon: BookOpen },
           { id: 'calendar', label: 'التقويم', icon: Calendar },
           { id: 'reports', label: 'التقارير المالية', icon: TrendingUp },
+          { id: 'settings', label: `تصنيفات المنافسات (${categories.length})`, icon: Settings },
         ].map(navItem => {
           const isActive = activeTab === navItem.id;
           const Icon = navItem.icon;
@@ -479,7 +515,6 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* ========================================================================= */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
-          {/* Executive Stats Cards Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-muted-foreground text-xs">
@@ -536,7 +571,6 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Middle Row: Invoices Status Ribbon & Latest Tasks */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
               <div className="flex items-center justify-between">
@@ -651,11 +685,9 @@ export const KasEtimadCloudPage: React.FC = () => {
                 className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs"
               >
                 <option value="all">كل التصنيفات</option>
-                <option value="التجارة">التجارة</option>
-                <option value="دعاية وإعلان">دعاية وإعلان</option>
-                <option value="معارض ومؤتمرات">معارض ومؤتمرات</option>
-                <option value="مقاولات">مقاولات</option>
-                <option value="تقنية">تقنية</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
               </select>
 
               <select
@@ -811,7 +843,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                         }}
                         className="text-emerald-600 hover:underline text-[11px] font-bold"
                       >
-                        عرض / طباعة
+                        عرض / طباعة ZATCA
                       </button>
                     </td>
                   </tr>
@@ -823,955 +855,532 @@ export const KasEtimadCloudPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* 4. ESTIMATES VIEW (عروض الأسعار) */}
+      {/* 4. CLIENTS VIEW (العملاء مع ملف العميل 360) */}
       {/* ========================================================================= */}
-      {activeTab === 'estimates' && (
+      {activeTab === 'clients' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-sky-600" />
-              <span>عروض الأسعار المعتمدة (Estimates & Quotations)</span>
+              <Users className="w-5 h-5 text-emerald-600" />
+              <span>دليل العملاء والجهات الحكومية المتعاقدة</span>
             </h3>
             <button
-              onClick={() => setShowAddEstimateModal(true)}
+              onClick={() => setShowAddClientModal(true)}
               className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
-              <span>إنشاء عرض سعر</span>
-            </button>
-          </div>
-
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">رقم العرض</th>
-                  <th className="p-3 text-left">المبلغ الإجمالي</th>
-                  <th className="p-3 text-left">الضريبة</th>
-                  <th className="p-3">العميل</th>
-                  <th className="p-3">المشروع</th>
-                  <th className="p-3">تاريخ العرض</th>
-                  <th className="p-3">تاريخ الانتهاء</th>
-                  <th className="p-3">الحالة</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {estimates.map(est => (
-                  <tr key={est.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono font-bold text-sky-600">{est.estimateNumber}</td>
-                    <td className="p-3 text-left font-mono font-bold text-foreground">{est.totalAmount.toLocaleString()} ر.س</td>
-                    <td className="p-3 text-left font-mono text-muted-foreground">{est.taxAmount.toLocaleString()} ر.س</td>
-                    <td className="p-3 font-semibold text-foreground">{est.clientName}</td>
-                    <td className="p-3 text-muted-foreground">{est.project || '-'}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{est.date}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{est.expiryDate}</td>
-                    <td className="p-3">{getStatusPill(est.status)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 5. PAYMENTS VIEW (المدفوعات وسندات القبض) */}
-      {/* ========================================================================= */}
-      {activeTab === 'payments' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Receipt className="w-5 h-5 text-emerald-600" />
-              <span>سجل المدفوعات وسندات القبض البنكية</span>
-            </h3>
-            <button
-              onClick={() => setShowAddPaymentModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>تسجيل سند قبض</span>
-            </button>
-          </div>
-
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">رقم السند</th>
-                  <th className="p-3">رقم الفاتورة</th>
-                  <th className="p-3">العميل</th>
-                  <th className="p-3 text-left">المبلغ</th>
-                  <th className="p-3">طريقة الدفع</th>
-                  <th className="p-3">رقم المعاملة البنكية</th>
-                  <th className="p-3">التاريخ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {payments.map(pay => (
-                  <tr key={pay.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono font-bold text-emerald-600">{pay.paymentNumber}</td>
-                    <td className="p-3 font-mono text-foreground font-semibold">{pay.invoiceNumber}</td>
-                    <td className="p-3 font-semibold">{pay.clientName}</td>
-                    <td className="p-3 text-left font-mono font-bold text-foreground">{pay.amount.toLocaleString()} ر.س</td>
-                    <td className="p-3"><span className="px-2 py-0.5 rounded bg-secondary font-medium">{pay.paymentMode}</span></td>
-                    <td className="p-3 font-mono text-muted-foreground">{pay.transactionId}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{pay.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 6. ITEMS VIEW (جدول الكميات وبنود التسعير) */}
-      {/* ========================================================================= */}
-      {activeTab === 'items' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Layers className="w-5 h-5 text-indigo-600" />
-              <span>دليل بنود التوريد وجداول الكميات المعتمدة</span>
-            </h3>
-            <button
-              onClick={() => setShowAddItemModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>إضافة صنف جديد</span>
+              <span>إضافة عميل جديد</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {items.map(it => (
-              <div key={it.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3">
-                <div className="flex justify-between items-start">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-600">
-                    {it.group}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-muted-foreground">الوحدة: {it.unit}</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-foreground text-sm leading-snug">{it.description}</h4>
-                  {it.longDescription && (
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{it.longDescription}</p>
-                  )}
-                </div>
-                <div className="p-3 bg-secondary/50 rounded-xl flex justify-between items-center text-xs font-mono">
-                  <span>سعر التوريد:</span>
-                  <span className="font-bold text-emerald-600 text-sm">{it.rate.toLocaleString()} ر.س</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 7. CONTRACTS VIEW (العقود والاشتراكات) */}
-      {/* ========================================================================= */}
-      {activeTab === 'contracts' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <FileCheck className="w-5 h-5 text-emerald-600" />
-              <span>سجل العقود والاتفاقيات الحكومية والتجارية</span>
-            </h3>
-            <button
-              onClick={() => setShowAddContractModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>عقد جديد</span>
-            </button>
-          </div>
-
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">موضوع العقد</th>
-                  <th className="p-3">العميل</th>
-                  <th className="p-3">نوع العقد</th>
-                  <th className="p-3 text-left">قيمة العقد</th>
-                  <th className="p-3">تاريخ البدء</th>
-                  <th className="p-3">تاريخ الانتهاء</th>
-                  <th className="p-3">الحالة</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {contracts.map(cnt => (
-                  <tr key={cnt.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-semibold text-foreground">{cnt.subject}</td>
-                    <td className="p-3">{cnt.clientName}</td>
-                    <td className="p-3 font-medium">{cnt.contractType}</td>
-                    <td className="p-3 text-left font-mono font-bold text-foreground">{cnt.contractValue.toLocaleString()} ر.س</td>
-                    <td className="p-3 font-mono text-muted-foreground">{cnt.startDate}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{cnt.endDate}</td>
-                    <td className="p-3">{getStatusPill(cnt.status)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 8. EXPENSES VIEW (المصروفات) */}
-      {/* ========================================================================= */}
-      {activeTab === 'expenses' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-rose-600" />
-              <span>سجل المصروفات ومشتريات المنافسات</span>
-            </h3>
-            <button
-              onClick={() => setShowAddExpenseModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>تسجيل مصروف</span>
-            </button>
-          </div>
-
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">بيان المصروف</th>
-                  <th className="p-3">الفئة</th>
-                  <th className="p-3 text-left">المبلغ</th>
-                  <th className="p-3 text-left">الضريبة (15%)</th>
-                  <th className="p-3">التاريخ</th>
-                  <th className="p-3">طريقة الدفع</th>
-                  <th className="p-3">المشروع المرتبط</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {expenses.map(exp => (
-                  <tr key={exp.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-semibold text-foreground">{exp.expenseName}</td>
-                    <td className="p-3 font-medium text-muted-foreground">{exp.category}</td>
-                    <td className="p-3 text-left font-mono font-bold text-rose-600">{exp.amount.toLocaleString()} ر.س</td>
-                    <td className="p-3 text-left font-mono text-muted-foreground">{exp.taxAmount.toLocaleString()} ر.س</td>
-                    <td className="p-3 font-mono text-muted-foreground">{exp.date}</td>
-                    <td className="p-3">{exp.paymentMode}</td>
-                    <td className="p-3 text-muted-foreground">{exp.project || '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 9. TICKETS VIEW (الدعم الفني) */}
-      {/* ========================================================================= */}
-      {activeTab === 'tickets' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-amber-600" />
-              <span>تذاكر الدعم والطلبات الفنية والمتابعات</span>
-            </h3>
-            <button
-              onClick={() => setShowAddTicketModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>تذكرة جديدة</span>
-            </button>
-          </div>
-
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">موضوع التذكرة</th>
-                  <th className="p-3">القسم</th>
-                  <th className="p-3">جهة الاتصال</th>
-                  <th className="p-3">الأولوية</th>
-                  <th className="p-3">الحالة</th>
-                  <th className="p-3">آخر رد</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {tickets.map(tkt => (
-                  <tr key={tkt.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-semibold text-foreground">{tkt.subject}</td>
-                    <td className="p-3 font-medium text-emerald-600">{tkt.department}</td>
-                    <td className="p-3 text-muted-foreground">{tkt.contact}</td>
-                    <td className="p-3"><span className="px-2 py-0.5 rounded bg-secondary font-bold text-[11px]">{tkt.priority}</span></td>
-                    <td className="p-3">{getStatusPill(tkt.status)}</td>
-                    <td className="p-3 font-mono text-muted-foreground text-[11px]">{tkt.lastReply}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 10. KNOWLEDGE BASE VIEW (قاعدة المعرفة) */}
-      {/* ========================================================================= */}
-      {activeTab === 'knowledge-base' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-600" />
-              <span>قاعدة المعرفة واللوائح المعتمدة لمنصة اعتماد</span>
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {knowledge.map(art => (
-              <div key={art.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 font-bold">
-                    {art.category}
-                  </span>
-                  <span className="text-muted-foreground font-mono">👁️ {art.viewsCount} مشاهدة</span>
-                </div>
-                <h4 className="font-bold text-foreground text-base leading-snug">{art.title}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{art.summary}</p>
-                <div className="p-3 bg-secondary/40 rounded-xl text-xs text-foreground/80 leading-relaxed font-sans border-r-2 border-emerald-500">
-                  {art.content}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 11. CALENDAR VIEW (التقويم) */}
-      {/* ========================================================================= */}
-      {activeTab === 'calendar' && (
-        <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-emerald-600" />
-              <span>التقويم الزمني للمنافسات والمهام واستحقاقات الفواتير</span>
-            </h3>
-            <span className="text-xs font-bold text-muted-foreground font-mono">أغسطس - سبتمبر 2026</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
-              <div className="flex justify-between text-xs font-bold text-emerald-700">
-                <span>02 مارس 2026</span>
-                <span>منافسة</span>
-              </div>
-              <p className="text-xs font-semibold text-foreground">مشروع تركيب خيام هرمية بميدان العرض بالطائف</p>
-              <div className="text-[11px] text-muted-foreground">استحقاق تقديم العرض المالي والفني</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-sky-500/10 border border-sky-500/20 space-y-2">
-              <div className="flex justify-between text-xs font-bold text-sky-700">
-                <span>05 مارس 2026</span>
-                <span>منافسة</span>
-              </div>
-              <p className="text-xs font-semibold text-foreground">احتفالات عيد الفطر المبارك لعام 2026م</p>
-              <div className="text-[11px] text-muted-foreground">ترسية وتوريد بوكسات الضيافة</div>
-            </div>
-
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-2">
-              <div className="flex justify-between text-xs font-bold text-amber-700">
-                <span>10 مارس 2026</span>
-                <span>فاتورة</span>
-              </div>
-              <p className="text-xs font-semibold text-foreground">استحقاق فاتورة INV-000001 (56,006.00 ر.س)</p>
-              <div className="text-[11px] text-muted-foreground">مؤسسة خالد السليم للتجارة</div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 12. REPORTS VIEW (التقارير المالية) */}
-      {/* ========================================================================= */}
-      {activeTab === 'reports' && (
-        <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-600" />
-                <span>التقرير المالي التنفيذي ومؤشرات الأداء لكاس للتجارة</span>
-              </h3>
-              <button
-                onClick={() => window.print()}
-                className="px-3 py-1.5 rounded-xl bg-secondary text-foreground text-xs font-bold flex items-center gap-1"
+            {clients.map(client => (
+              <div 
+                key={client.id} 
+                onClick={() => setSelectedClientProfile(client)}
+                className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:border-emerald-500/50 cursor-pointer transition-all hover:scale-[1.01]"
               >
-                <Printer className="w-3.5 h-3.5" />
-                <span>طباعة التقرير</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 rounded-xl bg-secondary/40 border border-border">
-                <div className="text-xs text-muted-foreground">مجموع الفواتير الصادرة</div>
-                <div className="text-xl font-bold font-mono text-emerald-600 mt-1">{stats.totalInvoicesAmount.toLocaleString()} ر.س</div>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary/40 border border-border">
-                <div className="text-xs text-muted-foreground">المتحصلات الفعلية</div>
-                <div className="text-xl font-bold font-mono text-sky-600 mt-1">{stats.paidAmount.toLocaleString()} ر.س</div>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary/40 border border-border">
-                <div className="text-xs text-muted-foreground">المصروفات والمشتريات</div>
-                <div className="text-xl font-bold font-mono text-rose-600 mt-1">{stats.totalExpenses.toLocaleString()} ر.س</div>
-              </div>
-              <div className="p-4 rounded-xl bg-secondary/40 border border-border">
-                <div className="text-xs text-muted-foreground">صافي الفائض المالي</div>
-                <div className="text-xl font-bold font-mono text-emerald-700 mt-1">{(stats.paidAmount - stats.totalExpenses).toLocaleString()} ر.س</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL: DETAIL / PRINT PREVIEW (ZATCA Phase 2 Simulation) */}
-      {/* ========================================================================= */}
-      {showDetailModal && selectedDetail && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold">
-                  ✓
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                    {client.company.slice(0, 2)}
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
+                    نشط
+                  </span>
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-foreground">
-                    {detailType === 'competition' ? 'تفاصيل المنافسة الحكومية الرسمية' : 'معاينة الفاتورة الضريبية ZATCA'}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">مؤسسة خالد عبدالعزيز السليم للتجارة والمقاولات</p>
+                  <h4 className="font-bold text-foreground text-sm leading-snug">{client.company}</h4>
+                  <p className="text-xs text-muted-foreground mt-1">جهة الاتصال: {client.primaryContact}</p>
+                </div>
+                <div className="text-xs text-muted-foreground space-y-1 font-mono">
+                  <div>📞 {client.phone}</div>
+                  <div>✉️ {client.email}</div>
+                  <div>📍 {client.city}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => window.print()}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold flex items-center gap-1"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>طباعة</span>
-                </button>
-                <button onClick={() => setShowDetailModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Competition Details */}
-            {detailType === 'competition' && (
-              <div className="space-y-4 text-xs">
-                <div className="p-4 rounded-xl bg-secondary/50 border border-border space-y-2">
-                  <div className="text-sm font-bold text-foreground">{selectedDetail.title}</div>
-                  <div className="text-muted-foreground font-mono">الرقم المرجعي: {selectedDetail.referenceNumber}</div>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <div className="p-3 bg-card border rounded-xl">
-                    <div className="text-muted-foreground">الجهة الحكومية</div>
-                    <div className="font-bold mt-1 text-foreground">{selectedDetail.governmentEntity}</div>
-                  </div>
-                  <div className="p-3 bg-card border rounded-xl">
-                    <div className="text-muted-foreground">التصنيف</div>
-                    <div className="font-bold mt-1 text-foreground">{selectedDetail.category}</div>
-                  </div>
-                  <div className="p-3 bg-card border rounded-xl">
-                    <div className="text-muted-foreground">الموعد النهائي</div>
-                    <div className="font-bold mt-1 font-mono text-foreground">{selectedDetail.deadlineDate}</div>
-                  </div>
-                  <div className="p-3 bg-card border rounded-xl">
-                    <div className="text-muted-foreground">قيمة العرض المالي</div>
-                    <div className="font-bold mt-1 font-mono text-emerald-600 text-sm">
-                      {selectedDetail.totalItemsValue?.toLocaleString()} ر.س
-                    </div>
-                  </div>
-                  <div className="p-3 bg-card border rounded-xl">
-                    <div className="text-muted-foreground">الحالة</div>
-                    <div className="mt-1">{getStatusPill(selectedDetail.status)}</div>
-                  </div>
-                  <div className="p-3 bg-card border rounded-xl">
-                    <div className="text-muted-foreground">مسؤول المتابعة</div>
-                    <div className="font-bold mt-1 text-foreground">{selectedDetail.contactName || 'م. أحمد البشير'}</div>
-                  </div>
-                </div>
-
-                {selectedDetail.notes && (
-                  <div className="p-3 bg-secondary/30 rounded-xl">
-                    <div className="font-bold text-foreground mb-1">ملاحظات العطاء:</div>
-                    <div className="text-muted-foreground leading-relaxed">{selectedDetail.notes}</div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Invoice Details */}
-            {detailType === 'invoice' && (
-              <div className="space-y-4 text-xs">
-                <div className="flex justify-between items-start p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-                  <div>
-                    <div className="text-sm font-bold text-foreground font-mono">{selectedDetail.invoiceNumber}</div>
-                    <div className="text-muted-foreground mt-0.5">العميل: <span className="font-bold text-foreground">{selectedDetail.clientName}</span></div>
-                    <div className="text-muted-foreground font-mono">تاريخ الإصدار: {selectedDetail.date}</div>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <QrCode className="w-16 h-16 text-emerald-800" />
-                    <span className="text-[10px] font-bold text-emerald-700 mt-1">ZATCA QR Compliant</span>
-                  </div>
-                </div>
-
-                <div className="border rounded-xl overflow-hidden">
-                  <table className="w-full text-right border-collapse">
-                    <thead className="bg-secondary">
-                      <tr>
-                        <th className="p-2.5">الوصف</th>
-                        <th className="p-2.5">الكمية</th>
-                        <th className="p-2.5 text-left">السعر</th>
-                        <th className="p-2.5 text-left">الإجمالي</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedDetail.items?.map((it: any, i: number) => (
-                        <tr key={i} className="border-t">
-                          <td className="p-2.5 font-medium">{it.description}</td>
-                          <td className="p-2.5 font-mono">{it.qty}</td>
-                          <td className="p-2.5 text-left font-mono">{it.rate.toLocaleString()} ر.س</td>
-                          <td className="p-2.5 text-left font-mono font-bold">{it.total.toLocaleString()} ر.س</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="p-3 bg-secondary/30 rounded-xl space-y-1 text-left font-mono font-bold">
-                  <div className="text-foreground">المبلغ قبل الضريبة: {selectedDetail.amount?.toLocaleString()} ر.س</div>
-                  <div className="text-emerald-600">ضريبة القيمة المضافة (15%): {selectedDetail.taxAmount?.toLocaleString()} ر.س</div>
-                  <div className="text-sm text-foreground border-t pt-1">
-                    الإجمالي النهائي: {(selectedDetail.amount + selectedDetail.taxAmount)?.toLocaleString()} ر.س
-                  </div>
-                </div>
-              </div>
-            )}
+            ))}
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD COMPETITION */}
+      {/* 5. STAFF VIEW (الطاقم وفريق العمل) */}
       {/* ========================================================================= */}
-      {showAddCompModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-border pb-3">
+      {activeTab === 'staff' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+              <UserCheck className="w-5 h-5 text-emerald-600" />
+              <span>أعضاء الطاقم وفريق عمل منظومة كاس</span>
+            </h3>
+            <button
+              onClick={() => setShowAddStaffModal(true)}
+              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span>عضو جديد في الطاقم</span>
+            </button>
+          </div>
+
+          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+            <table className="w-full text-xs text-right border-collapse">
+              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
+                <tr>
+                  <th className="p-3">الاسم الكامل</th>
+                  <th className="p-3">البريد الإلكتروني</th>
+                  <th className="p-3">الدور الوظيفي / الصلاحيات</th>
+                  <th className="p-3">آخر تسجيل دخول</th>
+                  <th className="p-3">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {staff.map(st => (
+                  <tr key={st.id} className="hover:bg-emerald-500/5">
+                    <td className="p-3 font-semibold text-foreground flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-700 flex items-center justify-center font-bold text-[10px]">
+                        {st.name.slice(0, 2)}
+                      </div>
+                      <span>{st.name}</span>
+                    </td>
+                    <td className="p-3 font-mono text-muted-foreground">{st.email}</td>
+                    <td className="p-3">
+                      <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${
+                        st.role.includes('Super_Admin') ? 'bg-purple-500/10 text-purple-600' : 'bg-emerald-500/10 text-emerald-600'
+                      }`}>
+                        {st.role}
+                      </span>
+                    </td>
+                    <td className="p-3 font-mono text-muted-foreground">{st.lastLogin}</td>
+                    <td className="p-3">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[10px]">نشط</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 6. SETTINGS VIEW (تصنيفات المنافسات والأكواد 01 - 9987) */}
+      {/* ========================================================================= */}
+      {activeTab === 'settings' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Award className="w-5 h-5 text-emerald-600" />
-                <span>إضافة منافسة حكومية جديدة (منظومة اعتماد كاس)</span>
+                <Settings className="w-5 h-5 text-emerald-600" />
+                <span>إعدادات وتصنيفات المنافسات الحكومية (منصة اعتماد)</span>
               </h3>
-              <button onClick={() => setShowAddCompModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
+              <p className="text-xs text-muted-foreground">التصنيفات المعتمدة وأكوادها الرسمية في منظومة كاس</p>
+            </div>
+            <button
+              onClick={() => setShowAddCategoryModal(true)}
+              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+            >
+              <Plus className="w-4 h-4" />
+              <span>تصنيف جديد</span>
+            </button>
+          </div>
+
+          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+            <table className="w-full text-xs text-right border-collapse">
+              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
+                <tr>
+                  <th className="p-3 w-12 text-center">#</th>
+                  <th className="p-3">اسم التصنيف</th>
+                  <th className="p-3 font-mono">الرمز / الكود</th>
+                  <th className="p-3">الوصف</th>
+                  <th className="p-3 font-mono">تاريخ التحديث</th>
+                  <th className="p-3 w-20 text-center">حذف</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {categories.map((cat, idx) => (
+                  <tr key={cat.id || idx} className="hover:bg-emerald-500/5">
+                    <td className="p-3 text-center font-mono text-muted-foreground">{idx + 1}</td>
+                    <td className="p-3 font-bold text-foreground">{cat.name}</td>
+                    <td className="p-3 font-mono font-bold text-emerald-600">{cat.code}</td>
+                    <td className="p-3 text-muted-foreground">{cat.description || '-'}</td>
+                    <td className="p-3 font-mono text-muted-foreground">{cat.updatedAt}</td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`حذف تصنيف "${cat.name}"؟`)) {
+                            kasEtmadSuiteService.deleteCategory(cat.id);
+                            setReloadKey(k => k + 1);
+                          }
+                        }}
+                        className="text-rose-600 hover:underline"
+                      >
+                        حذف
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: CLIENT 360 PROFILE VIEW */}
+      {/* ========================================================================= */}
+      {selectedClientProfile && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-700 flex items-center justify-center font-bold text-base">
+                  {selectedClientProfile.company.slice(0, 2)}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-foreground">{selectedClientProfile.company}</h3>
+                  <p className="text-xs text-muted-foreground font-mono">الرقم الضريبي: {selectedClientProfile.vatNumber}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedClientProfile(null)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="col-span-full">
-                <label className="block font-medium text-foreground mb-1">اسم المنافسة *</label>
-                <input
-                  type="text"
-                  placeholder="اسم المنافسة حسب كراسة الشروط..."
-                  value={formData.title || ''}
-                  onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border text-sm"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">الرقم المرجعي (اعتماد)</label>
-                <input
-                  type="text"
-                  placeholder="2603XXXXXXXX"
-                  value={formData.referenceNumber || ''}
-                  onChange={e => setFormData({ ...formData, referenceNumber: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">الجهة الحكومية</label>
-                <input
-                  type="text"
-                  placeholder="وزارة الحرس الوطني، الصحة..."
-                  value={formData.governmentEntity || ''}
-                  onChange={e => setFormData({ ...formData, governmentEntity: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">التصنيف</label>
-                <select
-                  value={formData.category || 'التجارة'}
-                  onChange={e => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                >
-                  <option value="التجارة">التجارة</option>
-                  <option value="دعاية وإعلان">دعاية وإعلان</option>
-                  <option value="معارض ومؤتمرات">معارض ومؤتمرات</option>
-                  <option value="مقاولات">مقاولات</option>
-                  <option value="سياحة وضيافة">سياحة وضيافة</option>
-                  <option value="تقنية">تقنية</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">قيمة العرض (ر.س)</label>
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.totalItemsValue || ''}
-                  onChange={e => setFormData({ ...formData, totalItemsValue: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">الموعد النهائي للتقديم</label>
-                <input
-                  type="date"
-                  value={formData.deadlineDate || ''}
-                  onChange={e => setFormData({ ...formData, deadlineDate: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">الحالة</label>
-                <select
-                  value={formData.status || 'جديد'}
-                  onChange={e => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                >
-                  <option value="جديد">جديد</option>
-                  <option value="تم رفع العرض الفني والمالي">تم رفع العرض الفني والمالي</option>
-                  <option value="تمت الترسية">تمت الترسية</option>
-                  <option value="لم يتم التسعير(لاغي)">لم يتم التسعير(لاغي)</option>
-                </select>
-              </div>
+            {/* Profile Navigation Tabs */}
+            <div className="flex items-center gap-2 border-b border-border pb-2 text-xs">
+              <button
+                onClick={() => setClientProfileTab('info')}
+                className={`px-3 py-1.5 rounded-lg font-bold ${clientProfileTab === 'info' ? 'bg-emerald-600 text-white' : 'text-muted-foreground hover:bg-secondary'}`}
+              >
+                البيانات العامة
+              </button>
+              <button
+                onClick={() => setClientProfileTab('invoices')}
+                className={`px-3 py-1.5 rounded-lg font-bold ${clientProfileTab === 'invoices' ? 'bg-emerald-600 text-white' : 'text-muted-foreground hover:bg-secondary'}`}
+              >
+                الفواتير ({invoices.filter(i => i.clientName === selectedClientProfile.company).length})
+              </button>
+              <button
+                onClick={() => setClientProfileTab('contracts')}
+                className={`px-3 py-1.5 rounded-lg font-bold ${clientProfileTab === 'contracts' ? 'bg-emerald-600 text-white' : 'text-muted-foreground hover:bg-secondary'}`}
+              >
+                العقود ({contracts.filter(c => c.clientName === selectedClientProfile.company).length})
+              </button>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-border">
-              <button onClick={() => setShowAddCompModal(false)} className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs">إلغاء</button>
-              <button onClick={handleSaveCompetition} className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">حفظ المنافسة</button>
-            </div>
+            {clientProfileTab === 'info' && (
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="p-3 bg-secondary/40 rounded-xl">
+                  <div className="text-muted-foreground">جهة الاتصال الرئيسية</div>
+                  <div className="font-bold text-foreground mt-0.5">{selectedClientProfile.primaryContact}</div>
+                </div>
+                <div className="p-3 bg-secondary/40 rounded-xl">
+                  <div className="text-muted-foreground">رقم الهاتف</div>
+                  <div className="font-bold text-foreground font-mono mt-0.5">{selectedClientProfile.phone}</div>
+                </div>
+                <div className="p-3 bg-secondary/40 rounded-xl">
+                  <div className="text-muted-foreground">البريد الإلكتروني</div>
+                  <div className="font-bold text-foreground font-mono mt-0.5">{selectedClientProfile.email}</div>
+                </div>
+                <div className="p-3 bg-secondary/40 rounded-xl">
+                  <div className="text-muted-foreground">المدينة والعنوان</div>
+                  <div className="font-bold text-foreground mt-0.5">{selectedClientProfile.city} - {selectedClientProfile.address}</div>
+                </div>
+              </div>
+            )}
+
+            {clientProfileTab === 'invoices' && (
+              <div className="space-y-2 text-xs">
+                {invoices.filter(i => i.clientName === selectedClientProfile.company).map(inv => (
+                  <div key={inv.id} className="p-3 bg-secondary/30 rounded-xl flex justify-between items-center font-mono">
+                    <div>
+                      <span className="font-bold text-emerald-600">{inv.invoiceNumber}</span>
+                      <span className="text-muted-foreground mr-3">بتاريخ {inv.date}</span>
+                    </div>
+                    <div className="font-bold">{inv.amount.toLocaleString()} ر.س</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {clientProfileTab === 'contracts' && (
+              <div className="space-y-2 text-xs">
+                {contracts.filter(c => c.clientName === selectedClientProfile.company).map(cnt => (
+                  <div key={cnt.id} className="p-3 bg-secondary/30 rounded-xl flex justify-between items-center">
+                    <div>
+                      <div className="font-bold text-foreground">{cnt.subject}</div>
+                      <div className="text-muted-foreground text-[11px] font-mono">{cnt.startDate} إلى {cnt.endDate}</div>
+                    </div>
+                    <div className="font-bold font-mono text-emerald-600">{cnt.contractValue.toLocaleString()} ر.س</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD INVOICE */}
+      {/* MODAL: ADD INVOICE WITH ITEMIZED ROWS */}
       {/* ========================================================================= */}
       {showAddInvoiceModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-emerald-600" />
-                <span>إنشاء فاتورة ضريبية جديدة ZATCA</span>
+                <span>إنشاء فاتورة ضريبية ذكية ZATCA المرحلة الثانية</span>
               </h3>
               <button onClick={() => setShowAddInvoiceModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
+            <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
                 <label className="block font-medium text-foreground mb-1">العميل / الجهة *</label>
-                <input
-                  type="text"
-                  placeholder="اسم العميل أو الجهة الحكومية..."
+                <select
                   value={formData.clientName || ''}
                   onChange={e => setFormData({ ...formData, clientName: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
+                >
+                  <option value="">اختر العميل...</option>
+                  {clients.map(c => (
+                    <option key={c.id} value={c.company}>{c.company}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-medium text-foreground mb-1">المشروع المرتبط</label>
+                <input
+                  type="text"
+                  placeholder="مشروع توريدات..."
+                  value={formData.project || ''}
+                  onChange={e => setFormData({ ...formData, project: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
                 />
               </div>
 
               <div>
-                <label className="block font-medium text-foreground mb-1">المبلغ الأساسي (قبل الضريبة) *</label>
+                <label className="block font-medium text-foreground mb-1">تاريخ الفاتورة</label>
                 <input
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.amount || ''}
-                  onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono text-sm"
+                  type="date"
+                  value={formData.date || new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-medium text-foreground mb-1">تاريخ الفاتورة</label>
-                  <input
-                    type="date"
-                    value={formData.date || ''}
-                    onChange={e => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                  />
+              <div>
+                <label className="block font-medium text-foreground mb-1">تاريخ الاستحقاق</label>
+                <input
+                  type="date"
+                  value={formData.dueDate || new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Itemized Rows Table */}
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="font-bold text-foreground">بنود الفاتورة وجدول الكميات:</span>
+                <button
+                  type="button"
+                  onClick={() => setItemLines([...itemLines, { description: 'بند جديد', qty: 1, rate: 500, taxPct: 15, total: 575 }])}
+                  className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg font-bold flex items-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ بند إضافي</span>
+                </button>
+              </div>
+
+              <div className="border rounded-xl overflow-hidden">
+                <table className="w-full text-right border-collapse">
+                  <thead className="bg-secondary text-foreground font-semibold">
+                    <tr>
+                      <th className="p-2">الوصف</th>
+                      <th className="p-2 w-20">الكمية</th>
+                      <th className="p-2 w-28">السعر (ر.س)</th>
+                      <th className="p-2 w-28 text-left">الإجمالي</th>
+                      <th className="p-2 w-10 text-center">×</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {itemLines.map((it, idx) => (
+                      <tr key={idx}>
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            value={it.description}
+                            onChange={e => {
+                              const copy = [...itemLines];
+                              copy[idx].description = e.target.value;
+                              setItemLines(copy);
+                            }}
+                            className="w-full px-2 py-1 bg-transparent border rounded"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="number"
+                            value={it.qty}
+                            onChange={e => {
+                              const copy = [...itemLines];
+                              copy[idx].qty = parseFloat(e.target.value) || 0;
+                              copy[idx].total = Number((copy[idx].qty * copy[idx].rate * 1.15).toFixed(2));
+                              setItemLines(copy);
+                            }}
+                            className="w-full px-2 py-1 bg-transparent border rounded font-mono"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="number"
+                            value={it.rate}
+                            onChange={e => {
+                              const copy = [...itemLines];
+                              copy[idx].rate = parseFloat(e.target.value) || 0;
+                              copy[idx].total = Number((copy[idx].qty * copy[idx].rate * 1.15).toFixed(2));
+                              setItemLines(copy);
+                            }}
+                            className="w-full px-2 py-1 bg-transparent border rounded font-mono"
+                          />
+                        </td>
+                        <td className="p-2 text-left font-mono font-bold">{it.total.toLocaleString()} ر.س</td>
+                        <td className="p-2 text-center">
+                          <button
+                            type="button"
+                            onClick={() => setItemLines(itemLines.filter((_, i) => i !== idx))}
+                            className="text-rose-600 font-bold"
+                          >
+                            ×
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Dynamic Totals & Tafqeet */}
+              <div className="p-3 bg-secondary/40 rounded-xl space-y-1 text-xs">
+                <div className="flex justify-between font-mono">
+                  <span>المبلغ قبل الضريبة:</span>
+                  <span className="font-bold">{itemLines.reduce((s, it) => s + (it.qty * it.rate), 0).toLocaleString()} ر.س</span>
                 </div>
-                <div>
-                  <label className="block font-medium text-foreground mb-1">تاريخ الاستحقاق</label>
-                  <input
-                    type="date"
-                    value={formData.dueDate || ''}
-                    onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                  />
+                <div className="flex justify-between font-mono text-emerald-600">
+                  <span>ضريبة القيمة المضافة (15%):</span>
+                  <span className="font-bold">{(itemLines.reduce((s, it) => s + (it.qty * it.rate), 0) * 0.15).toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between font-mono font-bold text-sm border-t pt-1 text-foreground">
+                  <span>الإجمالي النهائي:</span>
+                  <span>{(itemLines.reduce((s, it) => s + (it.qty * it.rate), 0) * 1.15).toLocaleString()} ر.س</span>
+                </div>
+                <div className="text-[11px] text-muted-foreground pt-1">
+                  التفقيط: <span className="font-semibold text-foreground">{tafqeet(itemLines.reduce((s, it) => s + (it.qty * it.rate), 0) * 1.15)}</span>
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-3 border-t border-border">
               <button onClick={() => setShowAddInvoiceModal(false)} className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs">إلغاء</button>
-              <button onClick={handleSaveInvoice} className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">حفظ وإصدار</button>
+              <button onClick={handleSaveInvoice} className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">حفظ وإصدار الفاتورة</button>
             </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD ESTIMATE */}
+      {/* MODAL: ADD CATEGORY */}
       {/* ========================================================================= */}
-      {showAddEstimateModal && (
+      {showAddCategoryModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <FileSpreadsheet className="w-5 h-5 text-sky-600" />
-                <span>إنشاء عرض سعر رسمي (Estimate)</span>
-              </h3>
-              <button onClick={() => setShowAddEstimateModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
-                <X className="w-5 h-5" />
-              </button>
+              <h3 className="text-base font-bold text-foreground">إضافة تصنيف منافسة جديد</h3>
+              <button onClick={() => setShowAddCategoryModal(false)} className="p-1 text-muted-foreground"><X className="w-5 h-5" /></button>
             </div>
-
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-medium text-foreground mb-1">العميل / الجهة *</label>
+                <label className="block font-medium mb-1">اسم التصنيف *</label>
                 <input
                   type="text"
-                  placeholder="اسم العميل أو الجهة..."
-                  value={formData.clientName || ''}
-                  onChange={e => setFormData({ ...formData, clientName: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
+                  placeholder="المقاولات، التجارة..."
+                  value={formData.catName || ''}
+                  onChange={e => setFormData({ ...formData, catName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
                 />
               </div>
-
               <div>
-                <label className="block font-medium text-foreground mb-1">المبلغ الإجمالي (ر.س) *</label>
+                <label className="block font-medium mb-1">رمز / كود التصنيف *</label>
                 <input
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.totalAmount || ''}
-                  onChange={e => setFormData({ ...formData, totalAmount: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
+                  type="text"
+                  placeholder="01, 02, 9987..."
+                  value={formData.catCode || ''}
+                  onChange={e => setFormData({ ...formData, catCode: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
                 />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-medium text-foreground mb-1">تاريخ العرض</label>
-                  <input
-                    type="date"
-                    value={formData.date || ''}
-                    onChange={e => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium text-foreground mb-1">تاريخ الانتهاء</label>
-                  <input
-                    type="date"
-                    value={formData.expiryDate || ''}
-                    onChange={e => setFormData({ ...formData, expiryDate: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                  />
-                </div>
               </div>
             </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t border-border">
-              <button onClick={() => setShowAddEstimateModal(false)} className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs">إلغاء</button>
-              <button onClick={handleSaveEstimate} className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs">حفظ عرض السعر</button>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddCategoryModal(false)} className="px-4 py-2 bg-secondary rounded-xl">إلغاء</button>
+              <button onClick={handleSaveCategory} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold">حفظ</button>
             </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD PAYMENT */}
+      {/* MODAL: ADD STAFF */}
       {/* ========================================================================= */}
-      {showAddPaymentModal && (
+      {showAddStaffModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+          <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-emerald-600" />
-                <span>تسجيل سند قبض / دفعة بنكية</span>
-              </h3>
-              <button onClick={() => setShowAddPaymentModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
-                <X className="w-5 h-5" />
-              </button>
+              <h3 className="text-base font-bold text-foreground">إضافة عضو جديد في الطاقم</h3>
+              <button onClick={() => setShowAddStaffModal(false)} className="p-1 text-muted-foreground"><X className="w-5 h-5" /></button>
             </div>
-
             <div className="space-y-3 text-xs">
               <div>
-                <label className="block font-medium text-foreground mb-1">رقم الفاتورة المرتبطة *</label>
+                <label className="block font-medium mb-1">الاسم الكامل *</label>
+                <input
+                  type="text"
+                  placeholder="الاسم الثلاثي..."
+                  value={formData.staffName || ''}
+                  onChange={e => setFormData({ ...formData, staffName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">البريد الإلكتروني *</label>
+                <input
+                  type="email"
+                  placeholder="name@kas.com.sa"
+                  value={formData.staffEmail || ''}
+                  onChange={e => setFormData({ ...formData, staffEmail: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">الدور الوظيفي</label>
                 <select
-                  value={formData.invoiceNumber || ''}
-                  onChange={e => {
-                    const inv = invoices.find(i => i.invoiceNumber === e.target.value);
-                    setFormData({
-                      ...formData,
-                      invoiceNumber: e.target.value,
-                      clientName: inv?.clientName || '',
-                      amount: inv ? inv.amount - (inv.paidAmount || 0) : ''
-                    });
-                  }}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
+                  value={formData.staffRole || 'Employee'}
+                  onChange={e => setFormData({ ...formData, staffRole: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
                 >
-                  <option value="">اختر الفاتورة...</option>
-                  {invoices.map(i => (
-                    <option key={i.id} value={i.invoiceNumber}>
-                      {i.invoiceNumber} - {i.clientName} ({i.amount.toLocaleString()} ر.س)
-                    </option>
-                  ))}
+                  <option value="Employee">Employee (موظف تشغيل)</option>
+                  <option value="المنافسات">المنافسات (مسؤول دراسة العطاءات)</option>
+                  <option value="المحاسب المالي المعتمد">المحاسب المالي المعتمد</option>
+                  <option value="Super_Admin">Super_Admin (مدير عام)</option>
                 </select>
               </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">مبلغ الدفعة (ر.س) *</label>
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.amount || ''}
-                  onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-medium text-foreground mb-1">طريقة الدفع</label>
-                  <select
-                    value={formData.paymentMode || 'تحويل بنكي'}
-                    onChange={e => setFormData({ ...formData, paymentMode: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                  >
-                    <option value="تحويل بنكي">تحويل بنكي</option>
-                    <option value="سداد">سداد SADAD</option>
-                    <option value="بطاقة مدى / ائتمان">بطاقة مدى / ائتمان</option>
-                    <option value="شيك مصدّق">شيك مصدّق</option>
-                    <option value="نقداً">نقداً</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-medium text-foreground mb-1">رقم الحوالة / المعاملة</label>
-                  <input
-                    type="text"
-                    placeholder="TXN-XXXXXX"
-                    value={formData.transactionId || ''}
-                    onChange={e => setFormData({ ...formData, transactionId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                  />
-                </div>
-              </div>
             </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t border-border">
-              <button onClick={() => setShowAddPaymentModal(false)} className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs">إلغاء</button>
-              <button onClick={handleSavePayment} className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">حفظ السند</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL: ADD EXPENSE */}
-      {/* ========================================================================= */}
-      {showAddExpenseModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-rose-600" />
-                <span>تسجيل مصروف / مشتريات للمنافسات</span>
-              </h3>
-              <button onClick={() => setShowAddExpenseModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="block font-medium text-foreground mb-1">بيان المصروف *</label>
-                <input
-                  type="text"
-                  placeholder="شراء بوكسات، نقل ديانات، صيانة..."
-                  value={formData.expenseName || ''}
-                  onChange={e => setFormData({ ...formData, expenseName: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-foreground mb-1">المبلغ الأساسي (ر.س) *</label>
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.amount || ''}
-                  onChange={e => setFormData({ ...formData, amount: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border font-mono"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-medium text-foreground mb-1">الفئة</label>
-                  <select
-                    value={formData.category || 'مصاريف مشتريات'}
-                    onChange={e => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                  >
-                    <option value="مصاريف مشتريات">مصاريف مشتريات</option>
-                    <option value="نقل وشحن">نقل وشحن</option>
-                    <option value="ضيافة">ضيافة</option>
-                    <option value="صيانة وتشغيل">صيانة وتشغيل</option>
-                    <option value="رسوم حكومية وتراخيص">رسوم حكومية وتراخيص</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-medium text-foreground mb-1">طريقة الدفع</label>
-                  <select
-                    value={formData.paymentMode || 'تحويل بنكي'}
-                    onChange={e => setFormData({ ...formData, paymentMode: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-secondary/50 border border-border"
-                  >
-                    <option value="تحويل بنكي">تحويل بنكي</option>
-                    <option value="مدى">بطاقة مدى</option>
-                    <option value="عهدة نقدية">عهدة نقدية</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t border-border">
-              <button onClick={() => setShowAddExpenseModal(false)} className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs">إلغاء</button>
-              <button onClick={handleSaveExpense} className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs">حفظ المصروف</button>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddStaffModal(false)} className="px-4 py-2 bg-secondary rounded-xl">إلغاء</button>
+              <button onClick={handleSaveStaff} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold">حفظ العضو</button>
             </div>
           </div>
         </div>
