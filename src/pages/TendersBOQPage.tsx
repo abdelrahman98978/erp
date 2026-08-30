@@ -13,6 +13,7 @@ import { KasMonafasatSpreadsheetView } from '../components/tenders/KasMonafasatS
 import { KasEtimadCloudPage } from './KasEtimadCloudPage';
 import { KasTenderItem } from '../types/kasMonafasat';
 import { BOQItem, TenderRecord, SupplierRecord } from '../types/tenders';
+import { KasKpiCard, KasTenderCard, KasSupplierCard } from '../components/kas/KasCards';
 import { 
   Building2, Plus, FileSpreadsheet, FileText, Search, Printer, 
   Trash2, Edit3, CheckCircle2, AlertCircle, TrendingUp, DollarSign,
@@ -20,7 +21,7 @@ import {
   ShieldCheck, X, RefreshCw, Landmark, Tag, Check, Award, BarChart3,
   Users, Star, MapPin, Phone, Mail, PieChart, Activity, Copy,
   Upload, FileUp, QrCode, Percent, ArrowUpRight, Shield, CheckSquare,
-  CloudLightning
+  CloudLightning, LayoutGrid, List
 } from 'lucide-react';
 
 const DEFAULT_MOCK_TENDERS: TenderRecord[] = [
@@ -235,8 +236,10 @@ export const TendersBOQPage: React.FC = () => {
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportContext, setExportContext] = useState<'boq' | 'suppliers' | 'directory' | 'awards'>('boq');
 
-  // Filter & Search
+  // Filter & Search & View Modes
   const [searchQuery, setSearchQuery] = useState('');
+  const [directoryViewMode, setDirectoryViewMode] = useState<'cards' | 'table'>('cards');
+  const [suppliersViewMode, setSuppliersViewMode] = useState<'cards' | 'table'>('cards');
   const [suppliers, setSuppliers] = useState<SupplierRecord[]>(DEFAULT_SUPPLIERS);
 
   // Form States
@@ -1405,37 +1408,69 @@ export const TendersBOQPage: React.FC = () => {
 
       {/* Tab 2: Tenders Directory */}
       {activeTab === 'directory' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm space-y-4">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black m-0">سجل مناقصات وعقود التوريد المعتمدة</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">كافة المنافسات المسجلة باسم مؤسسة خالد السليم للتجارة (شركة كاس)</p>
+              <h3 className="text-base font-black text-slate-900 dark:text-white m-0 flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-emerald-600" />
+                <span>سجل مناقصات وعقود التوريد المعتمدة</span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">كافة المنافسات المسجلة باسم مؤسسة خالد السليم للتجارة (شركة كاس)</p>
             </div>
+
             <div className="flex items-center gap-2 flex-wrap">
+              {/* Cards vs Table View Mode Switcher */}
+              <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 border border-slate-200 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setDirectoryViewMode('cards')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    directoryViewMode === 'cards'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>عرض البطاقات</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDirectoryViewMode('table')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    directoryViewMode === 'table'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  <List className="w-3.5 h-3.5" />
+                  <span>عرض الجدول</span>
+                </button>
+              </div>
+
               <button
                 onClick={() => setShowNewTenderModal(true)}
-                className="button-primary-pill text-xs py-1.5 px-3 flex items-center gap-1"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-2xl shadow-md transition flex items-center gap-1.5"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-4 h-4" />
                 <span>+ إنشاء منافسة جديدة</span>
               </button>
               <button
                 onClick={() => setShowImportModal(true)}
-                className="button-outline-on-light text-xs py-1.5 px-3 flex items-center gap-1"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-2xl transition flex items-center gap-1.5"
               >
-                <FileUp className="w-3.5 h-3.5 text-amber-600" />
+                <FileUp className="w-4 h-4 text-amber-600" />
                 <span>استيراد كراسة BOQ</span>
               </button>
 
               {/* Multi-Format Export Group */}
-              <div className="flex items-center bg-zinc-50 border border-zinc-200 rounded-xl p-0.5 shadow-2xs">
-                <span className="text-[10px] text-zinc-500 font-bold px-1.5 flex items-center gap-1">
-                  <Download className="w-3 h-3 text-zinc-600" />
+              <div className="flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1">
+                <span className="text-[10px] text-slate-500 font-bold px-1.5 flex items-center gap-1">
+                  <Download className="w-3 h-3 text-slate-600" />
                   <span>تصدير:</span>
                 </span>
                 <button
                   onClick={handleExportDirectoryExcel}
-                  className="px-2 py-1 text-[11px] font-bold text-emerald-800 hover:bg-emerald-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-xl flex items-center gap-1"
                   title="تصدير كـ Excel"
                 >
                   <FileSpreadsheet className="w-3 h-3 text-emerald-600" />
@@ -1443,22 +1478,15 @@ export const TendersBOQPage: React.FC = () => {
                 </button>
                 <button
                   onClick={handleExportDirectoryCSV}
-                  className="px-2 py-1 text-[11px] font-bold text-sky-800 hover:bg-sky-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 text-[11px] font-bold text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950 rounded-xl flex items-center gap-1"
                   title="تصدير كـ CSV"
                 >
                   <FileText className="w-3 h-3 text-sky-600" />
                   <span>CSV</span>
                 </button>
                 <button
-                  onClick={handleExportDirectoryJSON}
-                  className="px-2 py-1 text-[11px] font-bold text-amber-800 hover:bg-amber-50 rounded-lg flex items-center gap-1 cursor-pointer"
-                  title="تصدير كـ JSON"
-                >
-                  <span>JSON</span>
-                </button>
-                <button
                   onClick={() => window.print()}
-                  className="px-2 py-1 text-[11px] font-bold text-purple-800 hover:bg-purple-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 text-[11px] font-bold text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950 rounded-xl flex items-center gap-1"
                   title="طباعة السجل / PDF"
                 >
                   <Printer className="w-3 h-3 text-purple-600" />
@@ -1468,119 +1496,168 @@ export const TendersBOQPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-                <tr>
-                  <th className="p-3.5">الرقم المرجعي</th>
-                  <th className="p-3.5">عنوان المنافسة والجهة</th>
-                  <th className="p-3.5">الجهة التابعة</th>
-                  <th className="p-3.5">عدد البنود</th>
-                  <th className="p-3.5">الإجمالي (قبل الضريبة)</th>
-                  <th className="p-3.5">الضريبة (15%)</th>
-                  <th className="p-3.5">الإجمالي شامل الضريبة</th>
-                  <th className="p-3.5">الحالة</th>
-                  <th className="p-3.5 text-center min-w-[200px]">الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100">
-                {tendersList.map((t) => (
-                  <tr key={t.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">{t.referenceNumber}</td>
-                    <td className="p-3.5">
-                      <div className="font-bold text-black">{t.title}</div>
-                      <div className="text-[11px] text-zinc-500">{t.clientName}</div>
-                    </td>
-                    <td className="p-3.5">
-                      <span className="font-semibold text-zinc-800">{t.entityName}</span>
-                    </td>
-                    <td className="p-3.5 font-mono text-center font-bold">{t.itemsCount} بنود</td>
-                    <td className="p-3.5 font-mono font-bold text-black">{t.subtotal.toLocaleString()} ر.س</td>
-                    <td className="p-3.5 font-mono text-emerald-800">{t.vatAmount.toLocaleString()} ر.س</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-900 bg-emerald-50/50">{t.grandTotal.toLocaleString()} ر.س</td>
-                    <td className="p-3.5"><Badge text={t.status} type="success" /></td>
-                    <td className="p-3.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <button
-                          onClick={() => {
-                            handleSelectTender(t);
-                            setActiveTab('excel-boq');
-                          }}
-                          className="button-outline-on-light text-xs py-1 px-2.5"
-                          title="فتح محرر جدول الكميات"
-                        >
-                          <Eye className="w-3 h-3 ml-1" />
-                          <span>فتح BOQ</span>
-                        </button>
-                        <button
-                          onClick={() => handleOpenEditTender(t)}
-                          className="button-outline-on-light text-xs py-1 px-2 text-amber-700 border-amber-200 hover:bg-amber-50"
-                          title="تعديل بيانات المنافسة"
-                        >
-                          <Edit3 className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleSelectTender(t);
-                            setShowPrintModal(true);
-                          }}
-                          className="button-outline-on-light text-xs py-1 px-2"
-                          title="طباعة العرض الرسمي"
-                        >
-                          <Printer className="w-3 h-3 text-black" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleSelectTender(t);
-                            handleDuplicateTender();
-                          }}
-                          className="button-outline-on-light text-xs py-1 px-2"
-                          title="نسخ المنافسة"
-                        >
-                          <Copy className="w-3 h-3 text-zinc-600" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleSelectTender(t);
-                            handleDeleteTender();
-                          }}
-                          className="button-outline-on-light text-xs py-1 px-2 text-red-600 border-red-200 hover:bg-red-50"
-                          title="حذف المنافسة"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </td>
+          {/* Cards Grid View */}
+          {directoryViewMode === 'cards' && (
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {tendersList.map((t) => (
+                <KasTenderCard
+                  key={t.id}
+                  tender={t}
+                  onOpenBOQ={() => {
+                    handleSelectTender(t);
+                    setActiveTab('excel-boq');
+                  }}
+                  onEdit={() => handleOpenEditTender(t)}
+                  onPrint={() => {
+                    handleSelectTender(t);
+                    setShowPrintModal(true);
+                  }}
+                  onDuplicate={() => {
+                    handleSelectTender(t);
+                    handleDuplicateTender();
+                  }}
+                  onDelete={() => {
+                    handleSelectTender(t);
+                    handleDeleteTender();
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Table View */}
+          {directoryViewMode === 'table' && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-slate-700 dark:text-slate-200">
+                <thead className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+                  <tr>
+                    <th className="p-4">الرقم المرجعي</th>
+                    <th className="p-4">عنوان المنافسة والجهة</th>
+                    <th className="p-4">الجهة التابعة</th>
+                    <th className="p-4">عدد البنود</th>
+                    <th className="p-4">الإجمالي (قبل الضريبة)</th>
+                    <th className="p-4">الضريبة (15%)</th>
+                    <th className="p-4">الإجمالي شامل الضريبة</th>
+                    <th className="p-4">الحالة</th>
+                    <th className="p-4 text-center min-w-[200px]">الإجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                  {tendersList.map((t) => (
+                    <tr key={t.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{t.referenceNumber}</td>
+                      <td className="p-4">
+                        <div className="font-bold text-slate-900 dark:text-white">{t.title}</div>
+                        <div className="text-[11px] text-slate-500">{t.clientName}</div>
+                      </td>
+                      <td className="p-4">
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">{t.entityName}</span>
+                      </td>
+                      <td className="p-4 font-mono text-center font-bold">{t.itemsCount} بنود</td>
+                      <td className="p-4 font-mono font-bold text-slate-900 dark:text-white">{t.subtotal.toLocaleString()} ر.س</td>
+                      <td className="p-4 font-mono text-emerald-600">{t.vatAmount.toLocaleString()} ر.س</td>
+                      <td className="p-4 font-mono font-black text-emerald-600 bg-emerald-50/40 dark:bg-emerald-950/20">{t.grandTotal.toLocaleString()} ر.س</td>
+                      <td className="p-4"><Badge text={t.status} type="success" /></td>
+                      <td className="p-4 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => {
+                              handleSelectTender(t);
+                              setActiveTab('excel-boq');
+                            }}
+                            className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-xs font-bold"
+                            title="فتح محرر جدول الكميات"
+                          >
+                            <Eye className="w-3.5 h-3.5 ml-1 inline" />
+                            <span>فتح BOQ</span>
+                          </button>
+                          <button
+                            onClick={() => handleOpenEditTender(t)}
+                            className="p-1.5 hover:bg-amber-50 text-amber-700 rounded-lg"
+                            title="تعديل بيانات المنافسة"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleSelectTender(t);
+                              setShowPrintModal(true);
+                            }}
+                            className="p-1.5 hover:bg-slate-100 text-slate-700 rounded-lg"
+                            title="طباعة العرض الرسمي"
+                          >
+                            <Printer className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleSelectTender(t);
+                              handleDuplicateTender();
+                            }}
+                            className="p-1.5 hover:bg-slate-100 text-slate-600 rounded-lg"
+                            title="نسخ المنافسة"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleSelectTender(t);
+                              handleDeleteTender();
+                            }}
+                            className="p-1.5 hover:bg-red-50 text-red-600 rounded-lg"
+                            title="حذف المنافسة"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
       {/* Tab 3: Analytics Dashboard */}
       {activeTab === 'analytics' && (
         <div className="space-y-6">
-          {/* KPI Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'إجمالي المناقصات', value: kpis.totalTenders, icon: Layers, color: '#0f172a', bg: '#f1f5f9' },
-              { label: 'المرسّاة والمعتمدة', value: kpis.totalAwarded, icon: CheckCircle2, color: '#059669', bg: '#ecfdf5' },
-              { label: 'نسبة الفوز (Win Rate)', value: `${kpis.winRate}%`, icon: TrendingUp, color: '#0284c7', bg: '#f0f9ff' },
-              { label: 'إجمالي الإيرادات شامل الضريبة', value: `${kpis.totalRevenueWithVat.toLocaleString()} ر.س`, icon: DollarSign, color: '#7c3aed', bg: '#f5f3ff' },
-            ].map((kpi, idx) => {
-              const Icon = kpi.icon;
-              return (
-                <div key={idx} className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: kpi.bg }}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="w-4 h-4" style={{ color: kpi.color }} />
-                    <span className="text-[11px] font-medium text-zinc-600">{kpi.label}</span>
-                  </div>
-                  <div className="text-xl font-bold" style={{ color: kpi.color }}>{kpi.value}</div>
-                </div>
-              );
-            })}
+          {/* Luxury KPI Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <KasKpiCard
+              title="إجمالي المناقصات المسجلة"
+              value={kpis.totalTenders}
+              subtitle="كافة الكراسات النشطة"
+              icon={Layers}
+              variant="slate"
+              trend={{ value: '+12% شهرياً', isPositive: true }}
+            />
+            <KasKpiCard
+              title="المنافسات المرسّاة والمعتمدة"
+              value={kpis.totalAwarded}
+              subtitle="ترسية نهائية وعقود توريد"
+              icon={CheckCircle2}
+              variant="emerald"
+              trend={{ value: 'عالي الجدوى', isPositive: true }}
+              progressPct={Math.round((kpis.totalAwarded / Math.max(kpis.totalTenders, 1)) * 100)}
+            />
+            <KasKpiCard
+              title="معدل الفوز والترسية"
+              value={`${kpis.winRate}%`}
+              subtitle="Win Rate للمنافسات"
+              icon={TrendingUp}
+              variant="sky"
+              trend={{ value: '+5.4%', isPositive: true }}
+              progressPct={kpis.winRate}
+            />
+            <KasKpiCard
+              title="إجمالي الإيرادات شامل الضريبة"
+              value={`${kpis.totalRevenueWithVat.toLocaleString()} ر.س`}
+              subtitle="القيمة الإجمالية للعقود"
+              icon={DollarSign}
+              variant="gold"
+              trend={{ value: 'شامل 15% ZATCA', isPositive: true }}
+            />
           </div>
 
           {/* Charts Row */}
@@ -1675,23 +1752,51 @@ export const TendersBOQPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
+                {/* Cards vs Table View Mode Switcher */}
+                <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 border border-slate-200 dark:border-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setSuppliersViewMode('cards')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      suppliersViewMode === 'cards'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>عرض البطاقات</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSuppliersViewMode('table')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                      suppliersViewMode === 'table'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                    }`}
+                  >
+                    <List className="w-3.5 h-3.5" />
+                    <span>عرض الجدول</span>
+                  </button>
+                </div>
+
                 <button
                   onClick={() => setShowNewSupplierModal(true)}
-                  className="button-primary-pill text-xs px-4 py-2 flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-2xl shadow-md transition flex items-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
                   <span>+ إضافة مورد معتمد جديد</span>
                 </button>
 
                 {/* Multi-Format Export Group */}
-                <div className="flex items-center bg-zinc-50 border border-zinc-200 rounded-xl p-0.5 shadow-2xs">
-                  <span className="text-[10px] text-zinc-500 font-bold px-1.5 flex items-center gap-1">
-                    <Download className="w-3 h-3 text-zinc-600" />
+                <div className="flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1">
+                  <span className="text-[10px] text-slate-500 font-bold px-1.5 flex items-center gap-1">
+                    <Download className="w-3 h-3 text-slate-600" />
                     <span>تصدير:</span>
                   </span>
                   <button
                     onClick={handleExportSuppliersExcel}
-                    className="px-2 py-1 text-[11px] font-bold text-emerald-800 hover:bg-emerald-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    className="px-2.5 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-xl flex items-center gap-1"
                     title="تصدير كـ Excel"
                   >
                     <FileSpreadsheet className="w-3 h-3 text-emerald-600" />
@@ -1699,22 +1804,15 @@ export const TendersBOQPage: React.FC = () => {
                   </button>
                   <button
                     onClick={handleExportSuppliersCSV}
-                    className="px-2 py-1 text-[11px] font-bold text-sky-800 hover:bg-sky-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    className="px-2.5 py-1 text-[11px] font-bold text-sky-700 hover:bg-sky-50 dark:hover:bg-sky-950 rounded-xl flex items-center gap-1"
                     title="تصدير كـ CSV"
                   >
                     <FileText className="w-3 h-3 text-sky-600" />
                     <span>CSV</span>
                   </button>
                   <button
-                    onClick={handleExportSuppliersJSON}
-                    className="px-2 py-1 text-[11px] font-bold text-amber-800 hover:bg-amber-50 rounded-lg flex items-center gap-1 cursor-pointer"
-                    title="تصدير كـ JSON"
-                  >
-                    <span>JSON</span>
-                  </button>
-                  <button
                     onClick={() => window.print()}
-                    className="px-2 py-1 text-[11px] font-bold text-purple-800 hover:bg-purple-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    className="px-2.5 py-1 text-[11px] font-bold text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950 rounded-xl flex items-center gap-1"
                     title="طباعة سجل الموردين / PDF"
                   >
                     <Printer className="w-3 h-3 text-purple-600" />
@@ -1726,29 +1824,43 @@ export const TendersBOQPage: React.FC = () => {
 
             {/* Summary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
-                <div className="text-lg font-bold text-emerald-800">{suppliers.filter(s => s.status === 'معتمد').length}</div>
-                <div className="text-[10px] text-emerald-700">موردين معتمدين</div>
+              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-center">
+                <div className="text-xl font-black font-mono text-emerald-800 dark:text-emerald-300">{suppliers.filter(s => s.status === 'معتمد').length}</div>
+                <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">موردين معتمدين</div>
               </div>
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-center">
-                <div className="text-lg font-bold text-amber-800">{suppliers.filter(s => s.status === 'تحت التقييم').length}</div>
-                <div className="text-[10px] text-amber-700">تحت التقييم</div>
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-center">
+                <div className="text-xl font-black font-mono text-amber-800 dark:text-amber-300">{suppliers.filter(s => s.status === 'تحت التقييم').length}</div>
+                <div className="text-[11px] font-bold text-amber-700 dark:text-amber-400 mt-0.5">تحت التقييم</div>
               </div>
-              <div className="p-3 rounded-xl bg-sky-50 border border-sky-200 text-center">
-                <div className="text-lg font-bold text-sky-800">{suppliers.reduce((s, sup) => s + sup.totalDeals, 0)}</div>
-                <div className="text-[10px] text-sky-700">إجمالي التعاملات</div>
+              <div className="p-4 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-center">
+                <div className="text-xl font-black font-mono text-sky-800 dark:text-sky-300">{suppliers.reduce((s, sup) => s + sup.totalDeals, 0)}</div>
+                <div className="text-[11px] font-bold text-sky-700 dark:text-sky-400 mt-0.5">إجمالي التعاملات</div>
               </div>
-              <div className="p-3 rounded-xl bg-violet-50 border border-violet-200 text-center">
-                <div className="text-lg font-bold text-violet-800">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
-                <div className="text-[10px] text-violet-700">إجمالي القيمة (ر.س)</div>
+              <div className="p-4 rounded-2xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800 text-center">
+                <div className="text-xl font-black font-mono text-violet-800 dark:text-violet-300">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
+                <div className="text-[11px] font-bold text-violet-700 dark:text-violet-400 mt-0.5">إجمالي القيمة (ر.س)</div>
               </div>
             </div>
 
+            {/* Cards View */}
+            {suppliersViewMode === 'cards' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                {suppliers.map((sup) => (
+                  <KasSupplierCard
+                    key={sup.id}
+                    supplier={sup}
+                    onEdit={() => handleOpenEditSupplier(sup)}
+                  />
+                ))}
+              </div>
+            )}
+
             {/* Suppliers Table */}
-            <div className="overflow-x-auto" style={{ borderRadius: '16px', border: '1px solid #e4e4e7' }}>
-              <table className="w-full text-xs" style={{ borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            {suppliersViewMode === 'table' && (
+              <div className="overflow-x-auto" style={{ borderRadius: '16px', border: '1px solid #e4e4e7' }}>
+                <table className="w-full text-xs" style={{ borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                     <th className="p-2.5 text-right border-r border-zinc-200">اسم المورد</th>
                     <th className="p-2.5 text-center border-r border-zinc-200 w-28">الفئة</th>
                     <th className="p-2.5 text-center border-r border-zinc-200 w-20">المدينة</th>
@@ -1843,6 +1955,7 @@ export const TendersBOQPage: React.FC = () => {
                 </tbody>
               </table>
             </div>
+            )}
           </div>
         </div>
       )}

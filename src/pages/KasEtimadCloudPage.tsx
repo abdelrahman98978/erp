@@ -10,7 +10,7 @@ import {
   Briefcase, Send, HelpCircle, FileCheck, CheckCircle, Flame, ExternalLink,
   MessageSquare, UserPlus, FilePlus, Play, Square, Settings, MoreVertical,
   ChevronRight, ChevronLeft, Receipt, BookOpen, AlertTriangle, CheckCheck,
-  UserCheck, ShieldAlert, ArrowDownRight, Share2, FolderKanban
+  UserCheck, ShieldAlert, ArrowDownRight, Share2, FolderKanban, LayoutGrid, List
 } from 'lucide-react';
 import { 
   KasEtmadCompetition, KasEtmadInvoice, KasEtmadEstimate, 
@@ -23,6 +23,7 @@ import {
 import { kasEtmadSuiteService } from '../services/kasEtmadSuiteService';
 import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
+import { KasKpiCard, KasInvoiceCard } from '../components/kas/KasCards';
 import { tafqeet } from '../services/tafqeetService';
 
 export const KasEtimadCloudPage: React.FC = () => {
@@ -31,6 +32,8 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   // Active Module Tab
   const [activeTab, setActiveTab] = useState<EtmadModuleTab>('dashboard');
+  const [invoicesViewMode, setInvoicesViewMode] = useState<'cards' | 'table'>('cards');
+  const [competitionsViewMode, setCompetitionsViewMode] = useState<'cards' | 'table'>('table');
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -818,79 +821,72 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* ========================================================================= */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
-          {/* Top KPI Grid (8 Cards) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-emerald-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>المنافسات</span>
-                <Award className="w-4 h-4 text-emerald-500" />
-              </div>
-              <div className="mt-1.5 text-xl font-bold text-foreground font-mono">{stats.totalCompetitions}</div>
-              <div className="text-[10px] text-emerald-600 font-semibold mt-0.5">{stats.wonCompetitions} ترسية ({stats.winRate}%)</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-sky-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>إجمالي الفواتير</span>
-                <DollarSign className="w-4 h-4 text-sky-500" />
-              </div>
-              <div className="mt-1.5 text-sm font-bold text-sky-600 truncate font-mono">{stats.totalInvoicesAmount.toLocaleString()} ر.س</div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">مبيعات كاس</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-emerald-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>المحصل</span>
-                <CheckCircle className="w-4 h-4 text-emerald-500" />
-              </div>
-              <div className="mt-1.5 text-sm font-bold text-emerald-600 truncate font-mono">{stats.paidAmount.toLocaleString()} ر.س</div>
-              <div className="text-[10px] text-emerald-600 font-medium mt-0.5">في الحسابات</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-rose-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>غير محصل</span>
-                <Clock className="w-4 h-4 text-rose-500" />
-              </div>
-              <div className="mt-1.5 text-sm font-bold text-rose-600 truncate font-mono">{stats.unpaidAmount.toLocaleString()} ر.س</div>
-              <div className="text-[10px] text-rose-500 mt-0.5">مستحق السداد</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-violet-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>العروض</span>
-                <Send className="w-4 h-4 text-violet-500" />
-              </div>
-              <div className="mt-1.5 text-sm font-bold text-violet-600 truncate font-mono">{stats.totalProposalsValue.toLocaleString()} ر.س</div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">{proposals.length} عرض تجاري</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-teal-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>الاشتراكات</span>
-                <RefreshCw className="w-4 h-4 text-teal-500" />
-              </div>
-              <div className="mt-1.5 text-sm font-bold text-teal-600 truncate font-mono">{stats.totalSubscriptionsRevenue.toLocaleString()} ر.س</div>
-              <div className="text-[10px] text-teal-600 mt-0.5">إيراد دوري</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-indigo-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>المشاريع</span>
-                <Briefcase className="w-4 h-4 text-indigo-500" />
-              </div>
-              <div className="mt-1.5 text-xl font-bold text-indigo-600 font-mono">{stats.activeProjects}</div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">جارية التنفيذ</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between hover:border-amber-500/40 transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>المهام</span>
-                <CheckSquare className="w-4 h-4 text-amber-500" />
-              </div>
-              <div className="mt-1.5 text-xl font-bold text-amber-600 font-mono">{stats.activeTasks}</div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">قيد المتابعة</div>
-            </div>
+          {/* Top KPI Grid (8 Luxury Cards) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3.5">
+            <KasKpiCard
+              title="المنافسات"
+              value={stats.totalCompetitions}
+              subtitle={`${stats.wonCompetitions} ترسية (${stats.winRate}%)`}
+              icon={Award}
+              variant="emerald"
+              onClick={() => setActiveTab('competitions')}
+            />
+            <KasKpiCard
+              title="إجمالي الفواتير"
+              value={`${(stats.totalInvoicesAmount / 1000).toFixed(0)}k`}
+              subtitle="مبيعات كاس (ر.س)"
+              icon={DollarSign}
+              variant="sky"
+              onClick={() => setActiveTab('invoices')}
+            />
+            <KasKpiCard
+              title="المحصل الفعلي"
+              value={`${(stats.paidAmount / 1000).toFixed(0)}k`}
+              subtitle="في الحسابات (ر.س)"
+              icon={CheckCircle2}
+              variant="emerald"
+              onClick={() => setActiveTab('invoices')}
+            />
+            <KasKpiCard
+              title="غير محصل"
+              value={`${(stats.unpaidAmount / 1000).toFixed(0)}k`}
+              subtitle="مستحق السداد (ر.س)"
+              icon={Clock}
+              variant="rose"
+              onClick={() => setActiveTab('invoices')}
+            />
+            <KasKpiCard
+              title="العروض التجارية"
+              value={`${(stats.totalProposalsValue / 1000).toFixed(0)}k`}
+              subtitle={`${proposals.length} عرض معتمد`}
+              icon={Send}
+              variant="purple"
+              onClick={() => setActiveTab('proposals')}
+            />
+            <KasKpiCard
+              title="الاشتراكات"
+              value={`${(stats.totalSubscriptionsRevenue / 1000).toFixed(0)}k`}
+              subtitle="إيراد دوري سنوي"
+              icon={RefreshCw}
+              variant="gold"
+              onClick={() => setActiveTab('subscriptions')}
+            />
+            <KasKpiCard
+              title="المشاريع النشطة"
+              value={stats.activeProjects}
+              subtitle="جارية التنفيذ"
+              icon={Briefcase}
+              variant="slate"
+              onClick={() => setActiveTab('projects')}
+            />
+            <KasKpiCard
+              title="المهام المجدولة"
+              value={stats.activeTasks}
+              subtitle="قيد المتابعة"
+              icon={CheckSquare}
+              variant="slate"
+              onClick={() => setActiveTab('tasks')}
+            />
           </div>
 
           {/* Interactive Visual Charts Grid */}
@@ -1253,92 +1249,157 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* ========================================================================= */}
       {activeTab === 'invoices' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-emerald-600" />
-              <span>سجل الفواتير الإلكترونية ZATCA المرحلة 2 (شركة كاس للتجارة)</span>
-            </h3>
-            <button
-              onClick={() => setShowAddInvoiceModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>إنشاء فاتورة جديدة</span>
-            </button>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border shadow-sm">
+            <div>
+              <h3 className="text-base font-black text-foreground flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-emerald-600" />
+                <span>سجل الفواتير الإلكترونية ZATCA المرحلة 2 (شركة كاس للتجارة)</span>
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">فواتير ضريبية مبسطة وأساسية متوافقة مع متطلبات هيئة الزكاة والضريبة والجمارك</p>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Cards vs Table View Mode Switcher */}
+              <div className="flex items-center bg-secondary rounded-2xl p-1 border border-border">
+                <button
+                  type="button"
+                  onClick={() => setInvoicesViewMode('cards')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    invoicesViewMode === 'cards'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>عرض البطاقات</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInvoicesViewMode('table')}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    invoicesViewMode === 'table'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <List className="w-3.5 h-3.5" />
+                  <span>عرض الجدول</span>
+                </button>
+              </div>
+
+              <button
+                onClick={() => setShowAddInvoiceModal(true)}
+                className="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ إنشاء فاتورة جديدة</span>
+              </button>
+            </div>
           </div>
 
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">رقم الفاتورة</th>
-                  <th className="p-3 text-left">المبلغ</th>
-                  <th className="p-3 text-left">إجمالي الضريبة (15%)</th>
-                  <th className="p-3">التاريخ</th>
-                  <th className="p-3">العميل</th>
-                  <th className="p-3">المشروع</th>
-                  <th className="p-3">تاريخ الاستحقاق</th>
-                  <th className="p-3">الحالة</th>
-                  <th className="p-3 text-center">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {invoices.map(inv => (
-                  <tr key={inv.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono font-bold text-emerald-600">{inv.invoiceNumber}</td>
-                    <td className="p-3 text-left font-mono font-bold text-foreground">{inv.amount.toLocaleString()} ر.س</td>
-                    <td className="p-3 text-left font-mono text-muted-foreground">{inv.taxAmount.toLocaleString()} ر.س</td>
-                    <td className="p-3 font-mono text-muted-foreground">{inv.date}</td>
-                    <td className="p-3 font-semibold text-foreground">{inv.clientName}</td>
-                    <td className="p-3 text-muted-foreground">{inv.project || '-'}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{inv.dueDate}</td>
-                    <td className="p-3">{getStatusPill(inv.status)}</td>
-                    <td className="p-3 text-center">
-                      <div className="flex items-center justify-center gap-1.5 text-[11px]">
-                        <button
-                          onClick={() => {
-                            setSelectedDetail(inv);
-                            setDetailType('invoice');
-                            setShowDetailModal(true);
-                          }}
-                          className="text-emerald-600 hover:underline font-bold"
-                        >
-                          عرض / ZATCA
-                        </button>
-                        {inv.status !== 'مدفوع' && (
-                          <>
-                            <span className="text-muted-foreground">|</span>
-                            <button
-                              onClick={() => {
-                                setQuickPayInvoice(inv);
-                                setShowQuickPayModal(true);
-                              }}
-                              className="text-sky-600 hover:underline font-bold"
-                            >
-                              تسجيل سداد
-                            </button>
-                          </>
-                        )}
-                        <span className="text-muted-foreground">|</span>
-                        <button
-                          onClick={() => {
-                            if (window.confirm(`حذف الفاتورة "${inv.invoiceNumber}"؟`)) {
-                              kasEtmadSuiteService.deleteInvoice(inv.id);
-                              setReloadKey(k => k + 1);
-                              addNotification({ title: 'تم حذف الفاتورة', message: `تم حذف ${inv.invoiceNumber} بنجاح`, type: 'info' });
-                            }
-                          }}
-                          className="text-rose-600 hover:underline"
-                        >
-                          حذف
-                        </button>
-                      </div>
-                    </td>
+          {/* Cards View */}
+          {invoicesViewMode === 'cards' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {invoices.map(inv => (
+                <KasInvoiceCard
+                  key={inv.id}
+                  invoice={inv}
+                  onViewZatca={() => {
+                    setSelectedDetail(inv);
+                    setDetailType('invoice');
+                    setShowDetailModal(true);
+                  }}
+                  onQuickPay={() => {
+                    setQuickPayInvoice(inv);
+                    setShowQuickPayModal(true);
+                  }}
+                  onDelete={() => {
+                    if (window.confirm(`حذف الفاتورة "${inv.invoiceNumber}"؟`)) {
+                      kasEtmadSuiteService.deleteInvoice(inv.id);
+                      setReloadKey(k => k + 1);
+                      addNotification({ title: 'تم حذف الفاتورة', message: `تم حذف ${inv.invoiceNumber} بنجاح`, type: 'info' });
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Table View */}
+          {invoicesViewMode === 'table' && (
+            <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+              <table className="w-full text-xs text-right border-collapse">
+                <thead className="bg-secondary text-foreground font-semibold border-b border-border">
+                  <tr>
+                    <th className="p-3">رقم الفاتورة</th>
+                    <th className="p-3 text-left">المبلغ</th>
+                    <th className="p-3 text-left">إجمالي الضريبة (15%)</th>
+                    <th className="p-3">التاريخ</th>
+                    <th className="p-3">العميل</th>
+                    <th className="p-3">المشروع</th>
+                    <th className="p-3">تاريخ الاستحقاق</th>
+                    <th className="p-3">الحالة</th>
+                    <th className="p-3 text-center">إجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {invoices.map(inv => (
+                    <tr key={inv.id} className="hover:bg-emerald-500/5">
+                      <td className="p-3 font-mono font-bold text-emerald-600">{inv.invoiceNumber}</td>
+                      <td className="p-3 text-left font-mono font-bold text-foreground">{inv.amount.toLocaleString()} ر.س</td>
+                      <td className="p-3 text-left font-mono text-muted-foreground">{inv.taxAmount.toLocaleString()} ر.س</td>
+                      <td className="p-3 font-mono text-muted-foreground">{inv.date}</td>
+                      <td className="p-3 font-semibold text-foreground">{inv.clientName}</td>
+                      <td className="p-3 text-muted-foreground">{inv.project || '-'}</td>
+                      <td className="p-3 font-mono text-muted-foreground">{inv.dueDate}</td>
+                      <td className="p-3">{getStatusPill(inv.status)}</td>
+                      <td className="p-3 text-center">
+                        <div className="flex items-center justify-center gap-1.5 text-[11px]">
+                          <button
+                            onClick={() => {
+                              setSelectedDetail(inv);
+                              setDetailType('invoice');
+                              setShowDetailModal(true);
+                            }}
+                            className="text-emerald-600 hover:underline font-bold"
+                          >
+                            عرض / ZATCA
+                          </button>
+                          {inv.status !== 'مدفوع' && (
+                            <>
+                              <span className="text-muted-foreground">|</span>
+                              <button
+                                onClick={() => {
+                                  setQuickPayInvoice(inv);
+                                  setShowQuickPayModal(true);
+                                }}
+                                className="text-sky-600 hover:underline font-bold"
+                              >
+                                تسجيل سداد
+                              </button>
+                            </>
+                          )}
+                          <span className="text-muted-foreground">|</span>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`حذف الفاتورة "${inv.invoiceNumber}"؟`)) {
+                                kasEtmadSuiteService.deleteInvoice(inv.id);
+                                setReloadKey(k => k + 1);
+                                addNotification({ title: 'تم حذف الفاتورة', message: `تم حذف ${inv.invoiceNumber} بنجاح`, type: 'info' });
+                              }
+                            }}
+                            className="text-rose-600 hover:underline"
+                          >
+                            حذف
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
