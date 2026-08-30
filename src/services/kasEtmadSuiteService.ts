@@ -505,6 +505,22 @@ class KasEtmadSuiteService {
     if (idx === -1) return false;
     this.estimateRequests[idx] = { ...this.estimateRequests[idx], ...updates }; this.saveToStorage(); return true;
   }
+  public deleteEstimateRequest(id: string): boolean {
+    const idx = this.estimateRequests.findIndex(r => r.id === id);
+    if (idx === -1) return false;
+    this.estimateRequests.splice(idx, 1); this.saveToStorage(); return true;
+  }
+
+  // Knowledge Articles CRUD
+  public addKnowledgeArticle(item: Omit<KasEtmadKnowledgeArticle, 'id' | 'viewsCount'>): KasEtmadKnowledgeArticle {
+    const newItem: KasEtmadKnowledgeArticle = { ...item, id: `kb-${Date.now()}`, viewsCount: 1 };
+    this.knowledgeArticles.unshift(newItem); this.saveToStorage(); return newItem;
+  }
+  public deleteKnowledgeArticle(id: string): boolean {
+    const idx = this.knowledgeArticles.findIndex(a => a.id === id);
+    if (idx === -1) return false;
+    this.knowledgeArticles.splice(idx, 1); this.saveToStorage(); return true;
+  }
 
   // Email Templates CRUD
   public addEmailTemplate(item: Omit<KasEtmadEmailTemplate, 'id'>): KasEtmadEmailTemplate {

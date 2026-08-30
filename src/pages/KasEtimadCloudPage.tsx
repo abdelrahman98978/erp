@@ -46,6 +46,12 @@ export const KasEtimadCloudPage: React.FC = () => {
   const [showAddCompModal, setShowAddCompModal] = useState<boolean>(false);
   const [showAddInvoiceModal, setShowAddInvoiceModal] = useState<boolean>(false);
   const [showAddEstimateModal, setShowAddEstimateModal] = useState<boolean>(false);
+  const [showAddProposalModal, setShowAddProposalModal] = useState<boolean>(false);
+  const [showAddCreditNoteModal, setShowAddCreditNoteModal] = useState<boolean>(false);
+  const [showAddSubscriptionModal, setShowAddSubscriptionModal] = useState<boolean>(false);
+  const [showAddEstimateRequestModal, setShowAddEstimateRequestModal] = useState<boolean>(false);
+  const [showAddTemplateModal, setShowAddTemplateModal] = useState<boolean>(false);
+  const [showImportModal, setShowImportModal] = useState<boolean>(false);
   const [showAddPaymentModal, setShowAddPaymentModal] = useState<boolean>(false);
   const [showAddItemModal, setShowAddItemModal] = useState<boolean>(false);
   const [showAddTaskModal, setShowAddTaskModal] = useState<boolean>(false);
@@ -488,6 +494,153 @@ export const KasEtimadCloudPage: React.FC = () => {
       phone: formData.staffPhone
     });
     setShowAddStaffModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveProposal = () => {
+    if (!formData.subject || !formData.toClient) {
+      alert('يرجى إدخال موضوع العرض واسم العميل / الجهة');
+      return;
+    }
+    const subtotal = itemLines.reduce((s, it) => s + (it.qty * it.rate), 0) || parseFloat(formData.totalAmount) || 0;
+    kasEtmadSuiteService.addProposal({
+      proposalNumber: `PROP-${String(proposals.length + 1).padStart(6, '0')}`,
+      subject: formData.subject,
+      toClient: formData.toClient,
+      totalAmount: subtotal,
+      date: formData.date || new Date().toISOString().split('T')[0],
+      openTill: formData.openTill || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+      project: formData.project || '',
+      tags: ['عرض تجاري', 'شركة كاس'],
+      createdAt: new Date().toISOString().split('T')[0],
+      status: formData.status || 'مسودة',
+      items: itemLines
+    });
+    addNotification({
+      title: 'تم إنشاء العرض التجاري',
+      message: `تم تسجيل العرض (${formData.subject}) بنجاح.`,
+      type: 'success'
+    });
+    setShowAddProposalModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveCreditNote = () => {
+    if (!formData.clientName || !formData.totalAmount) {
+      alert('يرجى تحديد العميل والمبلغ');
+      return;
+    }
+    const tot = parseFloat(formData.totalAmount) || 0;
+    kasEtmadSuiteService.addCreditNote({
+      creditNoteNumber: `CN-${String(creditNotes.length + 1).padStart(6, '0')}`,
+      clientName: formData.clientName,
+      date: formData.date || new Date().toISOString().split('T')[0],
+      status: formData.status || 'مسودة',
+      project: formData.project || '',
+      remainingAmount: tot,
+      totalAmount: tot,
+      invoiceRef: formData.invoiceRef || ''
+    });
+    addNotification({
+      title: 'تم إنشاء إشعار الائتمان',
+      message: `تم قيد إشعار الائتمان بمبلغ ${tot.toLocaleString()} ر.س.`,
+      type: 'success'
+    });
+    setShowAddCreditNoteModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveSubscription = () => {
+    if (!formData.subscriptionName || !formData.clientName || !formData.amount) {
+      alert('يرجى تعبئة كافة الحقول المطلوبة للاشتراك');
+      return;
+    }
+    const amt = parseFloat(formData.amount) || 0;
+    kasEtmadSuiteService.addSubscription({
+      subscriptionName: formData.subscriptionName,
+      clientName: formData.clientName,
+      billingInterval: formData.billingInterval || 'شهري',
+      amount: amt,
+      status: formData.status || 'نشط',
+      startDate: formData.startDate || new Date().toISOString().split('T')[0],
+      nextBillingDate: formData.nextBillingDate || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
+    });
+    addNotification({
+      title: 'تم إنشاء الاشتراك الدوري',
+      message: `تم تسجيل اشتراك (${formData.subscriptionName}) بنجاح.`,
+      type: 'success'
+    });
+    setShowAddSubscriptionModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveEstimateRequest = () => {
+    if (!formData.clientName || !formData.description) {
+      alert('يرجى كتابة اسم العميل ووصف متطلبات العرض');
+      return;
+    }
+    kasEtmadSuiteService.addEstimateRequest({
+      requestNumber: `EREQ-${String(estimateRequests.length + 1).padStart(6, '0')}`,
+      clientName: formData.clientName,
+      description: formData.description,
+      requestedDate: formData.requestedDate || new Date().toISOString().split('T')[0],
+      status: 'جديد'
+    });
+    addNotification({
+      title: 'تم تسجيل طلب عرض السعر',
+      message: `تم تسجيل طلب العميل (${formData.clientName}) بنجاح.`,
+      type: 'success'
+    });
+    setShowAddEstimateRequestModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveEmailTemplate = () => {
+    if (!formData.templateName || !formData.subject) {
+      alert('يرجى إدخال اسم القالب وموضوع البريد');
+      return;
+    }
+    kasEtmadSuiteService.addEmailTemplate({
+      name: formData.templateName,
+      subject: formData.subject,
+      category: formData.type || 'فاتورة',
+      body: formData.body || 'نص الرسالة الافتراضي...',
+      variables: ['{client_name}', '{invoice_number}', '{amount}', '{due_date}', '{company_name}'],
+      lastModified: new Date().toISOString().split('T')[0]
+    });
+    addNotification({
+      title: 'تم حفظ قالب البريد',
+      message: `تم إنشاء قالب (${formData.templateName}) بنجاح.`,
+      type: 'success'
+    });
+    setShowAddTemplateModal(false);
+    setFormData({});
+    setReloadKey(k => k + 1);
+  };
+
+  const handleSaveArticle = () => {
+    if (!formData.articleTitle || !formData.articleCategory) {
+      alert('يرجى إدخال عنوان المقال والتصنيف');
+      return;
+    }
+    kasEtmadSuiteService.addKnowledgeArticle({
+      title: formData.articleTitle,
+      category: formData.articleCategory || 'لوائح وأنظمة',
+      summary: formData.articleDescription || 'ملخص المقال',
+      content: formData.articleContent || formData.articleDescription || 'المحتوى الكامل للمقال...',
+      publishedDate: new Date().toISOString().split('T')[0]
+    });
+    addNotification({
+      title: 'تمت إضافة المقال',
+      message: `تم إضافة (${formData.articleTitle}) إلى قاعدة المعرفة.`,
+      type: 'success'
+    });
+    setShowAddArticleModal(false);
     setFormData({});
     setReloadKey(k => k + 1);
   };
@@ -2252,11 +2405,11 @@ export const KasEtimadCloudPage: React.FC = () => {
               <button onClick={() => {
                 setFormData({});
                 setItemLines([{ description: '', qty: 1, rate: 0, taxPct: 15, total: 0 }]);
-                setShowAddEstimateModal(true);
-              }} className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs flex items-center gap-1.5">
-                <Plus className="w-3.5 h-3.5" /><span>عرض جديد</span>
+                setShowAddProposalModal(true);
+              }} className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
+                <Plus className="w-3.5 h-3.5" /><span>عرض تجاري جديد</span>
               </button>
-              <button onClick={() => kasEtmadSuiteService.exportProposalsToXLSX()} className="px-3 py-2 rounded-xl bg-secondary text-xs font-bold flex items-center gap-1">
+              <button onClick={() => kasEtmadSuiteService.exportProposalsToXLSX()} className="px-3 py-2 rounded-xl bg-secondary text-xs font-bold flex items-center gap-1 cursor-pointer">
                 <Download className="w-3.5 h-3.5" /><span>تصدير</span>
               </button>
             </div>
@@ -2291,8 +2444,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <td className="px-4 py-3">{getStatusPill(p.status)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
-                        <button onClick={() => { setSelectedDetail(p); setDetailType('estimate'); setShowDetailModal(true); }} className="p-1.5 rounded-lg hover:bg-secondary text-sky-600"><Eye className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => kasEtmadSuiteService.deleteProposal(p.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => { setSelectedDetail(p); setDetailType('estimate'); setShowDetailModal(true); }} className="p-1.5 rounded-lg hover:bg-secondary text-sky-600 cursor-pointer"><Eye className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => kasEtmadSuiteService.deleteProposal(p.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -2315,15 +2468,9 @@ export const KasEtimadCloudPage: React.FC = () => {
               <span className="text-xs text-muted-foreground">({creditNotes.length} إشعار)</span>
             </h3>
             <button onClick={() => {
-              kasEtmadSuiteService.addCreditNote({
-                creditNoteNumber: `CN-${String(creditNotes.length + 1).padStart(6, '0')}`,
-                clientName: clients[0]?.company || 'عميل جديد',
-                date: new Date().toISOString().split('T')[0],
-                status: 'مسودة', project: '', remainingAmount: 0, totalAmount: 0, invoiceRef: ''
-              });
-              setReloadKey(k => k + 1);
-              addNotification({ title: 'تم إنشاء إشعار ائتمان', message: 'يمكنك تعديل التفاصيل من القائمة.', type: 'success' });
-            }} className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5">
+              setFormData({});
+              setShowAddCreditNoteModal(true);
+            }} className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
               <Plus className="w-3.5 h-3.5" /><span>إشعار ائتمان جديد</span>
             </button>
           </div>
@@ -2356,7 +2503,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <td className="px-4 py-3 font-mono font-bold text-foreground">{cn.totalAmount.toLocaleString()} ر.س</td>
                     <td className="px-4 py-3">{getStatusPill(cn.status)}</td>
                     <td className="px-4 py-3">
-                      <button onClick={() => kasEtmadSuiteService.deleteCreditNote(cn.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => kasEtmadSuiteService.deleteCreditNote(cn.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                     </td>
                   </tr>
                 ))}
@@ -2378,16 +2525,10 @@ export const KasEtimadCloudPage: React.FC = () => {
               <span className="text-xs text-muted-foreground">({subscriptions.length} اشتراك)</span>
             </h3>
             <button onClick={() => {
-              kasEtmadSuiteService.addSubscription({
-                subscriptionName: 'اشتراك جديد', clientName: clients[0]?.company || 'عميل',
-                billingInterval: 'شهري', amount: 0, status: 'نشط',
-                startDate: new Date().toISOString().split('T')[0],
-                nextBillingDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
-              });
-              setReloadKey(k => k + 1);
-              addNotification({ title: 'تم إنشاء اشتراك جديد', message: 'يمكنك تعديل التفاصيل.', type: 'success' });
-            }} className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5">
-              <Plus className="w-3.5 h-3.5" /><span>اشتراك جديد</span>
+              setFormData({});
+              setShowAddSubscriptionModal(true);
+            }} className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
+              <Plus className="w-3.5 h-3.5" /><span>اشتراك دوري جديد</span>
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2419,10 +2560,10 @@ export const KasEtimadCloudPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 pt-2 border-t border-border/40">
-                  <button onClick={() => { kasEtmadSuiteService.updateSubscription(sub.id, { status: sub.status === 'نشط' ? 'متوقف' : 'نشط' }); setReloadKey(k => k + 1); }} className="flex-1 py-1.5 rounded-lg bg-secondary text-xs font-bold text-foreground hover:bg-secondary/80">
+                  <button onClick={() => { kasEtmadSuiteService.updateSubscription(sub.id, { status: sub.status === 'نشط' ? 'متوقف' : 'نشط' }); setReloadKey(k => k + 1); }} className="flex-1 py-1.5 rounded-lg bg-secondary text-xs font-bold text-foreground hover:bg-secondary/80 cursor-pointer">
                     {sub.status === 'نشط' ? 'إيقاف' : 'تفعيل'}
                   </button>
-                  <button onClick={() => kasEtmadSuiteService.deleteSubscription(sub.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => kasEtmadSuiteService.deleteSubscription(sub.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             ))}
@@ -2442,14 +2583,10 @@ export const KasEtimadCloudPage: React.FC = () => {
               <span className="text-xs text-muted-foreground">({estimateRequests.length} طلب)</span>
             </h3>
             <button onClick={() => {
-              kasEtmadSuiteService.addEstimateRequest({
-                requestNumber: `EREQ-${String(estimateRequests.length + 1).padStart(6, '0')}`,
-                clientName: '', description: '', requestedDate: new Date().toISOString().split('T')[0], status: 'جديد'
-              });
-              setReloadKey(k => k + 1);
-              addNotification({ title: 'تم إنشاء طلب عرض سعر', message: 'يمكنك تعديل التفاصيل.', type: 'info' });
-            }} className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5">
-              <Plus className="w-3.5 h-3.5" /><span>طلب جديد</span>
+              setFormData({});
+              setShowAddEstimateRequestModal(true);
+            }} className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
+              <Plus className="w-3.5 h-3.5" /><span>طلب عرض سعر جديد</span>
             </button>
           </div>
           <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
@@ -2481,10 +2618,11 @@ export const KasEtimadCloudPage: React.FC = () => {
                             kasEtmadSuiteService.updateEstimateRequest(req.id, { status: 'تم التحويل لعرض سعر' });
                             setReloadKey(k => k + 1);
                             addNotification({ title: 'تم تحويل الطلب', message: 'تم تحويله لعرض سعر بنجاح.', type: 'success' });
-                          }} className="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-bold hover:bg-emerald-200">
+                          }} className="px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-[10px] font-bold hover:bg-emerald-200 cursor-pointer">
                             تحويل لعرض سعر
                           </button>
                         )}
+                        <button onClick={() => kasEtmadSuiteService.deleteEstimateRequest(req.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -2506,6 +2644,12 @@ export const KasEtimadCloudPage: React.FC = () => {
               <span>قوالب البريد الإلكتروني</span>
               <span className="text-xs text-muted-foreground">({emailTemplates.length} قالب)</span>
             </h3>
+            <button onClick={() => {
+              setFormData({});
+              setShowAddTemplateModal(true);
+            }} className="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer">
+              <Plus className="w-3.5 h-3.5" /><span>قالب بريد جديد</span>
+            </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {emailTemplates.map(tmpl => (
@@ -2524,7 +2668,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <h4 className="text-sm font-bold text-foreground mt-2">{tmpl.name}</h4>
                     <p className="text-xs text-muted-foreground mt-1 font-mono">الموضوع: {tmpl.subject}</p>
                   </div>
-                  <button onClick={() => kasEtmadSuiteService.deleteEmailTemplate(tmpl.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-400"><Trash2 className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => kasEtmadSuiteService.deleteEmailTemplate(tmpl.id) && setReloadKey(k => k + 1)} className="p-1.5 rounded-lg hover:bg-rose-50 text-rose-400 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
                 <div className="p-3 rounded-xl bg-secondary/50 text-xs text-foreground leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto font-mono">{tmpl.body}</div>
                 <div className="flex flex-wrap gap-1">
@@ -3500,6 +3644,388 @@ export const KasEtimadCloudPage: React.FC = () => {
                 className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs"
               >
                 تأكيد وقيد السداد
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ========================================================================= */}
+      {/* MODAL: ADD PROPOSAL (إنشاء عرض تجاري) */}
+      {/* ========================================================================= */}
+      {showAddProposalModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Send className="w-5 h-5 text-violet-600" />
+                <span>إنشاء عرض تجاري جديد (Proposal)</span>
+              </h3>
+              <button onClick={() => setShowAddProposalModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div className="sm:col-span-2">
+                <label className="block font-medium mb-1">موضوع العرض *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: عرض توريد مواد وتجهيزات..."
+                  value={formData.subject || ''}
+                  onChange={e => setFormData({ ...formData, subject: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">العميل / الجهة المستهدفة *</label>
+                <input
+                  type="text"
+                  placeholder="اسم الجهة..."
+                  value={formData.toClient || ''}
+                  onChange={e => setFormData({ ...formData, toClient: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">إجمالي قيمة العرض (ر.س) *</label>
+                <input
+                  type="number"
+                  placeholder="المبلغ..."
+                  value={formData.totalAmount || ''}
+                  onChange={e => setFormData({ ...formData, totalAmount: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono font-bold"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">تاريخ العرض</label>
+                <input
+                  type="date"
+                  value={formData.date || new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">صلاحية العرض حتى</label>
+                <input
+                  type="date"
+                  value={formData.openTill || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, openTill: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">المشروع المرتبط</label>
+                <input
+                  type="text"
+                  placeholder="اسم المشروع إن وجد..."
+                  value={formData.project || ''}
+                  onChange={e => setFormData({ ...formData, project: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">الحالة</label>
+                <select
+                  value={formData.status || 'مسودة'}
+                  onChange={e => setFormData({ ...formData, status: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                >
+                  <option value="مسودة">مسودة</option>
+                  <option value="مرسل">مرسل للعميل</option>
+                  <option value="مقبول">مقبول ومعتمد</option>
+                  <option value="مرفوض">مرفوض</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddProposalModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
+              <button onClick={handleSaveProposal} className="px-5 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold text-xs">
+                حفظ وإصدار العرض
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: ADD CREDIT NOTE (إشعار ائتمان) */}
+      {/* ========================================================================= */}
+      {showAddCreditNoteModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <ArrowDownRight className="w-5 h-5 text-orange-600" />
+                <span>إصدار إشعار ائتمان مالي جديد (Credit Note)</span>
+              </h3>
+              <button onClick={() => setShowAddCreditNoteModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-medium mb-1">العميل *</label>
+                <input
+                  type="text"
+                  placeholder="اسم العميل..."
+                  value={formData.clientName || ''}
+                  onChange={e => setFormData({ ...formData, clientName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">رقم الفاتورة المرجعية</label>
+                <input
+                  type="text"
+                  placeholder="INV-000001"
+                  value={formData.invoiceRef || ''}
+                  onChange={e => setFormData({ ...formData, invoiceRef: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">مبلغ الإشعار (ر.س) *</label>
+                <input
+                  type="number"
+                  placeholder="المبلغ..."
+                  value={formData.totalAmount || ''}
+                  onChange={e => setFormData({ ...formData, totalAmount: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono font-bold"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">التاريخ</label>
+                <input
+                  type="date"
+                  value={formData.date || new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddCreditNoteModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
+              <button onClick={handleSaveCreditNote} className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-xs">
+                قيد إشعار الائتمان
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: ADD SUBSCRIPTION (إنشاء اشتراك دوري) */}
+      {/* ========================================================================= */}
+      {showAddSubscriptionModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <RefreshCw className="w-5 h-5 text-teal-600" />
+                <span>تسجيل اشتراك دوري جديد</span>
+              </h3>
+              <button onClick={() => setShowAddSubscriptionModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-medium mb-1">اسم / حزمة الاشتراك *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: اشتراك صيانة سنوية..."
+                  value={formData.subscriptionName || ''}
+                  onChange={e => setFormData({ ...formData, subscriptionName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">العميل *</label>
+                <input
+                  type="text"
+                  placeholder="اسم العميل..."
+                  value={formData.clientName || ''}
+                  onChange={e => setFormData({ ...formData, clientName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-medium mb-1">المبلغ الدوري (ر.س) *</label>
+                  <input
+                    type="number"
+                    placeholder="المبلغ..."
+                    value={formData.amount || ''}
+                    onChange={e => setFormData({ ...formData, amount: e.target.value })}
+                    className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium mb-1">دورة الفوترة</label>
+                  <select
+                    value={formData.billingInterval || 'شهري'}
+                    onChange={e => setFormData({ ...formData, billingInterval: e.target.value })}
+                    className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                  >
+                    <option value="شهري">شهري</option>
+                    <option value="ربع سنوي">ربع سنوي (3 أشهر)</option>
+                    <option value="نصف سنوي">نصف سنوي (6 أشهر)</option>
+                    <option value="سنوي">سنوي</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-medium mb-1">تاريخ البدء</label>
+                  <input
+                    type="date"
+                    value={formData.startDate || new Date().toISOString().split('T')[0]}
+                    onChange={e => setFormData({ ...formData, startDate: e.target.value })}
+                    className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium mb-1">تاريخ الفوترة القادمة</label>
+                  <input
+                    type="date"
+                    value={formData.nextBillingDate || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]}
+                    onChange={e => setFormData({ ...formData, nextBillingDate: e.target.value })}
+                    className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddSubscriptionModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
+              <button onClick={handleSaveSubscription} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs">
+                حفظ وتفعيل الاشتراك
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: ADD ESTIMATE REQUEST (طلب عرض سعر) */}
+      {/* ========================================================================= */}
+      {showAddEstimateRequestModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <FilePlus className="w-5 h-5 text-indigo-600" />
+                <span>تسجيل طلب عرض سعر جديد</span>
+              </h3>
+              <button onClick={() => setShowAddEstimateRequestModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-medium mb-1">اسم العميل / الجهة الطالبة *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: وزارة النقل..."
+                  value={formData.clientName || ''}
+                  onChange={e => setFormData({ ...formData, clientName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">تفاصيل ومواصفات الطلب *</label>
+                <textarea
+                  rows={4}
+                  placeholder="اكتب متطلبات العرض والمواصفات المطلوبة..."
+                  value={formData.description || ''}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">تاريخ استلام الطلب</label>
+                <input
+                  type="date"
+                  value={formData.requestedDate || new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, requestedDate: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddEstimateRequestModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
+              <button onClick={handleSaveEstimateRequest} className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs">
+                تسجيل الطلب
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: ADD EMAIL TEMPLATE (قالب بريد) */}
+      {/* ========================================================================= */}
+      {showAddTemplateModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <Mail className="w-5 h-5 text-pink-600" />
+                <span>إنشاء قالب بريد إلكتروني جديد</span>
+              </h3>
+              <button onClick={() => setShowAddTemplateModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-medium mb-1">اسم القالب *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: إشعار استحقاق فاتورة..."
+                  value={formData.templateName || ''}
+                  onChange={e => setFormData({ ...formData, templateName: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">تصنيف القالب</label>
+                <select
+                  value={formData.type || 'الفواتير'}
+                  onChange={e => setFormData({ ...formData, type: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                >
+                  <option value="الفواتير">الفواتير</option>
+                  <option value="عروض الأسعار">عروض الأسعار</option>
+                  <option value="إشعارات الدفع">إشعارات الدفع</option>
+                  <option value="المنافسات">المنافسات</option>
+                  <option value="عام">عام</option>
+                </select>
+              </div>
+              <div>
+                <label className="block font-medium mb-1">موضوع الرسالة (Subject) *</label>
+                <input
+                  type="text"
+                  placeholder="موضوع البريد..."
+                  value={formData.subject || ''}
+                  onChange={e => setFormData({ ...formData, subject: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">نص الرسالة (Body) *</label>
+                <textarea
+                  rows={5}
+                  placeholder="نص البريد مع المتغيرات مثل {client_name} و {invoice_number}..."
+                  value={formData.body || ''}
+                  onChange={e => setFormData({ ...formData, body: e.target.value })}
+                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono text-xs"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-3 border-t">
+              <button onClick={() => setShowAddTemplateModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
+              <button onClick={handleSaveEmailTemplate} className="px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-xs">
+                حفظ القالب
               </button>
             </div>
           </div>
