@@ -17,7 +17,7 @@ import {
   KasEtmadKnowledgeArticle
 } from '../types/kasEtmadSuite';
 
-const STORAGE_KEY = 'kas_etmad_suite_data_v1';
+const STORAGE_KEY = 'kas_etmad_suite_data_v2';
 
 export const INITIAL_COMPETITIONS: KasEtmadCompetition[] = [
   {
@@ -211,6 +211,70 @@ export const INITIAL_ESTIMATES: KasEtmadEstimate[] = [
   }
 ];
 
+export const INITIAL_PAYMENTS: KasEtmadPayment[] = [
+  {
+    id: 'pay-1',
+    paymentNumber: 'PAY-000001',
+    invoiceNumber: 'INV-000001',
+    paymentMode: 'تحويل بنكي',
+    transactionId: 'TXN-99882211',
+    clientName: 'مؤسسة خالد السليم للتجارة (كاس)',
+    amount: 50000.00,
+    date: '2026-02-15',
+    notes: 'دفعة أولى 50% بموجب محضر التوريد الجزئي'
+  },
+  {
+    id: 'pay-2',
+    paymentNumber: 'PAY-000002',
+    invoiceNumber: 'INV-000003',
+    paymentMode: 'سداد',
+    transactionId: 'SADAD-774411',
+    clientName: 'قوات الطوارئ الخاصة',
+    amount: 94760.00,
+    date: '2026-02-25',
+    notes: 'سداد كامل مستحقات الاستوديو الفوتوغرافي'
+  }
+];
+
+export const INITIAL_ITEMS: KasEtmadItem[] = [
+  {
+    id: 'item-1',
+    description: 'تمر سكري ملكي فاخر منتقى ومغلف',
+    longDescription: 'كرتون 3 كجم عبوات فاخرة مفرغة من الهواء ومختومة',
+    rate: 185.00,
+    taxPct: 15,
+    unit: 'كرتون',
+    group: 'ضيافة وتمور'
+  },
+  {
+    id: 'item-2',
+    description: 'بوكس إهداء وطني فاخر مخصص بشعار الجهة',
+    longDescription: 'يتضمن مبخرة سيراميك، عود مروكي فاخر، وشاح مطرز، وبطاقة إهداء',
+    rate: 120.00,
+    taxPct: 15,
+    unit: 'بوكس',
+    group: 'توريدات حكومية'
+  },
+  {
+    id: 'item-3',
+    description: 'طقم كنب وجلسة ملكية لكبار الشخصيات VIP',
+    longDescription: 'تأجير وتنظيم لمدة يومين شامل التوصيل والتركيب والتنظيف',
+    rate: 4500.00,
+    taxPct: 15,
+    unit: 'طقم',
+    group: 'ديكور ومعارض'
+  },
+  {
+    id: 'item-4',
+    description: 'مضخة مياه غاطسة 1.5 حصان ستانلس ستيل إيطالي',
+    longDescription: 'مطابقة للمواصفات القياسية السعودية SASO مع الضمان سنتين',
+    rate: 1450.00,
+    taxPct: 15,
+    unit: 'عدد',
+    group: 'أجهزة وتقنية'
+  }
+];
+
 export const INITIAL_CLIENTS: KasEtmadClient[] = [
   {
     id: 'client-1',
@@ -259,6 +323,99 @@ export const INITIAL_CLIENTS: KasEtmadClient[] = [
     city: 'جدة',
     vatNumber: '300000000000005',
     createdAt: '2025-05-20'
+  }
+];
+
+export const INITIAL_CONTRACTS: KasEtmadContract[] = [
+  {
+    id: 'cnt-1',
+    subject: 'اتفاقية توريد وتشغيل مستلزمات الضيافة والفعاليات الوطنية',
+    clientName: 'مؤسسة خالد السليم للتجارة (كاس)',
+    contractType: 'توريد بضائع',
+    contractValue: 250000.00,
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    status: 'ساري'
+  },
+  {
+    id: 'cnt-2',
+    subject: 'عقد صيانة وتوريد أنظمة الإنارة والمضخات الغاطسة',
+    clientName: 'الشؤون الصحية بالحرس الوطني',
+    contractType: 'تشغيل وتنظيم',
+    contractValue: 124800.00,
+    startDate: '2026-03-01',
+    endDate: '2027-02-28',
+    status: 'ساري'
+  }
+];
+
+export const INITIAL_EXPENSES: KasEtmadExpense[] = [
+  {
+    id: 'exp-1',
+    category: 'مصاريف مشتريات',
+    amount: 32000.00,
+    taxAmount: 4800.00,
+    expenseName: 'شراء مواد تغليف وبوكسات إهداء مصنعية',
+    receiptFile: 'receipt_box_factory.pdf',
+    date: '2026-02-18',
+    clientName: 'أمانة منطقة الرياض',
+    project: 'مشروع احتفالات العيد',
+    paymentMode: 'تحويل بنكي'
+  },
+  {
+    id: 'exp-2',
+    category: 'نقل وشحن',
+    amount: 4500.00,
+    taxAmount: 675.00,
+    expenseName: 'نقل ديانات وتوصيل الطائف والدمام',
+    receiptFile: 'shipping_bill_882.pdf',
+    date: '2026-02-24',
+    project: 'توريدات مستشفى الملك سلمان بالطائف',
+    paymentMode: 'مدى'
+  }
+];
+
+export const INITIAL_TICKETS: KasEtmadTicket[] = [
+  {
+    id: 'tkt-1',
+    subject: 'طلب اعتماد عينات التمور والبوكسات الملكية لمراسم الحرس الوطني',
+    department: 'المنافسات والترسيات',
+    service: 'خدمة التوريدات المعتمدة',
+    contact: 'خالد عبدالعزيز السليم',
+    status: 'مفتوحة',
+    priority: 'مرتفع',
+    lastReply: '2026-08-30 11:38:00'
+  },
+  {
+    id: 'tkt-2',
+    subject: 'مراجعة وتحديث الشهادة الضريبية ZATCA لمنافسات الشرقية',
+    department: 'المالية والفوترة',
+    service: 'الربط الضريبي والامتثال',
+    contact: 'م. أحمد البشير',
+    status: 'بانتظار رد العميل',
+    priority: 'متوسط',
+    lastReply: '2026-08-29 14:15:00'
+  }
+];
+
+export const INITIAL_KNOWLEDGE: KasEtmadKnowledgeArticle[] = [
+  {
+    id: 'art-1',
+    title: 'دليل تقديم العروض الفنية والمالية على منصة اعتماد 2026',
+    category: 'أنظمة المنافسات',
+    summary: 'شرح الخطوات المعتمدة لإرفاق جداول الكميات والضمانات البنكية والعينات وتجنب الاستبعاد الفني.',
+    content: 'المنافسات الحكومية تتطلب التزاماً دقيقاً بجدول الكميات والتفقيط الصحيح بالريال السعودي والهلالات، وتقديم الضمان البنكي الابتدائي بنسبة 1-2% عند الحاجة.',
+    publishedDate: '2026-01-15',
+    viewsCount: 1420
+  },
+  {
+    id: 'art-2',
+    title: 'ضوابط الفوترة الإلكترونية ZATCA المرحلة الثانية لشركة كاس',
+    category: 'المالية والضرائب',
+    summary: 'متطلبات رمز الاستجابة السريعة QR المشفر وتضمين الرقم المرجعي والرمز التعريفي للمنشأة.',
+    content: 'يجب أن تحتوي كل فاتورة ضريبية على التفاصيل الكاملة للأصناف، نسبة الضريبة 15%، وقيمة الضريبة منفصلة مع التفقيط الكامل لكافة المبالغ.',
+    publishedDate: '2026-02-01',
+    viewsCount: 980
   }
 ];
 
@@ -380,18 +537,18 @@ class KasEtmadSuiteService {
         this.competitions = parsed.competitions || INITIAL_COMPETITIONS;
         this.invoices = parsed.invoices || INITIAL_INVOICES;
         this.estimates = parsed.estimates || INITIAL_ESTIMATES;
+        this.payments = parsed.payments || INITIAL_PAYMENTS;
+        this.items = parsed.items || INITIAL_ITEMS;
         this.clients = parsed.clients || INITIAL_CLIENTS;
+        this.contracts = parsed.contracts || INITIAL_CONTRACTS;
+        this.expenses = parsed.expenses || INITIAL_EXPENSES;
+        this.tickets = parsed.tickets || INITIAL_TICKETS;
+        this.knowledgeArticles = parsed.knowledgeArticles || INITIAL_KNOWLEDGE;
         this.leads = parsed.leads || INITIAL_LEADS;
         this.projects = parsed.projects || INITIAL_PROJECTS;
         this.tasks = parsed.tasks || INITIAL_TASKS;
-        this.payments = parsed.payments || [];
         this.creditNotes = parsed.creditNotes || [];
-        this.items = parsed.items || [];
-        this.contracts = parsed.contracts || [];
         this.subscriptions = parsed.subscriptions || [];
-        this.expenses = parsed.expenses || [];
-        this.tickets = parsed.tickets || [];
-        this.knowledgeArticles = parsed.knowledgeArticles || [];
         return;
       }
     } catch {}
@@ -399,7 +556,13 @@ class KasEtmadSuiteService {
     this.competitions = INITIAL_COMPETITIONS;
     this.invoices = INITIAL_INVOICES;
     this.estimates = INITIAL_ESTIMATES;
+    this.payments = INITIAL_PAYMENTS;
+    this.items = INITIAL_ITEMS;
     this.clients = INITIAL_CLIENTS;
+    this.contracts = INITIAL_CONTRACTS;
+    this.expenses = INITIAL_EXPENSES;
+    this.tickets = INITIAL_TICKETS;
+    this.knowledgeArticles = INITIAL_KNOWLEDGE;
     this.leads = INITIAL_LEADS;
     this.projects = INITIAL_PROJECTS;
     this.tasks = INITIAL_TASKS;
@@ -523,6 +686,61 @@ class KasEtmadSuiteService {
     return true;
   }
 
+  // Payments CRUD
+  public addPayment(item: Omit<KasEtmadPayment, 'id'>): KasEtmadPayment {
+    const newItem: KasEtmadPayment = {
+      ...item,
+      id: `pay-${Date.now()}`
+    };
+    this.payments.unshift(newItem);
+    this.saveToStorage();
+    return newItem;
+  }
+
+  // Items CRUD
+  public addItem(item: Omit<KasEtmadItem, 'id'>): KasEtmadItem {
+    const newItem: KasEtmadItem = {
+      ...item,
+      id: `itm-${Date.now()}`
+    };
+    this.items.unshift(newItem);
+    this.saveToStorage();
+    return newItem;
+  }
+
+  // Contracts CRUD
+  public addContract(item: Omit<KasEtmadContract, 'id'>): KasEtmadContract {
+    const newItem: KasEtmadContract = {
+      ...item,
+      id: `cnt-${Date.now()}`
+    };
+    this.contracts.unshift(newItem);
+    this.saveToStorage();
+    return newItem;
+  }
+
+  // Expenses CRUD
+  public addExpense(item: Omit<KasEtmadExpense, 'id'>): KasEtmadExpense {
+    const newItem: KasEtmadExpense = {
+      ...item,
+      id: `exp-${Date.now()}`
+    };
+    this.expenses.unshift(newItem);
+    this.saveToStorage();
+    return newItem;
+  }
+
+  // Tickets CRUD
+  public addTicket(item: Omit<KasEtmadTicket, 'id'>): KasEtmadTicket {
+    const newItem: KasEtmadTicket = {
+      ...item,
+      id: `tkt-${Date.now()}`
+    };
+    this.tickets.unshift(newItem);
+    this.saveToStorage();
+    return newItem;
+  }
+
   // Clients CRUD
   public addClient(item: Omit<KasEtmadClient, 'id'>): KasEtmadClient {
     const newItem: KasEtmadClient = {
@@ -628,6 +846,8 @@ class KasEtmadSuiteService {
     const totalInvoicesAmount = this.invoices.reduce((sum, i) => sum + i.amount, 0);
     const unpaidAmount = this.invoices.filter(i => i.status === 'غير مدفوع' || i.status === 'متأخر').reduce((sum, i) => sum + i.amount, 0);
     const paidAmount = this.invoices.reduce((sum, i) => sum + (i.paidAmount || 0), 0);
+    const totalExpenses = this.expenses.reduce((sum, e) => sum + e.amount, 0);
+    const totalContracts = this.contracts.reduce((sum, c) => sum + c.contractValue, 0);
     const totalCompetitions = this.competitions.length;
     const wonCompetitions = this.competitions.filter(c => c.isWinner === 'Yes' || c.status === 'تمت الترسية').length;
     const activeTasks = this.tasks.filter(t => t.status !== 'مكتملة').length;
@@ -638,6 +858,8 @@ class KasEtmadSuiteService {
       totalInvoicesAmount,
       unpaidAmount,
       paidAmount,
+      totalExpenses,
+      totalContracts,
       totalCompetitions,
       wonCompetitions,
       winRate: totalCompetitions > 0 ? Math.round((wonCompetitions / totalCompetitions) * 100) : 0,
