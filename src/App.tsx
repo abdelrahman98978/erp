@@ -4,6 +4,7 @@ import { AppShell } from './components/layout/AppShell';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { CompanyProvider } from './contexts/CompanyContext';
+import { CompanyId } from './types';
 import { ImpersonationProvider } from './contexts/ImpersonationContext';
 import { RBACProvider } from './contexts/RBACContext';
 
@@ -189,7 +190,17 @@ const MainContent: React.FC = () => {
         return <GroupCommandCenterPage />;
 
       case 'company-selector':
-        return <CompanySelectorPortal onSelectCompany={() => handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')} />;
+        return (
+          <CompanySelectorPortal 
+            onSelectCompany={(companyId: CompanyId) => {
+              if (companyId === 'KAS' || companyId === 'kas') {
+                handleSelectTab('kas-etmad', 'منظومة سحابة اعتماد (KAS Etmad Cloud Suite)');
+              } else {
+                handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية');
+              }
+            }} 
+          />
+        );
 
       case 'ats-pipeline':
         return <EnterpriseATSPipelinePage />;

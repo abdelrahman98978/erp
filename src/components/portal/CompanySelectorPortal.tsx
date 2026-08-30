@@ -85,29 +85,59 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
         {companies.map((comp) => {
           const isCurrent = activeCompanyId === comp.id;
+          const isKas = comp.id === 'KAS' || comp.id === 'kas';
           return (
             <div
               key={comp.id}
               style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: '16px',
-                border: isCurrent ? '2px solid #059669' : '1px solid #E2E8F0',
-                boxShadow: isCurrent ? '0 10px 30px rgba(5, 150, 105, 0.15)' : '0 4px 15px rgba(0,0,0,0.05)',
+                border: isKas 
+                  ? '2px solid #059669' 
+                  : isCurrent 
+                  ? '2px solid #2563EB' 
+                  : '1px solid #E2E8F0',
+                boxShadow: isKas
+                  ? '0 10px 30px rgba(5, 150, 105, 0.18)'
+                  : isCurrent
+                  ? '0 10px 30px rgba(37, 99, 235, 0.15)'
+                  : '0 4px 15px rgba(0,0,0,0.05)',
                 padding: '24px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 transition: 'transform 0.2s ease, boxShadow 0.2s ease',
+                position: 'relative',
+                overflow: 'hidden',
               }}
             >
+              {isKas && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    backgroundColor: '#059669',
+                    color: '#FFFFFF',
+                    fontSize: '10px',
+                    fontWeight: '900',
+                    padding: '3px 16px',
+                    borderBottomLeftRadius: '12px',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  منظومة سحابة اعتماد
+                </div>
+              )}
+
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <CompanyLogo companyId={comp.id as CompanyId} size={54} />
                     <span
                       style={{
-                        backgroundColor: '#0F172A',
-                        color: '#38BDF8',
+                        backgroundColor: isKas ? '#064E3B' : '#0F172A',
+                        color: isKas ? '#34D399' : '#38BDF8',
                         padding: '4px 10px',
                         borderRadius: '6px',
                         fontWeight: '900',
@@ -132,11 +162,11 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#000000', marginBottom: '4px' }}>
+                <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#000000', marginBottom: '4px' }}>
                   {comp.name}
                 </h3>
                 <div style={{ fontSize: '12px', color: '#71717a', marginBottom: '16px', fontWeight: 500 }}>
-                  {comp.nameEn}
+                  {isKas ? 'KAS Trading & Contracting • سحابة اعتماد وإدارة المنافسات' : comp.nameEn}
                 </div>
 
                 {/* Company Stats Grid */}
@@ -145,27 +175,36 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
                     gap: '10px',
-                    backgroundColor: '#F8FAFC',
+                    backgroundColor: isKas ? '#F0FDF4' : '#F8FAFC',
                     padding: '12px',
                     borderRadius: '10px',
                     marginBottom: '20px',
+                    border: isKas ? '1px solid #BBF7D0' : 'none',
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>الفروع النشطة</div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#0F172A' }}>{comp.branchesCount} فروع</div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>{isKas ? 'المنافسات النشطة' : 'الفروع النشطة'}</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: isKas ? '#059669' : '#0F172A' }}>
+                      {isKas ? '6 منافسات' : `${comp.branchesCount} فروع`}
+                    </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>إجمالي الكادر</div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#059669' }}>{comp.employeesCount} موظف</div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>{isKas ? 'فريق العمل' : 'إجمالي الكادر'}</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#059669' }}>
+                      {isKas ? '4 أعضاء' : `${comp.employeesCount} موظف`}
+                    </div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '11px', color: '#64748B' }}>الطلبات السارية</div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#2563EB' }}>{comp.activeOrdersCount} طلب</div>
+                    <div style={{ fontSize: '11px', color: '#64748B' }}>{isKas ? 'المبيعات المعتمدة' : 'الطلبات السارية'}</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#2563EB' }}>
+                      {isKas ? '106,006 ر.س' : `${comp.activeOrdersCount} طلب`}
+                    </div>
                   </div>
                   <div>
                     <div style={{ fontSize: '11px', color: '#64748B' }}>الرقم الضريبي</div>
-                    <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569' }}>{comp.taxNumber.slice(0, 10)}...</div>
+                    <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', fontFamily: 'monospace' }}>
+                      {comp.taxNumber.slice(0, 10)}...
+                    </div>
                   </div>
                 </div>
               </div>
@@ -174,20 +213,23 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
               <button
                 type="button"
                 onClick={() => handleChoose(comp.id as CompanyId)}
-                className={isCurrent ? 'button-aloe-pill' : 'button-primary-pill'}
+                className={isKas ? 'button-aloe-pill' : isCurrent ? 'button-aloe-pill' : 'button-primary-pill'}
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  fontSize: '12.5px',
+                  padding: '12px',
+                  fontSize: '13px',
+                  fontWeight: '700',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
                   whiteSpace: 'nowrap',
+                  backgroundColor: isKas ? '#059669' : undefined,
+                  color: isKas ? '#FFFFFF' : undefined,
                 }}
               >
-                <span>{isCurrent ? 'الشركة الحالية (مفعلة)' : 'دخول بيئة العمل'}</span>
+                <span>{isKas ? 'دخول بيئة عمل كاس وسحابة اعتماد' : isCurrent ? 'الشركة الحالية (مفعلة)' : 'دخول بيئة العمل'}</span>
                 <i className="fa-solid fa-arrow-left"></i>
               </button>
             </div>
