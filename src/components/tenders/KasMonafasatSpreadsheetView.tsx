@@ -8,7 +8,7 @@ import {
   Users, Star, MapPin, Phone, Mail, PieChart, Activity, Copy,
   Upload, FileUp, QrCode, Percent, ArrowUpRight, Shield, CheckSquare,
   Filter, ChevronRight, ChevronLeft, Calendar, FileCheck, HelpCircle,
-  Clock, Hash, ExternalLink
+  Clock, Hash, ExternalLink, FolderSync
 } from 'lucide-react';
 import { KasTenderItem, SheetCategory, KasSheetMeta } from '../../types/kasMonafasat';
 import { kasMonafasatService, KAS_SHEETS_META } from '../../services/kasMonafasatService';
@@ -377,79 +377,82 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
       </div>
 
       {/* Primary Category Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-3">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-2.5 bg-secondary/30 rounded-2xl border border-border/50">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 max-w-full">
           <button
             onClick={() => handleCategoryChange('companies')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeCategory === 'companies'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40'
             }`}
           >
-            <Building2 className="w-4 h-4" />
+            <Building2 className="w-3.5 h-3.5" />
             <span>المؤسسات والأنشطة (6)</span>
           </button>
 
           <button
             onClick={() => handleCategoryChange('medical')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeCategory === 'medical'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40'
             }`}
           >
-            <Activity className="w-4 h-4" />
+            <Activity className="w-3.5 h-3.5" />
             <span>الإدارة الطبية (12 شهراً)</span>
           </button>
 
           <button
             onClick={() => handleCategoryChange('monthly')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeCategory === 'monthly'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40'
             }`}
           >
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-3.5 h-3.5" />
             <span>المتابعة الشهرية (12 شهراً)</span>
           </button>
 
           <button
             onClick={() => handleCategoryChange('archive')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeCategory === 'archive'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40'
             }`}
           >
-            <Layers className="w-4 h-4" />
+            <Layers className="w-3.5 h-3.5" />
             <span>أرشيف المنافسات (2024 & عامة)</span>
           </button>
 
           <button
             onClick={() => handleCategoryChange('all')}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
               activeCategory === 'all'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground'
+                : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-amber-300" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>اللوحة الإجمالية (11,700+ سجل)</span>
           </button>
         </div>
 
-        <div className="text-xs text-muted-foreground flex items-center gap-2 font-mono">
-          <span>إجمالي السجلات:</span>
-          <span className="font-bold text-foreground bg-secondary px-2 py-0.5 rounded-md">{filteredTenders.length.toLocaleString()}</span>
+        <div className="text-xs text-muted-foreground flex items-center gap-2 font-mono px-3 py-1.5 bg-card rounded-xl border border-border/40 shrink-0 self-start lg:self-center">
+          <span className="font-medium">إجمالي السجلات:</span>
+          <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">{filteredTenders.length.toLocaleString()}</span>
         </div>
       </div>
 
       {/* Sub-sheets Pills (if category is not 'all') */}
       {activeCategory !== 'all' && (
-        <div className="flex flex-wrap items-center gap-2 p-3 bg-secondary/30 rounded-2xl border border-border/50">
-          <span className="text-xs font-semibold text-muted-foreground ml-2">اختر الشيت:</span>
+        <div className="flex items-center gap-2 p-2.5 bg-card rounded-2xl border border-border/50 overflow-x-auto shadow-xs">
+          <span className="text-xs font-bold text-muted-foreground whitespace-nowrap px-2 flex items-center gap-1.5">
+            <FolderSync className="w-3.5 h-3.5 text-emerald-600" />
+            <span>اختر الشيت:</span>
+          </span>
           {categorySheets.map(s => {
             const isSelected = selectedSheetName === s.name;
             const count = kasMonafasatService.getSheetTenders(s.name).length;
@@ -457,15 +460,15 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
               <button
                 key={s.name}
                 onClick={() => setSelectedSheetName(s.name)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-2 transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
-                    ? 'bg-foreground text-background shadow-md'
-                    : 'bg-card text-foreground hover:bg-secondary/80 border border-border/40'
+                    ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-sm'
+                    : 'bg-secondary/60 text-foreground hover:bg-secondary border border-border/40'
                 }`}
               >
                 <span>{s.label}</span>
-                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                  isSelected ? 'bg-background text-foreground' : 'bg-secondary text-muted-foreground'
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                  isSelected ? 'bg-white/20 text-white' : 'bg-secondary text-muted-foreground'
                 }`}>
                   {count}
                 </span>
@@ -477,23 +480,23 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
       {/* KPI Cards Ribbon */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>المنافسات</span>
             <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-foreground">
+          <div className="mt-2 text-2xl font-bold font-mono text-foreground">
             {kpis.totalTenders.toLocaleString()}
           </div>
           <div className="text-[11px] text-muted-foreground mt-1">سجل مسجل بالشيت</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>قيمة العروض المقدمة</span>
             <DollarSign className="w-4 h-4 text-sky-500" />
           </div>
-          <div className="mt-2 text-xl font-bold text-sky-600 truncate" title={`${kpis.totalBidValue.toLocaleString()} ريال`}>
+          <div className="mt-2 text-xl font-bold font-mono text-sky-600 truncate" title={`${kpis.totalBidValue.toLocaleString()} ريال`}>
             {kpis.totalBidValue > 1000000 
               ? `${(kpis.totalBidValue / 1000000).toFixed(2)} م.ر`
               : `${kpis.totalBidValue.toLocaleString()} ر.س`}
@@ -501,12 +504,12 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
           <div className="text-[11px] text-muted-foreground mt-1">إجمالي عروض كاس</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>الترسيات المعتمدة</span>
             <Award className="w-4 h-4 text-emerald-500" />
           </div>
-          <div className="mt-2 text-xl font-bold text-emerald-600 truncate" title={`${kpis.totalWinningValue.toLocaleString()} ريال`}>
+          <div className="mt-2 text-xl font-bold font-mono text-emerald-600 truncate" title={`${kpis.totalWinningValue.toLocaleString()} ريال`}>
             {kpis.totalWinningValue > 1000000 
               ? `${(kpis.totalWinningValue / 1000000).toFixed(2)} م.ر`
               : `${kpis.totalWinningValue.toLocaleString()} ر.س`}
@@ -514,34 +517,34 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
           <div className="text-[11px] text-emerald-600/80 font-medium mt-1">{kpis.wonCount} ترسية ناجحة</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-indigo-500/40 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>نسبة الترسية والفوز</span>
             <Percent className="w-4 h-4 text-indigo-500" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-indigo-600">
+          <div className="mt-2 text-2xl font-bold font-mono text-indigo-600">
             {kpis.winRate}%
           </div>
           <div className="text-[11px] text-muted-foreground mt-1">من العروض المفحوصة</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>عروض قيد الفحص</span>
             <Clock className="w-4 h-4 text-amber-500" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-amber-600">
+          <div className="mt-2 text-2xl font-bold font-mono text-amber-600">
             {kpis.pendingCount.toLocaleString()}
           </div>
           <div className="text-[11px] text-muted-foreground mt-1">بانتظار قرار الترسية</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-rose-500/40 transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-medium">
             <span>سعر مرتفع / لم ترسى</span>
             <TrendingUp className="w-4 h-4 text-rose-500" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-rose-600">
+          <div className="mt-2 text-2xl font-bold font-mono text-rose-600">
             {kpis.highBidCount.toLocaleString()}
           </div>
           <div className="text-[11px] text-muted-foreground mt-1">فرص تحسين التسعير</div>
@@ -549,7 +552,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
       </div>
 
       {/* Filter and Search Toolbar */}
-      <div className="p-4 rounded-2xl bg-card border border-border shadow-sm space-y-3">
+      <div className="p-4 rounded-2xl bg-card border border-border shadow-xs space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Universal Search Input */}
           <div className="relative flex-1">
@@ -559,7 +562,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
               placeholder="ابحث برقم المنافسة، الرقم المرجعي، اسم المنافسة، الجهة الحكومية، المسؤول، المدينة..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-secondary/50 border border-border/80 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+              className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-secondary/50 border border-border/80 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium"
             />
             {searchQuery && (
               <button
@@ -576,7 +579,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
             >
               <option value="all">كل الحالات (الملاحظات)</option>
               {filterOptions.statuses.map(st => (
@@ -587,7 +590,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <select
               value={reasonFilter}
               onChange={e => setReasonFilter(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
             >
               <option value="all">كل أسباب الترسية/الاستبعاد</option>
               {filterOptions.reasons.map(r => (
@@ -599,7 +602,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
               <select
                 value={cityFilter}
                 onChange={e => setCityFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="px-3 py-2 rounded-xl bg-secondary/50 border border-border text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
               >
                 <option value="all">كل المدن</option>
                 {filterOptions.cities.map(c => (
@@ -616,7 +619,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                   setCityFilter('all');
                   setSearchQuery('');
                 }}
-                className="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-xs font-medium transition-all"
+                className="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-xs font-bold transition-all cursor-pointer"
               >
                 مسح الفلاتر
               </button>
@@ -624,7 +627,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             <button
               onClick={() => setShowColSettings(!showColSettings)}
-              className="p-2 rounded-xl bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground text-xs flex items-center gap-1 border border-border"
+              className="p-2 rounded-xl bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground text-xs flex items-center gap-1 border border-border cursor-pointer"
               title="تخصيص الأعمدة"
             >
               <Layers className="w-4 h-4" />
@@ -651,29 +654,33 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
         )}
       </div>
 
-      {/* Main Spreadsheet Grid Table */}
-      <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto max-h-[650px]">
-          <table className="w-full text-xs text-right border-collapse select-text">
-            <thead className="sticky top-0 z-20 bg-secondary text-foreground font-semibold border-b border-border shadow-sm">
+      {/* Main Spreadsheet Grid Table (Zero Overlap with Explicit Widths) */}
+      <div className="rounded-3xl bg-card border border-border shadow-xs overflow-hidden">
+        <div className="overflow-x-auto max-h-[680px]">
+          <table className="min-w-[1720px] w-full text-xs text-right border-collapse select-text table-fixed">
+            <thead className="sticky top-0 z-20 bg-secondary text-foreground font-bold border-b border-border shadow-xs">
               <tr className="divide-x divide-x-reverse divide-border/40">
-                {visibleColumns.seq && <th className="p-3 w-12 text-center">#</th>}
-                {visibleColumns.company && <th className="p-3 min-w-[140px]">المؤسسة</th>}
-                {visibleColumns.tenderCode && <th className="p-3 min-w-[90px]">كود المنافسة</th>}
-                {visibleColumns.title && <th className="p-3 min-w-[280px]">اسم المنافسة والمشروع</th>}
-                {visibleColumns.referenceNumber && <th className="p-3 min-w-[130px]">الرقم المرجعي / اعتماد</th>}
-                {visibleColumns.entity && <th className="p-3 min-w-[160px]">الجهة الحكومية</th>}
-                {visibleColumns.manager && <th className="p-3 min-w-[130px]">المسؤول / التواصل</th>}
-                {visibleColumns.deadlineDate && <th className="p-3 min-w-[100px]">انتهاء التقديم</th>}
-                {visibleColumns.duration && <th className="p-3 min-w-[80px]">مدة التنفيذ</th>}
-                {visibleColumns.bidValue && <th className="p-3 min-w-[110px] text-left">قيمة العرض (ر.س)</th>}
-                {visibleColumns.winningBidValue && <th className="p-3 min-w-[110px] text-left">المبلغ الفائز (ر.س)</th>}
-                {visibleColumns.notes && <th className="p-3 min-w-[140px]">الحالة (الملاحظات)</th>}
-                {visibleColumns.rejectionReason && <th className="p-3 min-w-[140px]">سبب الترسية / الاستبعاد</th>}
-                {visibleColumns.boqStatus && <th className="p-3 min-w-[80px] text-center">جدول الكميات</th>}
-                {visibleColumns.city && <th className="p-3 min-w-[80px]">المدينة</th>}
-                {visibleColumns.platform && <th className="p-3 min-w-[90px]">المنصة</th>}
-                {visibleColumns.actions && <th className="p-3 w-28 text-center sticky left-0 bg-secondary z-30 shadow-l">الإجراءات</th>}
+                {visibleColumns.seq && <th className="p-3.5 w-14 text-center font-mono">#</th>}
+                {visibleColumns.company && <th className="p-3.5 w-44">المؤسسة</th>}
+                {visibleColumns.tenderCode && <th className="p-3.5 w-28 font-mono">كود المنافسة</th>}
+                {visibleColumns.title && <th className="p-3.5 w-80">اسم المنافسة والمشروع</th>}
+                {visibleColumns.referenceNumber && <th className="p-3.5 w-36 font-mono">الرقم المرجعي / اعتماد</th>}
+                {visibleColumns.entity && <th className="p-3.5 w-48">الجهة الحكومية</th>}
+                {visibleColumns.manager && <th className="p-3.5 w-36">المسؤول / التواصل</th>}
+                {visibleColumns.deadlineDate && <th className="p-3.5 w-28 font-mono">انتهاء التقديم</th>}
+                {visibleColumns.duration && <th className="p-3.5 w-24">مدة التنفيذ</th>}
+                {visibleColumns.bidValue && <th className="p-3.5 w-32 text-left font-mono">قيمة العرض (ر.س)</th>}
+                {visibleColumns.winningBidValue && <th className="p-3.5 w-36 text-left font-mono">المبلغ الفائز (ر.س)</th>}
+                {visibleColumns.notes && <th className="p-3.5 w-44">الحالة (الملاحظات)</th>}
+                {visibleColumns.rejectionReason && <th className="p-3.5 w-44">سبب الترسية / الاستبعاد</th>}
+                {visibleColumns.boqStatus && <th className="p-3.5 w-24 text-center">جدول الكميات</th>}
+                {visibleColumns.city && <th className="p-3.5 w-24">المدينة</th>}
+                {visibleColumns.platform && <th className="p-3.5 w-28">المنصة</th>}
+                {visibleColumns.actions && (
+                  <th className="p-3.5 w-28 text-center sticky left-0 bg-secondary border-r border-border/80 z-30 shadow-md">
+                    الإجراءات
+                  </th>
+                )}
               </tr>
             </thead>
 
@@ -709,19 +716,19 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                       )}
 
                       {visibleColumns.company && (
-                        <td className="p-3 font-medium text-foreground truncate max-w-[150px]" title={item.company}>
+                        <td className="p-3 font-medium text-foreground truncate" title={item.company}>
                           {item.company || 'كاس للتجارة'}
                         </td>
                       )}
 
                       {visibleColumns.tenderCode && (
-                        <td className="p-3 font-mono font-bold text-emerald-600">
+                        <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">
                           {item.tenderCode || '-'}
                         </td>
                       )}
 
                       {visibleColumns.title && (
-                        <td className="p-3 font-medium text-foreground max-w-[320px]">
+                        <td className="p-3 font-medium text-foreground">
                           <div className="line-clamp-2 leading-relaxed" title={item.title}>
                             {item.title}
                           </div>
@@ -735,45 +742,45 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                       )}
 
                       {visibleColumns.entity && (
-                        <td className="p-3 text-foreground truncate max-w-[180px]" title={item.entity}>
+                        <td className="p-3 text-foreground truncate" title={item.entity}>
                           {item.entity || '-'}
                         </td>
                       )}
 
                       {visibleColumns.manager && (
-                        <td className="p-3 text-muted-foreground text-[11px]">
-                          <div>{item.managerName || '-'}</div>
+                        <td className="p-3 text-muted-foreground text-[11px] whitespace-nowrap">
+                          <div className="font-medium text-foreground truncate">{item.managerName || '-'}</div>
                           {item.managerPhone && <div className="text-[10px] font-mono text-muted-foreground/80">{item.managerPhone}</div>}
                         </td>
                       )}
 
                       {visibleColumns.deadlineDate && (
-                        <td className="p-3 font-mono text-muted-foreground text-[11px]">
+                        <td className="p-3 font-mono text-muted-foreground text-[11px] whitespace-nowrap">
                           {item.deadlineDate || '-'}
                         </td>
                       )}
 
                       {visibleColumns.duration && (
-                        <td className="p-3 text-muted-foreground text-[11px]">
+                        <td className="p-3 text-muted-foreground text-[11px] whitespace-nowrap">
                           {item.executionDuration || (item.durationDays ? `${item.durationDays} يوم` : '-')}
                         </td>
                       )}
 
                       {visibleColumns.bidValue && (
-                        <td className="p-3 text-left font-mono font-semibold text-foreground">
+                        <td className="p-3 text-left font-mono font-semibold text-foreground whitespace-nowrap">
                           {bid > 0 ? `${bid.toLocaleString()} ر.س` : '-'}
                         </td>
                       )}
 
                       {visibleColumns.winningBidValue && (
-                        <td className="p-3 text-left font-mono text-emerald-600 font-semibold">
+                        <td className="p-3 text-left font-mono text-emerald-600 font-semibold whitespace-nowrap">
                           {win > 0 ? (
-                            <div>
+                            <div className="flex flex-col items-start gap-0.5">
                               <span>{win.toLocaleString()} ر.س</span>
                               {gapPercent && Number(gapPercent) > 0 && (
-                                <div className="text-[10px] text-amber-600 font-mono">
+                                <span className="text-[10px] text-amber-600 font-mono bg-amber-500/10 px-1 rounded-sm">
                                   +{gapPercent}% فارق
-                                </div>
+                                </span>
                               )}
                             </div>
                           ) : '-'}
@@ -781,19 +788,19 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                       )}
 
                       {visibleColumns.notes && (
-                        <td className="p-3">
+                        <td className="p-3 whitespace-nowrap">
                           {getStatusBadge(item.notes, item.rejectionReason)}
                         </td>
                       )}
 
                       {visibleColumns.rejectionReason && (
-                        <td className="p-3 text-muted-foreground text-[11px] truncate max-w-[150px]" title={item.rejectionReason}>
+                        <td className="p-3 text-muted-foreground text-[11px] truncate" title={item.rejectionReason}>
                           {item.rejectionReason || '-'}
                         </td>
                       )}
 
                       {visibleColumns.boqStatus && (
-                        <td className="p-3 text-center">
+                        <td className="p-3 text-center whitespace-nowrap">
                           {item.boqStatus === 'تم' ? (
                             <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[10px]">
                               ✓ تم
@@ -805,20 +812,20 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                       )}
 
                       {visibleColumns.city && (
-                        <td className="p-3 text-muted-foreground text-[11px]">
+                        <td className="p-3 text-muted-foreground text-[11px] whitespace-nowrap">
                           {item.city || '-'}
                         </td>
                       )}
 
                       {visibleColumns.platform && (
-                        <td className="p-3 text-muted-foreground text-[11px]">
+                        <td className="p-3 text-muted-foreground text-[11px] whitespace-nowrap">
                           {item.platformType || '-'}
                         </td>
                       )}
 
                       {visibleColumns.actions && (
                         <td 
-                          className="p-3 text-center sticky left-0 bg-card group-hover:bg-muted/50 z-10 shadow-l"
+                          className="p-3 text-center sticky left-0 bg-card group-hover:bg-secondary/80 z-10 border-r border-border/60 shadow-md"
                           onClick={e => e.stopPropagation()}
                         >
                           <div className="flex items-center justify-center gap-1">
@@ -827,7 +834,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                                 setSelectedItem(item);
                                 setIsDetailModalOpen(true);
                               }}
-                              className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground"
+                              className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground cursor-pointer"
                               title="معاينة التفاصيل"
                             >
                               <Eye className="w-3.5 h-3.5" />
@@ -835,7 +842,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
                             <button
                               onClick={() => handleOpenEdit(item)}
-                              className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-emerald-600"
+                              className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground hover:text-emerald-600 cursor-pointer"
                               title="تعديل"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
@@ -844,7 +851,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                             {onConvertToBOQ && (
                               <button
                                 onClick={() => onConvertToBOQ(item)}
-                                className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-600"
+                                className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-600 cursor-pointer"
                                 title="تحويل لكراسة BOQ والتفقيط"
                               >
                                 <Calculator className="w-3.5 h-3.5" />
@@ -853,7 +860,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
                             <button
                               onClick={() => handleDelete(item)}
-                              className="p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-600"
+                              className="p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-600 cursor-pointer"
                               title="حذف"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
