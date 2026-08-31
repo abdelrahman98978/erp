@@ -74,21 +74,38 @@ export const ClientPortalPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header Banner */}
-      <div className="card-feature-cinematic bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white rounded-3xl p-6 shadow-2xl border border-emerald-800/40 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold mb-3 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>بوابة الخدمة الذاتية وتتبع العقود للعملاء</span>
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <ShieldCheck className="w-5 h-5 text-emerald-400" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              بوابة عملاء {activeCompany.name}
-            </h1>
-            <p className="text-emerald-200/80 text-sm mt-1">
-              متابعة مباشرة ومؤتمتة لخطوات الاستقدام، توثيق مساند، بوالص التأمين، وخدمة العملاء على مدار الساعة
-            </p>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  CLIENT SELF-SERVICE PORTAL
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  بوابة عملاء {activeCompany.name}
+                </span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                بوابة الخدمة الذاتية وتتبع العقود والوصول
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                متابعة مباشرة ومؤتمتة لخطوات الاستقدام، توثيق مساند، بوالص التأمين، وخدمة العملاء على مدار الساعة
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -96,50 +113,56 @@ export const ClientPortalPage: React.FC = () => {
               href="https://wa.me/966500000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="button-aloe-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 20px' }}
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-4 h-4 text-emerald-700" />
               <span>خدمة العملاء (واتساب)</span>
             </a>
           </div>
         </div>
       </div>
 
-      {/* KPI Ribbon */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <KasKpiCard
-          title="العقود النشطة تحت التنفيذ"
-          value={activeContracts.length}
-          subtitle="متابعة عبر منصة مساند"
-          icon={FileText}
-          trend={{ value: '+1 عقد جديد هذا الشهر', isPositive: true }}
-          variant="emerald"
-        />
-        <KasKpiCard
-          title="العقود المنجزة والمسلمة"
-          value={completedContracts.length}
-          subtitle="تحت فترة الضمان النظامي"
-          icon={CheckCircle2}
-          trend={{ value: '100% نسبة رضا العملاء', isPositive: true }}
-          variant="sky"
-        />
-        <KasKpiCard
-          title="إجمالي المدفوعات الموثقة"
-          value="33,000 ر.س"
-          subtitle="سداد عبر مساند وحساب الأمانات"
-          icon={CreditCard}
-          trend={{ value: 'فواتير ZATCA معتمدة', isPositive: true }}
-          variant="gold"
-        />
-        <KasKpiCard
-          title="سريان الضمان والحماية"
-          value="90 يوماً"
-          subtitle="ضمان شامل وإعادة استقدام"
-          icon={ShieldCheck}
-          trend={{ value: 'متوافق مع وزارة الموارد', isPositive: true }}
-          variant="purple"
-        />
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>العقود النشطة تحت التنفيذ</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {activeContracts.length} عقود
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>متابعة منصة مساند</span>
+        </div>
+
+        {/* Card 2: Pistachio Band Card */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>العقود المنجزة والمسلمة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {completedContracts.length} عقود
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>100% نسبة الرضا</span>
+        </div>
+
+        {/* Card 3: Pitch Black Featured Card */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي المدفوعات الموثقة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            33,000 ر.س
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>فواتير ZATCA معتمدة</span>
+        </div>
+
+        {/* Card 4: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>سريان الضمان والحماية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            90 يوماً
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="w-full h-full bg-emerald-500 rounded-full" />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>ضمان رسمي شامل</span>
+        </div>
       </div>
 
       {/* Contract Lifecycle Cards */}

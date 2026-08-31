@@ -223,22 +223,35 @@ export const OfficesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 p-7 text-white shadow-2xl border border-emerald-500/20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-xl backdrop-blur-md">
-              <Globe className="w-9 h-9" />
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Globe className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl lg:text-3xl font-black tracking-tight">إدارة المكاتب والوكلاء الخارجيين</h2>
-                <span className="px-3 py-1 text-xs font-black rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Global Network
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  GLOBAL AGENCY NETWORK
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  إدارة المكاتب والوكالات الدولية
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-emerald-100/70 mt-1 font-medium">
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                إدارة المكاتب والوكلاء الخارجيين
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
                 إدارة عقود واتفاقيات المكاتب الخارجية، ميزانيات السير، تسوية الدفعات بالدولار، وحسابات الدخول
               </p>
             </div>
@@ -247,11 +260,11 @@ export const OfficesPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setShowAddModal(true)}
-              className="button-primary-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 22px' }}
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4" />
-              <span>إضافة مكتب خارجي جديد</span>
+              <Plus className="w-4 h-4 text-emerald-700" />
+              <span>+ إضافة مكتب خارجي</span>
             </button>
 
             <ExportDropdown 
@@ -264,39 +277,46 @@ export const OfficesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI Stats Ribbon */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <KasKpiCard
-          title="إجمالي الوكلاء الدوليين"
-          value={`${offices.length} وكالات`}
-          subtitle="مرخصة لدى مساند"
-          icon={Globe}
-          variant="emerald"
-        />
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الوكلاء الدوليين</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {offices.length} وكالات
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>مرخصة لدى مساند</span>
+        </div>
 
-        <KasKpiCard
-          title="إجمالي السير المرفوعة"
-          value={`${totalCvs} سيرة`}
-          subtitle="جاهزة للتعاقد الفوري"
-          icon={FileCheck}
-          variant="sky"
-        />
+        {/* Card 2: Pistachio Band Card */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي السير المرفوعة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {totalCvs} سيرة
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>جاهزة للتعاقد الفوري</span>
+        </div>
 
-        <KasKpiCard
-          title="عقود الاستقدام المنجزة"
-          value={`${totalContracts} عقد`}
-          subtitle="تم التفييز والتذاكر"
-          icon={Award}
-          variant="gold"
-        />
+        {/* Card 3: Pitch Black Featured Card */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>عقود الاستقدام المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {totalContracts} عقد
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تم التفييز والتذاكر</span>
+        </div>
 
-        <KasKpiCard
-          title="أرصدة المحافظ والحسابات"
-          value={`$${totalBalanceUsd.toLocaleString()}`}
-          subtitle="رصيد دائن بالدولار"
-          icon={DollarSign}
-          variant="purple"
-        />
+        {/* Card 4: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>أرصدة المحافظ والحسابات</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            ${totalBalanceUsd.toLocaleString()}
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="w-full h-full bg-emerald-500 rounded-full" />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>رصيد دائن بالدولار</span>
+        </div>
       </div>
 
       {/* Filter and View Switcher Toolbar */}

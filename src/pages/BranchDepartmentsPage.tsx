@@ -368,22 +368,35 @@ export const BranchDepartmentsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Luxury Cinematic Header */}
-      <div className="rounded-3xl bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 p-7 text-white shadow-2xl border border-emerald-500/20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-xl backdrop-blur-md">
-              <Network className="w-9 h-9" />
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Network className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl lg:text-3xl font-black tracking-tight">دليل الهيكلية والأقسام التخصصية للشركات والفروع</h2>
-                <span className="px-3 py-1 text-xs font-black rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Enterprise Matrix
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  ENTERPRISE MATRIX
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  الهيكلية والأقسام التخصصية للمجموعة
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-emerald-100/70 mt-1 font-medium">
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                دليل الهيكلية والأقسام التخصصية للشركات والفروع
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
                 مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيام للسفر، كاس للتجارة والمعارض، الفروع الإقليمية، والوكالات الدولية
               </p>
             </div>
@@ -392,10 +405,11 @@ export const BranchDepartmentsPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setShowAddDeptModal(true)}
-              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4" />
-              <span>إضافة قسم لـ ({selectedEntity.code})</span>
+              <Plus className="w-4 h-4 text-emerald-700" />
+              <span>+ إضافة قسم لـ ({selectedEntity.code})</span>
             </button>
 
             <ExportDropdown
@@ -421,55 +435,46 @@ export const BranchDepartmentsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Luxury KPI Cards Ribbon */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-        <KasKpiCard
-          title="إجمالي الكيانات"
-          value={stats.totalEntities.toString()}
-          subtitle="شركات، فروع ومكاتب"
-          icon={Building2}
-          variant="emerald"
-        />
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الكيانات والشركات</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {stats.totalEntities} كيان
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>{stats.companiesCount} شركات رئيسية</span>
+        </div>
 
-        <KasKpiCard
-          title="شركات المجموعة"
-          value={stats.companiesCount.toString()}
-          subtitle="توباز، دار الرواد، كاس.."
-          icon={Gem}
-          variant="gold"
-        />
+        {/* Card 2: Pistachio Band Card */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الفروع ومراكز الإيواء</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {stats.branchesCount} فروع
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>الرياض، جدة، الخبر</span>
+        </div>
 
-        <KasKpiCard
-          title="الفروع ومراكز الإيواء"
-          value={stats.branchesCount.toString()}
-          subtitle="الرياض، جدة، الخبر"
-          icon={Landmark}
-          variant="sky"
-        />
+        {/* Card 3: Pitch Black Featured Card */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الأقسام التخصصية المفعلة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {stats.totalDepts} قسم
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>{stats.agenciesCount} وكالات دولية</span>
+        </div>
 
-        <KasKpiCard
-          title="الوكالات الخارجية"
-          value={stats.agenciesCount.toString()}
-          subtitle="إثيوبيا، الفلبين، الهند"
-          icon={Globe}
-          variant="purple"
-        />
-
-        <KasKpiCard
-          title="الأقسام التخصصية"
-          value={stats.totalDepts.toString()}
-          subtitle="وحدات تشغيلية مفعلة"
-          icon={Layers}
-          variant="slate"
-        />
-
-        <KasKpiCard
-          title="القوة البشرية الإجمالية"
-          value={`${stats.totalStaff} موظف`}
-          subtitle="كوادر إدارية وميدانية"
-          icon={Users}
-          variant="rose"
-        />
+        {/* Card 4: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>القوة البشرية الإجمالية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {stats.totalStaff}
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="w-full h-full bg-emerald-500 rounded-full" />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>كوادر إدارية وميدانية</span>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}

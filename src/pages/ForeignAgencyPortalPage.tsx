@@ -87,70 +87,93 @@ export const ForeignAgencyPortalPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Cinematic Header */}
-      <div className="card-feature-cinematic bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white rounded-3xl p-6 shadow-2xl border border-emerald-800/40 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold mb-3 backdrop-blur-md">
-              <Globe2 className="w-3.5 h-3.5" />
-              <span>بوابة الوكلاء والمكاتب الخارجية المعتمدة دولياً</span>
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Globe2 className="w-5 h-5 text-emerald-400" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-              بوابة الوكيل الدولي: {activeAgency}
-            </h1>
-            <p className="text-emerald-200/80 text-sm mt-1">
-              رفع وتدقيق السير الذاتية بالدفعة، الفحوصات الطبية، حجوزات الطيران، ومطابقة الحسابات بالدولار ($ USD)
-            </p>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  INTERNATIONAL AGENCY PORTAL
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  {activeAgency}
+                </span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                بوابة الوكلاء والمكاتب الخارجية المعتمدة دولياً
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                رفع وتدقيق السير الذاتية بالدفعة، الفحوصات الطبية، حجوزات الطيران، ومطابقة الحسابات بالدولار ($ USD)
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowUploadModal(true)}
-              className="button-aloe-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 20px' }}
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <UploadCloud className="w-4 h-4" />
+              <UploadCloud className="w-4 h-4 text-emerald-700" />
               <span>+ رفع دفعة سير ذاتية (Batch CV)</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* KPI Ribbon */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <KasKpiCard
-          title="إجمالي السير المرفوعة"
-          value={candidates.length}
-          subtitle="سجل معتمد ومدقق"
-          icon={FileText}
-          trend={{ value: '+3 سير جديدة هذا الأسبوع', isPositive: true }}
-          variant="emerald"
-        />
-        <KasKpiCard
-          title="سير جاهزة للتفييز والحجز"
-          value={candidates.filter(c => c.visaStatus === 'READY' || c.visaStatus === 'ISSUED').length}
-          subtitle="فحص طبي FIT معتمد"
-          icon={CheckCircle2}
-          trend={{ value: 'مطابق لاشتراطات مساند', isPositive: true }}
-          variant="sky"
-        />
-        <KasKpiCard
-          title="مستحقات معلقة بالدولار"
-          value={`$${totalUsdBalance.toLocaleString()}`}
-          subtitle={`ما يعادل ${(totalUsdBalance * 3.75).toLocaleString()} ر.س`}
-          icon={DollarSign}
-          trend={{ value: 'بانتظار وصول الرحلة والتسليم', isPositive: false }}
-          variant="gold"
-        />
-        <KasKpiCard
-          title="إجمالي الحوالات المحولة"
-          value={`$${totalPaidUsd.toLocaleString()}`}
-          subtitle="حوالات بنكية دولية Swift"
-          icon={ShieldCheck}
-          trend={{ value: 'حساب بنكي مسوى 100%', isPositive: true }}
-          variant="purple"
-        />
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي السير المرفوعة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {candidates.length} سيرة
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل معتمد ومدقق</span>
+        </div>
+
+        {/* Card 2: Pistachio Band Card */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>سير جاهزة للتفييز والحجز</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {candidates.filter(c => c.visaStatus === 'READY' || c.visaStatus === 'ISSUED').length} جاهزة
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>فحص طبي FIT معتمد</span>
+        </div>
+
+        {/* Card 3: Pitch Black Featured Card */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>مستحقات معلقة بالدولار</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            ${totalUsdBalance.toLocaleString()}
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>ما يعادل {(totalUsdBalance * 3.75).toLocaleString()} ر.س</span>
+        </div>
+
+        {/* Card 4: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الحوالات المحولة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            ${totalPaidUsd.toLocaleString()}
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="w-full h-full bg-emerald-500 rounded-full" />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>حساب بنكي مسوى 100%</span>
+        </div>
       </div>
 
       {/* Search & Actions Bar */}
