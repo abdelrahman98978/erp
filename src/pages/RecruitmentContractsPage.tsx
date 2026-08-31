@@ -4,6 +4,7 @@ import { exportData } from '../services/exportService';
 import { useRecruitmentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
+import { MusanedMasterIntegrationHub } from '../components/musaned/MusanedMasterIntegrationHub';
 import { useAppStore } from '../stores/appStore';
 import { FileSignature, Plus, FileSpreadsheet, FileText, Search, ArrowLeft, Printer, X, LayoutGrid, List } from 'lucide-react';
 
@@ -460,78 +461,9 @@ export const RecruitmentContractsPage: React.FC = () => {
         })}
       </div>
 
-      {/* 1. Musaned Sync Full View */}
+      {/* 1. Musaned Sync & Master Integration Hub View */}
       {activeTab === 'musaned' && (
-        <div className="space-y-6">
-          <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="pill-tag-mint" style={{ fontSize: '11px' }}>MUSANED API GATEWAY V2</span>
-                </div>
-                <h2 className="display-sm" style={{ fontSize: '20px', fontWeight: 330, color: '#000000', margin: 0 }}>
-                  حالة المزامنة والربط المباشر مع منصة مساند الحكومية
-                </h2>
-                <p className="text-xs text-zinc-400 mt-1 font-sans">
-                  مزامنة لحظية لحالات العقود، التوثيق الإلكتروني، تحصيل رسوم الاستقدام، ومواعيد وصول العمالة
-                </p>
-              </div>
-
-              <button
-                onClick={() => {
-                  addNotification({
-                    title: 'مزامنة مساند',
-                    message: 'تمت مزامنة جميع العقود والحجوزات بنجاح مع منصة مساند الحكومية.',
-                    type: 'success',
-                  });
-                }}
-                className="button-primary-pill"
-                style={{ fontSize: '12.5px', padding: '8px 22px', minHeight: '40px' }}
-              >
-                <span>⚡ بدء المزامنة الفورية الآن</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs text-zinc-500 font-semibold block">حالة الاتصال بالبوابة الحكومية</span>
-                <span className="text-sm font-bold text-emerald-700 block mt-1">متصل ومفعل (200 OK)</span>
-                <span className="text-[11px] text-zinc-400 font-mono">Ping: 34ms • SSL TLS 1.3</span>
-              </div>
-              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs text-zinc-500 font-semibold block">آخر مزامنة ناجحة</span>
-                <span className="text-sm font-bold text-black block mt-1">اليوم - 10:45:22 AM</span>
-                <span className="text-[11px] text-zinc-400 font-mono">115 عقداً محدثاً بالكامل</span>
-              </div>
-              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs text-zinc-500 font-semibold block">معرف المنشأة بمساند (Company ID)</span>
-                <span className="text-sm font-bold text-black font-mono block mt-1">MSN-EST-7019284</span>
-                <span className="text-[11px] text-zinc-400">اعتماد وزارة الموارد البشرية</span>
-              </div>
-            </div>
-
-            {/* Live Logs Table */}
-            <div className="mt-6">
-              <h3 className="text-xs font-bold text-black mb-3">سجل عمليات المزامنة والتحديثات اللحظية:</h3>
-              <div className="divide-y divide-zinc-100 border border-zinc-200 rounded-xl overflow-hidden text-xs">
-                {[
-                  { id: '1', time: '10:45:22', event: 'مزامنة 12 عقداً جديداً من منصة مساند', status: 'نجاح' },
-                  { id: '2', time: '09:30:15', event: 'تحديث حالة التأشيرات لـ 5 عقود في مرحلة التفييز', status: 'نجاح' },
-                  { id: '3', time: '08:15:00', event: 'التحقق الدوري من شهادات الفحص الطبي بالربط المباشر', status: 'نجاح' },
-                ].map(log => (
-                  <div key={log.id} className="p-3.5 flex items-center justify-between bg-white hover:bg-zinc-50">
-                    <div className="flex items-center gap-3">
-                      <span className="pill-tag-shade font-mono" style={{ fontSize: '10px' }}>{log.time}</span>
-                      <span className="font-semibold text-black">{log.event}</span>
-                    </div>
-                    <span className="pill-tag-mint" style={{ fontSize: '10px' }}>{log.status}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <MusanedMasterIntegrationHub />
       )}
 
       {/* 2. Insurance Policies Full View */}
