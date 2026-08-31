@@ -130,14 +130,14 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'sponsorship-transfer',
     titleKey: 'sponsorship-transfer',
-    defaultTitle: 'نقل الكفالة والتنازل والتجربة',
+    defaultTitle: 'نقل الخدمات والتنازل وفترة التجربة',
     subKey: 'sponsorshipTransferSub',
-    defaultSubtitle: 'إدارة عقود التنازل ونقل الخدمات، فترات التجربة، والتسويات المالية.',
+    defaultSubtitle: 'إدارة عقود التنازل ونقل الخدمات المعتمدة، فترات التجربة النظامية، والتسويات المالية بين أصحاب العمل.',
     icon: RefreshCw,
     href: 'sponsorship-transfer',
     category: 'operations',
-    categoryLabel: 'نقل الكفالة',
-    metricBadge: '8 تحت التجربة'
+    categoryLabel: 'نقل الخدمات والتنازل',
+    metricBadge: '8 قيد فترة التجربة'
   },
   {
     id: 'travel',

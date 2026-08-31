@@ -1057,7 +1057,7 @@ export const UsersPage: React.FC = () => {
 
                       <div className="space-y-2">
                         <label className="block text-xs font-bold text-zinc-700">
-                          أدخل رمز التجربة (6 أرقام) للتأكيد وتفعيل الحماية *
+                          أدخل رمز التحقق (OTP) المكون من 6 أرقام للتأكيد وتفعيل الحماية *
                         </label>
                         <input
                           type="text"
