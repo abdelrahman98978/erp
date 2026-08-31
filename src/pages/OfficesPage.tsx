@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { Building, Plus, FileSpreadsheet, FileText, Search, FileSignature, Key, X, DollarSign, Trash2 } from 'lucide-react';
+import { 
+  Building, Plus, FileSpreadsheet, FileText, Search, 
+  FileSignature, Key, X, DollarSign, Trash2, Globe,
+  ShieldCheck, LayoutGrid, Table as TableIcon, CheckCircle2,
+  AlertCircle, Users, Award, TrendingUp, Phone, Mail, FileCheck
+} from 'lucide-react';
+import { KasKpiCard, KasSupplierCard } from '../components/kas/KasCards';
 
 export interface ForeignOffice {
   id: string;
@@ -128,6 +134,7 @@ export const OfficesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedOfficeStatement, setSelectedOfficeStatement] = useState<ForeignOffice | null>(null);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   // New Office Form State
   const [formData, setFormData] = useState({
@@ -198,117 +205,121 @@ export const OfficesPage: React.FC = () => {
 
   const countries = ['الكل', 'الفلبين', 'إثيوبيا', 'أوغندا', 'سيريلانكا', 'كينيا'];
 
-  const filteredOffices = offices.filter(o => {
-    const matchesCountry = countryFilter === 'الكل' || o.nationality === countryFilter;
-    const matchesSearch =
-      o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      o.manager.includes(searchQuery) ||
-      o.account_code.includes(searchQuery);
-    return matchesCountry && matchesSearch;
-  });
+  const filteredOffices = useMemo(() => {
+    return offices.filter(o => {
+      const matchesCountry = countryFilter === 'الكل' || o.nationality === countryFilter;
+      const matchesSearch =
+        o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.manager.includes(searchQuery) ||
+        o.account_code.includes(searchQuery);
+      return matchesCountry && matchesSearch;
+    });
+  }, [offices, countryFilter, searchQuery]);
 
-  const totalCvs = offices.reduce((sum, o) => sum + o.cvs_count, 0);
-  const totalContracts = offices.reduce((sum, o) => sum + o.contracts_count, 0);
-  const totalBalanceUsd = offices.reduce((sum, o) => sum + o.balance_usd, 0);
+  const totalCvs = offices.reduce((sum, o) => sum + (o.cvs_count || 0), 0);
+  const totalContracts = offices.reduce((sum, o) => sum + (o.contracts_count || 0), 0);
+  const totalBalanceUsd = offices.reduce((sum, o) => sum + (o.balance_usd || 0), 0);
 
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div
-        className="card-feature-cinematic"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: '#000000',
-          color: '#FFF',
-          padding: '28px',
-          borderRadius: '16px',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          flexWrap: 'wrap',
-          gap: '16px'
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Building className="w-5 h-5" />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                INTERNATIONAL AGENCIES
-              </span>
+      <div className="rounded-3xl bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 p-7 text-white shadow-2xl border border-emerald-500/20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-xl backdrop-blur-md">
+              <Globe className="w-9 h-9" />
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: 0, letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-              إدارة المكاتب والوكلاء الخارجيين
-            </h1>
-            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-              إدارة عقود واتفاقيات المكاتب الخارجية، ميزانيات السير، تسوية الدفعات بالدولار، وحسابات الدخول
-            </p>
+            <div>
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl lg:text-3xl font-black tracking-tight">إدارة المكاتب والوكلاء الخارجيين</h2>
+                <span className="px-3 py-1 text-xs font-black rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  Global Network
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-emerald-100/70 mt-1 font-medium">
+                إدارة عقود واتفاقيات المكاتب الخارجية، ميزانيات السير، تسوية الدفعات بالدولار، وحسابات الدخول
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>إضافة مكتب خارجي جديد</span>
+            </button>
+
+            <button
+              onClick={() => exportData('offices', filteredOffices, 'excel')}
+              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <span>Excel</span>
+            </button>
+
+            <button
+              onClick={() => exportData('offices', filteredOffices, 'pdf')}
+              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-rose-400" />
+              <span>PDF</span>
+            </button>
           </div>
         </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="button-white-pill"
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <Plus className="w-4 h-4 ml-1" />
-            <span>+ إضافة مكتب خارجي جديد</span>
-          </button>
-        </div>
       </div>
 
-      {/* KPI Stats */}
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الوكلاء الدوليين</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{offices.length} وكالات</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مرخصة لدى مساند</span>
-        </div>
+      {/* KPI Stats Ribbon */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <KasKpiCard
+          title="إجمالي الوكلاء الدوليين"
+          value={`${offices.length} وكالات`}
+          subtitle="مرخصة لدى مساند"
+          icon={Globe}
+          variant="emerald"
+        />
 
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>إجمالي السير المرفوعة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalCvs} سيرة</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>جاهزة للتعاقد الفوري</span>
-        </div>
+        <KasKpiCard
+          title="إجمالي السير المرفوعة"
+          value={`${totalCvs} سيرة`}
+          subtitle="جاهزة للتعاقد الفوري"
+          icon={FileCheck}
+          variant="sky"
+        />
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>عقود الاستقدام المنجزة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalContracts} عقد</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تم التفييز والتذاكر</span>
-        </div>
+        <KasKpiCard
+          title="عقود الاستقدام المنجزة"
+          value={`${totalContracts} عقد`}
+          subtitle="تم التفييز والتذاكر"
+          icon={Award}
+          variant="gold"
+        />
 
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>أرصدة المحافظ والحسابات</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>${totalBalanceUsd.toLocaleString()}</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>رصيد دائن بالدولار</span>
-        </div>
+        <KasKpiCard
+          title="أرصدة المحافظ والحسابات"
+          value={`$${totalBalanceUsd.toLocaleString()}`}
+          subtitle="رصيد دائن بالدولار"
+          icon={DollarSign}
+          variant="purple"
+        />
       </div>
 
-      {/* Country Filter Bar & Export */}
-      <div className="flex justify-between items-center flex-wrap gap-3">
-        <div className="flex gap-2 overflow-x-auto">
+      {/* Filter and View Switcher Toolbar */}
+      <div className="p-4 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-2 overflow-x-auto">
           {countries.map(c => {
             const isActive = countryFilter === c;
             return (
               <button
                 key={c}
                 onClick={() => setCountryFilter(c)}
-                style={{
-                  padding: '6px 16px',
-                  borderRadius: '9999px',
-                  border: '1px solid',
-                  borderColor: isActive ? '#000000' : '#e4e4e7',
-                  backgroundColor: isActive ? '#000000' : '#ffffff',
-                  color: isActive ? '#ffffff' : '#27272a',
-                  fontWeight: isActive ? 550 : 420,
-                  fontSize: '12.5px',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                  whiteSpace: 'nowrap',
-                }}
+                className={`px-4 py-2 rounded-2xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                }`}
               >
                 {c}
               </button>
@@ -316,154 +327,216 @@ export const OfficesPage: React.FC = () => {
           })}
         </div>
 
-        <div className="flex gap-2">
-          <button className="button-outline-on-light" onClick={() => exportData('offices', filteredOffices, 'excel')} style={{ padding: '6px 14px', fontSize: '12px', minHeight: '36px' }}>
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
-            <span>Excel</span>
-          </button>
-          <button className="button-outline-on-light" onClick={() => exportData('offices', filteredOffices, 'pdf')} style={{ padding: '6px 14px', fontSize: '12px', minHeight: '36px' }}>
-            <FileText className="w-4 h-4 ml-1 text-rose-600" />
-            <span>PDF</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Table Card */}
-      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
-          <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          <div className="relative min-w-[220px]">
+            <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="ابحث باسم المكتب، كود الحساب، أو المدير..."
+              placeholder="ابحث بالاسم، الحساب، أو المدير..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="text-input"
-              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-3 pr-9 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
             />
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-            العدد: {filteredOffices.length} وكالة
-          </span>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs text-zinc-700">
-            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-              <tr>
-                <th className="p-3.5">كود المكتب</th>
-                <th className="p-3.5">اسم المكتب والمدير</th>
-                <th className="p-3.5">دولة المصدر</th>
-                <th className="p-3.5">الحساب المحاسبي</th>
-                <th className="p-3.5">السير والعقود</th>
-                <th className="p-3.5">التكلفة بالدولار</th>
-                <th className="p-3.5">رصيد المحفظة ($)</th>
-                <th className="p-3.5">الحالة</th>
-                <th className="p-3.5 text-center">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {filteredOffices.map((row) => (
-                <tr key={row.id} className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
-                  <td className="p-3.5">
-                    <div className="font-bold text-black">{row.name}</div>
-                    <div className="text-[11px] text-zinc-500">المدير: {row.manager} | ترخيص: {row.license_no}</div>
-                  </td>
-                  <td className="p-3.5">
-                    <Badge text={row.nationality} type="info" />
-                  </td>
-                  <td className="p-3.5">
-                    <span className="pill-tag-shade" style={{ fontFamily: 'monospace', fontSize: '11px' }}>
-                      {row.account_code}
-                    </span>
-                  </td>
-                  <td className="p-3.5">
-                    <div className="font-bold text-black">سير: {row.cvs_count ?? 0}</div>
-                    <div className="text-[11px] text-emerald-700 font-bold">عقود: {row.contracts_count ?? 0}</div>
-                  </td>
-                  <td className="p-3.5">
-                    <div className="font-mono font-bold text-amber-700">${(row.cost_usd ?? 0).toLocaleString()}</div>
-                    <div className="text-[10.5px] text-zinc-400">~{(row.commission_sar ?? 0).toLocaleString()} ر.س</div>
-                  </td>
-                  <td className="p-3.5 font-mono font-bold text-emerald-700">
-                    ${(row.balance_usd ?? 0).toLocaleString()}
-                  </td>
-                  <td className="p-3.5">
-                    <Badge text={row.status} type={row.status === 'نشط' ? 'success' : 'danger'} />
-                  </td>
-                  <td className="p-3.5 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <button
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => setSelectedOfficeStatement(row)}
-                      >
-                        <DollarSign className="w-3 h-3 ml-1 text-emerald-600" />
-                        <span>كشف حساب</span>
-                      </button>
-                      <button
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => addNotification({
-                          title: 'بوابة الوكيل الخارجي',
-                          message: `تم إعادة إرسال بيانات الدخول لبوابة الوكيل لـ (${row.name}) بنجاح.`,
-                          type: 'info'
-                        })}
-                        title="البوابة"
-                      >
-                        <Key className="w-3 h-3" />
-                      </button>
-                      <button
-                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
-                        onClick={() => handleDeleteOffice(row)}
-                        title="حذف الوكالة"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {/* View Toggle */}
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <button
+              onClick={() => setViewMode('cards')}
+              className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+                viewMode === 'cards'
+                  ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="عرض الكروت"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+                viewMode === 'table'
+                  ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="عرض الجدول"
+            >
+              <TableIcon className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Main Content: Cards View vs Table View */}
+      {viewMode === 'cards' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredOffices.map(office => (
+            <div key={office.id} className="flex flex-col justify-between">
+              <KasSupplierCard
+                supplier={{
+                  id: office.id,
+                  name: office.name,
+                  category: `وكالة استقدام دولية`,
+                  city: office.nationality,
+                  contactPerson: office.manager,
+                  phone: office.phone,
+                  email: office.email,
+                  rating: 4.9,
+                  qualityScore: 98,
+                  commitmentScore: 99,
+                  priceCompetitiveness: 95,
+                  totalDeals: office.contracts_count || 0,
+                  totalValue: office.balance_usd || 0,
+                  status: office.status,
+                }}
+                onContactWhatsApp={() => {
+                  window.open(`https://wa.me/${office.phone.replace(/[^0-9]/g, '')}`, '_blank');
+                }}
+                onEdit={() => setSelectedOfficeStatement(office)}
+              />
+              <div className="mt-2 flex items-center justify-end gap-2 px-1">
+                <button
+                  onClick={() => setSelectedOfficeStatement(office)}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center gap-1.5 transition"
+                >
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span>كشف حساب ($)</span>
+                </button>
+                <button
+                  onClick={() => handleDeleteOffice(office)}
+                  className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/60 text-slate-400 hover:text-rose-600 transition"
+                  title="حذف"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-slate-700 dark:text-slate-300">
+              <thead className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th className="p-3.5">كود المكتب</th>
+                  <th className="p-3.5">اسم المكتب والمدير</th>
+                  <th className="p-3.5">دولة المصدر</th>
+                  <th className="p-3.5">الحساب المحاسبي</th>
+                  <th className="p-3.5">السير والعقود</th>
+                  <th className="p-3.5">التكلفة بالدولار</th>
+                  <th className="p-3.5">رصيد المحفظة ($)</th>
+                  <th className="p-3.5">الحالة</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {filteredOffices.map((row) => (
+                  <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td className="p-3.5 font-mono font-bold text-slate-900 dark:text-white">{row.id}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-slate-900 dark:text-white">{row.name}</div>
+                      <div className="text-[11px] text-slate-500">المدير: {row.manager} | ترخيص: {row.license_no}</div>
+                    </td>
+                    <td className="p-3.5">
+                      <Badge text={row.nationality} type="info" />
+                    </td>
+                    <td className="p-3.5">
+                      <span className="font-mono text-[11px] px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        {row.account_code}
+                      </span>
+                    </td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-slate-900 dark:text-white">سير: {row.cvs_count ?? 0}</div>
+                      <div className="text-[11px] text-emerald-600 font-bold">عقود: {row.contracts_count ?? 0}</div>
+                    </td>
+                    <td className="p-3.5">
+                      <div className="font-mono font-bold text-amber-600">${(row.cost_usd ?? 0).toLocaleString()}</div>
+                      <div className="text-[10.5px] text-slate-400">~{(row.commission_sar ?? 0).toLocaleString()} ر.س</div>
+                    </td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-600">
+                      ${(row.balance_usd ?? 0).toLocaleString()}
+                    </td>
+                    <td className="p-3.5">
+                      <Badge text={row.status} type={row.status === 'نشط' ? 'success' : 'danger'} />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold text-xs flex items-center gap-1 transition"
+                          onClick={() => setSelectedOfficeStatement(row)}
+                        >
+                          <DollarSign className="w-3 h-3" />
+                          <span>كشف حساب</span>
+                        </button>
+                        <button
+                          className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                          onClick={() => addNotification({
+                            title: 'بوابة الوكيل الخارجي',
+                            message: `تم إعادة إرسال بيانات الدخول لبوابة الوكيل لـ (${row.name}) بنجاح.`,
+                            type: 'info'
+                          })}
+                          title="البوابة"
+                        >
+                          <Key className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition"
+                          onClick={() => handleDeleteOffice(row)}
+                          title="حذف الوكالة"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* ADD OFFICE MODAL */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Building className="w-4 h-4 text-emerald-400" />
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white relative">
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
+
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Building className="w-4 h-4 text-emerald-600" />
                 <span>تسجيل وكالة استقدام خارجية جديدة</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button 
+                onClick={() => setShowAddModal(false)} 
+                className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white transition"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateOffice} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleCreateOffice} className="p-6 space-y-4 text-xs">
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم المكتب الخارجي (الرسمي) *</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">اسم المكتب الخارجي (الرسمي) *</label>
                 <input
                   type="text"
                   required
                   placeholder="مثال: MANILA ELITE RECRUITMENT CORP"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">دولة المصدر</label>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">دولة المصدر</label>
                   <select
                     value={formData.nationality}
                     onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                   >
                     <option value="الفلبين">الفلبين</option>
                     <option value="إثيوبيا">إثيوبيا</option>
@@ -475,87 +548,85 @@ export const OfficesPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم المدير المسؤول</label>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">اسم المدير المسؤول</label>
                   <input
                     type="text"
                     placeholder="مثال: مارك أنتوني"
                     value={formData.manager}
                     onChange={(e) => setFormData({ ...formData, manager: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الترخيص الخارجي</label>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">رقم الترخيص الخارجي</label>
                   <input
                     type="text"
                     placeholder="POEA-XXX-2026"
                     value={formData.license_no}
                     onChange={(e) => setFormData({ ...formData, license_no: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono text-slate-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">كود الحساب المحاسبي (ERP)</label>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">كود الحساب المحاسبي (ERP)</label>
                   <input
                     type="text"
                     value={formData.account_code}
                     onChange={(e) => setFormData({ ...formData, account_code: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الهاتف الدولي</label>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">رقم الهاتف الدولي</label>
                   <input
                     type="text"
                     placeholder="+63 9XX XXX XXXX"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono text-slate-900 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 mb-1">البريد الإلكتروني</label>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">البريد الإلكتروني</label>
                   <input
                     type="email"
                     placeholder="agency@domain.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">تكلفة العقد بالدولار ($ USD)</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">تكلفة العقد بالدولار ($ USD)</label>
                 <input
                   type="number"
                   value={formData.cost_usd}
                   onChange={(e) => setFormData({ ...formData, cost_usd: Number(e.target.value) })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-zinc-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="button-outline-on-light"
-                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
+                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="button-primary-pill"
-                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
+                  className="px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-lg shadow-emerald-600/25 transition"
                 >
                   حفظ واعتماد الوكالة
                 </button>
@@ -567,52 +638,55 @@ export const OfficesPage: React.FC = () => {
 
       {/* STATEMENT MODAL */}
       {selectedOfficeStatement && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white relative">
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
+
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-white">كشف حساب المعاملات: {selectedOfficeStatement.name}</h3>
-                <p className="text-xs text-zinc-400 font-mono mt-0.5">كود الحساب: {selectedOfficeStatement.account_code} | الدولة: {selectedOfficeStatement.nationality}</p>
+                <h3 className="font-bold text-base text-slate-900 dark:text-white">كشف حساب المعاملات: {selectedOfficeStatement.name}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">كود الحساب: {selectedOfficeStatement.account_code} | الدولة: {selectedOfficeStatement.nationality}</p>
               </div>
-              <button onClick={() => setSelectedOfficeStatement(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button 
+                onClick={() => setSelectedOfficeStatement(null)} 
+                className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white transition"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
-              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 grid grid-cols-3 gap-3 text-center">
+            <div className="p-6 space-y-4 text-xs">
+              <div className="p-4 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 grid grid-cols-3 gap-3 text-center">
                 <div>
-                  <div className="text-[11px] text-zinc-500">الرصيد الدائن المستحق</div>
-                  <div className="text-base font-mono font-bold text-emerald-700">${(selectedOfficeStatement.balance_usd ?? 0).toLocaleString()}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">الرصيد الدائن المستحق</div>
+                  <div className="text-base font-mono font-bold text-emerald-600">${(selectedOfficeStatement.balance_usd ?? 0).toLocaleString()}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-zinc-500">العقود المنجزة</div>
-                  <div className="text-base font-mono font-bold text-black">{selectedOfficeStatement.contracts_count ?? 0} عقود</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">العقود المنجزة</div>
+                  <div className="text-base font-mono font-bold text-slate-900 dark:text-white">{selectedOfficeStatement.contracts_count ?? 0} عقود</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-zinc-500">متوسط العمولة</div>
-                  <div className="text-base font-mono font-bold text-amber-700">${(selectedOfficeStatement.cost_usd ?? 0).toLocaleString()}</div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">متوسط العمولة</div>
+                  <div className="text-base font-mono font-bold text-amber-600">${(selectedOfficeStatement.cost_usd ?? 0).toLocaleString()}</div>
                 </div>
               </div>
 
-              <p className="text-xs text-zinc-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                 • تم إجراء آخر تسوية نقدية عبر التحويل البنكي الخارجي بتاريخ 2026-08-10 بمبلغ $5,000.<br />
                 • توجد 3 إرساليات قيد إجراءات إصدار تذاكر الطيران للوصول إلى مطار الملك خالد الدولي.
               </p>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
-                  className="button-outline-on-light"
+                  className="px-5 py-2.5 rounded-2xl bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800 font-bold text-xs flex items-center gap-1.5 transition"
                   onClick={() => exportData('offices', [selectedOfficeStatement], 'pdf')}
-                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
                 >
-                  <FileText className="w-4 h-4 ml-1 text-rose-600" />
+                  <FileText className="w-4 h-4" />
                   <span>طباعة كشف الحساب</span>
                 </button>
                 <button
-                  className="button-primary-pill"
+                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition"
                   onClick={() => setSelectedOfficeStatement(null)}
-                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   إغلاق
                 </button>

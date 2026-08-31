@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
-import { Network, Plus, FileSpreadsheet, FileText, Building2, Users, Check, X, Shield, Plane, Globe, Handshake, DollarSign, PhoneCall, Hotel, Stethoscope, Utensils, Archive, Gem, Landmark, Repeat, Crown, ShieldAlert } from 'lucide-react';
+import { 
+  Network, Plus, FileSpreadsheet, FileText, Building2, Users, 
+  Check, X, Shield, Plane, Globe, Handshake, DollarSign, 
+  PhoneCall, Hotel, Stethoscope, Utensils, Archive, Gem, 
+  Landmark, Repeat, Crown, ShieldAlert, Sparkles, Activity,
+  Briefcase, CheckCircle2, TrendingUp, Compass, Award, ArrowUpRight,
+  Layers, MapPin, Search
+} from 'lucide-react';
+import { KasKpiCard } from '../components/kas/KasCards';
 
 export interface BranchEntity {
   id: string;
@@ -279,6 +287,7 @@ export const BranchDepartmentsPage: React.FC = () => {
   const [entities, setEntities] = useState<BranchEntity[]>(ALL_GROUP_ENTITIES);
   const [selectedEntityId, setSelectedEntityId] = useState<string>('b-1');
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<'all' | 'فرع منطقي' | 'شركة مجموعة' | 'مكتب خارجي'>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [showAddDeptModal, setShowAddDeptModal] = useState(false);
 
   // Form State
@@ -289,12 +298,43 @@ export const BranchDepartmentsPage: React.FC = () => {
     kpi: 'أداء 100%'
   });
 
-  const filteredEntities = entities.filter(e => {
-    if (activeCategoryFilter === 'all') return true;
-    return e.category === activeCategoryFilter;
-  });
+  const filteredEntities = useMemo(() => {
+    return entities.filter(e => {
+      if (activeCategoryFilter !== 'all' && e.category !== activeCategoryFilter) {
+        return false;
+      }
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchName = e.name.toLowerCase().includes(q);
+        const matchCode = e.code.toLowerCase().includes(q);
+        const matchLoc = e.location.toLowerCase().includes(q);
+        const matchMgr = e.manager.toLowerCase().includes(q);
+        const matchDept = e.departments.some(d => d.name.toLowerCase().includes(q) || d.head.toLowerCase().includes(q));
+        if (!matchName && !matchCode && !matchLoc && !matchMgr && !matchDept) return false;
+      }
+      return true;
+    });
+  }, [entities, activeCategoryFilter, searchQuery]);
 
-  const selectedEntity = entities.find(e => e.id === selectedEntityId) || entities[0];
+  const selectedEntity = entities.find(e => e.id === selectedEntityId) || filteredEntities[0] || entities[0];
+
+  // Overall KPI statistics
+  const stats = useMemo(() => {
+    const totalStaff = entities.reduce((acc, curr) => acc + curr.staff_count, 0);
+    const totalDepts = entities.reduce((acc, curr) => acc + curr.departments.length, 0);
+    const branchesCount = entities.filter(e => e.category === 'فرع منطقي').length;
+    const companiesCount = entities.filter(e => e.category === 'شركة مجموعة').length;
+    const agenciesCount = entities.filter(e => e.category === 'مكتب خارجي').length;
+
+    return {
+      totalEntities: entities.length,
+      totalStaff,
+      totalDepts,
+      branchesCount,
+      companiesCount,
+      agenciesCount
+    };
+  }, [entities]);
 
   const handleAddSubDepartment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -327,291 +367,400 @@ export const BranchDepartmentsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header Banner */}
-      <div
-        className="card-feature-cinematic"
-        style={{
-          background: '#000000',
-          borderRadius: '16px',
-          padding: '28px',
-          color: '#FFFFFF',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Network className="w-5 h-5" />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>ORGANIZATIONAL MATRIX</span>
+      {/* Luxury Cinematic Header */}
+      <div className="rounded-3xl bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 p-7 text-white shadow-2xl border border-emerald-500/20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-xl backdrop-blur-md">
+              <Network className="w-9 h-9" />
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-              دليل الهيكلية والأقسام التخصصية للشركات والفروع
-            </h1>
-            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر، الفروع الإقليمية، والمكاتب الخارجية
-            </p>
+            <div>
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl lg:text-3xl font-black tracking-tight">دليل الهيكلية والأقسام التخصصية للشركات والفروع</h2>
+                <span className="px-3 py-1 text-xs font-black rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  Enterprise Matrix
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-emerald-100/70 mt-1 font-medium">
+                مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيام للسفر، كاس للتجارة والمعارض، الفروع الإقليمية، والوكالات الدولية
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={() => setShowAddDeptModal(true)}
+              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>إضافة قسم لـ ({selectedEntity.code})</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const exportRows = entities.flatMap(ent =>
+                  ent.departments.map(d => ({
+                    entity_code: ent.code,
+                    entity_name: ent.name,
+                    category: ent.category,
+                    location: ent.location,
+                    manager: ent.manager,
+                    dept_name: d.name,
+                    head: d.head,
+                    staff_count: d.staff_count,
+                    kpi: d.kpi,
+                    status: d.status,
+                  }))
+                );
+                exportData('branches', exportRows, 'excel', 'الهيكل التنظيمي وأقسام المجموعة');
+              }}
+              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <span>تصدير Excel</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const exportRows = entities.flatMap(ent =>
+                  ent.departments.map(d => ({
+                    entity_code: ent.code,
+                    entity_name: ent.name,
+                    category: ent.category,
+                    location: ent.location,
+                    manager: ent.manager,
+                    dept_name: d.name,
+                    head: d.head,
+                    staff_count: d.staff_count,
+                    kpi: d.kpi,
+                    status: d.status,
+                  }))
+                );
+                exportData('branches', exportRows, 'pdf', 'الهيكل التنظيمي وأقسام المجموعة');
+              }}
+              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-rose-400" />
+              <span>تصدير PDF</span>
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            className="button-white-pill"
-            onClick={() => setShowAddDeptModal(true)}
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <Plus className="w-4 h-4 ml-1" />
-            <span>+ إضافة قسم تخصصي لـ ({selectedEntity.code})</span>
-          </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => {
-              const exportRows = entities.flatMap(ent =>
-                ent.departments.map(d => ({
-                  entity_code: ent.code,
-                  entity_name: ent.name,
-                  category: ent.category,
-                  location: ent.location,
-                  manager: ent.manager,
-                  dept_name: d.name,
-                  head: d.head,
-                  staff_count: d.staff_count,
-                  kpi: d.kpi,
-                  status: d.status,
-                }))
-              );
-              exportData('branches', exportRows, 'excel', 'الهيكل التنظيمي وأقسام المجموعة');
-            }}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => {
-              const exportRows = entities.flatMap(ent =>
-                ent.departments.map(d => ({
-                  entity_code: ent.code,
-                  entity_name: ent.name,
-                  category: ent.category,
-                  location: ent.location,
-                  manager: ent.manager,
-                  dept_name: d.name,
-                  head: d.head,
-                  staff_count: d.staff_count,
-                  kpi: d.kpi,
-                  status: d.status,
-                }))
-              );
-              exportData('branches', exportRows, 'pdf', 'الهيكل التنظيمي وأقسام المجموعة');
-            }}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+      {/* Luxury KPI Cards Ribbon */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <KasKpiCard
+          title="إجمالي الكيانات"
+          value={stats.totalEntities.toString()}
+          subtitle="شركات، فروع ومكاتب"
+          icon={Building2}
+          variant="emerald"
+        />
+
+        <KasKpiCard
+          title="شركات المجموعة"
+          value={stats.companiesCount.toString()}
+          subtitle="توباز، دار الرواد، كاس.."
+          icon={Gem}
+          variant="gold"
+        />
+
+        <KasKpiCard
+          title="الفروع ومراكز الإيواء"
+          value={stats.branchesCount.toString()}
+          subtitle="الرياض، جدة، الخبر"
+          icon={Landmark}
+          variant="sky"
+        />
+
+        <KasKpiCard
+          title="الوكالات الخارجية"
+          value={stats.agenciesCount.toString()}
+          subtitle="إثيوبيا، الفلبين، الهند"
+          icon={Globe}
+          variant="purple"
+        />
+
+        <KasKpiCard
+          title="الأقسام التخصصية"
+          value={stats.totalDepts.toString()}
+          subtitle="وحدات تشغيلية مفعلة"
+          icon={Layers}
+          variant="slate"
+        />
+
+        <KasKpiCard
+          title="القوة البشرية الإجمالية"
+          value={`${stats.totalStaff} موظف`}
+          subtitle="كوادر إدارية وميدانية"
+          icon={Users}
+          variant="rose"
+        />
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="p-4 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        {/* Category Filter Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+          {[
+            { id: 'all', label: `الكل (${entities.length})`, icon: Sparkles },
+            { id: 'فرع منطقي', label: `الفروع والإيواء (${stats.branchesCount})`, icon: Landmark },
+            { id: 'شركة مجموعة', label: `شركات المجموعة (${stats.companiesCount})`, icon: Gem },
+            { id: 'مكتب خارجي', label: `المكاتب الخارجية (${stats.agenciesCount})`, icon: Globe },
+          ].map(tab => {
+            const isActive = activeCategoryFilter === tab.id;
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategoryFilter(tab.id as any)}
+                className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Quick Search */}
+        <div className="relative min-w-[260px]">
+          <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="بحث بالاسم، الكود، المدير أو القسم..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="w-full pl-4 pr-10 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Category Filter Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
-        {[
-          { id: 'all', label: `جميع الكيانات والشركات والمكاتب (${entities.length})` },
-          { id: 'فرع منطقي', label: '🏛️ الفروع الإقليمية والإيواء (4)' },
-          { id: 'شركة مجموعة', label: '💎 شركات المجموعة الرئيسية (5)' },
-          { id: 'مكتب خارجي', label: '🌍 المكاتب الخارجية والوكالات (3)' },
-        ].map(tab => {
-          const isActive = activeCategoryFilter === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveCategoryFilter(tab.id as any)}
-              style={{
-                padding: '6px 16px',
-                borderRadius: '9999px',
-                border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
-                color: isActive ? '#ffffff' : '#27272a',
-                fontWeight: isActive ? 550 : 420,
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Group Entities Selector Bar */}
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))' }}>
+      {/* Group Entities Selector Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredEntities.map(e => {
           const isSelected = selectedEntityId === e.id;
           return (
             <div
               key={e.id}
               onClick={() => setSelectedEntityId(e.id)}
-              className={isSelected ? 'card-pricing-featured cursor-pointer' : 'card-pricing cursor-pointer'}
-              style={{
-                padding: '20px',
-                borderRadius: '16px',
-                background: isSelected ? '#000000' : '#ffffff',
-                color: isSelected ? '#ffffff' : '#000000',
-                transition: 'all 0.2s ease',
-              }}
+              className={`p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
+                isSelected
+                  ? 'bg-gradient-to-br from-slate-900 to-emerald-950 text-white border-emerald-500/50 shadow-xl shadow-emerald-950/20 scale-[1.02]'
+                  : 'bg-white dark:bg-slate-900/90 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 hover:shadow-md'
+              }`}
             >
-              <div className="flex justify-between items-center mb-2">
-                <span className={isSelected ? 'pill-tag-mint text-[10px]' : 'pill-tag-shade text-[10px]'}>
+              <div className="flex justify-between items-center mb-3">
+                <span className={`px-2.5 py-1 rounded-xl text-[10px] font-black font-mono border ${
+                  isSelected
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}>
                   {e.code}
                 </span>
-                <Badge text={e.category} type={e.category === 'شركة مجموعة' ? 'purple' : e.category === 'مكتب خارجي' ? 'success' : 'info'} />
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  e.category === 'شركة مجموعة' 
+                    ? 'bg-purple-50 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300' 
+                    : e.category === 'مكتب خارجي' 
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300' 
+                    : 'bg-sky-50 text-sky-700 dark:bg-sky-950/70 dark:text-sky-300'
+                }`}>
+                  {e.category}
+                </span>
               </div>
 
-              <h4 className="font-bold text-sm mb-1">{e.name}</h4>
-              <span className={`text-xs block ${isSelected ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                المسؤول: {e.manager} • {e.departments.length} أقسام
-              </span>
+              <h4 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h4>
+              <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
+                isSelected ? 'text-emerald-100/70' : 'text-slate-500 dark:text-slate-400'
+              }`}>
+                <span className="truncate max-w-[140px]">{e.manager}</span>
+                <span className="font-bold text-[11px] shrink-0 font-mono">{e.departments.length} أقسام • {e.staff_count} موظف</span>
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Selected Entity Overview Banner */}
-      <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-        <div className="flex justify-between items-center flex-wrap gap-3">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Badge text={selectedEntity.code} type="purple" />
-              <Badge text={selectedEntity.category} type="info" />
-              <span className="pill-tag-mint text-xs">إجمالي الكادر: {selectedEntity.staff_count} موظفين</span>
+      {/* Selected Entity Hero Overview Banner */}
+      {selectedEntity && (
+        <div className="rounded-3xl bg-gradient-to-r from-emerald-50 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/20 border border-emerald-200/80 dark:border-emerald-800/50 p-6 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-1 rounded-xl bg-emerald-600 text-white font-mono font-black text-xs">
+                  {selectedEntity.code}
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-xs">
+                  {selectedEntity.category}
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-800 text-slate-700 dark:text-slate-300 font-bold text-xs font-mono">
+                  👥 إجمالي الكادر: {selectedEntity.staff_count} موظف
+                </span>
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>{selectedEntity.name}</span>
+                <span className="text-xs font-normal text-slate-500 dark:text-slate-400 font-medium">({selectedEntity.location})</span>
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                المشرف / المدير المسؤول: <strong className="text-emerald-700 dark:text-emerald-400">{selectedEntity.manager}</strong>
+              </p>
             </div>
-            <h3 className="font-bold text-base text-black">
-              {selectedEntity.name} - الموقع والفرع: {selectedEntity.location}
-            </h3>
-            <p className="text-xs text-zinc-700 mt-1">
-              المشرف / المدير المسؤول: <strong>{selectedEntity.manager}</strong>
-            </p>
-          </div>
 
-          <button
-            className="button-primary-pill"
-            onClick={() => setShowAddDeptModal(true)}
-            style={{ padding: '6px 18px', fontSize: '12.5px', minHeight: '36px' }}
-          >
-            <Plus className="w-4 h-4 ml-1" />
-            <span>تطوير وإضافة قسم تخصصي</span>
-          </button>
+            <button
+              onClick={() => setShowAddDeptModal(true)}
+              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition self-start md:self-center cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>تطوير وإضافة قسم تخصصي</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Sub-Departments Cards Grid */}
-      <div>
-        <h3 className="text-base font-bold text-black mb-4 flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-black" />
-          <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
-        </h3>
+      {selectedEntity && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-emerald-600" />
+              <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
+            </h3>
+            <span className="text-xs font-bold text-slate-500 font-mono">
+              {selectedEntity.departments.length} أقسام تشغيلية
+            </span>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {selectedEntity.departments.map(dept => (
-            <div key={dept.id} className="card-pricing flex flex-col justify-between" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold text-sm">
-                    <Building2 className="w-5 h-5 text-emerald-400" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {selectedEntity.departments.map(dept => (
+              <div 
+                key={dept.id} 
+                className="rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/40 transition-all flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center font-bold shadow-xs">
+                      <Building2 className="w-6 h-6" />
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-2xs">
+                      {dept.kpi}
+                    </span>
                   </div>
-                  <span className="pill-tag-mint text-[11px]">{dept.kpi}</span>
+
+                  <h4 className="font-black text-base text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    {dept.name}
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium mb-4">
+                    {dept.description}
+                  </p>
                 </div>
 
-                <h4 className="font-bold text-sm text-black mb-2">{dept.name}</h4>
-                <p className="text-xs text-zinc-600 leading-relaxed mb-4">{dept.description}</p>
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                  <div className="text-slate-500 dark:text-slate-400">
+                    <span>رئيس القسم: </span>
+                    <strong className="text-slate-900 dark:text-white font-bold">{dept.head}</strong>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 font-mono font-black text-xs">
+                    {dept.staff_count} كوادر
+                  </span>
+                </div>
               </div>
-
-              <div className="pt-3 border-t border-zinc-100 flex justify-between items-center text-xs text-zinc-600">
-                <span>رئيس القسم: <strong className="text-black">{dept.head}</strong></span>
-                <span className="text-emerald-700 font-bold">{dept.staff_count} موظفين مفعلين</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Add Sub-Department Modal */}
-      {showAddDeptModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-emerald-400" />
+      {showAddDeptModal && selectedEntity && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 text-slate-900 dark:text-white relative">
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
+
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-emerald-600" />
                 <span>إضافة قسم تخصصي لـ ({selectedEntity.name})</span>
               </h3>
-              <button onClick={() => setShowAddDeptModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button 
+                onClick={() => setShowAddDeptModal(false)} 
+                className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white transition"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleAddSubDepartment} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddSubDepartment} className="space-y-4 text-xs">
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم القسم التخصصي *</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">اسم القسم التخصصي *</label>
                 <input
                   type="text"
                   placeholder="مثال: إدارة الرعاية الطبية والفحوصات..."
                   value={deptForm.name}
                   onChange={e => setDeptForm({ ...deptForm, name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">رئيس / مشرف القسم *</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">رئيس / مشرف القسم *</label>
                 <input
                   type="text"
                   placeholder="اسم مسؤول القسم..."
                   value={deptForm.head}
                   onChange={e => setDeptForm({ ...deptForm, head: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">الوصف المهني ومسؤوليات القسم *</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">الوصف المهني ومسؤوليات القسم *</label>
                 <textarea
                   rows={3}
                   placeholder="اكتب مهام وأهداف هذا القسم التخصصي..."
                   value={deptForm.description}
                   onChange={e => setDeptForm({ ...deptForm, description: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-medium text-slate-900 dark:text-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-700 mb-1">مؤشر الأداء المستهدف KPI</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">مؤشر الأداء المستهدف KPI</label>
                 <input
                   type="text"
                   value={deptForm.kpi}
                   onChange={e => setDeptForm({ ...deptForm, kpi: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
-                <button type="button" className="button-outline-on-light" onClick={() => setShowAddDeptModal(false)} style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}>
+              <div className="flex gap-3 justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button 
+                  type="button" 
+                  onClick={() => setShowAddDeptModal(false)} 
+                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition"
+                >
                   إلغاء
                 </button>
-                <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}>
-                  <Check className="w-4 h-4 ml-1" />
+                <button 
+                  type="submit" 
+                  className="px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/25 transition"
+                >
+                  <Check className="w-4 h-4" />
                   <span>اعتماد القسم التخصصي</span>
                 </button>
               </div>
