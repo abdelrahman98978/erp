@@ -308,8 +308,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setBiometricProgress(20);
     setBiometricMessage(
       type === 'fingerprint'
-        ? `يرجى وضع إصبعك على مستشعر البصمة الحقيقي (Windows Hello / Touch ID)...`
-        : `يرجى توجيه وجهك أمام الكاميرا للمطابقة البيومترية الحقيقية (Face ID)...`
+        ? `يرجى لمس مستشعر البصمة البيومترية المعتمد (Windows Hello / Touch ID)...`
+        : `يرجى توجيه الوجه أمام الكاميرا للمصادقة البيومترية المعتمدة (Face ID)...`
     );
 
     let currentP = 20;
@@ -339,8 +339,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       setBiometricStatus('success');
       setBiometricMessage(
         authResult.isRealHardware
-          ? `تم التحقق بنجاح عبر مستشعر البصمة الحقيقي (${authResult.authenticatorType || 'Hardware'})!`
-          : `تم التحقق البيومتري بنجاح! جاري توجيهك إلى ${selectedPortal.nameAr}...`
+          ? `تم التحقق بنجاح عبر مستشعر الأمان البيومتري (${authResult.authenticatorType || 'Hardware'})!`
+          : `تمت المصادقة البيومترية بنجاح! جاري التوجيه إلى ${selectedPortal.nameAr}...`
       );
       localStorage.setItem('ALSULAIM_LAST_BIOMETRIC_AUTH', JSON.stringify({
         type,
@@ -1045,7 +1045,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>الدخول بالبصمة الحقيقية (Real WebAuthn)</span>
+                      <span>المصادقة البيومترية المعتمدة (WebAuthn / FIDO2)</span>
                     </span>
                     <span className="pill-tag-mint text-[10px]" style={{ padding: '2px 8px' }}>
                       {hasHardwareWebAuthn ? '● مستشعر الجهاز متصل' : '● بروتوكول مشفر جاهز'}
@@ -1073,7 +1073,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       }}
                     >
                       <Fingerprint className="w-4 h-4 text-emerald-600" />
-                      <span>بصمة الإصبع الحقيقية</span>
+                      <span>بصمة الإصبع (Touch ID)</span>
                     </button>
 
                     <button
@@ -1096,7 +1096,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       }}
                     >
                       <ScanFace className="w-4 h-4 text-purple-600" />
-                      <span>بصمة الوجه الحقيقية</span>
+                      <span>بصمة الوجه (Face ID)</span>
                     </button>
                   </div>
                 </div>

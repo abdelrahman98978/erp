@@ -238,10 +238,10 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             onClick={() => setShowDataHubModal(true)}
             className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 transition-colors"
-            title="إدارة قاعدة البيانات الحقيقية واستيراد البيانات الفعلية"
+            title="مركز إدارة قاعدة البيانات المؤسسية والبيانات الفعلية"
           >
             <Database className="w-3 h-3 text-emerald-700" />
-            <span>قاعدة البيانات الحقيقية</span>
+            <span>قاعدة البيانات المؤسسية</span>
           </button>
         </div>
 

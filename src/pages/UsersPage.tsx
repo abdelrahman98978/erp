@@ -284,7 +284,7 @@ export const UsersPage: React.FC = () => {
 
       addNotification({
         title: 'تم تسجيل البصمة بنجاح',
-        message: `تم ربط وتخزين البصمة البيومترية الحقيقية للمستخدم (${userForBiometrics.name}) بنجاح.`,
+        message: `تم توثيق وربط المفتاح البيومتري للمستخدم (${userForBiometrics.name}) بنجاح.`,
         type: 'success'
       });
     } else if (result.canceled) {
@@ -314,7 +314,7 @@ export const UsersPage: React.FC = () => {
         credId: cred.id,
         success: true,
         message: result.isRealHardware
-          ? `✓ تم التحقق بنجاح عبر مستشعر العتاد الحقيقي (${result.authenticatorType || 'Hardware'})!`
+          ? `✓ تمت المصادقة بنجاح عبر مستشعر الأمان الحيوي (${result.authenticatorType || 'Hardware'})!`
           : '✓ تم فحص البصمة والمطابقة التشفيرية بنجاح!'
       });
       if (userForBiometrics) {
@@ -608,7 +608,7 @@ export const UsersPage: React.FC = () => {
                         onClick={() => handleOpenBiometricModal(u)}
                         className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
                         style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        title="إدارة وتسجيل البصمة البيومترية الحقيقية (WebAuthn / FIDO2)"
+                        title="إدارة وتوثيق المفاتيح البيومترية (WebAuthn / FIDO2)"
                       >
                         <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
                         <span>البصمة</span>
@@ -1272,9 +1272,9 @@ export const UsersPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <h4 className="font-bold text-xs text-emerald-950 flex items-center gap-1.5 m-0">
                     <Plus className="w-4 h-4 text-emerald-700" />
-                    <span>تسجيل بصمة حقيقية جديدة لهذا الحساب الآن</span>
+                    <span>تسجيل وتوثيق مفتاح بيومتري جديد لهذا الحساب</span>
                   </h4>
-                  <span className="pill-tag-mint text-[10px]">Real WebAuthn Enrollment</span>
+                  <span className="pill-tag-mint text-[10px]">FIDO2 WebAuthn Key</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1325,7 +1325,7 @@ export const UsersPage: React.FC = () => {
                   ) : (
                     <>
                       <Fingerprint className="w-4 h-4" />
-                      <span>بدء تسجيل وتفويض البصمة الحقيقية على هذا الجهاز</span>
+                      <span>بدء تسجيل وتفويض البصمة البيومترية على هذا الجهاز</span>
                     </>
                   )}
                 </button>

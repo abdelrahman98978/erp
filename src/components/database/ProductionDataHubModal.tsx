@@ -71,10 +71,10 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
     setDataMode(mode);
     setCurrentMode(mode);
     addNotification({
-      title: mode === 'production_real' ? 'تفعيل وضع الإنتاج الحقيقي' : 'تفعيل الوضع التجريبي',
+      title: mode === 'production_real' ? 'تفعيل نمط الإنتاج المؤسسي الفعلي' : 'تفعيل النمط الاستعراضي',
       message: mode === 'production_real' 
-        ? 'تم تحويل النظام إلى نمط الإنتاج الفعلي: يتم الاعتماد حصرياً على البيانات الحقيقية.' 
-        : 'تم تفعيل وضع المعاينة التجريبية للاستعراض.',
+        ? 'تم تحويل النظام إلى نمط الإنتاج الفعلي: يتم الاعتماد حصرياً على السجلات التشغيلية المعتمدة.' 
+        : 'تم تفعيل نمط المعاينة للاستعراض التوضيحي.',
       type: 'success',
     });
     refreshStats();
@@ -82,13 +82,13 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
   };
 
   const handlePurgeData = () => {
-    if (window.confirm('هل أنت متأكد من رغبتك في إفراغ كافة السجلات التجريبية وتصفير الجداول للبدء ببيانات الإنتاج الحقيقية؟ هذا الإجراء فوري.')) {
+    if (window.confirm('هل أنت متأكد من رغبتك في تصفير الجداول للبدء بالسجلات الإنتاجية المعتمدة؟ هذا الإجراء فوري وغير قابل للتراجع.')) {
       realErpDataStore.purgeAllDemoData();
       setCurrentMode('production_real');
       refreshStats();
       addNotification({
-        title: 'تصفير البيانات التجريبية',
-        message: 'تم إفراغ كافة الجداول بنجاح. النظام الآن جاهز لاستقبال بياناتكم الحقيقية بالكامل.',
+        title: 'تصفير السجلات الافتراضية',
+        message: 'تم تصفير كافة الجداول بنجاح. النظام الآن جاهز لاستقبال السجلات التشغيلية المعتمدة بالكامل.',
         type: 'success',
       });
       setTimeout(() => window.location.reload(), 600);
@@ -118,7 +118,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
       if (result.success) {
         addNotification({
           title: 'اكتمال الاستيراد',
-          message: `تم استيراد ${result.importedCount} سجل حقيقي بنجاح إلى جدول (${targetTable}).`,
+          message: `تم استيراد ${result.importedCount} سجل بنجاح إلى جدول (${targetTable}).`,
           type: 'success',
         });
         refreshStats();
@@ -164,13 +164,13 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in font-sans">
       <div 
         className="bg-white rounded-3xl border border-zinc-200 shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
         dir="rtl"
       >
         {/* Header */}
-        <div className="p-6 bg-black text-white flex items-center justify-between">
+        <div className="p-6 bg-black text-white flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-emerald-400 border border-white/20">
               <Database className="w-5 h-5" />
@@ -178,10 +178,10 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base font-bold text-white m-0">
-                  إدارة قاعدة البيانات والبيانات الحقيقية (Production Data Hub)
+                  مركز إدارة قواعد البيانات التشغيلية (Production Data Hub)
                 </h3>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${currentMode === 'production_real' ? 'bg-emerald-500 text-black' : 'bg-amber-500 text-black'}`}>
-                  {currentMode === 'production_real' ? '⚡ وضع الإنتاج الحقيقي' : '🧪 الوضع التجريبي'}
+                  {currentMode === 'production_real' ? '⚡ نمط الإنتاج الفعلي' : '🧪 نمط المعاينة'}
                 </span>
               </div>
               <p className="text-xs text-zinc-400 m-0 mt-0.5">
@@ -298,19 +298,19 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                      <span className="text-sm font-bold text-black">وضع الإنتاج الحقيقي (موصى به)</span>
+                      <span className="text-sm font-bold text-black">نمط الإنتاج المؤسسي الفعلي (موصى به)</span>
                     </div>
                     {currentMode === 'production_real' && (
-                      <span className="pill-tag-mint" style={{ fontSize: '10px' }}>الوضع النشط حالياً</span>
+                      <span className="pill-tag-mint" style={{ fontSize: '10px' }}>النمط النشط حالياً</span>
                     )}
                   </div>
                   <p className="text-xs text-zinc-600 leading-relaxed mb-3">
-                    يعتمد كلياً على سجلاتكم وقواعد بياناتكم الفعلية المدخلة أو المستوردة. لا يظهر أي بيانات وهمية أو تجريبية.
+                    يعتمد كلياً على سجلاتكم وقواعد بياناتكم الفعلية المدخلة أو المستوردة بصورة تشغيلية معتمدة.
                   </p>
                   <ul className="text-[11px] text-zinc-600 space-y-1">
                     <li className="flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>حفظ دائم في قاعدة البيانات وسير العمليات</span>
+                      <span>حفظ دائم في قاعدة البيانات وسير العمليات المؤسسية</span>
                     </li>
                     <li className="flex items-center gap-1.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -331,19 +331,19 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Cpu className="w-5 h-5 text-amber-600" />
-                      <span className="text-sm font-bold text-black">وضع الاستعراض التجريبي (Demo)</span>
+                      <span className="text-sm font-bold text-black">نمط المعاينة الاستعراضي (Demo)</span>
                     </div>
                     {currentMode === 'demo_preview' && (
-                      <span className="pill-tag-shade" style={{ fontSize: '10px' }}>الوضع النشط حالياً</span>
+                      <span className="pill-tag-shade" style={{ fontSize: '10px' }}>النمط النشط حالياً</span>
                     )}
                   </div>
                   <p className="text-xs text-zinc-600 leading-relaxed mb-3">
-                    يستخدم نماذج بيانات افتراضية لتوضيح الشكل العام للوحة والتقارير عند غياب البيانات.
+                    يستخدم نماذج بيانات إرشادية لتوضيح الهيكل العام للوحة والتقارير عند التهيئة الأولى.
                   </p>
                   <ul className="text-[11px] text-zinc-600 space-y-1">
                     <li className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
-                      <span>بيانات افتراضية للتجربة السريعة</span>
+                      <span>بيانات استرشادية للعرض السريع</span>
                     </li>
                   </ul>
                 </div>
@@ -354,10 +354,10 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                 <div>
                   <h4 className="text-xs font-bold text-rose-900 m-0 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4 text-rose-600" />
-                    <span>إفراغ وتصفير البيانات التجريبية بالكامل</span>
+                    <span>تصفير وإفراغ السجلات الافتراضية بالكامل</span>
                   </h4>
                   <p className="text-xs text-rose-700 m-0 mt-1">
-                    حذف كافة السجلات النموذجية في جميع الجداول للبدء بسجل إنتاجي حقيقي ونظيف.
+                    تصفير الجداول في كافة الوحدات للبدء بسجلات إنتاجية معتمدة ونظيفة.
                   </p>
                 </div>
 
@@ -366,7 +366,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
-                  <span>تصفير البيانات والبدء الفعلي</span>
+                  <span>تصفير السجلات والبدء الفعلي</span>
                 </button>
               </div>
             </div>
@@ -377,7 +377,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-500 font-bold">
-                  الجداول الحقيقية وعدد السجلات المسجلة في كل جدول:
+                  جداول المنظومة المؤسسية وعدد السجلات المسجلة:
                 </span>
                 <button
                   onClick={refreshStats}
@@ -418,7 +418,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             <div className="space-y-5">
               <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200">
                 <label className="block text-xs font-bold text-black mb-2">
-                  اختر الجدول المراد استيراد بياناته الحقيقية:
+                  اختر الجدول المراد استيراد بياناته:
                 </label>
                 <select
                   value={targetTable}
@@ -434,10 +434,10 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
               <div className="p-8 border-2 border-dashed border-zinc-300 rounded-2xl bg-zinc-50 text-center space-y-3">
                 <FileSpreadsheet className="w-10 h-10 text-emerald-600 mx-auto" />
                 <h4 className="text-sm font-bold text-black m-0">
-                  رفع ملف البيانات الحقيقية (Excel, CSV, JSON)
+                  استيراد ملف البيانات المعتمد (Excel, CSV, JSON)
                 </h4>
                 <p className="text-xs text-zinc-500 max-w-md mx-auto">
-                  قم باختيار ملف البيانات الحقيقية الخاص بشركتك ليتم إدراجه فوراً في جدول ({tableLabels[targetTable]?.label || targetTable})
+                  قم باختيار ملف البيانات المعتمد الخاص بالمنشأة ليتم إدراجه فوراً في جدول ({tableLabels[targetTable]?.label || targetTable})
                 </p>
 
                 <div className="pt-2">

@@ -622,7 +622,7 @@ export const TendersBOQPage: React.FC = () => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      addNotification({ title: 'تصدير Excel حقيقي بالمعادلات', message: 'تم توليد وتصدير ملف Excel رسمي يتضمن كافة المعادلات والصيغ الحسابية والتفقيط بنجاح.', type: 'success' });
+      addNotification({ title: 'تصدير مصنف Excel تفاعلي بالمعادلات', message: 'تم توليد وتصدير ملف Excel رسمي يتضمن كافة المعادلات والصيغ الحسابية والتفقيط بنجاح.', type: 'success' });
     } catch (err: any) {
       handleExportBOQCSV();
     }
