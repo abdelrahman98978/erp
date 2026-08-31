@@ -162,16 +162,28 @@ const MainContent: React.FC = () => {
   if (flowState === 'landing') {
     return (
       <Suspense fallback={<PageFallback />}>
-        <LandingPage onSelectCompany={() => setFlowState('login')} />
+        <LandingPage onSelectCompany={(companyId: string) => {
+          if (companyId && companyId !== 'login') {
+            localStorage.setItem('ALSULAIM_TARGET_SYSTEM', companyId.toLowerCase());
+          }
+          setFlowState('login');
+        }} />
       </Suspense>
     );
   }
 
-  // 2. Login Page
+  // 2. Login Page with Dedicated Isolated System Portals
   if (flowState === 'login') {
     return (
       <Suspense fallback={<PageFallback />}>
-        <LoginPage onLoginSuccess={() => setFlowState('launcher')} />
+        <LoginPage onLoginSuccess={(targetTab?: string, targetTitle?: string) => {
+          if (targetTab) {
+            setActiveTab(targetTab, targetTitle || targetTab);
+            setFlowState('workspace');
+          } else {
+            setFlowState('launcher');
+          }
+        }} />
       </Suspense>
     );
   }

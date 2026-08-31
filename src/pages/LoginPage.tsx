@@ -2,22 +2,273 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LANGUAGES, Language } from '../i18n/languages';
 import { useAuthContext } from '../contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import { useCompany } from '../contexts/CompanyContext';
+import { useAppStore } from '../stores/appStore';
+import { CompanyId } from '../types';
+import { 
+  Loader2, 
+  Building2, 
+  ShieldCheck, 
+  Sparkles, 
+  Store, 
+  Globe, 
+  Users, 
+  FileText, 
+  CheckCircle2, 
+  Lock, 
+  ArrowLeft,
+  Layers,
+  Zap,
+  Briefcase,
+  UserCheck
+} from 'lucide-react';
+
+export interface SystemPortalOption {
+  id: string;
+  key: string;
+  nameAr: string;
+  nameEn: string;
+  companyId: CompanyId;
+  category: 'شركات المجموعة' | 'البوابات الرقمية' | 'الإدارة والسيطرة';
+  license: string;
+  tagBadge: string;
+  iconName: string;
+  themeColor: string;
+  gradient: string;
+  description: string;
+  defaultUser: string;
+  defaultPass: string;
+  targetTab: string;
+  targetTitle: string;
+  kpis: { label: string; value: string }[];
+}
+
+export const SYSTEM_PORTALS: SystemPortalOption[] = [
+  {
+    id: 'saf',
+    key: 'saf',
+    companyId: 'SAF',
+    nameAr: 'شركة الصفا الماسي للاستقدام',
+    nameEn: 'Al-Safa Al-Masi Recruitment Co.',
+    category: 'شركات المجموعة',
+    license: 'ترخيص مساند RC01 • س.ت 1010123456',
+    tagBadge: 'عقود الاستقدام مساند',
+    iconName: 'Building2',
+    themeColor: '#0284c7',
+    gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+    description: 'بوابة إدارة عقود استقدام الأفراد، إصدار التأشيرات، توثيق مساند، وبوالص التأمين.',
+    defaultUser: 'saf.manager@alsulaim.sa',
+    defaultPass: 'SafRecruit@2026',
+    targetTab: 'recruitment-contracts',
+    targetTitle: 'عقود استقدام مساند - شركة الصفا الماسي',
+    kpis: [
+      { label: 'عقود مساند', value: '1,420+' },
+      { label: 'تأشيرات نشطة', value: '380' },
+      { label: 'SLA استقدام', value: '98.5%' }
+    ]
+  },
+  {
+    id: 'yaq',
+    key: 'yaq',
+    companyId: 'YAQ',
+    nameAr: 'شركة الياقوت الشرقية للتشغيل والتأجير',
+    nameEn: 'Yaqoot Eastern Operation & Rental Co.',
+    category: 'شركات المجموعة',
+    license: 'ترخيص مساند RC02 • س.ت 1010543210',
+    tagBadge: 'التأجير والتشغيل المرن',
+    iconName: 'Users',
+    themeColor: '#e11d48',
+    gradient: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
+    description: 'بوابة عقود وباقات تأجير الكوادر المهنية والعمالة المنزلية وخدمات قطاع الأعمال.',
+    defaultUser: 'yaq.operations@alsulaim.sa',
+    defaultPass: 'YaqootRent@2026',
+    targetTab: 'rent-contracts',
+    targetTitle: 'عقود التأجير والتشغيل - شركة الياقوت',
+    kpis: [
+      { label: 'عقود إيجار', value: '890+' },
+      { label: 'باقات نشطة', value: '24' },
+      { label: 'نسبة الإشغال', value: '94.2%' }
+    ]
+  },
+  {
+    id: 'top',
+    key: 'top',
+    companyId: 'TOP',
+    nameAr: 'شركة توب تالنت الدولية للتوظيف والـ ATS',
+    nameEn: 'Top Talent ATS & Recruitment Co.',
+    category: 'شركات المجموعة',
+    license: 'ترخيص مساند RC03 • س.ت 1010776543',
+    tagBadge: 'التوظيف الذكي و ATS',
+    iconName: 'Sparkles',
+    themeColor: '#7c3aed',
+    gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+    description: 'منظومة التوظيف والفرز الذكي ATS، استيراد السير بالدفعة، وشبكة المكاتب الدولية.',
+    defaultUser: 'top.recruiter@alsulaim.sa',
+    defaultPass: 'TopTalent@2026',
+    targetTab: 'ats-pipeline',
+    targetTitle: 'منظومة ATS والفرز الوظيفي - توب تالنت',
+    kpis: [
+      { label: 'سير ATS', value: '3,250+' },
+      { label: 'مكاتب دولية', value: '38' },
+      { label: 'دقة المطابقة', value: '97%' }
+    ]
+  },
+  {
+    id: 'kas',
+    key: 'kas',
+    companyId: 'KAS',
+    nameAr: 'مؤسسة كاس وسحابة اعتماد للمنافسات',
+    nameEn: 'KAS Trading & Etmad Cloud (BOQ)',
+    category: 'شركات المجموعة',
+    license: 'ترخيص مساند RC04 + كود مورد KAS-990',
+    tagBadge: 'المنافسات وجداول الكميات BOQ',
+    iconName: 'FileText',
+    themeColor: '#d97706',
+    gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+    description: 'بوابة سحابة اعتماد، منافسات التوريدات والتشغيل، وتسعير جداول الكميات BOQ.',
+    defaultUser: 'kas.etmad@alsulaim.sa',
+    defaultPass: 'KasEtmad@2026',
+    targetTab: 'tenders-boq',
+    targetTitle: 'منافسات شركة كاس وجداول الكميات (BOQ)',
+    kpis: [
+      { label: 'منافسات BOQ', value: '18 مناقصة' },
+      { label: 'قيمة المشاريع', value: '45M ر.س' },
+      { label: 'سحابة اعتماد', value: '100% متصل' }
+    ]
+  },
+  {
+    id: 'client',
+    key: 'client',
+    companyId: 'SAF',
+    nameAr: 'بوابة العملاء والخدمة الذاتية',
+    nameEn: 'Client Self-Service Portal',
+    category: 'البوابات الرقمية',
+    license: 'بوابة المستفيدين والمتابعة 24/7',
+    tagBadge: 'الخدمة الذاتية للمستفيدين',
+    iconName: 'UserCheck',
+    themeColor: '#059669',
+    gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+    description: 'بوابة عملاء الاستقدام والتأجير: تتبع مراحل القدوم، سداد الفواتير ZATCA، وبوالص التأمين.',
+    defaultUser: 'client@alsulaim.sa',
+    defaultPass: 'ClientPortal@2026',
+    targetTab: 'client-portal',
+    targetTitle: 'بوابة خدمة وتتبع عقود العملاء',
+    kpis: [
+      { label: 'تتبع الرحلات', value: 'لحظي' },
+      { label: 'الفواتير ZATCA', value: 'مفوترة' },
+      { label: 'تقييم الخدمة', value: '4.9/5' }
+    ]
+  },
+  {
+    id: 'agent',
+    key: 'agent',
+    companyId: 'SAF',
+    nameAr: 'بوابة الوكلاء والمكاتب الخارجية الدولية',
+    nameEn: 'International Agency & Partner Portal',
+    category: 'البوابات الرقمية',
+    license: 'بوابة الوكالات والشركاء المعتمدين',
+    tagBadge: 'بوابة الوكالات الخارجية',
+    iconName: 'Globe',
+    themeColor: '#4f46e5',
+    gradient: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
+    description: 'بوابة المكاتب المعتمدة دولياً لرفع السير الذاتية بالدفعة ومطابقة الحسابات المالية.',
+    defaultUser: 'agent.manila@agency.ph',
+    defaultPass: 'AgencyPartner@2026',
+    targetTab: 'foreign-agency-portal',
+    targetTitle: 'بوابة الوكلاء والمكاتب الخارجية',
+    kpis: [
+      { label: 'دول الشراكة', value: '14 دولة' },
+      { label: 'سير معتمدة', value: '820+' },
+      { label: 'تفييز إنجاز', value: 'مؤتمت' }
+    ]
+  },
+  {
+    id: 'ecommerce',
+    key: 'ecommerce',
+    companyId: 'SAF',
+    nameAr: 'بوابة المتاجر الإلكترونية وقنوات البيع',
+    nameEn: 'E-Commerce & Omnichannel Stores Hub',
+    category: 'البوابات الرقمية',
+    license: 'سلة • زد • شوبيفاي • ووكومرس • ميسر',
+    tagBadge: 'قنوات البيع الرقمية',
+    iconName: 'Store',
+    themeColor: '#0891b2',
+    gradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
+    description: 'بوابة مدراء المبيعات والمتاجر: تزامن الطلبات، الباقات الرقمية، وبوابات الدفع الإلكتروني.',
+    defaultUser: 'store.manager@alsulaim.sa',
+    defaultPass: 'StoreOnline@2026',
+    targetTab: 'smacc-modules',
+    targetTitle: 'ربط وتزامن المتاجر الإلكترونية',
+    kpis: [
+      { label: 'متاجر متصلة', value: '5 متاجر' },
+      { label: 'طلبات مستلمة', value: '1,026' },
+      { label: 'استجابة Webhook', value: '<800ms' }
+    ]
+  },
+  {
+    id: 'admin',
+    key: 'admin',
+    companyId: 'all',
+    nameAr: 'الإدارة المركزية والسيطرة العليا',
+    nameEn: 'Executive Command & Super Admin',
+    category: 'الإدارة والسيطرة',
+    license: 'مجموعة خالد السليم القابضة الموحدة',
+    tagBadge: 'التحكم الفائق والحوكمة',
+    iconName: 'ShieldCheck',
+    themeColor: '#000000',
+    gradient: 'linear-gradient(135deg, #18181b 0%, #000000 100%)',
+    description: 'مركز القيادة الموحد: حوكمة الشركات الـ 4، الصلاحيات IAM، المؤشرات المالية، وسجل النشاط.',
+    defaultUser: 'admin@alsulaim.sa',
+    defaultPass: 'Alsulaim@2026',
+    targetTab: 'admin-dashboard',
+    targetTitle: 'لوحة تحكم الإدارة والسيطرة المركزية',
+    kpis: [
+      { label: 'الشركات التابعة', value: '4 شركات' },
+      { label: 'الأمان والامتثال', value: '100% ZATCA' },
+      { label: 'مستخدمين نشطين', value: '450+' }
+    ]
+  }
+];
 
 interface LoginPageProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (targetTab?: string, targetTitle?: string, targetCompanyId?: CompanyId) => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const { currentLanguage, setLanguage, t } = useLanguage();
   const { signIn, loading: authLoading, error: authError } = useAuthContext();
+  const { setActiveCompanyId } = useCompany();
+  const { setActiveTab } = useAppStore();
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  // Determine initial portal based on saved preference or URL param
+  const getInitialPortal = (): SystemPortalOption => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramSystem = urlParams.get('system') || localStorage.getItem('ALSULAIM_TARGET_SYSTEM');
+    if (paramSystem) {
+      const match = SYSTEM_PORTALS.find(p => p.id.toLowerCase() === paramSystem.toLowerCase() || p.key.toLowerCase() === paramSystem.toLowerCase());
+      if (match) return match;
+    }
+    return SYSTEM_PORTALS[0];
+  };
+
+  const [selectedPortal, setSelectedPortal] = useState<SystemPortalOption>(getInitialPortal);
+  const [selectedCategory, setSelectedCategory] = useState<'شركات المجموعة' | 'البوابات الرقمية' | 'الإدارة والسيطرة'>('شركات المجموعة');
+
+  const [username, setUsername] = useState(selectedPortal.defaultUser);
+  const [password, setPassword] = useState(selectedPortal.defaultPass);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+
+  // When selected portal changes, update credentials
+  const handleSelectPortal = (portal: SystemPortalOption) => {
+    setSelectedPortal(portal);
+    setSelectedCategory(portal.category);
+    setUsername(portal.defaultUser);
+    setPassword(portal.defaultPass);
+    localStorage.setItem('ALSULAIM_TARGET_SYSTEM', portal.id);
+  };
 
   // 2FA Verification Step States
   const [is2FAStep, setIs2FAStep] = useState(false);
@@ -35,35 +286,36 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [biometricStatus, setBiometricStatus] = useState<'idle' | 'scanning' | 'success' | 'failed'>('idle');
   const [biometricMessage, setBiometricMessage] = useState('');
 
+  const executeCompleteLogin = () => {
+    setActiveCompanyId(selectedPortal.companyId);
+    setActiveTab(selectedPortal.targetTab, selectedPortal.targetTitle);
+    onLoginSuccess(selectedPortal.targetTab, selectedPortal.targetTitle, selectedPortal.companyId);
+  };
+
   const handleTriggerBiometric = async (type: 'fingerprint' | 'face') => {
     setBiometricModal(type);
     setBiometricStatus('scanning');
     setBiometricProgress(15);
     setBiometricMessage(
       type === 'fingerprint'
-        ? 'يرجى وضع إصبعك على مستشعر البصمة (Touch ID / Windows Hello)...'
-        : 'يرجى توجيه وجهك أمام الكاميرا للمطابقة البيومترية ثلاثية الأبعاد (Face ID)...'
+        ? `يرجى وضع إصبعك على مستشعر البصمة للدخول إلى ${selectedPortal.nameAr}...`
+        : `يرجى توجيه وجهك أمام الكاميرا للمطابقة البيومترية لمنظومة ${selectedPortal.nameAr}...`
     );
 
-    // Progressive biometric scanning animation steps
     for (let p = 30; p <= 100; p += 25) {
-      await new Promise(r => setTimeout(r, 260));
+      await new Promise(r => setTimeout(r, 240));
       setBiometricProgress(Math.min(100, p));
       if (p === 55) {
-        setBiometricMessage(
-          type === 'fingerprint'
-            ? 'جاري فحص النمط المشفر والمصادقة مع وحدة الأمان Secure Enclave...'
-            : 'جاري مطابقة المعالم الحيوية والتأكد من الحيوية (Liveness Check)...'
-        );
+        setBiometricMessage('جاري التحقق من التشفير والمصادقة مع وحدة الأمان Secure Enclave...');
       }
     }
 
     setBiometricStatus('success');
-    setBiometricMessage('تم التحقق البيومتري بنجاح! جاري توجيهك إلى المنظومة...');
-    localStorage.setItem('ALSULAIM_LAST_BIOMETRIC_AUTH', JSON.stringify({ type, timestamp: new Date().toISOString() }));
-    await new Promise(r => setTimeout(r, 650));
+    setBiometricMessage(`تم التحقق البيومتري بنجاح! جاري توجيهك إلى ${selectedPortal.nameAr}...`);
+    localStorage.setItem('ALSULAIM_LAST_BIOMETRIC_AUTH', JSON.stringify({ type, portal: selectedPortal.id, timestamp: new Date().toISOString() }));
+    await new Promise(r => setTimeout(r, 600));
     setBiometricModal(null);
-    onLoginSuccess();
+    executeCompleteLogin();
   };
 
   useEffect(() => {
@@ -99,14 +351,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
       container.appendChild(renderer.domElement);
 
-      // Lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambientLight);
       const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
       directionalLight.position.set(5, 5, 5);
       scene.add(directionalLight);
 
-      // Create a Geometric Star
       const starColor = 0x0f6b6e;
       const starGeometry = new THREE.IcosahedronGeometry(4, 0);
 
@@ -133,7 +383,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       const starMesh = new THREE.Mesh(starGeometry, wireframeMaterial);
       scene.add(starMesh);
 
-      // Core Sphere
       const coreGeo = new THREE.SphereGeometry(1.5, 16, 16);
       const coreMat = new THREE.MeshPhongMaterial({
         color: starColor,
@@ -145,7 +394,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       const core = new THREE.Mesh(coreGeo, coreMat);
       scene.add(core);
 
-      // Orbital Particles
       const particlesCount = 200;
       const particlesGeometry = new THREE.BufferGeometry();
       const posArray = new Float32Array(particlesCount * 3);
@@ -166,7 +414,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       scene.add(particleMesh);
 
       camera.position.z = 15;
-
       let clock = new THREE.Clock();
 
       function animate() {
@@ -220,42 +467,31 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         cancelAnimationFrame(animId);
         window.removeEventListener('resize', handleResize);
         document.removeEventListener('mousemove', handleMouseMove);
-        if (renderer && renderer.domElement) {
+        if (renderer && renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
           renderer.dispose();
         }
       };
     };
 
-    let cleanup: any;
-    if (!initThree()) {
-      const timer = setInterval(() => {
-        if (initThree()) {
-          clearInterval(timer);
-        }
-      }, 100);
-      return () => clearInterval(timer);
-    } else {
-      cleanup = initThree();
-    }
-
+    let cleanup = initThree();
     return () => {
-      if (cleanup) cleanup();
+      if (typeof cleanup === 'function') cleanup();
     };
-  }, []);
+  }, [selectedPortal.id]);
 
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
-    const effectiveUser = username.trim() || 'admin@alsulaim.sa';
-    const effectivePass = password.trim() || 'Alsulaim@2026';
+    const effectiveUser = username.trim() || selectedPortal.defaultUser;
+    const effectivePass = password.trim() || selectedPortal.defaultPass;
 
     const result = await signIn(effectiveUser, effectivePass);
     if (result.success) {
       setIs2FAStep(true);
       setTimerSeconds(45);
     } else {
-      // In offline/demo fallback, allow immediate login transition
       setIs2FAStep(true);
       setTimerSeconds(45);
     }
@@ -264,7 +500,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const handle2FASubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
-    onLoginSuccess();
+    executeCompleteLogin();
   };
 
   const handleOtpChange = (index: number, val: string) => {
@@ -273,7 +509,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     newValues[index] = val;
     setOtpValues(newValues);
 
-    // Auto-focus next input
     if (val && index < 5) {
       otpInputsRef.current[index + 1]?.focus();
     }
@@ -315,16 +550,86 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      backgroundColor: 'var(--color-canvas-cream)',
+      backgroundColor: '#f8fafc',
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 'clamp(12px, 3vw, 24px)',
+      padding: 'clamp(12px, 2.5vw, 24px)',
       fontFamily: 'var(--font-family-ui)',
       direction: currentLanguage.dir,
       fontFeatureSettings: '"ss03" 1'
     }}>
-      {/* Main Card Container with Level 3 Stacked Shadows */}
+
+      {/* ========================================================================= */}
+      {/* 1. TOP DEDICATED SYSTEM PORTAL SELECTOR RIBBON */}
+      {/* ========================================================================= */}
+      <div className="w-full max-w-5xl mb-4">
+        {/* Category Tabs */}
+        <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-zinc-600 flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5 text-black" />
+              <span>اختر منظومة الدخول المستقلة:</span>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1 bg-zinc-200/80 p-1 rounded-2xl">
+            {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  const firstInCat = SYSTEM_PORTALS.find(p => p.category === cat);
+                  if (firstInCat) handleSelectPortal(firstInCat);
+                }}
+                className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
+                  selectedCategory === cat
+                    ? 'bg-black text-white shadow-sm'
+                    : 'text-zinc-600 hover:text-black'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Portals Pill Matrix */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {SYSTEM_PORTALS.filter(p => p.category === selectedCategory).map((portal) => {
+            const isCurrent = selectedPortal.id === portal.id;
+            return (
+              <button
+                key={portal.id}
+                type="button"
+                onClick={() => handleSelectPortal(portal)}
+                className={`flex flex-col p-2.5 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
+                  isCurrent
+                    ? 'bg-white border-black shadow-md ring-2 ring-black/10'
+                    : 'bg-white/80 border-zinc-200 hover:border-zinc-300 hover:bg-white'
+                }`}
+              >
+                {isCurrent && (
+                  <div 
+                    style={{ position: 'absolute', top: 0, right: 0, left: 0, height: '3px', background: portal.themeColor }} 
+                  />
+                )}
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-xs font-bold text-black truncate">{portal.nameAr}</span>
+                  {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />}
+                </div>
+                <span className="text-[10px] text-zinc-500 truncate">{portal.license}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 2. MAIN LOGIN CARD CONTAINER */}
+      {/* ========================================================================= */}
       <div 
         className="w-full max-w-5xl rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden flex flex-col lg:flex-row"
         style={{
@@ -332,19 +637,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         }}
       >
 
-        {/* Right Side: 3D Visual Hero Section (Hidden on mobile/tablet) */}
+        {/* Right Side: Visual Hero Card Styled per Selected Portal */}
         <div 
-          className="hidden lg:flex flex-1 relative bg-white overflow-hidden items-center justify-center border-inline-end border-zinc-200 min-h-[580px]"
+          className="hidden lg:flex flex-1 relative bg-white overflow-hidden items-center justify-center border-inline-end border-zinc-200 min-h-[600px]"
         >
-          {/* Light Gradient Overlay */}
+          {/* Subtle Light Gradient Overlay */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top right, #fbfbf5, #ffffff, #d4f9e0)',
-            opacity: 0.5
+            background: 'linear-gradient(to top right, #fbfbf5, #ffffff, #f1f5f9)',
+            opacity: 0.7
           }}></div>
 
-          {/* Three.js 3D Animation Background Container */}
+          {/* Three.js 3D Animation Background */}
           <div
             ref={containerRef}
             aria-hidden="true"
@@ -354,84 +659,103 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               width: '100%',
               height: '100%',
               mixBlendMode: 'multiply',
-              opacity: 0.6,
+              opacity: 0.5,
               pointerEvents: 'none',
               zIndex: 5
             }}
           ></div>
 
-          {/* Clean Light Card */}
+          {/* Dedicated Entity Card */}
           <div
             ref={visualCardRef}
             style={{
               position: 'relative',
               zIndex: 20,
-              maxWidth: '400px',
-              padding: '36px 28px',
-              borderRadius: '16px',
-              background: 'rgba(255, 255, 255, 0.92)',
+              maxWidth: '410px',
+              padding: '32px 28px',
+              borderRadius: '20px',
+              background: 'rgba(255, 255, 255, 0.94)',
               backdropFilter: 'blur(20px)',
               border: '1px solid #e4e4e7',
-              boxShadow: '0 8px 8px rgba(0,0,0,0.06), 0 2px 2px rgba(0,0,0,0.04)',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.06)',
               textAlign: 'center',
               transition: 'transform 0.2s ease-out'
             }}
           >
-            <img
-              src="./logo.png"
-              alt="شعار مجموعة خالد السليم"
-              style={{
-                width: '84px',
-                height: '84px',
-                borderRadius: '50%',
-                margin: '0 auto 16px auto',
-                objectFit: 'cover',
-                background: '#FFFFFF',
-                padding: '3px',
-                border: '2px solid #000000'
-              }}
-            />
-            <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '26px', fontWeight: '500', color: '#000000', margin: '0 0 10px 0' }}>
-              {t('groupTitle', 'مجموعة خالد السليم')}
+            <div className="flex justify-center mb-3">
+              <div 
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '18px',
+                  background: selectedPortal.themeColor,
+                  color: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '22px',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.12)'
+                }}
+              >
+                {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
+                 selectedPortal.id === 'client' ? <UserCheck className="w-8 h-8" /> :
+                 selectedPortal.id === 'agent' ? <Globe className="w-8 h-8" /> :
+                 selectedPortal.id === 'ecommerce' ? <Store className="w-8 h-8" /> :
+                 selectedPortal.id === 'kas' ? <FileText className="w-8 h-8" /> :
+                 <Building2 className="w-8 h-8" />}
+              </div>
+            </div>
+
+            <div className="mb-2">
+              <span className="pill-tag-shade text-xs font-bold" style={{ background: '#f4f4f5', color: '#18181b' }}>
+                {selectedPortal.tagBadge}
+              </span>
+            </div>
+
+            <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '22px', fontWeight: '600', color: '#000000', margin: '0 0 6px 0' }}>
+              {selectedPortal.nameAr}
             </h2>
-            <div style={{ width: '40px', height: '3px', background: '#000000', margin: '0 auto 16px auto', borderRadius: '9999px' }}></div>
-            <p style={{ fontSize: '14px', color: '#52525b', lineHeight: '1.6', margin: 0, fontWeight: 420 }}>
-              {t('loginVision', 'نحو مستقبل رقمي متكامل يعزز الكفاءة والابتكار في إدارة أعمالكم.')}
+            <div style={{ width: '40px', height: '3px', background: selectedPortal.themeColor, margin: '0 auto 12px auto', borderRadius: '9999px' }}></div>
+            
+            <p style={{ fontSize: '12.5px', color: '#52525b', lineHeight: '1.6', margin: 0 }}>
+              {selectedPortal.description}
             </p>
+
+            <div className="mt-3 p-2 bg-zinc-50 border border-zinc-200 rounded-xl text-[11px] font-bold text-zinc-700">
+              {selectedPortal.license}
+            </div>
 
             {/* Metrics */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '12px',
-              marginTop: '28px',
-              paddingTop: '20px',
+              gap: '8px',
+              marginTop: '20px',
+              paddingTop: '16px',
               borderTop: '1px solid #e4e4e7'
             }}>
-              <div>
-                <span className="pill-tag-mint" style={{ display: 'block', margin: '0 auto 4px auto' }}>{t('secure', 'آمن')}</span>
-                <span style={{ fontSize: '12px', color: '#71717a' }}>{t('protection', 'حماية 2FA')}</span>
-              </div>
-              <div>
-                <span className="pill-tag-shade" style={{ display: 'block', margin: '0 auto 4px auto' }}>{t('smart', 'ذكي')}</span>
-                <span style={{ fontSize: '12px', color: '#71717a' }}>{t('solutions', 'حلول')}</span>
-              </div>
-              <div>
-                <span className="pill-tag-mint" style={{ display: 'block', margin: '0 auto 4px auto' }}>{t('comprehensive', 'شامل')}</span>
-                <span style={{ fontSize: '12px', color: '#71717a' }}>{t('coverage', 'تغطية')}</span>
-              </div>
+              {selectedPortal.kpis.map((kpi, idx) => (
+                <div key={idx}>
+                  <span className="font-bold text-xs text-black block">{kpi.value}</span>
+                  <span style={{ fontSize: '11px', color: '#71717a' }}>{kpi.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Left Side: Login Form / 2FA Verification Section */}
         <div 
-          className="w-full lg:w-[480px] p-6 sm:p-10 bg-white flex flex-col justify-between relative z-10 mx-auto"
+          className="w-full lg:w-[490px] p-6 sm:p-8 bg-white flex flex-col justify-between relative z-10 mx-auto"
         >
           {/* Top Brand & Language Switcher */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', position: 'relative' }}>
-              <img src="/logo.png" alt="شعار المكاتب" style={{ height: '42px', width: 'auto' }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', position: 'relative' }}>
+              <div className="flex items-center gap-2">
+                <img src="/logo.png" alt="Logo" style={{ height: '36px', width: 'auto' }} />
+                <span className="text-xs font-bold text-zinc-800">مجموعة خالد السليم ERP</span>
+              </div>
 
               <div style={{ position: 'relative' }}>
                 <button
@@ -440,11 +764,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   onClick={() => setShowLangMenu(!showLangMenu)}
                   aria-expanded={showLangMenu}
                   aria-haspopup="true"
-                  aria-label="تغيير اللغة"
                   style={{
-                    padding: '6px 14px',
-                    fontSize: '13px',
-                    minHeight: '34px',
+                    padding: '5px 12px',
+                    fontSize: '12px',
+                    minHeight: '32px',
                     borderRadius: '9999px'
                   }}
                 >
@@ -456,7 +779,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 {showLangMenu && (
                   <div style={{
                     position: 'absolute',
-                    top: '40px',
+                    top: '38px',
                     left: isRtl ? 0 : 'auto',
                     right: !isRtl ? 0 : 'auto',
                     background: '#FFFFFF',
@@ -503,14 +826,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
             {displayedError && (
               <div style={{
-                padding: '12px 16px',
+                padding: '10px 14px',
                 borderRadius: '8px',
                 background: '#ffdad6',
                 border: '1px solid #fca5a5',
                 color: '#ba1a1a',
-                fontSize: '13.5px',
+                fontSize: '12.5px',
                 fontWeight: '500',
-                marginBottom: '20px',
+                marginBottom: '16px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px'
@@ -523,54 +846,66 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {!is2FAStep ? (
               /* Step 1: Standard Username & Password Form */
               <div>
-                <div style={{ marginBottom: '28px' }}>
-                  <h1 className="heading-xl" style={{ fontSize: '28px', fontWeight: '500', color: '#000000', margin: '0 0 6px 0' }}>
-                    {t('loginHeaderTitle', 'تسجيل الدخول')}
+                <div style={{ marginBottom: '20px' }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span 
+                      className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white" 
+                      style={{ background: selectedPortal.themeColor }}
+                    >
+                      {selectedPortal.license.split('•')[0].trim()}
+                    </span>
+                    <span className="text-xs text-zinc-500 font-medium">بوابة مستقلة</span>
+                  </div>
+
+                  <h1 className="heading-xl" style={{ fontSize: '22px', fontWeight: '600', color: '#000000', margin: '0 0 4px 0' }}>
+                    تسجيل الدخول: {selectedPortal.nameAr}
                   </h1>
-                  <p style={{ fontSize: '14px', color: '#71717a', margin: 0 }}>
-                    {t('loginHeaderSub', 'مرحباً بك في المنصة الموحدة لمجموعة خالد السليم')}
+                  <p style={{ fontSize: '13px', color: '#71717a', margin: 0 }}>
+                    أدخل بيانات الاعتماد المخصصة لهذه المنظومة للوصول إلى بيئة العمل المعزولة.
                   </p>
                 </div>
 
-                <form onSubmit={handleInitialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <form onSubmit={handleInitialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {/* Username Input */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label htmlFor="login-username" style={{ fontSize: '13px', fontWeight: '550', color: '#000000' }}>
-                      {t('username', 'اسم المستخدم أو البريد الإلكتروني')}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <label htmlFor="login-username" style={{ fontSize: '12.5px', fontWeight: '600', color: '#000000' }}>
+                      اسم المستخدم أو البريد الإلكتروني للمنظومة
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-user" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '15px' }}></i>
+                      <i className="fa-solid fa-user" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '14px' }}></i>
                       <input
                         id="login-username"
                         type="text"
                         className="text-input"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
-                        placeholder={t('usernamePlaceholder', 'أدخل اسم المستخدم... (الافتراضي: admin@alsulaim.sa)')}
+                        placeholder={selectedPortal.defaultUser}
                         style={{
-                          paddingInlineStart: '44px',
+                          paddingInlineStart: '40px',
+                          fontSize: '13px'
                         }}
                       />
                     </div>
                   </div>
 
                   {/* Password Input */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <label htmlFor="login-password" style={{ fontSize: '13px', fontWeight: '550', color: '#000000' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <label htmlFor="login-password" style={{ fontSize: '12.5px', fontWeight: '600', color: '#000000' }}>
                       {t('password', 'كلمة المرور')}
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-lock" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '15px' }}></i>
+                      <i className="fa-solid fa-lock" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '14px' }}></i>
                       <input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
                         className="text-input"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        placeholder="•••••••• (الافتراضي: Alsulaim@2026)"
+                        placeholder="••••••••"
                         style={{
-                          paddingInlineStart: '44px',
-                          paddingInlineEnd: '44px',
+                          paddingInlineStart: '40px',
+                          paddingInlineEnd: '40px',
+                          fontSize: '13px'
                         }}
                       />
                       <button
@@ -587,16 +922,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
                   {/* Remember & Forgot */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#52525b' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', color: '#52525b' }}>
                       <input
                         type="checkbox"
                         checked={rememberMe}
                         onChange={e => setRememberMe(e.target.checked)}
-                        style={{ accentColor: '#000000', width: '16px', height: '16px' }}
+                        style={{ accentColor: '#000000', width: '15px', height: '15px' }}
                       />
                       <span>{t('rememberMe', 'تذكرني')}</span>
                     </label>
-                    <a href="#forgot" onClick={e => e.preventDefault()} style={{ fontSize: '13px', color: '#000000', fontWeight: '550' }}>
+                    <a href="#forgot" onClick={e => e.preventDefault()} style={{ fontSize: '12px', color: '#000000', fontWeight: '600' }}>
                       {t('forgotPassword', 'نسيت كلمة المرور؟')}
                     </a>
                   </div>
@@ -608,36 +943,60 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     className="button-primary-pill"
                     style={{
                       width: '100%',
-                      marginTop: '6px',
+                      marginTop: '4px',
+                      height: '44px',
+                      fontSize: '13.5px'
                     }}
                   >
                     {authLoading ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
                         <span>{t('loggingIn', 'جاري التحقق من الهوية...')}</span>
                       </>
                     ) : (
                       <>
-                        <span>{t('loginSubmit', 'دخول المنظومة')}</span>
-                        <i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                        <span>دخول منظومة {selectedPortal.nameAr}</span>
+                        <ArrowLeft className="w-4 h-4" />
                       </>
                     )}
+                  </button>
+
+                  {/* Direct One-Click Instant Access for Testing/Demo */}
+                  <button
+                    type="button"
+                    onClick={executeCompleteLogin}
+                    className="button-outline-on-light"
+                    style={{
+                      width: '100%',
+                      height: '38px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      borderRadius: '9999px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      background: '#f8fafc',
+                      border: '1px dashed #cbd5e1'
+                    }}
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-500" />
+                    <span>دخول فوري مباشر لهذه المنظومة</span>
                   </button>
                 </form>
 
                 {/* Biometric Quick Login Options */}
-                <div style={{ margin: '20px 0 16px 0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <div style={{ margin: '16px 0 12px 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
                     <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
-                    <span style={{ fontSize: '11.5px', fontWeight: 600, color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
-                      <span>الدخول البيومتري السريع</span>
+                      <span>الدخول البيومتري المشفر</span>
                     </span>
                     <div style={{ flex: 1, height: '1px', background: '#e4e4e7' }}></div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    {/* Fingerprint / Touch ID Button */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     <button
                       type="button"
                       onClick={() => handleTriggerBiometric('fingerprint')}
@@ -645,24 +1004,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
-                        height: '46px',
+                        gap: '6px',
+                        height: '40px',
                         borderRadius: '12px',
                         border: '1px solid #A7F3D0',
                         background: 'linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%)',
                         color: '#065F46',
                         cursor: 'pointer',
-                        fontSize: '12.5px',
-                        fontWeight: '800',
-                        boxShadow: '0 2px 6px rgba(5, 150, 105, 0.08)',
+                        fontSize: '12px',
+                        fontWeight: '700',
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      <i className="fa-solid fa-fingerprint" style={{ fontSize: '16px', color: '#059669' }} aria-hidden="true"></i>
+                      <i className="fa-solid fa-fingerprint" style={{ fontSize: '14px', color: '#059669' }} aria-hidden="true"></i>
                       <span>بصمة الإصبع</span>
                     </button>
 
-                    {/* Face ID Button */}
                     <button
                       type="button"
                       onClick={() => handleTriggerBiometric('face')}
@@ -670,131 +1027,40 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '8px',
-                        height: '46px',
+                        gap: '6px',
+                        height: '40px',
                         borderRadius: '12px',
                         border: '1px solid #DDD6FE',
                         background: 'linear-gradient(135deg, #F5F3FF 0%, #FAF5FF 100%)',
                         color: '#5B21B6',
                         cursor: 'pointer',
-                        fontSize: '12.5px',
-                        fontWeight: '800',
-                        boxShadow: '0 2px 6px rgba(124, 58, 237, 0.08)',
+                        fontSize: '12px',
+                        fontWeight: '700',
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      <i className="fa-solid fa-face-viewfinder" style={{ fontSize: '16px', color: '#7C3AED' }} aria-hidden="true"></i>
+                      <i className="fa-solid fa-face-viewfinder" style={{ fontSize: '14px', color: '#7C3AED' }} aria-hidden="true"></i>
                       <span>بصمة الوجه</span>
                     </button>
                   </div>
-                </div>
-
-                {/* Separator */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '16px 0 12px 0' }}>
-                  <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
-                  <span style={{ fontSize: '12px', color: '#5a6363' }}>{t('orLoginWith', 'أو')}</span>
-                  <div style={{ flex: 1, height: '1px', background: '#e0e3e3' }}></div>
-                </div>
-
-                {/* Social Buttons */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setIs2FAStep(true)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      height: '42px',
-                      borderRadius: '12px',
-                      border: '1px solid #bec9c8',
-                      background: '#FFFFFF',
-                      cursor: 'pointer',
-                      fontSize: '12.5px',
-                      fontWeight: '600'
-                    }}
-                  >
-                    <svg style={{ width: '16px', height: '16px' }} viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
-                    </svg>
-                    <span>Google</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setIs2FAStep(true)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      height: '42px',
-                      borderRadius: '12px',
-                      border: '1px solid #bec9c8',
-                      background: '#FFFFFF',
-                      cursor: 'pointer',
-                      fontSize: '12.5px',
-                      fontWeight: '600'
-                    }}
-                  >
-                    <i className="fa-solid fa-building" style={{ color: '#000000' }} aria-hidden="true"></i>
-                    <span>{t('groupDirectory', 'دليل المجموعة')}</span>
-                  </button>
                 </div>
               </div>
             ) : (
               /* Step 2: 2FA Verification Form */
               <div>
-                <div style={{ marginBottom: '24px' }}>
-                  <button
-                    type="button"
-                    onClick={() => { setIs2FAStep(false); setLocalError(null); }}
-                    style={{
-                      border: 'none',
-                      background: 'none',
-                      color: '#000000',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      padding: 0,
-                      marginBottom: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}
-                  >
-                    <i className={`fa-solid ${isRtl ? 'fa-arrow-right' : 'fa-arrow-left'}`} aria-hidden="true"></i> رجوع لاسم المستخدم
-                  </button>
-
-                  <div style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '16px',
-                    background: '#000000',
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '28px',
-                    marginBottom: '16px'
-                  }}>
-                    <i className="fa-solid fa-shield-halved" aria-hidden="true"></i>
-                  </div>
-
-                  <h1 id="otp-heading" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#000000', margin: '0 0 8px 0' }}>
-                    المصادقة الثنائية (2FA Verification)
+                <div style={{ marginBottom: '20px' }}>
+                  <span className="pill-tag-mint" style={{ display: 'inline-block', marginBottom: '8px', fontSize: '11px' }}>
+                    التحقق الثنائي 2FA للمنظومة
+                  </span>
+                  <h1 id="otp-heading" className="heading-xl" style={{ fontSize: '20px', fontWeight: '600', color: '#000000', margin: '0 0 4px 0' }}>
+                    تأكيد رمز التحقق
                   </h1>
-                  <p style={{ fontSize: '13.5px', color: '#3f4949', margin: 0, lineHeight: '1.6' }}>
-                    تم تفعيل طبقة الحماية 2FA لحسابك <strong>({username || 'المستخدِم'})</strong>. أدخل كود التحقق المكون من 6 أرقام من تطبيق Authenticator أو الرسائل:
+                  <p style={{ fontSize: '12.5px', color: '#71717a', margin: 0 }}>
+                    تم إرسال رمز المصادقة إلى الجوال والبريد المعتمد لمنظومة <strong>{selectedPortal.nameAr}</strong>.
                   </p>
                 </div>
 
-                <form onSubmit={handle2FASubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {/* 6 Digit OTP Input Grid */}
+                <form onSubmit={handle2FASubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div
                     role="group"
                     aria-labelledby="otp-heading"
@@ -814,26 +1080,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         onChange={e => handleOtpChange(idx, e.target.value)}
                         onKeyDown={e => handleOtpKeyDown(idx, e)}
                         style={{
-                          width: '50px',
-                          height: '56px',
+                          width: '46px',
+                          height: '52px',
                           borderRadius: '12px',
                           background: '#fbfbf5',
                           border: val ? '2px solid #000000' : '1px solid #e4e4e7',
                           textAlign: 'center',
-                          fontSize: '22px',
-                          fontWeight: 600,
+                          fontSize: '20px',
+                          fontWeight: 700,
                           color: '#000000',
                           outline: 'none',
-                          boxShadow: val ? '0 4px 12px rgba(0, 0, 0, 0.1)' : 'none'
                         }}
                       />
                     ))}
                   </div>
 
-                  {/* Timer & Resend code */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                    <span style={{ fontSize: '12.5px', color: '#71717a' }} aria-live="polite">
-                      <i className="fa-solid fa-clock me-1" aria-hidden="true"></i> ينتهي الرمز خلال: <strong>00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}</strong>
+                    <span style={{ fontSize: '12px', color: '#71717a' }} aria-live="polite">
+                      ينتهي الرمز خلال: <strong>00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}</strong>
                     </span>
 
                     <button
@@ -845,7 +1109,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         background: 'none',
                         color: timerSeconds === 0 ? '#000000' : '#a1a1aa',
                         fontWeight: 600,
-                        fontSize: '12.5px',
+                        fontSize: '12px',
                         cursor: timerSeconds === 0 ? 'pointer' : 'not-allowed'
                       }}
                     >
@@ -853,20 +1117,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     </button>
                   </div>
 
-                  {/* Verify Button */}
                   <button
                     type="submit"
                     disabled={authLoading}
                     className="button-primary-pill"
                     style={{
-                      height: '48px',
-                      marginTop: '12px',
+                      height: '44px',
+                      marginTop: '8px',
                       width: '100%',
-                      fontSize: '14px',
+                      fontSize: '13.5px',
                       fontWeight: 600,
                       borderRadius: '9999px',
-                      cursor: authLoading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.3s ease',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -875,13 +1136,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   >
                     {authLoading ? (
                       <>
-                        <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                         <span>جاري التحقق...</span>
                       </>
                     ) : (
                       <>
-                        <span>تأكيد الرمز والدخول للمنصة</span>
-                        <i className="fa-solid fa-shield-check ms-1" aria-hidden="true"></i>
+                        <span>تأكيد الرمز والدخول إلى {selectedPortal.nameAr}</span>
+                        <ArrowLeft className="w-4 h-4" />
                       </>
                     )}
                   </button>
@@ -891,8 +1152,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
 
           {/* Copyright Footer */}
-          <div style={{ textAlign: 'center', fontSize: '12px', color: '#5a6363', opacity: 0.8, marginTop: '24px' }}>
-            © ٢٠٢٦ مجموعة خالد السليم. جميع الحقوق محفوظة.
+          <div style={{ textAlign: 'center', fontSize: '11.5px', color: '#71717a', marginTop: '20px' }}>
+            © ٢٠٢٦ مجموعة خالد السليم • منظومات الدخول المعزولة
           </div>
         </div>
       </div>
@@ -919,10 +1180,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div
             style={{
               width: '100%',
-              maxWidth: '440px',
+              maxWidth: '420px',
               background: '#FFFFFF',
-              borderRadius: '28px',
-              padding: '36px 30px',
+              borderRadius: '24px',
+              padding: '30px 26px',
               boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35)',
               border: '1px solid rgba(0, 81, 84, 0.15)',
               textAlign: 'center',
@@ -930,22 +1191,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               overflow: 'hidden'
             }}
           >
-            {/* Top Security Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '16px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                <i className="fa-solid fa-lock text-xs" aria-hidden="true"></i>
+                <Lock className="w-3 h-3 inline-block me-1" />
                 مصادقة بيومترية مشفرة (FIDO2 / WebAuthn)
               </span>
             </div>
 
-            {/* Scanner Visual Container */}
             <div
               style={{
                 position: 'relative',
-                width: '130px',
-                height: '130px',
-                margin: '0 auto 24px auto',
-                borderRadius: '24px',
+                width: '110px',
+                height: '110px',
+                margin: '0 auto 20px auto',
+                borderRadius: '20px',
                 background: '#fbfbf5',
                 border: '2px dashed #000000',
                 display: 'flex',
@@ -954,7 +1213,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 overflow: 'hidden'
               }}
             >
-              {/* Laser Scanning Line */}
               {biometricStatus === 'scanning' && (
                 <div
                   style={{
@@ -971,24 +1229,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 ></div>
               )}
 
-              {/* Center Icon */}
               {biometricStatus === 'success' ? (
-                <div style={{ color: '#000000', fontSize: '56px' }}>
+                <div style={{ color: '#000000', fontSize: '48px' }}>
                   <i className="fa-solid fa-circle-check" aria-hidden="true"></i>
                 </div>
               ) : biometricModal === 'fingerprint' ? (
-                <div style={{ color: '#000000', fontSize: '56px' }}>
+                <div style={{ color: '#000000', fontSize: '48px' }}>
                   <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
                 </div>
               ) : (
-                <div style={{ color: '#000000', fontSize: '56px' }}>
+                <div style={{ color: '#000000', fontSize: '48px' }}>
                   <i className="fa-solid fa-face-viewfinder" aria-hidden="true"></i>
                 </div>
               )}
             </div>
 
-            {/* Title & Message */}
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#000000', margin: '0 0 8px 0' }}>
+            <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#000000', margin: '0 0 6px 0' }}>
               {biometricStatus === 'success'
                 ? 'تم التحقق بنجاح!'
                 : biometricModal === 'fingerprint'
@@ -996,19 +1252,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 : 'التحقق ببصمة الوجه'}
             </h3>
 
-            <p style={{ fontSize: '13px', color: '#475569', margin: '0 0 20px 0', minHeight: '38px', lineHeight: '1.6' }}>
+            <p style={{ fontSize: '12px', color: '#475569', margin: '0 0 18px 0', minHeight: '34px', lineHeight: '1.5' }}>
               {biometricMessage}
             </p>
 
-            {/* Progress Bar */}
             <div
               style={{
-                height: '6px',
+                height: '5px',
                 width: '100%',
                 background: '#E2E8F0',
                 borderRadius: '9999px',
                 overflow: 'hidden',
-                marginBottom: '24px'
+                marginBottom: '20px'
               }}
             >
               <div
@@ -1022,15 +1277,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               ></div>
             </div>
 
-            {/* Cancel / Switch Option */}
             <button
               type="button"
               onClick={() => setBiometricModal(null)}
               className="button-outline-on-light"
               style={{
-                padding: '8px 24px',
-                fontSize: '13px',
-                minHeight: '38px',
+                padding: '6px 20px',
+                fontSize: '12px',
+                minHeight: '34px',
                 margin: '0 auto',
                 display: 'inline-flex'
               }}
