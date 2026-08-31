@@ -1068,93 +1068,148 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* ========================================================================= */}
       {activeTab === 'dashboard' && (
         <div className="space-y-6">
-          {/* Top KPI Grid (8 Luxury Cards) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3.5">
-            <KasKpiCard
-              title="المنافسات"
-              value={stats.totalCompetitions}
-              subtitle={`${stats.wonCompetitions} ترسية (${stats.winRate}%)`}
-              icon={Award}
-              variant="emerald"
+          {/* Top KPI Grid (8 Signature Luxury Cards) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3.5">
+            <div
               onClick={() => setActiveTab('competitions')}
-            />
-            <KasKpiCard
-              title="إجمالي الفواتير"
-              value={`${(stats.totalInvoicesAmount / 1000).toFixed(0)}k`}
-              subtitle="مبيعات كاس (ر.س)"
-              icon={DollarSign}
-              variant="sky"
+              className="card-pricing cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>المنافسات</span>
+                <Award className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {stats.totalCompetitions}
+              </div>
+              <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px' }}>{stats.wonCompetitions} ترسية ({stats.winRate}%)</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('invoices')}
-            />
-            <KasKpiCard
-              title="المحصل الفعلي"
-              value={`${(stats.paidAmount / 1000).toFixed(0)}k`}
-              subtitle="في الحسابات (ر.س)"
-              icon={CheckCircle2}
-              variant="emerald"
+              className="card-pistachio-band cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>إجمالي الفواتير</span>
+                <DollarSign className="w-4 h-4 text-emerald-800" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {(stats.totalInvoicesAmount / 1000).toFixed(0)}k
+              </div>
+              <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '6px' }}>مبيعات كاس (ر.س)</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('invoices')}
-            />
-            <KasKpiCard
-              title="غير محصل"
-              value={`${(stats.unpaidAmount / 1000).toFixed(0)}k`}
-              subtitle="مستحق السداد (ر.س)"
-              icon={Clock}
-              variant="rose"
+              className="card-pricing-featured cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>المحصل الفعلي</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {(stats.paidAmount / 1000).toFixed(0)}k
+              </div>
+              <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '6px' }}>في الحسابات (ر.س)</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('invoices')}
-            />
-            <KasKpiCard
-              title="العروض التجارية"
-              value={`${(stats.totalProposalsValue / 1000).toFixed(0)}k`}
-              subtitle={`${proposals.length} عرض معتمد`}
-              icon={Send}
-              variant="purple"
+              className="card-pricing cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>غير محصل</span>
+                <Clock className="w-4 h-4 text-rose-500" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {(stats.unpaidAmount / 1000).toFixed(0)}k
+              </div>
+              <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px', color: '#e11d48' }}>مستحق السداد</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('proposals')}
-            />
-            <KasKpiCard
-              title="الاشتراكات"
-              value={`${(stats.totalSubscriptionsRevenue / 1000).toFixed(0)}k`}
-              subtitle="إيراد دوري سنوي"
-              icon={RefreshCw}
-              variant="gold"
+              className="card-pricing cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>العروض التجارية</span>
+                <Send className="w-4 h-4 text-sky-600" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {(stats.totalProposalsValue / 1000).toFixed(0)}k
+              </div>
+              <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px' }}>{proposals.length} عرض معتمد</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('subscriptions')}
-            />
-            <KasKpiCard
-              title="المشاريع النشطة"
-              value={stats.activeProjects}
-              subtitle="جارية التنفيذ"
-              icon={Briefcase}
-              variant="slate"
+              className="card-pistachio-band cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>الاشتراكات</span>
+                <RefreshCw className="w-4 h-4 text-emerald-800" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {(stats.totalSubscriptionsRevenue / 1000).toFixed(0)}k
+              </div>
+              <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '6px' }}>إيراد دوري سنوي</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('projects')}
-            />
-            <KasKpiCard
-              title="المهام المجدولة"
-              value={stats.activeTasks}
-              subtitle="قيد المتابعة"
-              icon={CheckSquare}
-              variant="slate"
+              className="card-pricing-featured cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>المشاريع</span>
+                <Briefcase className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {stats.activeProjects}
+              </div>
+              <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '6px' }}>جارية التنفيذ</span>
+            </div>
+
+            <div
               onClick={() => setActiveTab('tasks')}
-            />
+              className="card-pricing cursor-pointer hover:shadow-md transition-all"
+              style={{ padding: '16px', borderRadius: '16px', background: '#ffffff' }}
+            >
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>المهام</span>
+                <CheckSquare className="w-4 h-4 text-zinc-700" />
+              </div>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+                {stats.activeTasks}
+              </div>
+              <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px' }}>قيد المتابعة</span>
+            </div>
           </div>
 
           {/* Interactive Visual Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Monthly Invoicing & Cashflow SVG Chart */}
-            <div className="lg:col-span-2 p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
+            <div className="lg:col-span-2 card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3 mb-3">
                 <div>
-                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                     <Activity className="w-4 h-4 text-emerald-600" />
                     <span>حركة المبيعات والتحصيلات الشهرية (2026)</span>
                   </h3>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">مقارنة الفواتير الصادرة والمبالغ المحصلة عبر منصة اعتماد</p>
+                  <p className="text-xs text-zinc-400 mt-1 font-sans">مقارنة الفواتير الصادرة والمبالغ المحصلة عبر منصة اعتماد</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs font-semibold">
-                  <span className="flex items-center gap-1.5 text-emerald-600">
-                    <span className="w-3 h-3 rounded-sm bg-emerald-500 inline-block" />
+                  <span className="flex items-center gap-1.5 text-zinc-900">
+                    <span className="w-3 h-3 rounded-full bg-black inline-block" />
                     الفواتير الصادرة
                   </span>
-                  <span className="flex items-center gap-1.5 text-sky-600">
-                    <span className="w-3 h-3 rounded-sm bg-sky-500 inline-block" />
+                  <span className="flex items-center gap-1.5 text-emerald-600">
+                    <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
                     التحصيلات النقدية
                   </span>
                 </div>
@@ -1177,21 +1232,21 @@ export const KasEtimadCloudPage: React.FC = () => {
                   const colHeight = Math.round((item.collected / maxVal) * 100);
                   return (
                     <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group cursor-pointer">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded-lg pointer-events-none mb-1 shadow-lg text-center z-10">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[10px] font-mono px-2 py-1 rounded-lg pointer-events-none mb-1 shadow-lg text-center z-10">
                         <div>صادر: {item.invoiced.toLocaleString()} ر.س</div>
                         <div className="text-emerald-400">محصل: {item.collected.toLocaleString()} ر.س</div>
                       </div>
                       <div className="w-full flex items-end justify-center gap-1 h-36">
                         <div 
-                          className="w-3.5 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md transition-all group-hover:brightness-110" 
+                          className="w-3.5 bg-black rounded-t-md transition-all group-hover:opacity-80" 
                           style={{ height: `${invHeight}%` }} 
                         />
                         <div 
-                          className="w-3.5 bg-gradient-to-t from-sky-600 to-sky-400 rounded-t-md transition-all group-hover:brightness-110" 
+                          className="w-3.5 bg-emerald-500 rounded-t-md transition-all group-hover:brightness-110" 
                           style={{ height: `${colHeight}%` }} 
                         />
                       </div>
-                      <span className="text-[10px] text-muted-foreground font-medium truncate group-hover:text-foreground transition-colors">{item.month}</span>
+                      <span className="text-[11px] text-zinc-500 font-medium truncate group-hover:text-black transition-colors">{item.month}</span>
                     </div>
                   );
                 })}
@@ -1199,72 +1254,74 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
 
             {/* Competitions Funnel & Win Rate Card */}
-            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4 flex flex-col justify-between">
+            <div className="card-pricing flex flex-col justify-between" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div>
-                <div className="flex items-center justify-between border-b border-border pb-3">
-                  <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                  <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                     <Award className="w-4 h-4 text-emerald-600" />
-                    <span>مسار ترسية المنافسات الحكومية</span>
+                    <span>مسار ترسية المنافسات</span>
                   </h3>
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-0.5 rounded-full font-mono">
+                  <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                     {stats.winRate}% معدل الفوز
                   </span>
                 </div>
 
-                <div className="space-y-3 mt-4 text-xs">
+                <div className="space-y-3.5 mt-4 text-xs">
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
-                      <span className="text-foreground">1. تم رفع العرض الفني والمالي</span>
-                      <span className="font-mono text-sky-600">2 منافسة (33%)</span>
+                      <span className="text-zinc-800">1. تم رفع العرض الفني والمالي</span>
+                      <span className="font-mono text-zinc-900 font-bold">2 منافسة (33%)</span>
                     </div>
-                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                      <div className="bg-sky-500 h-2 rounded-full" style={{ width: '33%' }} />
+                    <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
+                      <div className="bg-black h-2 rounded-full" style={{ width: '33%' }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
-                      <span className="text-foreground">2. تمت الترسية بنجاح (فائز)</span>
-                      <span className="font-mono text-emerald-600">2 منافسة (33%)</span>
+                      <span className="text-zinc-800">2. تمت الترسية بنجاح (فائز)</span>
+                      <span className="font-mono text-emerald-600 font-bold">2 منافسة (33%)</span>
                     </div>
-                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
                       <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '33%' }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
-                      <span className="text-foreground">3. تحت الدراسة والتسعير</span>
-                      <span className="font-mono text-amber-600">1 منافسة (17%)</span>
+                      <span className="text-zinc-800">3. تحت الدراسة والتسعير</span>
+                      <span className="font-mono text-amber-600 font-bold">1 منافسة (17%)</span>
                     </div>
-                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
                       <div className="bg-amber-500 h-2 rounded-full" style={{ width: '17%' }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
-                      <span className="text-foreground">4. لم يتم التسعير (لاغي)</span>
-                      <span className="font-mono text-rose-500">1 منافسة (17%)</span>
+                      <span className="text-zinc-800">4. لم يتم التسعير (لاغي)</span>
+                      <span className="font-mono text-rose-500 font-bold">1 منافسة (17%)</span>
                     </div>
-                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                      <div className="bg-rose-500 h-2 rounded-full" style={{ width: '17%' }} />
+                    <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
+                      <div className="bg-rose-400 h-2 rounded-full" style={{ width: '17%' }} />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-border flex items-center gap-2">
+              <div className="pt-4 border-t border-zinc-100 flex items-center gap-2 mt-4">
                 <button
                   onClick={() => setShowAddCompModal(true)}
-                  className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                  className="button-primary-pill flex-1 text-xs"
+                  style={{ minHeight: '36px', padding: '6px 14px' }}
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3.5 h-3.5 ml-1" />
                   <span>+ إضافة منافسة</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('competitions')}
-                  className="py-2 px-3 rounded-xl bg-secondary hover:bg-secondary/80 text-xs font-bold text-foreground"
+                  className="button-outline-on-light text-xs"
+                  style={{ minHeight: '36px', padding: '6px 14px' }}
                 >
                   عرض الكل
                 </button>
@@ -1274,22 +1331,22 @@ export const KasEtimadCloudPage: React.FC = () => {
 
           {/* Quick Tasks & Recent Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <div className="card-pricing space-y-4" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                   <DollarSign className="w-4 h-4 text-emerald-600" />
                   <span>حالات الفواتير والتحصيل</span>
                 </h3>
-                <span className="text-xs font-bold text-muted-foreground font-mono">2026</span>
+                <span className="pill-tag-shade" style={{ fontSize: '10px' }}>2026</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-3.5 pt-1">
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
                     <span className="text-rose-600">غير مدفوع (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
-                  <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
                     <div className="bg-rose-500 h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
@@ -1299,7 +1356,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <span className="text-amber-600">مدفوع جزئياً (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
-                  <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
                     <div className="bg-amber-500 h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
@@ -1309,7 +1366,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <span className="text-emerald-600">مدفوع بالكامل (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
-                  <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
                     <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
@@ -1317,40 +1374,42 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => setShowAddInvoiceModal(true)}
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 mt-4"
+                className="button-primary-pill w-full text-xs mt-4"
+                style={{ minHeight: '38px', padding: '8px 16px' }}
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 ml-1" />
                 <span>+ إنشاء فاتورة جديدة</span>
               </button>
             </div>
 
-            <div className="lg:col-span-2 p-5 rounded-2xl bg-card border border-border shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <CheckSquare className="w-4 h-4 text-sky-600" />
+            <div className="lg:col-span-2 card-pricing space-y-4" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  <CheckSquare className="w-4 h-4 text-emerald-600" />
                   <span>آخر المهام وجداول التوريدات</span>
                 </h3>
                 <button
                   onClick={() => setShowAddTaskModal(true)}
-                  className="text-xs font-bold text-emerald-600 hover:underline flex items-center gap-1"
+                  className="button-outline-on-light text-xs"
+                  style={{ minHeight: '32px', padding: '4px 12px' }}
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3.5 h-3.5 ml-1" />
                   <span>إضافة مهمة</span>
                 </button>
               </div>
 
-              <div className="divide-y divide-border/40">
+              <div className="divide-y divide-zinc-100">
                 {tasks.map(task => (
                   <div key={task.id} className="py-3 flex items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-3">
                       <div className={`w-2.5 h-2.5 rounded-full ${
                         task.priority === 'عاجل' ? 'bg-rose-500 animate-ping' :
-                        task.priority === 'مرتفع' ? 'bg-amber-500' : 'bg-sky-500'
+                        task.priority === 'مرتفع' ? 'bg-amber-500' : 'bg-emerald-500'
                       }`} />
                       <div>
-                        <div className="font-bold text-foreground leading-relaxed">{task.taskName}</div>
-                        <div className="text-muted-foreground text-[11px] mt-0.5">
-                          المسؤول: <span className="text-foreground font-medium">{task.assignedTo}</span> • استحقاق: <span className="font-mono">{task.dueDate}</span>
+                        <div className="font-bold text-zinc-900 leading-relaxed">{task.taskName}</div>
+                        <div className="text-zinc-500 text-[11px] mt-0.5">
+                          المسؤول: <span className="text-black font-semibold">{task.assignedTo}</span> • استحقاق: <span className="font-mono">{task.dueDate}</span>
                         </div>
                       </div>
                     </div>

@@ -5,7 +5,7 @@ import { CompanyLogo } from '../common/CompanyLogo';
 import { 
   Building2, Users, FileText, CheckCircle2, ArrowLeft, 
   Sparkles, Layers, ShieldCheck, ArrowUpRight, Landmark,
-  Receipt, Briefcase, ChevronLeft, Globe
+  Receipt, Briefcase, ChevronLeft, Globe, Award, DollarSign
 } from 'lucide-react';
 
 interface CompanySelectorPortalProps {
@@ -24,42 +24,64 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
   const recruitmentCompanies = companies.filter(c => c.id !== 'KAS' && c.id !== 'kas' && c.id !== 'all');
 
   return (
-    <div className="min-h-[85vh] p-4 sm:p-6 lg:p-8 bg-slate-50/60 dark:bg-slate-950/40 space-y-8">
+    <div className="space-y-8 pb-16">
       {/* ========================================================================= */}
-      {/* 1. TOP HEADER BANNER */}
+      {/* 1. TOP HEADER BANNER - Pitch Black Cinematic Header */}
       {/* ========================================================================= */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white p-6 sm:p-8 shadow-2xl border border-slate-800 overflow-hidden">
-        {/* Ambient Glow */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 backdrop-blur-md">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Enterprise Multi-Company Scope</span>
-              </span>
-              <span className="text-xs text-slate-400 font-medium">مجموعة شركات خالد السليم</span>
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="flex items-start gap-4">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', flexShrink: 0 }}>
+              <Building2 className="w-5 h-5 text-emerald-400" />
             </div>
-
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              بوابة اختيار الكيانات التشغيلية والشركات المستقلة
-            </h1>
-            <p className="text-sm text-slate-300/80 max-w-2xl leading-relaxed">
-              اختر بيئة العمل الخاصة بكل كيان قانوني للوصول إلى السجلات المحاسبية المستقلة، المنافسات الحكومية، عقود الاستقدام، والتقارير التنفيذية مع الحفاظ التام على عزل البيانات.
-            </p>
+            <div>
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  ENTERPRISE MULTI-COMPANY SCOPE
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  مجموعة شركات خالد السليم ERP
+                </span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                بوابة اختيار الكيانات التشغيلية والشركات المستقلة
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans max-w-3xl leading-relaxed">
+                اختر بيئة العمل الخاصة بكل كيان قانوني للوصول إلى السجلات المحاسبية المستقلة، المنافسات الحكومية، عقود الاستقدام، والتقارير التنفيذية مع الحفاظ التام على عزل البيانات.
+              </p>
+            </div>
           </div>
 
           {/* Global Group Admin Button */}
           <button
             type="button"
             onClick={() => handleChoose('all')}
-            className="px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm flex items-center gap-2.5 backdrop-blur-md border border-white/15 shadow-lg transition-all hover:scale-[1.02] cursor-pointer self-start lg:self-center"
+            className="button-white-pill self-start lg:self-center"
+            style={{
+              fontSize: '12.5px',
+              padding: '8px 20px',
+              minHeight: '40px',
+              backgroundColor: '#ffffff',
+              color: '#000000',
+              fontWeight: '700',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+            }}
           >
-            <Globe className="w-4 h-4 text-sky-400" />
+            <Globe className="w-4 h-4 text-emerald-700" />
             <span>الدخول للإدارة المركزية للمجموعة (All Companies)</span>
-            <ChevronLeft className="w-4 h-4 text-slate-400" />
+            <ChevronLeft className="w-4 h-4 text-zinc-500" />
           </button>
         </div>
       </div>
@@ -74,76 +96,96 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>قطاع التجارة والمقاولات والمنافسات الحكومية (Featured Entity):</span>
             </h2>
-            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               سحابة اعتماد + BOQ
             </span>
           </div>
 
-          <div className="relative rounded-3xl bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 border-2 border-emerald-500/50 p-6 sm:p-8 text-white shadow-xl shadow-emerald-950/20 overflow-hidden">
-            {/* Background Decorative Blur */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div
+            className="card-feature-cinematic"
+            style={{
+              background: '#000000',
+              borderRadius: '16px',
+              padding: '28px',
+              color: '#FFFFFF',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+            }}
+          >
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               {/* Left Details */}
               <div className="space-y-4 flex-1">
                 <div className="flex items-start sm:items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 p-2 flex items-center justify-center shadow-lg backdrop-blur-md">
-                    <CompanyLogo companyId={kasCompany.id as CompanyId} size={50} />
+                  <div style={{ width: '56px', height: '56px', borderRadius: '9999px', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <CompanyLogo companyId={kasCompany.id as CompanyId} size={42} />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2.5 flex-wrap">
-                      <span className="px-2.5 py-0.5 rounded-md bg-emerald-500 text-black font-mono font-black text-xs">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                         {kasCompany.code || 'KAS'}
                       </span>
-                      <span className="text-xs font-bold text-emerald-300 font-mono bg-emerald-950/60 px-2.5 py-0.5 rounded-md border border-emerald-500/30">
+                      <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
                         CR: {kasCompany.crNumber || '1010567890'}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-md bg-white/10 text-emerald-200 text-xs font-medium">
+                      <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
                         منظومة سحابة اعتماد كاس
                       </span>
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white mt-1.5">
+                    <h3 className="display-sm" style={{ fontSize: '22px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                       {kasCompany.name}
                     </h3>
-                    <p className="text-xs sm:text-sm text-emerald-200/80 mt-0.5 font-medium">
+                    <p className="text-xs text-zinc-400 mt-1 font-sans">
                       KAS Trading & Contracting • إدارة المنافسات الحكومية، الفواتير الإلكترونية ZATCA، عروض الأسعار، وكراسات الكميات
                     </p>
                   </div>
                 </div>
 
-                {/* Live Stats Row */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl pt-2">
-                  <div className="p-3.5 rounded-2xl bg-black/40 border border-emerald-500/30 backdrop-blur-md">
-                    <span className="text-[11px] text-emerald-300 block font-medium">المنافسات الحكومية</span>
-                    <span className="text-lg font-black text-white block mt-0.5">2,651 منافسة</span>
-                    <span className="text-[10px] text-emerald-400/80">مسجلة بشيت كاس</span>
+                {/* Live Stats 4-Grid matching Signature Tokens */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                  <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '12px', background: '#ffffff', color: '#000000' }}>
+                    <span style={{ fontSize: '11.5px', color: '#71717a', fontWeight: 550 }}>المنافسات الحكومية</span>
+                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#000000' }}>2,651 منافسة</span>
+                    <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '4px' }}>مسجلة بشيت كاس</span>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-black/40 border border-emerald-500/30 backdrop-blur-md">
-                    <span className="text-[11px] text-emerald-300 block font-medium">المبيعات المعتمدة</span>
-                    <span className="text-lg font-black text-emerald-400 font-mono block mt-0.5">106,006 ر.س</span>
-                    <span className="text-[10px] text-emerald-400/80">فواتير ZATCA</span>
+                  <div className="card-pistachio-band" style={{ padding: '14px 18px', borderRadius: '12px' }}>
+                    <span style={{ fontSize: '11.5px', color: '#000000', fontWeight: 550 }}>المبيعات المعتمدة</span>
+                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#000000' }}>106,006 ر.س</span>
+                    <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '4px' }}>فواتير ZATCA</span>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-black/40 border border-emerald-500/30 backdrop-blur-md">
-                    <span className="text-[11px] text-emerald-300 block font-medium">فريق العمل</span>
-                    <span className="text-lg font-black text-white block mt-0.5">4 أعضاء</span>
-                    <span className="text-[10px] text-emerald-400/80">طاقم إدارة المنافسات</span>
+                  <div className="card-pricing-featured" style={{ padding: '14px 18px', borderRadius: '12px', background: '#000000', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }}>
+                    <span style={{ fontSize: '11.5px', color: '#a1a1aa', fontWeight: 550 }}>فريق العمل</span>
+                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#ffffff' }}>4 أعضاء</span>
+                    <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '4px' }}>طاقم إدارة المنافسات</span>
                   </div>
-                  <div className="p-3.5 rounded-2xl bg-black/40 border border-emerald-500/30 backdrop-blur-md">
-                    <span className="text-[11px] text-emerald-300 block font-medium">الرقم الضريبي</span>
-                    <span className="text-xs font-bold text-white font-mono block mt-1.5">310245879600003</span>
-                    <span className="text-[10px] text-emerald-400/80">هيئة الزكاة والضريبة</span>
+                  <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '12px', background: '#ffffff', color: '#000000' }}>
+                    <span style={{ fontSize: '11.5px', color: '#71717a', fontWeight: 550 }}>الرقم الضريبي</span>
+                    <span className="block mt-1 font-mono font-bold text-xs" style={{ color: '#000000' }}>310245879600003</span>
+                    <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '4px' }}>هيئة الزكاة والضريبة</span>
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row lg:flex-col gap-3 min-w-[240px]">
+              {/* Action Button */}
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-3 min-w-[220px]">
                 <button
                   type="button"
                   onClick={() => handleChoose(kasCompany.id as CompanyId)}
-                  className="px-6 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-sm flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/30 transition-all hover:scale-[1.02] cursor-pointer"
+                  className="button-white-pill"
+                  style={{
+                    padding: '12px 24px',
+                    fontSize: '13px',
+                    backgroundColor: '#ffffff',
+                    color: '#000000',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    cursor: 'pointer',
+                  }}
                 >
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-emerald-700" />
                   <span>دخول سحابة اعتماد كاس</span>
                   <ArrowLeft className="w-4 h-4" />
                 </button>
@@ -169,54 +211,62 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
             return (
               <div
                 key={comp.id}
-                className={`relative rounded-3xl bg-white dark:bg-slate-900 border p-6 flex flex-col justify-between space-y-5 transition-all duration-200 hover:shadow-xl hover:-translate-y-1 ${
-                  isCurrent 
-                    ? 'border-2 border-blue-600 shadow-xl shadow-blue-500/10' 
-                    : 'border-slate-200/80 dark:border-slate-800 shadow-sm hover:border-slate-300 dark:hover:border-slate-700'
-                }`}
+                className="card-pricing"
+                style={{
+                  padding: '24px',
+                  borderRadius: '16px',
+                  background: '#ffffff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '20px',
+                  border: isCurrent ? '2px solid #000000' : '1px solid #e4e4e7',
+                  boxShadow: isCurrent ? '0 10px 25px rgba(0,0,0,0.1)' : undefined,
+                  transition: 'all 0.2s ease',
+                }}
               >
                 <div>
                   {/* Card Header */}
                   <div className="flex items-start justify-between gap-3 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-13 h-13 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center shadow-xs">
-                        <CompanyLogo companyId={comp.id as CompanyId} size={42} />
+                      <div style={{ width: '48px', height: '48px', borderRadius: '9999px', background: '#f4f4f5', border: '1px solid #e4e4e7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CompanyLogo companyId={comp.id as CompanyId} size={36} />
                       </div>
-                      <span className="px-2 py-0.5 rounded-md bg-slate-900 dark:bg-slate-800 text-sky-400 font-mono font-bold text-xs">
+                      <span className="pill-tag-shade" style={{ fontSize: '11px', fontWeight: 700, background: '#000000', color: '#ffffff' }}>
                         {comp.code}
                       </span>
                     </div>
 
-                    <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                    <span className="pill-tag-shade" style={{ fontSize: '10px', background: '#f4f4f5', color: '#71717a' }}>
                       CR: {comp.crNumber}
                     </span>
                   </div>
 
                   {/* Company Titles */}
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">
+                  <h3 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', letterSpacing: '-0.01em', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                     {comp.name}
                   </h3>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                  <div className="text-xs text-zinc-400 mt-1 font-sans font-medium">
                     {comp.nameEn}
                   </div>
 
                   {/* Metrics Grid */}
-                  <div className="grid grid-cols-2 gap-2.5 bg-slate-50/80 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800/80 mt-4 text-xs">
+                  <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-zinc-50 border border-zinc-200 mt-4 text-xs">
                     <div>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">الفروع النشطة</span>
-                      <span className="text-sm font-bold text-slate-900 dark:text-white block mt-0.5">{comp.branchesCount} فروع</span>
+                      <span className="text-[11px] text-zinc-500 block font-medium">الفروع النشطة</span>
+                      <span className="text-sm font-bold text-black block mt-0.5">{comp.branchesCount} فروع</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">إجمالي الكادر</span>
-                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">{comp.employeesCount} موظف</span>
+                      <span className="text-[11px] text-zinc-500 block font-medium">إجمالي الكادر</span>
+                      <span className="text-sm font-bold text-emerald-700 block mt-0.5">{comp.employeesCount} موظف</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">الطلبات السارية</span>
-                      <span className="text-sm font-bold text-blue-600 dark:text-blue-400 block mt-0.5">{comp.activeOrdersCount} طلب</span>
+                      <span className="text-[11px] text-zinc-500 block font-medium">الطلبات السارية</span>
+                      <span className="text-sm font-bold text-zinc-900 block mt-0.5">{comp.activeOrdersCount} طلب</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 block font-medium">الرقم الضريبي</span>
-                      <span className="text-[11px] font-bold font-mono text-slate-700 dark:text-slate-300 block mt-0.5">{comp.taxNumber.slice(0, 8)}...</span>
+                      <span className="text-[11px] text-zinc-500 block font-medium">الرقم الضريبي</span>
+                      <span className="text-[11px] font-mono font-bold text-zinc-700 block mt-0.5">{comp.taxNumber.slice(0, 8)}...</span>
                     </div>
                   </div>
                 </div>
@@ -225,11 +275,23 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                 <button
                   type="button"
                   onClick={() => handleChoose(comp.id as CompanyId)}
-                  className={`w-full py-3 px-4 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                    isCurrent
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700'
-                      : 'bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-800 dark:hover:bg-slate-700'
-                  }`}
+                  style={{
+                    width: '100%',
+                    padding: '10px 16px',
+                    borderRadius: '9999px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    border: '1px solid',
+                    borderColor: isCurrent ? '#000000' : '#000000',
+                    backgroundColor: isCurrent ? '#000000' : '#000000',
+                    color: '#ffffff',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    transition: 'all 0.15s ease',
+                  }}
                 >
                   <span>{isCurrent ? 'الشركة الحالية (مفعلة)' : 'دخول بيئة العمل'}</span>
                   <ArrowLeft className="w-3.5 h-3.5" />
@@ -242,3 +304,4 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
     </div>
   );
 };
+
