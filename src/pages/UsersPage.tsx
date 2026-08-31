@@ -6,8 +6,18 @@ import { useAppStore } from '../stores/appStore';
 import { 
   UserCheck, ShieldCheck, Plus, FileSpreadsheet, FileText, Search, 
   Fingerprint, Lock, Shield, X, Check, QrCode, Smartphone, MessageSquare, 
-  Mail, ArrowLeft, Trash2, UserX, UserCog, Edit3, Key, Star
+  Mail, ArrowLeft, Trash2, UserX, UserCog, Edit3, Key, Star, ScanFace,
+  RefreshCw, CheckCircle2, AlertCircle, Laptop
 } from 'lucide-react';
+import { 
+  getStoredBiometricCredentials, 
+  registerUserBiometric, 
+  testBiometricAssertion, 
+  removeStoredBiometricCredential, 
+  toggleBiometricStatus, 
+  checkWebAuthnSupport, 
+  RegisteredBiometricCredential 
+} from '../services/webAuthnBiometricService';
 
 export interface UserAdmin {
   id: string;
@@ -114,6 +124,20 @@ export const UsersPage: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // User Biometrics Management Modal States
+  const [showBiometricModal, setShowBiometricModal] = useState(false);
+  const [userForBiometrics, setUserForBiometrics] = useState<UserAdmin | null>(null);
+  const [userCredentials, setUserCredentials] = useState<RegisteredBiometricCredential[]>([]);
+  const [hardwareInfo, setHardwareInfo] = useState<{ supported: boolean; hasHardware: boolean; detectedDevice: string }>({
+    supported: false,
+    hasHardware: false,
+    detectedDevice: ''
+  });
+  const [isEnrollingBio, setIsEnrollingBio] = useState(false);
+  const [testingBioId, setTestingBioId] = useState<string | null>(null);
+  const [testBioResult, setTestBioResult] = useState<{ credId: string; success: boolean; message: string } | null>(null);
+  const [enrollBioType, setEnrollBioType] = useState<'Touch ID (بصمة إصبع)' | 'Face ID (بصمة وجه)' | 'بصمة مزدوجة'>('Touch ID (بصمة إصبع)');
+
   // New User Form State
   const [newUser, setNewUser] = useState({
     name: '',
@@ -213,6 +237,131 @@ export const UsersPage: React.FC = () => {
       title: isEnabling ? 'تفعيل 2FA بنجاح' : 'تعطيل 2FA',
       message: `تم ${isEnabling ? 'تفعيل' : 'إلغاء'} المصادقة الثنائية للمستخدم (${selectedUser.name}) بنجاح.`,
       type: isEnabling ? 'success' : 'info',
+    });
+  };
+
+  const handleOpenBiometricModal = async (user: UserAdmin) => {
+    setUserForBiometrics(user);
+    const [creds, hw] = await Promise.all([
+      getStoredBiometricCredentials(user.username),
+      checkWebAuthnSupport()
+    ]);
+    setUserCredentials(creds);
+    setHardwareInfo(hw);
+    setTestBioResult(null);
+    setShowBiometricModal(true);
+  };
+
+  const handleEnrollBiometricForUser = async () => {
+    if (!userForBiometrics) return;
+    setIsEnrollingBio(true);
+    setTestBioResult(null);
+
+    const result = await registerUserBiometric(
+      {
+        id: userForBiometrics.id,
+        username: userForBiometrics.username,
+        fullName: userForBiometrics.name,
+        systemScope: 'جميع المنظومات'
+      },
+      enrollBioType
+    );
+
+    setIsEnrollingBio(false);
+
+    if (result.success && result.credential) {
+      const updatedCreds = await getStoredBiometricCredentials(userForBiometrics.username);
+      setUserCredentials(updatedCreds);
+
+      // Update user status in system_users
+      const patch = {
+        biometric_enabled: true,
+        biometric_type: enrollBioType
+      };
+      const updatedUsers = await realErpDataStore.updateRecord<UserAdmin>('system_users', userForBiometrics.id, patch, MOCK_USERS);
+      setUsers(updatedUsers);
+      setUserForBiometrics({ ...userForBiometrics, ...patch });
+
+      addNotification({
+        title: 'تم تسجيل البصمة بنجاح',
+        message: `تم ربط وتخزين البصمة البيومترية الحقيقية للمستخدم (${userForBiometrics.name}) بنجاح.`,
+        type: 'success'
+      });
+    } else if (result.canceled) {
+      addNotification({
+        title: 'إلغاء التسجيل',
+        message: 'تم إلغاء نافذة تسجيل البصمة من نظام التشغيل.',
+        type: 'warning'
+      });
+    } else {
+      addNotification({
+        title: 'فشل التسجيل',
+        message: result.errorMessage || 'تعذر تسجيل البصمة.',
+        type: 'error'
+      });
+    }
+  };
+
+  const handleTestBiometric = async (cred: RegisteredBiometricCredential) => {
+    setTestingBioId(cred.id);
+    setTestBioResult(null);
+
+    const result = await testBiometricAssertion(cred);
+    setTestingBioId(null);
+
+    if (result.success) {
+      setTestBioResult({
+        credId: cred.id,
+        success: true,
+        message: result.isRealHardware
+          ? `✓ تم التحقق بنجاح عبر مستشعر العتاد الحقيقي (${result.authenticatorType || 'Hardware'})!`
+          : '✓ تم فحص البصمة والمطابقة التشفيرية بنجاح!'
+      });
+      if (userForBiometrics) {
+        const updated = await getStoredBiometricCredentials(userForBiometrics.username);
+        setUserCredentials(updated);
+      }
+    } else {
+      setTestBioResult({
+        credId: cred.id,
+        success: false,
+        message: result.errorMessage || 'فشلت مطابقة البصمة.'
+      });
+    }
+  };
+
+  const handleDeleteBiometric = async (cred: RegisteredBiometricCredential) => {
+    if (!confirm(`هل أنت متأكد من حذف البصمة المسجلة (${cred.biometricType}) للمستخدم؟`)) return;
+    await removeStoredBiometricCredential(cred.id, cred.username);
+    if (userForBiometrics) {
+      const updatedCreds = await getStoredBiometricCredentials(userForBiometrics.username);
+      setUserCredentials(updatedCreds);
+
+      if (updatedCreds.length === 0) {
+        const patch = { biometric_enabled: false };
+        const updatedUsers = await realErpDataStore.updateRecord<UserAdmin>('system_users', userForBiometrics.id, patch, MOCK_USERS);
+        setUsers(updatedUsers);
+        setUserForBiometrics({ ...userForBiometrics, ...patch });
+      }
+    }
+    addNotification({
+      title: 'حذف البصمة',
+      message: 'تم حذف البصمة البيومترية وإلغاء المفتاح المشفر من النظام.',
+      type: 'info'
+    });
+  };
+
+  const handleToggleBiometricStatus = async (cred: RegisteredBiometricCredential) => {
+    const nextStatus = cred.status === 'نشط' ? 'معطل' : 'نشط';
+    await toggleBiometricStatus(cred.id, nextStatus);
+    if (userForBiometrics) {
+      const updatedCreds = await getStoredBiometricCredentials(userForBiometrics.username);
+      setUserCredentials(updatedCreds);
+    }
+    addNotification({
+      title: 'تحديث حالة البصمة',
+      message: `تم تغيير حالة البصمة إلى (${nextStatus}).`,
+      type: 'info'
     });
   };
 
@@ -431,17 +580,39 @@ export const UsersPage: React.FC = () => {
                   </td>
                   <td className="p-3.5">
                     {u.biometric_enabled ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
-                        <Fingerprint className="w-3 h-3 text-emerald-600" />
+                      <button
+                        type="button"
+                        onClick={() => handleOpenBiometricModal(u)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all cursor-pointer shadow-sm"
+                        title="إدارة البصمات المسجلة لهذا المستخدم"
+                      >
+                        <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
                         <span>{u.biometric_type || 'بصمة معتمدة'}</span>
-                      </span>
+                      </button>
                     ) : (
-                      <span className="text-[11px] text-zinc-400">غير مسجلة</span>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenBiometricModal(u)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 text-[10.5px] border border-zinc-200 hover:bg-zinc-200 transition-all cursor-pointer"
+                        title="تسجيل بصمة جديدة"
+                      >
+                        <Plus className="w-3 h-3 text-zinc-500" />
+                        <span>تسجيل بصمة</span>
+                      </button>
                     )}
                   </td>
                   <td className="p-3.5"><Badge text={u.status} type={u.status === 'نشط' ? 'success' : 'danger'} /></td>
                   <td className="p-3.5 text-center">
                     <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                      <button
+                        onClick={() => handleOpenBiometricModal(u)}
+                        className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
+                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                        title="إدارة وتسجيل البصمة البيومترية الحقيقية (WebAuthn / FIDO2)"
+                      >
+                        <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
+                        <span>البصمة</span>
+                      </button>
                       <button
                         onClick={() => handleOpenEditRoleModal(u)}
                         className="button-outline-on-light"
@@ -455,10 +626,10 @@ export const UsersPage: React.FC = () => {
                         onClick={() => handleOpen2FAModal(u)}
                         className="button-outline-on-light"
                         style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        title="إعدادات المصادقة الثنائية والبصمة"
+                        title="إعدادات المصادقة الثنائية 2FA"
                       >
-                        <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
-                        <span>{u.two_factor_enabled ? '2FA' : 'تفعيل 2FA'}</span>
+                        <Shield className="w-3 h-3 ml-1 text-zinc-600" />
+                        <span>2FA</span>
                       </button>
                       <button
                         onClick={() => handleToggleUserStatus(u)}
@@ -911,6 +1082,269 @@ export const UsersPage: React.FC = () => {
                   )}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Dedicated Real Hardware Biometric Management Modal (WebAuthn / FIDO2) */}
+      {showBiometricModal && userForBiometrics && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="p-5 bg-black text-white flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <Fingerprint className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="pill-tag-mint text-[10px]">FIDO2 / WEBAUTHN HARDWARE</span>
+                    <span className="text-xs text-zinc-400">إدارة البصمات والمستشعرات</span>
+                  </div>
+                  <h3 className="font-bold text-base text-white m-0">
+                    البصمة البيومترية للمستخدم: {userForBiometrics.name}
+                  </h3>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowBiometricModal(false)} 
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-5 bg-white text-black flex-1">
+              {/* User Context & Hardware Readiness Banner */}
+              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-sm text-black">{userForBiometrics.name}</span>
+                    <span className="text-xs text-zinc-500 font-mono">(@{userForBiometrics.username})</span>
+                    <Badge text={userForBiometrics.role} type="purple" />
+                  </div>
+                  <div className="text-xs text-zinc-500 mt-1 flex items-center gap-2">
+                    <Laptop className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>الجهاز الحالي: {hardwareInfo.detectedDevice}</span>
+                  </div>
+                </div>
+
+                <div className="text-left">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                    hardwareInfo.hasHardware 
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      : 'bg-blue-100 text-blue-800 border border-blue-300'
+                  }`}>
+                    <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
+                    <span>{hardwareInfo.hasHardware ? 'مستشعر العتاد متصل ونشط' : 'التشفير البيومتري جاهز'}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Registered Biometric Credentials List */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-xs text-black flex items-center gap-2 m-0">
+                    <Fingerprint className="w-4 h-4 text-emerald-600" />
+                    <span>البصمات والمفاتيح المسجلة ({userCredentials.length})</span>
+                  </h4>
+                  <span className="text-[11px] text-zinc-500">مخزنة مشفرة بمفتاح فريد FIDO2</span>
+                </div>
+
+                {userCredentials.length === 0 ? (
+                  <div className="p-6 text-center bg-zinc-50 rounded-2xl border border-dashed border-zinc-300 space-y-2">
+                    <Fingerprint className="w-8 h-8 text-zinc-400 mx-auto" />
+                    <div className="font-bold text-xs text-zinc-700">لا توجد بصمات بيومترية مسجلة لهذا الحساب حالياً</div>
+                    <p className="text-[11px] text-zinc-500 max-w-sm mx-auto">
+                      يمكنك تسجيل بصمة جهاز المستخدم (Windows Hello / Touch ID / Face ID) لتسريع وتأمين تسجيل الدخول.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {userCredentials.map((cred) => {
+                      const isTesting = testingBioId === cred.id;
+                      const hasTestResult = testBioResult && testBioResult.credId === cred.id;
+
+                      return (
+                        <div 
+                          key={cred.id}
+                          className="p-4 rounded-2xl border border-zinc-200 bg-white hover:border-zinc-300 transition-all shadow-sm space-y-3"
+                        >
+                          <div className="flex items-start justify-between flex-wrap gap-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center flex-shrink-0">
+                                {cred.biometricType.includes('Face') ? (
+                                  <ScanFace className="w-4 h-4" />
+                                ) : (
+                                  <Fingerprint className="w-4 h-4" />
+                                )}
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-xs text-black">{cred.biometricType}</span>
+                                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                    cred.status === 'نشط' ? 'bg-emerald-100 text-emerald-800' : 'bg-zinc-200 text-zinc-600'
+                                  }`}>
+                                    {cred.status}
+                                  </span>
+                                </div>
+                                <div className="text-[11px] text-zinc-500 font-sans mt-0.5">
+                                  {cred.deviceName}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Action Buttons per Credential */}
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                disabled={isTesting}
+                                onClick={() => handleTestBiometric(cred)}
+                                className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
+                                style={{ padding: '4px 10px', fontSize: '11px', minHeight: '28px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                                title="اختبار فحص ومطابقة البصمة مع المستشعر الحي"
+                              >
+                                {isTesting ? (
+                                  <>
+                                    <RefreshCw className="w-3 h-3 animate-spin" />
+                                    <span>جاري الفحص...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Fingerprint className="w-3 h-3" />
+                                    <span>فحص واختبار</span>
+                                  </>
+                                )}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleToggleBiometricStatus(cred)}
+                                className="button-outline-on-light"
+                                style={{ padding: '4px 10px', fontSize: '11px', minHeight: '28px' }}
+                                title="تعطيل أو تفعيل البصمة"
+                              >
+                                <span>{cred.status === 'نشط' ? 'تعطيل' : 'تفعيل'}</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteBiometric(cred)}
+                                className="p-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition-colors"
+                                title="حذف هذه البصمة نهائياً"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Credential Metadata Strip */}
+                          <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100 flex-wrap gap-2">
+                            <span>تاريخ التسجيل: <strong>{new Date(cred.enrolledAt).toLocaleDateString('ar-SA')}</strong></span>
+                            <span>آخر استخدام: <strong>{cred.lastUsedAt ? new Date(cred.lastUsedAt).toLocaleString('ar-SA') : 'لم تستخدم بعد'}</strong></span>
+                            <span className="font-mono text-[10px] text-zinc-400">ID: {cred.credentialId.slice(0, 16)}...</span>
+                          </div>
+
+                          {/* Live Test Feedback Banner */}
+                          {hasTestResult && (
+                            <div className={`p-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                              testBioResult.success 
+                                ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' 
+                                : 'bg-rose-50 text-rose-900 border border-rose-200'
+                            }`}>
+                              {testBioResult.success ? (
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                              ) : (
+                                <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                              )}
+                              <span>{testBioResult.message}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Enroll New Biometric Section */}
+              <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-xs text-emerald-950 flex items-center gap-1.5 m-0">
+                    <Plus className="w-4 h-4 text-emerald-700" />
+                    <span>تسجيل بصمة حقيقية جديدة لهذا الحساب الآن</span>
+                  </h4>
+                  <span className="pill-tag-mint text-[10px]">Real WebAuthn Enrollment</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {[
+                    { id: 'Touch ID (بصمة إصبع)', label: 'بصمة الإصبع', desc: 'Windows Hello / Touch ID', icon: Fingerprint },
+                    { id: 'Face ID (بصمة وجه)', label: 'بصمة الوجه', desc: 'كاميرا 3D / Face ID', icon: ScanFace },
+                    { id: 'بصمة مزدوجة', label: 'بصمة مزدوجة', desc: 'إصبع + وجه معاً', icon: ShieldCheck }
+                  ].map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setEnrollBioType(opt.id as any)}
+                      className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer ${
+                        enrollBioType === opt.id
+                          ? 'bg-white border-black ring-2 ring-black/10 shadow-sm'
+                          : 'bg-white/60 border-zinc-200 hover:bg-white hover:border-zinc-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-xs text-black">{opt.label}</span>
+                        <opt.icon className="w-3.5 h-3.5 text-emerald-600" />
+                      </div>
+                      <span className="text-[10px] text-zinc-500 block">{opt.desc}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  disabled={isEnrollingBio}
+                  onClick={handleEnrollBiometricForUser}
+                  className="button-primary-pill w-full"
+                  style={{
+                    height: '42px',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {isEnrollingBio ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                      <span>جاري استدعاء نافذة مستشعر البصمة من نظام التشغيل...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Fingerprint className="w-4 h-4" />
+                      <span>بدء تسجيل وتفويض البصمة الحقيقية على هذا الجهاز</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between flex-shrink-0">
+              <span className="text-xs text-zinc-500">
+                يتم تشفير وتأمين المفاتيح البيومترية وفق معايير FIDO2 / W3C العالمية
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowBiometricModal(false)}
+                className="button-outline-on-light"
+                style={{ padding: '6px 20px', fontSize: '12.5px', minHeight: '36px' }}
+              >
+                إغلاق
+              </button>
             </div>
           </div>
         </div>

@@ -6,8 +6,17 @@ import {
   Sliders, Fingerprint, Shield, Building2, Phone, Image, Link, 
   Key, Search, MessageSquare, FileText, Check, Save, ExternalLink,
   Plus, Trash2, Globe, ShieldAlert, Sparkles, RefreshCw, Eye,
-  ShoppingBag, Store, CreditCard, Layers, Zap
+  ShoppingBag, Store, CreditCard, Layers, Zap, ScanFace, Laptop,
+  AlertCircle, CheckCircle2
 } from 'lucide-react';
+import { 
+  checkWebAuthnSupport, 
+  getStoredBiometricCredentials, 
+  registerUserBiometric, 
+  testBiometricAssertion, 
+  removeStoredBiometricCredential, 
+  RegisteredBiometricCredential 
+} from '../services/webAuthnBiometricService';
 
 interface QuickLinkItem {
   id: string;
@@ -58,6 +67,99 @@ export const SettingsPage: React.FC = () => {
   const [allowFaceId, setAllowFaceId] = useState(true);
   const [otpExpiryMinutes, setOtpExpiryMinutes] = useState(5);
   const [defaultOtpChannel, setDefaultOtpChannel] = useState('Google Authenticator');
+
+  // Device Biometrics Management in Settings
+  const [deviceBiometrics, setDeviceBiometrics] = useState<RegisteredBiometricCredential[]>([]);
+  const [hwSupport, setHwSupport] = useState<{ supported: boolean; hasHardware: boolean; detectedDevice: string }>({
+    supported: false,
+    hasHardware: false,
+    detectedDevice: ''
+  });
+  const [isRegisteringDeviceBio, setIsRegisteringDeviceBio] = useState(false);
+  const [testingSettingsBioId, setTestingSettingsBioId] = useState<string | null>(null);
+  const [settingsTestResult, setSettingsTestResult] = useState<{ credId: string; success: boolean; message: string } | null>(null);
+
+  useEffect(() => {
+    checkWebAuthnSupport().then(setHwSupport);
+    getStoredBiometricCredentials('admin').then(setDeviceBiometrics);
+  }, []);
+
+  const handleRegisterCurrentDeviceBio = async (type: 'Touch ID (بصمة إصبع)' | 'Face ID (بصمة وجه)') => {
+    setIsRegisteringDeviceBio(true);
+    setSettingsTestResult(null);
+
+    const result = await registerUserBiometric(
+      {
+        id: '1',
+        username: 'admin',
+        fullName: 'مشرف admin (خالد السليم)',
+        systemScope: 'جميع المنظومات'
+      },
+      type
+    );
+
+    setIsRegisteringDeviceBio(false);
+
+    if (result.success) {
+      const updated = await getStoredBiometricCredentials('admin');
+      setDeviceBiometrics(updated);
+      addNotification({
+        title: 'تم تسجيل البصمة بنجاح',
+        message: 'تم ربط بصمة هذا الجهاز بحسابك وتفعيل الدخول المباشر بها.',
+        type: 'success'
+      });
+    } else if (result.canceled) {
+      addNotification({
+        title: 'إلغاء التسجيل',
+        message: 'تم إلغاء نافذة تسجيل البصمة من نظام التشغيل.',
+        type: 'warning'
+      });
+    } else {
+      addNotification({
+        title: 'فشل التسجيل',
+        message: result.errorMessage || 'تعذر تسجيل البصمة.',
+        type: 'error'
+      });
+    }
+  };
+
+  const handleTestSettingsBiometric = async (cred: RegisteredBiometricCredential) => {
+    setTestingSettingsBioId(cred.id);
+    setSettingsTestResult(null);
+
+    const result = await testBiometricAssertion(cred);
+    setTestingSettingsBioId(null);
+
+    if (result.success) {
+      setSettingsTestResult({
+        credId: cred.id,
+        success: true,
+        message: result.isRealHardware
+          ? `✓ تم التحقق بنجاح من مستشعر العتاد (${result.authenticatorType || 'Hardware'})!`
+          : '✓ تم التحقق من البصمة بنجاح!'
+      });
+      const updated = await getStoredBiometricCredentials('admin');
+      setDeviceBiometrics(updated);
+    } else {
+      setSettingsTestResult({
+        credId: cred.id,
+        success: false,
+        message: result.errorMessage || 'فشلت مطابقة البصمة.'
+      });
+    }
+  };
+
+  const handleDeleteSettingsBiometric = async (cred: RegisteredBiometricCredential) => {
+    if (!confirm(`هل أنت متأكد من حذف البصمة المسجلة (${cred.biometricType})؟`)) return;
+    await removeStoredBiometricCredential(cred.id, cred.username);
+    const updated = await getStoredBiometricCredentials('admin');
+    setDeviceBiometrics(updated);
+    addNotification({
+      title: 'حذف البصمة',
+      message: 'تم حذف البصمة المسجلة من هذا الجهاز.',
+      type: 'info'
+    });
+  };
 
   // Section 2: RBAC Matrix State
   const [rolesPermissions, setRolesPermissions] = useState([
@@ -428,6 +530,116 @@ export const SettingsPage: React.FC = () => {
                     <option value="SMS">رسالة SMS نصية قصيرة</option>
                     <option value="WhatsApp">إشعار عبر الواتساب الرسمي</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Device Biometric Registration & Testing Card */}
+              <div className="p-5 bg-gradient-to-br from-emerald-50/70 to-teal-50/40 rounded-2xl border border-emerald-200 space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center">
+                      <Fingerprint className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-xs text-emerald-950 m-0">
+                        إدارة وتفويض بصمة هذا الجهاز لحسابك (This Device WebAuthn)
+                      </h4>
+                      <p className="text-[11px] text-emerald-800 m-0 font-sans">
+                        تسجيل مستشعر البصمة الحقيقي لجهازك الحالي للتمكن من الدخول المباشر الفوري.
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                    hwSupport.hasHardware 
+                      ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' 
+                      : 'bg-zinc-100 text-zinc-700 border border-zinc-200'
+                  }`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                    <span>{hwSupport.hasHardware ? 'المستشعر متصل ومتاح' : 'متاح عبر التشفير'}</span>
+                  </span>
+                </div>
+
+                <div className="text-xs text-zinc-600 flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-emerald-100 font-sans">
+                  <Laptop className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <span>الجهاز المكتشف: <strong>{hwSupport.detectedDevice}</strong></span>
+                </div>
+
+                {/* Enrolled Keys */}
+                {deviceBiometrics.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="text-[11px] font-bold text-zinc-700">المفاتيح البيومترية المسجلة على حسابك:</div>
+                    {deviceBiometrics.map(cred => {
+                      const isTesting = testingSettingsBioId === cred.id;
+                      const hasResult = settingsTestResult && settingsTestResult.credId === cred.id;
+
+                      return (
+                        <div key={cred.id} className="p-3 bg-white rounded-xl border border-emerald-100 flex items-center justify-between flex-wrap gap-2">
+                          <div className="flex items-center gap-2">
+                            <Fingerprint className="w-4 h-4 text-emerald-600" />
+                            <div>
+                              <span className="font-bold text-xs text-black block">{cred.biometricType}</span>
+                              <span className="text-[10px] text-zinc-500 font-mono">ID: {cred.credentialId.slice(0, 14)}... • {new Date(cred.enrolledAt).toLocaleDateString('ar-SA')}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              disabled={isTesting}
+                              onClick={() => handleTestSettingsBiometric(cred)}
+                              className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
+                              style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            >
+                              {isTesting ? 'جاري الفحص...' : 'فحص ومطابقة'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteSettingsBiometric(cred)}
+                              className="p-1 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50"
+                              title="حذف البصمة"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          {hasResult && (
+                            <div className={`w-full p-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 mt-1 ${
+                              settingsTestResult.success ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+                            }`}>
+                              {settingsTestResult.success ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <AlertCircle className="w-3.5 h-3.5 text-rose-600" />}
+                              <span>{settingsTestResult.message}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Enrollment Action Buttons */}
+                <div className="flex items-center gap-2 flex-wrap pt-1">
+                  <button
+                    type="button"
+                    disabled={isRegisteringDeviceBio}
+                    onClick={() => handleRegisterCurrentDeviceBio('Touch ID (بصمة إصبع)')}
+                    className="button-primary-pill"
+                    style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <Fingerprint className="w-3.5 h-3.5" />
+                    <span>{isRegisteringDeviceBio ? 'جاري الاستدعاء...' : 'تسجيل بصمة الإصبع لهذا الجهاز'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isRegisteringDeviceBio}
+                    onClick={() => handleRegisterCurrentDeviceBio('Face ID (بصمة وجه)')}
+                    className="button-outline-on-light"
+                    style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <ScanFace className="w-3.5 h-3.5 text-purple-600" />
+                    <span>تسجيل بصمة الوجه</span>
+                  </button>
                 </div>
               </div>
             </div>
