@@ -6,6 +6,7 @@ import {
   IamRole, 
   IamDelegation, 
   IamSessionContext as IamSessionContextType,
+  AccountType,
   DataScopeLevel,
   DataScopeName,
   ModuleAction,
@@ -277,6 +278,74 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     });
   }, [currentUser, activeCompany, allowedBranchIds, allowedDepartmentIds, dataScope, isSuperAdmin]);
 
+  // Live Role Simulator for testing access control
+  const simulateRole = useCallback((role: AccountType, customDataScope?: DataScopeLevel) => {
+    let defaultScope: DataScopeLevel = 5;
+    let newPerms = new Set<string>();
+
+    switch (role) {
+      case 'Group Super Admin':
+        defaultScope = 6;
+        newPerms = new Set(['*']);
+        break;
+      case 'Board / Group Executive':
+        defaultScope = 6;
+        newPerms = new Set([
+          'dashboard.view', 'group.dashboard.view', 'recruitment.view', 'rent.view', 
+          'hr.view', 'finance.view', 'shelter.view', 'tenders.view', 'audit.view', 'reports.export'
+        ]);
+        break;
+      case 'Company Admin':
+        defaultScope = 5;
+        newPerms = new Set([
+          'dashboard.view', 'crm.*', 'recruitment.*', 'rent.*', 
+          'hr.view', 'hr.create', 'hr.edit', 'hr.export',
+          'finance.*', 'shelter.*', 'tenders.*', 'audit.view'
+        ]);
+        break;
+      case 'Branch Manager':
+        defaultScope = 4;
+        newPerms = new Set([
+          'dashboard.view', 'crm.view', 'crm.create', 'crm.edit',
+          'recruitment.view', 'recruitment.create', 'recruitment.edit', 'recruitment.approve',
+          'rent.view', 'rent.create', 'rent.edit', 'rent.approve',
+          'shelter.view', 'shelter.create', 'shelter.edit', 'hr.view'
+        ]);
+        break;
+      case 'Department Manager':
+        defaultScope = 3;
+        newPerms = new Set([
+          'dashboard.view', 'hr.view', 'hr.create', 'hr.edit', 'hr.approve', 'hr.export',
+          'recruitment.view', 'recruitment.create', 'recruitment.edit'
+        ]);
+        break;
+      case 'Employee':
+        defaultScope = 1;
+        newPerms = new Set([
+          'dashboard.view', 'recruitment.view', 'recruitment.create', 'recruitment.edit',
+          'crm.view', 'crm.create', 'crm.edit'
+        ]);
+        break;
+      case 'Auditor':
+        defaultScope = 5;
+        newPerms = new Set([
+          'dashboard.view', 'crm.view', 'recruitment.view', 'rent.view', 
+          'hr.view', 'finance.view', 'shelter.view', 'tenders.view', 'audit.view', 'reports.export'
+        ]);
+        break;
+    }
+
+    const assignedScope = customDataScope !== undefined ? customDataScope : defaultScope;
+
+    setCurrentUser(prev => prev ? {
+      ...prev,
+      accountType: role,
+      dataScope: assignedScope,
+    } : null);
+
+    setPermissionCodes(newPerms);
+  }, []);
+
   // Safe Company Switch with Zero Privilege Leakage
   const switchCompany = async (newCompanyCodeOrId: string): Promise<boolean> => {
     const target = companies.find(c => c.code === newCompanyCodeOrId || c.id === newCompanyCodeOrId);
@@ -373,6 +442,7 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     canAccessBranch,
     canAccessDepartment,
     filterRecords,
+    simulateRole,
     logAuditAction,
   };
 
