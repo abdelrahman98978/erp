@@ -10,6 +10,8 @@ import {
 import { Badge } from '../components/ui/Badge';
 import { useIamSession } from '../contexts/IamSessionContext';
 import { iamPolicyEngine } from '../services/iamPolicyEngine';
+import { RolesPermissionsMatrixWidget } from '../components/iam/RolesPermissionsMatrixWidget';
+import { UserScopeEditModal } from '../components/iam/UserScopeEditModal';
 import { 
   IamUser, IamCompany, IamBranch, IamDepartment, IamMembership, 
   IamRole, IamPermission, IamDelegation, IamSoDRule, IamAccessRequest, 
@@ -572,48 +574,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {/* TAB 4: ROLES & PERMISSIONS MATRIX (مصفوفة الصلاحيات) */}
       {/* ==================================================================== */}
       {activeTab === 'roles-matrix' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {roles.map((r) => (
-              <div key={r.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold rounded-md">
-                    {r.roleType}
-                  </span>
-                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">نظامي معتمد</span>
-                </div>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white">{r.name}</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{r.description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Permissions Catalog */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
-            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <KeyRound className="w-5 h-5 text-emerald-500" />
-              كتالوج الصلاحيات الدقيقة (Permissions Catalog)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {permissions.map((p) => (
-                <div key={p.id} className="p-3.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-2xl space-y-1.5 text-xs">
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">{p.code}</span>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
-                      p.sensitivityLevel === 'حرج' || p.sensitivityLevel === 'سري للغاية'
-                        ? 'bg-red-500/10 text-red-600 border border-red-500/20'
-                        : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                    }`}>
-                      {p.sensitivityLevel}
-                    </span>
-                  </div>
-                  <div className="font-bold text-slate-900 dark:text-white">{p.name}</div>
-                  <div className="text-[11px] text-slate-500 dark:text-slate-400">الوحدة: {p.module} • الإجراء: {p.action}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <RolesPermissionsMatrixWidget />
       )}
 
       {/* ==================================================================== */}
@@ -861,6 +822,19 @@ export const IdentityAccessManagementPage: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* MODAL: USER SCOPE & PERMISSIONS EDIT */}
+      {selectedUserForDetail && (
+        <UserScopeEditModal
+          user={selectedUserForDetail}
+          onClose={() => setSelectedUserForDetail(null)}
+          onSave={(updatedUser) => {
+            setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+            iamPolicyEngine.saveUser(updatedUser);
+            setSelectedUserForDetail(null);
+          }}
+        />
       )}
     </div>
   );

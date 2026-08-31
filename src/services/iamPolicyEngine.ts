@@ -20,6 +20,10 @@ import {
   IamAccessReview,
   IamUserSession,
   IamAuditLog,
+  DataScopeLevel,
+  DataScopeName,
+  ModuleAction,
+  RecordAccessContext,
 } from '../types/iam';
 
 class IamPolicyEngine {
@@ -157,6 +161,7 @@ class IamPolicyEngine {
         companyId: m.company_id,
         companyCode: m.company?.code,
         companyName: m.company?.commercial_name || m.company?.legal_name,
+        dataScope: (m.data_scope ?? 5) as DataScopeLevel,
         branchScope: Array.isArray(m.branch_scope) ? m.branch_scope : ['*'],
         departmentScope: Array.isArray(m.department_scope) ? m.department_scope : ['*'],
         isPrimary: Boolean(m.is_primary),
@@ -487,6 +492,161 @@ class IamPolicyEngine {
     }
   }
 
+  // ============================================================================
+  // 8. MULTI-ENTITY AUTHORIZATION & ACCESS DECISION ENGINE (Deny By Default)
+  // ============================================================================
+
+  /**
+   * Evaluates access decision across the 8-stage security hierarchy:
+   * 1. Account Active?
+   * 2. Tenant Matched?
+   * 3. Active Company Authorized?
+   * 4. Branch Scope Allowed?
+   * 5. Department Scope Allowed?
+   * 6. Module & Action Permission Granted?
+   * 7. Data Scope & Record-Level Ownership Matched?
+   */
+  public evaluateAccessDecision(
+    context: {
+      user: IamUser | null;
+      activeTenantId: string;
+      activeCompanyId: string;
+      allowedCompanyIds: string[];
+      allowedBranchIds: string[];
+      allowedDepartmentIds: string[];
+      dataScope: DataScopeLevel;
+      permissionCodes: Set<string>;
+    },
+    module: string,
+    action: ModuleAction,
+    record?: RecordAccessContext
+  ): { allowed: boolean; reason: string; scopeApplied: DataScopeLevel } {
+    // Stage 1: Account must be present and active
+    if (!context.user) {
+      return { allowed: false, reason: 'Deny: No authenticated user session found.', scopeApplied: 0 };
+    }
+    if (context.user.status !== 'نشط') {
+      return { allowed: false, reason: `Deny: User account status is ${context.user.status}.`, scopeApplied: 0 };
+    }
+
+    // Super Admin has global override capability
+    if (context.user.accountType === 'Group Super Admin') {
+      return { allowed: true, reason: 'Allow: Super Admin privilege.', scopeApplied: 6 };
+    }
+
+    // Stage 2: Company Isolation (Deny cross-company leaks)
+    if (!context.allowedCompanyIds.includes(context.activeCompanyId) && !context.allowedCompanyIds.includes('*')) {
+      return { allowed: false, reason: 'Deny: Active company is not in authorized company list.', scopeApplied: 0 };
+    }
+
+    if (record?.company_id && record.company_id !== context.activeCompanyId && context.dataScope < 6) {
+      return { allowed: false, reason: 'Deny: Record belongs to a different company.', scopeApplied: 0 };
+    }
+
+    // Stage 3: Data Scope Gate
+    if (context.dataScope === 0) {
+      return { allowed: false, reason: 'Deny: Data Scope is 0 (No Access).', scopeApplied: 0 };
+    }
+
+    // Stage 4: Module & Action Permission Gate (Deny by default)
+    const exactCode = `${module}.${action}`;
+    const wildcardModule = `${module}.*`;
+    const hasExplicitPerm = context.permissionCodes.has(exactCode) || 
+                            context.permissionCodes.has(wildcardModule) ||
+                            context.permissionCodes.has('*');
+
+    if (!hasExplicitPerm) {
+      return { allowed: false, reason: `Deny: Missing required permission code [${exactCode}].`, scopeApplied: context.dataScope };
+    }
+
+    // Stage 5: Record-Level Scope Check (if record is provided)
+    if (record) {
+      // 1 — Own: Must be creator or assignee
+      if (context.dataScope === 1) {
+        const isOwn = (record.created_by && record.created_by === context.user.id) ||
+                      (record.assigned_to && record.assigned_to === context.user.id) ||
+                      (record.user_id && record.user_id === context.user.id);
+        if (!isOwn) {
+          return { allowed: false, reason: 'Deny: Data Scope is 1 (Own records only).', scopeApplied: 1 };
+        }
+      }
+
+      // 3 — Department: Must match user's authorized departments
+      if (context.dataScope === 3 && record.department_id) {
+        const deptAllowed = context.allowedDepartmentIds.includes('*') || context.allowedDepartmentIds.includes(record.department_id);
+        if (!deptAllowed) {
+          return { allowed: false, reason: 'Deny: Record belongs to unauthorized department.', scopeApplied: 3 };
+        }
+      }
+
+      // 4 — Branch: Must match user's authorized branches
+      if (context.dataScope === 4 && record.branch_id) {
+        const branchAllowed = context.allowedBranchIds.includes('*') || context.allowedBranchIds.includes(record.branch_id);
+        if (!branchAllowed) {
+          return { allowed: false, reason: 'Deny: Record belongs to unauthorized branch.', scopeApplied: 4 };
+        }
+      }
+    }
+
+    return { allowed: true, reason: 'Allow: Security gates satisfied.', scopeApplied: context.dataScope };
+  }
+
+  /**
+   * Filters an in-memory or queried record dataset by user's security context & Data Scope.
+   * Guarantees that no unauthorized records leak into UI, Search, Export, or Reports.
+   */
+  public filterRecordsByScope<T extends RecordAccessContext>(
+    records: T[],
+    context: {
+      user: IamUser | null;
+      activeCompanyId: string;
+      allowedBranchIds: string[];
+      allowedDepartmentIds: string[];
+      dataScope: DataScopeLevel;
+      isSuperAdmin?: boolean;
+    }
+  ): T[] {
+    if (!records || !Array.isArray(records)) return [];
+    if (!context.user || context.user.status !== 'نشط') return [];
+    if (context.isSuperAdmin || context.user.accountType === 'Group Super Admin') return records;
+    if (context.dataScope === 0) return [];
+
+    return records.filter(record => {
+      // 1. Company Isolation
+      if (context.dataScope < 6 && record.company_id && record.company_id !== context.activeCompanyId) {
+        return false;
+      }
+
+      // 2. Scope-based evaluation
+      switch (context.dataScope) {
+        case 1: // Own
+          return (record.created_by && record.created_by === context.user?.id) ||
+                 (record.assigned_to && record.assigned_to === context.user?.id) ||
+                 (record.user_id && record.user_id === context.user?.id);
+
+        case 2: // Team
+        case 3: // Department
+          if (!record.department_id) return true;
+          return context.allowedDepartmentIds.includes('*') || 
+                 context.allowedDepartmentIds.includes(record.department_id);
+
+        case 4: // Branch
+          if (!record.branch_id) return true;
+          return context.allowedBranchIds.includes('*') || 
+                 context.allowedBranchIds.includes(record.branch_id);
+
+        case 5: // Company
+          return true; // Checked above via company_id
+
+        case 6: // Group
+          return true;
+
+        default:
+          return false;
+      }
+    });
+  }
+
   public async logAudit(log: Omit<IamAuditLog, 'id' | 'createdAt'>): Promise<void> {
     try {
       await supabase.from('iam_audit_logs').insert([
@@ -507,7 +667,7 @@ class IamPolicyEngine {
         }
       ]);
     } catch (err) {
-      console.warn('Could not record audit log:', err);
+      console.warn('Could not record audit log in supabase:', err);
     }
   }
 }

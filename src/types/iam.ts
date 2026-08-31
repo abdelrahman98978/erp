@@ -15,16 +15,62 @@ export type AccountType =
 
 export type UserStatus = 'نشط' | 'معلق' | 'موقوف' | 'منتهي الصلاحية';
 
+export type DataScopeLevel = 
+  | 0 // 0 — No Access: لا وصول
+  | 1 // 1 — Own: سجلات المستخدم ومعاملاته فقط
+  | 2 // 2 — Team: فريق العمل المحدد
+  | 3 // 3 — Department: القسم المحدد
+  | 4 // 4 — Branch: الفرع المحدد
+  | 5 // 5 — Company: كامل الشركة
+  | 6; // 6 — Group: جميع شركات المجموعة، للإدارة العليا المخولة فقط
+
+export type DataScopeName = 
+  | 'No Access'
+  | 'Own'
+  | 'Team'
+  | 'Department'
+  | 'Branch'
+  | 'Company'
+  | 'Group';
+
+export type ModuleAction = 
+  | 'view'
+  | 'create'
+  | 'edit'
+  | 'delete'
+  | 'approve'
+  | 'reject'
+  | 'export'
+  | 'print'
+  | 'import'
+  | 'assign'
+  | 'archive'
+  | 'restore';
+
+export interface RecordAccessContext {
+  tenant_id?: string;
+  company_id?: string;
+  branch_id?: string;
+  department_id?: string;
+  created_by?: string;
+  assigned_to?: string;
+  [key: string]: any;
+}
+
 export interface IamUser {
   id: string;
   identityId?: string;
   employeeNumber: string;
   fullName: string;
+  username?: string;
   email: string;
   phone: string;
   jobTitle: string;
   accountType: AccountType;
   status: UserStatus;
+  dataScope?: DataScopeLevel;
+  branchId?: string;
+  departmentId?: string;
   mfaEnabled: boolean;
   mfaMethod: 'Google Authenticator' | 'SMS' | 'WhatsApp' | 'Email' | 'بصمة بيومترية (FIDO2)';
   biometricEnabled: boolean;
@@ -80,6 +126,8 @@ export interface IamMembership {
   companyId: string;
   companyCode?: string;
   companyName?: string;
+  dataScope: DataScopeLevel;
+  dataScopeName?: DataScopeName;
   branchScope: string[]; // ["*"] or list of branch IDs
   departmentScope: string[]; // ["*"] or list of department IDs
   isPrimary: boolean;
@@ -231,6 +279,11 @@ export interface IamSessionContext {
   activeTenantId: string;
   activeCompanyId: string;
   activeCompany: IamCompany | null;
+  allowedCompanyIds: string[];
+  allowedBranchIds: string[];
+  allowedDepartmentIds: string[];
+  dataScope: DataScopeLevel;
+  dataScopeName: DataScopeName;
   userMemberships: IamMembership[];
   activeMembership: IamMembership | null;
   activeRoles: IamRole[];
@@ -238,10 +291,15 @@ export interface IamSessionContext {
   delegations: IamDelegation[];
   isSuperAdmin: boolean;
   isBoardExecutive: boolean;
+  isCompanyAdmin: boolean;
+  isBranchManager: boolean;
+  isDepartmentManager: boolean;
   canSwitchCompany: boolean;
   switchCompany: (companyId: string) => Promise<boolean>;
   hasPermission: (permissionCode: string) => boolean;
+  canPerform: (module: string, action: ModuleAction, recordContext?: RecordAccessContext) => boolean;
   canAccessBranch: (branchId: string) => boolean;
   canAccessDepartment: (deptId: string) => boolean;
+  filterRecords: <T extends RecordAccessContext>(records: T[]) => T[];
   logAuditAction: (action: string, resource: string, result: 'SUCCESS' | 'FORBIDDEN' | 'FAILED', recordId?: string, details?: any) => Promise<void>;
 }

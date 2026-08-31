@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { SIDEBAR_MENU } from '../../data/sidebarMenu';
 import { NavItem } from '../../types';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useIamSession } from '../../contexts/IamSessionContext';
 import { 
   X, Search, ChevronDown, ChevronLeft, ChevronRight, 
   ListTree, Columns, LayoutGrid, CircleDot, Folder,
@@ -12,7 +13,7 @@ import {
   HelpingHand, Headphones, FileSignature, FilePlus, CheckCircle2, 
   RotateCcw, Truck, Clock3, Receipt, Zap, ArrowRightLeft, 
   ClipboardCheck, Package, Scale, Stamp, ShieldCheck, Hotel, 
-  Home, Building2, LogOut, Plane, MapPin, Repeat, ArrowLeftRight, 
+  Home, Building2, LogOut, Plane, MapPin, Repeat, 
   Hourglass, CheckCheck, ScrollText, PlaneLanding, PlaneTakeoff, 
   AlertCircle, PlusCircle, Tags, Globe2, Building, FileDown, 
   BadgeDollarSign, Plus, BarChart3, Network, CalendarDays, Coins, 
@@ -31,7 +32,7 @@ const LUCIDE_ICONS: Record<string, React.FC<{ className?: string }>> = {
   HelpingHand, Headphones, FileSignature, FilePlus, CheckCircle2, 
   RotateCcw, Truck, Clock3, Receipt, Zap, ArrowRightLeft, 
   ClipboardCheck, Package, Scale, Stamp, ShieldCheck, Hotel, 
-  Home, Building2, LogOut, Plane, MapPin, Repeat, ArrowLeftRight, 
+  Home, Building2, LogOut, Plane, MapPin, Repeat, 
   Hourglass, CheckCheck, ScrollText, PlaneLanding, PlaneTakeoff, 
   AlertCircle, PlusCircle, Tags, Globe2, Building, FileDown, 
   BadgeDollarSign, Plus, BarChart3, Network, CalendarDays, Coins, 
@@ -40,6 +41,31 @@ const LUCIDE_ICONS: Record<string, React.FC<{ className?: string }>> = {
   MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio, 
   GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders, 
   History, Settings2, Folder, CircleDot
+};
+
+const MODULE_PERMISSIONS_MAP: Record<string, string> = {
+  'dashboard': 'dashboard.view',
+  'crm-section': 'crm.view',
+  'clients': 'crm.view',
+  'operations-section': 'recruitment.view',
+  'recruitment-contracts': 'recruitment.view',
+  'rent-contracts': 'rent.view',
+  'travel-section': 'travel.view',
+  'shelter-section': 'shelter.view',
+  'sponsorship-transfer': 'transfer.view',
+  'external-agents-section': 'agents.view',
+  'hr-recruitment-section': 'hr.view',
+  'hr': 'hr.view',
+  'attendances': 'hr.view',
+  'finance-section': 'finance.view',
+  'finance': 'finance.view',
+  'zatca': 'finance.view',
+  'tenders-boq': 'tenders.view',
+  'microsoft-analytics-section': 'analytics.view',
+  'settings-section': 'settings.view',
+  'iam-matrix': 'iam.manage',
+  'users': 'iam.manage',
+  'activity-log': 'audit.view',
 };
 
 interface SidebarProps {
@@ -52,6 +78,7 @@ export type SidebarDisplayMode = 'tree' | 'compact' | 'cards';
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClose }) => {
   const { t, currentLanguage } = useLanguage();
+  const { hasPermission, isSuperAdmin, dataScopeName, activeCompany } = useIamSession();
   const isRtl = currentLanguage.dir === 'rtl';
   const [displayMode, setDisplayMode] = useState<SidebarDisplayMode>('tree');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -83,26 +110,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
     return <CircleDot className={className} />;
   };
 
-  // Filter items if user typed in quick search
+  // RBAC Permission Check (Deny by Default)
+  const isItemAuthorized = (item: NavItem): boolean => {
+    if (isSuperAdmin) return true;
+    const requiredPerm = MODULE_PERMISSIONS_MAP[item.id] || MODULE_PERMISSIONS_MAP[item.href || ''];
+    if (!requiredPerm) return true; // Standard common item
+    return hasPermission(requiredPerm);
+  };
+
+  // Filter items if user typed in quick search + RBAC Gate
   const filteredMenu = useMemo(() => {
-    if (!searchQuery.trim()) return SIDEBAR_MENU;
     const query = searchQuery.toLowerCase().trim();
 
     const filterItem = (item: NavItem): NavItem | null => {
-      const titleMatch = t(item.id, item.title).toLowerCase().includes(query);
+      // 1. RBAC Gate: Deny unauthorized items
+      if (!isItemAuthorized(item)) return null;
+
+      const titleMatch = query ? t(item.id, item.title).toLowerCase().includes(query) : true;
       if (item.children && item.children.length > 0) {
         const matchingChildren = item.children
           .map((child) => filterItem(child))
           .filter((c): c is NavItem => c !== null);
-        if (matchingChildren.length > 0 || titleMatch) {
+        if (matchingChildren.length > 0 || (query && titleMatch)) {
           return { ...item, children: matchingChildren };
         }
+        return null;
       }
       return titleMatch ? item : null;
     };
 
     return SIDEBAR_MENU.map((item) => filterItem(item)).filter((i): i is NavItem => i !== null);
-  }, [searchQuery, t]);
+  }, [searchQuery, t, hasPermission, isSuperAdmin]);
 
   const renderTreeItem = (item: NavItem, level: number = 0) => {
     const hasChildren = item.children && item.children.length > 0;

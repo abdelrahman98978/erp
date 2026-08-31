@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useCompany } from '../contexts/CompanyContext';
+import { useIamSession } from '../contexts/IamSessionContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { MOCK_RECRUITMENT_CONTRACTS, DASHBOARD_STATS_BY_PERIOD } from '../data/mockData';
 import { SmaccDashboardWidget } from '../components/smacc/SmaccDashboardWidget';
@@ -8,7 +9,8 @@ import {
   Building2, Plus, FileText, ShoppingBag, Users, BarChart3, 
   ArrowLeft, Home, DollarSign, PieChart, Handshake, ShoppingCart, 
   UserCheck, UserPlus, FileCheck, Headphones, Repeat, Hotel, 
-  Radio, CheckCircle2, MessageSquare
+  Radio, CheckCircle2, MessageSquare, ShieldCheck, Lock, MapPin, 
+  Briefcase
 } from 'lucide-react';
 
 interface DashboardPageProps {
@@ -18,6 +20,15 @@ interface DashboardPageProps {
 export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
   const { activeCompanyId } = useCompany();
+  const { 
+    currentUser, 
+    activeCompany, 
+    dataScope, 
+    dataScopeName, 
+    filterRecords, 
+    isSuperAdmin 
+  } = useIamSession();
+  
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'month' | 'all'>('today');
 
   // Real Database Queries
@@ -52,18 +63,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
     });
   }, []);
 
-  // Filter by Active Company if selected
-  const filteredContracts = activeCompanyId !== 'all' 
-    ? contracts.filter(c => c.company_id === activeCompanyId) 
-    : contracts;
-
-  const filteredOrders = activeCompanyId !== 'all'
-    ? orders.filter(o => o.company_id === activeCompanyId)
-    : orders;
-
-  const filteredRent = activeCompanyId !== 'all'
-    ? rentContracts.filter(r => r.company_id === activeCompanyId)
-    : rentContracts;
+  // Filter records strictly by Active Company and Data Scope
+  const filteredContracts = filterRecords(contracts);
+  const filteredOrders = filterRecords(orders);
+  const filteredRent = filterRecords(rentContracts);
+  const filteredCvs = filterRecords(cvs);
+  const filteredClients = filterRecords(clients);
+  const filteredInmates = filterRecords(inmates);
+  const filteredComplaints = filterRecords(complaints);
+  const filteredTransfers = filterRecords(transfers);
 
   // Dynamic Calculated Metrics
   const totalContractsCount = filteredContracts.length || 115;
@@ -290,6 +298,39 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <span className="font-mono font-bold text-blue-300">{stats.todayOrdersCount}</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* IAM Multi-Entity Access Scope HUD */}
+      <div className="p-4 rounded-2xl bg-zinc-900 text-white flex items-center justify-between flex-wrap gap-4 border border-zinc-800 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+            <ShieldCheck className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-white">
+                جلسة الوصول المعتمدة: {currentUser?.fullName || 'المشرف العام'} ({currentUser?.accountType || 'Group Super Admin'})
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-black">
+                {activeCompany?.code || 'SAF'}: {activeCompany?.commercialName || 'الصفا الماسي'}
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-400 m-0 mt-0.5">
+              نطاق البيانات التشغيلي: <strong className="text-emerald-300 font-sans">Level {dataScope} — {dataScopeName}</strong> • الفروع المصرح بها: [الكل] • نظام العزل: فعال ومفعل 100%
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onNavigate('iam-matrix', 'مصفوفة الصلاحيات')}
+            className="button-outline-on-dark"
+            style={{ fontSize: '11px', padding: '4px 12px' }}
+          >
+            <Lock className="w-3 h-3 ml-1" />
+            <span>مصفوفة الصلاحيات (IAM)</span>
+          </button>
         </div>
       </div>
 
