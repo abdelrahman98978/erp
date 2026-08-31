@@ -815,7 +815,11 @@ export const TendersBOQPage: React.FC = () => {
   const handleDeleteTender = (tenderId?: string) => {
     const idToDelete = tenderId || selectedTender.id;
     if (tendersList.length <= 1) {
-      alert('لا يمكن حذف المنافسة الوحيدة المتبقية في النظام.');
+      addNotification({
+        title: 'تنبيه',
+        message: 'لا يمكن حذف المنافسة الوحيدة المتبقية في النظام.',
+        type: 'warning',
+      });
       return;
     }
     const target = tendersList.find(t => t.id === idToDelete);
@@ -2396,7 +2400,11 @@ export const TendersBOQPage: React.FC = () => {
                         selectedTender.vatAmount
                       );
                       navigator.clipboard.writeText(qrPayload);
-                      alert('تم نسخ كود الـ QR المشفر إلى الحافظة.');
+                      addNotification({
+                        title: 'نسخ كود QR',
+                        message: 'تم نسخ كود الـ QR المشفر إلى الحافظة بنجاح.',
+                        type: 'success',
+                      });
                     }}
                     className="text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
                   >

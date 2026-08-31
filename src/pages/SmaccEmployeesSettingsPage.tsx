@@ -6,8 +6,10 @@ import {
   Calculator,
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
+import { useAppStore } from '../stores/appStore';
 
 export const SmaccEmployeesSettingsPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'employees' | 'settings' | 'numbering'>('employees');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -66,17 +68,30 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       res = (sal / 2) * 5 + sal * (yrs - 5);
     }
     setEosbCalc({ ...eosbCalc, result: res });
+    addNotification({
+      title: 'احتساب مكافأة نهاية الخدمة (EOSB)',
+      message: `تم احتساب المستحق النظامي بقيمة ${res.toLocaleString()} ر.س بناءً على نظام العمل السعودي.`,
+      type: 'info',
+    });
   };
 
   const handleSaveEmployee = (e: React.FormEvent) => {
     e.preventDefault();
     setIsEmployeeModalOpen(false);
-    alert(`تم تسجيل الموظف الجديد (${newEmp.name}) وإعداد مسير الراتب الخاص به بنجاح!`);
+    addNotification({
+      title: 'تسجيل موظف جديد',
+      message: `تم تسجيل الموظف (${newEmp.name || 'موظف جديد'}) وإعداد مسير الراتب الخاص به بنجاح.`,
+      type: 'success',
+    });
   };
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('تم حفظ إعدادات المنشأة والترقيم التلقائي بنجاح في SMACC!');
+    addNotification({
+      title: 'حفظ الإعدادات المالية',
+      message: 'تم حفظ إعدادات المنشأة وقواعد الترقيم التلقائي بنجاح في SMACC.',
+      type: 'success',
+    });
   };
 
   return (

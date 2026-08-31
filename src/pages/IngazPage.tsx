@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
-import { Stamp, Plus, FileSpreadsheet, FileText, Search, Printer, RefreshCw, X } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { Stamp, Plus, FileSpreadsheet, FileText, Search, Printer, RefreshCw, X, CheckCircle } from 'lucide-react';
 
 export interface IngazDelegation {
   id: string;
@@ -61,6 +62,7 @@ const MOCK_INGAZ_DELEGATIONS: IngazDelegation[] = [
 ];
 
 export const IngazPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [delegations, setDelegations] = useState<IngazDelegation[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending'>('all');
@@ -83,7 +85,11 @@ export const IngazPage: React.FC = () => {
   const handleCreateDelegation = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.client_name || !formData.visa_number) {
-      alert('يرجى ملء جميع الحقول المطلوبة');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى ملء جميع الحقول المطلوبة للتفويض.',
+        type: 'warning',
+      });
       return;
     }
 
@@ -113,7 +119,40 @@ export const IngazPage: React.FC = () => {
       nationality: 'اثيوبيا',
       fee_amount: '350'
     });
-    alert('تم إضافة تفويض الإنجاز الإلكتروني بنجاح وربطه بمنصة مساند وتأشير!');
+    addNotification({
+      title: 'إضافة تفويض إنجاز',
+      message: `تم إضافة تفويض الإنجاز الإلكتروني #${newDelegation.delegation_number} وربطه بمنصة إنجاز ومساند.`,
+      type: 'success',
+    });
+  };
+
+  const handlePrintDelegation = (row: IngazDelegation) => {
+    exportData('operations', [{
+      'رقم التفويض': row.delegation_number,
+      'العميل المستفيد': row.client_name,
+      'رقم الهوية': row.sponsor_id,
+      'رقم التأشيرة': row.visa_number,
+      'المكتب الخارجي': row.foreign_office,
+      'المهنة والجنسية': `${row.profession} - ${row.nationality}`,
+      'رسوم التفويض': `${row.fee_amount} ر.س`,
+      'حالة التوثيق': row.status,
+      'التاريخ': row.created_at
+    }], 'print', `وثيقة تفويض إلكتروني - ${row.delegation_number}`);
+  };
+
+  const handleSyncWithEnjaz = async (row: IngazDelegation) => {
+    const updated = await realErpDataStore.updateRecord<IngazDelegation>(
+      'ingaz_delegations',
+      row.id,
+      { status: 'تم التوثيق' },
+      MOCK_INGAZ_DELEGATIONS
+    );
+    setDelegations(updated);
+    addNotification({
+      title: 'مزامنة منصة إنجاز ومساند',
+      message: `تم التحقق وتوثيق التفويض رقم ${row.delegation_number} بنجاح عبر الربط الحكومي.`,
+      type: 'success',
+    });
   };
 
   const filteredDelegations = delegations.filter(d => {
@@ -285,7 +324,8 @@ export const IngazPage: React.FC = () => {
                       <button
                         className="button-outline-on-light"
                         style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => alert(`طباعة وثيقة التفويض الإلكتروني رقم ${row.delegation_number}`)}
+                        onClick={() => handlePrintDelegation(row)}
+                        title="طباعة وثيقة التفويض الإلكتروني"
                       >
                         <Printer className="w-3 h-3 ml-1" />
                         <span>طباعة</span>
@@ -293,7 +333,8 @@ export const IngazPage: React.FC = () => {
                       <button
                         className="button-outline-on-light"
                         style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => alert(`تحديث حالة التفويض مع منصة إنجاز للمستفيد ${row.client_name}`)}
+                        onClick={() => handleSyncWithEnjaz(row)}
+                        title="تحديث والتحقق مع منصة إنجاز ومساند"
                       >
                         <RefreshCw className="w-3 h-3" />
                       </button>

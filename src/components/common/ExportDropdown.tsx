@@ -10,6 +10,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { exportData, ExportFormat } from '../../services/exportService';
+import { useAppStore } from '../../stores/appStore';
 
 export interface ExportDropdownProps {
   sectionKey: string;
@@ -32,6 +33,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { addNotification } = useAppStore();
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -46,11 +48,20 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 
   const handleExport = (format: ExportFormat) => {
     if (!data || data.length === 0) {
-      alert('لا توجد بيانات متاحة للتصدير في هذا القسم حالياً.');
+      addNotification({
+        title: 'تنبيه تصدير',
+        message: 'لا توجد بيانات متاحة للتصدير في هذا القسم حالياً.',
+        type: 'warning',
+      });
       return;
     }
     
     exportData(sectionKey, data, format, customTitle);
+    addNotification({
+      title: 'تصدير البيانات',
+      message: `تم بدء تصدير (${data.length}) سجل بصيغة ${format.toUpperCase()} بنجاح.`,
+      type: 'success',
+    });
     setIsOpen(false);
   };
 

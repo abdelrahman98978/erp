@@ -5,6 +5,7 @@
  */
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
+import { useAppStore } from '../stores/appStore';
 
 export interface SectionExportConfig {
   sectionTitle: string;
@@ -816,7 +817,11 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
 
   const printWindow = window.open('', '_blank', 'width=1100,height=850');
   if (!printWindow) {
-    alert('يرجى السماح بالنوافذ المنبثقة للطباعة');
+    useAppStore.getState().addNotification({
+      title: 'تنبيه الطباعة',
+      message: 'يرجى السماح بالنوافذ المنبثقة (Popups) في المتصفح لمعاينة وطباعة التقرير.',
+      type: 'warning',
+    });
     return;
   }
 

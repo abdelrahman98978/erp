@@ -12,6 +12,8 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
+import { useAppStore } from '../stores/appStore';
+import { exportData } from '../services/exportService';
 
 export interface SmaccAccountNode {
   code: string;
@@ -24,6 +26,7 @@ export interface SmaccAccountNode {
 }
 
 export const SmaccAccountingPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing'>('coa');
   const [selectedLedgerAccount, setSelectedLedgerAccount] = useState('1101');
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,82 +51,61 @@ export const SmaccAccountingPage: React.FC = () => {
   const [newVoucher, setNewVoucher] = useState({
     voucherNo: 'VOU-2026-089',
     date: '2026-08-18',
-    payeeName: '',
+    accountCode: '1101',
+    amount: '15000',
+    payeeOrPayer: 'شركة دار الرواد للتشغيل',
+    payeeName: 'شركة دار الرواد للتشغيل',
     treasury: 'بنك الراجحي الرئيسي',
-    amount: '',
-    vatInclusive: true,
-    description: '',
-    costCenter: 'مركز الرياض التشغيلي',
+    costCenter: 'CC-01',
+    notes: 'تحصيل دفعة عقد استقدام وإيداع في الصندوق',
   });
 
-  // New Journal Entry State
+  // New Journal Entry Form State
   const [journalHeader, setJournalHeader] = useState({
     refNo: 'JV-2026-402',
     date: '2026-08-18',
-    description: '',
-    branch: 'فرع الرياض الرئيسي',
+    branch: 'الفرع الرئيسي - الرياض',
+    description: 'إثبات مصروفات صيانة وسكن مركز الإيواء لشهر أغسطس',
+    notes: 'إثبات مصروفات صيانة وسكن مركز الإيواء لشهر أغسطس',
   });
 
   const [journalLines, setJournalLines] = useState([
-    { accountCode: '1101', accountName: 'الصندوق الرئيسي', debit: '1000', credit: '0', memo: 'إيداع نقدي' },
-    { accountCode: '4101', accountName: 'إيرادات عقود الاستقدام', debit: '0', credit: '1000', memo: 'إثبات الإيراد' },
+    { accountCode: '5101', accountName: 'مصروفات تشغيل ومراكز إيواء', debit: '8500', credit: '0', memo: 'صيانة دورية للمركز', costCenter: 'CC-03' },
+    { accountCode: '1101', accountName: 'الصندوق الرئيسي (Cash)', debit: '0', credit: '8500', memo: 'صرف نقدي من الخزينة', costCenter: 'CC-01' },
   ]);
 
   // Initial Mock Chart of Accounts Tree
   const [chartOfAccounts, setChartOfAccounts] = useState<SmaccAccountNode[]>([
-    {
-      code: '1000',
-      name: 'الأصول (Assets)',
-      type: 'أصول',
-      nature: 'مدين',
-      balance: 1830000,
-      children: [
-        { code: '1100', name: 'الأصول المتداولة', type: 'أصول', nature: 'مدين', balance: 850000, parentCode: '1000' },
-        { code: '1101', name: 'الصندوق الرئيسي (Cash)', type: 'أصول', nature: 'مدين', balance: 154200, parentCode: '1100' },
-        { code: '1102', name: 'بنك الراجحي - الحساب التشغيلي', type: 'أصول', nature: 'مدين', balance: 420500, parentCode: '1100' },
-        { code: '1200', name: 'الأصول الثابتة', type: 'أصول', nature: 'مدين', balance: 980000, parentCode: '1000' },
-      ],
-    },
-    {
-      code: '2000',
-      name: 'الخصوم والالتزامات (Liabilities)',
-      type: 'خصوم',
-      nature: 'دائن',
-      balance: 407575,
-      children: [
-        { code: '2101', name: 'مستحقات الموردين والوكلاء', type: 'خصوم', nature: 'دائن', balance: 189375, parentCode: '2000' },
-        { code: '2103', name: 'أمانات ضريبة القيمة المضافة (ZATCA 15%)', type: 'خصوم', nature: 'دائن', balance: 124000, parentCode: '2000' },
-      ],
-    },
-    {
-      code: '3000',
-      name: 'حقوق الملكية (Equity)',
-      type: 'حقوق ملكية',
-      nature: 'دائن',
-      balance: 1205000,
-    },
-    {
-      code: '4000',
-      name: 'الإيرادات (Revenues)',
-      type: 'إيرادات',
-      nature: 'دائن',
-      balance: 525471,
-    },
-    {
-      code: '5000',
-      name: 'المصروفات (Expenses)',
-      type: 'مصروفات',
-      nature: 'مدين',
-      balance: 220500,
-    },
+    { code: '1', name: 'الأصول (Assets)', type: 'أصول', nature: 'مدين', balance: 1882500, children: [
+      { code: '11', name: 'الأصول المتداولة', type: 'أصول', nature: 'مدين', balance: 1000000, parentCode: '1', children: [
+        { code: '1101', name: 'الصندوق الرئيسي (Cash)', type: 'أصول', nature: 'مدين', balance: 154200, parentCode: '11' },
+        { code: '1102', name: 'بنك الراجحي التشغيلي', type: 'أصول', nature: 'مدين', balance: 275300, parentCode: '11' },
+        { code: '1103', name: 'أمانات مساند المعلقة (90 يوماً)', type: 'أصول', nature: 'مدين', balance: 184500, parentCode: '11' },
+        { code: '1104', name: 'المدينون - عملاء العقود', type: 'أصول', nature: 'مدين', balance: 386000, parentCode: '11' },
+      ]},
+      { code: '12', name: 'الأصول الثابتة (Fixed Assets)', type: 'أصول', nature: 'مدين', balance: 882500, parentCode: '1' }
+    ]},
+    { code: '2', name: 'الخصوم (Liabilities)', type: 'خصوم', nature: 'دائن', balance: 407575, children: [
+      { code: '2101', name: 'مستحقات الموردين والوكلاء الخارجيين', type: 'خصوم', nature: 'دائن', balance: 189375, parentCode: '2' },
+      { code: '2102', name: 'مخصص مكافأة نهاية الخدمة (EOSB)', type: 'خصوم', nature: 'دائن', balance: 94200, parentCode: '2' },
+      { code: '2103', name: 'أمانات ضريبة القيمة المضافة (ZATCA 15%)', type: 'خصوم', nature: 'دائن', balance: 124000, parentCode: '2' },
+    ]},
+    { code: '3', name: 'حقوق الملكية (Equity)', type: 'حقوق ملكية', nature: 'دائن', balance: 1205000, children: [
+      { code: '3101', name: 'رأس المال المدفوع', type: 'حقوق ملكية', nature: 'دائن', balance: 1205000, parentCode: '3' }
+    ]},
+    { code: '4', name: 'الإيرادات (Revenue)', type: 'إيرادات', nature: 'دائن', balance: 525471.2, children: [
+      { code: '4101', name: 'إيرادات وساطة عقود الاستقدام', type: 'إيرادات', nature: 'دائن', balance: 410000, parentCode: '4' },
+      { code: '4102', name: 'إيرادات عقود التأجير والتشغيل', type: 'إيرادات', nature: 'دائن', balance: 115471.2, parentCode: '4' },
+    ]},
+    { code: '5', name: 'المصروفات (Expenses)', type: 'مصروفات', nature: 'مدين', balance: 220500, children: [
+      { code: '5101', name: 'مصروفات تشغيل ومراكز إيواء', type: 'مصروفات', nature: 'مدين', balance: 90000, parentCode: '5' },
+      { code: '5102', name: 'رواتب وأجور الكوادر الإدارية', type: 'مصروفات', nature: 'مدين', balance: 130500, parentCode: '5' },
+    ]},
   ]);
 
   // Handlers for dynamic Journal Lines
   const handleAddJournalLine = () => {
-    setJournalLines(prev => [
-      ...prev,
-      { accountCode: '', accountName: '', debit: '0', credit: '0', memo: '' },
-    ]);
+    setJournalLines(prev => [...prev, { accountCode: '1101', accountName: 'الصندوق الرئيسي (Cash)', debit: '0', credit: '0', memo: '', costCenter: 'CC-01' }]);
   };
 
   const handleRemoveJournalLine = (index: number) => {
@@ -139,6 +121,14 @@ export const SmaccAccountingPage: React.FC = () => {
   // Save Handlers
   const handleSaveAccount = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newAccount.code || !newAccount.name) {
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى كتابة رمز واسم الحساب.',
+        type: 'warning',
+      });
+      return;
+    }
     const newAccNode: SmaccAccountNode = {
       code: newAccount.code,
       name: newAccount.name,
@@ -149,23 +139,39 @@ export const SmaccAccountingPage: React.FC = () => {
     };
     setChartOfAccounts(prev => [...prev, newAccNode]);
     setIsAccountModalOpen(false);
-    alert('تم إضافة الحساب الجديد بنجاح في دليل حسابات SMACC!');
+    addNotification({
+      title: 'إضافة حساب جديد',
+      message: `تم إضافة الحساب (${newAccount.name} - #${newAccount.code}) بنجاح في دليل حسابات SMACC.`,
+      type: 'success',
+    });
   };
 
   const handleSaveJournal = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isJournalBalanced) {
-      alert('خطأ: يجب أن يتساوى إجمالي المدين مع إجمالي الدائن لاعتماد القيد!');
+      addNotification({
+        title: 'خطأ في توازن القيد',
+        message: `يجب أن يتساوى إجمالي المدين (${totalDebit} ر.س) مع إجمالي الدائن (${totalCredit} ر.س) لاعتماد القيد.`,
+        type: 'error',
+      });
       return;
     }
     setIsJournalModalOpen(false);
-    alert(`تم حفظ وتوزيع قيد اليومية (${journalHeader.refNo}) بنجاح!`);
+    addNotification({
+      title: 'حفظ قيد اليومية',
+      message: `تم حفظ وترحيل قيد اليومية (${journalHeader.refNo}) بإجمالي متوازن ${totalDebit.toLocaleString()} ر.س بنجاح.`,
+      type: 'success',
+    });
   };
 
   const handleSaveVoucher = (e: React.FormEvent) => {
     e.preventDefault();
     setIsVoucherModalOpen(false);
-    alert(`تم حفظ وتأكيد سند ${voucherType} رقم (${newVoucher.voucherNo}) بقيمة ${newVoucher.amount} ر.س!`);
+    addNotification({
+      title: `حفظ وتأكيد سند ${voucherType}`,
+      message: `تم حفظ وتأكيد سند ${voucherType} رقم (${newVoucher.voucherNo}) بقيمة ${newVoucher.amount} ر.س وترحيله للحسابات.`,
+      type: 'success',
+    });
   };
 
   return (
@@ -741,7 +747,13 @@ export const SmaccAccountingPage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => alert('تم التحقق من توازن جميع حسابات الإيرادات والمصروفات وجاهزية تدوير السنة!')}
+            onClick={() => {
+              addNotification({
+                title: 'جاهزية الإقفال السنوي',
+                message: 'تم التحقق من توازن جميع حسابات الإيرادات والمصروفات، ومطابقة الأرصدة الافتتاحية وجاهزية تدوير السنة المالية بنجاح.',
+                type: 'success',
+              });
+            }}
             className="button-primary-pill mt-4"
             style={{ padding: '8px 24px', fontSize: '12.5px', minHeight: '38px' }}
           >

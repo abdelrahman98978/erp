@@ -201,7 +201,11 @@ export const KasEtimadCloudPage: React.FC = () => {
   // Save Handlers
   const handleSaveCompetition = () => {
     if (!formData.title || !formData.title.trim()) {
-      alert('يرجى إدخال اسم المنافسة');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم المنافسة.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addCompetition({
@@ -231,7 +235,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveInvoice = () => {
     if (!formData.clientName) {
-      alert('يرجى تحديد العميل');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى تحديد العميل.',
+        type: 'warning'
+      });
       return;
     }
     const subtotal = itemLines.reduce((s, it) => s + (it.qty * it.rate), 0);
@@ -263,7 +271,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveEstimate = () => {
     if (!formData.clientName) {
-      alert('يرجى إدخال اسم العميل');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم العميل.',
+        type: 'warning'
+      });
       return;
     }
     const subtotal = itemLines.reduce((s, it) => s + (it.qty * it.rate), 0);
@@ -316,7 +328,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSavePayment = () => {
     if (!formData.invoiceNumber || !formData.amount) {
-      alert('يرجى تحديد رقم الفاتورة والمبلغ');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى تحديد رقم الفاتورة والمبلغ.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addPayment({
@@ -341,7 +357,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveItem = () => {
     if (!formData.description || !formData.rate) {
-      alert('يرجى إدخال وصف البند وسعره');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال وصف البند وسعره.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addItem({
@@ -359,7 +379,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveClient = () => {
     if (!formData.company || !formData.phone) {
-      alert('يرجى إدخال اسم الشركة ورقم الهاتف');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم الشركة ورقم الهاتف.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addClient({
@@ -381,7 +405,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveLead = () => {
     if (!formData.leadName || !formData.company) {
-      alert('يرجى إدخال اسم المسؤول والجهة');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم المسؤول والجهة.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addLead({
@@ -402,7 +430,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveProject = () => {
     if (!formData.projectName || !formData.clientName) {
-      alert('يرجى إدخال اسم المشروع والجهة');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم المشروع والجهة.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addProject({
@@ -423,7 +455,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveTask = () => {
     if (!formData.taskName || !formData.assignedTo) {
-      alert('يرجى إدخال عنوان المهمة والمسؤول');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال عنوان المهمة والمسؤول.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addTask({
@@ -443,7 +479,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveContract = () => {
     if (!formData.subject || !formData.clientName) {
-      alert('يرجى إدخال موضوع العقد والعميل');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال موضوع العقد والعميل.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addContract({
@@ -462,7 +502,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveExpense = () => {
     if (!formData.expenseName || !formData.amount) {
-      alert('يرجى إدخال اسم المصروف والمبلغ');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم المصروف والمبلغ.',
+        type: 'warning'
+      });
       return;
     }
     const amount = parseFloat(formData.amount) || 0;
@@ -483,7 +527,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveTicket = () => {
     if (!formData.subject || !formData.department) {
-      alert('يرجى إدخال موضوع التذكرة والقسم');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال موضوع التذكرة والقسم.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addTicket({
@@ -495,6 +543,11 @@ export const KasEtimadCloudPage: React.FC = () => {
       priority: formData.priority || 'متوسط',
       lastReply: new Date().toISOString().replace('T', ' ').slice(0, 19)
     });
+    addNotification({
+      title: 'تم إنشاء تذكرة الدعم',
+      message: `تم تسجيل التذكرة (${formData.subject}) وتوجيهها لقسم (${formData.department}).`,
+      type: 'success'
+    });
     setShowAddTicketModal(false);
     setFormData({});
     setReloadKey(k => k + 1);
@@ -502,7 +555,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveCategory = () => {
     if (!formData.catName || !formData.catCode) {
-      alert('يرجى إدخال اسم التصنيف والرمز');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم التصنيف والرمز.',
+        type: 'warning'
+      });
       return;
     }
     if (editingCategory) {
@@ -536,7 +593,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveStaff = () => {
     if (!formData.staffName || !formData.staffEmail) {
-      alert('يرجى إدخال الاسم والبريد الإلكتروني');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال الاسم والبريد الإلكتروني.',
+        type: 'warning'
+      });
       return;
     }
     if (editingStaff) {
@@ -572,7 +633,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveProposal = () => {
     if (!formData.subject || !formData.toClient) {
-      alert('يرجى إدخال موضوع العرض واسم العميل / الجهة');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال موضوع العرض واسم العميل / الجهة.',
+        type: 'warning'
+      });
       return;
     }
     const subtotal = itemLines.reduce((s, it) => s + (it.qty * it.rate), 0) || parseFloat(formData.totalAmount) || 0;
@@ -601,7 +666,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveCreditNote = () => {
     if (!formData.clientName || !formData.totalAmount) {
-      alert('يرجى تحديد العميل والمبلغ');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى تحديد العميل والمبلغ.',
+        type: 'warning'
+      });
       return;
     }
     const tot = parseFloat(formData.totalAmount) || 0;
@@ -627,7 +696,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveSubscription = () => {
     if (!formData.subscriptionName || !formData.clientName || !formData.amount) {
-      alert('يرجى تعبئة كافة الحقول المطلوبة للاشتراك');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى تعبئة كافة الحقول المطلوبة للاشتراك.',
+        type: 'warning'
+      });
       return;
     }
     const amt = parseFloat(formData.amount) || 0;
@@ -652,7 +725,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveEstimateRequest = () => {
     if (!formData.clientName || !formData.description) {
-      alert('يرجى كتابة اسم العميل ووصف متطلبات العرض');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى كتابة اسم العميل ووصف متطلبات العرض.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addEstimateRequest({
@@ -674,7 +751,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveEmailTemplate = () => {
     if (!formData.templateName || !formData.subject) {
-      alert('يرجى إدخال اسم القالب وموضوع البريد');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال اسم القالب وموضوع البريد.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addEmailTemplate({
@@ -697,7 +778,11 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   const handleSaveArticle = () => {
     if (!formData.articleTitle || !formData.articleCategory) {
-      alert('يرجى إدخال عنوان المقال والتصنيف');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى إدخال عنوان المقال والتصنيف.',
+        type: 'warning'
+      });
       return;
     }
     kasEtmadSuiteService.addKnowledgeArticle({

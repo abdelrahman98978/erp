@@ -4,6 +4,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 import { 
   Send, Plus, FileSpreadsheet, FileText, Eye, Printer, X, Check, 
   Building2, Plane, Globe, Award, ShieldAlert, Sparkles
@@ -77,6 +78,7 @@ const MOCK_DISPATCHES: GroupDispatchMemo[] = [
 ];
 
 export const GroupDispatchPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [dispatches, setDispatches] = useState<GroupDispatchMemo[]>([]);
   const [selectedEntity, setSelectedEntity] = useState<string>('all');
   const [showDispatchModal, setShowDispatchModal] = useState(false);
@@ -99,7 +101,11 @@ export const GroupDispatchPage: React.FC = () => {
   const handleCreateDispatch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.subject || !formData.details) {
-      alert('يرجى ملء كافة حقول المعاملة الرسمية');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى ملء كافة حقول المعاملة الرسمية.',
+        type: 'warning',
+      });
       return;
     }
 
@@ -119,6 +125,11 @@ export const GroupDispatchPage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord('group_dispatches', newDisp, MOCK_DISPATCHES);
     setDispatches(updated);
+    addNotification({
+      title: 'إرسال معاملة رسمية',
+      message: `تم توجيه المعاملة (${newDisp.dispatch_no}) بنجاح إلى (${formData.target_entity}).`,
+      type: 'success',
+    });
     setShowDispatchModal(false);
     setFormData({
       source_entity: 'شركة توباز (Topaz Group)',
@@ -128,6 +139,21 @@ export const GroupDispatchPage: React.FC = () => {
       details: '',
       priority: 'عاجل جداً'
     });
+  };
+
+  const handlePrintMemo = (memo: GroupDispatchMemo) => {
+    exportData('finance', [{
+      'رقم المعاملة': memo.dispatch_no,
+      'الجهة المرسلة': memo.source_entity,
+      'الجهة المستلمة': memo.target_entity,
+      'نوع الخطاب': memo.dispatch_type,
+      'الموضوع': memo.subject,
+      'التفاصيل': memo.details,
+      'الأولوية': memo.priority,
+      'الحالة': memo.status,
+      'المسؤول': memo.assigned_officer,
+      'التاريخ': memo.created_at
+    }], 'print', `معاملة رسمية - ${memo.dispatch_no}`);
   };
 
   const filteredDispatches = dispatches.filter(d => {
@@ -319,7 +345,7 @@ export const GroupDispatchPage: React.FC = () => {
                       <button
                         className="button-outline-on-light"
                         style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
-                        onClick={() => alert(`طباعة المعاملة الرسمية رقم ${row.dispatch_no}`)}
+                        onClick={() => handlePrintMemo(row)}
                       >
                         طباعة
                       </button>
@@ -489,7 +515,10 @@ export const GroupDispatchPage: React.FC = () => {
                 <button
                   className="button-primary-pill"
                   style={{ padding: '6px 20px', fontSize: '13px', minHeight: '36px' }}
-                  onClick={() => { setSelectedMemo(null); }}
+                  onClick={() => {
+                    handlePrintMemo(selectedMemo);
+                    setSelectedMemo(null);
+                  }}
                 >
                   <Printer className="w-3.5 h-3.5 ml-1" />
                   <span>طباعة الوثيقة الرسمية</span>

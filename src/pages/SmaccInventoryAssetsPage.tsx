@@ -9,8 +9,11 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
+import { useAppStore } from '../stores/appStore';
+import { exportData } from '../services/exportService';
 
 export const SmaccInventoryAssetsPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'assets' | 'inventory' | 'stock-vouchers'>('assets');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -56,16 +59,31 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
   const handleSaveAsset = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAssetModalOpen(false);
+    addNotification({
+      title: 'إضافة أصل ثابت',
+      message: `تم إضافة الأصل الثابت (${newAsset.name || 'أصل جديد'}) بنجاح واحتساب جدول الإهلاك.`,
+      type: 'success',
+    });
   };
 
   const handleSaveItem = (e: React.FormEvent) => {
     e.preventDefault();
     setIsItemModalOpen(false);
+    addNotification({
+      title: 'إضافة صنف مخزون',
+      message: `تم تسجيل الصنف (${newItem.name || 'صنف جديد'}) في دليل أصناف SMACC بنجاح.`,
+      type: 'success',
+    });
   };
 
   const handleSaveStockVoucher = (e: React.FormEvent) => {
     e.preventDefault();
     setIsStockVoucherModalOpen(false);
+    addNotification({
+      title: `إذن مخزني (${newStockVoucher.type})`,
+      message: `تم ترحيل إذن ${newStockVoucher.type} رقم (${newStockVoucher.voucherNo}) بنجاح.`,
+      type: 'success',
+    });
   };
 
   return (
@@ -182,7 +200,13 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 <span>إضافة أصل ثابت</span>
               </button>
               <button
-                onClick={() => alert('تم تشغيل وإعادة احتساب الإهلاك التلقائي لجميع الأصول المسجلة وتوليد قيود اليومية!')}
+                onClick={() => {
+                  addNotification({
+                    title: 'احتساب الإهلاك الدوري',
+                    message: 'تم تشغيل واحتساب الإهلاك التلقائي لجميع الأصول الثابتة وتوليد قيود اليومية بنجاح.',
+                    type: 'success',
+                  });
+                }}
                 className="button-outline-on-light"
                 style={{ fontSize: '12px', padding: '6px 14px', minHeight: '34px' }}
               >

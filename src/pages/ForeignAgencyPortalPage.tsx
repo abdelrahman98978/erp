@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard, KasSupplierCard } from '../components/kas/KasCards';
+import { useAppStore } from '../stores/appStore';
+import { exportData } from '../services/exportService';
 
 interface AgencyCandidate {
   id: string;
@@ -25,6 +27,7 @@ interface AgencyCandidate {
 
 export const ForeignAgencyPortalPage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const { addNotification } = useAppStore();
   const [activeAgency, setActiveAgency] = useState('DAMAS ETHIOPIA');
   const [searchQuery, setSearchQuery] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -165,6 +168,25 @@ export const ForeignAgencyPortalPage: React.FC = () => {
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           <button 
+            onClick={() => {
+              exportData('operations', filteredCandidates.map(c => ({
+                'الاسم': c.maidName,
+                'رقم الجواز': c.passportNumber,
+                'المهنة': c.profession,
+                'الجنسية': c.nationality,
+                'الفحص الطبي': c.medicalStatus,
+                'حالة التأشيرة': c.visaStatus,
+                'تذكرة الطيران': c.ticketStatus,
+                'العمولة ($)': c.commissionUsd,
+                'حالة السداد': c.paymentStatus,
+                'تاريخ الرفع': c.uploadedAt,
+              })), 'excel', `كشف حساب السير والمستحقات - ${activeAgency}`);
+              addNotification({
+                title: 'تصدير كشف الحساب',
+                message: `تم تصدير كشف حساب السير والعمولات بالدولار لـ (${activeAgency}) بنجاح.`,
+                type: 'success',
+              });
+            }}
             className="button-outline-on-light text-xs font-bold flex items-center gap-1.5"
             style={{ minHeight: '36px', padding: '6px 18px' }}
           >
@@ -261,8 +283,34 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                   يدعم ملفات .xlsx, .csv, وصور الجوازات والفحوصات الطبية
                 </p>
               </div>
-              <button className="button-primary-pill text-xs font-bold" style={{ padding: '8px 22px' }}>
-                اختيار ملفات من الجهاز
+              <button 
+                onClick={() => {
+                  const simulatedCand: AgencyCandidate = {
+                    id: `cand-${Date.now()}`,
+                    maidName: 'سارة ألمو ديستا (سيرة جديدة)',
+                    passportNumber: `EP${Math.floor(1000000 + Math.random() * 9000000)}`,
+                    nationality: 'إثيوبيا',
+                    age: 25,
+                    profession: 'عاملة منزلية',
+                    medicalStatus: 'FIT',
+                    visaStatus: 'READY',
+                    ticketStatus: 'PENDING',
+                    commissionUsd: 1100,
+                    paymentStatus: 'UNPAID',
+                    uploadedAt: new Date().toISOString().slice(0, 10),
+                  };
+                  setCandidates([simulatedCand, ...candidates]);
+                  setShowUploadModal(false);
+                  addNotification({
+                    title: 'استيراد وتدقيق السير الذاتية',
+                    message: `تم رفع السيرة الذاتية (${simulatedCand.maidName}) ومطابقتها فورياً مع متطلبات مساند.`,
+                    type: 'success',
+                  });
+                }}
+                className="button-primary-pill text-xs font-bold" 
+                style={{ padding: '8px 22px' }}
+              >
+                اختيار ملفات ومطابقة السير الذاتية
               </button>
             </div>
 
@@ -277,7 +325,11 @@ export const ForeignAgencyPortalPage: React.FC = () => {
               <button
                 onClick={() => {
                   setShowUploadModal(false);
-                  alert('تم استلام دفعة السير الذاتية وجاري تدقيقها ومطابقتها مع مساند!');
+                  addNotification({
+                    title: 'استلام دفعة السير الذاتية',
+                    message: 'تم استلام دفعة السير الذاتية وجاري تدقيقها ومطابقتها مع مساند بنجاح.',
+                    type: 'success',
+                  });
                 }}
                 className="button-primary-pill text-xs font-bold"
                 style={{ padding: '8px 22px' }}

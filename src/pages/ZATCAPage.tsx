@@ -4,6 +4,7 @@ import { exportData } from '../services/exportService';
 import { useZatcaInvoices, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
+import { useAppStore } from '../stores/appStore';
 import { QrCode, Plus, FileSpreadsheet, FileText, Search, Key, X, ShieldCheck, Download, Copy, Check } from 'lucide-react';
 
 export interface ZatcaInvoiceRecord {
@@ -67,6 +68,7 @@ const DEFAULT_MOCK_INVOICES: ZatcaInvoiceRecord[] = [
 ];
 
 export const ZATCAPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawInvoices = [], isLoading } = useZatcaInvoices();
   const { createItem } = useTableMutation('zatca_invoices');
@@ -573,7 +575,11 @@ export const ZATCAPage: React.FC = () => {
                   type="button"
                   onClick={() => {
                     navigator.clipboard.writeText(selectedInvoiceForXml.qr_code_payload || '');
-                    alert('تم نسخ كود الـ QR Base64 المشفر بنجاح');
+                    addNotification({
+                      title: 'نسخ كود QR المشفر',
+                      message: 'تم نسخ كود الـ QR Base64 المشفر إلى الحافظة بنجاح.',
+                      type: 'success',
+                    });
                   }}
                   className="button-outline-on-light"
                   style={{ minHeight: '36px', padding: '6px 18px', fontSize: '13px' }}

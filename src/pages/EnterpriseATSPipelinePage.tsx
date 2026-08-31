@@ -3,6 +3,7 @@ import { Candidate, CandidateStage } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
 import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 import { Users, UserPlus, Calendar, ArrowRight, ArrowLeft, Video, X } from 'lucide-react';
 
 const INITIAL_CANDIDATES: Candidate[] = [
@@ -86,6 +87,7 @@ const INITIAL_CANDIDATES: Candidate[] = [
 
 export const EnterpriseATSPipelinePage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const { addNotification } = useAppStore();
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedStage, setSelectedStage] = useState<string>('الكل');
   const [activeCandidate, setActiveCandidate] = useState<Candidate | null>(null);
@@ -407,8 +409,19 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    alert(`تم تأكيد موعد المقابلة للمرشح ${activeCandidate.name} بنجاح.`);
+                  onClick={async () => {
+                    if (activeCandidate) {
+                      const updated = candidates.map(c => 
+                        c.id === activeCandidate.id ? { ...c, stage: 'مقابلة أولى' as CandidateStage } : c
+                      );
+                      setCandidates(updated);
+                      await realErpDataStore.updateRecord<Candidate>('ats_candidates', activeCandidate.id, { stage: 'مقابلة أولى' }, INITIAL_CANDIDATES);
+                      addNotification({
+                        title: 'تأكيد موعد المقابلة',
+                        message: `تم تأكيد موعد المقابلة للمرشح (${activeCandidate.name}) بتاريخ (${interviewDate}) وإرسال رابط المقابلة المرئية.`,
+                        type: 'success',
+                      });
+                    }
                     setShowInterviewModal(false);
                   }}
                   className="button-primary-pill"

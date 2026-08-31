@@ -253,7 +253,11 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
   const handleSaveAdd = () => {
     if (!formData.title) {
-      alert('يرجى كتابة اسم المنافسة');
+      addNotification({
+        title: 'تنبيه إدخال',
+        message: 'يرجى كتابة اسم المنافسة.',
+        type: 'warning',
+      });
       return;
     }
     const targetSheet = formData.sheetName || selectedSheetName || 'تجارة';
@@ -318,7 +322,11 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
       setIsImportModalOpen(false);
       loadData();
     } else {
-      alert(res.message);
+      addNotification({
+        title: 'تعذر استيراد الملف',
+        message: res.message || 'حدث خطأ أثناء قراءة ملف الإكسيل.',
+        type: 'error',
+      });
     }
   };
 
