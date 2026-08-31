@@ -5,6 +5,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { useAppStore } from '../stores/appStore';
+import { realErpDataStore } from '../services/realErpDataStore';
 import { BudgetVsActualWidget } from '../components/finance/BudgetVsActualWidget';
 import { 
   Scale, Plus, FileSpreadsheet, FileText, Printer, FileCheck, 
@@ -137,8 +138,18 @@ export const FinancePage: React.FC = () => {
     setActiveTab(getMappedTab(storeActiveTab));
   }, [storeActiveTab]);
 
-  const [journals, setJournals] = useState<JournalEntry[]>(MOCK_JOURNALS);
-  const [vouchers, setVouchers] = useState<Voucher[]>(MOCK_VOUCHERS);
+  const [journals, setJournals] = useState<JournalEntry[]>([]);
+  const [vouchers, setVouchers] = useState<Voucher[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      realErpDataStore.getRecords<JournalEntry>('finance_journals', MOCK_JOURNALS),
+      realErpDataStore.getRecords<Voucher>('finance_vouchers', MOCK_VOUCHERS),
+    ]).then(([j, v]) => {
+      setJournals(j);
+      setVouchers(v);
+    });
+  }, []);
   const [selectedBranch, setSelectedBranch] = useState<string>('ALL');
   
   // Drill-down and Chart of Accounts state
@@ -195,7 +206,7 @@ export const FinancePage: React.FC = () => {
     return base;
   };
 
-  const handleCreateVoucher = (e: React.FormEvent) => {
+  const handleCreateVoucher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!voucherForm.payee_payer || !voucherForm.amount) return;
 
@@ -210,7 +221,8 @@ export const FinancePage: React.FC = () => {
       status: 'معتمد',
     };
 
-    setVouchers([newV, ...vouchers]);
+    const updated = await realErpDataStore.addRecord<Voucher>('finance_vouchers', newV, vouchers);
+    setVouchers(updated);
     setShowAddVoucherModal(false);
     setVoucherForm({ type: 'قبض', payee_payer: '', treasury: 'بنك الراجحي', amount: '' });
   };
@@ -241,7 +253,8 @@ export const FinancePage: React.FC = () => {
       branch: newJ.branch,
     });
 
-    setJournals([newJ, ...journals]);
+    const updated = await realErpDataStore.addRecord<JournalEntry>('finance_journals', newJ, journals);
+    setJournals(updated);
     setShowAddJournalModal(false);
     setJournalForm({ description: '', amount: '', branch: 'فرع الرياض الرئيسي' });
   };
