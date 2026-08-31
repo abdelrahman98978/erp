@@ -55,6 +55,7 @@ const UnifiedCommunicationCenterPage = lazyWithRetry(() => import('./pages/Unifi
 const MicrosoftIntegrationCenterPage = lazyWithRetry(() => import('./pages/MicrosoftIntegrationCenterPage').then(m => ({ default: m.MicrosoftIntegrationCenterPage })));
 
 const RecruitmentContractsPage = lazyWithRetry(() => import('./pages/RecruitmentContractsPage').then(m => ({ default: m.RecruitmentContractsPage })));
+const MusanedIntegrationPlanPage = lazyWithRetry(() => import('./pages/MusanedIntegrationPlanPage').then(m => ({ default: m.MusanedIntegrationPlanPage })));
 const RentContractsPage = lazyWithRetry(() => import('./pages/RentContractsPage').then(m => ({ default: m.RentContractsPage })));
 const CreateCVPage = lazyWithRetry(() => import('./pages/CreateCVPage').then(m => ({ default: m.CreateCVPage })));
 const OrdersPage = lazyWithRetry(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
@@ -242,6 +243,11 @@ const MainContent: React.FC = () => {
       case 'musaned-sync':
       case 'contract-insurance':
         return <RecruitmentContractsPage />;
+
+      case 'musaned-master-plan':
+      case 'musaned-plan':
+      case 'musaned-integration-plan':
+        return <MusanedIntegrationPlanPage />;
 
       case 'rent-contracts':
       case 'create-rent':

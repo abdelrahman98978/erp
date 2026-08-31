@@ -67,6 +67,7 @@ export const SIDEBAR_MENU: NavItem[] = [
           { id: 'create-contract', title: 'إضافة عقد استقدام جديد', icon: 'FilePlus', href: 'create-contract' },
           { id: 'current-contracts', title: 'العقود السارية والنشطة', icon: 'FileText', href: 'current-contracts', badge: 27, badgeType: 'primary' },
           { id: 'musaned-sync', title: 'مزامنة منصة مساند الرقمية', icon: 'RefreshCw', href: 'musaned-sync' },
+          { id: 'musaned-master-plan', title: 'خطة واعتماد تكامل مساند ⚡', icon: 'Sparkles', href: 'musaned-master-plan', badge: '32 قسم', badgeType: 'purple' },
           { id: 'contract-insurance', title: 'بوالص التأمين على العقود', icon: 'ShieldCheck', href: 'contract-insurance' },
           { id: 'completed-contracts', title: 'العقود المكتملة والمنجزة', icon: 'CheckCircle2', href: 'completed-contracts', badge: 2, badgeType: 'success' },
           { id: 'returned-contracts', title: 'العقود المرتجعة والملغاة', icon: 'RotateCcw', href: 'returned-contracts', badge: 11, badgeType: 'danger' },
