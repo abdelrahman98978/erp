@@ -6,13 +6,12 @@ import { useIamSession } from '../../contexts/IamSessionContext';
 import { useAppStore } from '../../stores/appStore';
 import { NotificationDropdown } from '../common/NotificationDropdown';
 import { ProductionDataHubModal } from '../database/ProductionDataHubModal';
-import { RoleSimulatorModal } from '../iam/RoleSimulatorModal';
 import { 
   Menu, Grid, Search, Bell, Maximize, Minimize, MapPin, 
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
   MessageSquare, ShieldCheck, Settings, LogOut, Check, X,
   Globe, Languages as LanguagesIcon, Building2, ArrowLeftRight,
-  Database, Sliders
+  Database
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -43,7 +42,6 @@ export const Header: React.FC<HeaderProps> = ({
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState<boolean>(false);
   const [showDataHubModal, setShowDataHubModal] = useState<boolean>(false);
-  const [showRoleSimulator, setShowRoleSimulator] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [langSearch, setLangSearch] = useState<string>('');
 
@@ -245,16 +243,6 @@ export const Header: React.FC<HeaderProps> = ({
             <Database className="w-3 h-3 text-emerald-700" />
             <span>قاعدة البيانات المؤسسية</span>
           </button>
-
-          <button
-            type="button"
-            onClick={() => setShowRoleSimulator(true)}
-            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 bg-zinc-900 text-white border border-zinc-700 hover:bg-black transition-colors"
-            title="محاكي الأدوار والصلاحيات الحية (IAM Role Simulator)"
-          >
-            <Sliders className="w-3 h-3 text-emerald-400" />
-            <span>محاكي الصلاحيات (IAM)</span>
-          </button>
         </div>
 
         {/* Left Section: 25 Languages Switcher, Search, Notifications, User */}
@@ -431,18 +419,6 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => {
                     setShowUserDropdown(false);
-                    setShowRoleSimulator(true);
-                  }}
-                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-zinc-100 text-zinc-900 font-bold flex items-center gap-2"
-                >
-                  <Sliders className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>محاكي الأدوار والصلاحيات (IAM)</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowUserDropdown(false);
                     onOpenAppLauncher();
                   }}
                   className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-zinc-50 text-zinc-700 flex items-center gap-2"
@@ -474,12 +450,6 @@ export const Header: React.FC<HeaderProps> = ({
       <ProductionDataHubModal
         isOpen={showDataHubModal}
         onClose={() => setShowDataHubModal(false)}
-      />
-
-      {/* IAM Live Role & Scope Simulator Modal */}
-      <RoleSimulatorModal
-        isOpen={showRoleSimulator}
-        onClose={() => setShowRoleSimulator(false)}
       />
     </>
   );

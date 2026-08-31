@@ -301,6 +301,5 @@ export interface IamSessionContext {
   canAccessBranch: (branchId: string) => boolean;
   canAccessDepartment: (deptId: string) => boolean;
   filterRecords: <T extends RecordAccessContext>(records: T[]) => T[];
-  simulateRole: (role: AccountType, customDataScope?: DataScopeLevel) => void;
   logAuditAction: (action: string, resource: string, result: 'SUCCESS' | 'FORBIDDEN' | 'FAILED', recordId?: string, details?: any) => Promise<void>;
 }
