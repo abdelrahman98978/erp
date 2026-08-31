@@ -954,124 +954,166 @@ export const TendersBOQPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
       <div
         className="card-feature-cinematic"
         style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          background: '#000000',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)' }}>
-            <Building2 className="w-6 h-6" />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px', background: '#059669', color: '#ffffff' }}>KAS TRADING & TENDERS</span>
-              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>مؤسسة خالد عبدالعزيز السليم للتجارة</span>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Building2 className="w-5 h-5 text-emerald-400" />
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0 }}>
-              إدارة المناقصات وجداول الكميات والتوريدات (BOQ Platform)
-            </h1>
-            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '4px 0 0 0', fontWeight: 420 }}>
-              محاكاة إكسيل الذكية، التسعير، الضريبة 15%، التفقيط التلقائي، والترسية المعتمدة لـ شركة كاس للتجارة
-            </p>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  KAS TRADING & TENDERS
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  مؤسسة خالد عبدالعزيز السليم للتجارة والمقاولات
+                </span>
+              </div>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                إدارة المناقصات وجداول الكميات والتوريدات (BOQ Platform)
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                محاكاة إكسيل الذكية، التسعير، الضريبة 15%، التفقيط التلقائي، والترسية المعتمدة لـ شركة كاس للتجارة
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={() => setShowNewTenderModal(true)}
-            className="button-white-pill"
-            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
-          >
-            <Plus className="w-4 h-4 ml-1 text-emerald-700" />
-            <span>+ إنشاء منافسة جديدة</span>
-          </button>
-
-          <button
-            onClick={() => handleOpenEditTender(selectedTender)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(255,255,255,0.3)', color: '#ffffff' }}
-            title="تعديل بيانات المنافسة النشطة"
-          >
-            <Edit3 className="w-3.5 h-3.5 ml-1 text-amber-300" />
-            <span>تعديل المنافسة</span>
-          </button>
-
-          <button
-            onClick={() => setShowComparisonModal(true)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <ArrowRightLeft className="w-3.5 h-3.5 ml-1 text-sky-400" />
-            <span>مقارنة عروض الأسعار</span>
-          </button>
-
-          <button
-            onClick={() => setShowImportModal(true)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileUp className="w-3.5 h-3.5 ml-1 text-amber-400" />
-            <span>استيراد كراسة BOQ</span>
-          </button>
-
-          <button
-            onClick={() => setShowPrintModal(true)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <Printer className="w-3.5 h-3.5 ml-1 text-emerald-400" />
-            <span>طباعة العرض الرسمي</span>
-          </button>
-
-          {/* Multi-Format Export Group */}
-          <div className="flex items-center bg-black/40 rounded-xl p-0.5 border border-emerald-500/40">
-            <span className="text-[10px] text-emerald-300 font-bold px-2 flex items-center gap-1">
-              <Download className="w-3 h-3" />
-              <span>تصدير:</span>
-            </span>
+          <div className="flex items-center gap-2 flex-wrap">
             <button
-              onClick={handleExportBOQExcel}
-              className="px-2.5 py-1 text-[11px] font-bold text-emerald-300 hover:bg-emerald-800/60 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-              title="تصدير بصيغة Excel"
+              onClick={() => setShowNewTenderModal(true)}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <FileSpreadsheet className="w-3 h-3" />
-              <span>Excel</span>
+              <Plus className="w-4 h-4 ml-1 text-emerald-700" />
+              <span>+ إنشاء منافسة جديدة</span>
             </button>
+
             <button
-              onClick={handleExportBOQCSV}
-              className="px-2.5 py-1 text-[11px] font-bold text-sky-300 hover:bg-sky-800/60 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-              title="تصدير بصيغة CSV"
+              onClick={() => handleOpenEditTender(selectedTender)}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+              title="تعديل بيانات المنافسة النشطة"
             >
-              <FileText className="w-3 h-3" />
-              <span>CSV</span>
+              <Edit3 className="w-3.5 h-3.5 ml-1 text-amber-300" />
+              <span>تعديل</span>
             </button>
+
             <button
-              onClick={handleExportBOQJSON}
-              className="px-2.5 py-1 text-[11px] font-bold text-amber-300 hover:bg-amber-800/60 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-              title="تصدير بصيغة JSON"
+              onClick={() => setShowComparisonModal(true)}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              <span>JSON</span>
+              <ArrowRightLeft className="w-3.5 h-3.5 ml-1 text-sky-400" />
+              <span>مقارنة العروض</span>
             </button>
+
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <FileUp className="w-3.5 h-3.5 ml-1 text-amber-400" />
+              <span>استيراد BOQ</span>
+            </button>
+
+            <button
+              onClick={() => setShowPrintModal(true)}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            >
+              <Printer className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <span>طباعة العرض</span>
+            </button>
+
+            {/* Multi-Format Export Group */}
+            <div className="flex items-center bg-white/10 rounded-full p-1 border border-white/20">
+              <span className="text-[10px] text-emerald-300 font-bold px-2 flex items-center gap-1">
+                <Download className="w-3 h-3" />
+                <span>تصدير:</span>
+              </span>
+              <button
+                onClick={handleExportBOQExcel}
+                className="px-2.5 py-1 text-[11px] font-bold text-emerald-300 hover:bg-white/10 rounded-full transition-colors flex items-center gap-1 cursor-pointer"
+                title="تصدير بصيغة Excel"
+              >
+                <FileSpreadsheet className="w-3 h-3" />
+                <span>Excel</span>
+              </button>
+              <button
+                onClick={handleExportBOQCSV}
+                className="px-2.5 py-1 text-[11px] font-bold text-sky-300 hover:bg-white/10 rounded-full transition-colors flex items-center gap-1 cursor-pointer"
+                title="تصدير بصيغة CSV"
+              >
+                <FileText className="w-3 h-3" />
+                <span>CSV</span>
+              </button>
+              <button
+                onClick={handleExportBOQJSON}
+                className="px-2.5 py-1 text-[11px] font-bold text-amber-300 hover:bg-white/10 rounded-full transition-colors flex items-center gap-1 cursor-pointer"
+                title="تصدير بصيغة JSON"
+              >
+                <span>JSON</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي كراسات BOQ</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {tendersList.length} كراسة
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>جداول كميات نشطة</span>
+        </div>
+
+        {/* Card 2: Pistachio Band Card */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {tendersList.filter(t => t.status.includes('ترسية') || t.status.includes('مكتملة')).length} منافسة
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>ترسية معتمدة 100%</span>
+        </div>
+
+        {/* Card 3: Pitch Black Featured Card */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي القيمة المالية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {(tendersList.reduce((s, t) => s + t.grandTotal, 0) / 1000).toFixed(1)}k ر.س
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>شامل الضريبة 15%</span>
+        </div>
+
+        {/* Card 4: White Card - Compliance & Ready */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>جاهزية الربط المالي والضريبي</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            100%
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="w-full h-full bg-emerald-500 rounded-full" />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>ZATCA Phase 2 QR</span>
+        </div>
+      </div>
+
       {/* Tender Switcher Bar & Live Control Bar */}
-      <div className="card-pricing" style={{ padding: '16px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+      <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
           <span className="text-xs font-bold text-zinc-500 ml-1">المنافسة النشطة:</span>
           {tendersList.map((t) => {
             const isSelected = selectedTender.id === t.id;
@@ -1079,14 +1121,34 @@ export const TendersBOQPage: React.FC = () => {
               <button
                 key={t.id}
                 onClick={() => handleSelectTender(t)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isSelected 
-                    ? 'bg-emerald-800 text-white shadow-xs' 
-                    : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
-                }`}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '11.5px',
+                  fontWeight: isSelected ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isSelected ? '#000000' : '#e4e4e7',
+                  backgroundColor: isSelected ? '#000000' : '#ffffff',
+                  color: isSelected ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
               >
-                <span>{t.title.slice(0, 30)}...</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${isSelected ? 'bg-emerald-900 text-white' : 'bg-zinc-200 text-zinc-800'}`}>
+                <span>{t.title.slice(0, 26)}...</span>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    padding: '1px 6px',
+                    borderRadius: '9999px',
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : '#f4f4f5',
+                    color: isSelected ? '#ffffff' : '#52525b',
+                  }}
+                >
                   {t.referenceNumber}
                 </span>
               </button>
@@ -1097,12 +1159,12 @@ export const TendersBOQPage: React.FC = () => {
         {/* Action Controls for Selected Tender */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Status Dropdown */}
-          <div className="flex items-center gap-1 bg-zinc-50 p-1 rounded-xl border border-zinc-200">
+          <div className="flex items-center gap-1 bg-zinc-50 py-1 px-2.5 rounded-full border border-zinc-200">
             <span className="text-[11px] text-zinc-500 font-semibold px-1">الحالة:</span>
             <select
               value={selectedTender.status}
               onChange={(e) => handleStatusChange(e.target.value as any)}
-              className="text-xs font-bold bg-white border border-zinc-300 rounded-lg px-2 py-1 focus:outline-hidden text-zinc-800"
+              className="text-xs font-bold bg-transparent border-none focus:outline-none text-zinc-800 cursor-pointer"
             >
               <option value="مسودة قيد الدراسة">مسودة قيد الدراسة</option>
               <option value="مقدمة ومسعرة">مقدمة ومسعرة</option>
@@ -1153,7 +1215,8 @@ export const TendersBOQPage: React.FC = () => {
       </div>
 
       {/* Main Tabs Navigation */}
-      <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
+      <div className="card-pricing" style={{ padding: '12px 18px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <span className="text-xs font-semibold text-zinc-500 ml-1">طرق العرض:</span>
         {[
           { id: 'kas-sheet', label: 'سجل منافسات كاس الشامل (11,700+ منافسة Google Sheet)', icon: FileSpreadsheet },
           { id: 'etmad-cloud', label: 'منظومة سحابة اعتماد (Inova Etmad Cloud Suite)', icon: CloudLightning },
@@ -1173,14 +1236,14 @@ export const TendersBOQPage: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '6px 16px',
+                padding: '5px 14px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#059669' : '#e4e4e7',
-                backgroundColor: isActive ? '#059669' : '#ffffff',
+                borderColor: isActive ? '#000000' : '#e4e4e7',
+                backgroundColor: isActive ? '#000000' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
-                fontSize: '12.5px',
+                fontSize: '11.5px',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}

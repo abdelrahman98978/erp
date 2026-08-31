@@ -818,54 +818,57 @@ export const KasEtimadCloudPage: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-16">
-      {/* Top Header matching Inova Etmad Cloud with KAS Emerald Theme */}
-      <div className="rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 p-5 text-white shadow-xl border border-emerald-500/30 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="w-13 h-13 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shadow-inner backdrop-blur-md">
-              <Building2 className="w-7 h-7" />
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <Building2 className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-emerald-500 text-black text-[11px] font-black tracking-wider">
-                  KAS ETMAD CLOUD
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  KAS ETMAD CLOUD & MONAFASAT
                 </span>
-                <span className="text-emerald-300 text-xs font-semibold">
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
                   مؤسسة خالد عبدالعزيز السليم للتجارة والمقاولات
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight mt-1 text-white">
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 منظومة سحابة اعتماد وإدارة المنافسات والفوترة الذكية
               </h1>
-              <p className="text-emerald-200/70 text-xs mt-0.5">
-                المنصة السحابية الموحدة لإدارة المنافسات، الفواتير ZATCA، عروض الأسعار، المشاريع، والعملاء
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                المنصة السحابية الموحدة لإدارة المنافسات الحكومية، الفواتير الإلكترونية ZATCA، عروض الأسعار، والمشاريع
               </p>
             </div>
           </div>
 
-          {/* Quick Header Actions & Timer Bar */}
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-2 flex-wrap">
             {/* Live Task Timer */}
-            <div className="flex items-center bg-black/40 border border-emerald-500/40 rounded-xl px-3 py-1.5 backdrop-blur-md">
+            <div className="flex items-center bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs">
               <button
                 onClick={() => setIsTimerRunning(!isTimerRunning)}
-                className={`p-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                  isTimerRunning 
-                    ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30' 
-                    : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
-                }`}
+                className="text-white hover:text-emerald-300 ml-1.5 flex items-center gap-1 font-bold cursor-pointer"
                 title={isTimerRunning ? 'إيقاف المؤقت' : 'بدء المؤقت'}
               >
                 {isTimerRunning ? <Square className="w-3.5 h-3.5 text-rose-400" /> : <Play className="w-3.5 h-3.5 text-emerald-400" />}
-                <span>{isTimerRunning ? 'إيقاف' : 'بدء المؤقت'}</span>
+                <span>{isTimerRunning ? 'إيقاف' : 'المؤقت'}</span>
               </button>
-              <span className="font-mono font-bold text-xs text-white mr-2.5">
+              <span className="font-mono font-bold text-emerald-300 mr-1">
                 {formatTimer(timerSeconds)}
               </span>
             </div>
 
-            {/* Quick Add Menu */}
+            {/* Quick Add Action */}
             <button
               onClick={() => {
                 if (activeTab === 'invoices') setShowAddInvoiceModal(true);
@@ -883,10 +886,22 @@ export const KasEtimadCloudPage: React.FC = () => {
                 else if (activeTab === 'staff') setShowAddStaffModal(true);
                 else setShowAddCompModal(true);
               }}
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02]"
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 ml-1 text-emerald-700" />
               <span>+ إضافة سريعة</span>
+            </button>
+
+            {/* Refresh */}
+            <button
+              className="button-outline-on-dark"
+              onClick={() => setReloadKey(k => k + 1)}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+              title="تحديث البيانات"
+            >
+              <RefreshCw className="w-3.5 h-3.5 ml-1 text-cyan-400" />
+              <span>تحديث</span>
             </button>
 
             {/* Universal Multi-Format Export Dropdown */}
@@ -928,73 +943,124 @@ export const KasEtimadCloudPage: React.FC = () => {
               customTitle={`كشف سجلات ${activeTab} - منصة اعتماد كاس`}
               variant="outline-dark"
             />
-
-            {/* User Profile Badge */}
-            <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-xs">
-              <div className="w-6 h-6 rounded-full bg-emerald-400 text-emerald-950 flex items-center justify-center font-bold text-[10px]">
-                أب
-              </div>
-              <span className="font-semibold text-white">م. أحمد البشير</span>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Module Navigation Bar - Shopify Pill Style */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-border/40 pb-4 overflow-x-auto max-w-full">
-        {[
-          { id: 'dashboard', label: 'لوحة التحكم', icon: BarChart3 },
-          { id: 'competitions', label: 'المنافسات', count: competitions.length, icon: Award, badge: 'اعتماد' },
-          { id: 'invoices', label: 'الفواتير', count: invoices.length, icon: DollarSign },
-          { id: 'estimates', label: 'عروض الأسعار', count: estimates.length, icon: FileSpreadsheet },
-          { id: 'proposals', label: 'العروض', count: proposals.length, icon: Send },
-          { id: 'credit-notes', label: 'إشعارات الائتمان', count: creditNotes.length, icon: ArrowDownRight },
-          { id: 'payments', label: 'المدفوعات', count: payments.length, icon: Receipt },
-          { id: 'subscriptions', label: 'الاشتراكات', count: subscriptions.length, icon: RefreshCw },
-          { id: 'items', label: 'جدول الكميات', count: items.length, icon: Layers },
-          { id: 'clients', label: 'العملاء', count: clients.length, icon: Users },
-          { id: 'leads', label: 'العملاء المحتملين', count: leads.length, icon: UserPlus },
-          { id: 'projects', label: 'المشاريع', count: projects.length, icon: Briefcase },
-          { id: 'tasks', label: 'المهام', count: tasks.length, icon: CheckSquare },
-          { id: 'contracts', label: 'العقود', count: contracts.length, icon: FileCheck },
-          { id: 'expenses', label: 'المصروفات', count: expenses.length, icon: CreditCard },
-          { id: 'tickets', label: 'الدعم', count: tickets.length, icon: HelpCircle },
-          { id: 'estimate-requests', label: 'طلب عرض سعر', count: estimateRequests.length, icon: FilePlus },
-          { id: 'staff', label: 'الطاقم', count: staff.length, icon: UserCheck },
-          { id: 'knowledge-base', label: 'قاعدة المعرفة', count: knowledge.length, icon: BookOpen },
-          { id: 'email-templates', label: 'قوالب البريد', count: emailTemplates.length, icon: Mail },
-          { id: 'utilities', label: 'الأدوات المساعدة', icon: Calculator },
-          { id: 'calendar', label: 'التقويم', icon: Calendar },
-          { id: 'reports', label: 'التقارير المالية', icon: TrendingUp },
-          { id: 'settings', label: 'تصنيفات المنافسات', count: categories.length, icon: Settings },
-        ].map(navItem => {
-          const isActive = activeTab === navItem.id;
-          const Icon = navItem.icon;
-          return (
-            <button
-              key={navItem.id}
-              onClick={() => setActiveTab(navItem.id as any)}
-              className={`px-4 py-2 text-xs transition-all cursor-pointer inline-flex items-center gap-2 ${
-                isActive
-                  ? 'button-primary-pill shadow-md shadow-emerald-600/20'
-                  : 'button-outline-on-light'
-              }`}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span className="font-bold">{navItem.label}</span>
-              {navItem.count !== undefined && (
-                <span className={isActive ? 'pill-tag-mint text-[10px] py-0.5 px-2 font-black' : 'pill-tag-shade text-[10px] py-0.5 px-2 font-bold'}>
-                  {navItem.count}
-                </span>
-              )}
-              {navItem.badge && (
-                <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-slate-950 shadow-xs">
-                  {navItem.badge}
-                </span>
-              )}
-            </button>
-          );
-        })}
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card - Total Competitions */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المنافسات المسجلة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {stats.totalCompetitions} منافسة
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>منصة اعتماد الحكومية</span>
+        </div>
+
+        {/* Card 2: Pistachio Band Card - Completed Awards */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {stats.wonCompetitions} ترسية
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معدل الفوز {stats.winRate}%</span>
+        </div>
+
+        {/* Card 3: Pitch Black Featured Card - Active Sessions / Revenue */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي المبيعات والفواتير</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {(stats.totalInvoicesAmount / 1000).toFixed(0)}k ر.س
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>المحصل: {(stats.paidAmount / 1000).toFixed(0)}k ر.س</span>
+        </div>
+
+        {/* Card 4: White Card - ZATCA & Security Compliance */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مستوى الامتثال ومطابقة ZATCA</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            100%
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="w-full h-full bg-emerald-500 rounded-full" />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>معتمد وموثق سحابياً</span>
+        </div>
+      </div>
+
+      {/* Main Module Navigation Bar - Capsule Pill Design */}
+      <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+        <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto max-w-full pb-1">
+          <span className="text-xs font-semibold text-zinc-500 ml-1">الأقسام:</span>
+          {[
+            { id: 'dashboard', label: 'لوحة التحكم', icon: BarChart3 },
+            { id: 'competitions', label: 'المنافسات', count: competitions.length, icon: Award, badge: 'اعتماد' },
+            { id: 'invoices', label: 'الفواتير', count: invoices.length, icon: DollarSign },
+            { id: 'estimates', label: 'عروض الأسعار', count: estimates.length, icon: FileSpreadsheet },
+            { id: 'proposals', label: 'العروض', count: proposals.length, icon: Send },
+            { id: 'credit-notes', label: 'إشعارات الائتمان', count: creditNotes.length, icon: ArrowDownRight },
+            { id: 'payments', label: 'المدفوعات', count: payments.length, icon: Receipt },
+            { id: 'subscriptions', label: 'الاشتراكات', count: subscriptions.length, icon: RefreshCw },
+            { id: 'items', label: 'جدول الكميات', count: items.length, icon: Layers },
+            { id: 'clients', label: 'العملاء', count: clients.length, icon: Users },
+            { id: 'leads', label: 'العملاء المحتملين', count: leads.length, icon: UserPlus },
+            { id: 'projects', label: 'المشاريع', count: projects.length, icon: Briefcase },
+            { id: 'tasks', label: 'المهام', count: tasks.length, icon: CheckSquare },
+            { id: 'contracts', label: 'العقود', count: contracts.length, icon: FileCheck },
+            { id: 'expenses', label: 'المصروفات', count: expenses.length, icon: CreditCard },
+            { id: 'tickets', label: 'الدعم', count: tickets.length, icon: HelpCircle },
+            { id: 'estimate-requests', label: 'طلب عرض سعر', count: estimateRequests.length, icon: FilePlus },
+            { id: 'staff', label: 'الطاقم', count: staff.length, icon: UserCheck },
+            { id: 'knowledge-base', label: 'قاعدة المعرفة', count: knowledge.length, icon: BookOpen },
+            { id: 'email-templates', label: 'قوالب البريد', count: emailTemplates.length, icon: Mail },
+            { id: 'utilities', label: 'الأدوات المساعدة', icon: Calculator },
+            { id: 'calendar', label: 'التقويم', icon: Calendar },
+            { id: 'reports', label: 'التقارير المالية', icon: TrendingUp },
+            { id: 'settings', label: 'تصنيفات المنافسات', count: categories.length, icon: Settings },
+          ].map(navItem => {
+            const isActive = activeTab === navItem.id;
+            const Icon = navItem.icon;
+            return (
+              <button
+                key={navItem.id}
+                onClick={() => setActiveTab(navItem.id as any)}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '11.5px',
+                  fontWeight: isActive ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isActive ? '#000000' : '#e4e4e7',
+                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                }}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{navItem.label}</span>
+                {navItem.count !== undefined && (
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      padding: '1px 6px',
+                      borderRadius: '9999px',
+                      fontWeight: 700,
+                      backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : '#f4f4f5',
+                      color: isActive ? '#ffffff' : '#52525b',
+                    }}
+                  >
+                    {navItem.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ========================================================================= */}

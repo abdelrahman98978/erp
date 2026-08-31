@@ -373,129 +373,174 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
   return (
     <div className="space-y-6">
-      {/* Top Banner & Control Actions */}
-      <div className="rounded-3xl bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 p-7 text-white shadow-2xl border border-emerald-500/20 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-xl backdrop-blur-md">
-              <FileSpreadsheet className="w-9 h-9" />
+      {/* Top Banner - Pitch Black Cinematic Header matching ActivityLog/Master Design */}
+      <div
+        className="card-feature-cinematic"
+        style={{
+          background: '#000000',
+          borderRadius: '16px',
+          padding: '28px',
+          color: '#FFFFFF',
+          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+        }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+              <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl lg:text-3xl font-black tracking-tight">سجل ومنظومة منافسات شركة كاس والمجموعة</h2>
-                <span className="px-3 py-1 text-xs font-black rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Google Sheet Live Synchronizer
+              <div className="flex items-center gap-2 mb-1">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  KAS LIVE MONAFASAT MASTER
+                </span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
+                  Google Sheet Synchronizer (11,700+ منافسة)
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-emerald-100/70 mt-1 font-medium">
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                سجل ومنظومة منافسات شركة كاس والمجموعة
+              </h1>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
                 إدارة ومتابعة أكثر من 11,700 منافسة حكومية وترسية تعاقدية لكافة مؤسسات وشركات المجموعة عبر منصة اعتماد والجهات الرسمية
               </p>
             </div>
           </div>
 
-          {/* Top Quick Actions */}
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={handleOpenAdd}
-              className="button-primary-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 22px' }}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4" />
-              <span>إضافة منافسة جديدة</span>
+              <Plus className="w-4 h-4 ml-1 text-emerald-700" />
+              <span>+ إضافة منافسة</span>
             </button>
 
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
-              style={{ minHeight: '38px', padding: '8px 18px' }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              <Upload className="w-4 h-4 text-emerald-400" />
+              <Upload className="w-3.5 h-3.5 ml-1 text-emerald-400" />
               <span>استيراد إكسل</span>
             </button>
 
             <button
               onClick={handleExport}
-              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
-              style={{ minHeight: '38px', padding: '8px 18px' }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              <Download className="w-4 h-4 text-sky-400" />
+              <Download className="w-3.5 h-3.5 ml-1 text-sky-400" />
               <span>تصدير XLSX</span>
             </button>
 
             <button
               onClick={() => setIsPrintModalOpen(true)}
-              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
-              style={{ minHeight: '38px', padding: '8px 18px' }}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
               title="طباعة كشف المنافسات"
             >
-              <Printer className="w-4 h-4 text-amber-300" />
+              <Printer className="w-3.5 h-3.5 ml-1 text-amber-300" />
               <span>طباعة كشف</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Primary Category Selector */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 max-w-full">
-          <button
-            onClick={() => handleCategoryChange('companies')}
-            className={activeCategory === 'companies' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
-            style={{ padding: '6px 18px', minHeight: '36px' }}
-          >
-            <Building2 className="w-4 h-4" />
-            <span>المؤسسات والأنشطة (6)</span>
-          </button>
-
-          <button
-            onClick={() => handleCategoryChange('medical')}
-            className={activeCategory === 'medical' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
-            style={{ padding: '6px 18px', minHeight: '36px' }}
-          >
-            <Activity className="w-4 h-4" />
-            <span>الإدارة الطبية (12 شهراً)</span>
-          </button>
-
-          <button
-            onClick={() => handleCategoryChange('monthly')}
-            className={activeCategory === 'monthly' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
-            style={{ padding: '6px 18px', minHeight: '36px' }}
-          >
-            <Calendar className="w-4 h-4" />
-            <span>المتابعة الشهرية (12 شهراً)</span>
-          </button>
-
-          <button
-            onClick={() => handleCategoryChange('archive')}
-            className={activeCategory === 'archive' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
-            style={{ padding: '6px 18px', minHeight: '36px' }}
-          >
-            <Layers className="w-4 h-4" />
-            <span>أرشيف المنافسات (2024 & عامة)</span>
-          </button>
-
-          <button
-            onClick={() => handleCategoryChange('all')}
-            className={activeCategory === 'all' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
-            style={{ padding: '6px 18px', minHeight: '36px' }}
-          >
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>اللوحة الإجمالية (11,700+ سجل)</span>
-          </button>
+      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        {/* Card 1: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المنافسات المسجلة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {kpis.totalTenders.toLocaleString()} سجل
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل تدقيق مستمر</span>
         </div>
 
-        <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2 font-mono px-3.5 py-1.5 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-200 dark:border-zinc-700 shrink-0 self-start lg:self-center">
-          <span className="font-bold">إجمالي السجلات:</span>
-          <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono text-sm">{filteredTenders.length.toLocaleString()}</span>
+        {/* Card 2: Pistachio Band Card */}
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {kpis.wonCount} ترسية
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معدل الفوز {kpis.winRate}%</span>
+        </div>
+
+        {/* Card 3: Pitch Black Featured Card */}
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي قيمة العروض المقدمة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {kpis.totalBidValue > 1000000 ? `${(kpis.totalBidValue / 1000000).toFixed(2)}M` : `${(kpis.totalBidValue / 1000).toFixed(0)}k`} ر.س
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>قيمة الترسيات: {kpis.totalWinningValue > 1000000 ? `${(kpis.totalWinningValue / 1000000).toFixed(2)}M` : `${(kpis.totalWinningValue / 1000).toFixed(0)}k`} ر.س</span>
+        </div>
+
+        {/* Card 4: White Card */}
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>نسبة الترسية والجاهزية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+            {kpis.winRate}%
+          </div>
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
+            <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${Math.min(100, Math.max(15, Number(kpis.winRate) || 0))}%` }} />
+          </div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>{kpis.pendingCount} عروض قيد الفحص</span>
+        </div>
+      </div>
+
+      {/* Primary Category Selector - Capsule Pill Container */}
+      <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1">
+          <span className="text-xs font-semibold text-zinc-500 ml-1">التصنيف:</span>
+          {[
+            { id: 'companies', label: 'المؤسسات والأنشطة (6)', icon: Building2 },
+            { id: 'medical', label: 'الإدارة الطبية (12 شهراً)', icon: Activity },
+            { id: 'monthly', label: 'المتابعة الشهرية (12 شهراً)', icon: Calendar },
+            { id: 'archive', label: 'أرشيف المنافسات (2024 & عامة)', icon: Layers },
+            { id: 'all', label: 'اللوحة الإجمالية (11,700+ سجل)', icon: Sparkles },
+          ].map(cat => {
+            const isActive = activeCategory === cat.id;
+            const Icon = cat.icon;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryChange(cat.id as any)}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '11.5px',
+                  fontWeight: isActive ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isActive ? '#000000' : '#e4e4e7',
+                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="text-xs text-zinc-500 flex items-center gap-2 font-mono px-3 py-1 bg-zinc-50 rounded-full border border-zinc-200 shrink-0">
+          <span className="font-bold">السجلات:</span>
+          <span className="font-black text-black font-mono">{filteredTenders.length.toLocaleString()}</span>
         </div>
       </div>
 
       {/* Sub-sheets Pills (if category is not 'all') */}
       {activeCategory !== 'all' && (
-        <div className="flex items-center gap-2 p-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 overflow-x-auto shadow-xs">
-          <span className="text-xs font-black text-zinc-500 dark:text-zinc-400 whitespace-nowrap px-2 flex items-center gap-1.5">
-            <FolderSync className="w-4 h-4 text-emerald-600" />
+        <div className="card-pricing" style={{ padding: '12px 18px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', overflowX: 'auto' }}>
+          <span className="text-xs font-semibold text-zinc-500 whitespace-nowrap px-1 flex items-center gap-1.5">
+            <FolderSync className="w-3.5 h-3.5 text-emerald-600" />
             <span>اختر الشيت:</span>
           </span>
           {categorySheets.map((s: KasSheetMeta) => {
@@ -505,16 +550,35 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
               <button
                 key={s.name}
                 onClick={() => setSelectedSheetName(s.name)}
-                className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-                  isSelected
-                    ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-md'
-                    : 'bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 border border-zinc-200 dark:border-zinc-700'
-                }`}
+                style={{
+                  padding: '4px 12px',
+                  borderRadius: '9999px',
+                  fontSize: '11.5px',
+                  fontWeight: isSelected ? 550 : 420,
+                  border: '1px solid',
+                  borderColor: isSelected ? '#000000' : '#e4e4e7',
+                  backgroundColor: isSelected ? '#000000' : '#ffffff',
+                  color: isSelected ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  whiteSpace: 'nowrap',
+                }}
               >
                 <span>{s.label}</span>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
-                  isSelected ? 'bg-white/20 text-white' : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300'
-                }`}>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    padding: '1px 6px',
+                    borderRadius: '9999px',
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : '#f4f4f5',
+                    color: isSelected ? '#ffffff' : '#52525b',
+                  }}
+                >
                   {count}
                 </span>
               </button>
@@ -522,62 +586,6 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
           })}
         </div>
       )}
-
-      {/* Luxury KPI Cards Ribbon */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-        <KasKpiCard
-          title="المنافسات الكلية"
-          value={kpis.totalTenders.toLocaleString()}
-          subtitle="سجل مسجل بالشيت"
-          icon={FileSpreadsheet}
-          variant="emerald"
-        />
-
-        <KasKpiCard
-          title="قيمة العروض المقدمة"
-          value={kpis.totalBidValue > 1000000 
-            ? `${(kpis.totalBidValue / 1000000).toFixed(2)} م.ر`
-            : `${kpis.totalBidValue.toLocaleString()} ر.س`}
-          subtitle="إجمالي عروض كاس"
-          icon={DollarSign}
-          variant="sky"
-        />
-
-        <KasKpiCard
-          title="الترسيات المعتمدة"
-          value={kpis.totalWinningValue > 1000000 
-            ? `${(kpis.totalWinningValue / 1000000).toFixed(2)} م.ر`
-            : `${kpis.totalWinningValue.toLocaleString()} ر.س`}
-          subtitle={`${kpis.wonCount} ترسية ناجحة`}
-          icon={Award}
-          variant="gold"
-        />
-
-        <KasKpiCard
-          title="نسبة الترسية والفوز"
-          value={`${kpis.winRate}%`}
-          subtitle="من العروض المفحوصة"
-          icon={Percent}
-          variant="purple"
-          progressPct={Number(kpis.winRate) || 0}
-        />
-
-        <KasKpiCard
-          title="عروض قيد الفحص"
-          value={kpis.pendingCount.toLocaleString()}
-          subtitle="بانتظار قرار الترسية"
-          icon={Clock}
-          variant="slate"
-        />
-
-        <KasKpiCard
-          title="سعر مرتفع / لم ترسى"
-          value={kpis.highBidCount.toLocaleString()}
-          subtitle="فرص تحسين التسعير"
-          icon={TrendingUp}
-          variant="rose"
-        />
-      </div>
 
       {/* Filter, Search & View Switcher Toolbar */}
       <div className="p-4 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
