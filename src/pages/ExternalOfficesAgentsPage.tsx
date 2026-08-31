@@ -39,7 +39,7 @@ const INITIAL_OFFICES: ExternalOffice[] = [
     activeCandidatesCount: 140,
     arrivedCountCount: 820,
     rating: 4.9,
-    authorizedCompanies: ['masi', 'topaz'],
+    authorizedCompanies: ['SAF', 'TOP'],
   },
   {
     id: 'OFF-ET-02',
@@ -53,7 +53,7 @@ const INITIAL_OFFICES: ExternalOffice[] = [
     activeCandidatesCount: 95,
     arrivedCountCount: 540,
     rating: 4.7,
-    authorizedCompanies: ['yaqoot', 'ruwad'],
+    authorizedCompanies: ['YAQ', 'KAS'],
   },
   {
     id: 'OFF-IN-03',
@@ -67,7 +67,7 @@ const INITIAL_OFFICES: ExternalOffice[] = [
     activeCandidatesCount: 210,
     arrivedCountCount: 1100,
     rating: 4.8,
-    authorizedCompanies: ['masi', 'yaqoot', 'topaz', 'ruwad'],
+    authorizedCompanies: ['SAF', 'YAQ', 'TOP', 'KAS'],
   },
 ];
 

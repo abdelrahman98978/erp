@@ -49,18 +49,18 @@ export const ReportsPage: React.FC = () => {
   const safContracts = contracts.filter(c => c.company_id === 'SAF' || !c.company_id).length || 115;
   const yaqContracts = contracts.filter(c => c.company_id === 'YAQ').length || 74;
   const topContracts = contracts.filter(c => c.company_id === 'TOP').length || 42;
-  const darContracts = contracts.filter(c => c.company_id === 'DAR').length || 10;
+  const kasContracts = contracts.filter(c => c.company_id === 'KAS' || c.company_id === 'DAR').length || 28;
 
   const safRent = rentContracts.filter(r => r.company_id === 'SAF' || !r.company_id).length || 22;
   const yaqRent = rentContracts.filter(r => r.company_id === 'YAQ').length || 16;
   const topRent = rentContracts.filter(r => r.company_id === 'TOP').length || 12;
-  const darRent = rentContracts.filter(r => r.company_id === 'DAR').length || 8;
+  const kasRent = rentContracts.filter(r => r.company_id === 'KAS' || r.company_id === 'DAR').length || 18;
 
   const reportData = [
-    { id: '1', companyCode: 'SAF', name: 'شركة السفير الماسي للاستقدام', recruitment_contracts: safContracts, rent_contracts: safRent, total_revenue: safContracts * 2473, expenses: Math.round(safContracts * 1026), net_profit: safContracts * 2473 - Math.round(safContracts * 1026), margin: '58.5%' },
-    { id: '2', companyCode: 'YAQ', name: 'شركة ياقوت نجد للاستقدام', recruitment_contracts: yaqContracts, rent_contracts: yaqRent, total_revenue: yaqContracts * 2194, expenses: Math.round(yaqContracts * 925), net_profit: yaqContracts * 2194 - Math.round(yaqContracts * 925), margin: '57.8%' },
-    { id: '3', companyCode: 'TOP', name: 'شركة توباز للاستقدام والتشغيل', recruitment_contracts: topContracts, rent_contracts: topRent, total_revenue: topContracts * 2345, expenses: Math.round(topContracts * 1047), net_profit: topContracts * 2345 - Math.round(topContracts * 1047), margin: '55.3%' },
-    { id: '4', companyCode: 'DAR', name: 'شركة دار الرواد للمقاولات والخدمات', recruitment_contracts: darContracts, rent_contracts: darRent, total_revenue: darContracts * 4500, expenses: Math.round(darContracts * 1950), net_profit: darContracts * 4500 - Math.round(darContracts * 1950), margin: '56.6%' },
+    { id: '1', companyCode: 'SAF', name: 'شركة الصفا الماسي للاستقدام (SAF RC01)', recruitment_contracts: safContracts, rent_contracts: safRent, total_revenue: safContracts * 2473, expenses: Math.round(safContracts * 1026), net_profit: safContracts * 2473 - Math.round(safContracts * 1026), margin: '58.5%' },
+    { id: '2', companyCode: 'YAQ', name: 'شركة الياقوت الشرقية للتشغيل (YAQ RC02)', recruitment_contracts: yaqContracts, rent_contracts: yaqRent, total_revenue: yaqContracts * 2194, expenses: Math.round(yaqContracts * 925), net_profit: yaqContracts * 2194 - Math.round(yaqContracts * 925), margin: '57.8%' },
+    { id: '3', companyCode: 'TOP', name: 'شركة توب تالنت الدولية للتوظيف (TOP RC03)', recruitment_contracts: topContracts, rent_contracts: topRent, total_revenue: topContracts * 2345, expenses: Math.round(topContracts * 1047), net_profit: topContracts * 2345 - Math.round(topContracts * 1047), margin: '55.3%' },
+    { id: '4', companyCode: 'KAS', name: 'مؤسسة كاس وسحابة اعتماد للمنافسات (KAS RC04)', recruitment_contracts: kasContracts, rent_contracts: kasRent, total_revenue: kasContracts * 4500, expenses: Math.round(kasContracts * 1950), net_profit: kasContracts * 4500 - Math.round(kasContracts * 1950), margin: '56.6%' },
   ].filter(item => selectedCompany === 'all' ? true : item.companyCode === selectedCompany);
 
   const totalRevenue = reportData.reduce((s, r) => s + r.total_revenue, 0);
@@ -223,10 +223,10 @@ export const ReportsPage: React.FC = () => {
             className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
           >
             <option value="all">كافة شركات المجموعة الموحدة</option>
-            <option value="masi">شركة السفير الماسي</option>
-            <option value="yaqoot">شركة ياقوت نجد</option>
-            <option value="topaz">شركة توباز للاستقدام</option>
-            <option value="dar">دار الرواد</option>
+            <option value="SAF">شركة الصفا الماسي (SAF RC01)</option>
+            <option value="YAQ">شركة الياقوت الشرقية (YAQ RC02)</option>
+            <option value="TOP">شركة توب تالنت الدولية (TOP RC03)</option>
+            <option value="KAS">مؤسسة كاس وسحابة اعتماد (KAS RC04)</option>
           </select>
         </div>
       </div>
