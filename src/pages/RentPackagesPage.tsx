@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
+import { exportData } from '../services/exportService';
 import { Package, Calculator, FileText, Plus, Check, PenSquare, FileSignature, FileSpreadsheet, X } from 'lucide-react';
 
 export interface RentPackage {
@@ -49,54 +51,54 @@ const MOCK_PACKAGES: RentPackage[] = [
     name: 'باقة الـ 3 أشهر الذهبية (Quarterly)',
     category: 'أفراد وعائلات',
     duration_months: 3,
-    monthly_rate: 2200,
+    monthly_rate: 2250,
     vat_inclusive: true,
-    discount_percentage: 10,
+    discount_percentage: 8,
     security_deposit: 1000,
     active_contracts: 14,
     features: [
-      'خصم 10% على إجمالي قيمة العقد',
-      'ضمان شامل واستبدال مرتين مجاناً',
-      'دعم مباشر على مدار الساعة 24/7',
-      'إمكانية التقسيط الشهري عبر سندات قبض'
+      'خصم 8% على إجمالي القيمة',
+      'ضمان استبدال غير محدود',
+      'فحص طبي شامل معتمد',
+      'مدير حساب خاص لخدمة العميل'
     ],
-    terms_summary: 'سداد الدفعة الأولى عند توقيع العقد والباقي وفق جدول الدفعات المحاسبي المعتمد.'
+    terms_summary: 'سداد دفعة أولى 50% والباقي بعد مضي 45 يوماً.'
   },
   {
     id: 'PKG-03',
-    name: 'الباقة السنوية الماسية (Annual 12 Months)',
+    name: 'باقة الـ 6 أشهر المميزة (Semi-Annual)',
     category: 'أفراد وعائلات',
+    duration_months: 6,
+    monthly_rate: 2100,
+    vat_inclusive: true,
+    discount_percentage: 14,
+    security_deposit: 1200,
+    active_contracts: 22,
+    features: [
+      'خصم 14% على إجمالي القيمة',
+      'أولوية اختيار الكوادر المنزلية المؤهلة',
+      'توصيل فوري خلال 24 ساعة',
+      'تأمين صحي شامل من بوبا/التعاونية'
+    ],
+    terms_summary: 'إمكانية التقسيط الميسر على 3 دفعات متساوية.'
+  },
+  {
+    id: 'PKG-04',
+    name: 'الباقة السنوية للشركات والقصور (Annual VIP)',
+    category: 'شركات وقطاع تجاري',
     duration_months: 12,
     monthly_rate: 1950,
     vat_inclusive: true,
     discount_percentage: 20,
-    security_deposit: 1500,
-    active_contracts: 22,
-    features: [
-      'أعلى نسبة خصم (20% توفير سنوي)',
-      'استبدال غير محدود طوال مدة العقد',
-      'سندات سداد ميسرة مقسمة على 4 دفعات',
-      'خدمة كبار العملاء VIP مع مدير حساب مخصص'
-    ],
-    terms_summary: 'تلتزم المجموعة بتوفير بديل مطابق للمواصفات في حال طلب العميل التغيير.'
-  },
-  {
-    id: 'PKG-04',
-    name: 'باقة قطاع الأعمال والشركات (Corporate Staff)',
-    category: 'شركات وقطاع تجاري',
-    duration_months: 12,
-    monthly_rate: 1750,
-    vat_inclusive: false,
-    discount_percentage: 15,
     security_deposit: 2000,
-    active_contracts: 6,
+    active_contracts: 31,
     features: [
-      'إصدار فواتير ضريبية B2B معتمدة من ZATCA',
-      'إشراف عمالي وإقامة وسكن مجهز',
-      'نقل وتوزيع يومي عبر أسطول المجموعة',
-      'عقود موحدة معتمدة من منصة قوى'
+      'خصم 20% وأقل سعر شهري متاح',
+      'إشراف ومتابعة دورية كل أسبوعين',
+      'تبديل مجاني فوري وبدون شروط',
+      'فواتير إلكترونية معتمدة لـ ZATCA'
     ],
-    terms_summary: 'تخضع للشروط العامة لعقود توريد الكوادر التشغيلية للشركات والمؤسسات.'
+    terms_summary: 'عقد سنوي ملزم مع دفعة مقدمة ربع سنوية.'
   }
 ];
 
@@ -104,15 +106,15 @@ const MOCK_TERMS: ContractTermClause[] = [
   {
     id: 'TRM-1',
     clause_no: 1,
-    title: 'موضوع العقد والالتزامات العامة',
-    text: 'يقوم الطرف الأول (مجموعة السليم) بتأجير وتقديم خدمات العمالة المنزلية المحددة بالملحق للطرف الثاني وفق المعايير والأنظمة المعمول بها في المملكة العربية السعودية.',
+    title: 'الالتزامات التشغيلية وحقوق الطرفين',
+    text: 'يلتزم المؤجر بتسليم الكادر المنزلي بحالة صحية ونفسية جيدة ومجتاز لكافة الفحوصات الطبية، ويلتزم المستأجر بتوفير سكن ملائم ومعاملة العاملة بما يراعي الأنظمة واللوائح المعتمدة بالمملكة.',
     is_mandatory: true
   },
   {
     id: 'TRM-2',
     clause_no: 2,
-    title: 'الضمان والاستبدال',
-    text: 'يحق للطرف الثاني طلب استبدال العاملة في حال رفض العمل أو عدم الكفاءة المهنية، وتلتزم الشركة بتوفير بديل خلال 48 ساعة عمل من تاريخ استلام الإشعار.',
+    title: 'شروط الاستبدال والضمان',
+    text: 'يحق للمستأجر طلب استبدال العاملة خلال مدة العقد في حال امتناعها عن العمل أو ثبوت عدم كفاءتها المهنية، ويلتزم المؤجر بتوفير البديل خلال 48 ساعة من تاريخ استلام الطلب.',
     is_mandatory: true
   },
   {
@@ -132,20 +134,32 @@ const MOCK_TERMS: ContractTermClause[] = [
 ];
 
 export const RentPackagesPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'packages' | 'calculator' | 'terms'>('packages');
   const [packages, setPackages] = useState<RentPackage[]>([]);
-  const [terms] = useState<ContractTermClause[]>(MOCK_TERMS);
+  const [terms, setTerms] = useState<ContractTermClause[]>(MOCK_TERMS);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddClauseModal, setShowAddClauseModal] = useState(false);
+  const [newClauseForm, setNewClauseForm] = useState({ title: '', text: '' });
 
   // Pricing Calculator State
   const [calcDuration, setCalcDuration] = useState<number>(3);
   const [calcWorkersCount, setCalcWorkersCount] = useState<number>(1);
   const [calcBaseRate, setCalcBaseRate] = useState<number>(2200);
 
-  // New Package Form
-  const [formData, setFormData] = useState({
+  // New/Edit Package Form
+  const [formData, setFormData] = useState<{
+    name: string;
+    category: 'أفراد وعائلات' | 'شركات وقطاع تجاري' | 'ساعات وضيافة';
+    duration_months: number;
+    monthly_rate: number;
+    discount_percentage: number;
+    security_deposit: number;
+    featuresText: string;
+    terms_summary: string;
+  }>({
     name: '',
-    category: 'أفراد وعائلات' as const,
+    category: 'أفراد وعائلات',
     duration_months: 3,
     monthly_rate: 2200,
     discount_percentage: 10,
@@ -176,7 +190,34 @@ export const RentPackagesPage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord<RentPackage>('rent_packages', newPkg, MOCK_PACKAGES);
     setPackages(updated);
+    addNotification({
+      title: 'حفظ الباقة الإيجارية',
+      message: `تم حفظ وتحديث بيانات الباقة (${newPkg.name}) بنجاح.`,
+      type: 'success'
+    });
     setShowAddModal(false);
+  };
+
+  const handleEditPackage = (pkg: RentPackage) => {
+    setFormData({
+      name: pkg.name,
+      category: pkg.category,
+      duration_months: pkg.duration_months,
+      monthly_rate: pkg.monthly_rate,
+      discount_percentage: pkg.discount_percentage,
+      security_deposit: pkg.security_deposit,
+      featuresText: pkg.features.join('\n'),
+      terms_summary: pkg.terms_summary
+    });
+    setShowAddModal(true);
+  };
+
+  const handleCreateContract = (pkg: RentPackage) => {
+    addNotification({
+      title: 'إنشاء عقد تأجير',
+      message: `تم فتح مسودة عقد تأجير جديد مبني على (${pkg.name}) بقيمة ${pkg.monthly_rate} ر.س/شهر.`,
+      type: 'success'
+    });
   };
 
   const calcSubtotal = calcBaseRate * calcDuration * calcWorkersCount;
@@ -304,6 +345,8 @@ export const RentPackagesPage: React.FC = () => {
 
               <div className="flex gap-2 border-t border-zinc-100 pt-4">
                 <button
+                  type="button"
+                  onClick={() => handleEditPackage(pkg)}
                   className="button-outline-on-light flex-1"
                   style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
                 >
@@ -311,6 +354,8 @@ export const RentPackagesPage: React.FC = () => {
                   <span>تعديل الباقة</span>
                 </button>
                 <button
+                  type="button"
+                  onClick={() => handleCreateContract(pkg)}
                   className="button-primary-pill flex-1"
                   style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
                 >
@@ -328,87 +373,104 @@ export const RentPackagesPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
           <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
             <Calculator className="w-5 h-5" />
-            <span>حاسبة عروض الأسعار وهوامش الربح لعقود التأجير</span>
+            <span>حاسبة تسعير عقود التأجير والتشغيل الذكية (Smart Quoting Engine)</span>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-zinc-700 block mb-1 font-semibold">مدة التعاقد (بالأشهر)</label>
-                <select
-                  value={calcDuration}
-                  onChange={(e) => setCalcDuration(Number(e.target.value))}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
-                >
-                  <option value={1}>شهر واحد (باقة مرنة)</option>
-                  <option value={3}>3 أشهر (ربع سنوي - خصم 10%)</option>
-                  <option value={6}>6 أشهر (نصف سنوي - خصم 15%)</option>
-                  <option value={12}>12 شهراً (سنوي كامل - خصم 20%)</option>
-                </select>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">مدة العقد الإيجاري:</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[1, 3, 6, 12].map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setCalcDuration(m)}
+                      className={`p-2.5 rounded-2xl text-xs font-bold transition-all ${calcDuration === m ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'}`}
+                    >
+                      {m} {m === 1 ? 'شهر' : m === 3 ? 'أشهر' : m === 6 ? 'أشهر' : 'سنة'}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div>
-                <label className="text-xs text-zinc-700 block mb-1 font-semibold">عدد العاملات / الكوادر المطلوبة</label>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">عدد الكوادر المطلوبة:</label>
                 <input
                   type="number"
                   min={1}
                   max={50}
                   value={calcWorkersCount}
                   onChange={(e) => setCalcWorkersCount(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-zinc-700 block mb-1 font-semibold">سعر الإيجار الشهري للعاملة الواحدة (ر.س)</label>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">السعر الشهري الأساسي للعاملة (ر.س):</label>
                 <input
                   type="number"
-                  step={50}
                   value={calcBaseRate}
                   onChange={(e) => setCalcBaseRate(Number(e.target.value))}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
                 />
               </div>
             </div>
 
-            {/* Calculated Breakdown Card */}
-            <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col justify-between">
+            <div className="bg-zinc-50 p-6 rounded-3xl border border-zinc-200 flex flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-black mb-3">تفاصيل العرض المالي للعقد الموحد</h3>
+                <h3 className="text-sm font-bold text-black border-b border-zinc-200 pb-2 mb-4">تفاصيل عرض السعر المبدئي</h3>
+                <div className="space-y-2 text-xs text-zinc-600">
+                  <div className="flex justify-between">
+                    <span>المبلغ الإجمالي الأساسي:</span>
+                    <span className="font-mono font-bold text-black">{calcSubtotal.toLocaleString()} ر.س</span>
+                  </div>
+                  <div className="flex justify-between text-emerald-700">
+                    <span>الخصم المطبق ({calcDuration >= 12 ? '20%' : calcDuration >= 3 ? '10%' : '0%'}):</span>
+                    <span className="font-mono font-bold">- {calcDiscount.toLocaleString()} ر.س</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>المبلغ الخاضع للضريبة:</span>
+                    <span className="font-mono font-bold text-black">{calcTotalAfterDiscount.toLocaleString()} ر.س</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>ضريبة القيمة المضافة (15% ZATCA):</span>
+                    <span className="font-mono font-bold text-black">{calcVat.toLocaleString()} ر.س</span>
+                  </div>
 
-                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-zinc-600">
-                  <span>القيمة الأساسية ({calcDuration} شهر × {calcWorkersCount} عاملة):</span>
-                  <span className="font-mono font-bold text-black">{calcSubtotal.toLocaleString()} ر.س</span>
+                  <div className="flex justify-between text-base py-3 font-bold text-black mt-2">
+                    <span>الإجمالي النهائي شامل الضريبة:</span>
+                    <span className="font-mono text-emerald-700 text-lg">{calcGrandTotal.toLocaleString()} ر.س</span>
+                  </div>
                 </div>
 
-                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-emerald-700 font-semibold">
-                  <span>الخصم الترويجي المطبق:</span>
-                  <span className="font-mono font-bold">- {calcDiscount.toLocaleString()} ر.س</span>
-                </div>
-
-                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-zinc-600">
-                  <span>المبلغ الخاضع للضريبة:</span>
-                  <span className="font-mono font-bold text-black">{calcTotalAfterDiscount.toLocaleString()} ر.س</span>
-                </div>
-
-                <div className="flex justify-between text-xs py-2 border-b border-zinc-200 text-zinc-600">
-                  <span>ضريبة القيمة المضافة (15% ZATCA):</span>
-                  <span className="font-mono font-bold text-black">{calcVat.toLocaleString()} ر.س</span>
-                </div>
-
-                <div className="flex justify-between text-base py-3 font-bold text-black mt-2">
-                  <span>الإجمالي النهائي شامل الضريبة:</span>
-                  <span className="font-mono text-emerald-700 text-lg">{calcGrandTotal.toLocaleString()} ر.س</span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const quoteRecord = [{
+                      'مدة العقد (أشهر)': calcDuration,
+                      'عدد الكوادر': calcWorkersCount,
+                      'السعر الشهري': calcBaseRate,
+                      'المبلغ قبل الخصم': calcSubtotal,
+                      'قيمة الخصم': calcDiscount,
+                      'الضريبة 15%': calcVat,
+                      'الإجمالي النهائي': calcGrandTotal,
+                      'تاريخ العرض': new Date().toISOString().split('T')[0]
+                    }];
+                    exportData(quoteRecord, 'عرض_سعر_ايجار_عمالة', 'csv');
+                    addNotification({
+                      title: 'تصدير عرض السعر',
+                      message: `تم تصدير عرض السعر الرسمي بقيمة ${calcGrandTotal.toLocaleString()} ر.س بنجاح.`,
+                      type: 'success'
+                    });
+                  }}
+                  className="button-primary-pill w-full mt-4"
+                  style={{ minHeight: '38px', fontSize: '12.5px', padding: '8px 20px' }}
+                >
+                  <FileSpreadsheet className="w-4 h-4 ml-1.5" />
+                  <span>تصدير عرض سعر رسمي (PDF / Excel Quotation)</span>
+                </button>
               </div>
-
-              <button
-                className="button-primary-pill w-full mt-4"
-                style={{ minHeight: '38px', fontSize: '12.5px', padding: '8px 20px' }}
-              >
-                <FileSpreadsheet className="w-4 h-4 ml-1.5" />
-                <span>تصدير عرض سعر رسمي (PDF Quotation)</span>
-              </button>
             </div>
           </div>
         </div>
@@ -419,7 +481,12 @@ export const RentPackagesPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h2 className="text-base font-bold text-black">بنود وشروط وثيقة عقد الإيجار والتشغيل المعتمدة</h2>
-            <button className="button-primary-pill" style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}>
+            <button
+              type="button"
+              onClick={() => setShowAddClauseModal(true)}
+              className="button-primary-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
+            >
               + إضافة بند شرطي جديد
             </button>
           </div>
@@ -545,6 +612,85 @@ export const RentPackagesPage: React.FC = () => {
                   style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ واعتماد الباقة
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Clause Modal */}
+      {showAddClauseModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in border border-zinc-200">
+            <div className="p-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
+              <h3 className="text-sm font-bold text-black m-0">إضافة بند شرطي جديد في عقد التأجير</h3>
+              <button onClick={() => setShowAddClauseModal(false)} className="text-zinc-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!newClauseForm.title || !newClauseForm.text) return;
+                const newClause: ContractTermClause = {
+                  id: `TRM-${Date.now().toString().slice(-4)}`,
+                  clause_no: terms.length + 1,
+                  title: newClauseForm.title,
+                  text: newClauseForm.text,
+                  is_mandatory: false,
+                };
+                setTerms([...terms, newClause]);
+                addNotification({
+                  title: 'إضافة بند شرطي',
+                  message: `تم إضافة بند (${newClause.title}) بنجاح إلى نموذج عقد التأجير.`,
+                  type: 'success',
+                });
+                setShowAddClauseModal(false);
+                setNewClauseForm({ title: '', text: '' });
+              }}
+              className="p-6 space-y-4"
+            >
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">عنوان البند الشرطي</label>
+                <input
+                  type="text"
+                  required
+                  value={newClauseForm.title}
+                  onChange={(e) => setNewClauseForm({ ...newClauseForm, title: e.target.value })}
+                  placeholder="مثال: شرط تسوية المستحقات عند الإنهاء المبكر"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">نص البند القانوني</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={newClauseForm.text}
+                  onChange={(e) => setNewClauseForm({ ...newClauseForm, text: e.target.value })}
+                  placeholder="اكتب الصياغة القانونية والالتزامات المترتبة على الطرفين..."
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddClauseModal(false)}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
+                >
+                  حفظ البند الشرطي
                 </button>
               </div>
             </form>

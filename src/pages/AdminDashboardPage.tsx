@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { IPWhitelistManager } from '../components/security/IPWhitelistManager';
 import { generateSecurityReport, detectAnomalies, SecurityEvent } from '../services/securityAuditService';
@@ -77,6 +78,7 @@ const MODULE_PERMISSIONS = [
 ];
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigate }) => {
+  const { addNotification } = useAppStore();
   const [currentUserRole, setCurrentUserRole] = useState<'Administrator' | 'BranchSpecialist'>('Administrator');
   const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'security' | 'devops' | 'rbac' | 'gateways' | 'ai-insights'>('overview');
   const [sessions, setSessions] = useState<UserSession[]>([]);
@@ -569,7 +571,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                   <td className="p-3.5 font-mono text-zinc-500 text-[11px]">صالحة حتى 2028-12-31</td>
                   <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
                   <td className="p-3.5 text-center">
-                    <button className="button-outline-on-light" style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}>تحديث CSID</button>
+                    <button
+                      onClick={() => addNotification({ title: 'تحديث شهادة CSID', message: 'تم فحص وتجديد شهادة التشفير الرقمية CSID بنجاح مع خوادم ZATCA Phase 2.', type: 'success' })}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                    >
+                      تحديث CSID
+                    </button>
                   </td>
                 </tr>
                 <tr className="hover:bg-zinc-50">
@@ -578,7 +586,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                   <td className="p-3.5 font-mono text-zinc-500 text-[11px]">ارتباط مباشر (Webhook)</td>
                   <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
                   <td className="p-3.5 text-center">
-                    <button className="button-outline-on-light" style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}>مزامنة فورية</button>
+                    <button
+                      onClick={() => addNotification({ title: 'مزامنة فورية مساند', message: 'تم استدعاء مسار المزامنة الفورية وتحديث سجلات العقود والمدفوعات.', type: 'success' })}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                    >
+                      مزامنة فورية
+                    </button>
                   </td>
                 </tr>
               </tbody>

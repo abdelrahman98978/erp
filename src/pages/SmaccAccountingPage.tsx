@@ -38,11 +38,18 @@ export const SmaccAccountingPage: React.FC = () => {
   const [voucherType, setVoucherType] = useState<'قبض' | 'صرف'>('قبض');
 
   // New Account Form State
-  const [newAccount, setNewAccount] = useState({
+  const [newAccount, setNewAccount] = useState<{
+    code: string;
+    name: string;
+    type: 'أصول' | 'خصوم' | 'حقوق ملكية' | 'إيرادات' | 'مصروفات';
+    nature: 'مدين' | 'دائن';
+    parentCode: string;
+    openingBalance: string;
+  }>({
     code: '',
     name: '',
-    type: 'أصول' as const,
-    nature: 'مدين' as const,
+    type: 'أصول',
+    nature: 'مدين',
     parentCode: '1100',
     openingBalance: '0',
   });
@@ -272,7 +279,18 @@ export const SmaccAccountingPage: React.FC = () => {
                 <Plus className="w-4 h-4 ml-1" />
                 <span>+ إضافة حساب جديد</span>
               </button>
-              <button className="button-outline-on-light" style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}>
+              <button
+                onClick={() => {
+                  const flattened = chartOfAccounts.flatMap(parent => [
+                    { 'رمز الحساب': parent.code, 'اسم الحساب': parent.name, 'النوع': parent.type, 'الطبيعة': parent.nature, 'الرصيد': parent.balance },
+                    ...(parent.children || []).map(c => ({ 'رمز الحساب': c.code, 'اسم الحساب': `  ↳ ${c.name}`, 'النوع': c.type, 'الطبيعة': c.nature, 'الرصيد': c.balance }))
+                  ]);
+                  exportData(flattened, 'دليل_الحسابات_المحاسبي_سماك', 'excel');
+                  addNotification({ title: 'تصدير دليل الحسابات', message: 'تم تصدير شجرة الحسابات بنجاح إلى ملف Excel.', type: 'success' });
+                }}
+                className="button-outline-on-light"
+                style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+              >
                 <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
                 <span>تصدير دليل الحسابات</span>
               </button>
@@ -326,7 +344,20 @@ export const SmaccAccountingPage: React.FC = () => {
                         <td className="p-3.5 font-bold text-emerald-700">{child.balance.toLocaleString()} ر.س</td>
                         <td className="p-3.5 text-center">
                           <div className="flex items-center justify-center gap-1">
-                            <button className="p-1 hover:text-black text-zinc-400">
+                            <button
+                              onClick={() => {
+                                setNewAccount({
+                                  code: child.code,
+                                  name: child.name,
+                                  type: child.type,
+                                  nature: child.nature,
+                                  parentCode: child.parentCode || node.code,
+                                  openingBalance: String(child.balance),
+                                });
+                                setIsAccountModalOpen(true);
+                              }}
+                              className="p-1 hover:text-black text-zinc-400"
+                            >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
@@ -391,7 +422,14 @@ export const SmaccAccountingPage: React.FC = () => {
                     </span>
                   </td>
                   <td className="p-3.5 text-center">
-                    <button className="button-outline-on-light" style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}>
+                    <button
+                      onClick={() => {
+                        window.print();
+                        addNotification({ title: 'طباعة قيد اليومية', message: 'تم إرسال نموذج القيد JV-2026-401 للطباعة بنجاح.', type: 'info' });
+                      }}
+                      className="button-outline-on-light"
+                      style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}
+                    >
                       طباعة القيد
                     </button>
                   </td>
@@ -408,7 +446,14 @@ export const SmaccAccountingPage: React.FC = () => {
                     </span>
                   </td>
                   <td className="p-3.5 text-center">
-                    <button className="button-outline-on-light" style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}>
+                    <button
+                      onClick={() => {
+                        window.print();
+                        addNotification({ title: 'طباعة قيد اليومية', message: 'تم إرسال نموذج القيد JV-2026-400 للطباعة بنجاح.', type: 'info' });
+                      }}
+                      className="button-outline-on-light"
+                      style={{ padding: '3px 12px', fontSize: '11px', minHeight: '28px' }}
+                    >
                       طباعة القيد
                     </button>
                   </td>
@@ -499,11 +544,28 @@ export const SmaccAccountingPage: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <button className="button-outline-on-light" style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}>
+              <button
+                onClick={() => {
+                  exportData([
+                    { 'رمز الحساب': '1101', 'اسم الحساب': 'الصندوق الرئيسي (Cash)', 'أول المدة مدين': 150000, 'أول المدة دائن': 0, 'الحركة مدين': 45000, 'الحركة دائن': 40800, 'الرصيد الصافي': 154200 },
+                    { 'رمز الحساب': '1102', 'اسم الحساب': 'بنك الراجحي التشغيلي', 'أول المدة مدين': 220000, 'أول المدة دائن': 0, 'الحركة مدين': 110300, 'الحركة دائن': 55000, 'الرصيد الصافي': 275300 }
+                  ], 'ميزان_المراجعة_المحاسبي', 'excel');
+                  addNotification({ title: 'تصدير ميزان المراجعة', message: 'تم تصدير ميزان المراجعة بصيغة Excel.', type: 'success' });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
                 <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
                 <span>تصدير Excel</span>
               </button>
-              <button className="button-outline-on-light" style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}>
+              <button
+                onClick={() => {
+                  window.print();
+                  addNotification({ title: 'طباعة ميزان المراجعة', message: 'جاري إعداد تقرير ميزان المراجعة بصيغة PDF.', type: 'info' });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
+              >
                 <Printer className="w-4 h-4 ml-1 text-rose-600" />
                 <span>طباعة PDF</span>
               </button>
@@ -570,7 +632,14 @@ export const SmaccAccountingPage: React.FC = () => {
               <input type="date" defaultValue="2026-08-18" className="bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-full text-black" />
             </div>
 
-            <button className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+            <button
+              onClick={() => {
+                window.print();
+                addNotification({ title: 'طباعة كشف الحساب', message: `تم إعداد كشف الحساب التفصيلي (${selectedLedgerAccount}) للطباعة.`, type: 'info' });
+              }}
+              className="button-primary-pill"
+              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+            >
               <Printer className="w-4 h-4 ml-1" />
               <span>طباعة كشف الحساب</span>
             </button>
@@ -616,7 +685,13 @@ export const SmaccAccountingPage: React.FC = () => {
         <div className="space-y-6">
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between">
             <h3 className="font-bold text-black text-sm">دليل مراكز التكلفة التشغيلية</h3>
-            <button className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+            <button
+              onClick={() => {
+                addNotification({ title: 'إضافة مركز تكلفة', message: 'تم فتح نموذج تسجيل مركز تكلفة تشغيلي جديد.', type: 'info' });
+              }}
+              className="button-primary-pill"
+              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+            >
               <Plus className="w-4 h-4 ml-1" />
               <span>إضافة مركز تكلفة جديد</span>
             </button>
@@ -645,7 +720,18 @@ export const SmaccAccountingPage: React.FC = () => {
               <h3 className="font-bold text-black text-base">قائمة الدخل والأرباح والخسائر (Profit & Loss Statement)</h3>
               <p className="text-xs text-zinc-500">السنة المالية الفعالة 2026</p>
             </div>
-            <button className="button-primary-pill" style={{ padding: '6px 18px', fontSize: '12px', minHeight: '36px' }}>
+            <button
+              onClick={() => {
+                exportData([
+                  { 'البند': 'إجمالي الإيرادات المحققة', 'القيمة': 525471.20 },
+                  { 'البند': 'تكلفة المبيعات ومصروفات التشغيل', 'القيمة': -220500.00 },
+                  { 'البند': 'صافي الربح التشغيلي قبل الزكاة', 'القيمة': 304971.20 }
+                ], 'قائمة_الدخل_والأرباح_والخسائر', 'excel');
+                addNotification({ title: 'تصدير قائمة الدخل', message: 'تم تصدير قائمة الدخل والأرباح والخسائر بنجاح.', type: 'success' });
+              }}
+              className="button-primary-pill"
+              style={{ padding: '6px 18px', fontSize: '12px', minHeight: '36px' }}
+            >
               <Printer className="w-4 h-4 ml-1" />
               <span>طباعة القائمة المعتمدة</span>
             </button>
@@ -676,7 +762,20 @@ export const SmaccAccountingPage: React.FC = () => {
               <h3 className="font-bold text-black text-base">قائمة المركز المالي والميزانية العمومية (Balance Sheet)</h3>
               <p className="text-xs text-zinc-500">كما هي في 18 أغسطس 2026</p>
             </div>
-            <button className="button-primary-pill" style={{ padding: '6px 18px', fontSize: '12px', minHeight: '36px' }}>
+            <button
+              onClick={() => {
+                exportData([
+                  { 'القسم': 'الأصول المتداولة', 'القيمة': 850000.00 },
+                  { 'القسم': 'الأصول الثابتة', 'القيمة': 980000.00 },
+                  { 'القسم': 'إجمالي الأصول', 'القيمة': 1830000.00 },
+                  { 'القسم': 'الخصوم المتداولة', 'القيمة': 407575.00 },
+                  { 'القسم': 'رأس المال وحقوق الملكية', 'القيمة': 1422425.00 }
+                ], 'قائمة_المركز_المالي_والميزانية', 'excel');
+                addNotification({ title: 'تصدير الميزانية العمومية', message: 'تم تصدير قائمة المركز المالي والميزانية العمومية بنجاح.', type: 'success' });
+              }}
+              className="button-primary-pill"
+              style={{ padding: '6px 18px', fontSize: '12px', minHeight: '36px' }}
+            >
               <Printer className="w-4 h-4 ml-1" />
               <span>تصدير الميزانية</span>
             </button>

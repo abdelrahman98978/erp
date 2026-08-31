@@ -958,26 +958,43 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
 export type ExportFormat = 'excel' | 'pdf' | 'csv' | 'print' | 'json';
 
 export function exportData(
-  sectionKey: string,
-  data: any[],
-  format: ExportFormat,
+  sectionKeyOrData: string | any[],
+  dataOrTitle: any[] | string,
+  format: ExportFormat = 'excel',
   customTitle?: string
 ): void {
-  switch (format) {
+  let sectionKey: string;
+  let data: any[];
+  let exportFmt: ExportFormat = format;
+  let title: string | undefined = customTitle;
+
+  if (Array.isArray(sectionKeyOrData)) {
+    data = sectionKeyOrData;
+    sectionKey = typeof dataOrTitle === 'string' ? dataOrTitle : 'export_data';
+    title = typeof dataOrTitle === 'string' ? dataOrTitle : undefined;
+    exportFmt = (format as ExportFormat) || 'excel';
+  } else {
+    sectionKey = sectionKeyOrData;
+    data = Array.isArray(dataOrTitle) ? dataOrTitle : [];
+    title = customTitle;
+    exportFmt = format;
+  }
+
+  switch (exportFmt) {
     case 'excel':
-      exportToExcel(sectionKey, data, customTitle);
+      exportToExcel(sectionKey, data, title);
       break;
     case 'pdf':
-      exportToPDF(sectionKey, data, customTitle);
+      exportToPDF(sectionKey, data, title);
       break;
     case 'csv':
-      exportToCSV(sectionKey, data, customTitle);
+      exportToCSV(sectionKey, data, title);
       break;
     case 'print':
-      exportToPrint(sectionKey, data, customTitle);
+      exportToPrint(sectionKey, data, title);
       break;
     case 'json':
-      exportToJSON(sectionKey, data, customTitle);
+      exportToJSON(sectionKey, data, title);
       break;
   }
 }

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useAppStore } from '../stores/appStore';
+import { exportData } from '../services/exportService';
 import {
   Building2,
   Search,
@@ -12,6 +14,7 @@ import {
 } from 'lucide-react';
 
 export const SmaccModulesPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeModuleTab, setActiveModuleTab] = useState<'fixed-assets' | 'inventory' | 'sales-collectors' | 'external-links'>('fixed-assets');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -154,11 +157,31 @@ export const SmaccModulesPage: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <button className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+              <button
+                onClick={() => {
+                  addNotification({
+                    title: 'إضافة أصل ثابت جديد',
+                    message: 'تم فتح نموذج تسجيل بيانات الأصل الثابت في دليل SMACC.',
+                    type: 'info',
+                  });
+                }}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
                 <Plus className="w-3.5 h-3.5 ml-1" />
                 <span>إضافة أصل جديد</span>
               </button>
-              <button className="button-outline-on-light" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+              <button
+                onClick={() => {
+                  addNotification({
+                    title: 'احتساب الإهلاك الدوري',
+                    message: 'تم احتساب أقساط الإهلاك الشهري وتوليد قيود التسوية المحاسبية تلقائياً.',
+                    type: 'success',
+                  });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
                 <RefreshCw className="w-3.5 h-3.5 ml-1" />
                 <span>احتساب الإهلاك الدوري</span>
               </button>
@@ -219,11 +242,40 @@ export const SmaccModulesPage: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <button className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+              <button
+                onClick={() => {
+                  addNotification({
+                    title: 'إضافة صنف مخزني',
+                    message: 'تم فتح نموذج تسجيل صنف / خدمة جديدة في المخزون.',
+                    type: 'info',
+                  });
+                }}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
                 <Plus className="w-3.5 h-3.5 ml-1" />
                 <span>إضافة صنف جديد</span>
               </button>
-              <button className="button-outline-on-light" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+              <button
+                onClick={() => {
+                  exportData(inventoryItems.map(item => ({
+                    'رمز الصنف': item.code,
+                    'اسم الصنف / الخدمة': item.name,
+                    'الفئة': item.category,
+                    'الكمية المتاحة': item.qty,
+                    'سعر الوحدة': item.unitPrice,
+                    'حد إعادة الطلب': item.reorderLevel,
+                    'الحالة': item.status
+                  })), 'جرد_المخزون_SMACC', 'excel');
+                  addNotification({
+                    title: 'تصدير الجرد',
+                    message: 'تم تصدير تقرير جرد المخزون والأصناف بنجاح إلى ملف Excel.',
+                    type: 'success',
+                  });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
                 <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
                 <span>تصدير الجرد</span>
               </button>

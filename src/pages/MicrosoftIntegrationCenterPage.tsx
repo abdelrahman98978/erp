@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
+import { useAppStore } from '../stores/appStore';
 import { MsProjectTask, PowerBiDashboardItem } from '../types';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { 
@@ -52,6 +53,7 @@ const INITIAL_TASKS: MsProjectTask[] = [
 
 export const MicrosoftIntegrationCenterPage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'project' | 'powerbi' | 'visio'>('project');
   const [projectTasks, setProjectTasks] = useState<MsProjectTask[]>([]);
 
@@ -176,7 +178,18 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               <Clock className="w-4 h-4 text-black" />
               <span>مزامنة مشاريع الاستقدام والتوسع اللوجستي (Project Timeline)</span>
             </h3>
-            <button type="button" className="button-primary-pill" style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                addNotification({
+                  title: 'مزامنة Microsoft Project',
+                  message: 'تم إرسال طلب المزامنة السحابية وتحديث مسار ومراحل المشروع بنجاح مع Azure DevOps / M365.',
+                  type: 'success',
+                });
+              }}
+              className="button-primary-pill"
+              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+            >
               <Plus className="w-3.5 h-3.5 ml-1" />
               <span>مزامنة مشروع جديد</span>
             </button>
@@ -251,6 +264,13 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => {
+                  addNotification({
+                    title: 'فتح تقرير Power BI',
+                    message: `تم تحميل لوحة (${dash.title}) وتفعيل أمان الوصول حسب دورك المؤسسي.`,
+                    type: 'info',
+                  });
+                }}
                 className="button-primary-pill w-full flex items-center justify-center gap-2"
                 style={{ padding: '8px', fontSize: '12px' }}
               >

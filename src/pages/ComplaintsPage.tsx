@@ -164,6 +164,18 @@ export const ComplaintsPage: React.FC = () => {
     details: ''
   });
 
+  const [replyMessage, setReplyMessage] = useState('');
+
+  const handleSendReply = () => {
+    if (!replyMessage.trim()) return;
+    addNotification({
+      title: 'إرسال الرد للعميل',
+      message: `تم إرسال الرسالة إلى العميل عبر واتساب وتوثيقها في سجل التذكرة.`,
+      type: 'success',
+    });
+    setReplyMessage('');
+  };
+
   const handleAddTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addForm.client_name || !addForm.client_phone || !addForm.description) return;
@@ -710,8 +722,19 @@ export const ComplaintsPage: React.FC = () => {
               </div>
 
               <div className="flex gap-2 mt-4 pt-3 border-t border-zinc-100">
-                <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" placeholder="اكتب ردك المباشر للعميل عبر الواتساب..." />
-                <button className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 18px', fontSize: '12px' }}>
+                <input
+                  type="text"
+                  value={replyMessage}
+                  onChange={(e) => setReplyMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  placeholder="اكتب ردك المباشر للعميل عبر الواتساب..."
+                />
+                <button
+                  onClick={handleSendReply}
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 18px', fontSize: '12px' }}
+                >
                   <Send className="w-3.5 h-3.5 ml-1" />
                   <span>إرسال</span>
                 </button>

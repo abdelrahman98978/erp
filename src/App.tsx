@@ -408,6 +408,7 @@ const MainContent: React.FC = () => {
       case 'employee-sanctions':
       case 'employee-permissions':
       case 'employee-rewards':
+      case 'employee-promotions':
       case 'end-of-service':
       case 'gosi-insurance':
       case 'salaries':

@@ -95,6 +95,19 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
   const [interviewDate, setInterviewDate] = useState('2026-08-20T10:00');
   const [interviewerName, setInterviewerName] = useState('عبدالعزيز التميمي');
 
+  // New Requisition / Candidate Modal
+  const [showNewCandidateModal, setShowNewCandidateModal] = useState(false);
+  const [newCandidateForm, setNewCandidateForm] = useState({
+    name: '',
+    phone: '',
+    nationality: 'الفلبين',
+    appliedPosition: 'عاملة منزلية شاملة',
+    targetBranch: 'الفرع الرئيسي - الرياض',
+    expectedSalary: 1800,
+    education: 'ثانوية عامة / تدريب مهني',
+    experienceYears: 3,
+  });
+
   useEffect(() => {
     realErpDataStore.getRecords<Candidate>('ats_candidates', INITIAL_CANDIDATES).then(data => setCandidates(data));
   }, []);
@@ -179,6 +192,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setShowNewCandidateModal(true)}
             className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
@@ -431,6 +445,151 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Candidate / Requisition Modal */}
+      {showNewCandidateModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in border border-zinc-200">
+            <div className="p-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                  <UserPlus className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-black m-0">إضافة طلب احتياج / مرشح وظيفي جديد</h3>
+              </div>
+              <button onClick={() => setShowNewCandidateModal(false)} className="text-zinc-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!newCandidateForm.name || !newCandidateForm.phone) return;
+                const newCandidate: Candidate = {
+                  id: `CND-${Date.now().toString().slice(-4)}`,
+                  candidateCode: `C-2026-${Math.floor(100 + Math.random() * 900)}`,
+                  name: newCandidateForm.name,
+                  email: `${newCandidateForm.name.replace(/\s+/g, '.').toLowerCase()}@example.com`,
+                  phone: newCandidateForm.phone,
+                  nationality: newCandidateForm.nationality,
+                  appliedPosition: newCandidateForm.appliedPosition,
+                  targetCompanyId: activeCompany.id,
+                  targetBranch: newCandidateForm.targetBranch,
+                  stage: 'تقديم جديد',
+                  aiScore: Math.floor(85 + Math.random() * 14),
+                  experienceYears: Number(newCandidateForm.experienceYears),
+                  education: newCandidateForm.education,
+                  expectedSalary: Number(newCandidateForm.expectedSalary),
+                  source: 'موقع الشركة',
+                  appliedDate: new Date().toISOString().split('T')[0],
+                };
+
+                const updated = await realErpDataStore.addRecord<Candidate>('ats_candidates', newCandidate, INITIAL_CANDIDATES);
+                setCandidates(updated);
+                addNotification({
+                  title: 'إضافة مرشح جديد',
+                  message: `تم تسجيل المرشح (${newCandidate.name}) بنجاح وإدراجه في مرحلة التقديم الأولي.`,
+                  type: 'success',
+                });
+                setShowNewCandidateModal(false);
+                setNewCandidateForm({
+                  name: '',
+                  phone: '',
+                  nationality: 'الفلبين',
+                  appliedPosition: 'عاملة منزلية شاملة',
+                  targetBranch: 'الفرع الرئيسي - الرياض',
+                  expectedSalary: 1800,
+                  education: 'ثانوية عامة / تدريب مهني',
+                  experienceYears: 3,
+                });
+              }}
+              className="p-6 space-y-4"
+            >
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">اسم المرشح / العاملة الكامل</label>
+                <input
+                  type="text"
+                  required
+                  value={newCandidateForm.name}
+                  onChange={e => setNewCandidateForm({ ...newCandidateForm, name: e.target.value })}
+                  placeholder="مثال: ساندرا كروز / مريم أحمد"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">رقم الهاتف / الواتساب</label>
+                  <input
+                    type="text"
+                    required
+                    value={newCandidateForm.phone}
+                    onChange={e => setNewCandidateForm({ ...newCandidateForm, phone: e.target.value })}
+                    placeholder="+9665xxxxxxxx"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الجنسية</label>
+                  <select
+                    value={newCandidateForm.nationality}
+                    onChange={e => setNewCandidateForm({ ...newCandidateForm, nationality: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                    <option value="بنغلاديش">بنغلاديش</option>
+                    <option value="الهند">الهند</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">المهنة المستهدفة</label>
+                  <input
+                    type="text"
+                    value={newCandidateForm.appliedPosition}
+                    onChange={e => setNewCandidateForm({ ...newCandidateForm, appliedPosition: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الراتب الشهري المتوقع (ر.س)</label>
+                  <input
+                    type="number"
+                    value={newCandidateForm.expectedSalary}
+                    onChange={e => setNewCandidateForm({ ...newCandidateForm, expectedSalary: Number(e.target.value) })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowNewCandidateModal(false)}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
+                >
+                  حفظ وتسجيل المرشح
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

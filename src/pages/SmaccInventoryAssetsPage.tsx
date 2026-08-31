@@ -243,7 +243,17 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                     <td className="p-3.5 text-zinc-600 font-mono">19,000 ر.س</td>
                     <td className="p-3.5 font-bold font-mono text-emerald-700">76,000 ر.س</td>
                     <td className="p-3.5 text-center">
-                      <button className="button-outline-on-light" style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}>
+                      <button
+                        onClick={() => {
+                          addNotification({
+                            title: 'تفاصيل الأصل AST-001',
+                            message: 'سيارة تويوتا كامري 2024 (فرع الرياض) - القيمة الدفترية: 76,000 ر.س - نسبة الإهلاك السنوية: 20%.',
+                            type: 'info',
+                          });
+                        }}
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                      >
                         تفاصيل الأصل
                       </button>
                     </td>

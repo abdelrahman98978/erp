@@ -3,6 +3,7 @@ import { ExternalOffice } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 import { Badge } from '../components/ui/Badge';
 import { Globe, Building2, Users, FolderOpen, FileSpreadsheet, Download, Phone, Mail, UserCheck, ShieldCheck } from 'lucide-react';
 
@@ -112,6 +113,7 @@ const MOCK_OFFICE_FILES: OfficeFile[] = [
 
 export const ExternalOfficesAgentsPage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const { addNotification } = useAppStore();
   const [offices, setOffices] = useState<ExternalOffice[]>([]);
   const [activeTab, setActiveTab] = useState<'offices' | 'users' | 'files'>('offices');
 
@@ -322,7 +324,17 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     <td className="p-3.5 font-mono text-zinc-500">{f.upload_date}</td>
                     <td className="p-3.5 font-mono">{f.file_size}</td>
                     <td className="p-3.5 text-center">
-                      <button className="button-outline-on-light" style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}>
+                      <button
+                        onClick={() => {
+                          addNotification({
+                            title: 'بدء تحميل الملف',
+                            message: `جاري تحميل مستند (${f.file_title}) الخاص بـ (${f.office_name}).`,
+                            type: 'info',
+                          });
+                        }}
+                        className="button-outline-on-light"
+                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                      >
                         <Download className="w-3 h-3 ml-1" />
                         <span>تحميل</span>
                       </button>
