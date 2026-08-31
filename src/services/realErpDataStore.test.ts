@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { realErpDataStore } from './realErpDataStore';
+import { realErpDataStore, setDataMode } from './realErpDataStore';
 
 interface TestItem {
   id: string;
@@ -15,9 +15,10 @@ const MOCK_ITEMS: TestItem[] = [
 describe('realErpDataStore (Offline & LocalStorage Persistence)', () => {
   beforeEach(() => {
     localStorage.clear();
+    setDataMode('demo_preview');
   });
 
-  it('should return initial data when store is empty', async () => {
+  it('should return initial data when store is empty in demo mode', async () => {
     const data = await realErpDataStore.getRecords<TestItem>('test_entities', MOCK_ITEMS);
     expect(data).toHaveLength(2);
     expect(data[0].name).toBe('Original Alpha');
