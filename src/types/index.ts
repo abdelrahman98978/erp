@@ -347,3 +347,34 @@ export interface DocumentSequence {
   currentNumber: number;
   digits: number; // e.g. 6 -> 000001
 }
+
+/* E-Commerce & Online Store Integration Types */
+export interface EcommerceStore {
+  id: string;
+  name: string;
+  platform: 'سلة (Salla)' | 'زد (Zid)' | 'شوبيفاي (Shopify)' | 'ووكومرس (WooCommerce)' | 'بوابة الدفع (Moyasar)';
+  companyId: CompanyId;
+  storeUrl: string;
+  status: 'متصل' | 'معطل' | 'جاري المزامنة' | 'خطأ اتصال';
+  lastSyncTime: string;
+  syncedOrdersCount: number;
+  syncedProductsCount: number;
+  webhookStatus: 'نشط' | 'متوقف';
+  autoSyncOrders: boolean;
+  autoSyncInventory: boolean;
+}
+
+export interface EcommerceStoreOrder {
+  id: string;
+  storeId: string;
+  platform: string;
+  externalOrderNo: string;
+  customerName: string;
+  customerPhone: string;
+  serviceType: string;
+  totalAmount: number;
+  paymentStatus: 'مدفوع' | 'بانتظار السداد' | 'مسترجع';
+  orderStatus: 'جديد' | 'قيد التنفيذ' | 'مكتمل' | 'ملغي';
+  createdAt: string;
+}
+

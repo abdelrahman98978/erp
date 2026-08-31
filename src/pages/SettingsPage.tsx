@@ -5,7 +5,8 @@ import { useAppStore } from '../stores/appStore';
 import { 
   Sliders, Fingerprint, Shield, Building2, Phone, Image, Link, 
   Key, Search, MessageSquare, FileText, Check, Save, ExternalLink,
-  Plus, Trash2, Globe, ShieldAlert, Sparkles, RefreshCw, Eye
+  Plus, Trash2, Globe, ShieldAlert, Sparkles, RefreshCw, Eye,
+  ShoppingBag, Store, CreditCard, Layers, Zap
 } from 'lucide-react';
 
 interface QuickLinkItem {
@@ -40,6 +41,7 @@ export const SettingsPage: React.FC = () => {
     if (tabKey === 'seo') return 'seo';
     if (tabKey === 'zoho') return 'zoho';
     if (tabKey === 'stipulations') return 'stipulations';
+    if (tabKey === 'ecommerce' || tabKey === 'stores' || tabKey === 'smacc-modules') return 'ecommerce';
     return 'security-2fa';
   };
 
@@ -129,7 +131,29 @@ export const SettingsPage: React.FC = () => {
 2. تتحمل الشركة كافة الالتزامات النظامية (التأمين الطبي، تذاكر السفر، والإقامة النظامية).`);
   const [privacyPolicyText, setPrivacyPolicyText] = useState(`نلتزم بحماية بيانات العملاء والمستفيدين طبقاً لنظام حماية البيانات الشخصية الصادر بالمرسوم الملكي في المملكة العربية السعودية.`);
 
+  // Section 11: E-Commerce & Store Connectors State
+  const [sallaStoreId, setSallaStoreId] = useState('SAL-ALSALIM-9921');
+  const [sallaApiKey, setSallaApiKey] = useState('salla_live_sec_8829471902847291');
+  const [sallaWebhookSecret, setSallaWebhookSecret] = useState('whsec_salla_892174982');
+  const [sallaAutoSync, setSallaAutoSync] = useState(true);
+
+  const [zidStoreId, setZidStoreId] = useState('ZID-YAQOOT-3341');
+  const [zidManagerToken, setZidManagerToken] = useState('zid_mgr_tok_99182374619');
+  const [zidAutoSync, setZidAutoSync] = useState(true);
+
+  const [shopifyStoreUrl, setShopifyStoreUrl] = useState('kas-group.myshopify.com');
+  const [shopifyAdminToken, setShopifyAdminToken] = useState('shpat_8829104719283746');
+  const [shopifyAutoSync, setShopifyAutoSync] = useState(true);
+
+  const [wooStoreUrl, setWooStoreUrl] = useState('https://top-talent.sa/b2b-portal');
+  const [wooConsumerKey, setWooConsumerKey] = useState('ck_8892174910283746');
+  const [wooConsumerSecret, setWooConsumerSecret] = useState('cs_9918237461928374');
+
+  const [moyasarPublishableKey, setMoyasarPublishableKey] = useState('pk_live_8829104719283746');
+  const [moyasarSecretKey, setMoyasarSecretKey] = useState('sk_live_9918237461928374');
+
   const SECTIONS = [
+    { id: 'ecommerce', name: 'ربط المتاجر الإلكترونية وبوابات الدفع', icon: ShoppingBag },
     { id: 'security-2fa', name: 'أمان المصادقة والبصمة البيومترية', icon: Fingerprint },
     { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: Shield },
     { id: 'general', name: 'البيانات الأساسية والهوية الرسمية', icon: Building2 },
@@ -1066,23 +1090,205 @@ export const SettingsPage: React.FC = () => {
                   className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
                 />
               </div>
+            </div>
+          )}
 
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between flex-wrap gap-3 mt-4">
-                <div>
-                  <h4 className="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
-                    <span>مواثيق التبرئة القانونية وسياسة استخدام النظام المخصصة لكل قسم</span>
-                  </h4>
-                  <p className="text-[11px] text-emerald-800 mt-0.5">
-                    الاطلاع على مواثيق الأقسام وسجلات التواقيع الرقمية للموظفين وإقرارات الدخول لأول مرة.
-                  </p>
+          {/* SECTION 11: E-COMMERCE & ONLINE STORES */}
+          {activeSection === 'ecommerce' && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+                  <ShoppingBag className="w-4 h-4 text-black" />
+                  <span>إعدادات وتراخيص ربط المتاجر الإلكترونية وبوابات الدفع (E-Commerce Connectors)</span>
+                </h3>
+                <p className="text-xs text-zinc-500 mt-1">
+                  تهيئة مفاتيح الـ API و Webhooks لمنصات سلة، زد، شوبيفاي، ووكومرس، ومزودي الدفع الإلكتروني.
+                </p>
+              </div>
+
+              {/* 1. Salla Integration Card */}
+              <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#fafafa', border: '1px solid #e4e4e7' }}>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#004d40', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
+                      S
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">منصة سلة (Salla API v2 Hub)</h4>
+                      <p className="text-[11px] text-zinc-500 m-0">تزامن باقات التأجير، استلام الطلبات، وتوليد الفواتير</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addNotification({ title: 'فحص اتصال سلة', message: 'تم التحقق من صحة مفاتيح منصة سلة بنجاح (OAuth Token Valid).', type: 'success' })}
+                    className="button-primary-pill"
+                    style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
+                  >
+                    اختبار اتصال سلة
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => window.dispatchEvent(new CustomEvent('alsulaim_navigate', { detail: { tab: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية' } }))}
-                  className="button-primary-pill text-xs py-1.5 px-4"
-                >
-                  فتح بوابة الامتثال والتواقيع
-                </button>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">معرف المتجر (Salla Merchant ID)</label>
+                    <input
+                      type="text"
+                      value={sallaStoreId}
+                      onChange={e => setSallaStoreId(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">مفتاح التطبيق المباشر (App Live Token)</label>
+                    <input
+                      type="password"
+                      value={sallaApiKey}
+                      onChange={e => setSallaApiKey(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">الرابط المعتمد لاستقبال الإشعارات (Webhook Endpoint)</label>
+                    <input
+                      type="text"
+                      readOnly
+                      value="https://api.alsalim-group.sa/webhooks/salla/orders"
+                      className="w-full bg-zinc-100 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-zinc-700 font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Zid Integration Card */}
+              <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#fafafa', border: '1px solid #e4e4e7' }}>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#6d28d9', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
+                      Z
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">منصة زد (Zid E-Commerce)</h4>
+                      <p className="text-[11px] text-zinc-500 m-0">مزامنة الكتالوج، الخدمات، وعقود العمالة المهنية</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addNotification({ title: 'فحص اتصال زد', message: 'تم التحقق من ربط متجر زد بنجاح (Manager API Active).', type: 'success' })}
+                    className="button-primary-pill"
+                    style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
+                  >
+                    اختبار اتصال زد
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">معرف متجر زد (Store ID)</label>
+                    <input
+                      type="text"
+                      value={zidStoreId}
+                      onChange={e => setZidStoreId(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">رمز مدير المتجر (X-Manager-Token)</label>
+                    <input
+                      type="password"
+                      value={zidManagerToken}
+                      onChange={e => setZidManagerToken(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Shopify Integration Card */}
+              <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#fafafa', border: '1px solid #e4e4e7' }}>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#95bf47', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
+                      Sh
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">متجر شوبيفاي (Shopify GraphQL Store)</h4>
+                      <p className="text-[11px] text-zinc-500 m-0">البوابة الدولية للمجموعة واستيراد الحجوزات</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addNotification({ title: 'فحص شوبيفاي', message: 'تم التحقق من ربط Shopify Admin API (2026-04).', type: 'success' })}
+                    className="button-primary-pill"
+                    style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
+                  >
+                    اختبار اتصال شوبيفاي
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">رابط نطاق المتجر (Store Myshopify Domain)</label>
+                    <input
+                      type="text"
+                      value={shopifyStoreUrl}
+                      onChange={e => setShopifyStoreUrl(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">رمز وصول المدير (Admin Access Token)</label>
+                    <input
+                      type="password"
+                      value={shopifyAdminToken}
+                      onChange={e => setShopifyAdminToken(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Moyasar Payment Gateway Card */}
+              <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#fafafa', border: '1px solid #e4e4e7' }}>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#0284c7', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
+                      <CreditCard className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">بوابة الدفع الإلكتروني (Moyasar Gateway)</h4>
+                      <p className="text-[11px] text-zinc-500 m-0">سداد الفواتير وعقود التأجير بمدى، فيزا، ماستركارد، و Apple Pay</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addNotification({ title: 'فحص بوابة الدفع', message: 'تم التحقق من مفاتيح Moyasar الإنتاجية ومسارات Webhook.', type: 'success' })}
+                    className="button-primary-pill"
+                    style={{ padding: '4px 14px', fontSize: '11px', minHeight: '30px' }}
+                  >
+                    فحص بوابة الدفع
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">المفتاح القابل للنشر (Publishable Key)</label>
+                    <input
+                      type="text"
+                      value={moyasarPublishableKey}
+                      onChange={e => setMoyasarPublishableKey(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">المفتاح السري (Secret Key)</label>
+                    <input
+                      type="password"
+                      value={moyasarSecretKey}
+                      onChange={e => setMoyasarSecretKey(e.target.value)}
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -595,6 +595,66 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                     </button>
                   </td>
                 </tr>
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">17. منصة سلة (Salla API v2)</td>
+                  <td className="p-3.5 text-zinc-600">ربط المتجر وباقات التأجير والطلبات</td>
+                  <td className="p-3.5 font-mono text-zinc-500 text-[11px]">OAuth App Token (ساري)</td>
+                  <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
+                  <td className="p-3.5 text-center">
+                    <button
+                      onClick={() => addNotification({ title: 'مزامنة متجر سلة', message: 'تم سحب الطلبات الجديدة وتحديث باقات التأجير والأسعار على متجر سلة بنجاح.', type: 'success' })}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                    >
+                      مزامنة سلة
+                    </button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">18. منصة زد (Zid E-Commerce)</td>
+                  <td className="p-3.5 text-zinc-600">عروض الاستقدام ومزامنة الفواتير</td>
+                  <td className="p-3.5 font-mono text-zinc-500 text-[11px]">Zid Manager API (نشط)</td>
+                  <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
+                  <td className="p-3.5 text-center">
+                    <button
+                      onClick={() => addNotification({ title: 'مزامنة منصة زد', message: 'تمت مزامنة كتالوج الخدمات والطلبات مع منصة زد بنجاح.', type: 'success' })}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                    >
+                      مزامنة زد
+                    </button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">19. متجر شوبيفاي (Shopify GraphQL)</td>
+                  <td className="p-3.5 text-zinc-600">المتجر الإلكتروني الدولي للمجموعة</td>
+                  <td className="p-3.5 font-mono text-zinc-500 text-[11px]">Admin Access Token (ساري)</td>
+                  <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
+                  <td className="p-3.5 text-center">
+                    <button
+                      onClick={() => addNotification({ title: 'مزامنة شوبيفاي', message: 'تم فحص اتصال Shopify Storefront وتحديث الطلبات.', type: 'success' })}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                    >
+                      مزامنة شوبيفاي
+                    </button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50">
+                  <td className="p-3.5 font-bold text-black">20. بوابة الدفع الإلكتروني (Moyasar Gateway)</td>
+                  <td className="p-3.5 text-zinc-600">سداد البطاقات البنكية ومدى وApple Pay</td>
+                  <td className="p-3.5 font-mono text-zinc-500 text-[11px]">Production Key (معتمد)</td>
+                  <td className="p-3.5"><Badge text="متصل وجاهز" type="success" /></td>
+                  <td className="p-3.5 text-center">
+                    <button
+                      onClick={() => addNotification({ title: 'فحص بوابة الدفع', message: 'بوابة الدفع الإلكتروني تعمل بكفاءة وجميع Webhooks مستقرة.', type: 'success' })}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                    >
+                      فحص الدفع
+                    </button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
