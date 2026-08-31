@@ -3,7 +3,7 @@ import {
   Zap, ShieldCheck, Database, RefreshCw, FileText, ArrowRightLeft, 
   DollarSign, FileSpreadsheet, Lock, ExternalLink, Activity, Server, 
   Shield, Cpu, Sparkles, Filter, CheckCircle2, ChevronRight, Check,
-  Search, BookOpen, Layers, GitBranch, Key, AlertTriangle, Printer
+  Search, BookOpen, Layers, GitBranch, Key, AlertTriangle, Printer, Building2
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { useAppStore } from '../stores/appStore';
@@ -47,6 +47,23 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
     { id: 'sec-30', number: '30', title: 'معايير القبول والجاهزية للإنتاج', category: 'الاعتماد الحكومي' },
     { id: 'sec-31', number: '31', title: 'الملاحق التقنية وجداول قاعدة البيانات (17 جدولاً)', category: 'الملاحق التقنية' },
     { id: 'sec-32', number: '32', title: 'المراجع والقرارات الوزارية الرسمية', category: 'المراجع الرسمية' },
+    { id: 'sec-33', number: '33', title: 'معمارية مساند لأربع شركات استقدام (Multi-Company Architecture)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-34', number: '34', title: 'إدارة اتصالات ومفاتيح مساند للشركات الأربع (Dedicated Credentials)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-35', number: '35', title: 'قاعدة البيانات متعددة الشركات وقواعد العزل الصارم (RLS Constraints)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-36', number: '36', title: 'نموذج الصلاحيات والفصل بين المهام (SoD & RBAC)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-37', number: '37', title: 'سيناريو التشغيل الكامل لشركة واحدة وتكراره على الأربع', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-38', number: '38', title: 'محرك توجيه الـ Webhooks للأربع شركات', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-39', number: '39', title: 'المحاسبة والتسويات ودفاتر الأستاذ المنفصلة لكل شركة (Dedicated Ledgers)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-40', number: '40', title: 'لوحة التحكم الموحدة لمساند للأربع شركات داخل ERP', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-41', number: '41', title: 'إدارة الأخطاء والاستثناءات المخصصة لكل شركة', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-42', number: '42', title: 'سيناريو منع كارثة خلط الشركات (Zero Cross-Contamination Guard)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-43', number: '43', title: 'خطة الاختبار الشاملة للأربع شركات (Isolation & Cross-Tenant Negative Tests)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-44', number: '44', title: 'استراتيجية Queue والـ Rate Limits الموزعة للشركات', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-45', number: '45', title: 'خطة الإطلاق المتدرجة للأربع شركات (Waves 0 to 6)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-46', number: '46', title: 'مصفوفة مسؤوليات الفرق RACI المعتمدة للشركات', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-47', number: '47', title: 'قائمة التحقق للـ Go-Live لكل شركة من الشركات الأربع', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-48', number: '48', title: 'معايير القبول النهائية لعزل الشركات (Zero Leakage Standards)', category: 'هندسة الشركات الأربع 🏢' },
+    { id: 'sec-49', number: '49', title: 'القرار المعماري الموصى به للمجموعة (Architecture Decision Record)', category: 'هندسة الشركات الأربع 🏢' },
   ];
 
   const filteredSections = SECTIONS.filter(s => 
@@ -90,7 +107,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
                   KHALID ERP × MUSANED PLATFORM
                 </span>
                 <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
-                  32 قسماً تقنياً وتنظيمياً معتمداً
+                  49 قسماً معمارياً وتنظيمياً معتمداً (v2)
                 </span>
               </div>
               <h1
@@ -104,10 +121,10 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
                   fontFamily: 'var(--font-family-display)',
                 }}
               >
-                وثيقة وخطة الربط والتكامل الشامل مع منصة مساند (Master Plan)
+                وثيقة وخطة الربط والتكامل الشامل مع مساند لأربع شركات استقدام (Master Plan v2)
               </h1>
               <p className="text-xs text-zinc-400 mt-1 font-sans max-w-3xl">
-                الدليل المعماري والتشغيلي المعتمد لربط شركات ومكاتب استقدام وتشغيل مجموعة خالد السليم مع منصة مساند وبوابة التكامل الحكومية.
+                الدليل المعماري والتشغيلي المعتمد لربط شركات ومكاتب استقدام وتشغيل مجموعة خالد السليم (السفير الماسي، ياقوت نجد، توباز، دار الرواد / كاس) مع منصة مساند وبوابة التكامل الحكومية مع عزل تام للشركات (Zero Cross-Tenant Contamination).
               </p>
             </div>
           </div>
@@ -138,43 +155,127 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
       {/* KPI Cards */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000' }}>أقسام الوثيقة المعمارية</span>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000' }}>أقسام الوثيقة المعمارية (v2)</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
-            32 قسماً
+            49 قسماً
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '10.5px', marginTop: '8px' }}>
-            تغطية شاملة 100%
+            Multi-Company Architecture
           </span>
         </div>
 
         <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#a1a1aa' }}>جداول قاعدة البيانات المقترحة</span>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#a1a1aa' }}>الشركات المعتمدة للربط</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px' }}>
+            4 شركات
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '10.5px', marginTop: '8px' }}>
+            SAF • YAQ • TOP • DAR/KAS
+          </span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>جداول قاعدة البيانات مع RLS</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
             17 جدولاً
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '10.5px', marginTop: '8px' }}>
-            MDM + Event Sourcing
-          </span>
-        </div>
-
-        <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>بنود قائمة التحقق للاعتماد</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
-            30 بنداً
-          </div>
           <span className="pill-tag-shade" style={{ fontSize: '10.5px', marginTop: '8px' }}>
-            جاهزية UAT والـ Sandbox
+            Tenant Isolation & Audit Trail
           </span>
         </div>
 
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>مراحل الإطلاق الميداني</span>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>موجات الإطلاق المتدرجة</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
-            7 مراحل
+            7 موجات
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '10.5px', marginTop: '8px' }}>
-            من Discovery إلى Go-Live
+            من Wave 0 إلى Wave 6
           </span>
+        </div>
+      </div>
+
+      {/* 4-Company Integration Matrix */}
+      <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-emerald-600" />
+              <span>مصفوفة تكامل مساند للشركات الأربع (4-Company Multi-Tenancy Matrix)</span>
+            </h3>
+            <p className="text-xs text-zinc-500 m-0 mt-1">
+              عزل تام للمفاتيح والاتصالات ودفاتر الأستاذ المحاسبية وقنوات الـ Webhooks لكل شركة ومكتب مرخص
+            </p>
+          </div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+            Zero Cross-Company Contamination Rule 🔒
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          {/* Company 1 */}
+          <div className="p-4 rounded-2xl bg-zinc-50 border-2 border-emerald-500/50 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold font-mono text-[10px]">RC01: SAF</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+            </div>
+            <h4 className="font-bold text-black text-xs m-0">شركة السفير الماسي للاستقدام</h4>
+            <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
+              <div>Estab ID: <strong className="text-black">EST-SAF-001</strong></div>
+              <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
+              <div>Ledger: <strong className="text-black">SAF-LEDGER-01</strong></div>
+              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-SAF</strong></div>
+              <div>DLQ Status: <strong className="text-emerald-700">0 Quarantine</strong></div>
+            </div>
+          </div>
+
+          {/* Company 2 */}
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold font-mono text-[10px]">RC02: YAQ</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+            </div>
+            <h4 className="font-bold text-black text-xs m-0">شركة ياقوت نجد للاستقدام</h4>
+            <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
+              <div>Estab ID: <strong className="text-black">EST-YAQ-002</strong></div>
+              <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
+              <div>Ledger: <strong className="text-black">YAQ-LEDGER-02</strong></div>
+              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-YAQ</strong></div>
+              <div>DLQ Status: <strong className="text-emerald-700">0 Quarantine</strong></div>
+            </div>
+          </div>
+
+          {/* Company 3 */}
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold font-mono text-[10px]">RC03: TOP</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+            </div>
+            <h4 className="font-bold text-black text-xs m-0">شركة توباز للاستقدام والتشغيل</h4>
+            <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
+              <div>Estab ID: <strong className="text-black">EST-TOP-003</strong></div>
+              <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
+              <div>Ledger: <strong className="text-black">TOP-LEDGER-03</strong></div>
+              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-TOP</strong></div>
+              <div>DLQ Status: <strong className="text-emerald-700">0 Quarantine</strong></div>
+            </div>
+          </div>
+
+          {/* Company 4 */}
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold font-mono text-[10px]">RC04: DAR</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+            </div>
+            <h4 className="font-bold text-black text-xs m-0">شركة دار الرواد / كاس</h4>
+            <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
+              <div>Estab ID: <strong className="text-black">EST-DAR-004</strong></div>
+              <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
+              <div>Ledger: <strong className="text-black">DAR-LEDGER-04</strong></div>
+              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-DAR</strong></div>
+              <div>DLQ Status: <strong className="text-emerald-700">0 Quarantine</strong></div>
+            </div>
+          </div>
         </div>
       </div>
 

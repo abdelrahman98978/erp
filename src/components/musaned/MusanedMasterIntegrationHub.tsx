@@ -3,16 +3,19 @@ import {
   Zap, ShieldCheck, Database, RefreshCw, AlertTriangle, 
   CheckCircle2, Clock, FileText, ArrowRightLeft, Layers, 
   DollarSign, FileSpreadsheet, Lock, ExternalLink, Activity,
-  Server, Shield, Cpu, Sparkles, Filter, ChevronRight, Check
+  Server, Shield, Cpu, Sparkles, Filter, ChevronRight, Check,
+  Building2, Users
 } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import { useAppStore } from '../../stores/appStore';
 
 export const MusanedMasterIntegrationHub: React.FC = () => {
   const { addNotification } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'overview' | 'mdm' | 'reconciliation' | 'visas_insurance' | 'webhooks_dlq' | 'checklist'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'multi_company' | 'mdm' | 'reconciliation' | 'visas_insurance' | 'webhooks_dlq' | 'checklist'>('overview');
   const [isSimulatingSync, setIsSimulatingSync] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<string>('Contract');
+  const [selectedCompany, setSelectedCompany] = useState<'SAF' | 'YAQ' | 'TOP' | 'DAR'>('SAF');
+  const [isTestingIsolation, setIsTestingIsolation] = useState(false);
 
   // Interactive Checklist State
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({
@@ -170,6 +173,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'overview', label: '⚡ لوحة العمليات وحالة البوابة' },
+          { id: 'multi_company', label: '🏢 معمارية الشركات الأربع (4 Companies)' },
           { id: 'mdm', label: '🗄️ نموذج البيانات الرئيسي (MDM)' },
           { id: 'reconciliation', label: '💰 المطابقة والتسويات المالية' },
           { id: 'visas_insurance', label: '🛡️ التأشيرات وبوالص التأمين (24 شهر)' },
@@ -294,7 +298,237 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
         </div>
       )}
 
-      {/* 2. MDM Entity Explorer */}
+      {/* 2. Multi-Company 4-Tenant Architecture Tab */}
+      {activeTab === 'multi_company' && (
+        <div className="space-y-6">
+          {/* Header Card */}
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4 flex-wrap gap-3">
+              <div>
+                <h3 className="text-base font-bold text-black flex items-center gap-2 m-0">
+                  <Building2 className="w-5 h-5 text-emerald-600" />
+                  <span>معمارية مساند لأربع شركات استقدام (Multi-Company Architecture & Tenant Isolation)</span>
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1">
+                  تطبيق القاعدة الذهبية: عزل تام 100% للبيانات والمفاتيح والحسابات البنكية ومحركات الـ Webhooks بين شركات المجموعة
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  Zero Cross-Tenant Contamination: Active 🔒
+                </span>
+              </div>
+            </div>
+
+            {/* 4 Company Selector Tabs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+              {[
+                { key: 'SAF', code: 'RC01', name: 'شركة السفير الماسي للاستقدام', estab: 'EST-SAF-001', color: '#10b981', bank: 'مصرف الإنماء' },
+                { key: 'YAQ', code: 'RC02', name: 'شركة ياقوت نجد للاستقدام', estab: 'EST-YAQ-002', color: '#3b82f6', bank: 'بنك الرياض' },
+                { key: 'TOP', code: 'RC03', name: 'شركة توباز للاستقدام والتشغيل', estab: 'EST-TOP-003', color: '#8b5cf6', bank: 'البنك الأهلي السعودي' },
+                { key: 'DAR', code: 'RC04', name: 'شركة دار الرواد / كاس', estab: 'EST-DAR-004', color: '#f59e0b', bank: 'مصرف الراجحي' },
+              ].map((comp) => {
+                const isSelected = selectedCompany === comp.key;
+                return (
+                  <button
+                    key={comp.key}
+                    onClick={() => setSelectedCompany(comp.key as any)}
+                    className="p-4 rounded-2xl text-right transition-all cursor-pointer flex flex-col justify-between"
+                    style={{
+                      border: isSelected ? '2px solid #000000' : '1px solid #e4e4e7',
+                      background: isSelected ? '#000000' : '#fcfcfc',
+                      color: isSelected ? '#ffffff' : '#000000',
+                      boxShadow: isSelected ? '0 8px 24px rgba(0,0,0,0.12)' : 'none',
+                    }}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span
+                          className="px-2 py-0.5 rounded-md font-mono font-bold text-[10px]"
+                          style={{
+                            backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.06)',
+                            color: isSelected ? '#ffffff' : comp.color,
+                          }}
+                        >
+                          {comp.code} • {comp.key}
+                        </span>
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: comp.color }} />
+                      </div>
+                      <div className="font-bold text-xs leading-snug">{comp.name}</div>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-zinc-200/40 text-[10.5px] opacity-80 flex items-center justify-between font-mono">
+                      <span>{comp.estab}</span>
+                      <span>{comp.bank}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Selected Company In-Depth Specs */}
+            <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-2 border-b border-zinc-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-bold text-sm text-black">
+                    المواصفات والاعتمادات الفنية لشركة: {selectedCompany === 'SAF' ? 'السفير الماسي' : selectedCompany === 'YAQ' ? 'ياقوت نجد' : selectedCompany === 'TOP' ? 'توباز للاستقدام' : 'دار الرواد / كاس'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setIsTestingIsolation(true);
+                      setTimeout(() => {
+                        setIsTestingIsolation(false);
+                        addNotification({
+                          title: 'اجتياز اختبار العزل الأمني',
+                          message: `تم التحقق بنجاح من عزل مستأجر (${selectedCompany})، ولم يتم تسريب أي بيانات أو قيود محاسبية إلى الشركات الأخرى (0 Leakage).`,
+                          type: 'success',
+                        });
+                      }, 1000);
+                    }}
+                    disabled={isTestingIsolation}
+                    className="button-white-pill"
+                    style={{ fontSize: '11px', padding: '6px 14px', minHeight: '32px' }}
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                    <span>{isTestingIsolation ? 'جاري فحص العزل...' : 'اختبار العزل التام (Verify Isolation)'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                <div className="p-3 bg-white rounded-xl border border-zinc-200">
+                  <div className="text-zinc-400 text-[11px] mb-1 font-mono">1. Musaned Gateway Client</div>
+                  <div className="font-bold text-black font-mono text-xs">client_id: musaned_{selectedCompany.toLowerCase()}_prod</div>
+                  <div className="text-[10.5px] text-emerald-700 mt-1">mTLS Cert: Valid (Exp: 2027)</div>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-zinc-200">
+                  <div className="text-zinc-400 text-[11px] mb-1 font-mono">2. Webhook HMAC Secret</div>
+                  <div className="font-bold text-black font-mono text-xs">sec_hmac_{selectedCompany.toLowerCase()}_99x</div>
+                  <div className="text-[10.5px] text-purple-700 mt-1">SHA-256 Signature Guard</div>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-zinc-200">
+                  <div className="text-zinc-400 text-[11px] mb-1 font-mono">3. Accounting Ledger</div>
+                  <div className="font-bold text-black font-mono text-xs">{selectedCompany}-LEDGER-01</div>
+                  <div className="text-[10.5px] text-blue-700 mt-1">Separate Chart of Accounts</div>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-zinc-200">
+                  <div className="text-zinc-400 text-[11px] mb-1 font-mono">4. Partition Queue & DLQ</div>
+                  <div className="font-bold text-black font-mono text-xs">queue:musaned:{selectedCompany.toLowerCase()}</div>
+                  <div className="text-[10.5px] text-emerald-700 mt-1">DLQ: 0 Failed Messages</div>
+                </div>
+              </div>
+
+              {/* Multi-Layer Protection Architecture Accordion/Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                <div className="p-3.5 bg-white rounded-xl border border-zinc-200 space-y-1">
+                  <div className="font-bold text-zinc-900 text-xs flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>طبقة سياسات الأمان (Policy Engine)</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 m-0 leading-relaxed">
+                    يتم التحقق البرمجي التلقائي من أن <code className="font-mono text-black">session.company_id == connection.company_id</code> مع رفض فوري 403 لأي محاولة خلط.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-white rounded-xl border border-zinc-200 space-y-1">
+                  <div className="font-bold text-zinc-900 text-xs flex items-center gap-1.5">
+                    <Database className="w-3.5 h-3.5 text-blue-600" />
+                    <span>قيود قاعدة البيانات (RLS Constraints)</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 m-0 leading-relaxed">
+                    عزل صلب على مستوى السطور (Row-Level Security) في PostgreSQL يمنع قراءة أو تعديل سجلات شركة بواسطة مستخدمي شركة أخرى.
+                  </p>
+                </div>
+
+                <div className="p-3.5 bg-white rounded-xl border border-zinc-200 space-y-1">
+                  <div className="font-bold text-zinc-900 text-xs flex items-center gap-1.5">
+                    <ArrowRightLeft className="w-3.5 h-3.5 text-purple-600" />
+                    <span>توجيه الـ Webhooks بالبصمة الرقمية</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 m-0 leading-relaxed">
+                    يتم فحص توقيع HMAC ومطابقة كود المنشأة <code className="font-mono text-black">establishment_id</code> لتوجيه الحدث بدقة لدفتر الأستاذ الصحيح.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* RACI Matrix Table */}
+            <div className="mt-6">
+              <h4 className="text-xs font-bold text-black mb-2 flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-zinc-700" />
+                <span>مصفوفة توزيع المسؤوليات (RACI Matrix) بين فرق المجموعة</span>
+              </h4>
+              <div className="overflow-x-auto rounded-xl border border-zinc-200">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                    <tr>
+                      <th className="p-3">المهمة التشغيلية / التقنية</th>
+                      <th className="p-3 text-center">تقنية التكامل</th>
+                      <th className="p-3 text-center">عمليات الشركة</th>
+                      <th className="p-3 text-center">الإدارة المالية</th>
+                      <th className="p-3 text-center">الامتثال القانوني</th>
+                      <th className="p-3 text-center">إدارة المجموعة</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100 bg-white">
+                    {[
+                      { task: 'إدارة مفاتيح ومصادقة مساند (Credentials)', tech: 'R (مسؤول)', ops: 'C (استشاري)', fin: 'I (إشعار)', comp: 'A/C (معتمد)', grp: 'I (إشعار)' },
+                      { task: 'مطابقة البيانات وتعيين الحقول (Mapping)', tech: 'R/A (مسؤول/معتمد)', ops: 'C (استشاري)', fin: 'C (استشاري)', comp: 'C (استشاري)', grp: 'I (إشعار)' },
+                      { task: 'إصدار ومتابعة عقود وطلبات الاستقدام', tech: 'C (استشاري)', ops: 'R/A (مسؤول/معتمد)', fin: 'I (إشعار)', comp: 'C (استشاري)', grp: 'I (إشعار)' },
+                      { task: 'التسويات والمطابقات المالية اليومية', tech: 'C (استشاري)', ops: 'I (إشعار)', fin: 'R/A (مسؤول/معتمد)', comp: 'C (استشاري)', grp: 'I (إشعار)' },
+                      { task: 'إدارة الصلاحيات والفصل بين المهام (SoD)', tech: 'R (مسؤول)', ops: 'A (معتمد)', fin: 'C (استشاري)', comp: 'C (استشاري)', grp: 'I (إشعار)' },
+                      { task: 'معالجة الطوارئ والحوادث التقنية (Incidents)', tech: 'R/A (مسؤول/معتمد)', ops: 'C (استشاري)', fin: 'C (استشاري)', comp: 'I (إشعار)', grp: 'I (إشعار)' },
+                      { task: 'متابعة مؤشرات أداء المجموعة الموحدة (Group KPIs)', tech: 'C (استشاري)', ops: 'I (إشعار)', fin: 'C (استشاري)', comp: 'I (إشعار)', grp: 'R/A (مسؤول/معتمد)' },
+                    ].map((row, idx) => (
+                      <tr key={idx} className="hover:bg-zinc-50">
+                        <td className="p-3 font-semibold text-black">{row.task}</td>
+                        <td className="p-3 text-center font-mono font-bold text-emerald-700">{row.tech}</td>
+                        <td className="p-3 text-center font-mono text-zinc-700">{row.ops}</td>
+                        <td className="p-3 text-center font-mono text-blue-700">{row.fin}</td>
+                        <td className="p-3 text-center font-mono text-purple-700">{row.comp}</td>
+                        <td className="p-3 text-center font-mono text-amber-700">{row.grp}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Phased Waves Rollout Timeline (Waves 0-6) */}
+            <div className="mt-6">
+              <h4 className="text-xs font-bold text-black mb-2 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <span>خطة الإطلاق المتدرجة للأربع شركات (Phased Waves 0 to 6)</span>
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="font-bold text-black mb-1 text-xs">Wave 0: Sandbox + RC01</div>
+                  <p className="text-zinc-500 m-0 text-[11px]">اختبارات UAT وعزل الصلاحيات لشركة السفير الماسي.</p>
+                </div>
+                <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="font-bold text-black mb-1 text-xs">Wave 1 & 2: RC01 Live + RC02 Read</div>
+                  <p className="text-zinc-500 m-0 text-[11px]">إطلاق السفير الماسي ثم ضم ياقوت نجد للقراءة فقط.</p>
+                </div>
+                <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="font-bold text-black mb-1 text-xs">Wave 3 & 4: RC02/03 Live + RC04</div>
+                  <p className="text-zinc-500 m-0 text-[11px]">تفعيل ياقوت نجد وتوباز وإدخال دار الرواد.</p>
+                </div>
+                <div className="p-3 rounded-xl bg-zinc-50 border border-emerald-300 bg-emerald-50/50">
+                  <div className="font-bold text-emerald-900 mb-1 text-xs">Wave 5 & 6: Full 4-Company Live</div>
+                  <p className="text-emerald-800 m-0 text-[11px]">اكتمال الإطلاق لكافة الشركات مع تقارير المجموعة الموحدة.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. MDM Entity Explorer */}
       {activeTab === 'mdm' && (
         <div className="space-y-6">
           <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
