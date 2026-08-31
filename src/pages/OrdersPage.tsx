@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useOrders, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -277,23 +278,12 @@ export const OrdersPage: React.FC = () => {
             <span>تسجيل طلب جديد</span>
           </button>
 
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('orders', filteredOrders, 'excel')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('orders', filteredOrders, 'pdf')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown 
+            sectionKey="orders" 
+            data={filteredOrders} 
+            variant="outline-dark" 
+            customTitle="تقرير طلبات واستفسارات الاستقدام" 
+          />
         </div>
       </div>
 

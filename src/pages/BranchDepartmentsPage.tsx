@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { 
   Network, Plus, FileSpreadsheet, FileText, Building2, Users, 
   Check, X, Shield, Plane, Globe, Handshake, DollarSign, 
@@ -397,53 +398,25 @@ export const BranchDepartmentsPage: React.FC = () => {
               <span>إضافة قسم لـ ({selectedEntity.code})</span>
             </button>
 
-            <button
-              onClick={() => {
-                const exportRows = entities.flatMap(ent =>
-                  ent.departments.map(d => ({
-                    entity_code: ent.code,
-                    entity_name: ent.name,
-                    category: ent.category,
-                    location: ent.location,
-                    manager: ent.manager,
-                    dept_name: d.name,
-                    head: d.head,
-                    staff_count: d.staff_count,
-                    kpi: d.kpi,
-                    status: d.status,
-                  }))
-                );
-                exportData('branches', exportRows, 'excel', 'الهيكل التنظيمي وأقسام المجموعة');
-              }}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-              <span>تصدير Excel</span>
-            </button>
-
-            <button
-              onClick={() => {
-                const exportRows = entities.flatMap(ent =>
-                  ent.departments.map(d => ({
-                    entity_code: ent.code,
-                    entity_name: ent.name,
-                    category: ent.category,
-                    location: ent.location,
-                    manager: ent.manager,
-                    dept_name: d.name,
-                    head: d.head,
-                    staff_count: d.staff_count,
-                    kpi: d.kpi,
-                    status: d.status,
-                  }))
-                );
-                exportData('branches', exportRows, 'pdf', 'الهيكل التنظيمي وأقسام المجموعة');
-              }}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
-            >
-              <FileText className="w-4 h-4 text-rose-400" />
-              <span>تصدير PDF</span>
-            </button>
+            <ExportDropdown
+              sectionKey="branches"
+              data={entities.flatMap(ent =>
+                ent.departments.map(d => ({
+                  entity_code: ent.code,
+                  entity_name: ent.name,
+                  category: ent.category,
+                  location: ent.location,
+                  manager: ent.manager,
+                  dept_name: d.name,
+                  head: d.head,
+                  staff_count: d.staff_count,
+                  kpi: d.kpi,
+                  status: d.status,
+                }))
+              )}
+              variant="outline-dark"
+              customTitle="الهيكل التنظيمي وأقسام المجموعة"
+            />
           </div>
         </div>
       </div>

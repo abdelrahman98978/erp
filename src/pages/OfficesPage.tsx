@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
@@ -253,23 +254,12 @@ export const OfficesPage: React.FC = () => {
               <span>إضافة مكتب خارجي جديد</span>
             </button>
 
-            <button
-              onClick={() => exportData('offices', filteredOffices, 'excel')}
-              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
-              style={{ minHeight: '38px', padding: '8px 18px' }}
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-              <span>Excel</span>
-            </button>
-
-            <button
-              onClick={() => exportData('offices', filteredOffices, 'pdf')}
-              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
-              style={{ minHeight: '38px', padding: '8px 18px' }}
-            >
-              <FileText className="w-4 h-4 text-rose-400" />
-              <span>PDF</span>
-            </button>
+            <ExportDropdown 
+              sectionKey="offices" 
+              data={filteredOffices} 
+              variant="outline-dark" 
+              customTitle="سجل المكاتب والوكالات الخارجية المعتمدة" 
+            />
           </div>
         </div>
       </div>

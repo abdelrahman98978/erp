@@ -775,6 +775,34 @@ export function exportToPDF(sectionKey: string, data: any[], customTitle?: strin
   doc.save(`${title}.pdf`);
 }
 
+// ─── Export to JSON ──────────────────────────────────────────────────
+export function exportToJSON(sectionKey: string, data: any[], customTitle?: string): void {
+  const config = resolveConfig(sectionKey, data, customTitle);
+  const title = customTitle || config.sectionTitle;
+  const payload = {
+    metadata: {
+      system: 'KAS & Al-Sulaim Group Enterprise ERP',
+      company: GROUP_COMPANY_INFO,
+      reportTitle: title,
+      section: sectionKey,
+      exportedAt: new Date().toISOString(),
+      recordCount: data.length,
+      version: '2.0-production'
+    },
+    headers: config.headers,
+    records: data
+  };
+
+  const jsonString = JSON.stringify(payload, null, 2);
+  const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${title}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 // ─── Official Printable Report (High-fidelity Arabic HTML Print) ────
 export function exportToPrint(sectionKey: string, data: any[], customTitle?: string): void {
   const config = resolveConfig(sectionKey, data, customTitle);
@@ -795,8 +823,8 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
   const rowsHtml = data.map((row, idx) => {
     const mapped = config.dataMapper(row);
     return `
-      <tr style="background-color: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};">
-        <td style="text-align: center; font-weight: bold; color: #64748B;">${idx + 1}</td>
+      <tr style="background-color: ${idx % 2 === 0 ? '#FFFFFF' : '#F9FAFB'};">
+        <td style="text-align: center; font-weight: bold; color: #64748B; padding: 8px;">${idx + 1}</td>
         ${mapped.map(val => `<td style="padding: 8px 10px; border: 1px solid #E2E8F0; font-size: 11.5px;">${String(val ?? '-')}</td>`).join('')}
       </tr>
     `;
@@ -804,7 +832,7 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
 
   const headersHtml = `
     <th style="padding: 10px; background: #000000; color: white; border: 1px solid #27272a; width: 40px;">#</th>
-    ${config.headers.map(h => `<th style="padding: 10px; background: #000000; color: white; border: 1px solid #27272a; font-size: 12px;">${h}</th>`).join('')}
+    ${config.headers.map(h => `<th style="padding: 10px; background: #000000; color: white; border: 1px solid #27272a; font-size: 12px; font-weight: 700;">${h}</th>`).join('')}
   `;
 
   printWindow.document.write(`
@@ -813,16 +841,16 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
     <head>
       <meta charset="utf-8">
       <title>${title} - ${GROUP_COMPANY_INFO.nameAr}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
       <style>
         body {
-          font-family: 'Inter', system-ui, sans-serif;
-          margin: 20px;
-          color: #000000;
-          background: #FFF;
+          font-family: 'Tajawal', 'Inter', system-ui, sans-serif;
+          margin: 25px;
+          color: #09090b;
+          background: #FFFFFF;
         }
         @media print {
-          @page { size: landscape; margin: 12mm; }
+          @page { size: landscape; margin: 10mm; }
           body { margin: 0; }
           .no-print { display: none !important; }
         }
@@ -830,7 +858,7 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 2px solid #000000;
+          border-bottom: 2.5px solid #000000;
           padding-bottom: 16px;
           margin-bottom: 20px;
         }
@@ -844,42 +872,60 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
           border: 1px solid #e4e4e7;
         }
         .footer-box {
-          margin-top: 30px;
+          margin-top: 35px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           padding-top: 15px;
-          border-top: 1px solid #e4e4e7;
+          border-top: 1.5px solid #e4e4e7;
           font-size: 11px;
           color: #71717a;
+        }
+        .stamp-box {
+          border: 2px dashed #059669;
+          border-radius: 12px;
+          padding: 8px 16px;
+          text-align: center;
+          color: #059669;
+          font-size: 11px;
+          font-weight: 700;
+          background: #f0fdf4;
+          display: inline-block;
         }
       </style>
     </head>
     <body>
-      <div class="no-print" style="margin-bottom: 16px; display: flex; gap: 10px;">
-        <button onclick="window.print()" style="padding: 10px 24px; background: #000000; color: white; border: none; border-radius: 9999px; font-weight: 600; cursor: pointer;">
-          🖨️ طباعة التقرير الفوري
-        </button>
-        <button onclick="window.close()" style="padding: 10px 24px; background: #f4f4f5; color: #000000; border: 1px solid #e4e4e7; border-radius: 9999px; font-weight: 600; cursor: pointer;">
-          إغلاق
-        </button>
+      <div class="no-print" style="margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; background: #f4f4f5; padding: 12px 18px; border-radius: 9999px;">
+        <div style="font-weight: 700; font-size: 13px;">معاينة التقرير الرسمي المعتمد جاهز للطباعة والتصدير</div>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="window.print()" style="padding: 8px 22px; background: #000000; color: white; border: none; border-radius: 9999px; font-weight: 700; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            🖨️ طباعة التقرير الفوري (A4)
+          </button>
+          <button onclick="window.close()" style="padding: 8px 20px; background: #ffffff; color: #000000; border: 1px solid #e4e4e7; border-radius: 9999px; font-weight: 700; font-size: 12px; cursor: pointer;">
+            إغلاق
+          </button>
+        </div>
       </div>
 
       <div class="header-box">
         <div>
-          <h1 style="font-size: 20px; font-weight: 600; color: #000000; margin: 0;">${GROUP_COMPANY_INFO.nameAr}</h1>
-          <div style="font-size: 11px; color: #71717a; font-weight: 500; margin-top: 2px;">${GROUP_COMPANY_INFO.nameEn}</div>
-          <div style="font-size: 11px; color: #71717a; margin-top: 4px;">س.ت: ${GROUP_COMPANY_INFO.crNumber} • الرقم الضريبي: ${GROUP_COMPANY_INFO.taxNumber}</div>
+          <h1 style="font-size: 20px; font-weight: 900; color: #000000; margin: 0;">${GROUP_COMPANY_INFO.nameAr}</h1>
+          <div style="font-size: 11px; color: #71717a; font-weight: 600; margin-top: 2px;">${GROUP_COMPANY_INFO.nameEn}</div>
+          <div style="font-size: 11px; color: #52525b; margin-top: 4px;">س.ت: <strong>${GROUP_COMPANY_INFO.crNumber}</strong> • الرقم الضريبي: <strong>${GROUP_COMPANY_INFO.taxNumber}</strong></div>
         </div>
 
         <div style="text-align: center;">
-          <h2 style="font-size: 17px; font-weight: 600; color: #000000; margin: 0;">${title}</h2>
-          <div style="font-size: 12px; color: #71717a; margin-top: 4px;">تاريخ الاستخراج: ${now}</div>
+          <h2 style="font-size: 18px; font-weight: 800; color: #000000; margin: 0;">${title}</h2>
+          <div style="font-size: 12px; color: #71717a; margin-top: 4px;">تاريخ الاستخراج: <strong>${now}</strong></div>
+          <div style="font-size: 11px; color: #059669; font-weight: 700; margin-top: 2px;">✓ تقرير مدقق ومطابق لمنظومة ERP</div>
         </div>
 
         <div style="text-align: left;">
-          <div style="font-size: 11px; font-weight: 600; color: #000000;">إجمالي السجلات المضمنة:</div>
-          <div style="font-size: 22px; font-weight: 330; color: #000000;">${data.length}</div>
+          <div class="stamp-box">
+            <div>معتمد إلكترونياً</div>
+            <div style="font-size: 9px; margin-top: 2px;">Saudi ERP Verified</div>
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #71717a; margin-top: 6px;">السجلات المضمنة: <span style="font-size: 16px; font-weight: 900; color: #000000;">${data.length}</span></div>
         </div>
       </div>
 
@@ -893,7 +939,7 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
       </table>
 
       <div class="footer-box">
-        <div>تم الاستخراج والاعتماد إلكترونياً عبر منظومة ERP المجموعة • تقرير رسمي موثق</div>
+        <div>تم الاستخراج والاعتماد إلكترونياً عبر منظومة ERP المجموعة • تقرير رسمي موثق لا يحتاج إلى توقيع خطي</div>
         <div>صفحة 1 من 1</div>
       </div>
     </body>
@@ -904,7 +950,7 @@ export function exportToPrint(sectionKey: string, data: any[], customTitle?: str
 }
 
 // ─── Universal Unified Export Method ─────────────────────────────────
-export type ExportFormat = 'excel' | 'pdf' | 'csv' | 'print';
+export type ExportFormat = 'excel' | 'pdf' | 'csv' | 'print' | 'json';
 
 export function exportData(
   sectionKey: string,
@@ -924,6 +970,9 @@ export function exportData(
       break;
     case 'print':
       exportToPrint(sectionKey, data, customTitle);
+      break;
+    case 'json':
+      exportToJSON(sectionKey, data, customTitle);
       break;
   }
 }

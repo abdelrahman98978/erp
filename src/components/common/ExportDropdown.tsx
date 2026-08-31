@@ -1,0 +1,194 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { 
+  Download, 
+  FileSpreadsheet, 
+  FileText, 
+  Printer, 
+  FileCode, 
+  ChevronDown, 
+  FileJson,
+  Sparkles
+} from 'lucide-react';
+import { exportData, ExportFormat } from '../../services/exportService';
+
+export interface ExportDropdownProps {
+  sectionKey: string;
+  data: any[];
+  customTitle?: string;
+  buttonLabel?: string;
+  variant?: 'outline-dark' | 'outline-light' | 'primary-pill' | 'compact';
+  showCountBadge?: boolean;
+  className?: string;
+}
+
+export const ExportDropdown: React.FC<ExportDropdownProps> = ({
+  sectionKey,
+  data,
+  customTitle,
+  buttonLabel = 'تصدير الكشوفات',
+  variant = 'outline-light',
+  showCountBadge = true,
+  className = '',
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleExport = (format: ExportFormat) => {
+    if (!data || data.length === 0) {
+      alert('لا توجد بيانات متاحة للتصدير في هذا القسم حالياً.');
+      return;
+    }
+    
+    exportData(sectionKey, data, format, customTitle);
+    setIsOpen(false);
+  };
+
+  const getButtonClass = () => {
+    switch (variant) {
+      case 'outline-dark':
+        return 'button-outline-on-dark';
+      case 'primary-pill':
+        return 'button-primary-pill';
+      case 'compact':
+        return 'button-outline-on-light !py-1.5 !px-3 !text-xs !min-h-[32px]';
+      case 'outline-light':
+      default:
+        return 'button-outline-on-light';
+    }
+  };
+
+  const formats = [
+    {
+      id: 'excel' as ExportFormat,
+      title: 'Microsoft Excel (.xlsx)',
+      desc: 'جدول بيانات متقدم مع دوال الإجماليات وRTL',
+      icon: FileSpreadsheet,
+      badge: 'موصى به',
+      color: 'emerald',
+      bgColor: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+    },
+    {
+      id: 'pdf' as ExportFormat,
+      title: 'مستند PDF رسمي (.pdf)',
+      desc: 'كشف معتمد بهيدر المجموعة وترقيم الصفحات',
+      icon: FileText,
+      badge: 'معتمد',
+      color: 'sky',
+      bgColor: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400 border-sky-200 dark:border-sky-800'
+    },
+    {
+      id: 'csv' as ExportFormat,
+      title: 'ملف CSV متوافق (UTF-8)',
+      desc: 'ملف خفيف متوافق مع كافة أنظمة المحاسبة',
+      icon: FileCode,
+      color: 'amber',
+      bgColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+    },
+    {
+      id: 'print' as ExportFormat,
+      title: 'طباعة كشف A4 فوري',
+      desc: 'عرض فوري للطباعة مع الختم الرقمي والـ QR',
+      icon: Printer,
+      badge: 'طباعة فورية',
+      color: 'purple',
+      bgColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400 border-purple-200 dark:border-purple-800'
+    },
+    {
+      id: 'json' as ExportFormat,
+      title: 'تصدير برمجي JSON (.json)',
+      desc: 'كائنات البيانات المهيكلة للمطورين والربط الخارجي',
+      icon: FileJson,
+      color: 'zinc',
+      bgColor: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700'
+    }
+  ];
+
+  return (
+    <div className={`relative inline-block text-right ${className}`} ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`${getButtonClass()} flex items-center gap-2 font-bold transition-all shadow-sm active:scale-95`}
+        type="button"
+        title="تصدير السجلات بكافة الصيغ المتاحة"
+      >
+        <Download className="w-4 h-4 text-emerald-500 shrink-0" />
+        <span>{buttonLabel}</span>
+        {showCountBadge && data && (
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-black">
+            {data.length}
+          </span>
+        )}
+        <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {/* Luxury Dropdown Menu */}
+      {isOpen && (
+        <div className="absolute left-0 sm:right-auto mt-2 w-80 sm:w-96 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl z-50 p-2.5 animate-in fade-in zoom-in-95 duration-150">
+          {/* Header Info */}
+          <div className="px-3.5 py-2.5 border-b border-zinc-100 dark:border-zinc-800/80 mb-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-black text-slate-900 dark:text-white">
+                تصدير البيانات بكل الصيغ
+              </span>
+            </div>
+            <span className="text-[11px] font-mono text-zinc-400 font-bold">
+              {data.length} سجل جاهز
+            </span>
+          </div>
+
+          {/* Formats List */}
+          <div className="space-y-1">
+            {formats.map((fmt) => {
+              const Icon = fmt.icon;
+              return (
+                <button
+                  key={fmt.id}
+                  onClick={() => handleExport(fmt.id)}
+                  className="w-full text-right p-3 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60 transition-all flex items-start gap-3 group"
+                >
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${fmt.bgColor} group-hover:scale-105 transition-transform`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        {fmt.title}
+                      </span>
+                      {fmt.badge && (
+                        <span className="pill-tag-mint text-[9px] font-black py-0.5 px-2">
+                          {fmt.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight line-clamp-1 font-normal">
+                      {fmt.desc}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Footer Note */}
+          <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 px-3 py-1.5 flex items-center justify-between text-[10px] text-zinc-400 font-medium">
+            <span>ترميز عربي موحد UTF-8</span>
+            <span>مطابق لمعايير ZATCA & SAMA</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

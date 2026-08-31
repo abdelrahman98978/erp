@@ -24,6 +24,7 @@ import { kasEtmadSuiteService } from '../services/kasEtmadSuiteService';
 import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard, KasInvoiceCard } from '../components/kas/KasCards';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { tafqeet } from '../services/tafqeetService';
 
 export const KasEtimadCloudPage: React.FC = () => {
@@ -735,23 +736,45 @@ export const KasEtimadCloudPage: React.FC = () => {
               <span>+ إضافة سريعة</span>
             </button>
 
-            {/* Export Action */}
-            <button
-              onClick={() => {
-                if (activeTab === 'invoices') kasEtmadSuiteService.exportInvoicesToXLSX();
-                else kasEtmadSuiteService.exportCompetitionsToXLSX();
-                addNotification({
-                  title: 'تم التصدير',
-                  message: 'تم تصدير البيانات بنجاح كملف إكسل.',
-                  type: 'success'
-                });
-              }}
-              className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs flex items-center gap-1.5 backdrop-blur-md border border-white/10"
-              title="تصدير كـ Excel"
-            >
-              <Download className="w-3.5 h-3.5 text-emerald-300" />
-              <span>تصدير</span>
-            </button>
+            {/* Universal Multi-Format Export Dropdown */}
+            <ExportDropdown
+              sectionKey={
+                activeTab === 'invoices' ? 'zatca' :
+                activeTab === 'estimates' ? 'estimates' :
+                activeTab === 'proposals' ? 'proposals' :
+                activeTab === 'subscriptions' ? 'subscriptions' :
+                activeTab === 'credit-notes' ? 'credit_notes' :
+                activeTab === 'payments' ? 'payments' :
+                activeTab === 'items' ? 'items' :
+                activeTab === 'clients' ? 'clients' :
+                activeTab === 'leads' ? 'leads' :
+                activeTab === 'projects' ? 'projects' :
+                activeTab === 'tasks' ? 'tasks' :
+                activeTab === 'contracts' ? 'contracts' :
+                activeTab === 'expenses' ? 'expenses' :
+                activeTab === 'tickets' ? 'tickets' :
+                activeTab === 'staff' ? 'staff' : 'kas_competitions'
+              }
+              data={
+                activeTab === 'invoices' ? invoices :
+                activeTab === 'estimates' ? estimates :
+                activeTab === 'proposals' ? proposals :
+                activeTab === 'subscriptions' ? subscriptions :
+                activeTab === 'credit-notes' ? creditNotes :
+                activeTab === 'payments' ? payments :
+                activeTab === 'items' ? items :
+                activeTab === 'clients' ? clients :
+                activeTab === 'leads' ? leads :
+                activeTab === 'projects' ? projects :
+                activeTab === 'tasks' ? tasks :
+                activeTab === 'contracts' ? contracts :
+                activeTab === 'expenses' ? expenses :
+                activeTab === 'tickets' ? tickets :
+                activeTab === 'staff' ? staff : competitions
+              }
+              customTitle={`كشف سجلات ${activeTab} - منصة اعتماد كاس`}
+              variant="outline-dark"
+            />
 
             {/* User Profile Badge */}
             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl border border-white/10 text-xs">

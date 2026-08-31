@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { 
   Send, Plus, FileSpreadsheet, FileText, Eye, Printer, X, Check, 
@@ -177,22 +178,12 @@ export const GroupDispatchPage: React.FC = () => {
               <Plus className="w-4 h-4 ml-1 text-black" />
               <span>+ توجيه معاملة جديدة</span>
             </button>
-            <button
-              className="button-outline-on-dark"
-              onClick={() => exportData('group-dispatch', filteredDispatches, 'excel')}
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
-              <span>Excel</span>
-            </button>
-            <button
-              className="button-outline-on-dark"
-              onClick={() => exportData('group-dispatch', filteredDispatches, 'pdf')}
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            >
-              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
-              <span>PDF</span>
-            </button>
+            <ExportDropdown 
+              sectionKey="group-dispatch" 
+              data={filteredDispatches} 
+              variant="outline-dark" 
+              customTitle="تقرير توجيه المعاملات والمراسلات الإدارية" 
+            />
           </div>
         </div>
       </div>

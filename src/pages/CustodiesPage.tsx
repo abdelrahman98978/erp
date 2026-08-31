@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Vault, Plus, FileSpreadsheet, FileText, Search, Printer, RotateCcw, X, ShieldCheck, Trash2 } from 'lucide-react';
@@ -140,14 +141,7 @@ export const CustodiesPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ تسليم عُهدة جديدة</span>
           </button>
-          <button className="button-outline-on-dark" onClick={() => exportData('custodies', custodies, 'excel')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-          <button className="button-outline-on-dark" onClick={() => exportData('custodies', custodies, 'pdf')} style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}>
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown sectionKey="custodies" data={custodies} variant="outline-dark" customTitle="سجل العُهد والأصول المالية" />
         </div>
       </div>
 

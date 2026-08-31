@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useJournals, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { chartOfAccountsService } from '../services/accounting/chartOfAccountsService';
@@ -239,22 +240,12 @@ export const JournalsPage: React.FC = () => {
             <Upload className="w-4 h-4 ml-1 text-emerald-400" />
             <span>استيراد قيود</span>
           </button>
-          <button
-            onClick={() => exportData('journals', filteredJournals, 'excel', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-          <button
-            onClick={() => exportData('journals', filteredJournals, 'pdf', `دفتر القيود المحاسبية - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown 
+            sectionKey="journals" 
+            data={filteredJournals} 
+            variant="outline-dark" 
+            customTitle={`دفتر القيود المحاسبية - ${activeCompany.name}`} 
+          />
         </div>
       </div>
 
