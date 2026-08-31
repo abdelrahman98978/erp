@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
@@ -253,22 +254,12 @@ export const MasterConstantsPage: React.FC = () => {
               <Plus className="w-4 h-4 ml-1 text-black" />
               <span>+ إضافة بند جديد</span>
             </button>
-            <button
-              onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'excel')}
-              className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
-              <span>Excel</span>
-            </button>
-            <button
-              onClick={() => exportData(`master_constants_${activeTab}`, activeList, 'pdf')}
-              className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            >
-              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
-              <span>PDF</span>
-            </button>
+            <ExportDropdown
+              sectionKey={`master_constants_${activeTab}`}
+              data={activeList}
+              customTitle={`ثوابت ومحددات النظام (${activeTab}) - مجموعة السليم`}
+              variant="outline-dark"
+            />
           </div>
         </div>
       </div>

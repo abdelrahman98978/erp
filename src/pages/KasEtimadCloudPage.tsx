@@ -99,6 +99,12 @@ export const KasEtimadCloudPage: React.FC = () => {
   // Form State
   const [formData, setFormData] = useState<any>({});
 
+  // Search & Edit states for sub-tabs
+  const [categorySearch, setCategorySearch] = useState<string>('');
+  const [editingCategory, setEditingCategory] = useState<KasEtmadCategory | null>(null);
+  const [staffSearch, setStaffSearch] = useState<string>('');
+  const [editingStaff, setEditingStaff] = useState<KasEtmadStaff | null>(null);
+
   // Reload trigger
   const [reloadKey, setReloadKey] = useState<number>(0);
 
@@ -143,6 +149,29 @@ export const KasEtimadCloudPage: React.FC = () => {
   const subscriptions = useMemo(() => kasEtmadSuiteService.getSubscriptions(), [reloadKey]);
   const estimateRequests = useMemo(() => kasEtmadSuiteService.getEstimateRequests(), [reloadKey]);
   const emailTemplates = useMemo(() => kasEtmadSuiteService.getEmailTemplates(), [reloadKey]);
+
+  // Filtered categories
+  const filteredCategories = useMemo(() => {
+    if (!categorySearch.trim()) return categories;
+    const q = categorySearch.toLowerCase().trim();
+    return categories.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.code.toLowerCase().includes(q) ||
+      (c.description && c.description.toLowerCase().includes(q))
+    );
+  }, [categories, categorySearch]);
+
+  // Filtered staff
+  const filteredStaff = useMemo(() => {
+    if (!staffSearch.trim()) return staff;
+    const q = staffSearch.toLowerCase().trim();
+    return staff.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.email.toLowerCase().includes(q) ||
+      s.role.toLowerCase().includes(q) ||
+      (s.phone && s.phone.includes(q))
+    );
+  }, [staff, staffSearch]);
   const stats = useMemo(() => kasEtmadSuiteService.getDashboardStats(), [reloadKey]);
 
   // Filtered Competitions
@@ -476,11 +505,30 @@ export const KasEtimadCloudPage: React.FC = () => {
       alert('يرجى إدخال اسم التصنيف والرمز');
       return;
     }
-    kasEtmadSuiteService.addCategory({
-      name: formData.catName,
-      code: formData.catCode,
-      description: formData.catDesc
-    });
+    if (editingCategory) {
+      kasEtmadSuiteService.updateCategory(editingCategory.id, {
+        name: formData.catName,
+        code: formData.catCode,
+        description: formData.catDesc
+      });
+      addNotification({
+        title: 'تم تحديث التصنيف',
+        message: `تم تحديث التصنيف (${formData.catName}) بنجاح.`,
+        type: 'success'
+      });
+      setEditingCategory(null);
+    } else {
+      kasEtmadSuiteService.addCategory({
+        name: formData.catName,
+        code: formData.catCode,
+        description: formData.catDesc
+      });
+      addNotification({
+        title: 'تمت إضافة التصنيف',
+        message: `تمت إضافة التصنيف (${formData.catName}) بنجاح.`,
+        type: 'success'
+      });
+    }
     setShowAddCategoryModal(false);
     setFormData({});
     setReloadKey(k => k + 1);
@@ -491,12 +539,32 @@ export const KasEtimadCloudPage: React.FC = () => {
       alert('يرجى إدخال الاسم والبريد الإلكتروني');
       return;
     }
-    kasEtmadSuiteService.addStaff({
-      name: formData.staffName,
-      email: formData.staffEmail,
-      role: formData.staffRole || 'Employee',
-      phone: formData.staffPhone
-    });
+    if (editingStaff) {
+      kasEtmadSuiteService.updateStaff(editingStaff.id, {
+        name: formData.staffName,
+        email: formData.staffEmail,
+        role: formData.staffRole || 'Employee',
+        phone: formData.staffPhone
+      });
+      addNotification({
+        title: 'تم تحديث العضو',
+        message: `تم تحديث بيانات (${formData.staffName}) بنجاح.`,
+        type: 'success'
+      });
+      setEditingStaff(null);
+    } else {
+      kasEtmadSuiteService.addStaff({
+        name: formData.staffName,
+        email: formData.staffEmail,
+        role: formData.staffRole || 'Employee',
+        phone: formData.staffPhone
+      });
+      addNotification({
+        title: 'تمت إضافة العضو',
+        message: `تمت إضافة (${formData.staffName}) لطاقم العمل.`,
+        type: 'success'
+      });
+    }
     setShowAddStaffModal(false);
     setFormData({});
     setReloadKey(k => k + 1);
@@ -787,33 +855,33 @@ export const KasEtimadCloudPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Module Navigation Bar */}
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-border pb-3 overflow-x-auto max-w-full">
+      {/* Main Module Navigation Bar - Shopify Pill Style */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-border/40 pb-4 overflow-x-auto max-w-full">
         {[
           { id: 'dashboard', label: 'لوحة التحكم', icon: BarChart3 },
-          { id: 'competitions', label: `المنافسات (${competitions.length})`, icon: Award, badge: 'اعتماد' },
-          { id: 'invoices', label: `الفواتير (${invoices.length})`, icon: DollarSign },
-          { id: 'estimates', label: `عروض الأسعار (${estimates.length})`, icon: FileSpreadsheet },
-          { id: 'proposals', label: `العروض (${proposals.length})`, icon: Send },
-          { id: 'credit-notes', label: `إشعارات الائتمان (${creditNotes.length})`, icon: ArrowDownRight },
-          { id: 'payments', label: `المدفوعات (${payments.length})`, icon: Receipt },
-          { id: 'subscriptions', label: `الاشتراكات (${subscriptions.length})`, icon: RefreshCw },
-          { id: 'items', label: `جدول الكميات (${items.length})`, icon: Layers },
-          { id: 'clients', label: `العملاء (${clients.length})`, icon: Users },
-          { id: 'leads', label: `العملاء المحتملين (${leads.length})`, icon: UserPlus },
-          { id: 'projects', label: `المشاريع (${projects.length})`, icon: Briefcase },
-          { id: 'tasks', label: `المهام (${tasks.length})`, icon: CheckSquare },
-          { id: 'contracts', label: `العقود (${contracts.length})`, icon: FileCheck },
-          { id: 'expenses', label: `المصروفات (${expenses.length})`, icon: CreditCard },
-          { id: 'tickets', label: `الدعم (${tickets.length})`, icon: HelpCircle },
-          { id: 'estimate-requests', label: `طلب عرض سعر (${estimateRequests.length})`, icon: FilePlus },
-          { id: 'staff', label: `الطاقم (${staff.length})`, icon: UserCheck },
-          { id: 'knowledge-base', label: `قاعدة المعرفة (${knowledge.length})`, icon: BookOpen },
-          { id: 'email-templates', label: `قوالب البريد (${emailTemplates.length})`, icon: Mail },
+          { id: 'competitions', label: 'المنافسات', count: competitions.length, icon: Award, badge: 'اعتماد' },
+          { id: 'invoices', label: 'الفواتير', count: invoices.length, icon: DollarSign },
+          { id: 'estimates', label: 'عروض الأسعار', count: estimates.length, icon: FileSpreadsheet },
+          { id: 'proposals', label: 'العروض', count: proposals.length, icon: Send },
+          { id: 'credit-notes', label: 'إشعارات الائتمان', count: creditNotes.length, icon: ArrowDownRight },
+          { id: 'payments', label: 'المدفوعات', count: payments.length, icon: Receipt },
+          { id: 'subscriptions', label: 'الاشتراكات', count: subscriptions.length, icon: RefreshCw },
+          { id: 'items', label: 'جدول الكميات', count: items.length, icon: Layers },
+          { id: 'clients', label: 'العملاء', count: clients.length, icon: Users },
+          { id: 'leads', label: 'العملاء المحتملين', count: leads.length, icon: UserPlus },
+          { id: 'projects', label: 'المشاريع', count: projects.length, icon: Briefcase },
+          { id: 'tasks', label: 'المهام', count: tasks.length, icon: CheckSquare },
+          { id: 'contracts', label: 'العقود', count: contracts.length, icon: FileCheck },
+          { id: 'expenses', label: 'المصروفات', count: expenses.length, icon: CreditCard },
+          { id: 'tickets', label: 'الدعم', count: tickets.length, icon: HelpCircle },
+          { id: 'estimate-requests', label: 'طلب عرض سعر', count: estimateRequests.length, icon: FilePlus },
+          { id: 'staff', label: 'الطاقم', count: staff.length, icon: UserCheck },
+          { id: 'knowledge-base', label: 'قاعدة المعرفة', count: knowledge.length, icon: BookOpen },
+          { id: 'email-templates', label: 'قوالب البريد', count: emailTemplates.length, icon: Mail },
           { id: 'utilities', label: 'الأدوات المساعدة', icon: Calculator },
           { id: 'calendar', label: 'التقويم', icon: Calendar },
           { id: 'reports', label: 'التقارير المالية', icon: TrendingUp },
-          { id: 'settings', label: `تصنيفات المنافسات (${categories.length})`, icon: Settings },
+          { id: 'settings', label: 'تصنيفات المنافسات', count: categories.length, icon: Settings },
         ].map(navItem => {
           const isActive = activeTab === navItem.id;
           const Icon = navItem.icon;
@@ -821,16 +889,21 @@ export const KasEtimadCloudPage: React.FC = () => {
             <button
               key={navItem.id}
               onClick={() => setActiveTab(navItem.id as any)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-4 py-2 text-xs transition-all cursor-pointer inline-flex items-center gap-2 ${
                 isActive
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                  : 'bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40'
+                  ? 'button-primary-pill shadow-md shadow-emerald-600/20'
+                  : 'button-outline-on-light'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
-              <span>{navItem.label}</span>
+              <span className="font-bold">{navItem.label}</span>
+              {navItem.count !== undefined && (
+                <span className={isActive ? 'pill-tag-mint text-[10px] py-0.5 px-2 font-black' : 'pill-tag-shade text-[10px] py-0.5 px-2 font-bold'}>
+                  {navItem.count}
+                </span>
+              )}
               {navItem.badge && (
-                <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-400 text-slate-900">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-400 text-slate-950 shadow-xs">
                   {navItem.badge}
                 </span>
               )}
@@ -2356,57 +2429,158 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* 17. STAFF VIEW (الطاقم وفريق العمل) */}
       {/* ========================================================================= */}
       {activeTab === 'staff' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <UserCheck className="w-5 h-5 text-emerald-600" />
-              <span>أعضاء الطاقم وفريق عمل منظومة كاس</span>
-            </h3>
-            <button
-              onClick={() => setShowAddStaffModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>عضو جديد في الطاقم</span>
-            </button>
+        <div className="space-y-6">
+          {/* Header & Action Bar */}
+          <div className="card-pricing flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-extrabold text-foreground">
+                  أعضاء الطاقم وفريق عمل منظومة كاس
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1 mr-10">إدارة مستخدمي النظام والصلاحيات وأدوار التشغيل المعتمدة</p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="بحث في الطاقم..."
+                  value={staffSearch}
+                  onChange={e => setStaffSearch(e.target.value)}
+                  className="pl-3 pr-9 py-2 text-xs rounded-full bg-secondary/50 border border-border/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 w-48 sm:w-60"
+                />
+              </div>
+
+              <ExportDropdown
+                sectionKey="staff"
+                data={filteredStaff}
+                customTitle="طاقم العمل وفريق التشغيل - سحابة كاس"
+                variant="outline-light"
+              />
+
+              <button
+                onClick={() => {
+                  setEditingStaff(null);
+                  setFormData({});
+                  setShowAddStaffModal(true);
+                }}
+                className="button-primary-pill !py-2 !px-4 !text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>عضو جديد</span>
+              </button>
+            </div>
           </div>
 
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3">الاسم الكامل</th>
-                  <th className="p-3">البريد الإلكتروني</th>
-                  <th className="p-3">الدور الوظيفي / الصلاحيات</th>
-                  <th className="p-3">آخر تسجيل دخول</th>
-                  <th className="p-3">الحالة</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {staff.map(st => (
-                  <tr key={st.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-semibold text-foreground flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-700 flex items-center justify-center font-bold text-[10px]">
-                        {st.name.slice(0, 2)}
-                      </div>
-                      <span>{st.name}</span>
-                    </td>
-                    <td className="p-3 font-mono text-muted-foreground">{st.email}</td>
-                    <td className="p-3">
-                      <span className={`px-2.5 py-0.5 rounded-full font-bold text-[11px] ${
-                        st.role.includes('Super_Admin') ? 'bg-purple-500/10 text-purple-600' : 'bg-emerald-500/10 text-emerald-600'
-                      }`}>
-                        {st.role}
-                      </span>
-                    </td>
-                    <td className="p-3 font-mono text-muted-foreground">{st.lastLogin}</td>
-                    <td className="p-3">
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-[10px]">نشط</span>
-                    </td>
+          {/* Luxury Table in card-pricing */}
+          <div className="card-pricing p-0 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-right border-collapse">
+                <thead className="bg-secondary/70 text-foreground font-bold border-b border-border/60">
+                  <tr>
+                    <th className="p-3.5 w-12 text-center">#</th>
+                    <th className="p-3.5">الاسم الكامل</th>
+                    <th className="p-3.5">البريد الإلكتروني</th>
+                    <th className="p-3.5">الهاتف</th>
+                    <th className="p-3.5">الدور الوظيفي / الصلاحيات</th>
+                    <th className="p-3.5">آخر تسجيل دخول</th>
+                    <th className="p-3.5">الحالة</th>
+                    <th className="p-3.5 w-28 text-center">الإجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {filteredStaff.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="p-12 text-center text-muted-foreground">
+                        <UserCheck className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+                        <span>لا يوجد أعضاء طاقم يطابقون معايير البحث</span>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredStaff.map((st, idx) => (
+                      <tr key={st.id} className="hover:bg-secondary/40 transition-colors">
+                        <td className="p-3.5 text-center font-mono text-muted-foreground">{idx + 1}</td>
+                        <td className="p-3.5 font-bold text-foreground">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-black text-[11px] border border-emerald-500/30">
+                              {st.name.slice(0, 2)}
+                            </div>
+                            <span>{st.name}</span>
+                          </div>
+                        </td>
+                        <td className="p-3.5 font-mono text-muted-foreground">
+                          <a href={`mailto:${st.email}`} className="hover:text-emerald-600 transition-colors">
+                            {st.email}
+                          </a>
+                        </td>
+                        <td className="p-3.5 font-mono text-muted-foreground">
+                          {st.phone ? (
+                            <a href={`tel:${st.phone}`} className="hover:text-emerald-600 transition-colors">
+                              {st.phone}
+                            </a>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+                        <td className="p-3.5">
+                          <span className={st.role.includes('Super_Admin') ? 'pill-tag-mint text-[11px]' : 'pill-tag-shade text-[11px]'}>
+                            {st.role}
+                          </span>
+                        </td>
+                        <td className="p-3.5 font-mono text-muted-foreground text-[11px]">{st.lastLogin}</td>
+                        <td className="p-3.5">
+                          <span className="pill-tag-mint text-[10px]">
+                            ● نشط
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                setEditingStaff(st);
+                                setFormData({
+                                  staffName: st.name,
+                                  staffEmail: st.email,
+                                  staffRole: st.role,
+                                  staffPhone: st.phone || ''
+                                });
+                                setShowAddStaffModal(true);
+                              }}
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
+                              title="تعديل بيانات العضو"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`هل أنت متأكد من حذف (${st.name})؟`)) {
+                                  kasEtmadSuiteService.deleteStaff(st.id);
+                                  setReloadKey(k => k + 1);
+                                  addNotification({
+                                    title: 'تم الحذف',
+                                    message: `تم حذف (${st.name}) من الطاقم.`,
+                                    type: 'info'
+                                  });
+                                }
+                              }}
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-rose-500/15 text-muted-foreground hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+                              title="حذف العضو"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -2415,61 +2589,149 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* 18. SETTINGS VIEW (تصنيفات المنافسات والأكواد 01 - 9987) */}
       {/* ========================================================================= */}
       {activeTab === 'settings' && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
+        <div className="space-y-6">
+          {/* Header & Action Bar */}
+          <div className="card-pricing flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
             <div>
-              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Settings className="w-5 h-5 text-emerald-600" />
-                <span>إعدادات وتصنيفات المنافسات الحكومية (منصة اعتماد)</span>
-              </h3>
-              <p className="text-xs text-muted-foreground">التصنيفات المعتمدة وأكوادها الرسمية في منظومة كاس</p>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+                  <Settings className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-extrabold text-foreground">
+                  إعدادات وتصنيفات المنافسات الحكومية (منصة اعتماد)
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1 mr-10">التصنيفات المعتمدة وأكوادها الرسمية (01 إلى 9987) في منظومة كاس</p>
             </div>
-            <button
-              onClick={() => setShowAddCategoryModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>تصنيف جديد</span>
-            </button>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="بحث في التصنيفات أو الكود..."
+                  value={categorySearch}
+                  onChange={e => setCategorySearch(e.target.value)}
+                  className="pl-3 pr-9 py-2 text-xs rounded-full bg-secondary/50 border border-border/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 w-48 sm:w-60"
+                />
+              </div>
+
+              <ExportDropdown
+                sectionKey="categories"
+                data={filteredCategories}
+                customTitle="تصنيفات المنافسات الحكومية - سحابة كاس"
+                variant="outline-light"
+              />
+
+              <button
+                onClick={() => {
+                  setEditingCategory(null);
+                  setFormData({});
+                  setShowAddCategoryModal(true);
+                }}
+                className="button-primary-pill !py-2 !px-4 !text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>تصنيف جديد</span>
+              </button>
+            </div>
           </div>
 
-          <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
-            <table className="w-full text-xs text-right border-collapse">
-              <thead className="bg-secondary text-foreground font-semibold border-b border-border">
-                <tr>
-                  <th className="p-3 w-12 text-center">#</th>
-                  <th className="p-3">اسم التصنيف</th>
-                  <th className="p-3 font-mono">الرمز / الكود</th>
-                  <th className="p-3">الوصف</th>
-                  <th className="p-3 font-mono">تاريخ التحديث</th>
-                  <th className="p-3 w-20 text-center">حذف</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {categories.map((cat, idx) => (
-                  <tr key={cat.id || idx} className="hover:bg-emerald-500/5">
-                    <td className="p-3 text-center font-mono text-muted-foreground">{idx + 1}</td>
-                    <td className="p-3 font-bold text-foreground">{cat.name}</td>
-                    <td className="p-3 font-mono font-bold text-emerald-600">{cat.code}</td>
-                    <td className="p-3 text-muted-foreground">{cat.description || '-'}</td>
-                    <td className="p-3 font-mono text-muted-foreground">{cat.updatedAt}</td>
-                    <td className="p-3 text-center">
-                      <button
-                        onClick={() => {
-                          if (window.confirm(`حذف تصنيف "${cat.name}"؟`)) {
-                            kasEtmadSuiteService.deleteCategory(cat.id);
-                            setReloadKey(k => k + 1);
-                          }
-                        }}
-                        className="text-rose-600 hover:underline"
-                      >
-                        حذف
-                      </button>
-                    </td>
+          {/* Luxury Table in card-pricing */}
+          <div className="card-pricing p-0 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-right border-collapse">
+                <thead className="bg-secondary/70 text-foreground font-bold border-b border-border/60">
+                  <tr>
+                    <th className="p-3.5 w-12 text-center">#</th>
+                    <th className="p-3.5">اسم التصنيف</th>
+                    <th className="p-3.5 font-mono">الرمز / الكود</th>
+                    <th className="p-3.5">الوصف ونطاق الأعمال</th>
+                    <th className="p-3.5 font-mono">تاريخ التحديث</th>
+                    <th className="p-3.5 w-28 text-center">الإجراءات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {filteredCategories.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-12 text-center text-muted-foreground">
+                        <Tag className="w-8 h-8 text-muted-foreground/30 mx-auto mb-2" />
+                        <span>لا توجد تصنيفات تطابق معايير البحث</span>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredCategories.map((cat, idx) => (
+                      <tr key={cat.id || idx} className="hover:bg-secondary/40 transition-colors">
+                        <td className="p-3.5 text-center font-mono text-muted-foreground">{idx + 1}</td>
+                        <td className="p-3.5 font-bold text-foreground">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>{cat.name}</span>
+                          </div>
+                        </td>
+                        <td className="p-3.5">
+                          <span className="pill-tag-shade font-mono font-black text-xs">
+                            {cat.code}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-muted-foreground max-w-sm truncate">{cat.description || '—'}</td>
+                        <td className="p-3.5 font-mono text-muted-foreground text-[11px]">{cat.updatedAt}</td>
+                        <td className="p-3.5 text-center">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                navigator.clipboard?.writeText(cat.code);
+                                addNotification({
+                                  title: 'تم النسخ',
+                                  message: `تم نسخ رمز التصنيف (${cat.code}) إلى الحافظة.`,
+                                  type: 'success'
+                                });
+                              }}
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-sky-500/15 text-muted-foreground hover:text-sky-600 flex items-center justify-center transition-colors cursor-pointer"
+                              title="نسخ الكود"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingCategory(cat);
+                                setFormData({
+                                  catName: cat.name,
+                                  catCode: cat.code,
+                                  catDesc: cat.description || ''
+                                });
+                                setShowAddCategoryModal(true);
+                              }}
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
+                              title="تعديل التصنيف"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`هل أنت متأكد من حذف تصنيف "${cat.name}"؟`)) {
+                                  kasEtmadSuiteService.deleteCategory(cat.id);
+                                  setReloadKey(k => k + 1);
+                                  addNotification({
+                                    title: 'تم الحذف',
+                                    message: `تم حذف تصنيف (${cat.name}) بنجاح.`,
+                                    type: 'info'
+                                  });
+                                }
+                              }}
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-rose-500/15 text-muted-foreground hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+                              title="حذف التصنيف"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -3896,93 +4158,179 @@ export const KasEtimadCloudPage: React.FC = () => {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD CATEGORY */}
+      {/* MODAL: ADD / EDIT CATEGORY */}
       {/* ========================================================================= */}
       {showAddCategoryModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-foreground">إضافة تصنيف منافسة جديد</h3>
-              <button onClick={() => setShowAddCategoryModal(false)} className="p-1 text-muted-foreground"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="card-pricing max-w-lg w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+                  <Tag className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-extrabold text-foreground">
+                  {editingCategory ? 'تعديل بيانات التصنيف' : 'إضافة تصنيف منافسة حكومية جديد'}
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowAddCategoryModal(false);
+                  setEditingCategory(null);
+                }}
+                className="w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 text-muted-foreground flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <div className="space-y-3 text-xs">
+
+            <div className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-medium mb-1">اسم التصنيف *</label>
+                <label className="block font-bold text-foreground mb-1.5">اسم التصنيف المعتمد *</label>
                 <input
                   type="text"
-                  placeholder="المقاولات، التجارة..."
+                  placeholder="المقاولات، التجارة، المعارض..."
                   value={formData.catName || ''}
                   onChange={e => setFormData({ ...formData, catName: e.target.value })}
-                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-semibold"
                 />
               </div>
+
               <div>
-                <label className="block font-medium mb-1">رمز / كود التصنيف *</label>
+                <label className="block font-bold text-foreground mb-1.5">رمز / كود التصنيف في منصة اعتماد *</label>
                 <input
                   type="text"
                   placeholder="01, 02, 9987..."
                   value={formData.catCode || ''}
                   onChange={e => setFormData({ ...formData, catCode: e.target.value })}
-                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-mono font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-foreground mb-1.5">الوصف ونطاق الأعمال</label>
+                <textarea
+                  rows={3}
+                  placeholder="شرح نطاق الأعمال والأنشطة التابعة لهذا التصنيف..."
+                  value={formData.catDesc || ''}
+                  onChange={e => setFormData({ ...formData, catDesc: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs"
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-2 pt-3 border-t">
-              <button onClick={() => setShowAddCategoryModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
-              <button onClick={handleSaveCategory} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ</button>
+
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border/60">
+              <button
+                onClick={() => {
+                  setShowAddCategoryModal(false);
+                  setEditingCategory(null);
+                }}
+                className="button-outline-on-light !py-2 !px-4 !text-xs cursor-pointer"
+              >
+                إلغاء
+              </button>
+              <button
+                onClick={handleSaveCategory}
+                className="button-primary-pill !py-2 !px-5 !text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer"
+              >
+                {editingCategory ? 'حفظ التعديلات' : 'إضافة التصنيف الآن'}
+              </button>
             </div>
           </div>
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD STAFF */}
+      {/* MODAL: ADD / EDIT STAFF */}
       {/* ========================================================================= */}
       {showAddStaffModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-base font-bold text-foreground">إضافة عضو جديد في الطاقم</h3>
-              <button onClick={() => setShowAddStaffModal(false)} className="p-1 text-muted-foreground"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="card-pricing max-w-lg w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+                  <UserCheck className="w-4 h-4" />
+                </div>
+                <h3 className="text-base font-extrabold text-foreground">
+                  {editingStaff ? 'تعديل بيانات عضو الطاقم' : 'إضافة عضو جديد في الطاقم'}
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  setShowAddStaffModal(false);
+                  setEditingStaff(null);
+                }}
+                className="w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 text-muted-foreground flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-            <div className="space-y-3 text-xs">
+
+            <div className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-medium mb-1">الاسم الكامل *</label>
+                <label className="block font-bold text-foreground mb-1.5">الاسم الكامل *</label>
                 <input
                   type="text"
-                  placeholder="الاسم الثلاثي..."
+                  placeholder="الاسم الثلاثي أو الثنائي..."
                   value={formData.staffName || ''}
                   onChange={e => setFormData({ ...formData, staffName: e.target.value })}
-                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-semibold"
                 />
               </div>
+
               <div>
-                <label className="block font-medium mb-1">البريد الإلكتروني *</label>
+                <label className="block font-bold text-foreground mb-1.5">البريد الإلكتروني المعتمد *</label>
                 <input
                   type="email"
                   placeholder="name@kas.com.sa"
                   value={formData.staffEmail || ''}
                   onChange={e => setFormData({ ...formData, staffEmail: e.target.value })}
-                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl font-mono"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-mono"
                 />
               </div>
+
               <div>
-                <label className="block font-medium mb-1">الدور الوظيفي</label>
+                <label className="block font-bold text-foreground mb-1.5">رقم الهاتف / الجوال</label>
+                <input
+                  type="tel"
+                  placeholder="05XXXXXXXX"
+                  value={formData.staffPhone || ''}
+                  onChange={e => setFormData({ ...formData, staffPhone: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-foreground mb-1.5">الدور الوظيفي والصلاحيات</label>
                 <select
                   value={formData.staffRole || 'Employee'}
                   onChange={e => setFormData({ ...formData, staffRole: e.target.value })}
-                  className="w-full px-3 py-2 bg-secondary/50 border rounded-xl"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-semibold"
                 >
-                  <option value="Employee">Employee (موظف تشغيل)</option>
-                  <option value="المنافسات">المنافسات (مسؤول دراسة العطاءات)</option>
+                  <option value="Employee / موظف تشغيل">Employee / موظف تشغيل</option>
+                  <option value="المنافسات / مسؤول دراسة العطاءات">المنافسات / مسؤول دراسة العطاءات</option>
                   <option value="المحاسب المالي المعتمد">المحاسب المالي المعتمد</option>
-                  <option value="Super_Admin">Super_Admin (مدير عام)</option>
+                  <option value="مدير العمليات">مدير العمليات</option>
+                  <option value="Super_Admin / مدير عام">Super_Admin / مدير عام</option>
                 </select>
               </div>
             </div>
-            <div className="flex justify-end gap-2 pt-3 border-t">
-              <button onClick={() => setShowAddStaffModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
-              <button onClick={handleSaveStaff} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ العضو</button>
+
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border/60">
+              <button
+                onClick={() => {
+                  setShowAddStaffModal(false);
+                  setEditingStaff(null);
+                }}
+                className="button-outline-on-light !py-2 !px-4 !text-xs cursor-pointer"
+              >
+                إلغاء
+              </button>
+              <button
+                onClick={handleSaveStaff}
+                className="button-primary-pill !py-2 !px-5 !text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer"
+              >
+                {editingStaff ? 'حفظ التعديلات' : 'إضافة العضو للطاقم'}
+              </button>
             </div>
           </div>
         </div>

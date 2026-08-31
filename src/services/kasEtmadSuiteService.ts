@@ -403,6 +403,12 @@ class KasEtmadSuiteService {
     const newCat: KasEtmadCategory = { id: `cat-${Date.now()}`, seq: this.categories.length + 1, name: cat.name, code: cat.code, description: cat.description || '', updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19) };
     this.categories.push(newCat); this.saveToStorage(); return newCat;
   }
+  public updateCategory(id: string, updates: Partial<KasEtmadCategory>): boolean {
+    const idx = this.categories.findIndex(c => c.id === id);
+    if (idx === -1) return false;
+    this.categories[idx] = { ...this.categories[idx], ...updates, updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19) };
+    this.saveToStorage(); return true;
+  }
   public deleteCategory(id: string): boolean {
     const idx = this.categories.findIndex(c => c.id === id);
     if (idx === -1) return false;
@@ -413,6 +419,17 @@ class KasEtmadSuiteService {
   public addStaff(s: { name: string; email: string; role: string; phone?: string }): KasEtmadStaff {
     const newStaff: KasEtmadStaff = { id: `st-${Date.now()}`, name: s.name, email: s.email, role: s.role, lastLogin: 'Never', active: true, phone: s.phone };
     this.staff.push(newStaff); this.saveToStorage(); return newStaff;
+  }
+  public updateStaff(id: string, updates: Partial<KasEtmadStaff>): boolean {
+    const idx = this.staff.findIndex(s => s.id === id);
+    if (idx === -1) return false;
+    this.staff[idx] = { ...this.staff[idx], ...updates };
+    this.saveToStorage(); return true;
+  }
+  public deleteStaff(id: string): boolean {
+    const idx = this.staff.findIndex(s => s.id === id);
+    if (idx === -1) return false;
+    this.staff.splice(idx, 1); this.saveToStorage(); return true;
   }
 
   // Invoices CRUD
