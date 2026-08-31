@@ -299,7 +299,7 @@ export const realErpDataStore = {
         });
       }
 
-      // 5. Sponsorship Transfers Cross-Module Sync
+        // 5. Sponsorship Transfers Cross-Module Sync
       else if (entityKey === 'sponsorship_transfers' || entityKey === 'sponsorship-transfers') {
         const transferFee = parseFloat(record.transfer_fee || 18000);
         const companyCode = record.company_id || 'SAF';
@@ -309,12 +309,57 @@ export const realErpDataStore = {
           description: `تسوية نقل كفالة وتنازل - العاملة: ${record.worker_name} (من: ${record.current_sponsor} إلى: ${record.new_sponsor || 'طرف جديد'})`,
           createdBy: 'نظام تسوية نقل الخدمات',
           autoPost: true,
+          branchName: record.branch || 'فرع الرياض',
           lines: [
             { accountCode: '11010', accountName: 'الصندوق / بنك الراجحي', debit: transferFee, credit: 0 },
             { accountCode: '21010', accountName: 'مستحقات الكفيل المتنازل', debit: 0, credit: transferFee * 0.8 },
             { accountCode: '41300', accountName: 'إيرادات رسوم وساطة التنازل', debit: 0, credit: transferFee * 0.2 }
           ]
         });
+      }
+
+      // 6. Government Tenders & BOQ Awards (KAS Monafasat)
+      else if (entityKey === 'kas_monafasat_master' || entityKey === 'tenders') {
+        const bidVal = parseFloat(record.bidValue || record.winningBidValue || record.bid_amount || 0);
+        const notes = (record.notes || record.rejectionReason || '').toLowerCase();
+        
+        if (bidVal > 0 && (notes.includes('ترسية') || notes.includes('معتمد') || notes.includes('فائز'))) {
+          const companyCode = record.company_id || 'KAS';
+          journalEngine.createJournalEntry(companyCode, {
+            entryDate: record.deadlineDate || todayDate,
+            description: `إثبات ترسية منافسة حكومية #${record.tenderCode || record.referenceNumber} - ${record.title || record.name} (${record.entity || 'الجهة الحكومية'})`,
+            createdBy: 'نظام منافسات كاس التلقائي',
+            autoPost: true,
+            branchName: record.city || 'الرياض',
+            lines: [
+              { accountCode: '11050', accountName: 'مشاريع ومنافسات حكومية تحت التنفيذ', debit: bidVal, credit: 0 },
+              { accountCode: '41200', accountName: 'إيرادات المناقصات والتوريدات الحكومية', debit: 0, credit: bidVal }
+            ]
+          });
+        }
+      }
+
+      // 7. Payroll & WPS Monthly Salary Release
+      else if (entityKey === 'payrolls' || entityKey === 'payroll') {
+        const netSal = parseFloat(record.net_salary || record.netPayable || record.total_salary || 0);
+        const deductions = parseFloat(record.deductions || 0);
+        const totalGross = netSal + deductions;
+        const companyCode = record.company_id || 'SAF';
+
+        if (netSal > 0) {
+          journalEngine.createJournalEntry(companyCode, {
+            entryDate: record.payment_date || todayDate,
+            description: `مسير الرواتب المعتمد لحماية الأجور (WPS) - شهر: ${record.month || todayDate.slice(0, 7)} - موظف: ${record.employee_name || record.name}`,
+            createdBy: 'نظام حماية الأجور WPS',
+            autoPost: true,
+            branchName: record.branch || 'الفرع الرئيسي',
+            lines: [
+              { accountCode: '51010', accountName: 'مصروف رواتب وأجور الموظفين', debit: totalGross, credit: 0 },
+              { accountCode: '21040', accountName: 'استقطاعات وتأمينات مستحقة', debit: 0, credit: deductions },
+              { accountCode: '11020', accountName: 'بنك الراجحي - الحساب التشغيلي', debit: 0, credit: netSal }
+            ]
+          });
+        }
       }
     } catch (e) {
       console.warn('Cross-module business trigger notice:', e);

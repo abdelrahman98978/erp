@@ -99,6 +99,8 @@ const LegalCompliancePage = lazyWithRetry(() => import('./pages/LegalComplianceP
 const TendersBOQPage = lazyWithRetry(() => import('./pages/TendersBOQPage').then(m => ({ default: m.TendersBOQPage })));
 const KasEtimadCloudPage = lazyWithRetry(() => import('./pages/KasEtimadCloudPage').then(m => ({ default: m.KasEtimadCloudPage })));
 const IdentityAccessManagementPage = lazyWithRetry(() => import('./pages/IdentityAccessManagementPage').then(m => ({ default: m.IdentityAccessManagementPage })));
+const ClientPortalPage = lazyWithRetry(() => import('./pages/ClientPortalPage').then(m => ({ default: m.ClientPortalPage })));
+const ForeignAgencyPortalPage = lazyWithRetry(() => import('./pages/ForeignAgencyPortalPage').then(m => ({ default: m.ForeignAgencyPortalPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -492,6 +494,15 @@ const MainContent: React.FC = () => {
 
       case 'custodies':
         return <CustodiesPage />;
+
+      case 'client-portal':
+      case 'clients-portal':
+        return <ClientPortalPage />;
+
+      case 'foreign-agency-portal':
+      case 'agency-portal':
+      case 'agent-portal':
+        return <ForeignAgencyPortalPage />;
 
       default:
         return <DashboardPage onNavigate={handleSelectTab} />;

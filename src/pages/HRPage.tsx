@@ -14,6 +14,7 @@ import {
   Briefcase, Building2, Star, CheckCircle2, UserCog, Edit3,
   FileSignature, Scale, Printer, Fingerprint, Eye, Download, Lock
 } from 'lucide-react';
+import { WpsPayrollEngine, EmployeePayrollRecord, WpsSifHeader } from '../services/wpsPayrollEngine';
 
 export interface EmployeeRecord {
   id: string;
@@ -599,49 +600,106 @@ export const HRPage: React.FC = () => {
     },
   ]);
 
-  const handleExportWPS = () => {
-    const headers = [
-      'رقم الهوية / الإقامة',
-      'اسم الموظف',
-      'اسم البنك',
-      'رقم الحساب (IBAN)',
-      'الراتب الأساسي',
-      'بدل السكن',
-      'بدل النقل',
-      'التأمينات GOSI (9.75%)',
-      'صافي المحول للبنك',
-      'رمز الحالة',
-    ];
+  const handleExportWPS = (format: 'SIF' | 'CSV' = 'SIF') => {
+    const today = new Date();
+    const monthYear = today.toISOString().slice(0, 7);
+    const dateStr = today.toISOString().slice(0, 10);
+    const timeStr = `${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`;
 
-    const rows = employeesList.map((emp) => {
-      const basic = emp.salary * 0.7;
-      const housing = emp.salary * 0.2;
-      const transport = emp.salary * 0.1;
-      const gosi = (basic + housing) * 0.0975;
-      const net = basic + housing + transport - gosi;
-      return [
-        `"${emp.national_id}"`,
-        `"${emp.name}"`,
-        `"مصرف الراجحي"`,
-        `"SA03800000000${emp.national_id}12"`,
-        basic.toFixed(2),
-        housing.toFixed(2),
-        transport.toFixed(2),
-        gosi.toFixed(2),
-        net.toFixed(2),
-        `"PAID"`,
-      ];
+    const payrollRecords: EmployeePayrollRecord[] = employeesList.map((emp, idx) => {
+      const basic = emp.basic_salary || emp.salary * 0.7;
+      const housing = emp.housing_allowance || emp.salary * 0.2;
+      const transport = emp.transport_allowance || emp.salary * 0.1;
+      const other = emp.allowances || 0;
+      const isSaudi = emp.national_id ? emp.national_id.startsWith('1') : true;
+      const gosi = WpsPayrollEngine.calculateGosi(basic, housing, isSaudi).employeeShare;
+      const net = basic + housing + transport + other - gosi;
+
+      return {
+        employeeId: emp.id || `EMP-${idx + 1}`,
+        employeeNumber: emp.employee_code || `EMP${String(idx + 1).padStart(4, '0')}`,
+        nationalIdOrIqama: emp.national_id || `10${String(idx + 1).padStart(8, '0')}`,
+        employeeName: emp.name,
+        bankCode: 'ALRAJHI',
+        iban: emp.iban || `SA03800000000${emp.national_id || '1010101010'}12`,
+        isSaudi,
+        basicSalary: basic,
+        housingAllowance: housing,
+        transportAllowance: transport,
+        otherAllowances: other,
+        deductions: 0,
+        gosiDeduction: gosi,
+        netSalary: net,
+        workingDays: 30,
+      };
     });
 
-    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `WPS_Payroll_KSA_${activeCompany.code}_${new Date().toISOString().slice(0, 7)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const totalAmount = payrollRecords.reduce((sum, r) => sum + r.netSalary, 0);
+
+    if (format === 'SIF') {
+      const header: WpsSifHeader = {
+        employerCrNumber: activeCompany.crNumber || '1010884920',
+        employerName: activeCompany.name,
+        bankRoutingCode: '8000', // Al Rajhi Bank routing
+        fileCreationDate: dateStr,
+        fileCreationTime: timeStr,
+        payrollMonth: monthYear,
+        totalSalariesAmount: totalAmount,
+        totalRecordsCount: payrollRecords.length,
+        currency: 'SAR',
+      };
+
+      const sifContent = WpsPayrollEngine.generateSifFileContent(header, payrollRecords);
+      const blob = new Blob([sifContent], { type: 'text/plain;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `WPS_SIF_${activeCompany.code}_${monthYear.replace('-', '')}.sif`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      addNotification({
+        title: 'توليد ملف حماية الأجور (.SIF)',
+        message: `تم توليد ملف SIF القياسي المعتمد من البنك المركزي ومنصة مدد لـ ${payrollRecords.length} موظفاً بإجمالي ${totalAmount.toLocaleString()} ر.س.`,
+        type: 'success',
+      });
+    } else {
+      const headers = [
+        'رقم الهوية / الإقامة',
+        'اسم الموظف',
+        'اسم البنك',
+        'رقم الحساب (IBAN)',
+        'الراتب الأساسي',
+        'بدل السكن',
+        'بدل النقل',
+        'التأمينات GOSI',
+        'صافي المحول للبنك',
+        'رمز الحالة',
+      ];
+
+      const rows = payrollRecords.map((rec) => [
+        `"${rec.nationalIdOrIqama}"`,
+        `"${rec.employeeName}"`,
+        `"مصرف الراجحي"`,
+        `"${rec.iban}"`,
+        rec.basicSalary.toFixed(2),
+        rec.housingAllowance.toFixed(2),
+        rec.transportAllowance.toFixed(2),
+        rec.gosiDeduction.toFixed(2),
+        rec.netSalary.toFixed(2),
+        `"PAID"`,
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+      const BOM = '\uFEFF';
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `WPS_Payroll_${activeCompany.code}_${monthYear}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   const filteredEmployees = employeesList.filter(
@@ -719,12 +777,23 @@ export const HRPage: React.FC = () => {
           </button>
 
           <button
-            onClick={handleExportWPS}
+            onClick={() => handleExportWPS('SIF')}
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
+            title="توليد ملف حماية الأجور القياسي المعتمد للبنوك السعودية"
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>تصدير WPS</span>
+            <ShieldCheck className="w-4 h-4 ml-1 text-emerald-400" />
+            <span>ملف حماية الأجور (.SIF)</span>
+          </button>
+
+          <button
+            onClick={() => handleExportWPS('CSV')}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
+            title="تصدير شيت مسير الرواتب بصيغة CSV"
+          >
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-teal-400" />
+            <span>تصدير CSV</span>
           </button>
         </div>
       </div>
@@ -1335,14 +1404,26 @@ export const HRPage: React.FC = () => {
                 احتساب التأمينات الاجتماعية (GOSI)، البدلات، والاستقطاعات البنكية المباشرة
               </p>
             </div>
-            <button
-              onClick={handleExportWPS}
-              className="button-primary-pill"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
-            >
-              <FileSpreadsheet className="w-4 h-4 ml-1" />
-              <span>تصدير شيت الرواتب</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleExportWPS('SIF')}
+                className="button-primary-pill bg-emerald-700 hover:bg-emerald-800 text-white"
+                style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
+                title="توليد ملف حماية الأجور القياسي المعتمد للبنوك السعودية"
+              >
+                <ShieldCheck className="w-4 h-4 ml-1" />
+                <span>توليد ملف حماية الأجور (.SIF)</span>
+              </button>
+              <button
+                onClick={() => handleExportWPS('CSV')}
+                className="button-outline-on-dark text-slate-800 border-slate-300 hover:bg-slate-100"
+                style={{ fontSize: '12px', padding: '6px 14px', minHeight: '34px' }}
+                title="تصدير شيت الرواتب بصيغة إكسيل/CSV"
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                <span>تصدير CSV</span>
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">

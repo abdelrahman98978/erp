@@ -13,6 +13,7 @@ export const SIDEBAR_MENU: NavItem[] = [
     icon: 'Contact',
     children: [
       { id: 'clients', title: 'جميع العملاء', icon: 'Users', href: 'clients', badge: 241, badgeType: 'primary' },
+      { id: 'client-portal', title: 'بوابة تتبع العقود للعملاء', icon: 'ShieldCheck', href: 'client-portal', badge: 'جديد', badgeType: 'success' },
       { id: 'new-client', title: 'إضافة عميل جديد', icon: 'UserPlus', href: 'new-client' },
       { id: 'client-blacklist', title: 'القائمة المحظورة', icon: 'UserX', href: 'client-blacklist' },
       { id: 'client-categories', title: 'شرائح وتصنيفات العملاء', icon: 'Tags', href: 'client-categories' },
@@ -155,6 +156,7 @@ export const SIDEBAR_MENU: NavItem[] = [
         icon: 'Globe2',
         children: [
           { id: 'offices', title: 'سجل الوكلاء المعتمدين دولياً', icon: 'Building', href: 'offices' },
+          { id: 'foreign-agency-portal', title: 'بوابة الوكيل الدولي (السير والحسابات)', icon: 'Globe', href: 'foreign-agency-portal', badge: 'جديد', badgeType: 'info' },
           { id: 'agent-imports', title: 'ملفات السير المرفوعة بالدفعة', icon: 'FileDown', href: 'agent-imports' },
           { id: 'agent-accounts', title: 'حسابات ومستحقات الوكلاء', icon: 'Calculator', href: 'agent-accounts' },
         ],
