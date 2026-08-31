@@ -38,51 +38,63 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
 }) => {
   const variantStyles = {
     emerald: {
-      gradient: 'from-emerald-500/10 via-emerald-500/5 to-transparent',
-      border: 'border-emerald-500/20 hover:border-emerald-500/50',
-      iconBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-      glow: 'group-hover:shadow-emerald-500/10',
-      accent: 'text-emerald-600 dark:text-emerald-400',
+      cardBg: 'bg-gradient-to-b from-emerald-500/10 via-emerald-500/[0.03] to-white dark:from-emerald-950/40 dark:via-zinc-900 dark:to-zinc-900',
+      border: 'border-emerald-500/30 hover:border-emerald-500',
+      topBeam: 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600',
+      iconGradient: 'bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-md shadow-emerald-500/30',
+      glow: 'hover:shadow-emerald-500/15',
+      valueColor: 'text-emerald-700 dark:text-emerald-400',
+      badgeBg: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700',
       bar: 'bg-gradient-to-r from-emerald-600 to-teal-400',
     },
     gold: {
-      gradient: 'from-amber-500/10 via-amber-500/5 to-transparent',
-      border: 'border-amber-500/20 hover:border-amber-500/50',
-      iconBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-      glow: 'group-hover:shadow-amber-500/10',
-      accent: 'text-amber-600 dark:text-amber-400',
+      cardBg: 'bg-gradient-to-b from-amber-500/10 via-amber-500/[0.03] to-white dark:from-amber-950/40 dark:via-zinc-900 dark:to-zinc-900',
+      border: 'border-amber-500/30 hover:border-amber-500',
+      topBeam: 'bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600',
+      iconGradient: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/30',
+      glow: 'hover:shadow-amber-500/15',
+      valueColor: 'text-amber-700 dark:text-amber-400',
+      badgeBg: 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300 dark:border-amber-700',
       bar: 'bg-gradient-to-r from-amber-500 to-yellow-400',
     },
     sky: {
-      gradient: 'from-sky-500/10 via-sky-500/5 to-transparent',
-      border: 'border-sky-500/20 hover:border-sky-500/50',
-      iconBg: 'bg-sky-500/10 text-sky-600 dark:text-sky-400',
-      glow: 'group-hover:shadow-sky-500/10',
-      accent: 'text-sky-600 dark:text-sky-400',
+      cardBg: 'bg-gradient-to-b from-sky-500/10 via-sky-500/[0.03] to-white dark:from-sky-950/40 dark:via-zinc-900 dark:to-zinc-900',
+      border: 'border-sky-500/30 hover:border-sky-500',
+      topBeam: 'bg-gradient-to-r from-sky-500 via-cyan-400 to-blue-600',
+      iconGradient: 'bg-gradient-to-br from-sky-500 to-blue-700 text-white shadow-md shadow-sky-500/30',
+      glow: 'hover:shadow-sky-500/15',
+      valueColor: 'text-sky-700 dark:text-sky-400',
+      badgeBg: 'bg-sky-100 text-sky-800 dark:bg-sky-950/80 dark:text-sky-300 border-sky-300 dark:border-sky-700',
       bar: 'bg-gradient-to-r from-sky-500 to-cyan-400',
     },
     purple: {
-      gradient: 'from-purple-500/10 via-purple-500/5 to-transparent',
-      border: 'border-purple-500/20 hover:border-purple-500/50',
-      iconBg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-      glow: 'group-hover:shadow-purple-500/10',
-      accent: 'text-purple-600 dark:text-purple-400',
+      cardBg: 'bg-gradient-to-b from-purple-500/10 via-purple-500/[0.03] to-white dark:from-purple-950/40 dark:via-zinc-900 dark:to-zinc-900',
+      border: 'border-purple-500/30 hover:border-purple-500',
+      topBeam: 'bg-gradient-to-r from-purple-500 via-fuchsia-400 to-indigo-600',
+      iconGradient: 'bg-gradient-to-br from-purple-500 to-indigo-700 text-white shadow-md shadow-purple-500/30',
+      glow: 'hover:shadow-purple-500/15',
+      valueColor: 'text-purple-700 dark:text-purple-400',
+      badgeBg: 'bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300 border-purple-300 dark:border-purple-700',
       bar: 'bg-gradient-to-r from-purple-600 to-indigo-400',
     },
     rose: {
-      gradient: 'from-rose-500/10 via-rose-500/5 to-transparent',
-      border: 'border-rose-500/20 hover:border-rose-500/50',
-      iconBg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400',
-      glow: 'group-hover:shadow-rose-500/10',
-      accent: 'text-rose-600 dark:text-rose-400',
+      cardBg: 'bg-gradient-to-b from-rose-500/10 via-rose-500/[0.03] to-white dark:from-rose-950/40 dark:via-zinc-900 dark:to-zinc-900',
+      border: 'border-rose-500/30 hover:border-rose-500',
+      topBeam: 'bg-gradient-to-r from-rose-500 via-pink-400 to-red-600',
+      iconGradient: 'bg-gradient-to-br from-rose-500 to-red-700 text-white shadow-md shadow-rose-500/30',
+      glow: 'hover:shadow-rose-500/15',
+      valueColor: 'text-rose-700 dark:text-rose-400',
+      badgeBg: 'bg-rose-100 text-rose-800 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 dark:border-rose-700',
       bar: 'bg-gradient-to-r from-rose-500 to-pink-400',
     },
     slate: {
-      gradient: 'from-slate-500/10 via-slate-500/5 to-transparent',
-      border: 'border-slate-200 dark:border-slate-800 hover:border-slate-400',
-      iconBg: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
-      glow: 'group-hover:shadow-slate-500/10',
-      accent: 'text-slate-900 dark:text-white',
+      cardBg: 'bg-gradient-to-b from-slate-500/10 via-slate-500/[0.03] to-white dark:from-slate-800/40 dark:via-zinc-900 dark:to-zinc-900',
+      border: 'border-zinc-300 dark:border-zinc-700 hover:border-zinc-500',
+      topBeam: 'bg-gradient-to-r from-slate-600 via-zinc-400 to-slate-700',
+      iconGradient: 'bg-gradient-to-br from-slate-700 to-zinc-900 text-white shadow-md shadow-slate-700/30',
+      glow: 'hover:shadow-slate-500/15',
+      valueColor: 'text-zinc-800 dark:text-zinc-100',
+      badgeBg: 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-600',
       bar: 'bg-gradient-to-r from-slate-600 to-slate-400',
     },
   };
@@ -92,31 +104,37 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative overflow-hidden rounded-3xl bg-white dark:bg-slate-900/90 border ${style.border} p-5 shadow-lg ${style.glow} hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${
+      className={`group relative overflow-hidden rounded-3xl ${style.cardBg} border ${style.border} p-4 sm:p-5 shadow-sm hover:shadow-xl ${style.glow} transition-all duration-300 transform hover:-translate-y-1.5 flex flex-col justify-between ${
         onClick ? 'cursor-pointer' : ''
       }`}
     >
-      {/* Subtle Background Glow Gradient */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${style.gradient} pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity`} />
+      {/* Top Radiant Color Accent Beam */}
+      <div className={`absolute top-0 right-0 left-0 h-1.5 ${style.topBeam}`} />
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
-        {/* Top Row: Icon + Title + Trend */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-11 h-11 rounded-2xl ${style.iconBg} flex items-center justify-center shadow-inner transition-transform group-hover:scale-110 duration-200`}>
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-3.5 pt-1">
+        {/* Top Row: Icon + Title */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl ${style.iconGradient} flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 group-hover:rotate-3 duration-300`}>
               <Icon className="w-5 h-5" />
             </div>
-            <div>
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">{title}</span>
-              {subtitle && <span className="text-[10px] text-slate-400 dark:text-slate-500">{subtitle}</span>}
+            <div className="min-w-0">
+              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 dark:text-zinc-100 block truncate leading-tight">
+                {title}
+              </span>
+              {subtitle && (
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium block truncate mt-0.5">
+                  {subtitle}
+                </span>
+              )}
             </div>
           </div>
 
           {trend && (
-            <span className={`inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full ${
+            <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full border shrink-0 ${
               trend.isPositive 
-                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' 
-                : 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
+                ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' 
+                : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
             }`}>
               <TrendingUp className={`w-3 h-3 ${trend.isPositive ? '' : 'rotate-180'}`} />
               {trend.value}
@@ -124,9 +142,9 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
           )}
         </div>
 
-        {/* Value */}
+        {/* Big Bold Value */}
         <div className="flex items-baseline justify-between pt-1">
-          <div className={`text-2xl lg:text-3xl font-black font-mono tracking-tight ${style.accent}`}>
+          <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight ${style.valueColor}`}>
             {value}
           </div>
         </div>
@@ -134,11 +152,11 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
         {/* Optional Progress Bar */}
         {progressPct !== undefined && (
           <div className="space-y-1 pt-1">
-            <div className="flex justify-between text-[10px] text-slate-400 font-bold">
+            <div className="flex justify-between text-[10px] text-zinc-500 font-bold">
               <span>نسبة الإنجاز</span>
-              <span>{progressPct}%</span>
+              <span className="font-mono">{progressPct}%</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-zinc-200/60 dark:bg-zinc-800 rounded-full overflow-hidden p-0.5">
               <div className={`h-full rounded-full ${style.bar}`} style={{ width: `${Math.min(progressPct, 100)}%` }} />
             </div>
           </div>
@@ -186,26 +204,22 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
   const isAwarded = tender.status.includes('ترسية') || tender.status.includes('فائز') || tender.status.includes('معتمد');
 
   return (
-    <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md hover:shadow-2xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between space-y-5 overflow-hidden">
+    <div className="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 flex flex-col justify-between space-y-5 overflow-hidden">
       {/* Top Accent Strip */}
       <div className={`absolute top-0 right-0 left-0 h-1.5 ${
         isAwarded 
           ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600' 
-          : 'bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400'
+          : 'bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500'
       }`} />
 
       {/* Header Info */}
-      <div className="space-y-2">
+      <div className="space-y-2 pt-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-xs font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+          <span className="font-mono text-xs font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
             <Hash className="w-3.5 h-3.5" />
             {tender.referenceNumber}
           </span>
-          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${
-            isAwarded
-              ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700'
-              : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-          }`}>
+          <span className={isAwarded ? 'pill-tag-mint text-xs font-bold' : 'pill-tag-shade text-xs font-bold'}>
             {tender.status}
           </span>
         </div>
@@ -214,22 +228,22 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
           {tender.title}
         </h3>
 
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
-          <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+          <Building2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
           <span className="truncate">{tender.clientName}</span>
         </div>
       </div>
 
       {/* Financial & Items Overview Box */}
-      <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2 text-xs">
+      <div className="bg-zinc-50 dark:bg-zinc-800/60 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 space-y-2 text-xs">
         <div className="flex items-baseline justify-between">
-          <span className="text-slate-500 dark:text-slate-400">القيمة شاملة الضريبة:</span>
+          <span className="text-zinc-500 dark:text-zinc-400">القيمة شاملة الضريبة:</span>
           <span className="text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
             {tender.grandTotal.toLocaleString()} <span className="text-xs font-sans">ر.س</span>
           </span>
         </div>
-        <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-          <span>بنود الكراسة: <strong className="text-slate-700 dark:text-slate-300 font-mono">{tender.itemsCount}</strong> بند</span>
+        <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1 border-t border-zinc-200/60 dark:border-zinc-700/60">
+          <span>بنود الكراسة: <strong className="text-zinc-700 dark:text-zinc-300 font-mono">{tender.itemsCount}</strong> بند</span>
           {tender.submissionDate && (
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
@@ -243,7 +257,8 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
       <div className="flex items-center gap-2 pt-1">
         <button
           onClick={onOpenBOQ}
-          className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-2xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2"
+          className="button-primary-pill flex-1 text-xs font-bold flex items-center justify-center gap-2"
+          style={{ minHeight: '36px', padding: '6px 16px' }}
         >
           <FileSpreadsheet className="w-4 h-4" />
           <span>محرر جدول الكميات (BOQ)</span>
@@ -252,7 +267,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
         {onPrint && (
           <button
             onClick={onPrint}
-            className="p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-2xl transition"
+            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 flex items-center justify-center transition"
             title="طباعة العرض الرسمي"
           >
             <Printer className="w-4 h-4" />
@@ -262,7 +277,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
         {onEdit && (
           <button
             onClick={onEdit}
-            className="p-2.5 bg-slate-100 hover:bg-amber-50 hover:text-amber-600 dark:bg-slate-800 dark:hover:bg-amber-950 text-slate-700 dark:text-slate-300 rounded-2xl transition"
+            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-amber-50 hover:text-amber-600 dark:bg-zinc-800 dark:hover:bg-amber-950 text-zinc-700 dark:text-zinc-300 flex items-center justify-center transition"
             title="تعديل المنافسة"
           >
             <Edit3 className="w-4 h-4" />
@@ -272,7 +287,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
         {onDuplicate && (
           <button
             onClick={onDuplicate}
-            className="p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-2xl transition"
+            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 flex items-center justify-center transition"
             title="نسخ المنافسة"
           >
             <Copy className="w-4 h-4" />
@@ -282,7 +297,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
         {onDelete && (
           <button
             onClick={onDelete}
-            className="p-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 dark:bg-slate-800 dark:hover:bg-red-950 text-slate-700 dark:text-slate-300 rounded-2xl transition"
+            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-red-50 hover:text-red-600 dark:bg-zinc-800 dark:hover:bg-red-950 text-zinc-700 dark:text-zinc-300 flex items-center justify-center transition"
             title="حذف المنافسة"
           >
             <Trash2 className="w-4 h-4" />
@@ -324,17 +339,17 @@ export const KasSupplierCard: React.FC<KasSupplierCardProps> = ({
   onEdit,
 }) => {
   return (
-    <div className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md hover:shadow-2xl hover:border-emerald-500/50 transition-all duration-300 space-y-4">
+    <div className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <span className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-lg border border-emerald-200 dark:border-emerald-800">
+          <span className="pill-tag-mint text-[10px] font-bold">
             {supplier.category}
           </span>
-          <h4 className="text-base font-black text-slate-900 dark:text-white mt-1 group-hover:text-emerald-600 transition-colors">
+          <h4 className="text-base font-black text-slate-900 dark:text-white mt-1.5 group-hover:text-emerald-600 transition-colors">
             {supplier.name}
           </h4>
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             <MapPin className="w-3.5 h-3.5" />
             <span>{supplier.city}</span>
             <span>•</span>
@@ -342,40 +357,40 @@ export const KasSupplierCard: React.FC<KasSupplierCardProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 px-2 py-1 rounded-xl border border-amber-200 dark:border-amber-800">
+        <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-800">
           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
           <span className="font-bold text-xs text-amber-700 dark:text-amber-300">{supplier.rating}.0</span>
         </div>
       </div>
 
       {/* Triple Score Metric Bars */}
-      <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl space-y-2 text-xs">
+      <div className="bg-zinc-50 dark:bg-zinc-800/60 p-3.5 rounded-2xl space-y-2 text-xs">
         <div>
           <div className="flex justify-between text-[11px] font-semibold mb-1">
-            <span className="text-slate-600 dark:text-slate-400">جودة المواد والتوريد</span>
-            <span className="font-mono text-emerald-600">{supplier.qualityScore}%</span>
+            <span className="text-zinc-600 dark:text-zinc-400">جودة المواد والتوريد</span>
+            <span className="font-mono font-bold text-emerald-600">{supplier.qualityScore}%</span>
           </div>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 h-1.5 rounded-full overflow-hidden">
             <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${supplier.qualityScore}%` }} />
           </div>
         </div>
 
         <div>
           <div className="flex justify-between text-[11px] font-semibold mb-1">
-            <span className="text-slate-600 dark:text-slate-400">الالتزام بمواعيد التسليم</span>
-            <span className="font-mono text-sky-600">{supplier.commitmentScore}%</span>
+            <span className="text-zinc-600 dark:text-zinc-400">الالتزام بمواعيد التسليم</span>
+            <span className="font-mono font-bold text-sky-600">{supplier.commitmentScore}%</span>
           </div>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 h-1.5 rounded-full overflow-hidden">
             <div className="bg-sky-500 h-full rounded-full" style={{ width: `${supplier.commitmentScore}%` }} />
           </div>
         </div>
 
         <div>
           <div className="flex justify-between text-[11px] font-semibold mb-1">
-            <span className="text-slate-600 dark:text-slate-400">التنافسية السعرية</span>
-            <span className="font-mono text-amber-600">{supplier.priceCompetitiveness}%</span>
+            <span className="text-zinc-600 dark:text-zinc-400">التنافسية السعرية</span>
+            <span className="font-mono font-bold text-amber-600">{supplier.priceCompetitiveness}%</span>
           </div>
-          <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-zinc-200 dark:bg-zinc-700 h-1.5 rounded-full overflow-hidden">
             <div className="bg-amber-500 h-full rounded-full" style={{ width: `${supplier.priceCompetitiveness}%` }} />
           </div>
         </div>
@@ -385,14 +400,16 @@ export const KasSupplierCard: React.FC<KasSupplierCardProps> = ({
       <div className="flex items-center gap-2 pt-1">
         <a
           href={`tel:${supplier.phone}`}
-          className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5"
+          className="button-outline-on-light flex-1 text-xs font-bold flex items-center justify-center gap-1.5"
+          style={{ minHeight: '34px', padding: '6px 14px' }}
         >
           <Phone className="w-3.5 h-3.5 text-emerald-600" />
           <span>اتصال</span>
         </a>
         <a
           href={`mailto:${supplier.email}`}
-          className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5"
+          className="button-outline-on-light flex-1 text-xs font-bold flex items-center justify-center gap-1.5"
+          style={{ minHeight: '34px', padding: '6px 14px' }}
         >
           <Mail className="w-3.5 h-3.5 text-sky-600" />
           <span>بريد</span>
@@ -434,7 +451,7 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
   const grandTotal = invoice.total || (invoice.amount + invoice.taxAmount);
 
   return (
-    <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md hover:shadow-2xl hover:border-emerald-500/50 transition-all duration-300 space-y-4 overflow-hidden">
+    <div className="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/50 transition-all duration-300 space-y-4 overflow-hidden">
       {/* Top Accent line */}
       <div className={`absolute top-0 right-0 left-0 h-1.5 ${
         isPaid 
@@ -443,16 +460,12 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
       }`} />
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+      <div className="flex items-center justify-between pt-1">
+        <span className="font-mono text-xs font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
           <Hash className="w-3.5 h-3.5" />
           {invoice.invoiceNumber}
         </span>
-        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black ${
-          isPaid
-            ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700'
-            : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700'
-        }`}>
+        <span className={isPaid ? 'pill-tag-mint text-xs font-bold' : 'pill-tag-shade text-xs font-bold'}>
           {invoice.status}
         </span>
       </div>
@@ -462,24 +475,24 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
           {invoice.clientName}
         </h4>
         {invoice.project && (
-          <span className="text-xs text-slate-400 mt-0.5 block truncate">
+          <span className="text-xs text-zinc-400 mt-0.5 block truncate">
             المشروع: {invoice.project}
           </span>
         )}
       </div>
 
       {/* Financial Details */}
-      <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2 text-xs">
+      <div className="bg-zinc-50 dark:bg-zinc-800/60 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 space-y-2 text-xs">
         <div className="flex items-baseline justify-between">
-          <span className="text-slate-500 dark:text-slate-400">الإجمالي شامل الضريبة:</span>
+          <span className="text-zinc-500 dark:text-zinc-400">الإجمالي شامل الضريبة:</span>
           <span className="text-lg font-black font-mono text-emerald-600 dark:text-emerald-400">
             {grandTotal.toLocaleString()} <span className="text-xs font-sans">ر.س</span>
           </span>
         </div>
-        <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-700/60">
-          <span>الضريبة (15%): <strong className="text-slate-600 dark:text-slate-300 font-mono">{invoice.taxAmount.toLocaleString()} ر.س</strong></span>
+        <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1 border-t border-zinc-200/60 dark:border-zinc-700/60">
+          <span>الضريبة (15%): <strong className="text-zinc-600 dark:text-zinc-300 font-mono">{invoice.taxAmount.toLocaleString()} ر.س</strong></span>
           <span className="flex items-center gap-1 font-mono">
-            <Clock className="w-3 h-3 text-slate-400" />
+            <Clock className="w-3 h-3 text-zinc-400" />
             استحقاق: {invoice.dueDate}
           </span>
         </div>
@@ -489,7 +502,8 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
       <div className="flex items-center gap-2 pt-1">
         <button
           onClick={onViewZatca}
-          className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-2xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-1.5"
+          className="button-primary-pill flex-1 text-xs font-bold flex items-center justify-center gap-1.5"
+          style={{ minHeight: '36px', padding: '6px 14px' }}
         >
           <QrCode className="w-4 h-4" />
           <span>عرض / ZATCA Phase 2</span>
@@ -498,7 +512,8 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
         {!isPaid && onQuickPay && (
           <button
             onClick={onQuickPay}
-            className="py-2.5 px-3 bg-sky-50 hover:bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300 text-xs font-black rounded-2xl transition"
+            className="button-outline-on-light text-xs font-bold"
+            style={{ minHeight: '36px', padding: '6px 14px' }}
             title="تسجيل سداد"
           >
             سداد
@@ -508,7 +523,7 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
         {onDelete && (
           <button
             onClick={onDelete}
-            className="p-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-600 dark:bg-slate-800 dark:hover:bg-red-950 text-slate-600 rounded-2xl transition"
+            className="w-9 h-9 rounded-full bg-zinc-100 hover:bg-red-50 hover:text-red-600 dark:bg-zinc-800 dark:hover:bg-red-950 text-zinc-600 flex items-center justify-center transition"
             title="حذف الفاتورة"
           >
             <Trash2 className="w-4 h-4" />
