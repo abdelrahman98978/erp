@@ -16,6 +16,8 @@ import {
   MOCK_EMPLOYEES,
 } from '../../data/mockData';
 
+import { realErpDataStore, getDataMode } from '../../services/realErpDataStore';
+
 // --- Generic Table Hook with Cache Invalidation and Fallback ---
 export function useTableData<T = any>(
   tableName: string,
@@ -26,9 +28,11 @@ export function useTableData<T = any>(
   const effectiveCompanyId = options.companyId || (activeCompanyId !== 'all' ? activeCompanyId : undefined);
 
   return useQuery({
-    queryKey: [tableName, effectiveCompanyId, options],
+    queryKey: [tableName, effectiveCompanyId, options, getDataMode()],
     queryFn: async () => {
-      const records = await realErpDataStore.getRecords<any>(tableName, fallbackData);
+      const isProduction = getDataMode() === 'production_real';
+      const effectiveFallback = isProduction ? [] : fallbackData;
+      const records = await realErpDataStore.getRecords<any>(tableName, effectiveFallback);
       if (effectiveCompanyId && records.length > 0) {
         return records.filter((item: any) => !item.company_id && !item.companyId || item.company_id === effectiveCompanyId || item.companyId === effectiveCompanyId || item.companyId === 'all') as T[];
       }
@@ -90,8 +94,6 @@ export function useZatcaInvoices(options: ListOptions = {}) {
 export function useVouchers(options: ListOptions = {}) {
   return useTableData('vouchers', options, []);
 }
-
-import { realErpDataStore } from '../../services/realErpDataStore';
 
 // --- Generic Mutation Hook for Real-time CRUD ---
 export function useTableMutation<T = any>(tableName: string) {

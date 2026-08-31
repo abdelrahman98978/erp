@@ -5,11 +5,13 @@ import { useImpersonation } from '../../contexts/ImpersonationContext';
 import { useIamSession } from '../../contexts/IamSessionContext';
 import { useAppStore } from '../../stores/appStore';
 import { NotificationDropdown } from '../common/NotificationDropdown';
+import { ProductionDataHubModal } from '../database/ProductionDataHubModal';
 import { 
   Menu, Grid, Search, Bell, Maximize, Minimize, MapPin, 
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
   MessageSquare, ShieldCheck, Settings, LogOut, Check, X,
-  Globe, Languages as LanguagesIcon, Building2, ArrowLeftRight
+  Globe, Languages as LanguagesIcon, Building2, ArrowLeftRight,
+  Database
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -39,6 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [showLangDropdown, setShowLangDropdown] = useState<boolean>(false);
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState<boolean>(false);
+  const [showDataHubModal, setShowDataHubModal] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [langSearch, setLangSearch] = useState<string>('');
 
@@ -229,6 +232,16 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <MessageSquare className="w-3 h-3 text-black" />
             <span>اللايف شات</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowDataHubModal(true)}
+            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 transition-colors"
+            title="إدارة قاعدة البيانات الحقيقية واستيراد البيانات الفعلية"
+          >
+            <Database className="w-3 h-3 text-emerald-700" />
+            <span>قاعدة البيانات الحقيقية</span>
           </button>
         </div>
 
@@ -432,6 +445,12 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       </header>
+
+      {/* Production Database & Real Data Management Modal */}
+      <ProductionDataHubModal
+        isOpen={showDataHubModal}
+        onClose={() => setShowDataHubModal(false)}
+      />
     </>
   );
 };

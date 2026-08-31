@@ -1,0 +1,525 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Database, ShieldCheck, RefreshCw, Trash2, Upload, CheckCircle2, 
+  AlertTriangle, Server, ArrowRight, X, FileSpreadsheet, Lock, 
+  Cpu, HardDrive, Download, Key, Activity, Layers
+} from 'lucide-react';
+import { realErpDataStore, getDataMode, setDataMode, ErpDataMode } from '../../services/realErpDataStore';
+import { supabase, isDummySupabase, getStandaloneSupabaseStatus } from '../../services/supabaseClient';
+import { useAppStore } from '../../stores/appStore';
+import { importAnyFileToTable } from '../../services/importEngine';
+
+interface ProductionDataHubModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ isOpen, onClose }) => {
+  const { addNotification } = useAppStore();
+  const [currentMode, setCurrentMode] = useState<ErpDataMode>(getDataMode());
+  const [tableStats, setTableStats] = useState<Record<string, number>>({});
+  const [isTestingConn, setIsTestingConn] = useState(false);
+  const [connStatus, setConnStatus] = useState<{ connected: boolean; message: string; latency?: number }>({
+    connected: !isDummySupabase,
+    message: isDummySupabase ? 'قاعدة بيانات محلية سريعة (Persistent Store)' : 'متصل بسحابة Supabase',
+  });
+
+  const [activeSubTab, setActiveSubTab] = useState<'overview' | 'tables' | 'import' | 'credentials'>('overview');
+
+  // Supabase Custom Config State
+  const [customUrl, setCustomUrl] = useState(() => localStorage.getItem('CUSTOM_SUPABASE_URL') || '');
+  const [customKey, setCustomKey] = useState(() => localStorage.getItem('CUSTOM_SUPABASE_KEY') || '');
+
+  // Import State
+  const [targetTable, setTargetTable] = useState('contracts');
+  const [isImporting, setIsImporting] = useState(false);
+
+  const refreshStats = () => {
+    setTableStats(realErpDataStore.getTableStats());
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentMode(getDataMode());
+      refreshStats();
+      checkConnection();
+    }
+  }, [isOpen]);
+
+  const checkConnection = async () => {
+    setIsTestingConn(true);
+    const start = performance.now();
+    try {
+      const status = await getStandaloneSupabaseStatus();
+      const latency = Math.round(performance.now() - start);
+      setConnStatus({
+        connected: status.connected,
+        message: status.connected ? 'الاتصال نشط ومستقر' : 'قيد التشغيل في الوضع المحلي المعزول',
+        latency,
+      });
+    } catch (e) {
+      setConnStatus({
+        connected: false,
+        message: 'تعذر الاتصال بالخادم السحابي',
+      });
+    } finally {
+      setIsTestingConn(false);
+    }
+  };
+
+  const handleModeChange = (mode: ErpDataMode) => {
+    setDataMode(mode);
+    setCurrentMode(mode);
+    addNotification({
+      title: mode === 'production_real' ? 'تفعيل وضع الإنتاج الحقيقي' : 'تفعيل الوضع التجريبي',
+      message: mode === 'production_real' 
+        ? 'تم تحويل النظام إلى نمط الإنتاج الفعلي: يتم الاعتماد حصرياً على البيانات الحقيقية.' 
+        : 'تم تفعيل وضع المعاينة التجريبية للاستعراض.',
+      type: 'success',
+    });
+    refreshStats();
+    window.location.reload();
+  };
+
+  const handlePurgeData = () => {
+    if (window.confirm('هل أنت متأكد من رغبتك في إفراغ كافة السجلات التجريبية وتصفير الجداول للبدء ببيانات الإنتاج الحقيقية؟ هذا الإجراء فوري.')) {
+      realErpDataStore.purgeAllDemoData();
+      setCurrentMode('production_real');
+      refreshStats();
+      addNotification({
+        title: 'تصفير البيانات التجريبية',
+        message: 'تم إفراغ كافة الجداول بنجاح. النظام الآن جاهز لاستقبال بياناتكم الحقيقية بالكامل.',
+        type: 'success',
+      });
+      setTimeout(() => window.location.reload(), 600);
+    }
+  };
+
+  const handleSaveCredentials = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customUrl || !customKey) return;
+    localStorage.setItem('CUSTOM_SUPABASE_URL', customUrl);
+    localStorage.setItem('CUSTOM_SUPABASE_KEY', customKey);
+    addNotification({
+      title: 'حفظ بيانات الربط',
+      message: 'تم حفظ مفاتيح وقاعدة بيانات Supabase بنجاح. جاري إعادة تحميل الصفحة لتطبيق الإعدادات...',
+      type: 'success',
+    });
+    setTimeout(() => window.location.reload(), 1000);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const result = await importAnyFileToTable(targetTable, file);
+      if (result.success) {
+        addNotification({
+          title: 'اكتمال الاستيراد',
+          message: `تم استيراد ${result.importedCount} سجل حقيقي بنجاح إلى جدول (${targetTable}).`,
+          type: 'success',
+        });
+        refreshStats();
+        setTimeout(() => window.location.reload(), 800);
+      } else {
+        addNotification({
+          title: 'خطأ في الاستيراد',
+          message: result.errors?.[0] || 'تعذر معالجة الملف',
+          type: 'error',
+        });
+      }
+    } catch (err: any) {
+      addNotification({
+        title: 'خطأ غير متوقع',
+        message: err.message || 'فشل الاستيراد',
+        type: 'error',
+      });
+    } finally {
+      setIsImporting(false);
+      e.target.value = '';
+    }
+  };
+
+  if (!isOpen) return null;
+
+  const totalRealRecords = Object.values(tableStats).reduce((a, b) => a + b, 0);
+
+  const tableLabels: Record<string, { label: string; icon: string }> = {
+    contracts: { label: 'عقود الاستقدام الموثقة (مساند)', icon: 'Handshake' },
+    orders: { label: 'طلبات الاستقدام والحجوزات', icon: 'ShoppingCart' },
+    rent_contracts: { label: 'عقود التأجير والتشغيل', icon: 'FileCheck' },
+    clients: { label: 'سجلات وبيانات العملاء', icon: 'Users' },
+    employees: { label: 'كادر الموظفين والموارد البشرية', icon: 'UserCheck' },
+    cvs: { label: 'بنك السير الذاتية والعمالة', icon: 'UserPlus' },
+    shelter_inmates: { label: 'نزيلات مركز الإيواء والضيافة', icon: 'Home' },
+    complaints: { label: 'الشكاوى والنزاعات الرسمية', icon: 'Headphones' },
+    sponsorship_transfers: { label: 'طلبات نقل الكفالة والتنازل', icon: 'Repeat' },
+    ingaz_delegations: { label: 'تفاويض إنجاز والتصديقات', icon: 'FileText' },
+    flights: { label: 'حجوزات الطيران والاستقبال بالمطار', icon: 'Plane' },
+    finance_journals: { label: 'دفاتر قيود اليومية المحاسبية', icon: 'Scale' },
+    finance_vouchers: { label: 'سندات القبض والصرف', icon: 'Receipt' },
+    zatca_invoices: { label: 'فواتير هيئة الزكاة المفسوحة (ZATCA)', icon: 'QrCode' },
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+      <div 
+        className="bg-white rounded-3xl border border-zinc-200 shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+        dir="rtl"
+      >
+        {/* Header */}
+        <div className="p-6 bg-black text-white flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-emerald-400 border border-white/20">
+              <Database className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-white m-0">
+                  إدارة قاعدة البيانات والبيانات الحقيقية (Production Data Hub)
+                </h3>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${currentMode === 'production_real' ? 'bg-emerald-500 text-black' : 'bg-amber-500 text-black'}`}>
+                  {currentMode === 'production_real' ? '⚡ وضع الإنتاج الحقيقي' : '🧪 الوضع التجريبي'}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 m-0 mt-0.5">
+                التحكم بالربط السحابي، إفراغ البيانات التجريبية، واستيراد البيانات الفعلية للشركة
+              </p>
+            </div>
+          </div>
+
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Sub-Tabs Nav */}
+        <div className="flex border-b border-zinc-200 bg-zinc-50 px-6 pt-3 gap-2">
+          <button
+            onClick={() => setActiveSubTab('overview')}
+            className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+              activeSubTab === 'overview'
+                ? 'border-black text-black'
+                : 'border-transparent text-zinc-500 hover:text-black'
+            }`}
+          >
+            <Activity className="w-4 h-4" />
+            <span>نظرة عامة والتحكم</span>
+          </button>
+
+          <button
+            onClick={() => setActiveSubTab('tables')}
+            className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+              activeSubTab === 'tables'
+                ? 'border-black text-black'
+                : 'border-transparent text-zinc-500 hover:text-black'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span>مستكشف الجداول الحية ({totalRealRecords})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveSubTab('import')}
+            className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+              activeSubTab === 'import'
+                ? 'border-black text-black'
+                : 'border-transparent text-zinc-500 hover:text-black'
+            }`}
+          >
+            <Upload className="w-4 h-4" />
+            <span>استيراد ملفات Excel/CSV</span>
+          </button>
+
+          <button
+            onClick={() => setActiveSubTab('credentials')}
+            className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+              activeSubTab === 'credentials'
+                ? 'border-black text-black'
+                : 'border-transparent text-zinc-500 hover:text-black'
+            }`}
+          >
+            <Key className="w-4 h-4" />
+            <span>إعدادات الاتصال وقاعدة البيانات</span>
+          </button>
+        </div>
+
+        {/* Content Body */}
+        <div className="p-6 overflow-y-auto flex-1 space-y-6">
+          {/* Tab 1: Overview & Controls */}
+          {activeSubTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Connection Status Card */}
+              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${connStatus.connected ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-200 text-zinc-700'}`}>
+                    <Server className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-black m-0">حالة محرك البيانات وقاعدة البيانات</h4>
+                      <span className={`w-2 h-2 rounded-full ${connStatus.connected ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                    </div>
+                    <p className="text-[11px] text-zinc-500 m-0 mt-0.5">
+                      {connStatus.message} {connStatus.latency ? `(${connStatus.latency} ms)` : ''}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={checkConnection}
+                    disabled={isTestingConn}
+                    className="button-outline-on-light"
+                    style={{ fontSize: '11.5px', padding: '4px 12px', minHeight: '32px' }}
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ml-1 ${isTestingConn ? 'animate-spin' : ''}`} />
+                    <span>فحص الاتصال</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Mode Selection Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Real Production Card */}
+                <div 
+                  onClick={() => handleModeChange('production_real')}
+                  className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+                    currentMode === 'production_real' 
+                      ? 'border-emerald-500 bg-emerald-50/40 shadow-sm' 
+                      : 'border-zinc-200 bg-white hover:border-zinc-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                      <span className="text-sm font-bold text-black">وضع الإنتاج الحقيقي (موصى به)</span>
+                    </div>
+                    {currentMode === 'production_real' && (
+                      <span className="pill-tag-mint" style={{ fontSize: '10px' }}>الوضع النشط حالياً</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-600 leading-relaxed mb-3">
+                    يعتمد كلياً على سجلاتكم وقواعد بياناتكم الفعلية المدخلة أو المستوردة. لا يظهر أي بيانات وهمية أو تجريبية.
+                  </p>
+                  <ul className="text-[11px] text-zinc-600 space-y-1">
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>حفظ دائم في قاعدة البيانات وسير العمليات</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>ربط تلقائي بالقيود المحاسبية والفواتير المفسوحة</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Demo Preview Card */}
+                <div 
+                  onClick={() => handleModeChange('demo_preview')}
+                  className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
+                    currentMode === 'demo_preview' 
+                      ? 'border-amber-500 bg-amber-50/40 shadow-sm' 
+                      : 'border-zinc-200 bg-white hover:border-zinc-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-5 h-5 text-amber-600" />
+                      <span className="text-sm font-bold text-black">وضع الاستعراض التجريبي (Demo)</span>
+                    </div>
+                    {currentMode === 'demo_preview' && (
+                      <span className="pill-tag-shade" style={{ fontSize: '10px' }}>الوضع النشط حالياً</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-zinc-600 leading-relaxed mb-3">
+                    يستخدم نماذج بيانات افتراضية لتوضيح الشكل العام للوحة والتقارير عند غياب البيانات.
+                  </p>
+                  <ul className="text-[11px] text-zinc-600 space-y-1">
+                    <li className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
+                      <span>بيانات افتراضية للتجربة السريعة</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Purge Demo Data Action */}
+              <div className="p-5 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h4 className="text-xs font-bold text-rose-900 m-0 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                    <span>إفراغ وتصفير البيانات التجريبية بالكامل</span>
+                  </h4>
+                  <p className="text-xs text-rose-700 m-0 mt-1">
+                    حذف كافة السجلات النموذجية في جميع الجداول للبدء بسجل إنتاجي حقيقي ونظيف.
+                  </p>
+                </div>
+
+                <button
+                  onClick={handlePurgeData}
+                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>تصفير البيانات والبدء الفعلي</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Live Tables Inspector */}
+          {activeSubTab === 'tables' && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-zinc-500 font-bold">
+                  الجداول الحقيقية وعدد السجلات المسجلة في كل جدول:
+                </span>
+                <button
+                  onClick={refreshStats}
+                  className="button-outline-on-light"
+                  style={{ fontSize: '11px', padding: '2px 10px', minHeight: '28px' }}
+                >
+                  <RefreshCw className="w-3 h-3 ml-1" />
+                  <span>تحديث الأعداد</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {Object.entries(tableLabels).map(([key, info]) => {
+                  const count = tableStats[key] || 0;
+                  return (
+                    <div 
+                      key={key} 
+                      className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between hover:border-black transition-colors"
+                    >
+                      <div>
+                        <div className="text-xs font-bold text-black">{info.label}</div>
+                        <div className="text-[10px] text-zinc-400 font-mono">table: {key}</div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${count > 0 ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-600'}`}>
+                          {count} سجل
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Tab 3: Bulk Importer */}
+          {activeSubTab === 'import' && (
+            <div className="space-y-5">
+              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200">
+                <label className="block text-xs font-bold text-black mb-2">
+                  اختر الجدول المراد استيراد بياناته الحقيقية:
+                </label>
+                <select
+                  value={targetTable}
+                  onChange={(e) => setTargetTable(e.target.value)}
+                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-bold text-black"
+                >
+                  {Object.entries(tableLabels).map(([k, v]) => (
+                    <option key={k} value={k}>{v.label} ({k})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="p-8 border-2 border-dashed border-zinc-300 rounded-2xl bg-zinc-50 text-center space-y-3">
+                <FileSpreadsheet className="w-10 h-10 text-emerald-600 mx-auto" />
+                <h4 className="text-sm font-bold text-black m-0">
+                  رفع ملف البيانات الحقيقية (Excel, CSV, JSON)
+                </h4>
+                <p className="text-xs text-zinc-500 max-w-md mx-auto">
+                  قم باختيار ملف البيانات الحقيقية الخاص بشركتك ليتم إدراجه فوراً في جدول ({tableLabels[targetTable]?.label || targetTable})
+                </p>
+
+                <div className="pt-2">
+                  <label className="button-black-pill cursor-pointer inline-flex items-center gap-2">
+                    <Upload className="w-4 h-4 ml-1" />
+                    <span>{isImporting ? 'جاري الاستيراد والمعالجة...' : 'اختر ملف من جهازك'}</span>
+                    <input
+                      type="file"
+                      accept=".xlsx,.xls,.csv,.json"
+                      onChange={handleFileUpload}
+                      disabled={isImporting}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 4: Supabase Live Credentials */}
+          {activeSubTab === 'credentials' && (
+            <form onSubmit={handleSaveCredentials} className="space-y-4">
+              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs text-zinc-600 leading-relaxed">
+                يمكنك هنا ربط المنظومة مباشرة بأي قاعدة بيانات Supabase سحابية خاصة بمجموعة خالد السليم.
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-black mb-1">
+                  رابط المشروع (Supabase Project URL):
+                </label>
+                <input
+                  type="text"
+                  placeholder="https://your-project.supabase.co"
+                  value={customUrl}
+                  onChange={(e) => setCustomUrl(e.target.value)}
+                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-black mb-1">
+                  المفتاح العام (Supabase Anon / Public Key):
+                </label>
+                <input
+                  type="password"
+                  placeholder="eyJhbGciOiJIUzI1NiIsIn..."
+                  value={customKey}
+                  onChange={(e) => setCustomKey(e.target.value)}
+                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
+                  dir="ltr"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="button-black-pill w-full flex items-center justify-center gap-2"
+                >
+                  <Lock className="w-4 h-4 ml-1" />
+                  <span>حفظ بيانات الربط والاتصال بقاعدة البيانات</span>
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-xs text-zinc-500">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>نظام بيانات معزول وممتثل لضوابط الهيئة وحماية البيانات الشخصية (PDPL)</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="button-outline-on-light"
+            style={{ fontSize: '11.5px', padding: '4px 14px', minHeight: '32px' }}
+          >
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

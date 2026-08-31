@@ -11,17 +11,42 @@ import { supabase, isDummySupabase } from './supabaseClient';
 import { journalEngine } from './accounting/journalEngine';
 
 const STORAGE_PREFIX = 'ALSULAIM_ERP_DB_V1_';
+const DATA_MODE_KEY = 'ALSULAIM_ERP_DATA_MODE';
 
-function getLocalStore<T>(key: string, initialSeed: T[]): T[] {
+export type ErpDataMode = 'production_real' | 'demo_preview';
+
+export function getDataMode(): ErpDataMode {
+  try {
+    const mode = localStorage.getItem(DATA_MODE_KEY);
+    if (mode === 'demo_preview' || mode === 'production_real') return mode;
+    return 'production_real'; // Default to real production data mode
+  } catch (e) {
+    return 'production_real';
+  }
+}
+
+export function setDataMode(mode: ErpDataMode): void {
+  try {
+    localStorage.setItem(DATA_MODE_KEY, mode);
+    window.dispatchEvent(new CustomEvent('erp-data-mode-changed', { detail: mode }));
+  } catch (e) {
+    // ignore
+  }
+}
+
+function getLocalStore<T>(key: string, initialSeed: T[] = []): T[] {
   try {
     const raw = localStorage.getItem(STORAGE_PREFIX + key);
     if (!raw) {
-      localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(initialSeed));
-      return initialSeed;
+      // In Production Real mode, never seed with mock/dummy data. Start clean!
+      const isProduction = getDataMode() === 'production_real';
+      const defaultData = isProduction ? [] : initialSeed;
+      localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(defaultData));
+      return defaultData;
     }
     return JSON.parse(raw);
   } catch (e) {
-    return initialSeed;
+    return [];
   }
 }
 
@@ -34,6 +59,75 @@ function saveLocalStore<T>(key: string, data: T[]): void {
 }
 
 export const realErpDataStore = {
+  getDataMode,
+  setDataMode,
+
+  /**
+   * Purge all demo / mock records from local storage across all tables
+   * Leaving clean, genuine production tables
+   */
+  purgeAllDemoData(): void {
+    const tables = [
+      'contracts', 'recruitment-contracts', 'rent_contracts', 'rent-contracts',
+      'orders', 'clients', 'employees', 'cvs', 'shelter_inmates', 'shelter_records',
+      'complaints', 'sponsorship_transfers', 'ingaz_delegations', 'flights',
+      'finance_journals', 'finance_vouchers', 'company_journal_entries',
+      'zatca_invoices', 'cost_centers', 'attendances', 'custodies', 'activity_log'
+    ];
+    tables.forEach(table => {
+      try {
+        localStorage.removeItem(STORAGE_PREFIX + table);
+        localStorage.setItem(STORAGE_PREFIX + table, JSON.stringify([]));
+      } catch (e) {
+        // ignore
+      }
+    });
+    setDataMode('production_real');
+    window.dispatchEvent(new CustomEvent('erp-data-purged'));
+  },
+
+  /**
+   * Batch import real production records for any table
+   */
+  async importRealRecordsBatch<T extends { id: string | number }>(
+    entityKey: string,
+    records: T[]
+  ): Promise<T[]> {
+    const current = getLocalStore<T>(entityKey, []);
+    const merged = [...records, ...current.filter(c => !records.some(r => r.id === c.id))];
+    saveLocalStore(entityKey, merged);
+
+    if (!isDummySupabase) {
+      try {
+        await supabase.from(entityKey).upsert(records as any);
+      } catch (e) {
+        console.warn(`Supabase upsert for ${entityKey}:`, e);
+      }
+    }
+
+    // Trigger double entry for each imported record where relevant
+    records.forEach(r => this.triggerAccountingIntegration(entityKey, r));
+    return merged;
+  },
+
+  /**
+   * Get row counts for all database tables
+   */
+  getTableStats(): Record<string, number> {
+    const tables = [
+      'contracts', 'orders', 'rent_contracts', 'clients', 'employees',
+      'cvs', 'shelter_inmates', 'complaints', 'sponsorship_transfers',
+      'ingaz_delegations', 'flights', 'finance_journals', 'finance_vouchers',
+      'zatca_invoices'
+    ];
+    const stats: Record<string, number> = {};
+    tables.forEach(t => {
+      const records = getLocalStore<any>(t, []);
+      stats[t] = records.length;
+    });
+    return stats;
+  },
+
   /**
    * Fetch real records for any module, merging local persistent state with Supabase
    */
@@ -50,7 +144,7 @@ export const realErpDataStore = {
           supabase.from(entityKey).select('*').order('created_at', { ascending: false }),
           timeoutPromise
         ]);
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           saveLocalStore(entityKey, data as unknown as T[]);
           return data as unknown as T[];
         }

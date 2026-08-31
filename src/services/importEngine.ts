@@ -768,3 +768,30 @@ export function downloadTemplate(template: ImportTemplate): void {
   XLSX.utils.book_append_sheet(wb, ws, template.displayName);
   XLSX.writeFile(wb, `قالب_استيراد_${template.displayName}.xlsx`);
 }
+
+/**
+ * Universal Direct Importer for any file to target entity
+ */
+export async function importAnyFileToTable(
+  entityKey: string,
+  file: File
+): Promise<{ success: boolean; importedCount: number; errors?: string[] }> {
+  try {
+    const template = IMPORT_TEMPLATES.find(t => t.entityKey === entityKey) || IMPORT_TEMPLATES[0];
+    const parsed = await parseImportFile(file);
+    const mappings = autoMapColumns(parsed.headers, template);
+    const validation = validateImportData(parsed.rows, mappings, template);
+    const result = await executeImport(validation.valid, template.entityKey);
+    return {
+      success: result.imported > 0 || validation.errors.length === 0,
+      importedCount: result.imported,
+      errors: result.errors.map(e => `سطر ${e.row}: ${e.message}`),
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      importedCount: 0,
+      errors: [err.message || 'فشل معالجة الملف'],
+    };
+  }
+}
