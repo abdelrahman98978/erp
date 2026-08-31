@@ -390,7 +390,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={handleOpenAdd}
-              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+              className="button-primary-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 22px' }}
             >
               <Plus className="w-4 h-4" />
               <span>إضافة منافسة جديدة</span>
@@ -398,7 +399,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
+              style={{ minHeight: '38px', padding: '8px 18px' }}
             >
               <Upload className="w-4 h-4 text-emerald-400" />
               <span>استيراد إكسل</span>
@@ -406,7 +408,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             <button
               onClick={handleExport}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
+              style={{ minHeight: '38px', padding: '8px 18px' }}
             >
               <Download className="w-4 h-4 text-sky-400" />
               <span>تصدير XLSX</span>
@@ -414,7 +417,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             <button
               onClick={() => setIsPrintModalOpen(true)}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
+              style={{ minHeight: '38px', padding: '8px 18px' }}
               title="طباعة كشف المنافسات"
             >
               <Printer className="w-4 h-4 text-amber-300" />
@@ -425,15 +429,12 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
       </div>
 
       {/* Primary Category Selector */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 bg-white dark:bg-slate-900/80 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 max-w-full">
           <button
             onClick={() => handleCategoryChange('companies')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeCategory === 'companies'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
+            className={activeCategory === 'companies' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
+            style={{ padding: '6px 18px', minHeight: '36px' }}
           >
             <Building2 className="w-4 h-4" />
             <span>المؤسسات والأنشطة (6)</span>
@@ -441,11 +442,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
           <button
             onClick={() => handleCategoryChange('medical')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeCategory === 'medical'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
+            className={activeCategory === 'medical' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
+            style={{ padding: '6px 18px', minHeight: '36px' }}
           >
             <Activity className="w-4 h-4" />
             <span>الإدارة الطبية (12 شهراً)</span>
@@ -453,11 +451,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
           <button
             onClick={() => handleCategoryChange('monthly')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeCategory === 'monthly'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
+            className={activeCategory === 'monthly' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
+            style={{ padding: '6px 18px', minHeight: '36px' }}
           >
             <Calendar className="w-4 h-4" />
             <span>المتابعة الشهرية (12 شهراً)</span>
@@ -465,11 +460,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
           <button
             onClick={() => handleCategoryChange('archive')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeCategory === 'archive'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
+            className={activeCategory === 'archive' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
+            style={{ padding: '6px 18px', minHeight: '36px' }}
           >
             <Layers className="w-4 h-4" />
             <span>أرشيف المنافسات (2024 & عامة)</span>
@@ -477,18 +469,15 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
           <button
             onClick={() => handleCategoryChange('all')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-              activeCategory === 'all'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
+            className={activeCategory === 'all' ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
+            style={{ padding: '6px 18px', minHeight: '36px' }}
           >
             <Sparkles className="w-4 h-4 text-amber-400" />
             <span>اللوحة الإجمالية (11,700+ سجل)</span>
           </button>
         </div>
 
-        <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2 font-mono px-3.5 py-2 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0 self-start lg:self-center">
+        <div className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2 font-mono px-3.5 py-1.5 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-200 dark:border-zinc-700 shrink-0 self-start lg:self-center">
           <span className="font-bold">إجمالي السجلات:</span>
           <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono text-sm">{filteredTenders.length.toLocaleString()}</span>
         </div>
@@ -496,8 +485,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
       {/* Sub-sheets Pills (if category is not 'all') */}
       {activeCategory !== 'all' && (
-        <div className="flex items-center gap-2 p-3 bg-white dark:bg-slate-900/80 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-x-auto shadow-xs">
-          <span className="text-xs font-black text-slate-500 dark:text-slate-400 whitespace-nowrap px-2 flex items-center gap-1.5">
+        <div className="flex items-center gap-2 p-3 bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 overflow-x-auto shadow-xs">
+          <span className="text-xs font-black text-zinc-500 dark:text-zinc-400 whitespace-nowrap px-2 flex items-center gap-1.5">
             <FolderSync className="w-4 h-4 text-emerald-600" />
             <span>اختر الشيت:</span>
           </span>
@@ -508,15 +497,15 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
               <button
                 key={s.name}
                 onClick={() => setSelectedSheetName(s.name)}
-                className={`px-4 py-2 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
                   isSelected
                     ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-md'
-                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:bg-slate-100 border border-slate-200 dark:border-slate-700'
+                    : 'bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 border border-zinc-200 dark:border-zinc-700'
                 }`}
               >
                 <span>{s.label}</span>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-black ${
-                  isSelected ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                  isSelected ? 'bg-white/20 text-white' : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300'
                 }`}>
                   {count}
                 </span>

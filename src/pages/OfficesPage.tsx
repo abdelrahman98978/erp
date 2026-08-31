@@ -246,7 +246,8 @@ export const OfficesPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition-all cursor-pointer"
+              className="button-primary-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 22px' }}
             >
               <Plus className="w-4 h-4" />
               <span>إضافة مكتب خارجي جديد</span>
@@ -254,7 +255,8 @@ export const OfficesPage: React.FC = () => {
 
             <button
               onClick={() => exportData('offices', filteredOffices, 'excel')}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
+              style={{ minHeight: '38px', padding: '8px 18px' }}
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
               <span>Excel</span>
@@ -262,7 +264,8 @@ export const OfficesPage: React.FC = () => {
 
             <button
               onClick={() => exportData('offices', filteredOffices, 'pdf')}
-              className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md border border-white/10 transition-all cursor-pointer"
+              className="button-outline-on-dark text-xs font-bold flex items-center gap-1.5"
+              style={{ minHeight: '38px', padding: '8px 18px' }}
             >
               <FileText className="w-4 h-4 text-rose-400" />
               <span>PDF</span>
@@ -307,7 +310,7 @@ export const OfficesPage: React.FC = () => {
       </div>
 
       {/* Filter and View Switcher Toolbar */}
-      <div className="p-4 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex items-center gap-2 overflow-x-auto">
           {countries.map(c => {
             const isActive = countryFilter === c;
@@ -315,11 +318,8 @@ export const OfficesPage: React.FC = () => {
               <button
                 key={c}
                 onClick={() => setCountryFilter(c)}
-                className={`px-4 py-2 rounded-2xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
+                className={isActive ? 'button-primary-pill text-xs font-bold' : 'button-outline-on-light text-xs font-medium'}
+                style={{ padding: '6px 18px', minHeight: '36px' }}
               >
                 {c}
               </button>
@@ -330,24 +330,24 @@ export const OfficesPage: React.FC = () => {
         <div className="flex items-center gap-2">
           {/* Search */}
           <div className="relative min-w-[220px]">
-            <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input
               type="text"
               placeholder="ابحث بالاسم، الحساب، أو المدير..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-3 pr-9 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
+              className="w-full pl-3 pr-9 py-2 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
             />
           </div>
 
           {/* View Toggle */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 p-1 rounded-full border border-zinc-200 dark:border-zinc-700">
             <button
               onClick={() => setViewMode('cards')}
-              className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+              className={`p-2 rounded-full text-xs font-bold flex items-center gap-1 transition-all ${
                 viewMode === 'cards'
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-zinc-900 text-emerald-600 shadow-xs'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
               }`}
               title="عرض الكروت"
             >
@@ -355,10 +355,10 @@ export const OfficesPage: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`p-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
+              className={`p-2 rounded-full text-xs font-bold flex items-center gap-1 transition-all ${
                 viewMode === 'table'
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-zinc-900 text-emerald-600 shadow-xs'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
               }`}
               title="عرض الجدول"
             >

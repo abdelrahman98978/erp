@@ -96,7 +96,8 @@ export const ClientPortalPage: React.FC = () => {
               href="https://wa.me/966500000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-900/40 transition-all"
+              className="button-aloe-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px' }}
             >
               <MessageCircle className="w-4 h-4" />
               <span>خدمة العملاء (واتساب)</span>
@@ -148,26 +149,26 @@ export const ClientPortalPage: React.FC = () => {
             <Plane className="w-5 h-5 text-emerald-600" />
             <span>العقود السارية ومراحل الوصول الحية</span>
           </h2>
-          <span className="text-xs text-slate-500 font-medium">محدث لحظياً عبر مساند</span>
+          <span className="pill-tag-mint text-xs">محدث لحظياً عبر مساند</span>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
           {contracts.map((contract) => (
             <div 
               key={contract.id}
-              className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all space-y-4"
+              className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all space-y-4 bg-white dark:bg-zinc-900"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-black text-sm">
+                  <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-black text-sm border border-emerald-300/40">
                     {contract.nationality === 'إثيوبيا' ? '🇪🇹' : '🇵🇭'}
                   </div>
                   <div>
                     <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
                       {contract.workerName}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span>رقم العقد: <strong className="text-slate-800 dark:text-slate-200">{contract.contractNumber}</strong></span>
+                    <div className="flex items-center gap-2 text-xs text-zinc-500 mt-0.5">
+                      <span>رقم العقد: <strong className="text-zinc-800 dark:text-zinc-200">{contract.contractNumber}</strong></span>
                       <span>•</span>
                       <span>{contract.profession}</span>
                       <span>•</span>
@@ -177,16 +178,13 @@ export const ClientPortalPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    contract.status === 'مكتمل ومسلم' 
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300'
-                      : 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300'
-                  }`}>
+                  <span className={contract.status === 'مكتمل ومسلم' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
                     {contract.status}
                   </span>
                   <button 
                     onClick={() => setSelectedContract(contract)}
-                    className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold flex items-center gap-1"
+                    className="button-outline-on-light text-xs font-bold flex items-center gap-1.5"
+                    style={{ minHeight: '34px', padding: '6px 16px' }}
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>تفاصيل العقد</span>

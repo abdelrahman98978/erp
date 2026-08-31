@@ -500,7 +500,7 @@ export const BranchDepartmentsPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Category Filter Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
           {[
@@ -515,11 +515,8 @@ export const BranchDepartmentsPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveCategoryFilter(tab.id as any)}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all whitespace-nowrap cursor-pointer ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
+                className={isActive ? 'button-primary-pill text-xs font-bold flex items-center gap-1.5' : 'button-outline-on-light text-xs font-medium flex items-center gap-1.5'}
+                style={{ padding: '6px 18px', minHeight: '36px' }}
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{tab.label}</span>
@@ -530,18 +527,18 @@ export const BranchDepartmentsPage: React.FC = () => {
 
         {/* Quick Search */}
         <div className="relative min-w-[260px]">
-          <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
             placeholder="بحث بالاسم، الكود، المدير أو القسم..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-4 pr-10 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
+            className="w-full pl-4 pr-10 py-2 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -560,31 +557,25 @@ export const BranchDepartmentsPage: React.FC = () => {
               className={`p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
                 isSelected
                   ? 'bg-gradient-to-br from-slate-900 to-emerald-950 text-white border-emerald-500/50 shadow-xl shadow-emerald-950/20 scale-[1.02]'
-                  : 'bg-white dark:bg-slate-900/90 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 hover:shadow-md'
+                  : 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 hover:shadow-md'
               }`}
             >
               <div className="flex justify-between items-center mb-3">
-                <span className={`px-2.5 py-1 rounded-xl text-[10px] font-black font-mono border ${
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black font-mono border ${
                   isSelected
                     ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700'
                 }`}>
                   {e.code}
                 </span>
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  e.category === 'شركة مجموعة' 
-                    ? 'bg-purple-50 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300' 
-                    : e.category === 'مكتب خارجي' 
-                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300' 
-                    : 'bg-sky-50 text-sky-700 dark:bg-sky-950/70 dark:text-sky-300'
-                }`}>
+                <span className={isSelected ? 'pill-tag-mint text-[10px]' : 'pill-tag-shade text-[10px]'}>
                   {e.category}
                 </span>
               </div>
 
               <h4 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h4>
               <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
-                isSelected ? 'text-emerald-100/70' : 'text-slate-500 dark:text-slate-400'
+                isSelected ? 'text-emerald-100/70' : 'text-zinc-500 dark:text-zinc-400'
               }`}>
                 <span className="truncate max-w-[140px]">{e.manager}</span>
                 <span className="font-bold text-[11px] shrink-0 font-mono">{e.departments.length} أقسام • {e.staff_count} موظف</span>
@@ -600,28 +591,29 @@ export const BranchDepartmentsPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-xl bg-emerald-600 text-white font-mono font-black text-xs">
+                <span className="px-3 py-1 rounded-full bg-emerald-600 text-white font-mono font-black text-xs">
                   {selectedEntity.code}
                 </span>
-                <span className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold text-xs">
+                <span className="pill-tag-mint text-xs">
                   {selectedEntity.category}
                 </span>
-                <span className="px-3 py-1 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200 dark:border-emerald-800 text-slate-700 dark:text-slate-300 font-bold text-xs font-mono">
+                <span className="pill-tag-shade text-xs font-mono">
                   👥 إجمالي الكادر: {selectedEntity.staff_count} موظف
                 </span>
               </div>
               <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
                 <span>{selectedEntity.name}</span>
-                <span className="text-xs font-normal text-slate-500 dark:text-slate-400 font-medium">({selectedEntity.location})</span>
+                <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 font-medium">({selectedEntity.location})</span>
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+              <p className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">
                 المشرف / المدير المسؤول: <strong className="text-emerald-700 dark:text-emerald-400">{selectedEntity.manager}</strong>
               </p>
             </div>
 
             <button
               onClick={() => setShowAddDeptModal(true)}
-              className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition self-start md:self-center cursor-pointer"
+              className="button-primary-pill text-xs font-black flex items-center gap-2 shadow-lg self-start md:self-center cursor-pointer"
+              style={{ padding: '8px 22px', minHeight: '38px' }}
             >
               <Plus className="w-4 h-4" />
               <span>تطوير وإضافة قسم تخصصي</span>
@@ -638,7 +630,7 @@ export const BranchDepartmentsPage: React.FC = () => {
               <Building2 className="w-5 h-5 text-emerald-600" />
               <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
             </h3>
-            <span className="text-xs font-bold text-slate-500 font-mono">
+            <span className="pill-tag-mint text-xs font-mono">
               {selectedEntity.departments.length} أقسام تشغيلية
             </span>
           </div>
@@ -647,14 +639,14 @@ export const BranchDepartmentsPage: React.FC = () => {
             {selectedEntity.departments.map(dept => (
               <div 
                 key={dept.id} 
-                className="rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/40 transition-all flex flex-col justify-between group"
+                className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/40 transition-all flex flex-col justify-between group bg-white dark:bg-zinc-900"
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center font-bold shadow-xs">
+                    <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center font-bold shadow-xs">
                       <Building2 className="w-6 h-6" />
                     </div>
-                    <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-2xs">
+                    <span className="pill-tag-mint text-xs font-black">
                       {dept.kpi}
                     </span>
                   </div>
@@ -662,17 +654,17 @@ export const BranchDepartmentsPage: React.FC = () => {
                   <h4 className="font-black text-base text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                     {dept.name}
                   </h4>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium mb-4">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium mb-4">
                     {dept.description}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                  <div className="text-slate-500 dark:text-slate-400">
+                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center text-xs">
+                  <div className="text-zinc-500 dark:text-zinc-400">
                     <span>رئيس القسم: </span>
                     <strong className="text-slate-900 dark:text-white font-bold">{dept.head}</strong>
                   </div>
-                  <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 font-mono font-black text-xs">
+                  <span className="pill-tag-shade text-xs font-mono">
                     {dept.staff_count} كوادر
                   </span>
                 </div>
@@ -685,17 +677,17 @@ export const BranchDepartmentsPage: React.FC = () => {
       {/* Add Sub-Department Modal */}
       {showAddDeptModal && selectedEntity && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 text-slate-900 dark:text-white relative">
+          <div className="card-pricing bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 text-slate-900 dark:text-white relative">
             <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
 
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
               <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-emerald-600" />
                 <span>إضافة قسم تخصصي لـ ({selectedEntity.name})</span>
               </h3>
               <button 
                 onClick={() => setShowAddDeptModal(false)} 
-                className="p-2 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:hover:text-white transition"
+                className="p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -709,7 +701,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   placeholder="مثال: إدارة الرعاية الطبية والفحوصات..."
                   value={deptForm.name}
                   onChange={e => setDeptForm({ ...deptForm, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -721,7 +713,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   placeholder="اسم مسؤول القسم..."
                   value={deptForm.head}
                   onChange={e => setDeptForm({ ...deptForm, head: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -733,7 +725,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   placeholder="اكتب مهام وأهداف هذا القسم التخصصي..."
                   value={deptForm.description}
                   onChange={e => setDeptForm({ ...deptForm, description: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-medium text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-medium text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -744,21 +736,23 @@ export const BranchDepartmentsPage: React.FC = () => {
                   type="text"
                   value={deptForm.kpi}
                   onChange={e => setDeptForm({ ...deptForm, kpi: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100 dark:border-zinc-800">
                 <button 
                   type="button" 
                   onClick={() => setShowAddDeptModal(false)} 
-                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition"
+                  className="button-outline-on-light text-xs font-bold"
+                  style={{ padding: '8px 20px' }}
                 >
                   إلغاء
                 </button>
                 <button 
                   type="submit" 
-                  className="px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/25 transition"
+                  className="button-primary-pill text-xs font-bold flex items-center gap-2"
+                  style={{ padding: '8px 22px' }}
                 >
                   <Check className="w-4 h-4" />
                   <span>اعتماد القسم التخصصي</span>

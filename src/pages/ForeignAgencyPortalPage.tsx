@@ -104,7 +104,8 @@ export const ForeignAgencyPortalPage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowUploadModal(true)}
-              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-900/40 transition-all"
+              className="button-aloe-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px' }}
             >
               <UploadCloud className="w-4 h-4" />
               <span>+ رفع دفعة سير ذاتية (Batch CV)</span>
@@ -150,20 +151,23 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       </div>
 
       {/* Search & Actions Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-zinc-900 p-4 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-zinc-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="بحث باسم العاملة أو رقم الجواز..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-3 pr-9 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-3 pr-10 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-800 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <button className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1.5">
+          <button 
+            className="button-outline-on-light text-xs font-bold flex items-center gap-1.5"
+            style={{ minHeight: '36px', padding: '6px 18px' }}
+          >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             <span>تصدير كشف الحساب ($)</span>
           </button>
@@ -171,65 +175,53 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       </div>
 
       {/* Candidates Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="table-card bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 font-bold border-b border-zinc-200 dark:border-zinc-700">
               <tr>
-                <th className="p-3.5">المرشح / العاملة</th>
-                <th className="p-3.5">رقم الجواز</th>
-                <th className="p-3.5">المهنة والجنسية</th>
-                <th className="p-3.5">الفحص الطبي</th>
-                <th className="p-3.5">حالة التأشيرة</th>
-                <th className="p-3.5">تذكرة الطيران</th>
-                <th className="p-3.5">العمولة ($ USD)</th>
-                <th className="p-3.5">حالة السداد</th>
+                <th className="p-4">المرشح / العاملة</th>
+                <th className="p-4">رقم الجواز</th>
+                <th className="p-4">المهنة والجنسية</th>
+                <th className="p-4">الفحص الطبي</th>
+                <th className="p-4">حالة التأشيرة</th>
+                <th className="p-4">تذكرة الطيران</th>
+                <th className="p-4">العمولة ($ USD)</th>
+                <th className="p-4">حالة السداد</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
               {filteredCandidates.map((cand) => (
-                <tr key={cand.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
-                  <td className="p-3.5 font-bold text-slate-900 dark:text-white">
+                <tr key={cand.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors">
+                  <td className="p-4 font-bold text-slate-900 dark:text-white">
                     {cand.maidName}
                   </td>
-                  <td className="p-3.5 font-mono text-slate-700 dark:text-slate-300">
+                  <td className="p-4 font-mono font-medium text-slate-700 dark:text-slate-300">
                     {cand.passportNumber}
                   </td>
-                  <td className="p-3.5 text-slate-600 dark:text-slate-400">
+                  <td className="p-4 text-zinc-600 dark:text-zinc-400">
                     {cand.profession} ({cand.nationality})
                   </td>
-                  <td className="p-3.5">
-                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                      cand.medicalStatus === 'FIT' 
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' 
-                        : 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-                    }`}>
+                  <td className="p-4">
+                    <span className={cand.medicalStatus === 'FIT' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
                       {cand.medicalStatus === 'FIT' ? '✓ لائق طبياً' : '⏳ قيد الفحص'}
                     </span>
                   </td>
-                  <td className="p-3.5">
-                    <span className="px-2.5 py-1 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300 text-[11px] font-bold">
+                  <td className="p-4">
+                    <span className="pill-tag-mint text-xs font-bold">
                       {cand.visaStatus === 'ISSUED' ? '✓ صادرة' : cand.visaStatus === 'READY' ? 'جاهز للتفييز' : 'قيد المعالجة'}
                     </span>
                   </td>
-                  <td className="p-3.5">
-                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                      cand.ticketStatus === 'BOOKED'
-                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
-                        : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
-                    }`}>
+                  <td className="p-4">
+                    <span className={cand.ticketStatus === 'BOOKED' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
                       {cand.ticketStatus === 'BOOKED' ? '✈️ مؤكد الحجز' : 'بانتظار الحجز'}
                     </span>
                   </td>
-                  <td className="p-3.5 font-bold font-mono text-slate-900 dark:text-white">
+                  <td className="p-4 font-bold font-mono text-slate-900 dark:text-white text-sm">
                     ${cand.commissionUsd.toLocaleString()}
                   </td>
-                  <td className="p-3.5">
-                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                      cand.paymentStatus === 'PAID'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300'
-                        : 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300'
-                    }`}>
+                  <td className="p-4">
+                    <span className={cand.paymentStatus === 'PAID' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
                       {cand.paymentStatus === 'PAID' ? '✓ مسدد' : 'مستحق'}
                     </span>
                   </td>
@@ -239,6 +231,63 @@ export const ForeignAgencyPortalPage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Upload Batch CV Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <UploadCloud className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                  رفع دفعة سير ذاتية جديدة (Batch Upload)
+                </h3>
+              </div>
+              <button 
+                onClick={() => setShowUploadModal(false)}
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-600 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl p-8 text-center space-y-3 bg-zinc-50/50 dark:bg-zinc-800/20">
+              <UploadCloud className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
+              <div>
+                <p className="text-xs font-bold text-slate-900 dark:text-white">
+                  اسحب وأفلت ملف إكسيل السير أو ملفات الـ PDF هنا
+                </p>
+                <p className="text-[11px] text-zinc-400 mt-1">
+                  يدعم ملفات .xlsx, .csv, وصور الجوازات والفحوصات الطبية
+                </p>
+              </div>
+              <button className="button-primary-pill text-xs font-bold" style={{ padding: '8px 22px' }}>
+                اختيار ملفات من الجهاز
+              </button>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={() => setShowUploadModal(false)}
+                className="button-outline-on-light text-xs font-bold"
+                style={{ padding: '8px 20px' }}
+              >
+                إلغاء
+              </button>
+              <button
+                onClick={() => {
+                  setShowUploadModal(false);
+                  alert('تم استلام دفعة السير الذاتية وجاري تدقيقها ومطابقتها مع مساند!');
+                }}
+                className="button-primary-pill text-xs font-bold"
+                style={{ padding: '8px 22px' }}
+              >
+                بدء الرفع والتدقيق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
