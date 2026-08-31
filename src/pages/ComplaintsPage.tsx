@@ -109,9 +109,10 @@ export const ComplaintsPage: React.FC = () => {
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' => {
+  const getMappedTab = (tabKey: string): 'tickets' | 'claims' | 'types' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics' => {
     switch (tabKey) {
-      case 'complaint-types':
+      case 'compensation-claims': return 'claims';
+      case 'complaint-types': return 'types';
       case 'complaint-analytics':
       case 'sla-tracking':
         return 'analytics';
@@ -124,7 +125,7 @@ export const ComplaintsPage: React.FC = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'tickets' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<'tickets' | 'claims' | 'types' | 'inter-company' | 'escalated' | 'whatsapp' | 'analytics'>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -363,6 +364,8 @@ export const ComplaintsPage: React.FC = () => {
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'tickets', label: '📥 تذاكر العملاء والدعم' },
+          { id: 'claims', label: '💰 مطالبات التعويض المالي للعملاء (3)' },
+          { id: 'types', label: '⚙️ تصنيفات ومستويات الشكاوى SLA' },
           { id: 'inter-company', label: '🏢 شكاوى ونزاعات الشركات للإدارة العليا' },
           { id: 'escalated', label: '⚡ الشكاوى المصعدة للمشرفين' },
           { id: 'whatsapp', label: '💬 محادثات الواتساب الحية' },
@@ -389,6 +392,109 @@ export const ComplaintsPage: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {/* 1. Compensation Claims View */}
+      {activeTab === 'claims' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-black">
+                مطالبات التعويض المالي واسترجاع المبالغ للعملاء
+              </h3>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                متابعة المطالبات المالية الناتجة عن رفض العمل، الهروب، أو إلغاء العقود وتأكيد التحويلات البنكية
+              </p>
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>3 مطالبات مالية</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم المطالبة</th>
+                  <th className="p-3.5">اسم العميل</th>
+                  <th className="p-3.5">مرجع العقد / التذكرة</th>
+                  <th className="p-3.5">سبب المطالبة</th>
+                  <th className="p-3.5">مبلغ التعويض المقر</th>
+                  <th className="p-3.5">رقم الآيبان (IBAN)</th>
+                  <th className="p-3.5">حالة الصرف والتحويل</th>
+                  <th className="p-3.5 text-center">إجراء مالي</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'CLM-2026-081', client: 'بندر صالح الهويريني', ref: 'RC-2026-0014', reason: 'استرجاع متبقي عقد بعد رفض العمل', amount: 8400, iban: 'SA4480000123608010119283', status: 'معتمد بانتظار التحويل' },
+                  { id: 'CLM-2026-082', client: 'سارة أحمد محمد', ref: 'REC-2026-0089', reason: 'تعويض تأخير وصول أكثر من المدة النظامية', amount: 1500, iban: 'SA1220000001283920194821', status: 'تم التحويل والإيداع' },
+                  { id: 'CLM-2026-083', client: 'شركة دار الرواد', ref: 'RC-2026-0010', reason: 'استرجاع مبلغ تأمين سكن عقد منتهي', amount: 3000, iban: 'SA9050000004810294819203', status: 'معتمد بانتظار التحويل' },
+                ].map((c) => (
+                  <tr key={c.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{c.id}</td>
+                    <td className="p-3.5 font-bold text-black">{c.client}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{c.ref}</td>
+                    <td className="p-3.5 text-zinc-700">{c.reason}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{c.amount.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono text-[11px] text-zinc-600">{c.iban}</td>
+                    <td className="p-3.5"><Badge text={c.status} type={c.status.includes('تم') ? 'success' : 'warning'} /></td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        onClick={() => {
+                          addNotification({
+                            title: 'اعتماد الحوالة البنكية',
+                            message: `تم إصدار أمر التحويل للمطالبة #${c.id} بنجاح.`,
+                            type: 'success',
+                          });
+                        }}
+                        className="button-primary-pill"
+                        style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
+                      >
+                        إصدار تحويل
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Complaint SLA Types View */}
+      {activeTab === 'types' && (
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+          <div className="border-b border-zinc-100 pb-4 mb-4">
+            <h3 className="text-base font-bold text-black">
+              تصنيفات الشكاوى ومصفوفة اتفاقية مستوى الخدمة (SLA Matrix)
+            </h3>
+            <p className="text-xs text-zinc-500 mt-1">
+              المدد الزمنية المحددة للاستجابة والحل، ومسارات التصعيد التلقائي للمشرفين والإدارة العليا
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { type: 'هروب العمالة المنزلية', sla: 'ساعتين (2h)', prio: 'عاجل طارئ جداً', dept: 'فريق العمليات والشرطة ومنصة بلّغ', action: 'إشعار فوري لمساند وتسجيل بلاغ تغيب' },
+              { type: 'رفض العمل / طلب التبديل', sla: '4 ساعات (4h)', prio: 'عاجل طارئ', dept: 'مشرف الإيواء والمصالحة', action: 'استدعاء للإيواء وإجراء جلسة استماع وتوفير بديل' },
+              { type: 'تأخير الوصول وتحديث الرحلات', sla: '12 ساعة (12h)', prio: 'مهم', dept: 'مسؤول المكاتب الخارجية والشحن', action: 'مخاطبة وكالة المصدر وتحديث موعد الطيران' },
+              { type: 'استرجاع وتسوية مالية', sla: '24 ساعة (24h)', prio: 'عادي', dept: 'الإدارة المالية والمحاسبة', action: 'مراجعة سندات القبض وبنود العقد والتحويل للآيبان' },
+              { type: 'شكاوى السلوك والجودة', sla: '8 ساعات (8h)', prio: 'مهم', dept: 'مشرف التوجيه والتأهيل', action: 'جلسة تدريب وتوجيه للعاملة في مقر العميل' },
+              { type: 'شكاوى سكن وإعاشة الإيواء', sla: '4 ساعات (4h)', prio: 'عاجل', dept: 'إدارة مراكز الإيواء', action: 'فحص فوري للغرف والتغذية ومعالجة الملاحظة' },
+            ].map((item, i) => (
+              <div key={i} className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="font-bold text-black text-sm">{item.type}</span>
+                    <Badge text={item.prio} type={item.prio.includes('طارئ') ? 'danger' : 'primary'} />
+                  </div>
+                  <div className="text-xs font-mono font-bold text-emerald-800 mb-2">المهلة الزمنية (SLA): {item.sla}</div>
+                  <div className="text-xs text-zinc-600 mb-1"><strong className="text-zinc-800">القسم المسؤول:</strong> {item.dept}</div>
+                  <div className="text-xs text-zinc-600"><strong className="text-zinc-800">الإجراء:</strong> {item.action}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tab: Inter-Company Disputes */}
       {activeTab === 'inter-company' && (

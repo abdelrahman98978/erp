@@ -131,17 +131,21 @@ export const RentContractsPage: React.FC = () => {
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages' => {
+  const getMappedTab = (tabKey: string): 'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages' | 'drivers' | 'domestic' | 'orders' | 'terms' => {
     switch (tabKey) {
       case 'active-rent': return 'active';
       case 'transferred-rent': return 'delivered';
       case 'completed-rent': return 'completed';
       case 'rent-packages': return 'packages';
+      case 'rental-drivers': return 'drivers';
+      case 'rental-domestic': return 'domestic';
+      case 'rental-orders': return 'orders';
+      case 'rent-contract-terms': return 'terms';
       default: return 'all';
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'sent' | 'locked' | 'delivered' | 'completed' | 'packages' | 'drivers' | 'domestic' | 'orders' | 'terms'>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -344,11 +348,15 @@ export const RentContractsPage: React.FC = () => {
         {[
           { id: 'all', label: `جميع عقود التأجير (${rentContracts.length || 13})` },
           { id: 'active', label: 'عقود نشطة (2)' },
+          { id: 'orders', label: 'طلبات وحجوزات الإيجار (3) 📝' },
+          { id: 'drivers', label: 'سائقين خاصين بنظام التأجير (4) 🚗' },
+          { id: 'domestic', label: 'عاملات منزليات بنظام التأجير (6) 🏠' },
+          { id: 'packages', label: `باقات التأجير (${MOCK_PACKAGES.length || 2})` },
+          { id: 'terms', label: 'بنود وشروط عقد الإيجار ⚖️' },
           { id: 'sent', label: 'عقود مرسلة (1)' },
           { id: 'locked', label: 'عقود موصدة (2)' },
           { id: 'delivered', label: 'تم التسليم (0)' },
           { id: 'completed', label: 'عقود مكتملة (7)' },
-          { id: 'packages', label: `باقات التأجير (${MOCK_PACKAGES.length || 2})` },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -376,8 +384,230 @@ export const RentContractsPage: React.FC = () => {
         })}
       </div>
 
+      {/* 1. Rental Orders View */}
+      {activeTab === 'orders' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              طلبات وحجوزات عقود الإيجار الواردة
+            </h2>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>3 طلبات جديدة</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم الحجز</th>
+                  <th className="p-3.5">اسم العميل</th>
+                  <th className="p-3.5">المهنة المطلوبة</th>
+                  <th className="p-3.5">الجنسية المفضلة</th>
+                  <th className="p-3.5">المدة المطلوبة</th>
+                  <th className="p-3.5">تاريخ البدء</th>
+                  <th className="p-3.5">مبلغ العربون</th>
+                  <th className="p-3.5">الحالة</th>
+                  <th className="p-3.5 text-center">إجراء</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'ORD-R-101', client: 'عبدالله بن سعد الدوسري', job: 'عاملة منزلية بالشهر', nat: 'الفلبين', dur: '3 أشهر', date: '2026-09-01', deposit: 1000, status: 'بانتظار التعميد' },
+                  { id: 'ORD-R-102', client: 'شركة الأفق للمقاولات', job: 'سائق خاص', nat: 'الهند', dur: '12 شهر', date: '2026-08-25', deposit: 2500, status: 'تم الفحص والموافقة' },
+                  { id: 'ORD-R-103', client: 'نورة بنت محمد آل الشيخ', job: 'مربية أطفال', nat: 'إندونيسيا', dur: '6 أشهر', date: '2026-09-05', deposit: 1500, status: 'بانتظار التعميد' },
+                ].map((ord) => (
+                  <tr key={ord.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{ord.id}</td>
+                    <td className="p-3.5 font-bold text-black">{ord.client}</td>
+                    <td className="p-3.5">{ord.job}</td>
+                    <td className="p-3.5">{ord.nat}</td>
+                    <td className="p-3.5 font-bold text-black">{ord.dur}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{ord.date}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{ord.deposit} ر.س</td>
+                    <td className="p-3.5"><Badge text={ord.status} type={ord.status.includes('تم') ? 'success' : 'warning'} /></td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        onClick={() => {
+                          addNotification({
+                            title: 'تحويل الحجز لعقد إيجار',
+                            message: `تم تحويل الطلب #${ord.id} إلى عقد إيجار وتوجيهه للتوقيع.`,
+                            type: 'success',
+                          });
+                        }}
+                        className="button-primary-pill"
+                        style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
+                      >
+                        تحويل لعقد
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Rental Drivers View */}
+      {activeTab === 'drivers' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              سائقين خاصين بنظام التأجير والتشغيل المرن
+            </h2>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>4 سائقين متاحين ومعينين</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">كود السائق</th>
+                  <th className="p-3.5">اسم السائق</th>
+                  <th className="p-3.5">الجنسية</th>
+                  <th className="p-3.5">رقم رخصة القيادة</th>
+                  <th className="p-3.5">حالة الرخصة</th>
+                  <th className="p-3.5">المركبة المسندة</th>
+                  <th className="p-3.5">العميل الحالي</th>
+                  <th className="p-3.5">الراتب الشهري</th>
+                  <th className="p-3.5">حالة التشغيل</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'DRV-01', name: 'RAJESH KUMAR', nat: 'الهند', lic: 'DL-992810', lic_status: 'سارية', car: 'تويوتا كامري 2024 (لوحة 4410)', client: 'عبدالرحمن السليم', salary: 2200, status: 'مؤجر ونشط' },
+                  { id: 'DRV-02', name: 'MOHAMMED ISLAM', nat: 'بنغلاديش', lic: 'DL-882711', lic_status: 'سارية', car: 'هيونداي H1 (لوحة 7721)', client: 'حساب مجموعة السليم', salary: 2000, status: 'مؤجر ونشط' },
+                  { id: 'DRV-03', name: 'ALI HASSAN', nat: 'باكستان', lic: 'DL-119283', lic_status: 'سارية', car: 'نيسان صني (لوحة 3312)', client: 'غير معين (متاح للتأجير)', salary: 2000, status: 'متاح للتعاقد' },
+                  { id: 'DRV-04', name: 'SURESH PATEL', nat: 'الهند', lic: 'DL-773829', lic_status: 'سارية', car: 'غير معين', client: 'غير معين (متاح للتأجير)', salary: 2200, status: 'متاح للتعاقد' },
+                ].map((d) => (
+                  <tr key={d.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{d.id}</td>
+                    <td className="p-3.5 font-bold text-black">{d.name}</td>
+                    <td className="p-3.5">{d.nat}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{d.lic}</td>
+                    <td className="p-3.5"><Badge text={d.lic_status} type="success" /></td>
+                    <td className="p-3.5 font-semibold text-black">{d.car}</td>
+                    <td className="p-3.5 text-zinc-600">{d.client}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{d.salary} ر.س</td>
+                    <td className="p-3.5"><Badge text={d.status} type={d.status.includes('نشط') ? 'purple' : 'success'} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Rental Domestic Maids View */}
+      {activeTab === 'domestic' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              عاملات منزليات بنظام التأجير الشهري والسنوي
+            </h2>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>6 عاملات مسجلات</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">الكود</th>
+                  <th className="p-3.5">اسم العاملة</th>
+                  <th className="p-3.5">الجنسية</th>
+                  <th className="p-3.5">رقم الإقامة / الجواز</th>
+                  <th className="p-3.5">المهنة والمهارات</th>
+                  <th className="p-3.5">العميل الحالي</th>
+                  <th className="p-3.5">تاريخ نهاية عقد التأجير</th>
+                  <th className="p-3.5">سعر الإيجار الشهري</th>
+                  <th className="p-3.5">حالة التوفر</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'DOM-01', name: 'SITI NURHALIZA', nat: 'إندونيسيا', pass: 'IQ-22910481', skill: 'عاملة منزلية + طبخ سعودي', client: 'سعود بن فهد التميمي', end: '2026-11-15', price: 3200, status: 'مؤجرة حالياً' },
+                  { id: 'DOM-02', name: 'MARITESS SANTOS', nat: 'الفلبين', pass: 'IQ-23491029', skill: 'رعاية أطفال + إتقان الإنجليزية', client: 'د. منيرة القحطاني', end: '2026-10-30', price: 3500, status: 'مؤجرة حالياً' },
+                  { id: 'DOM-03', name: 'TIGIST ALEMU', nat: 'إثيوبيا', pass: 'IQ-24810293', skill: 'نظافة وغسيل ورعاية منزلية', client: 'متاح للتعاقد الفوري', end: '-', price: 2800, status: 'متاح للتأجير' },
+                  { id: 'DOM-04', name: 'FATIMA NABATANZI', nat: 'أوغندا', pass: 'IQ-25910284', skill: 'عاملة منزلية ورعاية كبار سن', client: 'متاح للتعاقد الفوري', end: '-', price: 2700, status: 'متاح للتأجير' },
+                ].map((m) => (
+                  <tr key={m.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{m.id}</td>
+                    <td className="p-3.5 font-bold text-black">{m.name}</td>
+                    <td className="p-3.5">{m.nat}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{m.pass}</td>
+                    <td className="p-3.5 text-zinc-700">{m.skill}</td>
+                    <td className="p-3.5 font-bold text-black">{m.client}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{m.end}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{m.price} ر.س</td>
+                    <td className="p-3.5"><Badge text={m.status} type={m.status.includes('مؤجرة') ? 'primary' : 'success'} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Contract Terms View */}
+      {activeTab === 'terms' && (
+        <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '20px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                بنود وضوابط وشروط عقد التأجير الموحد
+              </h2>
+              <p className="text-xs text-zinc-400 mt-1 font-sans">
+                الشروط والالتزامات النظامية المتوافقة مع لوائح وزارة الموارد البشرية والتنمية الاجتماعية
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                addNotification({
+                  title: 'حفظ الشروط المحدثة',
+                  message: 'تم حفظ وتحديث بنود عقد التأجير بنجاح.',
+                  type: 'success',
+                });
+              }}
+              className="button-primary-pill"
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '36px' }}
+            >
+              حفظ التعديلات
+            </button>
+          </div>
+
+          <div className="space-y-4 text-xs">
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <h3 className="font-bold text-black text-sm mb-2">البند الأول: موضوع العقد وطبيعة التشغيل</h3>
+              <p className="text-zinc-700 leading-relaxed">
+                يلتزم الطرف الأول (الشركة المؤجرة) بتوفير خدمات العامل/العاملة المنزلية للطرف الثاني (المستأجر) خلال مدة العقد المحددة، وتبقى كفالة العامل/العاملة تحت مظلة الشركة طوال مدة التشغيل.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <h3 className="font-bold text-black text-sm mb-2">البند الثاني: التزامات الشركة (الطرف الأول)</h3>
+              <p className="text-zinc-700 leading-relaxed">
+                تلتزم الشركة بصرف رواتب العاملة في مواعيدها النظامية، وتوفير التغطية التأمينية الطبية الشاملة، واستبدال العاملة في حال رفض العمل أو العجز الصحي خلال 48 ساعة دون رسوم إضافية.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <h3 className="font-bold text-black text-sm mb-2">البند الثالث: التزامات المستأجر (الطرف الثاني)</h3>
+              <p className="text-zinc-700 leading-relaxed">
+                يلتزم المستأجر بتوفير بيئة سكنية ومعيشية لائقة ومناسبة، وتأمين الوجبات الغذائية، وساعات راحة يومية لا تقل عن 9 ساعات، وعدم تشغيل العاملة لدى أي طرف ثالث أو تكليفها بأعمال خطرة.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
+              <h3 className="font-bold text-black text-sm mb-2">البند الرابع: الشروط الجزائية والتسوية المالية</h3>
+              <p className="text-zinc-700 leading-relaxed">
+                في حال رغبة المستأجر بإنهاء العقد قبل انقضاء مدته يتم خصم قيمة الأيام الفعلية بالإضافة إلى رسوم إدارية بنسبة 10% من قيمة المدة المتبقية، مع إعادة كامل مبلغ التأمين بعد تسليم العاملة واستلام براءة الذمة.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Contracts Table */}
-      {activeTab !== 'packages' && (
+      {['all', 'active', 'sent', 'locked', 'delivered', 'completed'].includes(activeTab) && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
             <div className="relative w-full md:w-80">

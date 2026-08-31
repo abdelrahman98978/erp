@@ -65,12 +65,31 @@ export const IngazPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const [delegations, setDelegations] = useState<IngazDelegation[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     realErpDataStore.getRecords<IngazDelegation>('ingaz_delegations', MOCK_INGAZ_DELEGATIONS).then(data => setDelegations(data));
   }, []);
+
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'all' | 'verified' | 'pending' | 'chamber' | 'visas' => {
+    switch (tabKey) {
+      case 'chamber-commerce': return 'chamber';
+      case 'visa-issuance': return 'visas';
+      case 'verified-ingaz': return 'verified';
+      default: return 'all';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'all' | 'verified' | 'pending' | 'chamber' | 'visas'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'create-ingaz') {
+      setShowModal(true);
+    }
+  }, [storeActiveTab]);
 
   const [formData, setFormData] = useState({
     client_name: '',
@@ -237,6 +256,8 @@ export const IngazPage: React.FC = () => {
         {[
           { id: 'all', label: `جميع التفاويض (${delegations.length})` },
           { id: 'verified', label: 'تفاويض موثقة (Enjaz Valid)' },
+          { id: 'chamber', label: 'تصديقات الغرفة التجارية (4) 🏛️' },
+          { id: 'visas', label: 'التأشيرات الصادرة والجاهزة (6) ✈️' },
           { id: 'pending', label: 'بانتظار الموافقة' },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
@@ -265,87 +286,192 @@ export const IngazPage: React.FC = () => {
         })}
       </div>
 
-      {/* Table Card */}
-      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-        <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
-          <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="ابحث برقم التفويض، اسم العميل، أو التأشيرة..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="text-input"
-              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
-            />
+      {/* 1. Chamber of Commerce View */}
+      {activeTab === 'chamber' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                سجل تصديقات الغرفة التجارية الإلكترونية
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5">توثيق طلبات الاستقدام وتفاويض المكاتب الخارجية بالغرف التجارية السعودية</p>
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>4 تصديقات موثقة</span>
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-            العدد: {filteredDelegations.length} تفويض
-          </span>
-        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs text-zinc-700">
-            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-              <tr>
-                <th className="p-3.5">رقم التفويض</th>
-                <th className="p-3.5">العميل ورقم الهوية</th>
-                <th className="p-3.5">رقم التأشيرة والمهنة</th>
-                <th className="p-3.5">المكتب الخارجي</th>
-                <th className="p-3.5">رسوم التفويض</th>
-                <th className="p-3.5">حالة التوثيق</th>
-                <th className="p-3.5">التاريخ</th>
-                <th className="p-3.5 text-center">الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
-              {filteredDelegations.map((row) => (
-                <tr key={row.id} className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.delegation_number}</td>
-                  <td className="p-3.5">
-                    <div className="font-bold text-black">{row.client_name}</div>
-                    <div className="text-zinc-500 font-mono text-[11px]">هوية: {row.sponsor_id}</div>
-                  </td>
-                  <td className="p-3.5">
-                    <div className="font-mono font-bold text-black">{row.visa_number}</div>
-                    <div className="text-zinc-500 text-[11px]">{row.profession} • {row.nationality}</div>
-                  </td>
-                  <td className="p-3.5 font-semibold text-zinc-700">{row.foreign_office}</td>
-                  <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.fee_amount ?? 0).toFixed(2)} ر.س</td>
-                  <td className="p-3.5">
-                    <Badge
-                      text={row.status}
-                      type={row.status === 'تم التوثيق' ? 'success' : row.status === 'بانتظار الموافقة' ? 'warning' : 'danger'}
-                    />
-                  </td>
-                  <td className="p-3.5 font-mono text-zinc-500">{row.created_at}</td>
-                  <td className="p-3.5 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <button
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => handlePrintDelegation(row)}
-                        title="طباعة وثيقة التفويض الإلكتروني"
-                      >
-                        <Printer className="w-3 h-3 ml-1" />
-                        <span>طباعة</span>
-                      </button>
-                      <button
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        onClick={() => handleSyncWithEnjaz(row)}
-                        title="تحديث والتحقق مع منصة إنجاز ومساند"
-                      >
-                        <RefreshCw className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم طلب التصديق</th>
+                  <th className="p-3.5">الغرفة التجارية</th>
+                  <th className="p-3.5">اسم المنشأة / العميل</th>
+                  <th className="p-3.5">نوع الوثيقة المصدقة</th>
+                  <th className="p-3.5">رقم السجل التجاري</th>
+                  <th className="p-3.5">رسوم التصديق</th>
+                  <th className="p-3.5">تاريخ التصديق</th>
+                  <th className="p-3.5">حالة التوثيق</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'COC-2026-991', chamber: 'غرفة الرياض التجارية', name: 'شركة السليم الدولية للاستقدام', doc: 'تفويض استقدام عمالة منزلية لمكتب مانيلا', cr: '1010784920', fee: 35, date: '2026-08-30', status: 'مصدق إلكترونياً' },
+                  { id: 'COC-2026-992', chamber: 'غرفة الرياض التجارية', name: 'شركة توباز المتميزة', doc: 'عقد إرسالية وكالة توظيف أديس أبابا', cr: '1010892011', fee: 35, date: '2026-08-29', status: 'مصدق إلكترونياً' },
+                  { id: 'COC-2026-993', chamber: 'غرفة جدة التجارية', name: 'شركة ياقوت نجد للاستقدام', doc: 'تفويض وكالة كولومبو سريلانكا', cr: '4030192847', fee: 35, date: '2026-08-28', status: 'مصدق إلكترونياً' },
+                  { id: 'COC-2026-994', chamber: 'غرفة الشرقية', name: 'شركة دار الرواد', doc: 'خطاب تفويض بنغلاديش دكا', cr: '2050119284', fee: 35, date: '2026-08-27', status: 'مصدق إلكترونياً' },
+                ].map((c) => (
+                  <tr key={c.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{c.id}</td>
+                    <td className="p-3.5 font-bold text-black">{c.chamber}</td>
+                    <td className="p-3.5 font-bold text-zinc-800">{c.name}</td>
+                    <td className="p-3.5 text-zinc-600">{c.doc}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{c.cr}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{c.fee} ر.س</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{c.date}</td>
+                    <td className="p-3.5"><Badge text={c.status} type="success" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* 2. Ready Visas Full View */}
+      {activeTab === 'visas' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                سجل التأشيرات الصادرة والجاهزة للتفويض والربط
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5">تأشيرات الاستقدام الصادرة من وزارة الخارجية ومنصة مساند الجاهزة للربط الفوري</p>
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>6 تأشيرات نشطة</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم التأشيرة</th>
+                  <th className="p-3.5">اسم الكفيل / صاحب العمل</th>
+                  <th className="p-3.5">رقم الهوية الوطنية</th>
+                  <th className="p-3.5">المهنة</th>
+                  <th className="p-3.5">الجنسية وجهة القدوم</th>
+                  <th className="p-3.5">تاريخ الإصدار</th>
+                  <th className="p-3.5">صلاحية التأشيرة</th>
+                  <th className="p-3.5">حالة الربط</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { visa: '1300984521', sponsor: 'نايف بن عبدالعزيز القحطاني', nat_id: '1098452391', job: 'عاملة منزلية', country: 'إثيوبيا (أديس أبابا)', issue: '2026-07-28', exp: 'متبقي 88 يوماً', status: 'مفوضة وجاهزة' },
+                  { visa: '1300762145', sponsor: 'سليمان بن فهد العتيبي', nat_id: '1029384756', job: 'سائق خاص', country: 'الهند (نيودلهي)', issue: '2026-07-29', exp: 'متبقي 89 يوماً', status: 'مفوضة وجاهزة' },
+                  { visa: '1400293847', sponsor: 'شركة الخالد للتشغيل', nat_id: '7019283746', job: 'عامل مهني', country: 'الفلبين (مانيلا)', issue: '2026-07-30', exp: 'متبقي 90 يوماً', status: 'مفوضة وجاهزة' },
+                  { visa: '1300119283', sponsor: 'عبدالرحمن محمد السليم', nat_id: '1088273619', job: 'عاملة منزلية', country: 'الفلبين (مانيلا)', issue: '2026-08-10', exp: 'متبقي 100 يوماً', status: 'بانتظار التفويض' },
+                  { visa: '1300448192', sponsor: 'بندر صالح الهويريني', nat_id: '1055774494', job: 'عاملة منزلية', country: 'الفلبين (مانيلا)', issue: '2026-08-12', exp: 'متبقي 102 يوماً', status: 'مفوضة وجاهزة' },
+                ].map((v) => (
+                  <tr key={v.visa} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{v.visa}</td>
+                    <td className="p-3.5 font-bold text-black">{v.sponsor}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{v.nat_id}</td>
+                    <td className="p-3.5 font-semibold text-black">{v.job}</td>
+                    <td className="p-3.5 text-zinc-600">{v.country}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{v.issue}</td>
+                    <td className="p-3.5 font-semibold text-emerald-800">{v.exp}</td>
+                    <td className="p-3.5"><Badge text={v.status} type={v.status.includes('مفوضة') ? 'success' : 'warning'} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Table Card */}
+      {['all', 'verified', 'pending'].includes(activeTab) && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="ابحث برقم التفويض، اسم العميل، أو التأشيرة..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="text-input"
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+              />
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              العدد: {filteredDelegations.length} تفويض
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم التفويض</th>
+                  <th className="p-3.5">العميل ورقم الهوية</th>
+                  <th className="p-3.5">رقم التأشيرة والمهنة</th>
+                  <th className="p-3.5">المكتب الخارجي</th>
+                  <th className="p-3.5">رسوم التفويض</th>
+                  <th className="p-3.5">حالة التوثيق</th>
+                  <th className="p-3.5">التاريخ</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {filteredDelegations.map((row) => (
+                  <tr key={row.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{row.delegation_number}</td>
+                    <td className="p-3.5">
+                      <div className="font-bold text-black">{row.client_name}</div>
+                      <div className="text-zinc-500 font-mono text-[11px]">هوية: {row.sponsor_id}</div>
+                    </td>
+                    <td className="p-3.5">
+                      <div className="font-mono font-bold text-black">{row.visa_number}</div>
+                      <div className="text-zinc-500 text-[11px]">{row.profession} • {row.nationality}</div>
+                    </td>
+                    <td className="p-3.5 font-semibold text-zinc-700">{row.foreign_office}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.fee_amount ?? 0).toFixed(2)} ر.س</td>
+                    <td className="p-3.5">
+                      <Badge
+                        text={row.status}
+                        type={row.status === 'تم التوثيق' ? 'success' : row.status === 'بانتظار الموافقة' ? 'warning' : 'danger'}
+                      />
+                    </td>
+                    <td className="p-3.5 font-mono text-zinc-500">{row.created_at}</td>
+                    <td className="p-3.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          className="button-outline-on-light"
+                          style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                          onClick={() => handlePrintDelegation(row)}
+                          title="طباعة وثيقة التفويض الإلكتروني"
+                        >
+                          <Printer className="w-3 h-3 ml-1" />
+                          <span>طباعة</span>
+                        </button>
+                        <button
+                          className="button-outline-on-light"
+                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          onClick={() => handleSyncWithEnjaz(row)}
+                          title="تحديث والتحقق مع منصة إنجاز ومساند"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {showModal && (

@@ -82,7 +82,23 @@ export const TravelPage: React.FC = () => {
   const { activeCompany } = useCompany();
   const { addNotification } = useAppStore();
   const [flights, setFlights] = useState<FlightRecord[]>([]);
-  const [activeTab, setActiveTab] = useState<'all' | 'arrivals' | 'deportations'>('all');
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const getMappedTab = (tabKey: string): 'all' | 'arrivals' | 'deportations' | 'reception' => {
+    switch (tabKey) {
+      case 'airport-reception': return 'reception';
+      case 'deportation-travel': return 'deportations';
+      case 'arrivals-travel': return 'arrivals';
+      default: return 'all';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'all' | 'arrivals' | 'deportations' | 'reception'>(() => getMappedTab(storeActiveTab));
+
+  useEffect(() => {
+    setActiveTab(getMappedTab(storeActiveTab));
+  }, [storeActiveTab]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -243,7 +259,8 @@ export const TravelPage: React.FC = () => {
         {[
           { id: 'all', label: `جميع الرحلات (${flights.length})` },
           { id: 'arrivals', label: 'رحلات الوصول (Arrivals)' },
-          { id: 'deportations', label: 'رحلات الترحيل (Deportation)' },
+          { id: 'reception', label: 'سجل استقبال المطارات والنقل (4) 🚐' },
+          { id: 'deportations', label: 'رحلات الترحيل والمغادرة (Deportation)' },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -271,8 +288,74 @@ export const TravelPage: React.FC = () => {
         })}
       </div>
 
+      {/* Airport Reception View */}
+      {activeTab === 'reception' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                سجل استقبال المطارات وتفويج ونقل العمالة
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5">جدول استقبال الصالات، السائقين المكلفين، وتأكيد البصمة والتسليم للإيواء</p>
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>4 عمليات نقل اليوم</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم المهمة</th>
+                  <th className="p-3.5">العاملة والجنسية</th>
+                  <th className="p-3.5">المطار والصالة</th>
+                  <th className="p-3.5">موعد الوصول</th>
+                  <th className="p-3.5">السائق والمركبة</th>
+                  <th className="p-3.5">الوجهة المستهدفة</th>
+                  <th className="p-3.5">حالة البصمة والاستقبال</th>
+                  <th className="p-3.5 text-center">إجراء الاستقبال</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'REC-RUH-01', maid: 'MARIA SANTOS CORTEZ', nat: 'الفلبين', airport: 'مطار الملك خالد - صالة 2', time: '14:30', driver: 'محمد السائق (حافلة 12)', dest: 'مركز إيواء الرياض الرئيسي', status: 'تم الاستقبال بنجاح' },
+                  { id: 'REC-JED-02', maid: 'ALEMITU BEKELE', nat: 'إثيوبيا', airport: 'مطار الملك عبدالعزيز - الصالة 1', time: '09:15', driver: 'أحمد السائق (فان 05)', dest: 'مركز ترانزيت جدة', status: 'تم الاستقبال بنجاح' },
+                  { id: 'REC-RUH-03', maid: 'JOYCE MWANGI', nat: 'كينيا', airport: 'مطار الملك خالد - صالة 2', time: '18:45', driver: 'سعيد القحطاني (حافلة 14)', dest: 'تسليم مباشر للعميل', status: 'بانتظار هبوط الطائرة' },
+                  { id: 'REC-DMM-04', maid: 'FATIMA NABATANZI', nat: 'أوغندا', airport: 'مطار الملك فهد بالدمام', time: '21:00', driver: 'خالد السائق (فان 08)', dest: 'مركز إيواء الدمام', status: 'بانتظار هبوط الطائرة' },
+                ].map((r) => (
+                  <tr key={r.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{r.id}</td>
+                    <td className="p-3.5 font-bold text-black">{r.maid} <span className="text-zinc-500 font-normal">({r.nat})</span></td>
+                    <td className="p-3.5 font-semibold text-black">{r.airport}</td>
+                    <td className="p-3.5 font-mono text-black">{r.time}</td>
+                    <td className="p-3.5 text-zinc-700">{r.driver}</td>
+                    <td className="p-3.5 font-bold text-purple-700">{r.dest}</td>
+                    <td className="p-3.5"><Badge text={r.status} type={r.status.includes('تم') ? 'success' : 'warning'} /></td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        onClick={() => {
+                          addNotification({
+                            title: 'تأكيد استلام العاملة',
+                            message: `تم توثيق استلام العاملة (${r.maid}) وتسليمها للوجهة بنجاح.`,
+                            type: 'success',
+                          });
+                        }}
+                        className="button-primary-pill"
+                        style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
+                      >
+                        تأكيد النقل
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Flights Table */}
-      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+      {['all', 'arrivals', 'deportations'].includes(activeTab) && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
@@ -359,6 +442,7 @@ export const TravelPage: React.FC = () => {
           </table>
         </div>
       </div>
+      )}
 
       {/* Add Flight Modal */}
       {showAddModal && (

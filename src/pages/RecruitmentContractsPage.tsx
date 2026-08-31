@@ -140,7 +140,7 @@ export const RecruitmentContractsPage: React.FC = () => {
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns' => {
+  const getMappedTab = (tabKey: string): 'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns' | 'musaned' | 'insurance' => {
     switch (tabKey) {
       case 'current-contracts': return 'active';
       case 'completed-contracts': return 'completed';
@@ -148,11 +148,13 @@ export const RecruitmentContractsPage: React.FC = () => {
       case 'dispatches': return 'dispatches';
       case 'contract-extension-requests': return 'extensions';
       case 'contract-return-requests': return 'returns';
+      case 'musaned-sync': return 'musaned';
+      case 'contract-insurance': return 'insurance';
       default: return 'all';
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<'all' | 'active' | 'completed' | 'returned' | 'dispatches' | 'extensions' | 'returns' | 'musaned' | 'insurance'>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -424,11 +426,13 @@ export const RecruitmentContractsPage: React.FC = () => {
         {[
           { id: 'all', label: `جميع عقود الاستقدام (${contracts.length || 115})` },
           { id: 'active', label: 'العقود السارية (27)' },
+          { id: 'musaned', label: 'مزامنة مساند ⚡' },
+          { id: 'insurance', label: 'بوالص التأمين (3) 🛡️' },
+          { id: 'dispatches', label: `إرساليات المكتب الخارجي (${MOCK_DISPATCHES.length})` },
+          { id: 'extensions', label: `طلبات تمديد العقود (${MOCK_EXTENSIONS.length})` },
+          { id: 'returns', label: `طلبات استرجاع العقود (${MOCK_RETURNS.length})` },
           { id: 'completed', label: 'العقود المكتملة (2)' },
           { id: 'returned', label: 'العقود المرتجعة (11)' },
-          { id: 'dispatches', label: `إرساليات المكتب الخارجي (${MOCK_DISPATCHES.length || 26})` },
-          { id: 'extensions', label: `طلبات تمديد العقود (${MOCK_EXTENSIONS.length || 1})` },
-          { id: 'returns', label: `طلبات استرجاع العقود (${MOCK_RETURNS.length || 1})` },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -455,6 +459,309 @@ export const RecruitmentContractsPage: React.FC = () => {
           );
         })}
       </div>
+
+      {/* 1. Musaned Sync Full View */}
+      {activeTab === 'musaned' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="pill-tag-mint" style={{ fontSize: '11px' }}>MUSANED API GATEWAY V2</span>
+                </div>
+                <h2 className="display-sm" style={{ fontSize: '20px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  حالة المزامنة والربط المباشر مع منصة مساند الحكومية
+                </h2>
+                <p className="text-xs text-zinc-400 mt-1 font-sans">
+                  مزامنة لحظية لحالات العقود، التوثيق الإلكتروني، تحصيل رسوم الاستقدام، ومواعيد وصول العمالة
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  addNotification({
+                    title: 'مزامنة مساند',
+                    message: 'تمت مزامنة جميع العقود والحجوزات بنجاح مع منصة مساند الحكومية.',
+                    type: 'success',
+                  });
+                }}
+                className="button-primary-pill"
+                style={{ fontSize: '12.5px', padding: '8px 22px', minHeight: '40px' }}
+              >
+                <span>⚡ بدء المزامنة الفورية الآن</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-500 font-semibold block">حالة الاتصال بالبوابة الحكومية</span>
+                <span className="text-sm font-bold text-emerald-700 block mt-1">متصل ومفعل (200 OK)</span>
+                <span className="text-[11px] text-zinc-400 font-mono">Ping: 34ms • SSL TLS 1.3</span>
+              </div>
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-500 font-semibold block">آخر مزامنة ناجحة</span>
+                <span className="text-sm font-bold text-black block mt-1">اليوم - 10:45:22 AM</span>
+                <span className="text-[11px] text-zinc-400 font-mono">115 عقداً محدثاً بالكامل</span>
+              </div>
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-500 font-semibold block">معرف المنشأة بمساند (Company ID)</span>
+                <span className="text-sm font-bold text-black font-mono block mt-1">MSN-EST-7019284</span>
+                <span className="text-[11px] text-zinc-400">اعتماد وزارة الموارد البشرية</span>
+              </div>
+            </div>
+
+            {/* Live Logs Table */}
+            <div className="mt-6">
+              <h3 className="text-xs font-bold text-black mb-3">سجل عمليات المزامنة والتحديثات اللحظية:</h3>
+              <div className="divide-y divide-zinc-100 border border-zinc-200 rounded-xl overflow-hidden text-xs">
+                {[
+                  { id: '1', time: '10:45:22', event: 'مزامنة 12 عقداً جديداً من منصة مساند', status: 'نجاح' },
+                  { id: '2', time: '09:30:15', event: 'تحديث حالة التأشيرات لـ 5 عقود في مرحلة التفييز', status: 'نجاح' },
+                  { id: '3', time: '08:15:00', event: 'التحقق الدوري من شهادات الفحص الطبي بالربط المباشر', status: 'نجاح' },
+                ].map(log => (
+                  <div key={log.id} className="p-3.5 flex items-center justify-between bg-white hover:bg-zinc-50">
+                    <div className="flex items-center gap-3">
+                      <span className="pill-tag-shade font-mono" style={{ fontSize: '10px' }}>{log.time}</span>
+                      <span className="font-semibold text-black">{log.event}</span>
+                    </div>
+                    <span className="pill-tag-mint" style={{ fontSize: '10px' }}>{log.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Insurance Policies Full View */}
+      {activeTab === 'insurance' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+            <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  بوالص التأمين الإلزامية على عقود العمالة المنزلية (24 شهراً)
+                </h2>
+                <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                  حماية صاحب العمل والعاملة المنزلية ضد انقطاع العمل، هروب العمالة، الوفاة، أو التعويضات المالية
+                </p>
+              </div>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                وثائق سارية: 3 بوالص
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3.5">رقم البوليصة</th>
+                    <th className="p-3.5">رقم العقد</th>
+                    <th className="p-3.5">العميل</th>
+                    <th className="p-3.5">العاملة</th>
+                    <th className="p-3.5">شركة التأمين المعتمدة</th>
+                    <th className="p-3.5">التغطية التأمينية</th>
+                    <th className="p-3.5">فترة السريان</th>
+                    <th className="p-3.5">قسط التأمين</th>
+                    <th className="p-3.5">الحالة</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {[
+                    {
+                      id: 'INS-01',
+                      contract_number: 'SAF-RC-2026-0001',
+                      client_name: 'بندر صالح الهويريني',
+                      maid_name: 'MARIA SANTOS',
+                      company: 'شركة تكافل الراجحي للتأمين',
+                      policy_no: 'TR-REC-9982104',
+                      coverage: '24 شهراً (شامل الهروب ورفض العمل والوفاة)',
+                      status: 'سارية المفعول',
+                      start_date: '2026-01-15',
+                      end_date: '2028-01-14',
+                      premium_sar: 450,
+                    },
+                    {
+                      id: 'INS-02',
+                      contract_number: 'SAF-RC-2026-0002',
+                      client_name: 'سارة خالد الدوسري',
+                      maid_name: 'ALEMITU BEKELE',
+                      company: 'الشركة التعاونية للتأمين (Tawuniya)',
+                      policy_no: 'TAW-2026-887412',
+                      coverage: '24 شهراً (شامل تكاليف إعادة الاستقدام)',
+                      status: 'سارية المفعول',
+                      start_date: '2026-02-01',
+                      end_date: '2028-01-31',
+                      premium_sar: 450,
+                    },
+                    {
+                      id: 'INS-03',
+                      contract_number: 'SAF-RC-2026-0003',
+                      client_name: 'محمد عبدالله العتيبي',
+                      maid_name: 'JOYCE MWANGI',
+                      company: 'شركة سلامة للتأمين التعاوني',
+                      policy_no: 'SLM-REC-554190',
+                      coverage: '24 شهراً (حماية أصحاب العمل)',
+                      status: 'سارية المفعول',
+                      start_date: '2026-03-10',
+                      end_date: '2028-03-09',
+                      premium_sar: 450,
+                    },
+                  ].map(pol => (
+                    <tr key={pol.id} className="hover:bg-zinc-50">
+                      <td className="p-3.5 font-mono font-bold text-black">{pol.policy_no}</td>
+                      <td className="p-3.5 font-mono text-zinc-600">{pol.contract_number}</td>
+                      <td className="p-3.5 font-bold text-black">{pol.client_name}</td>
+                      <td className="p-3.5 text-black">{pol.maid_name}</td>
+                      <td className="p-3.5 font-bold text-emerald-800">{pol.company}</td>
+                      <td className="p-3.5 text-zinc-600">{pol.coverage}</td>
+                      <td className="p-3.5 font-mono text-zinc-500">{pol.start_date} إلى {pol.end_date}</td>
+                      <td className="p-3.5 font-mono font-bold text-black">{pol.premium_sar} ر.س</td>
+                      <td className="p-3.5"><Badge text={pol.status} type="success" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Dispatches Full View */}
+      {activeTab === 'dispatches' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              سجل إرساليات المكاتب الخارجية وتفويج العمالة
+            </h2>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              الإرساليات النشطة: {MOCK_DISPATCHES.length} إرسالية
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">كود الإرسالية</th>
+                  <th className="p-3.5">رقم العقد</th>
+                  <th className="p-3.5">العميل</th>
+                  <th className="p-3.5">العاملة والجنسية</th>
+                  <th className="p-3.5">المكتب الخارجي</th>
+                  <th className="p-3.5">حالة الإرسالية</th>
+                  <th className="p-3.5">تاريخ الإرسالية</th>
+                  <th className="p-3.5">محطة الوصول</th>
+                  <th className="p-3.5">التكلفة ($)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MOCK_DISPATCHES.map(d => (
+                  <tr key={d.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{d.id}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{d.contract_number}</td>
+                    <td className="p-3.5 font-bold text-black">{d.client_name}</td>
+                    <td className="p-3.5 font-bold text-black">{d.maid_name} ({d.nationality})</td>
+                    <td className="p-3.5 text-zinc-600">{d.office_name}</td>
+                    <td className="p-3.5"><Badge text={d.dispatch_status} type="primary" /></td>
+                    <td className="p-3.5 font-mono text-zinc-500">{d.dispatch_date}</td>
+                    <td className="p-3.5 text-zinc-700">{d.arrival_station}</td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">${d.cost_usd}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Extensions Requests View */}
+      {activeTab === 'extensions' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              طلبات تمديد وتجديد عقود الاستقدام
+            </h2>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              الطلبات: {MOCK_EXTENSIONS.length} طلب
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم الطلب</th>
+                  <th className="p-3.5">رقم العقد الأصلي</th>
+                  <th className="p-3.5">اسم العميل</th>
+                  <th className="p-3.5">العاملة</th>
+                  <th className="p-3.5">مدة التمديد</th>
+                  <th className="p-3.5">مقدم الطلب</th>
+                  <th className="p-3.5">تاريخ التقديم</th>
+                  <th className="p-3.5">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MOCK_EXTENSIONS.map(ext => (
+                  <tr key={ext.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{ext.id}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{ext.contract_number}</td>
+                    <td className="p-3.5 font-bold text-black">{ext.client_name}</td>
+                    <td className="p-3.5 text-black">{ext.maid_name}</td>
+                    <td className="p-3.5 font-bold text-emerald-800">{ext.extension_years} سنوات</td>
+                    <td className="p-3.5 text-zinc-600">{ext.applicant}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{ext.request_date}</td>
+                    <td className="p-3.5"><Badge text={ext.status} type="success" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Returns Requests View */}
+      {activeTab === 'returns' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              طلبات استرجاع العقود والتسويات المالية
+            </h2>
+            <span className="pill-tag-shade" style={{ fontSize: '11px' }}>
+              الطلبات: {MOCK_RETURNS.length} طلب
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">رقم الطلب</th>
+                  <th className="p-3.5">رقم العقد</th>
+                  <th className="p-3.5">اسم العميل</th>
+                  <th className="p-3.5">العاملة</th>
+                  <th className="p-3.5">سبب الاسترجاع وملاحظات التسوية</th>
+                  <th className="p-3.5">تاريخ الطلب</th>
+                  <th className="p-3.5">حالة الاسترجاع المالي</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {MOCK_RETURNS.map(ret => (
+                  <tr key={ret.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{ret.id}</td>
+                    <td className="p-3.5 font-mono text-zinc-600">{ret.contract_number}</td>
+                    <td className="p-3.5 font-bold text-black">{ret.client_name}</td>
+                    <td className="p-3.5 text-black">{ret.maid_name}</td>
+                    <td className="p-3.5 text-zinc-700">{ret.notes}</td>
+                    <td className="p-3.5 font-mono text-zinc-500">{ret.request_date}</td>
+                    <td className="p-3.5"><Badge text={ret.status} type="danger" /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Contracts Table / Kanban View */}
       {['all', 'active', 'completed', 'returned'].includes(activeTab) && (

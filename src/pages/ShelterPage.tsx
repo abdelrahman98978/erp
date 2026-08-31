@@ -84,8 +84,10 @@ export const ShelterPage: React.FC = () => {
     switch (tabKey) {
       case 'inside-shelter': return 'inside';
       case 'outside-shelter': return 'outside';
-      case 'available-transfer': return 'available';
+      case 'available-transfer': return 'transfer';
       case 'deportation-stage': return 'deportation';
+      case 'room-management': return 'rooms';
+      case 'food-catering': return 'catering';
       case 'shelter-places': return 'places';
       default: return 'all';
     }
@@ -295,6 +297,9 @@ export const ShelterPage: React.FC = () => {
         {[
           { id: 'all', label: 'جميع النزيلات', count: shelterItems.length },
           { id: 'inside', label: 'داخل الإيواء', count: insideCount },
+          { id: 'rooms', label: 'إدارة الغرف وتوزيع الأسرة 🛏️', count: 8 },
+          { id: 'catering', label: 'سجل الإعاشة والتغذية اليومية 🍲', count: totalMeals },
+          { id: 'places', label: 'مقرات وفروع مراكز الإيواء 🏢', count: 3 },
           { id: 'transfer', label: 'متاح للنقل والتأجير', count: transferCount },
           { id: 'deportation', label: 'مرحلة الترحيل', count: deportationCount },
         ].map((tab) => (
@@ -326,24 +331,197 @@ export const ShelterPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Table Card */}
-      <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-        <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
-          <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="ابحث باسم العاملة، رقم الجواز، أو اسم العميل..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="text-input"
-              style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
-            />
+      {/* 1. Room Management View */}
+      {activeSubTab === 'rooms' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4">
+              <div>
+                <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  إدارة غرف الإيواء وتوزيع الأسرة والمهاجع
+                </h2>
+                <p className="text-xs text-zinc-400 mt-1">تتبع الطاقة الاستيعابية، الأسرة المشغولة والشاغرة، ونظافة وتعقيم الغرف</p>
+              </div>
+              <button
+                onClick={() => addNotification({ title: 'إضافة غرفة جديدة', message: 'تم فتح نافذة تهيئة جناح وغرف الإيواء.', type: 'info' })}
+                className="button-white-pill"
+                style={{ fontSize: '11.5px', padding: '4px 14px', minHeight: '34px', background: '#000000', color: '#ffffff' }}
+              >
+                + إضافة غرفة / جناح
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { room: 'جناح أ - غرفة 101', beds: '4 أسرة', occupied: 3, status: 'متاح سرير 1', type: 'نزيلات الفلبين', clean: 'تم التعقيم' },
+                { room: 'جناح أ - غرفة 102', beds: '4 أسرة', occupied: 4, status: 'مكتمل الإشغال', type: 'نزيلات إندونيسيا', clean: 'تم التعقيم' },
+                { room: 'جناح ب - غرفة 201', beds: '6 أسرة', occupied: 4, status: 'متاح سريرين', type: 'نزيلات إثيوبيا', clean: 'تم التعقيم' },
+                { room: 'جناح ب - غرفة 202', beds: '6 أسرة', occupied: 2, status: 'متاح 4 أسرة', type: 'نزيلات أوغندا وكينيا', clean: 'تم التعقيم' },
+                { room: 'جناح ج - غرفة 301', beds: '4 أسرة', occupied: 0, status: 'شاغر بالكامل', type: 'غرفة عزل صحي مؤقت', clean: 'جاهز للاستقبال' },
+                { room: 'جناح ج - غرفة 302', beds: '4 أسرة', occupied: 1, status: 'متاح 3 أسرة', type: 'مرحلة الترحيل العاجل', clean: 'تم التعقيم' },
+                { room: 'فرع جدة - غرفة 1', beds: '8 أسرة', occupied: 5, status: 'متاح 3 أسرة', type: 'استقبال مطار وترانزيت', clean: 'تم التعقيم' },
+                { room: 'فرع الدمام - غرفة 1', beds: '6 أسرة', occupied: 3, status: 'متاح 3 أسرة', type: 'تسكين المنطقة الشرقية', clean: 'تم التعقيم' },
+              ].map((r, idx) => (
+                <div key={idx} className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-bold text-black text-sm">{r.room}</span>
+                      <Badge text={r.status} type={r.status.includes('شاغر') || r.status.includes('متاح') ? 'success' : 'danger'} />
+                    </div>
+                    <p className="text-xs text-zinc-500 mb-1">{r.type}</p>
+                    <div className="text-xs font-mono font-bold text-black mb-2">السعة: {r.beds} (مشغول {r.occupied})</div>
+                  </div>
+                  <div className="pt-2 border-t border-zinc-200 flex justify-between items-center text-[11px]">
+                    <span className="text-emerald-700 font-semibold">{r.clean}</span>
+                    <button
+                      onClick={() => addNotification({ title: 'توزيع النزيلات', message: `تم فتح سجل تسكين ${r.room}`, type: 'info' })}
+                      className="button-outline-on-light"
+                      style={{ fontSize: '10px', padding: '1px 8px', minHeight: '22px' }}
+                    >
+                      تسكين
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-            العدد المعروض: {filteredItems.length} نزيلة
-          </span>
         </div>
+      )}
+
+      {/* 2. Food Catering Full View */}
+      {activeSubTab === 'catering' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-4">
+              <div>
+                <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  سجل التغذية والإعاشة والوجبات اليومية للنزيلات
+                </h2>
+                <p className="text-xs text-zinc-400 mt-1">سجل الوجبات الغذائية الثلاث (فطور، غداء، عشاء) ومراقبة المعايير الصحية</p>
+              </div>
+              <button
+                onClick={() => addNotification({ title: 'توثيق وجبة جماعية', message: 'تم توثيق وجبة الغداء لجميع النزيلات بنجاح.', type: 'success' })}
+                className="button-primary-pill"
+                style={{ fontSize: '11.5px', padding: '4px 14px', minHeight: '34px' }}
+              >
+                + تسجيل وجبة جماعية
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-500 font-semibold block">وجبة الإفطار (07:30 AM)</span>
+                <span className="text-sm font-bold text-emerald-700 block mt-1">تم التوزيع (18 نزيلة)</span>
+                <span className="text-[11px] text-zinc-400">فطور متكامل + حليب وعصائر</span>
+              </div>
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-500 font-semibold block">وجبة الغداء (01:30 PM)</span>
+                <span className="text-sm font-bold text-emerald-700 block mt-1">تم التوزيع (18 نزيلة)</span>
+                <span className="text-[11px] text-zinc-400">أرز ولحوم وخضار طازجة</span>
+              </div>
+              <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-500 font-semibold block">وجبة العشاء (08:00 PM)</span>
+                <span className="text-sm font-bold text-black block mt-1">مجدولة وجاهزة للتوزيع</span>
+                <span className="text-[11px] text-zinc-400">وجبة خفيفة ومخبوزات وفاكهة</span>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3">التاريخ</th>
+                    <th className="p-3">مقر الإيواء</th>
+                    <th className="p-3">الوجبة</th>
+                    <th className="p-3">عدد الوجبات</th>
+                    <th className="p-3">المطعم / المورد المعتمد</th>
+                    <th className="p-3">التكلفة الإجمالية</th>
+                    <th className="p-3">المشرف المسؤول</th>
+                    <th className="p-3">حالة الاستلام</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {[
+                    { date: '2026-08-31', place: 'مقر الرياض الرئيسي', meal: 'وجبة غداء', count: '18 وجبة', vendor: 'مطابخ ومطاعم السليم للإعاشة', cost: '360 ر.س', sup: 'أميرة الشمري', status: 'تم الاستلام والتوزيع' },
+                    { date: '2026-08-31', place: 'مقر الرياض الرئيسي', meal: 'وجبة إفطار', count: '18 وجبة', vendor: 'مخابز وحلويات الريان', cost: '180 ر.س', sup: 'أميرة الشمري', status: 'تم الاستلام والتوزيع' },
+                    { date: '2026-08-31', place: 'فرع ترانزيت جدة', meal: 'وجبة غداء', count: '5 وجبات', vendor: 'شركة ضيافة الحجاز', cost: '125 ر.س', sup: 'خالد باوزير', status: 'تم الاستلام والتوزيع' },
+                  ].map((row, i) => (
+                    <tr key={i} className="hover:bg-zinc-50">
+                      <td className="p-3 font-mono text-black">{row.date}</td>
+                      <td className="p-3 font-bold text-black">{row.place}</td>
+                      <td className="p-3 font-semibold text-black">{row.meal}</td>
+                      <td className="p-3 font-mono font-bold text-black">{row.count}</td>
+                      <td className="p-3 text-zinc-600">{row.vendor}</td>
+                      <td className="p-3 font-mono font-bold text-emerald-700">{row.cost}</td>
+                      <td className="p-3 text-zinc-700">{row.sup}</td>
+                      <td className="p-3"><Badge text={row.status} type="success" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Shelter Places Full View */}
+      {activeSubTab === 'places' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
+            <div className="border-b border-zinc-100 pb-4 mb-4">
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                مقرات وفروع مراكز الإيواء المعتمدة للمجموعة
+              </h2>
+              <p className="text-xs text-zinc-400 mt-1">المراكز المعتمدة والمرخصة من وزارة الموارد البشرية للتسكين والإعاشة</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { name: 'مركز إيواء الرياض الرئيسي', city: 'الرياض - حي الياسمين', cap: '40 نزيلة', occ: '18 نزيلة', sup: 'أ. سارة القحطاني', phone: '+966114889201', license: 'MOL-SH-2024-0012' },
+                { name: 'مركز استقبال وترانزيت جدة', city: 'جدة - حي النزهة (قرب المطار)', cap: '25 نزيلة', occ: '5 نزيلات', sup: 'أ. خالد باوزير', phone: '+966126543201', license: 'MOL-SH-2024-0019' },
+                { name: 'مركز إيواء المنطقة الشرقية', city: 'الدمام - حي الشاطئ', cap: '20 نزيلة', occ: '3 نزيلات', sup: 'أ. فهد الدوسري', phone: '+966138901234', license: 'MOL-SH-2025-0044' },
+              ].map((p, i) => (
+                <div key={i} className="p-5 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-black text-sm mb-1">{p.name}</h3>
+                    <p className="text-xs text-zinc-500 mb-3">{p.city}</p>
+                    <div className="space-y-1.5 text-xs">
+                      <div className="flex justify-between"><span className="text-zinc-500">الطاقة الاستيعابية:</span><span className="font-bold text-black">{p.cap}</span></div>
+                      <div className="flex justify-between"><span className="text-zinc-500">الإشغال الحالي:</span><span className="font-bold text-purple-700">{p.occ}</span></div>
+                      <div className="flex justify-between"><span className="text-zinc-500">المشرف:</span><span className="text-black font-semibold">{p.sup}</span></div>
+                      <div className="flex justify-between"><span className="text-zinc-500">الترخيص:</span><span className="font-mono text-zinc-600">{p.license}</span></div>
+                    </div>
+                  </div>
+                  <div className="pt-3 border-t border-zinc-200 mt-4 flex justify-between items-center text-xs">
+                    <span className="font-mono text-zinc-600">{p.phone}</span>
+                    <Badge text="مرخص ونشط" type="success" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Table Card */}
+      {['all', 'inside', 'transfer', 'deportation'].includes(activeSubTab) && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="ابحث باسم العاملة، رقم الجواز، أو اسم العميل..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="text-input"
+                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+              />
+            </div>
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              العدد المعروض: {filteredItems.length} نزيلة
+            </span>
+          </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs text-zinc-700">
@@ -447,6 +625,7 @@ export const ShelterPage: React.FC = () => {
           </table>
         </div>
       </div>
+      )}
 
       {/* Add Inmate Modal */}
       {showAddModal && (
