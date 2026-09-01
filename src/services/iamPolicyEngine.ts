@@ -305,7 +305,7 @@ class IamPolicyEngine {
       permissionB: 'payment.release',
       riskLevel: 'حرج',
       mitigationControl: 'يتطلب اعتماداً مزدوجاً من المدير المالي أو المراجع الداخلي',
-      status: 'مفعل',
+      status: 'نشط',
     },
     {
       id: 'sod-002',
@@ -316,7 +316,7 @@ class IamPolicyEngine {
       permissionB: 'recruitment.contract.approve',
       riskLevel: 'عالي',
       mitigationControl: 'اعتماد مدير الفرع أو مدير إدارة الاستقدام حصراً',
-      status: 'مفعل',
+      status: 'نشط',
     },
     {
       id: 'sod-003',
@@ -327,7 +327,7 @@ class IamPolicyEngine {
       permissionB: 'accounting.journal.post',
       riskLevel: 'حرج',
       mitigationControl: 'الترحيل محصور برئيس الحسابات أو المدير المالي',
-      status: 'مفعل',
+      status: 'نشط',
     },
   ];
 
