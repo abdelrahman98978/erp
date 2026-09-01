@@ -102,7 +102,7 @@ export const AgentImportsPage: React.FC = () => {
             className="button-outline-on-light"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px', background: '#ffffff' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
             <span>فتح معالج الاستيراد</span>
           </button>
         </div>

@@ -237,7 +237,7 @@ export const JournalsPage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <Upload className="w-4 h-4 ml-1 text-emerald-400" />
+            <Upload className="w-4 h-4 ml-1 text-champagne-light" />
             <span>استيراد قيود</span>
           </button>
           <ExportDropdown 
@@ -388,7 +388,7 @@ export const JournalsPage: React.FC = () => {
           <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
             <div className="p-5 bg-black text-white flex items-center justify-between shrink-0">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <BookOpen className="w-4 h-4 text-champagne-light" />
                 <span>إنشاء قيد يومية متوازن جديد (Double-Entry Journal)</span>
               </h3>
               <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -523,11 +523,11 @@ export const JournalsPage: React.FC = () => {
 
                 {/* Balance Summary Box */}
                 <div className={`p-3.5 rounded-2xl border flex items-center justify-between ${
-                  isBalanced ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'
+                  isBalanced ? 'bg-champagne-pale border-champagne/40 text-black' : 'bg-amber-50 border-amber-200 text-amber-900'
                 }`}>
                   <div className="flex items-center gap-2.5">
                     {isBalanced ? (
-                      <Check className="w-4 h-4 text-emerald-700" />
+                      <Check className="w-4 h-4 text-champagne-dark" />
                     ) : (
                       <AlertTriangle className="w-4 h-4 text-amber-700" />
                     )}

@@ -85,7 +85,7 @@ export const ReportsPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <BarChart3 className="w-5 h-5 text-emerald-400" />
+              <BarChart3 className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -262,7 +262,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-mono">{row.rent_contracts} عقد</td>
                     <td className="p-3.5 font-mono font-bold text-black">{(row.total_revenue ?? 0).toLocaleString()} ر.س</td>
                     <td className="p-3.5 font-mono text-zinc-500">{(row.expenses ?? 0).toLocaleString()} ر.س</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{(row.net_profit ?? 0).toLocaleString()} ر.س</td>
                     <td className="p-3.5">
                       <Badge text={row.margin} type="success" />
                     </td>
@@ -276,7 +276,7 @@ export const ReportsPage: React.FC = () => {
                   <td className="p-3.5 font-mono">{totalRent} عقد</td>
                   <td className="p-3.5 font-mono">{(totalRevenue ?? 0).toLocaleString()} ر.س</td>
                   <td className="p-3.5 font-mono">{(totalExpenses ?? 0).toLocaleString()} ر.س</td>
-                  <td className="p-3.5 font-mono text-emerald-700">{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5 font-mono text-champagne-dark">{(totalNetProfit ?? 0).toLocaleString()} ر.س</td>
                   <td className="p-3.5"><Badge text="57.6%" type="purple" /></td>
                 </tr>
               </tfoot>
@@ -314,7 +314,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{s.channel}</td>
                     <td className="p-3.5 font-mono">{s.count} عقد</td>
                     <td className="p-3.5 font-mono">{s.avg.toLocaleString()} ر.س</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{s.total.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{s.total.toLocaleString()} ر.س</td>
                     <td className="p-3.5 font-bold text-black">{s.share}</td>
                     <td className="p-3.5"><Badge text={s.conv} type="success" /></td>
                   </tr>
@@ -355,7 +355,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{item.country}</td>
                     <td className="p-3.5 font-mono">{item.count} تأشيرة</td>
                     <td className="p-3.5 font-mono text-zinc-600">{item.visa_days}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-800">{item.total_days}</td>
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{item.total_days}</td>
                     <td className="p-3.5 font-bold text-black">{item.on_time}</td>
                     <td className="p-3.5"><Badge text={item.rating} type="success" /></td>
                   </tr>
@@ -398,7 +398,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-mono text-zinc-500">{row.vat.toLocaleString()} ر.س</td>
                     <td className="p-3.5 font-mono text-rose-700">{row.direct.toLocaleString()} ر.س</td>
                     <td className="p-3.5 font-mono text-zinc-600">{row.admin.toLocaleString()} ر.س</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{row.net.toLocaleString()} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{row.net.toLocaleString()} ر.س</td>
                     <td className="p-3.5"><Badge text={row.status} type="success" /></td>
                   </tr>
                 ))}

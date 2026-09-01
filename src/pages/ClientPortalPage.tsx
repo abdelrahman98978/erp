@@ -88,7 +88,7 @@ export const ClientPortalPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+              <ShieldCheck className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -116,7 +116,7 @@ export const ClientPortalPage: React.FC = () => {
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
               style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <MessageCircle className="w-4 h-4 text-emerald-700" />
+              <MessageCircle className="w-4 h-4 text-champagne-dark" />
               <span>خدمة العملاء (واتساب)</span>
             </a>
           </div>

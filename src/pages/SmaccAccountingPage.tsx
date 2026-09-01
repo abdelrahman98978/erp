@@ -291,7 +291,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
               >
-                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
                 <span>تصدير دليل الحسابات</span>
               </button>
             </div>
@@ -322,7 +322,7 @@ export const SmaccAccountingPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="p-3.5">{node.nature}</td>
-                      <td className="p-3.5 text-emerald-700 font-bold text-sm">{node.balance.toLocaleString()} ر.س</td>
+                      <td className="p-3.5 text-champagne-dark font-bold text-sm">{node.balance.toLocaleString()} ر.س</td>
                       <td className="p-3.5 text-center">
                         <button
                           onClick={() => setIsAccountModalOpen(true)}
@@ -341,7 +341,7 @@ export const SmaccAccountingPage: React.FC = () => {
                         <td className="p-3.5 pr-8 text-black">↳ {child.name}</td>
                         <td className="p-3.5 text-zinc-600">{child.type}</td>
                         <td className="p-3.5 text-zinc-600">{child.nature}</td>
-                        <td className="p-3.5 font-bold text-emerald-700">{child.balance.toLocaleString()} ر.س</td>
+                        <td className="p-3.5 font-bold text-champagne-dark">{child.balance.toLocaleString()} ر.س</td>
                         <td className="p-3.5 text-center">
                           <div className="flex items-center justify-center gap-1">
                             <button
@@ -493,7 +493,7 @@ export const SmaccAccountingPage: React.FC = () => {
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                 <h3 className="font-bold text-black text-sm flex items-center gap-2">
-                  <ArrowDownLeft className="w-5 h-5 text-emerald-600" />
+                  <ArrowDownLeft className="w-5 h-5 text-champagne-dark" />
                   <span>سندات القبض النقدية والبنكية</span>
                 </h3>
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>إجمالي القبض: 42,550.00 ر.س</span>
@@ -555,7 +555,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
               >
-                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
                 <span>تصدير Excel</span>
               </button>
               <button
@@ -591,7 +591,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   <td className="p-3 font-sans font-semibold text-black">الصندوق الرئيسي (Cash)</td>
                   <td className="p-3 text-zinc-600">150,000</td>
                   <td className="p-3 text-zinc-400">0</td>
-                  <td className="p-3 text-emerald-700 font-bold">45,000</td>
+                  <td className="p-3 text-champagne-dark font-bold">45,000</td>
                   <td className="p-3 text-zinc-700">40,800</td>
                   <td className="p-3 font-bold text-black">154,200 ر.س</td>
                 </tr>
@@ -600,7 +600,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   <td className="p-3 font-sans font-semibold text-black">بنك الراجحي التشغيلي</td>
                   <td className="p-3 text-zinc-600">220,000</td>
                   <td className="p-3 text-zinc-400">0</td>
-                  <td className="p-3 text-emerald-700 font-bold">110,300</td>
+                  <td className="p-3 text-champagne-dark font-bold">110,300</td>
                   <td className="p-3 text-zinc-700">55,000</td>
                   <td className="p-3 font-bold text-black">275,300 ر.س</td>
                 </tr>
@@ -662,7 +662,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   <td className="p-3 text-zinc-500 font-mono">2026-08-01</td>
                   <td className="p-3 font-mono text-black font-bold">OB-2026</td>
                   <td className="p-3 font-semibold text-black">رصيد أول المدة المرحل</td>
-                  <td className="p-3 font-mono text-emerald-700 font-bold">150,000.00</td>
+                  <td className="p-3 font-mono text-champagne-dark font-bold">150,000.00</td>
                   <td className="p-3 font-mono text-zinc-400">0.00</td>
                   <td className="p-3 font-mono font-bold text-black">150,000.00 ر.س</td>
                 </tr>
@@ -670,9 +670,9 @@ export const SmaccAccountingPage: React.FC = () => {
                   <td className="p-3 text-zinc-500 font-mono">2026-08-17</td>
                   <td className="p-3 font-mono text-black font-bold">JV-2026-401</td>
                   <td className="p-3 font-semibold text-black">تحصيل إيداع عقد استقدام REC-2026-0822</td>
-                  <td className="p-3 font-mono text-emerald-700 font-bold">14,500.00</td>
+                  <td className="p-3 font-mono text-champagne-dark font-bold">14,500.00</td>
                   <td className="p-3 font-mono text-zinc-400">0.00</td>
-                  <td className="p-3 font-mono font-bold text-emerald-700">164,500.00 ر.س</td>
+                  <td className="p-3 font-mono font-bold text-champagne-dark">164,500.00 ر.س</td>
                 </tr>
               </tbody>
             </table>
@@ -738,7 +738,7 @@ export const SmaccAccountingPage: React.FC = () => {
           </div>
 
           <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-            <div className="border-b border-zinc-100 pb-3 flex justify-between items-center text-sm font-bold text-emerald-700">
+            <div className="border-b border-zinc-100 pb-3 flex justify-between items-center text-sm font-bold text-champagne-dark">
               <span>إجمالي الإيرادات المحققة (عقود استقدام وتأجير)</span>
               <span className="font-mono">525,471.20 ر.س</span>
             </div>
@@ -748,7 +748,7 @@ export const SmaccAccountingPage: React.FC = () => {
             </div>
             <div className="mt-4 flex justify-between items-center text-base font-bold text-white bg-black p-4 rounded-2xl">
               <span>صافي الربح التشغيلي قبل الزكاة:</span>
-              <span className="text-emerald-300 font-mono">304,971.20 ر.س</span>
+              <span className="text-champagne-light font-mono">304,971.20 ر.س</span>
             </div>
           </div>
         </div>

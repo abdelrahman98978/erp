@@ -352,7 +352,7 @@ export const SettingsPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Sliders className="w-5 h-5 text-emerald-400" />
+              <Sliders className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -469,19 +469,19 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 cursor-pointer hover:border-emerald-500 transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-champagne-pale/40 border border-champagne/30 cursor-pointer hover:border-champagne transition-colors">
                   <input
                     type="checkbox"
                     checked={allowBiometrics}
                     onChange={e => setAllowBiometrics(e.target.checked)}
-                    className="rounded text-emerald-600 focus:ring-0 w-4 h-4"
+                    className="rounded text-champagne-dark accent-[#CFA64A] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-emerald-900 block flex items-center gap-1">
-                      <Fingerprint className="w-3.5 h-3.5" />
+                    <span className="font-bold text-xs text-champagne-dark block flex items-center gap-1">
+                      <Fingerprint className="w-3.5 h-3.5 text-champagne-dark" />
                       <span>تفعيل الدخول ببصمة الإصبع (Touch ID / Windows Hello / WebAuthn)</span>
                     </span>
-                    <span className="text-[11px] text-emerald-700 block mt-0.5">
+                    <span className="text-[11px] text-zinc-600 block mt-0.5">
                       السماح للمستخدمين بالدخول الفوري المشفر للمنظومة عبر مستشعر البصمة الحيوي للأجهزة المعتمدة.
                     </span>
                   </div>
@@ -534,17 +534,17 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               {/* Device Biometric Registration & Testing Card */}
-              <div className="p-5 bg-gradient-to-br from-emerald-50/70 to-teal-50/40 rounded-2xl border border-emerald-200 space-y-4">
+              <div className="p-5 bg-gradient-to-br from-champagne-pale/60 to-zinc-50 rounded-2xl border border-champagne/30 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-charcoal text-champagne-light flex items-center justify-center shadow-xs">
                       <Fingerprint className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-xs text-emerald-950 m-0">
+                      <h4 className="font-bold text-xs text-charcoal m-0">
                         إدارة وتفويض بصمة هذا الجهاز لحسابك (This Device WebAuthn)
                       </h4>
-                      <p className="text-[11px] text-emerald-800 m-0 font-sans">
+                      <p className="text-[11px] text-zinc-600 m-0 font-sans">
                         تسجيل مستشعر البصمة البيومترية لجهازك الحالي للتمكن من الدخول المباشر الموثق.
                       </p>
                     </div>
@@ -552,7 +552,7 @@ export const SettingsPage: React.FC = () => {
 
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
                     hwSupport.hasHardware 
-                      ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' 
+                      ? 'bg-champagne-pale text-champagne-dark border border-champagne/40' 
                       : 'bg-zinc-100 text-zinc-700 border border-zinc-200'
                   }`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
@@ -560,8 +560,8 @@ export const SettingsPage: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="text-xs text-zinc-600 flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-emerald-100 font-sans">
-                  <Laptop className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <div className="text-xs text-zinc-600 flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-champagne/20 font-sans">
+                  <Laptop className="w-4 h-4 text-champagne-dark flex-shrink-0" />
                   <span>الجهاز المكتشف: <strong>{hwSupport.detectedDevice}</strong></span>
                 </div>
 
@@ -574,9 +574,9 @@ export const SettingsPage: React.FC = () => {
                       const hasResult = settingsTestResult && settingsTestResult.credId === cred.id;
 
                       return (
-                        <div key={cred.id} className="p-3 bg-white rounded-xl border border-emerald-100 flex items-center justify-between flex-wrap gap-2">
+                        <div key={cred.id} className="p-3 bg-white rounded-xl border border-champagne/20 flex items-center justify-between flex-wrap gap-2">
                           <div className="flex items-center gap-2">
-                            <Fingerprint className="w-4 h-4 text-emerald-600" />
+                            <Fingerprint className="w-4 h-4 text-champagne-dark" />
                             <div>
                               <span className="font-bold text-xs text-black block">{cred.biometricType}</span>
                               <span className="text-[10px] text-zinc-500 font-mono">ID: {cred.credentialId.slice(0, 14)}... • {new Date(cred.enrolledAt).toLocaleDateString('ar-SA')}</span>
@@ -588,7 +588,7 @@ export const SettingsPage: React.FC = () => {
                               type="button"
                               disabled={isTesting}
                               onClick={() => handleTestSettingsBiometric(cred)}
-                              className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
+                              className="button-outline-on-light text-champagne-dark hover:border-champagne"
                               style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                             >
                               {isTesting ? 'جاري الفحص...' : 'فحص ومطابقة'}
@@ -605,9 +605,9 @@ export const SettingsPage: React.FC = () => {
 
                           {hasResult && (
                             <div className={`w-full p-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 mt-1 ${
-                              settingsTestResult.success ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'
+                              settingsTestResult.success ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-rose-50 text-rose-800'
                             }`}>
-                              {settingsTestResult.success ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> : <AlertCircle className="w-3.5 h-3.5 text-rose-600" />}
+                              {settingsTestResult.success ? <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark" /> : <AlertCircle className="w-3.5 h-3.5 text-rose-600" />}
                               <span>{settingsTestResult.message}</span>
                             </div>
                           )}
@@ -1035,7 +1035,7 @@ export const SettingsPage: React.FC = () => {
                       <tr key={link.id} className="hover:bg-zinc-50">
                         <td className="p-3.5 font-bold text-black">{link.name}</td>
                         <td className="p-3.5 font-mono text-zinc-500 text-[11px]">
-                          <a href={link.url} target="_blank" rel="noreferrer" className="text-emerald-700 hover:underline flex items-center gap-1">
+                          <a href={link.url} target="_blank" rel="noreferrer" className="text-champagne-dark hover:underline flex items-center gap-1">
                             <span>{link.url}</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
@@ -1212,18 +1212,18 @@ export const SettingsPage: React.FC = () => {
                 <p className="text-xs text-zinc-500 mt-1">تضمين ويدجت المحادثة الحية لدعم العملاء على مدار الساعة.</p>
               </div>
 
-              <label className="flex items-center gap-3 p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 cursor-pointer">
+              <label className="flex items-center gap-3 p-4 rounded-2xl bg-champagne-pale border border-champagne/30 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={enableSalesIq}
                   onChange={e => setEnableSalesIq(e.target.checked)}
-                  className="rounded text-emerald-600 focus:ring-0 w-4 h-4"
+                  className="rounded text-champagne focus:ring-0 w-4 h-4"
                 />
                 <div>
-                  <span className="font-bold text-xs text-emerald-900 block">
+                  <span className="font-bold text-xs text-black block">
                     تفعيل نافذة المحادثة الفورية في الموقع الخارجي وبوابة العملاء
                   </span>
-                  <span className="text-[11px] text-emerald-700 block mt-0.5">
+                  <span className="text-[11px] text-zinc-600 block mt-0.5">
                     إظهار زر الشات المباشر للزوار للرد التلقائي وتوزيع المحادثات على موظفي خدمة العملاء.
                   </span>
                 </div>
@@ -1235,7 +1235,7 @@ export const SettingsPage: React.FC = () => {
                   rows={4} 
                   value={zohoSalesIqCode} 
                   onChange={e => setZohoSalesIqCode(e.target.value)}
-                  className="w-full bg-zinc-900 text-emerald-400 font-mono text-[11px] rounded-2xl p-3 border border-zinc-700 focus:outline-none" 
+                  className="w-full bg-zinc-900 text-champagne-light font-mono text-[11px] rounded-2xl p-3 border border-zinc-700 focus:outline-none" 
                 />
               </div>
 

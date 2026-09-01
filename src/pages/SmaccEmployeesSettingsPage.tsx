@@ -210,7 +210,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
               >
-                <Calculator className="w-4 h-4 ml-1 text-emerald-600" />
+                <Calculator className="w-4 h-4 ml-1 text-champagne-dark" />
                 <span>حاسبة مكافأة نهاية الخدمة</span>
               </button>
             </div>
@@ -237,7 +237,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                   <td className="p-3.5 text-zinc-600">قسم المبيعات والتحصيل</td>
                   <td className="p-3.5 font-bold font-mono text-black">4,500 ر.س</td>
                   <td className="p-3.5 text-zinc-500 font-mono">1,500 ر.س</td>
-                  <td className="p-3.5 font-bold font-mono text-emerald-700">6,000.00 ر.س</td>
+                  <td className="p-3.5 font-bold font-mono text-champagne-dark">6,000.00 ر.س</td>
                 </tr>
               </tbody>
             </table>
@@ -426,7 +426,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
           {eosbCalc.result > 0 && (
             <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-center mt-3">
               <span className="text-xs text-zinc-600 block">إجمالي المستحق لمكافأة نهاية الخدمة:</span>
-              <span className="text-2xl font-mono font-black text-emerald-700 mt-1 block">{eosbCalc.result.toLocaleString()} ر.س</span>
+              <span className="text-2xl font-mono font-black text-champagne-dark mt-1 block">{eosbCalc.result.toLocaleString()} ر.س</span>
             </div>
           )}
         </div>

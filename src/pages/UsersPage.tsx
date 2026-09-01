@@ -490,7 +490,7 @@ export const UsersPage: React.FC = () => {
             onClick={() => exportData('system_users', filteredUsers, 'excel')}
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+            <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-light" />
             <span>Excel</span>
           </button>
         </div>
@@ -583,10 +583,10 @@ export const UsersPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenBiometricModal(u)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all cursor-pointer shadow-sm"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-champagne-pale text-champagne-dark text-[11px] font-bold border border-champagne/30 hover:bg-champagne-pale/80 transition-all cursor-pointer shadow-xs"
                         title="إدارة البصمات المسجلة لهذا المستخدم"
                       >
-                        <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
+                        <Fingerprint className="w-3.5 h-3.5 text-champagne-dark" />
                         <span>{u.biometric_type || 'بصمة معتمدة'}</span>
                       </button>
                     ) : (
@@ -606,11 +606,11 @@ export const UsersPage: React.FC = () => {
                     <div className="flex items-center justify-center gap-1.5 flex-wrap">
                       <button
                         onClick={() => handleOpenBiometricModal(u)}
-                        className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
+                        className="button-outline-on-light text-champagne-dark hover:border-champagne"
                         style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                         title="إدارة وتوثيق المفاتيح البيومترية (WebAuthn / FIDO2)"
                       >
-                        <Fingerprint className="w-3 h-3 ml-1 text-emerald-600" />
+                        <Fingerprint className="w-3 h-3 ml-1 text-champagne-dark" />
                         <span>البصمة</span>
                       </button>
                       <button
@@ -633,7 +633,7 @@ export const UsersPage: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleToggleUserStatus(u)}
-                        className={`p-1 rounded-lg border transition-colors ${u.status === 'نشط' ? 'border-amber-200 text-amber-700 hover:bg-amber-50' : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'}`}
+                        className={`p-1 rounded-lg border transition-colors ${u.status === 'نشط' ? 'border-amber-200 text-amber-700 hover:bg-amber-50' : 'border-champagne/30 text-champagne-dark hover:bg-champagne-pale'}`}
                         title={u.status === 'نشط' ? 'حظر المستخدم' : 'تفعيل المستخدم'}
                       >
                         {u.status === 'نشط' ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
@@ -660,7 +660,7 @@ export const UsersPage: React.FC = () => {
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-emerald-400" />
+                <UserCheck className="w-4 h-4 text-champagne-light" />
                 <span>إنشاء مستخدم جديد وتعيين الصلاحيات</span>
               </h3>
               <button onClick={() => setShowAddUserModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -765,9 +765,9 @@ export const UsersPage: React.FC = () => {
                     type="checkbox"
                     checked={newUser.biometric_enabled}
                     onChange={e => setNewUser({ ...newUser, biometric_enabled: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-0"
+                    className="rounded text-champagne-dark accent-[#CFA64A] focus:ring-0"
                   />
-                  <span className="text-xs font-semibold text-emerald-900">تمكين الدخول بالبصمة البيومترية (Touch ID / Face ID)</span>
+                  <span className="text-xs font-semibold text-champagne-dark">تمكين الدخول بالبصمة البيومترية (Touch ID / Face ID)</span>
                 </label>
               </div>
 
@@ -889,7 +889,7 @@ export const UsersPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Fingerprint className="w-4 h-4 text-emerald-400" />
+                <Fingerprint className="w-4 h-4 text-champagne-light" />
                 <span>إعدادات المصادقة الثنائية والبصمة ({selectedUser.name})</span>
               </h3>
               <button onClick={() => setShow2FAModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -900,7 +900,7 @@ export const UsersPage: React.FC = () => {
             <div className="p-6 space-y-4 bg-white text-black">
               {selectedUser.two_factor_enabled ? (
                 <div className="space-y-4 text-center">
-                  <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 mx-auto flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-champagne-pale border border-champagne/30 text-champagne-dark mx-auto flex items-center justify-center">
                     <ShieldCheck className="w-8 h-8" />
                   </div>
                   <div>
@@ -909,7 +909,7 @@ export const UsersPage: React.FC = () => {
                       الوسيلة الحالية: <span className="font-bold text-black">{selectedUser.two_factor_method || 'Google Authenticator'}</span>
                     </p>
                     {selectedUser.biometric_enabled && (
-                      <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                      <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full bg-champagne-pale text-champagne-dark text-[11px] font-bold border border-champagne/30">
                         <Fingerprint className="w-3.5 h-3.5" />
                         <span>مفوض بالبصمة البيومترية ({selectedUser.biometric_type})</span>
                       </span>
@@ -967,7 +967,7 @@ export const UsersPage: React.FC = () => {
                         <label
                           onClick={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
                           className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
-                            selectedMethod === 'بصمة بيومترية (FIDO2)' ? 'border-emerald-600 bg-emerald-50/40' : 'border-zinc-200 hover:bg-zinc-50'
+                            selectedMethod === 'بصمة بيومترية (FIDO2)' ? 'border-champagne bg-champagne-pale/40' : 'border-zinc-200 hover:bg-zinc-50'
                           }`}
                         >
                           <input
@@ -975,11 +975,11 @@ export const UsersPage: React.FC = () => {
                             name="2fa-method"
                             checked={selectedMethod === 'بصمة بيومترية (FIDO2)'}
                             onChange={() => setSelectedMethod('بصمة بيومترية (FIDO2)')}
-                            className="mt-1 accent-emerald-600"
+                            className="mt-1 accent-[#CFA64A]"
                           />
                           <div>
-                            <span className="font-bold text-xs text-emerald-950 flex items-center gap-1">
-                              <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
+                            <span className="font-bold text-xs text-charcoal flex items-center gap-1">
+                              <Fingerprint className="w-3.5 h-3.5 text-champagne-dark" />
                               <span>بصمة الإصبع أو الوجه (Touch ID / Face ID / Windows Hello)</span>
                             </span>
                             <span className="text-[11px] text-zinc-500 block mt-0.5">مصادقة مباشرة عبر شريحة الأمان للأجهزة الداعمة لـ WebAuthn.</span>
@@ -1038,8 +1038,8 @@ export const UsersPage: React.FC = () => {
                         </div>
                       ) : selectedMethod === 'بصمة بيومترية (FIDO2)' ? (
                         <div>
-                          <Fingerprint className="w-12 h-12 text-emerald-600 mx-auto mb-2" />
-                          <p className="text-sm font-bold text-emerald-900">
+                          <Fingerprint className="w-12 h-12 text-champagne-dark mx-auto mb-2" />
+                          <p className="text-sm font-bold text-charcoal">
                             جاهز لتسجيل وتفويض البصمة البيومترية للمستخدم
                           </p>
                           <p className="text-xs text-zinc-500 mt-1">
@@ -1093,7 +1093,7 @@ export const UsersPage: React.FC = () => {
             {/* Modal Header */}
             <div className="p-5 bg-black text-white flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <div className="w-10 h-10 rounded-full bg-charcoal border border-champagne/40 flex items-center justify-center text-champagne-light shadow-sm">
                   <Fingerprint className="w-5 h-5" />
                 </div>
                 <div>
@@ -1132,7 +1132,7 @@ export const UsersPage: React.FC = () => {
                 <div className="text-left">
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                     hardwareInfo.hasHardware 
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' 
                       : 'bg-blue-100 text-blue-800 border border-blue-300'
                   }`}>
                     <span className="w-2 h-2 rounded-full bg-current animate-pulse"></span>
@@ -1145,7 +1145,7 @@ export const UsersPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-bold text-xs text-black flex items-center gap-2 m-0">
-                    <Fingerprint className="w-4 h-4 text-emerald-600" />
+                    <Fingerprint className="w-4 h-4 text-champagne-dark" />
                     <span>البصمات والمفاتيح المسجلة ({userCredentials.length})</span>
                   </h4>
                   <span className="text-[11px] text-zinc-500">مخزنة مشفرة بمفتاح فريد FIDO2</span>
@@ -1172,7 +1172,7 @@ export const UsersPage: React.FC = () => {
                         >
                           <div className="flex items-start justify-between flex-wrap gap-2">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center flex-shrink-0">
+                              <div className="w-9 h-9 rounded-xl bg-champagne-pale text-champagne-dark border border-champagne/30 flex items-center justify-center flex-shrink-0">
                                 {cred.biometricType.includes('Face') ? (
                                   <ScanFace className="w-4 h-4" />
                                 ) : (
@@ -1183,7 +1183,7 @@ export const UsersPage: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                   <span className="font-bold text-xs text-black">{cred.biometricType}</span>
                                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                    cred.status === 'نشط' ? 'bg-emerald-100 text-emerald-800' : 'bg-zinc-200 text-zinc-600'
+                                    cred.status === 'نشط' ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-zinc-200 text-zinc-600'
                                   }`}>
                                     {cred.status}
                                   </span>
@@ -1200,7 +1200,7 @@ export const UsersPage: React.FC = () => {
                                 type="button"
                                 disabled={isTesting}
                                 onClick={() => handleTestBiometric(cred)}
-                                className="button-outline-on-light text-emerald-800 hover:border-emerald-500"
+                                className="button-outline-on-light text-champagne-dark hover:border-champagne"
                                 style={{ padding: '4px 10px', fontSize: '11px', minHeight: '28px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                                 title="اختبار فحص ومطابقة البصمة مع المستشعر الحي"
                               >
@@ -1249,11 +1249,11 @@ export const UsersPage: React.FC = () => {
                           {hasTestResult && (
                             <div className={`p-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${
                               testBioResult.success 
-                                ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' 
+                                ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' 
                                 : 'bg-rose-50 text-rose-900 border border-rose-200'
                             }`}>
                               {testBioResult.success ? (
-                                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                                <CheckCircle2 className="w-4 h-4 text-champagne-dark flex-shrink-0" />
                               ) : (
                                 <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                               )}
@@ -1268,10 +1268,10 @@ export const UsersPage: React.FC = () => {
               </div>
 
               {/* Enroll New Biometric Section */}
-              <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 space-y-3">
+              <div className="p-4 bg-champagne-pale/40 rounded-2xl border border-champagne/30 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs text-emerald-950 flex items-center gap-1.5 m-0">
-                    <Plus className="w-4 h-4 text-emerald-700" />
+                  <h4 className="font-bold text-xs text-charcoal flex items-center gap-1.5 m-0">
+                    <Plus className="w-4 h-4 text-champagne-dark" />
                     <span>تسجيل وتوثيق مفتاح بيومتري جديد لهذا الحساب</span>
                   </h4>
                   <span className="pill-tag-mint text-[10px]">FIDO2 WebAuthn Key</span>
@@ -1295,7 +1295,7 @@ export const UsersPage: React.FC = () => {
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-xs text-black">{opt.label}</span>
-                        <opt.icon className="w-3.5 h-3.5 text-emerald-600" />
+                        <opt.icon className="w-3.5 h-3.5 text-champagne-dark" />
                       </div>
                       <span className="text-[10px] text-zinc-500 block">{opt.desc}</span>
                     </button>

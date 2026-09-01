@@ -183,7 +183,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Shield className="w-5 h-5 text-emerald-400" />
+              <Shield className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -241,7 +241,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5 pt-4 border-t border-white/10 text-xs">
           <div>
             <span className="text-zinc-400">إجمالي مقبوضات المجموعة</span>
-            <div className="text-base font-bold text-emerald-400 font-mono mt-0.5">5,820,470 ر.س</div>
+            <div className="text-base font-bold text-champagne-light font-mono mt-0.5">5,820,470 ر.س</div>
           </div>
           <div>
             <span className="text-zinc-400">العقود السارية</span>
@@ -253,7 +253,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           </div>
           <div>
             <span className="text-zinc-400">الربط الضريبي والحكومي</span>
-            <div className="text-base font-bold text-emerald-400 font-mono mt-0.5">ZATCA & Musaned OK</div>
+            <div className="text-base font-bold text-champagne-light font-mono mt-0.5">ZATCA & Musaned OK</div>
           </div>
         </div>
       </div>
@@ -428,7 +428,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-zinc-500">حجم قاعدة البيانات الحالية</span>
               <div className="text-xl font-black text-black mt-1 font-mono">1.42 GB</div>
-              <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">آخر نسخة: اليوم 03:00 ص</span>
+              <span className="text-[11px] text-champagne-dark font-semibold mt-1 block">آخر نسخة: اليوم 03:00 ص</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
@@ -439,13 +439,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-zinc-500">نسبة نجاح الـ Cache (Redis)</span>
-              <div className="text-xl font-black text-emerald-700 mt-1 font-mono">96.4%</div>
-              <span className="text-[11px] text-emerald-700 mt-1 block">استجابة فائقة السرعة</span>
+              <div className="text-xl font-black text-champagne-dark mt-1 font-mono">96.4%</div>
+              <span className="text-[11px] text-champagne-dark mt-1 block">استجابة فائقة السرعة</span>
             </div>
           </div>
 
           <h4 className="text-xs font-bold text-black mb-2">7. مستكشف سجلات السيرفر المباشر (Real-Time Tail Logs)</h4>
-          <div className="bg-black text-emerald-400 p-4 rounded-2xl font-mono text-xs h-40 overflow-y-auto space-y-1">
+          <div className="bg-black text-champagne-light p-4 rounded-2xl font-mono text-xs h-40 overflow-y-auto space-y-1">
             <div>[2026-07-31 15:38:12] [INFO] system.auth: User 'admin' logged in from 197.34.110.42 (2FA TOTP Verified)</div>
             <div>[2026-07-31 15:38:15] [INFO] zatca.invoice: Signed bill #INV-Z-2026-002 Clearance successful CSID valid.</div>
             <div>[2026-07-31 15:38:22] [INFO] musaned.sync: Fetched 18 new delegations from Musaned API Gateway.</div>
@@ -548,8 +548,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-zinc-500">حالة الربط المصرفي (بنك الرياض B2B)</span>
-              <div className="text-xl font-black text-emerald-700 mt-1">متصل ومفعل</div>
-              <span className="text-[11px] text-emerald-700 mt-1 block">الرواتب والتحويلات المباشرة</span>
+              <div className="text-xl font-black text-champagne-dark mt-1">متصل ومفعل</div>
+              <span className="text-[11px] text-champagne-dark mt-1 block">الرواتب والتحويلات المباشرة</span>
             </div>
           </div>
 
@@ -689,7 +689,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Radio className="w-4 h-4 text-emerald-400" />
+                <Radio className="w-4 h-4 text-champagne-light" />
                 <span>بث إشعار عاجل لجميع المستخدمين</span>
               </h3>
               <button onClick={() => setShowBroadcastModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -730,7 +730,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Database className="w-4 h-4 text-emerald-400" />
+                <Database className="w-4 h-4 text-champagne-light" />
                 <span>إدارة النسخ الاحتياطي (Backup Manager)</span>
               </h3>
               <button onClick={() => setShowBackupModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">

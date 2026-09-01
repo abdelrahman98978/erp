@@ -177,7 +177,7 @@ export const GroupDispatchPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Send className="w-5 h-5 text-emerald-400" />
+              <Send className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -324,7 +324,7 @@ export const GroupDispatchPage: React.FC = () => {
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         row.status === 'تم الاستلام والتنفيذ'
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          ? 'bg-champagne-pale text-champagne-dark border border-champagne/30'
                           : 'bg-amber-50 text-amber-800 border border-amber-200'
                       }`}
                     >
@@ -364,7 +364,7 @@ export const GroupDispatchPage: React.FC = () => {
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Send className="w-4 h-4 text-emerald-400" />
+                <Send className="w-4 h-4 text-champagne-light" />
                 <span>توجيه خطاب / معاملة رسمية بين الشركات</span>
               </h3>
               <button onClick={() => setShowDispatchModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -481,7 +481,7 @@ export const GroupDispatchPage: React.FC = () => {
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-400" />
+                <FileText className="w-4 h-4 text-champagne-light" />
                 <span>وثيقة الخطاب والمعاملة الرسمية {selectedMemo.dispatch_no}</span>
               </h3>
               <button onClick={() => setSelectedMemo(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">

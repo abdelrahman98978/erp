@@ -251,7 +251,7 @@ export const ShelterPage: React.FC = () => {
             className="button-outline-on-light"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
             <span>Excel</span>
           </button>
           <button
@@ -372,7 +372,7 @@ export const ShelterPage: React.FC = () => {
                     <div className="text-xs font-mono font-bold text-black mb-2">السعة: {r.beds} (مشغول {r.occupied})</div>
                   </div>
                   <div className="pt-2 border-t border-zinc-200 flex justify-between items-center text-[11px]">
-                    <span className="text-emerald-700 font-semibold">{r.clean}</span>
+                    <span className="text-champagne-dark font-semibold">{r.clean}</span>
                     <button
                       onClick={() => addNotification({ title: 'توزيع النزيلات', message: `تم فتح سجل تسكين ${r.room}`, type: 'info' })}
                       className="button-outline-on-light"
@@ -411,12 +411,12 @@ export const ShelterPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
                 <span className="text-xs text-zinc-500 font-semibold block">وجبة الإفطار (07:30 AM)</span>
-                <span className="text-sm font-bold text-emerald-700 block mt-1">تم التوزيع (18 نزيلة)</span>
+                <span className="text-sm font-bold text-champagne-dark block mt-1">تم التوزيع (18 نزيلة)</span>
                 <span className="text-[11px] text-zinc-400">فطور متكامل + حليب وعصائر</span>
               </div>
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
                 <span className="text-xs text-zinc-500 font-semibold block">وجبة الغداء (01:30 PM)</span>
-                <span className="text-sm font-bold text-emerald-700 block mt-1">تم التوزيع (18 نزيلة)</span>
+                <span className="text-sm font-bold text-champagne-dark block mt-1">تم التوزيع (18 نزيلة)</span>
                 <span className="text-[11px] text-zinc-400">أرز ولحوم وخضار طازجة</span>
               </div>
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
@@ -452,7 +452,7 @@ export const ShelterPage: React.FC = () => {
                       <td className="p-3 font-semibold text-black">{row.meal}</td>
                       <td className="p-3 font-mono font-bold text-black">{row.count}</td>
                       <td className="p-3 text-zinc-600">{row.vendor}</td>
-                      <td className="p-3 font-mono font-bold text-emerald-700">{row.cost}</td>
+                      <td className="p-3 font-mono font-bold text-champagne-dark">{row.cost}</td>
                       <td className="p-3 text-zinc-700">{row.sup}</td>
                       <td className="p-3"><Badge text={row.status} type="success" /></td>
                     </tr>
@@ -570,7 +570,7 @@ export const ShelterPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 text-xs">
                       <div className="font-bold text-black">{item.days_in_shelter} يوم</div>
-                      <div className="text-emerald-700 font-bold flex items-center gap-1.5 mt-0.5">
+                      <div className="text-champagne-dark font-bold flex items-center gap-1.5 mt-0.5">
                         <span>{item.catering_meals_count} وجبة</span>
                         <button
                           onClick={() => handleAddMeal(item)}
@@ -585,7 +585,7 @@ export const ShelterPage: React.FC = () => {
                     </td>
                     <td className="p-3.5">
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        item.work_willingness === 'ترغب بالعمل' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+                        item.work_willingness === 'ترغب بالعمل' ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-rose-50 text-rose-800 border border-rose-200'
                       }`}>
                         {item.work_willingness}
                       </span>
@@ -633,7 +633,7 @@ export const ShelterPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Hotel className="w-4 h-4 text-emerald-400" />
+                <Hotel className="w-4 h-4 text-champagne-light" />
                 <span>تسكين عاملة جديدة بمركز الإيواء</span>
               </h3>
               <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">

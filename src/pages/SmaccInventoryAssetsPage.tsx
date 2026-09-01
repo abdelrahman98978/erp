@@ -102,7 +102,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Box className="w-5 h-5 text-emerald-400" />
+              <Box className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -124,28 +124,28 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Plus className="w-3.5 h-3.5 ml-1 text-black" />
-              <span>+ أصل جديد</span>
+              <Plus className="w-3.5 h-3.5 ml-1" />
+              <span>+ إضافة أصل ثابت</span>
             </button>
             <button
               onClick={() => setIsItemModalOpen(true)}
               className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Box className="w-3.5 h-3.5 ml-1" />
-              <span>+ صنف مخزون</span>
+              <Plus className="w-3.5 h-3.5 ml-1" />
+              <span>+ تعريف صنف جديد</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Tab Navigation Buttons */}
+      {/* TABS NAVIGATION */}
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'assets', label: 'سجل الأصول الثابتة', icon: Building2 },
-          { id: 'inventory', label: 'دليل أصناف المخزون', icon: Box },
-          { id: 'stock-vouchers', label: 'أذونات الصرف والإضافة', icon: Layers },
-        ].map((tab) => {
+          { id: 'fixed-assets', label: 'الأصول الثابتة والإهلاك', icon: Building2 },
+          { id: 'items-catalog', label: 'دليل الأصناف والمخزون', icon: Layers },
+          { id: 'stock-vouchers', label: 'أذونات الصرف والإضافة', icon: ArrowRightLeft },
+        ].map(tab => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
           return (
@@ -153,7 +153,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               style={{
-                padding: '6px 16px',
+                padding: '6px 18px',
                 borderRadius: '9999px',
                 border: '1px solid',
                 borderColor: isActive ? '#000000' : '#e4e4e7',
@@ -166,6 +166,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
+                whiteSpace: 'nowrap',
               }}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -176,29 +177,11 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       </div>
 
       {/* TAB 1: Fixed Assets */}
-      {activeTab === 'assets' && (
+      {activeTab === 'fixed-assets' && (
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-            <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
-              <input
-                type="text"
-                placeholder="البحث في الأصول الثابتة..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsAssetModalOpen(true)}
-                className="button-primary-pill"
-                style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
-              >
-                <Plus className="w-3.5 h-3.5 ml-1" />
-                <span>إضافة أصل ثابت</span>
-              </button>
+            <h3 className="text-sm font-bold text-black m-0">سجل الأصول الثابتة المعتمدة بالمجموعة</h3>
+            <div className="flex gap-2">
               <button
                 onClick={() => {
                   addNotification({
@@ -210,7 +193,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ fontSize: '12px', padding: '6px 14px', minHeight: '34px' }}
               >
-                <RefreshCw className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <RefreshCw className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
                 <span>احتساب الإهلاك الدوري</span>
               </button>
             </div>
@@ -241,7 +224,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                     <td className="p-3.5 font-bold font-mono text-black">95,000 ر.س</td>
                     <td className="p-3.5 text-black font-bold font-mono">20%</td>
                     <td className="p-3.5 text-zinc-600 font-mono">19,000 ر.س</td>
-                    <td className="p-3.5 font-bold font-mono text-emerald-700">76,000 ر.س</td>
+                    <td className="p-3.5 font-bold font-mono text-champagne-dark">76,000 ر.س</td>
                     <td className="p-3.5 text-center">
                       <button
                         onClick={() => {
@@ -322,7 +305,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                     <td className="p-3.5 text-zinc-600">خدمات استقدام</td>
                     <td className="p-3.5">عقد</td>
                     <td className="p-3.5 text-zinc-500 font-mono">12,000 ر.س</td>
-                    <td className="p-3.5 font-bold font-mono text-emerald-700">17,500 ر.س</td>
+                    <td className="p-3.5 font-bold font-mono text-champagne-dark">17,500 ر.س</td>
                     <td className="p-3.5 font-bold text-black">15 عقد</td>
                     <td className="p-3.5">
                       <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
@@ -369,7 +352,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                   <tr className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">STK-2026-001</td>
                     <td className="p-3.5">
-                      <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                      <span className="bg-champagne-pale text-champagne-dark border border-champagne/30 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
                         إضافة (+)
                       </span>
                     </td>
@@ -506,7 +489,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="0.00"
               value={newItem.salePrice}
               onChange={e => setNewItem({ ...newItem, salePrice: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold text-emerald-700 focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold text-champagne-dark focus:border-black focus:outline-none"
             />
           </div>
         </div>

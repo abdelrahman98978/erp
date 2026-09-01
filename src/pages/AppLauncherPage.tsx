@@ -630,11 +630,11 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     titleColor: 'text-white',
     subColor: 'text-zinc-400',
     iconBg: 'bg-zinc-800',
-    iconColor: 'text-emerald-300',
+    iconColor: 'text-champagne-light',
     categoryTagBg: 'bg-zinc-800',
     categoryTagColor: 'text-zinc-300',
     metricTagBg: 'bg-zinc-800',
-    metricTagColor: 'text-emerald-300',
+    metricTagColor: 'text-champagne-light',
     footerBorder: 'border-zinc-800',
     actionColor: 'text-zinc-300 group-hover:text-white',
     activePillBg: 'bg-black border-black',
@@ -700,7 +700,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
   }, []);
 
   return (
-    <main className="min-h-screen min-h-[100dvh] w-full bg-[#fbfbf5] text-zinc-900 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+    <main className="min-h-screen min-h-[100dvh] w-full bg-[#fbfbf5] text-zinc-900 flex flex-col font-sans selection:bg-champagne selection:text-black">
       {/* Top Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-zinc-200 px-4 sm:px-8 lg:px-12 py-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3 min-w-0">
@@ -754,7 +754,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
             const catStyle = CATEGORY_STYLES[cat.id];
 
             let activeClass = "bg-black text-white border-black shadow-xs";
-            let activeCountBadge = "bg-zinc-800 text-emerald-300";
+            let activeCountBadge = "bg-zinc-800 text-champagne-light";
             if (isActive && catStyle) {
               activeClass = `${catStyle.activePillBg} ${catStyle.activePillText} shadow-xs`;
               activeCountBadge = "bg-black/20 text-white";

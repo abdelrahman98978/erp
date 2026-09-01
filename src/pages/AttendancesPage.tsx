@@ -139,7 +139,7 @@ export const AttendancesPage: React.FC = () => {
             onClick={() => exportData('attendances', attendances, 'excel')}
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
             <span>Excel</span>
           </button>
           <button
@@ -210,7 +210,7 @@ export const AttendancesPage: React.FC = () => {
                   <td className="p-3.5 font-bold text-black">{row.emp_name}</td>
                   <td className="p-3.5"><Badge text={row.department} type="purple" /></td>
                   <td className="p-3.5 font-mono text-zinc-500">{row.date}</td>
-                  <td className="p-3.5 font-mono font-bold text-emerald-700">{row.check_in}</td>
+                  <td className="p-3.5 font-mono font-bold text-champagne-dark">{row.check_in}</td>
                   <td className="p-3.5 font-mono font-bold text-zinc-800">{row.check_out}</td>
                   <td className="p-3.5 font-mono font-bold text-black">{row.work_hours} س</td>
                   <td className="p-3.5">
@@ -229,7 +229,7 @@ export const AttendancesPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+                <FileSpreadsheet className="w-4 h-4 text-champagne-light" />
                 <span>استيراد شيت البصمة الجماعي</span>
               </h3>
               <button onClick={() => setShowUploadModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -267,7 +267,7 @@ export const AttendancesPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <ClipboardCheck className="w-4 h-4 text-emerald-400" />
+                <ClipboardCheck className="w-4 h-4 text-champagne-light" />
                 <span>تسجيل حضور وانصراف يدوي</span>
               </h3>
               <button onClick={() => setShowManualModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">

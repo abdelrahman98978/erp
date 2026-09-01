@@ -262,7 +262,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
 
             <div className="flex gap-2">
               <button className="button-outline-on-light" onClick={() => exportData('unified_correspondence', filteredList, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
                 <span>Excel</span>
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('unified_correspondence', filteredList, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
@@ -485,8 +485,8 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
           <div className="flex justify-between items-end mt-10 border-t border-zinc-200 pt-5">
             <div>
               <div className="text-xs text-zinc-500">الختم والتصديق الرقمي:</div>
-              <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold mt-1 border border-emerald-200">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="inline-flex items-center gap-1.5 bg-champagne-pale text-champagne-dark px-3 py-1 rounded-full text-xs font-bold mt-1 border border-champagne/30">
+                <ShieldCheck className="w-3.5 h-3.5 text-champagne-dark" />
                 <span>موثق إلكترونياً (ALSULAIM VERIFIED)</span>
               </div>
             </div>

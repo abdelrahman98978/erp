@@ -202,7 +202,7 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => exportData('sponsorship-transfer', transfers, 'excel')}
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
             <span>Excel</span>
           </button>
           <button
@@ -218,26 +218,22 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>طلبات نقل الكفالة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{transfers.length}</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>إجمالي المعاملات</span>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي طلبات التنازل</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{transfers.length} طلبات</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مسجلة بالنظام</span>
         </div>
 
-        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>قيد التجربة (10 أيام)</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {transfers.filter(t => t.status === 'فترة التجربة').length}
-          </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>عمالة قيد التجربة</span>
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>تحت فترة التجربة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{trialCount} عاملات</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>متابعة الضمان</span>
         </div>
 
         <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>تم النقل النهائي</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {transfers.filter(t => t.status === 'تم النقل').length}
-          </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معاملات مكتملة</span>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>تم اكتمال النقل والتوثيق</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{completedCount} مكتمل</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>توثيق مساند وأبشر</span>
         </div>
       </div>
 
@@ -248,7 +244,7 @@ export const SponsorshipTransferPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
-              placeholder="ابحث برقم العقد، اسم العاملة، الكفيل القديم أو الجديد..."
+              placeholder="ابحث باسم العاملة، الكفيل، أو المهنة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="text-input"
@@ -256,7 +252,7 @@ export const SponsorshipTransferPage: React.FC = () => {
             />
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-            العدد: {displayedTransfers.length} معاملة
+            العدد: {filteredTransfers.length} طلبات
           </span>
         </div>
 
@@ -264,23 +260,23 @@ export const SponsorshipTransferPage: React.FC = () => {
           <table className="w-full text-right text-xs text-zinc-700">
             <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
               <tr>
-                <th className="p-3.5">رقم النقل</th>
-                <th className="p-3.5">العاملة والجنسية</th>
-                <th className="p-3.5">الكفيل القديم (المتنازل)</th>
-                <th className="p-3.5">الكفيل الجديد (المستلم)</th>
-                <th className="p-3.5">فترة التجربة (10d)</th>
-                <th className="p-3.5">رسوم التنازل</th>
+                <th className="p-3.5">اسم العاملة</th>
+                <th className="p-3.5">الجنسية والمهنة</th>
+                <th className="p-3.5">الكفيل السابق</th>
+                <th className="p-3.5">الكفيل الجديد</th>
+                <th className="p-3.5">فترة التجربة</th>
+                <th className="p-3.5">مبلغ التنازل</th>
                 <th className="p-3.5">الحالة</th>
                 <th className="p-3.5 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {displayedTransfers.map((row) => (
-                <tr key={row.id} className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.contract_number}</td>
+              {filteredTransfers.map((row) => (
+                <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                  <td className="p-3.5 font-bold text-black">{row.maid_name}</td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{row.maid_name}</div>
-                    <div className="text-zinc-500">{row.nationality}</div>
+                    <div className="font-semibold text-black">{row.nationality}</div>
+                    <div className="text-zinc-400">{row.job}</div>
                   </td>
                   <td className="p-3.5">
                     <div className="font-bold text-black">{row.old_sponsor}</div>
@@ -291,12 +287,12 @@ export const SponsorshipTransferPage: React.FC = () => {
                     <div className="text-zinc-500 font-mono">{row.new_sponsor_phone || '---'}</div>
                   </td>
                   <td className="p-3.5">
-                    <span className={`font-bold font-mono flex items-center gap-1 ${row.trial_days_remaining > 0 ? 'text-amber-700' : 'text-emerald-700'}`}>
+                    <span className={`font-bold font-mono flex items-center gap-1 ${row.trial_days_remaining > 0 ? 'text-amber-700' : 'text-champagne-dark'}`}>
                       <Clock className="w-3 h-3" />
                       {row.trial_days_remaining > 0 ? `${row.trial_days_remaining} أيام متبقية` : 'انتهت التجربة'}
                     </span>
                   </td>
-                  <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.contract_amount ?? 0).toLocaleString()} ر.س</td>
+                  <td className="p-3.5 font-mono font-bold text-champagne-dark">{(row.contract_amount ?? 0).toLocaleString()} ر.س</td>
                   <td className="p-3.5">
                     <Badge
                       text={row.status}
@@ -344,7 +340,7 @@ export const SponsorshipTransferPage: React.FC = () => {
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-emerald-400" />
+                <Plus className="w-4 h-4 text-champagne-light" />
                 <span>تسجيل طلب نقل كفالة وتنازل جديد</span>
               </h3>
               <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">

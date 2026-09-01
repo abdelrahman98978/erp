@@ -161,7 +161,7 @@ export const ActivityLogPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+              <ShieldCheck className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -194,7 +194,7 @@ export const ActivityLogPage: React.FC = () => {
               onClick={() => handleExport('excel')}
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-light" />
               <span>Excel</span>
             </button>
             <button
@@ -337,7 +337,7 @@ export const ActivityLogPage: React.FC = () => {
                           ? 'bg-red-100 text-red-800 border border-red-300'
                           : row.severity === 'تنبيه'
                           ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                          : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          : 'bg-champagne-pale text-champagne-dark border border-champagne/30'
                       }`}
                     >
                       {row.severity}
@@ -347,7 +347,7 @@ export const ActivityLogPage: React.FC = () => {
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         row.action_type === 'اعتماد مالي'
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                          ? 'bg-champagne-pale text-champagne-dark border border-champagne/30'
                           : row.action_type === 'حذف'
                           ? 'bg-rose-50 text-rose-800 border border-rose-200'
                           : row.action_type === 'تسجيل دخول'

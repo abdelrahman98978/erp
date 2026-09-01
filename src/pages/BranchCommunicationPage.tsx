@@ -253,8 +253,8 @@ export const BranchCommunicationPage: React.FC = () => {
               <h3 className="text-sm font-bold text-black m-0">
                 قناة المحادثة: {activeChannel}
               </h3>
-              <div className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-full text-[11px] font-bold border border-emerald-200">
-                <Lock className="w-3 h-3 text-emerald-600" />
+              <div className="inline-flex items-center gap-1 bg-champagne-pale text-champagne-dark px-2.5 py-1 rounded-full text-[11px] font-bold border border-champagne/30">
+                <Lock className="w-3 h-3 text-champagne-dark" />
                 <span>تشفير مباشر آمن 256-bit</span>
               </div>
             </div>
@@ -344,7 +344,7 @@ export const BranchCommunicationPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <ArrowLeftRight className="w-4 h-4 text-emerald-400" />
+                <ArrowLeftRight className="w-4 h-4 text-champagne-light" />
                 <span>تقديم طلب مناقلة وتنسيق بين الفروع</span>
               </h3>
               <button onClick={() => setShowTransferModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">

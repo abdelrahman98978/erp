@@ -382,7 +382,7 @@ export const BranchDepartmentsPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Network className="w-5 h-5 text-emerald-400" />
+              <Network className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -405,10 +405,10 @@ export const BranchDepartmentsPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setShowAddDeptModal(true)}
-              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-champagne"
               style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4 text-emerald-700" />
+              <Plus className="w-4 h-4 text-champagne-dark" />
               <span>+ إضافة قسم لـ ({selectedEntity.code})</span>
             </button>
 
@@ -429,7 +429,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 }))
               )}
               variant="outline-dark"
-              customTitle="الهيكل التنظيمي وأقسام المجموعة"
+              customTitle="الهيكلية والأقسام التخصصية المعتمدة - مجموعة خالد السليم"
             />
           </div>
         </div>
@@ -534,14 +534,14 @@ export const BranchDepartmentsPage: React.FC = () => {
               onClick={() => setSelectedEntityId(e.id)}
               className={`p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
                 isSelected
-                  ? 'bg-gradient-to-br from-slate-900 to-emerald-950 text-white border-emerald-500/50 shadow-xl shadow-emerald-950/20 scale-[1.02]'
-                  : 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 hover:shadow-md'
+                  ? 'bg-gradient-to-br from-charcoal to-black text-white border-champagne shadow-xl scale-[1.02]'
+                  : 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border-zinc-200 dark:border-zinc-800 hover:border-champagne/40 hover:shadow-md'
               }`}
             >
               <div className="flex justify-between items-center mb-3">
                 <span className={`px-2.5 py-1 rounded-full text-[10px] font-black font-mono border ${
                   isSelected
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    ? 'bg-champagne-pale/20 text-champagne-light border-champagne/30'
                     : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700'
                 }`}>
                   {e.code}
@@ -553,7 +553,7 @@ export const BranchDepartmentsPage: React.FC = () => {
 
               <h4 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h4>
               <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
-                isSelected ? 'text-emerald-100/70' : 'text-zinc-500 dark:text-zinc-400'
+                isSelected ? 'text-champagne-light/70' : 'text-zinc-500 dark:text-zinc-400'
               }`}>
                 <span className="truncate max-w-[140px]">{e.manager}</span>
                 <span className="font-bold text-[11px] shrink-0 font-mono">{e.departments.length} أقسام • {e.staff_count} موظف</span>
@@ -565,11 +565,11 @@ export const BranchDepartmentsPage: React.FC = () => {
 
       {/* Selected Entity Hero Overview Banner */}
       {selectedEntity && (
-        <div className="rounded-3xl bg-gradient-to-r from-emerald-50 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/20 border border-emerald-200/80 dark:border-emerald-800/50 p-6 shadow-sm">
+        <div className="rounded-3xl bg-gradient-to-r from-champagne-pale/80 to-zinc-50 dark:from-zinc-900 dark:to-zinc-800 border border-champagne/30 p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-emerald-600 text-white font-mono font-black text-xs">
+                <span className="px-3 py-1 rounded-full bg-charcoal text-champagne-light font-mono font-black text-xs border border-champagne/30">
                   {selectedEntity.code}
                 </span>
                 <span className="pill-tag-mint text-xs">
@@ -584,7 +584,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 font-medium">({selectedEntity.location})</span>
               </h3>
               <p className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">
-                المشرف / المدير المسؤول: <strong className="text-emerald-700 dark:text-emerald-400">{selectedEntity.manager}</strong>
+                المشرف / المدير المسؤول: <strong className="text-champagne-dark dark:text-champagne-light">{selectedEntity.manager}</strong>
               </p>
             </div>
 
@@ -605,7 +605,7 @@ export const BranchDepartmentsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-emerald-600" />
+              <Building2 className="w-5 h-5 text-champagne-dark" />
               <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
             </h3>
             <span className="pill-tag-mint text-xs font-mono">
@@ -617,11 +617,11 @@ export const BranchDepartmentsPage: React.FC = () => {
             {selectedEntity.departments.map(dept => (
               <div 
                 key={dept.id} 
-                className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-emerald-500/40 transition-all flex flex-col justify-between group bg-white dark:bg-zinc-900"
+                className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-champagne/40 transition-all flex flex-col justify-between group bg-white dark:bg-zinc-900"
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
-                    <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center font-bold shadow-xs">
+                    <div className="w-12 h-12 rounded-full bg-champagne-pale dark:bg-zinc-800 text-champagne-dark border border-champagne/30 flex items-center justify-center font-bold shadow-xs">
                       <Building2 className="w-6 h-6" />
                     </div>
                     <span className="pill-tag-mint text-xs font-black">
@@ -629,7 +629,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <h4 className="font-black text-base text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <h4 className="font-black text-base text-slate-900 dark:text-white mb-2 group-hover:text-champagne-dark transition-colors">
                     {dept.name}
                   </h4>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium mb-4">
@@ -656,11 +656,11 @@ export const BranchDepartmentsPage: React.FC = () => {
       {showAddDeptModal && selectedEntity && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="card-pricing bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 text-slate-900 dark:text-white relative">
-            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-champagne via-champagne-light to-champagne-dark rounded-t-3xl" />
 
             <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
               <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-600" />
+                <Building2 className="w-5 h-5 text-champagne-dark" />
                 <span>إضافة قسم تخصصي لـ ({selectedEntity.name})</span>
               </h3>
               <button 
@@ -679,7 +679,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   placeholder="مثال: إدارة الرعاية الطبية والفحوصات..."
                   value={deptForm.name}
                   onChange={e => setDeptForm({ ...deptForm, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -691,7 +691,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   placeholder="اسم مسؤول القسم..."
                   value={deptForm.head}
                   onChange={e => setDeptForm({ ...deptForm, head: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -703,7 +703,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   placeholder="اكتب مهام وأهداف هذا القسم التخصصي..."
                   value={deptForm.description}
                   onChange={e => setDeptForm({ ...deptForm, description: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-medium text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-medium text-slate-900 dark:text-white"
                   required
                 />
               </div>
@@ -714,7 +714,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   type="text"
                   value={deptForm.kpi}
                   onChange={e => setDeptForm({ ...deptForm, kpi: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
 

@@ -248,7 +248,7 @@ export const TravelPage: React.FC = () => {
             className="button-outline-on-light"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
             <span>Excel</span>
           </button>
         </div>
@@ -450,7 +450,7 @@ export const TravelPage: React.FC = () => {
           <div className="w-full max-w-xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Plane className="w-4 h-4 text-emerald-400" />
+                <Plane className="w-4 h-4 text-champagne-light" />
                 <span>جدولة رحلة طيران جديدة (Logistics Form)</span>
               </h3>
               <button

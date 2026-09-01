@@ -80,7 +80,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
   return (
     <div
-      className="bg-black text-white min-h-screen w-full overflow-x-hidden font-sans selection:bg-emerald-500 selection:text-white"
+      className="bg-black text-white min-h-screen w-full overflow-x-hidden font-sans selection:bg-champagne selection:text-black"
       dir={currentLanguage.dir}
       style={{
         fontFamily: 'var(--font-family-ui)',
@@ -161,21 +161,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               <a
                 href="#companies"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-lg font-bold text-white hover:text-emerald-400 transition-colors py-1"
+                className="block text-lg font-bold text-white hover:text-champagne-light transition-colors py-1"
               >
                 الشركات التابعة للمجموعة
               </a>
               <a
                 href="#capabilities"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-lg font-bold text-white hover:text-emerald-400 transition-colors py-1"
+                className="block text-lg font-bold text-white hover:text-champagne-light transition-colors py-1"
               >
                 القدرات والأنظمة التشغيلية
               </a>
               <a
                 href="#governance"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-lg font-bold text-white hover:text-emerald-400 transition-colors py-1"
+                className="block text-lg font-bold text-white hover:text-champagne-light transition-colors py-1"
               >
                 الحوكمة والربط الحكومي
               </a>
@@ -190,7 +190,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   <button
                     key={c.id}
                     onClick={() => handleSelect(c.id)}
-                    className="p-2.5 bg-zinc-900/80 border border-white/10 rounded-xl text-right text-xs font-semibold hover:border-emerald-500 transition-all text-white"
+                    className="p-2.5 bg-zinc-900/80 border border-white/10 rounded-xl text-right text-xs font-semibold hover:border-champagne transition-all text-white"
                   >
                     {c.nameAr}
                   </button>
@@ -224,7 +224,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       <section className="max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-28 text-center">
         <div className="max-w-3xl mx-auto space-y-6">
           <div>
-            <span className="eyebrow-cap inline-block text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-medium tracking-widest">
+            <span className="eyebrow-cap inline-block text-champagne-light bg-black/60 border border-champagne/40 px-3 py-1 rounded-full text-xs font-medium tracking-widest">
               ENTERPRISE COMMERCE & HUMAN CAPITAL SYSTEM
             </span>
           </div>
@@ -314,7 +314,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   <span className="pill-tag-mint text-[10px]">
                     {comp.stats}
                   </span>
-                  <span className="text-xs text-white inline-flex items-center gap-1.5 group-hover:text-emerald-400 transition-colors font-medium">
+                  <span className="text-xs text-white inline-flex items-center gap-1.5 group-hover:text-champagne-light transition-colors font-medium">
                     <span>دخول المنظومة</span>
                     <ArrowLeft className="w-3 h-3" />
                   </span>
@@ -329,7 +329,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       <section id="capabilities" className="border-t border-white/10 bg-zinc-950/60 py-16 sm:py-24 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-12 sm:mb-16">
-            <span className="eyebrow-cap text-emerald-400 text-xs tracking-widest">CAPABILITIES & INFRASTRUCTURE</span>
+            <span className="eyebrow-cap text-champagne-light text-xs tracking-widest">CAPABILITIES & INFRASTRUCTURE</span>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-light text-white mt-2 font-display">
               بنية تحتية موحدة بمقاييس عالمية
             </h2>
@@ -337,7 +337,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="card-feature-cinematic bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-black/80 border border-champagne/40 text-champagne-light flex items-center justify-center">
                 <Network className="w-6 h-6" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white">
@@ -349,7 +349,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </div>
 
             <div className="card-feature-cinematic bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-black/80 border border-champagne/40 text-champagne-light flex items-center justify-center">
                 <TrendingUp className="w-6 h-6" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white">
@@ -361,7 +361,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </div>
 
             <div className="card-feature-cinematic bg-zinc-900/60 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-black/80 border border-champagne/40 text-champagne-light flex items-center justify-center">
                 <Bot className="w-6 h-6" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white">

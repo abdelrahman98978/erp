@@ -673,7 +673,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 )}
                 <div className="flex items-center justify-between gap-1 mb-1">
                   <span className="text-xs font-bold text-black truncate">{portal.nameAr}</span>
-                  {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />}
+                  {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark flex-shrink-0" />}
                 </div>
                 <span className="text-[10px] text-zinc-500 truncate">{portal.license}</span>
               </button>
@@ -1044,7 +1044,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 <div style={{ margin: '16px 0 12px 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', gap: '8px', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '11px', fontWeight: 700, color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
+                      <Fingerprint className="w-3.5 h-3.5 text-champagne-dark" />
                       <span>المصادقة البيومترية المعتمدة (WebAuthn / FIDO2)</span>
                     </span>
                     <span className="pill-tag-mint text-[10px]" style={{ padding: '2px 8px' }}>
@@ -1063,16 +1063,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         gap: '6px',
                         height: '42px',
                         borderRadius: '12px',
-                        border: '1px solid #A7F3D0',
-                        background: 'linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%)',
-                        color: '#065F46',
+                        border: '1px solid rgba(207, 166, 74, 0.3)',
+                        background: 'linear-gradient(135deg, #FDFBF7 0%, #F5EDDC 100%)',
+                        color: '#A98232',
                         cursor: 'pointer',
                         fontSize: '12px',
                         fontWeight: '700',
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      <Fingerprint className="w-4 h-4 text-emerald-600" />
+                      <Fingerprint className="w-4 h-4 text-champagne-dark" />
                       <span>بصمة الإصبع (Touch ID)</span>
                     </button>
 

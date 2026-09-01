@@ -335,7 +335,7 @@ export const RentPackagesPage: React.FC = () => {
                   <ul className="space-y-1.5 text-xs text-zinc-700">
                     {pkg.features.map((feat, idx) => (
                       <li key={idx} className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <Check className="w-3.5 h-3.5 text-champagne-dark shrink-0" />
                         <span>{feat}</span>
                       </li>
                     ))}
@@ -425,7 +425,7 @@ export const RentPackagesPage: React.FC = () => {
                     <span>المبلغ الإجمالي الأساسي:</span>
                     <span className="font-mono font-bold text-black">{calcSubtotal.toLocaleString()} ر.س</span>
                   </div>
-                  <div className="flex justify-between text-emerald-700">
+                  <div className="flex justify-between text-champagne-dark font-bold">
                     <span>الخصم المطبق ({calcDuration >= 12 ? '20%' : calcDuration >= 3 ? '10%' : '0%'}):</span>
                     <span className="font-mono font-bold">- {calcDiscount.toLocaleString()} ر.س</span>
                   </div>
@@ -440,7 +440,7 @@ export const RentPackagesPage: React.FC = () => {
 
                   <div className="flex justify-between text-base py-3 font-bold text-black mt-2">
                     <span>الإجمالي النهائي شامل الضريبة:</span>
-                    <span className="font-mono text-emerald-700 text-lg">{calcGrandTotal.toLocaleString()} ر.س</span>
+                    <span className="font-mono text-champagne-dark text-lg font-black">{calcGrandTotal.toLocaleString()} ر.س</span>
                   </div>
                 </div>
 

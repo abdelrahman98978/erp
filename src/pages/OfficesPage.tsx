@@ -237,7 +237,7 @@ export const OfficesPage: React.FC = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Globe className="w-5 h-5 text-emerald-400" />
+              <Globe className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -260,10 +260,10 @@ export const OfficesPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setShowAddModal(true)}
-              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-champagne"
               style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4 text-emerald-700" />
+              <Plus className="w-4 h-4 text-champagne-dark" />
               <span>+ إضافة مكتب خارجي</span>
             </button>
 
@@ -313,7 +313,7 @@ export const OfficesPage: React.FC = () => {
             ${totalBalanceUsd.toLocaleString()}
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-full h-full bg-emerald-500 rounded-full" />
+            <div className="w-full h-full bg-champagne rounded-full shadow-xs" />
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>رصيد دائن بالدولار</span>
         </div>
@@ -346,7 +346,7 @@ export const OfficesPage: React.FC = () => {
               placeholder="ابحث بالاسم، الحساب، أو المدير..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-3 pr-9 py-2 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
+              className="w-full pl-3 pr-9 py-2 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-champagne font-semibold"
             />
           </div>
 
@@ -356,7 +356,7 @@ export const OfficesPage: React.FC = () => {
               onClick={() => setViewMode('cards')}
               className={`p-2 rounded-full text-xs font-bold flex items-center gap-1 transition-all ${
                 viewMode === 'cards'
-                  ? 'bg-white dark:bg-zinc-900 text-emerald-600 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-900 text-champagne-dark shadow-xs border border-champagne/30'
                   : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
               }`}
               title="عرض الكروت"
@@ -367,7 +367,7 @@ export const OfficesPage: React.FC = () => {
               onClick={() => setViewMode('table')}
               className={`p-2 rounded-full text-xs font-bold flex items-center gap-1 transition-all ${
                 viewMode === 'table'
-                  ? 'bg-white dark:bg-zinc-900 text-emerald-600 shadow-xs'
+                  ? 'bg-white dark:bg-zinc-900 text-champagne-dark shadow-xs border border-champagne/30'
                   : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
               }`}
               title="عرض الجدول"
@@ -408,7 +408,7 @@ export const OfficesPage: React.FC = () => {
               <div className="mt-2 flex items-center justify-end gap-2 px-1">
                 <button
                   onClick={() => setSelectedOfficeStatement(office)}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center gap-1.5 transition"
+                  className="px-3 py-1.5 rounded-xl bg-champagne-pale hover:bg-champagne-pale/80 text-champagne-dark border border-champagne/30 font-bold text-xs flex items-center gap-1.5 transition shadow-xs"
                 >
                   <DollarSign className="w-3.5 h-3.5" />
                   <span>كشف حساب ($)</span>
@@ -459,13 +459,13 @@ export const OfficesPage: React.FC = () => {
                     </td>
                     <td className="p-3.5">
                       <div className="font-bold text-slate-900 dark:text-white">سير: {row.cvs_count ?? 0}</div>
-                      <div className="text-[11px] text-emerald-600 font-bold">عقود: {row.contracts_count ?? 0}</div>
+                      <div className="text-[11px] text-champagne-dark font-bold">عقود: {row.contracts_count ?? 0}</div>
                     </td>
                     <td className="p-3.5">
                       <div className="font-mono font-bold text-amber-600">${(row.cost_usd ?? 0).toLocaleString()}</div>
                       <div className="text-[10.5px] text-slate-400">~{(row.commission_sar ?? 0).toLocaleString()} ر.س</div>
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-600">
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">
                       ${(row.balance_usd ?? 0).toLocaleString()}
                     </td>
                     <td className="p-3.5">
@@ -474,10 +474,10 @@ export const OfficesPage: React.FC = () => {
                     <td className="p-3.5 text-center">
                       <div className="flex items-center justify-center gap-1.5">
                         <button
-                          className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold text-xs flex items-center gap-1 transition"
+                          className="px-3 py-1 rounded-xl bg-champagne-pale text-champagne-dark border border-champagne/30 hover:bg-champagne-pale/80 font-bold text-xs flex items-center gap-1 transition shadow-xs"
                           onClick={() => setSelectedOfficeStatement(row)}
                         >
-                          <DollarSign className="w-3 h-3" />
+                          <DollarSign className="w-3 h-3 text-champagne-dark" />
                           <span>كشف حساب</span>
                         </button>
                         <button
@@ -512,11 +512,11 @@ export const OfficesPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white relative">
-            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-champagne via-champagne-light to-champagne-dark rounded-t-3xl" />
 
             <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
-                <Building className="w-4 h-4 text-emerald-600" />
+                <Building className="w-4 h-4 text-champagne-dark" />
                 <span>تسجيل وكالة استقدام خارجية جديدة</span>
               </h3>
               <button 
@@ -536,7 +536,7 @@ export const OfficesPage: React.FC = () => {
                   placeholder="مثال: MANILA ELITE RECRUITMENT CORP"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
                 />
               </div>
 
@@ -546,7 +546,7 @@ export const OfficesPage: React.FC = () => {
                   <select
                     value={formData.nationality}
                     onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
                   >
                     <option value="الفلبين">الفلبين</option>
                     <option value="إثيوبيا">إثيوبيا</option>
@@ -564,7 +564,7 @@ export const OfficesPage: React.FC = () => {
                     placeholder="مثال: مارك أنتوني"
                     value={formData.manager}
                     onChange={(e) => setFormData({ ...formData, manager: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-semibold text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -577,7 +577,7 @@ export const OfficesPage: React.FC = () => {
                     placeholder="POEA-XXX-2026"
                     value={formData.license_no}
                     onChange={(e) => setFormData({ ...formData, license_no: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-mono text-slate-900 dark:text-white"
                   />
                 </div>
 
@@ -587,7 +587,7 @@ export const OfficesPage: React.FC = () => {
                     type="text"
                     value={formData.account_code}
                     onChange={(e) => setFormData({ ...formData, account_code: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-mono text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -600,7 +600,7 @@ export const OfficesPage: React.FC = () => {
                     placeholder="+63 9XX XXX XXXX"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-mono text-slate-900 dark:text-white"
                   />
                 </div>
 
@@ -611,7 +611,7 @@ export const OfficesPage: React.FC = () => {
                     placeholder="agency@domain.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
@@ -622,7 +622,7 @@ export const OfficesPage: React.FC = () => {
                   type="number"
                   value={formData.cost_usd}
                   onChange={(e) => setFormData({ ...formData, cost_usd: Number(e.target.value) })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-champagne font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
 
@@ -636,7 +636,7 @@ export const OfficesPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-lg shadow-emerald-600/25 transition"
+                  className="px-6 py-2.5 rounded-2xl bg-charcoal hover:bg-black text-champagne-light border border-champagne/40 font-black text-xs shadow-md transition"
                 >
                   حفظ واعتماد الوكالة
                 </button>
@@ -650,7 +650,7 @@ export const OfficesPage: React.FC = () => {
       {selectedOfficeStatement && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white relative">
-            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 rounded-t-3xl" />
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-champagne via-champagne-light to-champagne-dark rounded-t-3xl" />
 
             <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
@@ -666,10 +666,10 @@ export const OfficesPage: React.FC = () => {
             </div>
 
             <div className="p-6 space-y-4 text-xs">
-              <div className="p-4 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 grid grid-cols-3 gap-3 text-center">
+              <div className="p-4 bg-champagne-pale/60 dark:bg-zinc-800/80 rounded-2xl border border-champagne/30 grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">الرصيد الدائن المستحق</div>
-                  <div className="text-base font-mono font-bold text-emerald-600">${(selectedOfficeStatement.balance_usd ?? 0).toLocaleString()}</div>
+                  <div className="text-base font-mono font-bold text-champagne-dark">${(selectedOfficeStatement.balance_usd ?? 0).toLocaleString()}</div>
                 </div>
                 <div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">العقود المنجزة</div>
@@ -686,20 +686,37 @@ export const OfficesPage: React.FC = () => {
                 • توجد 3 إرساليات قيد إجراءات إصدار تذاكر الطيران للوصول إلى مطار الملك خالد الدولي.
               </p>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-between items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 flex-wrap">
                 <button
-                  className="px-5 py-2.5 rounded-2xl bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800 font-bold text-xs flex items-center gap-1.5 transition"
-                  onClick={() => exportData('offices', [selectedOfficeStatement], 'pdf')}
+                  className="px-4 py-2 rounded-2xl bg-charcoal text-champagne-light border border-champagne/40 hover:bg-black font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+                  onClick={() => {
+                    addNotification({
+                      title: 'تسوية رصيد معتمد',
+                      message: `تم إنشاء سند تحويل دولي بمبلغ ${(selectedOfficeStatement.balance_usd ?? 0).toLocaleString()}$ لصالح وكالة (${selectedOfficeStatement.name}) وتوجيهه لقسم المالية.`,
+                      type: 'success'
+                    });
+                    setSelectedOfficeStatement(null);
+                  }}
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>طباعة كشف الحساب</span>
+                  <DollarSign className="w-3.5 h-3.5 text-champagne-light" />
+                  <span>صرف وتسوية الدفعة</span>
                 </button>
-                <button
-                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition"
-                  onClick={() => setSelectedOfficeStatement(null)}
-                >
-                  إغلاق
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    className="px-4 py-2 rounded-2xl bg-champagne-pale text-champagne-dark border border-champagne/30 font-bold text-xs flex items-center gap-1.5 transition hover:bg-champagne-pale/80"
+                    onClick={() => exportData('offices', [selectedOfficeStatement], 'pdf')}
+                  >
+                    <FileText className="w-3.5 h-3.5 text-champagne-dark" />
+                    <span>طباعة الكشف</span>
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition"
+                    onClick={() => setSelectedOfficeStatement(null)}
+                  >
+                    إغلاق
+                  </button>
+                </div>
               </div>
             </div>
           </div>

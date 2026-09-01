@@ -360,7 +360,7 @@ export const SentMessagesPage: React.FC = () => {
                 />
               </div>
               <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
                 <span>Excel</span>
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
@@ -401,7 +401,7 @@ export const SentMessagesPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-semibold text-black">{row.template}</td>
                     <td className="p-3.5 max-w-xs truncate text-zinc-600" title={row.content}>{row.content}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.cost_sar ?? 0.12).toFixed(2)} ر.س</td>
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{(row.cost_sar ?? 0.12).toFixed(2)} ر.س</td>
                     <td className="p-3.5 font-mono text-zinc-400 text-[11px]">{row.sent_at}</td>
                     <td className="p-3.5">
                       <Badge
@@ -442,8 +442,8 @@ export const SentMessagesPage: React.FC = () => {
           </h2>
 
           {sendSuccess && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-2xl mb-4 font-bold text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <div className="bg-champagne-pale border border-champagne/40 text-champagne-dark p-3 rounded-2xl mb-4 font-bold text-xs flex items-center gap-2 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-champagne-dark" />
               <span>تم إرسال الرسالة بنجاح وتسجيلها في الأرشيف المعتمد!</span>
             </div>
           )}
@@ -614,10 +614,10 @@ export const SentMessagesPage: React.FC = () => {
           <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-sm font-bold text-black flex items-center gap-2">
-                <PhoneCall className="w-4 h-4 text-emerald-600" />
+                <PhoneCall className="w-4 h-4 text-champagne-dark" />
                 <span>واتساب للأعمال (Meta Cloud API)</span>
               </h3>
-              <Badge text="توثيق معتمد" type="success" />
+              <Badge text="توثيق معتمد" type="gold" />
             </div>
             <p className="text-xs text-zinc-600 mb-3">
               ربط مباشر وموثق بالعلامة الخضراء لإرسال قوالب التفييز والرحلات والفواتير الضريبية.

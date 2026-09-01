@@ -88,7 +88,7 @@ export const WhatsAppInboxPage: React.FC = () => {
       >
         <div className="flex items-center gap-3">
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <PhoneCall className="w-5 h-5 text-emerald-400" />
+            <PhoneCall className="w-5 h-5 text-champagne-light" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -109,7 +109,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
             <span>Excel</span>
           </button>
           <button
@@ -159,7 +159,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             99.2%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-[99.2%] h-full bg-emerald-500 rounded-full" />
+            <div className="w-[99.2%] h-full bg-champagne rounded-full" />
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تقييم ممتاز من العملاء</span>
         </div>
@@ -217,7 +217,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 </div>
                 <div className="text-xs text-zinc-500 truncate">{chat.last_message}</div>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-[11px] font-mono text-emerald-700 font-bold">{chat.phone}</span>
+                  <span className="text-[11px] font-mono text-champagne-dark font-bold">{chat.phone}</span>
                   {chat.unread_count > 0 && (
                     <span className="bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                       {chat.unread_count}
@@ -235,14 +235,14 @@ export const WhatsAppInboxPage: React.FC = () => {
           <div className="p-3.5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-black text-white font-bold flex items-center justify-center text-xs shadow-sm">
-                <PhoneCall className="w-4 h-4 text-emerald-400" />
+                <PhoneCall className="w-4 h-4 text-champagne-light" />
               </div>
               <div>
                 <h3 className="font-bold text-xs text-black">{activeChat.client_name}</h3>
-                <span className="text-[11px] font-mono text-emerald-700 font-bold">{activeChat.phone}</span>
+                <span className="text-[11px] font-mono text-champagne-dark font-bold">{activeChat.phone}</span>
               </div>
             </div>
-            <Badge text="متصل بـ WhatsApp Cloud API" type="success" />
+            <Badge text="متصل بـ WhatsApp Cloud API" type="gold" />
           </div>
 
           {/* Messages Body */}

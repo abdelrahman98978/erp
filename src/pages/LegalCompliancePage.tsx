@@ -188,7 +188,7 @@ export const LegalCompliancePage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
             <span>تصدير السجل (Excel)</span>
           </button>
         </div>
@@ -328,10 +328,10 @@ export const LegalCompliancePage: React.FC = () => {
                       <div>{item.signed_at}</div>
                       <div className="text-zinc-400 text-[10px]">{item.signed_at_hijri || '1447 هـ'}</div>
                     </td>
-                    <td className="p-3.5 font-mono text-emerald-800 font-bold text-[11px]">{item.ip_address}</td>
+                    <td className="p-3.5 font-mono text-champagne-dark font-bold text-[11px]">{item.ip_address}</td>
                     <td className="p-3.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
-                        <Fingerprint className="w-3 h-3 text-emerald-600" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-champagne-pale text-champagne-dark text-[11px] font-bold border border-champagne/30">
+                        <Fingerprint className="w-3 h-3 text-champagne-dark" />
                         <span>توقيع بيومتري إلكتروني</span>
                       </span>
                     </td>
@@ -344,7 +344,7 @@ export const LegalCompliancePage: React.FC = () => {
                           style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                           title="معاينة شهادة التعهد"
                         >
-                          <Eye className="w-3 h-3 ml-1 text-emerald-600" />
+                          <Eye className="w-3 h-3 ml-1 text-champagne-dark" />
                           <span>معاينة</span>
                         </button>
                         <button
@@ -380,7 +380,7 @@ export const LegalCompliancePage: React.FC = () => {
             <div key={policy.departmentKey} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
                 <div className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-emerald-600" />
+                  <Building2 className="w-5 h-5 text-champagne-dark" />
                   <h3 className="text-sm font-bold text-black m-0">{policy.departmentName}</h3>
                 </div>
                 <span className="pill-tag-mint text-[10px]">ميثاق معتمد</span>
@@ -421,7 +421,7 @@ export const LegalCompliancePage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="border-b border-zinc-100 pb-4 mb-4">
             <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
-              <Scale className="w-5 h-5 text-emerald-600" />
+              <Scale className="w-5 h-5 text-champagne-dark" />
               <span>المرجعيات التشريعية والنظامية في المملكة العربية السعودية</span>
             </h3>
             <p className="text-xs text-zinc-500 mt-1">
@@ -430,12 +430,12 @@ export const LegalCompliancePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-2">
-              <h4 className="font-bold text-xs text-emerald-950 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
+            <div className="p-4 rounded-2xl bg-champagne-pale border border-champagne/30 space-y-2">
+              <h4 className="font-bold text-xs text-black flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-champagne-dark" />
                 <span>1. نظام التعاملات الإلكترونية (مرسوم ملكي م/18)</span>
               </h4>
-              <p className="text-xs text-emerald-900 leading-relaxed">
+              <p className="text-xs text-zinc-700 leading-relaxed">
                 يقر النظام بأن التوقيع الإلكتروني والمعاملات الرقمية تتمتع بالحجية القانونية الكاملة متى ما استوفت شروط الأمان والتحقق والربط بهوية المستخدم.
               </p>
             </div>
@@ -479,7 +479,7 @@ export const LegalCompliancePage: React.FC = () => {
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-300 overflow-hidden font-sans max-h-[90vh] flex flex-col">
             <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
               <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                <Scale className="w-4 h-4 text-emerald-400" />
+                <Scale className="w-4 h-4 text-champagne-light" />
                 <span>وثيقة الإقرار والتعهد وإبراء الذمة القانونية الرقمية المعتمدة</span>
               </h3>
               <button onClick={() => setSelectedUndertaking(null)} className="p-1 text-zinc-400 hover:text-white">
@@ -493,7 +493,7 @@ export const LegalCompliancePage: React.FC = () => {
               <div className="text-center border-b-2 border-black pb-4">
                 <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">المملكة العربية السعودية</div>
                 <div className="text-lg font-bold text-black mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
-                <div className="text-sm font-bold text-emerald-800 mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية</div>
+                <div className="text-sm font-bold text-champagne-dark mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية</div>
                 <div className="text-[11px] font-mono text-zinc-500 mt-1">
                   رقم الاعتماد الرقمي: <span className="font-bold text-black">{selectedUndertaking.compliance_hash}</span>
                 </div>
@@ -525,14 +525,14 @@ export const LegalCompliancePage: React.FC = () => {
                   <div className="text-zinc-500 text-[11px]">بيانات التوثيق الرقمي:</div>
                   <div className="font-mono text-[10px] text-zinc-700">تاريخ التوقيع: {selectedUndertaking.signed_at}</div>
                   <div className="font-mono text-[10px] text-zinc-700">عنوان الـ IP: {selectedUndertaking.ip_address}</div>
-                  <div className="font-mono text-[9px] text-emerald-800 font-bold">الحالة: {selectedUndertaking.status}</div>
+                  <div className="font-mono text-[9px] text-champagne-dark font-bold">الحالة: {selectedUndertaking.status}</div>
                 </div>
 
                 <div className="text-center space-y-2">
                   <div className="text-zinc-500 text-[11px]">التوقيع الإلكتروني المعتمد:</div>
                   <div className="border border-zinc-200 rounded-lg p-2 bg-zinc-50 inline-block min-w-[140px]">
-                    <Fingerprint className="w-8 h-8 text-emerald-700 mx-auto" />
-                    <span className="text-[10px] font-bold text-emerald-900 block mt-1">توقيع رقمي موثق ومطابق</span>
+                    <Fingerprint className="w-8 h-8 text-champagne-dark mx-auto" />
+                    <span className="text-[10px] font-bold text-black block mt-1">توقيع رقمي موثق ومطابق</span>
                   </div>
                   <div className="text-[10px] font-bold text-black">{selectedUndertaking.employee_name}</div>
                 </div>

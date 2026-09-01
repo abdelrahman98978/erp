@@ -275,12 +275,12 @@ export const IdentityAccessManagementPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 lg:p-8 font-sans space-y-6" dir="rtl">
       {/* Top Breadcrumb & Hero Banner */}
-      <div className="bg-gradient-to-l from-emerald-900 via-slate-900 to-slate-950 border border-emerald-800/40 rounded-3xl p-6 lg:p-8 text-white shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-gradient-to-l from-zinc-900 via-slate-900 to-black border border-white/10 rounded-3xl p-6 lg:p-8 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-champagne/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-black tracking-wider text-emerald-400 uppercase bg-emerald-950/80 px-3 py-1 rounded-full w-max border border-emerald-700/50">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs font-black tracking-wider text-champagne-light uppercase bg-black/80 px-3 py-1 rounded-full w-max border border-champagne/40">
+              <ShieldCheck className="w-4 h-4 text-champagne-light" />
               <span>نظام الأمان والرقابة المركزية (IAM & Multi-Company Governance)</span>
             </div>
             <h1 className="text-2xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-3">
@@ -294,7 +294,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-2xl flex items-center gap-3">
-              <Building2 className="w-5 h-5 text-emerald-400" />
+              <Building2 className="w-5 h-5 text-champagne-light" />
               <div className="text-right">
                 <div className="text-[10px] text-slate-300">الشركة الحالية النشطة</div>
                 <div className="text-sm font-black text-white">{activeCompany?.commercialName}</div>
@@ -302,7 +302,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
             </div>
             <button
               onClick={loadAllIamData}
-              className="p-2.5 bg-emerald-600/80 hover:bg-emerald-600 text-white rounded-2xl transition border border-emerald-500/30 flex items-center justify-center shadow-lg"
+              className="p-2.5 bg-champagne hover:bg-champagne-dark text-black rounded-2xl transition border border-champagne/40 flex items-center justify-center shadow-lg"
               title="تحديث البيانات اللحظية"
             >
               <RefreshCw className="w-5 h-5" />
@@ -332,15 +332,15 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as IamTab)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl whitespace-nowrap transition-all ${
                   isActive
-                    ? 'bg-emerald-500 text-slate-950 font-black shadow-lg shadow-emerald-500/20 scale-105'
+                    ? 'bg-champagne text-black font-black shadow-lg scale-105'
                     : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-slate-950' : 'text-emerald-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-black' : 'text-champagne-light'}`} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                    isActive ? 'bg-slate-950 text-emerald-400' : 'bg-white/10 text-slate-300'
+                    isActive ? 'bg-black text-champagne-light' : 'bg-white/10 text-slate-300'
                   }`}>
                     {tab.count}
                   </span>
@@ -366,7 +366,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                   placeholder="البحث بالاسم، البريد، الرقم الوظيفي، أو المسمى..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl pr-10 pl-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl pr-10 pl-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-champagne"
                 />
               </div>
 
@@ -400,7 +400,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
 
             <button
               onClick={() => setShowNewUserModal(true)}
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-emerald-600/20 transition flex items-center justify-center gap-2"
+              className="px-5 py-2.5 bg-champagne hover:bg-champagne-dark text-black text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" />
               إضافة مستخدم جديد
@@ -427,7 +427,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     <tr key={u.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-black flex items-center justify-center text-sm shadow-inner">
+                          <div className="w-9 h-9 rounded-2xl bg-champagne-pale text-champagne-dark font-black flex items-center justify-center text-sm shadow-inner">
                             {u.fullName.slice(0, 1)}
                           </div>
                           <div>
@@ -456,7 +456,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
 
                       <td className="py-4 px-6 text-center">
                         {u.mfaEnabled ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 rounded-full font-bold text-[10px] border border-emerald-200 dark:border-emerald-800">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-champagne-pale text-champagne-dark rounded-full font-bold text-[10px] border border-champagne/30">
                             <CheckCircle2 className="w-3 h-3" />
                             {u.mfaMethod}
                           </span>
@@ -481,7 +481,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                       <td className="py-4 px-6 text-center">
                         <span className={`px-2.5 py-1 rounded-full font-black text-[10px] ${
                           u.status === 'نشط'
-                            ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                            ? 'bg-champagne-pale text-champagne-dark border border-champagne/30'
                             : 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
                         }`}>
                           {u.status}
@@ -502,7 +502,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                             className={`p-1.5 rounded-lg transition ${
                               u.status === 'نشط' 
                                 ? 'hover:bg-red-50 dark:hover:bg-red-950 text-red-600' 
-                                : 'hover:bg-emerald-50 dark:hover:bg-emerald-950 text-emerald-600'
+                                : 'hover:bg-champagne-pale text-champagne-dark'
                             }`}
                             title={u.status === 'نشط' ? 'إيقاف الحساب' : 'تفعيل الحساب'}
                           >
@@ -527,11 +527,11 @@ export const IdentityAccessManagementPage: React.FC = () => {
           {companies.map((comp) => (
             <div
               key={comp.id}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4 hover:border-emerald-500/50 transition relative overflow-hidden"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4 hover:border-champagne/50 transition relative overflow-hidden"
             >
               <div
                 className="absolute top-0 right-0 left-0 h-1.5"
-                style={{ backgroundColor: comp.primaryColor || '#059669' }}
+                style={{ backgroundColor: comp.primaryColor || '#CFA64A' }}
               />
 
               <div className="flex items-start justify-between">
@@ -542,7 +542,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{comp.legalName}</p>
                 </div>
-                <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full border border-emerald-200 dark:border-emerald-800">
+                <span className="px-2.5 py-1 bg-champagne-pale text-champagne-dark text-[10px] font-bold rounded-full border border-champagne/30">
                   {comp.status}
                 </span>
               </div>
@@ -560,7 +560,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
 
               <button
                 onClick={() => switchCompany(comp.code)}
-                className="w-full py-2.5 bg-slate-100 hover:bg-emerald-600 hover:text-white dark:bg-slate-800 dark:hover:bg-emerald-600 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-slate-100 hover:bg-black hover:text-white dark:bg-slate-800 dark:hover:bg-champagne dark:hover:text-black text-slate-700 dark:text-slate-300 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-2"
               >
                 <ArrowLeftRight className="w-3.5 h-3.5" />
                 التبديل إلى هذه الشركة
@@ -584,12 +584,12 @@ export const IdentityAccessManagementPage: React.FC = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <ArrowLeftRight className="w-5 h-5 text-emerald-500" />
+              <ArrowLeftRight className="w-5 h-5 text-champagne-dark" />
               سجل التفويضات المؤقتة والإجازات
             </h3>
             <button
               onClick={() => setShowNewDelegationModal(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl shadow transition flex items-center gap-2"
+              className="px-4 py-2 bg-champagne hover:bg-champagne-dark text-black text-xs font-bold rounded-2xl shadow transition flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               إنشاء تفويض مؤقت
@@ -605,7 +605,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
               delegations.map((d) => (
                 <div key={d.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-md">
+                    <span className="px-2 py-0.5 bg-champagne-pale text-champagne-dark text-[10px] font-bold rounded-md">
                       {d.status}
                     </span>
                     <span className="text-[10px] text-slate-400">{d.validFrom} إلى {d.validTo}</span>
@@ -672,7 +672,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Activity className="w-5 h-5 text-emerald-500" />
+              <Activity className="w-5 h-5 text-champagne-dark" />
               سجل التدقيق الأمني والامتثال (Immutable Audit Trail)
             </h3>
             <span className="text-xs text-slate-400 font-mono">آخر 100 حركة مسجلة</span>
@@ -695,13 +695,13 @@ export const IdentityAccessManagementPage: React.FC = () => {
                   <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
                     <td className="py-3 px-4 text-slate-400">{log.createdAt.slice(0, 19).replace('T', ' ')}</td>
                     <td className="py-3 px-4 text-slate-800 dark:text-slate-200 font-sans font-bold">{log.actorEmail}</td>
-                    <td className="py-3 px-4 text-emerald-600 dark:text-emerald-400">{log.companyCode || '—'}</td>
+                    <td className="py-3 px-4 text-champagne-dark font-bold">{log.companyCode || '—'}</td>
                     <td className="py-3 px-4 text-blue-600 dark:text-blue-400">{log.action}</td>
                     <td className="py-3 px-4 text-slate-600 dark:text-slate-300">{log.resource}</td>
                     <td className="py-3 px-4 text-center">
                       <span className={`px-2 py-0.5 rounded font-black text-[10px] ${
                         log.result === 'SUCCESS'
-                          ? 'bg-emerald-500/10 text-emerald-600'
+                          ? 'bg-champagne-pale text-champagne-dark border border-champagne/30'
                           : log.result === 'FORBIDDEN'
                           ? 'bg-amber-500/10 text-amber-600'
                           : 'bg-red-500/10 text-red-600'
@@ -723,7 +723,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 lg:p-8 shadow-2xl space-y-6">
             <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-600" />
+                <Users className="w-5 h-5 text-champagne-dark" />
                 إضافة مستخدم وموظف جديد للمنظومة
               </h3>
               <button onClick={() => setShowNewUserModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -788,7 +788,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     type="checkbox"
                     checked={newUserForm.mfaEnabled}
                     onChange={(e) => setNewUserForm({ ...newUserForm, mfaEnabled: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
+                    className="rounded text-champagne focus:ring-champagne w-4 h-4"
                   />
                   <span className="font-bold text-slate-700 dark:text-slate-300">إلزام المصادقة الثنائية (MFA)</span>
                 </label>
@@ -798,7 +798,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     type="checkbox"
                     checked={newUserForm.biometricEnabled}
                     onChange={(e) => setNewUserForm({ ...newUserForm, biometricEnabled: e.target.checked })}
-                    className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
+                    className="rounded text-champagne focus:ring-champagne w-4 h-4"
                   />
                   <span className="font-bold text-slate-700 dark:text-slate-300">تفعيل البصمة البيومترية (Touch/Face ID)</span>
                 </label>
@@ -814,7 +814,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl shadow transition font-black"
+                  className="px-6 py-2.5 bg-champagne hover:bg-champagne-dark text-black rounded-2xl shadow transition font-black"
                 >
                   إنشاء الحساب فوراً
                 </button>
