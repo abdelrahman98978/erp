@@ -31,7 +31,7 @@ export const DEFAULT_ACTIONS: ModuleAction[] = [
 
 export const ACTION_LABELS: Record<ModuleAction, { ar: string; desc: string; color: string }> = {
   view: { ar: 'عرض', desc: 'استعراض الشاشة والبيانات', color: 'bg-blue-50 text-blue-700' },
-  create: { ar: 'إنشاء', desc: 'إضافة سجلات جديدة', color: 'bg-emerald-50 text-emerald-700' },
+  create: { ar: 'إنشاء', desc: 'إضافة سجلات جديدة', color: 'bg-champagne-pale text-champagne-dark border border-champagne/30' },
   edit: { ar: 'تعديل', desc: 'تحديث البيانات الحالية', color: 'bg-amber-50 text-amber-700' },
   delete: { ar: 'حذف', desc: 'حذف السجلات نهائياً', color: 'bg-red-50 text-red-700' },
   approve: { ar: 'اعتماد', desc: 'الموافقة على الطلبات والعقود', color: 'bg-indigo-50 text-indigo-700' },
@@ -268,7 +268,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-zinc-100">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center shadow-xs">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="w-5 h-5 text-champagne-light" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
@@ -322,7 +322,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-black">{preset.name}</span>
                 {selectedPreset === preset.id && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="w-2 h-2 rounded-full bg-champagne" />
                 )}
               </div>
               <p className="text-[11px] text-zinc-500 m-0 leading-tight">
@@ -407,7 +407,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
       {/* Security Decision Hierarchy Footer Notes */}
       <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-4 text-xs">
         <div className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-emerald-600" />
+          <Lock className="w-4 h-4 text-champagne-dark" />
           <span className="text-zinc-700 font-bold">
             تسلسل قرار الوصول (Deny By Default Flow):
           </span>

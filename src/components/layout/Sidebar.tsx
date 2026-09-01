@@ -216,7 +216,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
               item.icon, 
               `w-4 h-4 flex-shrink-0 transition-colors ${
                 isDirectActive 
-                  ? 'text-emerald-300' 
+                  ? 'text-champagne-light' 
                   : 'text-zinc-400 group-hover:text-zinc-800'
               }`
             )}
@@ -230,8 +230,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
               <span
                 className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors ${
                   isDirectActive 
-                    ? 'bg-zinc-800 text-emerald-300' 
-                    : 'bg-zinc-100 text-zinc-700 group-hover:bg-emerald-50 group-hover:text-emerald-800'
+                    ? 'bg-zinc-900 text-champagne-light border border-champagne/30' 
+                    : 'bg-zinc-100 text-zinc-700 group-hover:bg-champagne-pale group-hover:text-champagne-dark'
                 }`}
               >
                 {item.badge}

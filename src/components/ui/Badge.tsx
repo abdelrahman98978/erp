@@ -2,13 +2,13 @@ import React from 'react';
 
 interface BadgeProps {
   text: string;
-  type?: 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'primary' | 'mint' | 'shade';
+  type?: 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'primary' | 'mint' | 'shade' | 'gold' | 'champagne';
   icon?: string;
   className?: string;
 }
 
 export const Badge: React.FC<BadgeProps> = ({ text, type = 'shade', icon, className = '' }) => {
-  if (type === 'mint' || type === 'success') {
+  if (type === 'mint' || type === 'success' || type === 'gold' || type === 'champagne') {
     return (
       <span className={`pill-tag-mint ${className}`}>
         {icon && <i className={icon} style={{ fontSize: '10px' }}></i>}

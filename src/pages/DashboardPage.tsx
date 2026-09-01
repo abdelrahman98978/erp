@@ -194,7 +194,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                   مؤشرات فورية
                 </span>
                 <span className="text-xs text-zinc-400 flex items-center gap-1.5 font-sans">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-champagne inline-block shadow-xs"></span>
                   محدث الآن - آخر تحديث اليوم
                 </span>
               </div>
@@ -287,9 +287,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
           <div className="flex gap-3">
             <div className="bg-white/10 rounded-xl px-3.5 py-1.5 flex items-center gap-2 text-xs">
-              <FileText className="w-3.5 h-3.5 text-emerald-300" />
+              <FileText className="w-3.5 h-3.5 text-champagne-light" />
               <span className="font-bold">عقود اليوم:</span>
-              <span className="font-mono font-bold text-emerald-300">{stats.todayContractsCount}</span>
+              <span className="font-mono font-bold text-champagne-light">{stats.todayContractsCount}</span>
             </div>
 
             <div className="bg-white/10 rounded-xl px-3.5 py-1.5 flex items-center gap-2 text-xs">
@@ -302,9 +302,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       </div>
 
       {/* IAM Multi-Entity Access Scope HUD */}
-      <div className="p-4 rounded-2xl bg-zinc-900 text-white flex items-center justify-between flex-wrap gap-4 border border-zinc-800 shadow-sm">
+      <div className="p-4 rounded-2xl bg-charcoal text-white flex items-center justify-between flex-wrap gap-4 border border-champagne/30 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+          <div className="w-9 h-9 rounded-xl bg-champagne/15 text-champagne-light flex items-center justify-center border border-champagne/40 shadow-xs">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
@@ -312,12 +312,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <span className="text-xs font-bold text-white">
                 جلسة الوصول المعتمدة: {currentUser?.fullName || 'المشرف العام'} ({currentUser?.accountType || 'Group Super Admin'})
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-black">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-champagne text-charcoal shadow-xs">
                 {activeCompany?.code || 'SAF'}: {activeCompany?.commercialName || 'الصفا الماسي'}
               </span>
             </div>
-            <p className="text-[11px] text-zinc-400 m-0 mt-0.5">
-              نطاق البيانات التشغيلي: <strong className="text-emerald-300 font-sans">Level {dataScope} — {dataScopeName}</strong> • الفروع المصرح بها: [الكل] • نظام العزل: فعال ومفعل 100%
+            <p className="text-[11px] text-zinc-300 m-0 mt-0.5">
+              نطاق البيانات التشغيلي: <strong className="text-champagne-light font-sans">Level {dataScope} — {dataScopeName}</strong> • الفروع المصرح بها: [الكل] • نظام العزل: فعال ومفعل 100%
             </p>
           </div>
         </div>

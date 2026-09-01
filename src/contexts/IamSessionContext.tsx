@@ -81,7 +81,7 @@ const DEFAULT_COMPANIES: IamCompany[] = [
     commercialName: 'كاس للمنافسات والتشغيل (KAS RC04)',
     crNumber: '1010789234',
     vatNumber: '310284759200003',
-    primaryColor: '#059669',
+    primaryColor: '#CFA64A',
     isGroupParent: false,
     status: 'نشط',
   },

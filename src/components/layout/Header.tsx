@@ -177,12 +177,12 @@ export const Header: React.FC<HeaderProps> = ({
                     }}
                     className={`w-full text-right px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
                       selectedBranch === b.name
-                        ? 'bg-emerald-50 text-emerald-800 font-bold'
+                        ? 'bg-champagne-pale text-champagne-dark font-bold border border-champagne/30'
                         : 'hover:bg-zinc-50 text-zinc-700'
                     }`}
                   >
                     <span>{b.name}</span>
-                    {selectedBranch === b.name && <Check className="w-3.5 h-3.5 text-emerald-600" />}
+                    {selectedBranch === b.name && <Check className="w-3.5 h-3.5 text-champagne-dark" />}
                   </button>
                 ))}
               </div>
@@ -237,10 +237,10 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setShowDataHubModal(true)}
-            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 transition-colors"
+            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 bg-champagne-pale text-champagne-dark border border-champagne/40 hover:bg-champagne-pale/80 transition-colors shadow-xs"
             title="مركز إدارة قاعدة البيانات المؤسسية والبيانات الفعلية"
           >
-            <Database className="w-3 h-3 text-emerald-700" />
+            <Database className="w-3 h-3 text-champagne-dark" />
             <span>قاعدة البيانات المؤسسية</span>
           </button>
         </div>
@@ -365,14 +365,14 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setShowUserDropdown(!showUserDropdown)}
               className="flex items-center gap-1.5 bg-white border border-zinc-200 rounded-full p-1 pl-2.5 sm:pl-3 hover:bg-zinc-50 transition-colors"
             >
-              <div className="w-7 h-7 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs font-black shadow-sm">
+              <div className="w-7 h-7 rounded-full bg-charcoal text-champagne-light border border-champagne/40 flex items-center justify-center text-xs font-black shadow-sm">
                 {(iamUser?.fullName || 'خ').slice(0, 1)}
               </div>
               <div className="hidden sm:block text-right">
                 <div className="text-[11px] font-bold text-black leading-tight">
                   {iamUser?.fullName?.split(' ')[0] || 'خالد السليم'}
                 </div>
-                <div className="text-[9.5px] text-emerald-700 font-bold">
+                <div className="text-[9.5px] text-champagne-dark font-bold">
                   {iamUser?.accountType || 'Group Super Admin'}
                 </div>
               </div>
@@ -385,7 +385,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="font-bold text-xs text-black">{iamUser?.fullName || 'خالد بن عبدالعزيز السليم'}</div>
                   <div className="text-[10px] text-zinc-500 font-mono">{iamUser?.email || 'khalid@alsulaim.sa'}</div>
                   <div className="mt-1 flex items-center gap-1">
-                    <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded">
+                    <span className="px-1.5 py-0.5 bg-champagne-pale text-champagne-dark border border-champagne/30 text-[9px] font-bold rounded">
                       {iamCompany?.commercialName || 'شركة كاس للتجارة والمقاولات'}
                     </span>
                   </div>
@@ -397,9 +397,9 @@ export const Header: React.FC<HeaderProps> = ({
                     setShowUserDropdown(false);
                     setActiveTab('users', 'إدارة الهوية والصلاحيات متعددة الشركات (IAM)');
                   }}
-                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-emerald-50 text-emerald-900 font-bold flex items-center gap-2"
+                  className="w-full text-right px-3 py-2 rounded-xl text-xs hover:bg-champagne-pale text-champagne-dark font-bold flex items-center gap-2"
                 >
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <ShieldCheck className="w-4 h-4 text-champagne-dark" />
                   <span>إدارة الهوية والصلاحيات (IAM)</span>
                 </button>
 

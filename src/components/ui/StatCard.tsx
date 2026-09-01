@@ -6,7 +6,7 @@ interface StatCardProps {
   icon: string;
   subtext?: string;
   trend?: { type: 'up' | 'down'; text: string };
-  variant?: 'teal' | 'purple' | 'warning' | 'danger' | 'info' | 'featured' | 'mint';
+  variant?: 'teal' | 'purple' | 'warning' | 'danger' | 'info' | 'featured' | 'mint' | 'gold' | 'champagne';
   onClick?: () => void;
 }
 
@@ -19,7 +19,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   variant = 'teal',
   onClick,
 }) => {
-  const isFeatured = variant === 'featured' || variant === 'mint';
+  const isFeatured = variant === 'featured' || variant === 'mint' || variant === 'gold' || variant === 'champagne';
 
   return (
     <div

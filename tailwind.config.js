@@ -28,13 +28,30 @@ export default {
         'link-cool-1': '#9dabad',
         'link-cool-2': '#9797a2',
         'link-cool-3': '#bdbdca',
-        'link-mint': '#99b3ad',
+        'link-mint': '#d4b36a',
+        // Warm Champagne Gold Luxury Identity Palette
+        champagne: {
+          DEFAULT: '#CFA64A',
+          light: '#E4C77B',
+          dark: '#A98232',
+          pale: '#F5EDDC',
+        },
+        charcoal: {
+          DEFAULT: '#1D2428',
+          deep: '#14181B',
+        },
+        accent: {
+          DEFAULT: '#CFA64A',
+          light: '#E4C77B',
+          dark: '#A98232',
+          pale: '#F5EDDC',
+        },
         // Legacy brand tints preserved for backward compatibility
         alsalim: {
           teal: '#005154',
-          gold: '#D4AF37',
+          gold: '#CFA64A',
           purple: '#714B67',
-          dark: '#0F172A',
+          dark: '#1D2428',
         }
       },
       fontFamily: {

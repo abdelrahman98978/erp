@@ -18,12 +18,29 @@
   --color-shade-70: #3f3f46;
   --color-hairline-light: #e4e4e7;
   --color-hairline-dark: #1e2c31;
-  --color-aloe-10: #c1fbd4;
-  --color-pistachio-10: #d4f9e0;
+
+  /* Warm Champagne Gold Luxury Identity Palette */
+  --color-champagne-gold: #CFA64A;       /* Primary Accent */
+  --color-gold-light: #E4C77B;           /* Light Gold / Hover & Dark Mode Glow */
+  --color-gold-dark: #A98232;            /* Dark Gold / Text & Contrasting Borders */
+  --color-gold-pale: #F5EDDC;            /* Pale Gold Background / Badges & Pills */
+  --color-charcoal-dark: #1D2428;        /* Luxury Dark Charcoal */
+  --color-charcoal-deep: #14181B;        /* Deep Midnight Charcoal */
+
+  /* Semantic UI Brand Accent Aliases */
+  --color-primary-accent: var(--color-champagne-gold);
+  --color-primary-accent-light: var(--color-gold-light);
+  --color-primary-accent-dark: var(--color-gold-dark);
+  --color-primary-accent-pale: var(--color-gold-pale);
+  --color-accent-contrast: var(--color-charcoal-dark);
+
+  /* Legacy tint aliases transitioned to Champagne Gold */
+  --color-aloe-10: var(--color-gold-pale);
+  --color-pistachio-10: #faebd7;
   --color-link-cool-1: #9dabad;
   --color-link-cool-2: #9797a2;
   --color-link-cool-3: #bdbdca;
-  --color-link-mint: #99b3ad;
+  --color-link-mint: #d4b36a;
 
   /* Aliases for theme integration */
   --primary: var(--color-primary);
@@ -38,6 +55,11 @@
   --hairline-dark: var(--color-hairline-dark);
   --aloe-10: var(--color-aloe-10);
   --pistachio-10: var(--color-pistachio-10);
+  --champagne-gold: var(--color-champagne-gold);
+  --gold-light: var(--color-gold-light);
+  --gold-dark: var(--color-gold-dark);
+  --gold-pale: var(--color-gold-pale);
+  --charcoal-dark: var(--color-charcoal-dark);
   --shade-30: var(--color-shade-30);
   --shade-40: var(--color-shade-40);
   --shade-50: var(--color-shade-50);

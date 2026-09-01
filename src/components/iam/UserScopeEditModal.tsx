@@ -135,7 +135,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
         {/* Header */}
         <div className="p-6 bg-black text-white flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-400 border border-white/20">
+            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-champagne-light border border-white/20">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -225,7 +225,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                   key={scope.level}
                   className={`flex items-start gap-3 p-3 rounded-2xl border-2 cursor-pointer transition-all ${
                     dataScope === scope.level 
-                      ? 'border-emerald-600 bg-emerald-50/50 shadow-xs' 
+                      ? 'border-champagne bg-champagne-pale/50 shadow-xs' 
                       : 'border-zinc-200 bg-white hover:border-zinc-300'
                   }`}
                 >
@@ -234,7 +234,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     name="data_scope"
                     checked={dataScope === scope.level}
                     onChange={() => setDataScope(scope.level)}
-                    className="mt-0.5 text-emerald-600"
+                    className="mt-0.5 text-champagne-dark accent-[#CFA64A]"
                   />
                   <div>
                     <div className="text-xs font-bold text-black">{scope.ar}</div>
