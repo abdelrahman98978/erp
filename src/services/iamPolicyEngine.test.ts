@@ -206,8 +206,11 @@ describe('IAM Policy & Multi-Entity Access Control Engine', () => {
     it('should detect conflicting toxic permission combinations', async () => {
       const conflictingPermissions = ['vendor.create', 'payment.release', 'hr.view'];
       const check = await iamPolicyEngine.checkSoDConflicts(conflictingPermissions);
-      // Even if offline fallback rules kick in, helper handles gracefully
       expect(check).toBeDefined();
-    });
+      expect(check.hasConflict).toBe(true);
+      expect(check.conflicts.length).toBeGreaterThanOrEqual(1);
+      expect(check.conflicts[0].permissionA).toBe('vendor.create');
+      expect(check.conflicts[0].permissionB).toBe('payment.release');
+    }, 10000);
   });
 });
