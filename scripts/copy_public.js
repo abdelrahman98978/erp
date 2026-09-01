@@ -13,17 +13,22 @@ if (!fs.existsSync(distDir)) {
 }
 
 if (fs.existsSync(publicDir)) {
-  const files = fs.readdirSync(publicDir);
-  for (const file of files) {
-    const src = path.join(publicDir, file);
-    const dest = path.join(distDir, file);
-    try {
-      if (fs.lstatSync(src).isFile()) {
-        fs.copyFileSync(src, dest);
-        console.log(`Copied ${file} to dist/ successfully.`);
+  try {
+    fs.cpSync(publicDir, distDir, { recursive: true, force: true });
+    console.log('Successfully synced public directory to dist/.');
+  } catch (cpErr) {
+    const files = fs.readdirSync(publicDir);
+    for (const file of files) {
+      const src = path.join(publicDir, file);
+      const dest = path.join(distDir, file);
+      try {
+        if (fs.lstatSync(src).isFile()) {
+          fs.copyFileSync(src, dest);
+          console.log(`Copied ${file} to dist/ successfully.`);
+        }
+      } catch (err) {
+        console.warn(`Guarded warning copying ${file}: ${err.message}`);
       }
-    } catch (err) {
-      console.warn(`Guarded OneDrive lock warning copying ${file}: ${err.message}`);
     }
   }
 }
