@@ -6,7 +6,7 @@ import { useJournals, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { chartOfAccountsService } from '../services/accounting/chartOfAccountsService';
 import { useAppStore } from '../stores/appStore';
-import { BookOpen, Plus, FileSpreadsheet, FileText, Search, Upload, Eye, X, Check, AlertTriangle, Trash2 } from 'lucide-react';
+import { BookOpen, Plus, FileSpreadsheet, FileText, Search, Upload, Eye, X, Check, AlertTriangle, Trash2, Printer, ShieldCheck } from 'lucide-react';
 
 export interface JournalLineItem {
   id: string;
@@ -567,6 +567,130 @@ export const JournalsPage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* View & Print Selected Journal Modal */}
+      {selectedJournal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
+            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-sm text-white m-0">
+                  معاينة وطباعة قيد اليومية: {selectedJournal.entry_number}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="button-white-pill"
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+                >
+                  <Printer className="w-3.5 h-3.5 ml-1" />
+                  <span>طباعة القيد</span>
+                </button>
+                <button
+                  onClick={() => setSelectedJournal(null)}
+                  className="text-zinc-400 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-8 space-y-6 bg-white border border-zinc-300 m-4 rounded-2xl">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
+                  <p className="text-xs text-zinc-600 mt-0.5 font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
+                  <p className="text-xs text-zinc-500">سجل القيود المحاسبية المعتمدة (Double-Entry Ledger)</p>
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-extrabold text-black font-mono border-2 border-black px-3 py-1 rounded-xl">
+                    قيد محاسبي: {selectedJournal.entry_number}
+                  </div>
+                  <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">التاريخ: {selectedJournal.entry_date}</div>
+                  <div className="text-xs text-zinc-500">الفرع: {selectedJournal.branch_name}</div>
+                </div>
+              </div>
+
+              {/* Description Box */}
+              <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 text-xs">
+                <span className="font-bold text-zinc-700 block mb-1">البيان والشرح المحاسبي:</span>
+                <span className="text-black font-semibold text-sm">{selectedJournal.description}</span>
+              </div>
+
+              {/* Journal Line Items Table */}
+              <div className="border border-zinc-300 rounded-xl overflow-hidden">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-zinc-100 font-bold border-b border-zinc-300 text-zinc-800">
+                    <tr>
+                      <th className="p-3">رمز الحساب</th>
+                      <th className="p-3">اسم الحساب في الدليل</th>
+                      <th className="p-3">مركز التكلفة</th>
+                      <th className="p-3 font-mono">مدين (Debit)</th>
+                      <th className="p-3 font-mono">دائن (Credit)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 font-mono">
+                    <tr>
+                      <td className="p-3 font-bold text-black">11010</td>
+                      <td className="p-3 font-sans font-semibold text-black">الصندوق الرئيسي - الخزينة</td>
+                      <td className="p-3 font-sans text-zinc-500">{selectedJournal.cost_center_code || 'CC-OPS-01'}</td>
+                      <td className="p-3 font-bold text-black">{selectedJournal.total_debit.toLocaleString()} ر.س</td>
+                      <td className="p-3 text-zinc-400">0.00 ر.س</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 font-bold text-black">41100</td>
+                      <td className="p-3 font-sans font-semibold text-black">إيرادات وساطة عقود الاستقدام</td>
+                      <td className="p-3 font-sans text-zinc-500">{selectedJournal.cost_center_code || 'CC-OPS-01'}</td>
+                      <td className="p-3 text-zinc-400">0.00 ر.س</td>
+                      <td className="p-3 font-bold text-rose-700">{selectedJournal.total_credit.toLocaleString()} ر.س</td>
+                    </tr>
+                    <tr className="bg-zinc-50 font-bold border-t-2 border-black text-xs font-sans">
+                      <td colSpan={3} className="p-3 text-left pl-4">الإجمالي المتوازن:</td>
+                      <td className="p-3 text-black font-mono font-extrabold">{selectedJournal.total_debit.toLocaleString()} ر.س</td>
+                      <td className="p-3 text-rose-700 font-mono font-extrabold">{selectedJournal.total_credit.toLocaleString()} ر.س</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Status & Approvals */}
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-zinc-200 text-center text-xs">
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">مُعد القيد</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px] text-zinc-800">
+                    {selectedJournal.created_by || 'المحاسب المالي'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">المراجع المالي</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px] text-zinc-800">
+                    {selectedJournal.approved_by || 'تدقيق الحسابات'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">اعتماد الإدارة المالية</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px] text-zinc-800">
+                    المدير المالي المعتمد
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2 print:hidden">
+              <button
+                onClick={() => setSelectedJournal(null)}
+                className="button-outline-on-light"
+                style={{ padding: '6px 16px', fontSize: '11.5px' }}
+              >
+                إغلاق
+              </button>
+            </div>
           </div>
         </div>
       )}

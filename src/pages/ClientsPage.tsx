@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { exportData } from '../services/exportService';
 import { useClients, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
@@ -19,6 +19,18 @@ export const ClientsPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'blacklist' | 'person' | 'company'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingClient, setEditingClient] = useState<any | null>(null);
+
+  const storeActiveTab = useAppStore(state => state.activeTab);
+
+  useEffect(() => {
+    if (storeActiveTab === 'client-blacklist' || storeActiveTab === 'black-list') {
+      setActiveFilter('blacklist');
+    } else if (storeActiveTab === 'client-categories') {
+      setActiveFilter('company');
+    } else if (storeActiveTab === 'new-client') {
+      setShowAddModal(true);
+    }
+  }, [storeActiveTab]);
 
   const [addForm, setAddForm] = useState({
     name: '',

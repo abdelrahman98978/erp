@@ -13,33 +13,38 @@ describe('chartOfAccountsService (Multi-Company Accounting Tree)', () => {
   });
 
   it('should find specific account by code within company scope', () => {
-    const cashAccount = chartOfAccountsService.getAccountByCode('SAF', '11010');
+    const cashAccount = chartOfAccountsService.getAccountByCode('SAF', '110101');
     expect(cashAccount).toBeDefined();
-    expect(cashAccount?.code).toBe('11010');
+    expect(cashAccount?.code).toBe('110101');
     expect(cashAccount?.nameAr).toContain('الصندوق الرئيسي');
   });
 
   it('should successfully add new account to company chart of accounts', () => {
     const created = chartOfAccountsService.addAccount('SAF', {
-      code: '11099',
+      code: '110999',
       nameAr: 'حساب تجريبي جديد',
       nameEn: 'New Test Account',
       category: 'أصول',
-      balance: 50000,
+      nature: 'مدين',
+      statementType: 'قائمة المركز المالي (ميزانية)',
+      level: 4,
+      openingBalance: 50000,
       currency: 'SAR',
       isActive: true,
     });
 
     expect(created.id).toBeDefined();
-    expect(created.code).toBe('11099');
+    expect(created.code).toBe('110999');
 
-    const found = chartOfAccountsService.getAccountByCode('SAF', '11099');
+    const found = chartOfAccountsService.getAccountByCode('SAF', '110999');
     expect(found).toBeDefined();
     expect(found?.nameAr).toBe('حساب تجريبي جديد');
   });
 
-  it('should return aggregated accounts when company is "all"', () => {
-    const allAccounts = chartOfAccountsService.getAccountsByCompany('all');
-    expect(allAccounts.length).toBeGreaterThan(15);
+  it('should build a hierarchical tree structure', () => {
+    const accounts = chartOfAccountsService.getAccountsByCompany('SAF');
+    const tree = chartOfAccountsService.buildTree(accounts);
+    expect(tree.length).toBeGreaterThan(0);
+    expect(tree[0].children).toBeDefined();
   });
 });

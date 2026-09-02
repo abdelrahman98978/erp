@@ -529,6 +529,24 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.two_factor_enabled ? 'مفعّل' : 'غير مفعّل',
       r.status || 'نشط'
     ]
+  },
+
+  // 23. زوار المنصة والعملاء المحتملون
+  website_visitors: {
+    sectionTitle: 'سجل زوار المنصة الخارجية ومتابعة العملاء المحتملين',
+    headers: ['كود الزائر', 'عنوان IP', 'المدينة', 'الجهاز والمستعرض', 'مصدر الزيارة (Source)', 'الصفحة التي يتصفحها', 'مدة التصفح', 'نوع الزائر', 'رقم الجوال', 'وقت الزيارة'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.ip_address || '',
+      r.city || '',
+      `${r.device || ''} (${r.browser || ''})`,
+      r.source || '',
+      r.page_visited || '',
+      r.duration_sec ? `${Math.floor(r.duration_sec / 60)} د و ${r.duration_sec % 60} ث` : '0 ث',
+      r.is_lead ? 'عميل محتمل (Lead)' : 'زائر مجهول',
+      r.phone || '-',
+      r.visit_time || ''
+    ]
   }
 };
 

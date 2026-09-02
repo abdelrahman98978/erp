@@ -7,7 +7,7 @@ import {
   Key, Search, MessageSquare, FileText, Check, Save, ExternalLink,
   Plus, Trash2, Globe, ShieldAlert, Sparkles, RefreshCw, Eye,
   ShoppingBag, Store, CreditCard, Layers, Zap, ScanFace, Laptop,
-  AlertCircle, CheckCircle2
+  AlertCircle, CheckCircle2, Database, Download, UploadCloud, RotateCcw, HardDrive
 } from 'lucide-react';
 import { 
   checkWebAuthnSupport, 
@@ -41,6 +41,7 @@ export const SettingsPage: React.FC = () => {
   const storeActiveTab = useAppStore(state => state.activeTab);
 
   const getMappedSection = (tabKey: string): string => {
+    if (tabKey === 'system-backup' || tabKey === 'backup' || tabKey === 'database-backup') return 'system-backup';
     if (tabKey === 'rbac-matrix') return 'rbac-matrix';
     if (tabKey === 'settings-general' || tabKey === 'general') return 'general';
     if (tabKey === 'contacts') return 'contacts';
@@ -59,6 +60,12 @@ export const SettingsPage: React.FC = () => {
   useEffect(() => {
     setActiveSection(getMappedSection(storeActiveTab));
   }, [storeActiveTab]);
+
+  // System Backup & Real Data Engine State
+  const [dataMode, setLocalDataMode] = useState<'production_real' | 'demo_preview'>(() => realErpDataStore.getDataMode());
+  const [backupSchedule, setBackupSchedule] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [isExportingDb, setIsExportingDb] = useState(false);
+  const [isPurgingData, setIsPurgingData] = useState(false);
 
   // Section 1: Security & 2FA State
   const [require2FAAdmin, setRequire2FAAdmin] = useState(true);
@@ -255,6 +262,7 @@ export const SettingsPage: React.FC = () => {
   const [moyasarSecretKey, setMoyasarSecretKey] = useState('sk_live_9918237461928374');
 
   const SECTIONS = [
+    { id: 'system-backup', name: 'النسخ الاحتياطي وقواعد البيانات والبيانات الحقيقية', icon: Database },
     { id: 'ecommerce', name: 'ربط المتاجر الإلكترونية وبوابات الدفع', icon: ShoppingBag },
     { id: 'security-2fa', name: 'أمان المصادقة والبصمة البيومترية', icon: Fingerprint },
     { id: 'rbac-matrix', name: 'مصفوفة الصلاحيات (RBAC Matrix)', icon: Shield },
@@ -267,6 +275,87 @@ export const SettingsPage: React.FC = () => {
     { id: 'zoho', name: 'اللايف شات المباشر (Zoho SalesIQ)', icon: MessageSquare },
     { id: 'stipulations', name: 'السياسات والشروط وضمان مساند', icon: FileText }
   ];
+
+  const handleExportDatabase = () => {
+    setIsExportingDb(true);
+    const dump: Record<string, any> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.startsWith('ALSULAIM_') || key.startsWith('erp-'))) {
+        try {
+          dump[key] = JSON.parse(localStorage.getItem(key) || '{}');
+        } catch (e) {
+          dump[key] = localStorage.getItem(key);
+        }
+      }
+    }
+    const jsonStr = JSON.stringify(dump, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ALSULAIM_ERP_DATABASE_BACKUP_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setIsExportingDb(false);
+    addNotification({
+      title: 'تصدير النسخة الاحتياطية',
+      message: 'تم توليد وتنزيل ملف النسخة الاحتياطية الشاملة لقاعدة البيانات بنجاح.',
+      type: 'success'
+    });
+  };
+
+  const handleRestoreDatabase = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        Object.entries(parsed).forEach(([key, val]) => {
+          localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val));
+        });
+        addNotification({
+          title: 'استعادة النسخة الاحتياطية',
+          message: 'تم استعادة كافة الجداول والبيانات بنجاح. سيتم تحديث الصفحة.',
+          type: 'success'
+        });
+        setTimeout(() => window.location.reload(), 1200);
+      } catch (err) {
+        addNotification({
+          title: 'خطأ في الاستعادة',
+          message: 'الملف المرفوع غير صالح أو تالف.',
+          type: 'error'
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handlePurgeDemoData = () => {
+    if (window.confirm('هل أنت متأكد من رغبتك في تصفير البيانات التجريبية والبدء ببيانات حقيقية جديدة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+      setIsPurgingData(true);
+      realErpDataStore.purgeAllDemoData();
+      setLocalDataMode('production_real');
+      setIsPurgingData(false);
+      addNotification({
+        title: 'تصفير البيانات التجريبية',
+        message: 'تم تصفير البيانات التجريبية وتفعيل نمط البيانات الحقيقية (Production Real Mode) بنجاح.',
+        type: 'success'
+      });
+      setTimeout(() => window.location.reload(), 1000);
+    }
+  };
+
+  const handleToggleDataMode = (newMode: 'production_real' | 'demo_preview') => {
+    realErpDataStore.setDataMode(newMode);
+    setLocalDataMode(newMode);
+    addNotification({
+      title: 'تغيير نمط البيانات',
+      message: newMode === 'production_real' ? 'تم التحويل إلى وضع البيانات الإنتاجية الحقيقية.' : 'تم التحويل إلى وضع المعاينة والتجربة.',
+      type: 'info'
+    });
+  };
 
   // Save full settings payload to store
   const handleSaveSettings = async () => {
@@ -1501,6 +1590,200 @@ export const SettingsPage: React.FC = () => {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* 12. System Backup & Real Data Persistence Engine */}
+          {activeSection === 'system-backup' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3 flex-wrap gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-black m-0">
+                    النسخ الاحتياطي الشامل وإدارة البيانات الحقيقية وقواعد البيانات
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    إدارة نمط تشغيل المنظومة (Real Production vs Demo)، وتصدير واستعادة قواعد البيانات المحلية والسحابية
+                  </p>
+                </div>
+                <span className="pill-tag-mint text-[11px]">Database Engine v2</span>
+              </div>
+
+              {/* Data Mode Switcher Card */}
+              <div className="card-pricing p-5 rounded-3xl bg-zinc-50 border border-zinc-200 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center font-bold">
+                      <HardDrive className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">نمط تشغيل المنظومة والبيانات (Data Mode)</h4>
+                      <p className="text-xs text-zinc-500 m-0">
+                        الوضع الحالي:{' '}
+                        <strong className={dataMode === 'production_real' ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'}>
+                          {dataMode === 'production_real' ? 'وضع العمل بالبيانات الحقيقية (Production Real)' : 'وضع المعاينة والتجربة (Demo Preview)'}
+                        </strong>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleDataMode('production_real')}
+                      className={`button-primary-pill ${dataMode === 'production_real' ? 'bg-black text-white' : 'button-outline-on-light'}`}
+                      style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '32px' }}
+                    >
+                      تفعيل وضع الإنتاج الحقيقي
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleDataMode('demo_preview')}
+                      className={`button-primary-pill ${dataMode === 'demo_preview' ? 'bg-black text-white' : 'button-outline-on-light'}`}
+                      style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '32px' }}
+                    >
+                      وضع المعاينة التجريبي
+                    </button>
+                  </div>
+                </div>
+                <p className="text-[11px] text-zinc-500 leading-relaxed m-0 border-t border-zinc-200/60 pt-2">
+                  في وضع العمل بالبيانات الحقيقية، يتم حفظ كافة العقود والعملاء والقيود في الذاكرة الدائمة وقاعدة البيانات الحقيقية فقط دون إدراج سجلات افتراضية مسبقة، لتكون المجموعة جاهزة للتشغيل اليومي المباشر.
+                </p>
+              </div>
+
+              {/* Backup & Restore Tools Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Export Full Database */}
+                <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                      <Download className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">تصدير نسخة احتياطية شاملة (Export Backup)</h4>
+                      <p className="text-[11px] text-zinc-500 m-0">توليد ملف JSON يحتوي على كافة الجداول والسجلات والقيود</p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-zinc-600 leading-relaxed">
+                    يتضمن ملف النسخة الاحتياطية: شجرة الحسابات، قيود اليومية، سندات الصرف والقبض، عقود الاستقدام والتأجير، بيانات العملاء، السير الذاتية، وسجلات الحضور والعهد.
+                  </p>
+
+                  <button
+                    type="button"
+                    disabled={isExportingDb}
+                    onClick={handleExportDatabase}
+                    className="button-primary-pill w-full flex items-center justify-center gap-2"
+                    style={{ padding: '8px 16px', fontSize: '12px', minHeight: '36px', background: '#10b981', borderColor: '#10b981' }}
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>{isExportingDb ? 'جارٍ توليد النسخة...' : 'تحميل النسخة الاحتياطية الآن (JSON)'}</span>
+                  </button>
+                </div>
+
+                {/* Import / Restore Database */}
+                <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold">
+                      <UploadCloud className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-black m-0">استعادة قاعدة البيانات (Restore Backup)</h4>
+                      <p className="text-[11px] text-zinc-500 m-0">استرجاع الجداول والبيانات من ملف نسخة سابقة</p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-zinc-600 leading-relaxed">
+                    اختر ملف النسخة الاحتياطية (.json) الذي قمت بتنزيله سابقاً لاستعادة كافة الحسابات والعمليات إلى حالتها السابقة.
+                  </p>
+
+                  <label className="button-outline-on-light w-full flex items-center justify-center gap-2 cursor-pointer" style={{ padding: '8px 16px', fontSize: '12px', minHeight: '36px' }}>
+                    <UploadCloud className="w-4 h-4 text-indigo-600" />
+                    <span>رفع واستعادة ملف النسخة الاحتياطية</span>
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={handleRestoreDatabase}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Automated Schedule & Policy */}
+              <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-3">
+                <h4 className="font-bold text-sm text-black m-0">جدولة النسخ الاحتياطي التلقائي للأرشفة</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                  <label className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="backupSchedule"
+                      value="daily"
+                      checked={backupSchedule === 'daily'}
+                      onChange={() => setBackupSchedule('daily')}
+                      className="text-black"
+                    />
+                    <div>
+                      <span className="font-bold block">نسخ يومي تلقائي (Daily)</span>
+                      <span className="text-[10px] text-zinc-500">عند نهاية يوم العمل (الساعة 11:59 مساءً)</span>
+                    </div>
+                  </label>
+                  <label className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="backupSchedule"
+                      value="weekly"
+                      checked={backupSchedule === 'weekly'}
+                      onChange={() => setBackupSchedule('weekly')}
+                      className="text-black"
+                    />
+                    <div>
+                      <span className="font-bold block">نسخ أسبوعي (Weekly)</span>
+                      <span className="text-[10px] text-zinc-500">كل يوم جمعة مع بداية الأسبوع المالي</span>
+                    </div>
+                  </label>
+                  <label className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="backupSchedule"
+                      value="monthly"
+                      checked={backupSchedule === 'monthly'}
+                      onChange={() => setBackupSchedule('monthly')}
+                      className="text-black"
+                    />
+                    <div>
+                      <span className="font-bold block">نسخ شهري (Monthly)</span>
+                      <span className="text-[10px] text-zinc-500">مع الإقفال المحاسبي الشهري</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Danger Zone: Purge Demo Data */}
+              <div className="card-pricing p-5 rounded-3xl bg-rose-50/60 border border-rose-200 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold">
+                      <Trash2 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-rose-900 m-0">تصفير وحذف البيانات التجريبية (Purge Demo Data)</h4>
+                      <p className="text-[11px] text-rose-700 m-0">تهيئة النظام بالكامل للتشغيل الحقيقي من الصفر (Zero Mock State)</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isPurgingData}
+                    onClick={handlePurgeDemoData}
+                    className="button-primary-pill"
+                    style={{ background: '#e11d48', borderColor: '#e11d48', color: '#fff', padding: '6px 16px', fontSize: '11.5px', minHeight: '34px' }}
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 ml-1" />
+                    <span>{isPurgingData ? 'جارٍ التصفير...' : 'تصفير البيانات التجريبية والبدء ببيانات حقيقية'}</span>
+                  </button>
+                </div>
+                <p className="text-[11px] text-rose-800/80 leading-relaxed m-0">
+                  تنبيه: سيؤدي هذا الإجراء إلى حذف جميع سجلات العقود والعملاء والطلبات والتسكين والسير الذاتية التجريبية، وتجهيز النظام ليكون جاهزاً لإدخال العقود والبيانات التشغيلية الحقيقية لشركة خالد السليم.
+                </p>
               </div>
             </div>
           )}

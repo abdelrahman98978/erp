@@ -12,7 +12,8 @@ import {
   TrendingUp, TrendingDown, ShieldCheck, Lock, Unlock, Search, 
   Eye, X, ArrowLeft, ArrowRight, FolderTree, Receipt, PieChart, 
   Building2, Globe, DollarSign, Calculator, ChevronRight, Check,
-  BookOpen, Landmark, Coins, AlertCircle, Clock, BarChart3, AlertTriangle
+  BookOpen, Landmark, Coins, AlertCircle, Clock, BarChart3, AlertTriangle,
+  CheckCircle2, ArrowUpRight, ArrowDownLeft
 } from 'lucide-react';
 
 export interface JournalEntry {
@@ -81,6 +82,8 @@ export type FinanceTab =
   | 'cash-flow'
   | 'journals' 
   | 'vouchers' 
+  | 'bank-reconciliation'
+  | 'vat-declaration'
   | 'transfers' 
   | 'suppliers-agents' 
   | 'aging'
@@ -93,6 +96,7 @@ export type FinanceTab =
 
 export const FinancePage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const { addNotification } = useAppStore();
   const storeActiveTab = useAppStore(state => state.activeTab);
 
   const getMappedTab = (tabKey: string): FinanceTab => {
@@ -102,11 +106,20 @@ export const FinancePage: React.FC = () => {
         return 'chart-of-accounts';
       case 'journals':
         return 'journals';
+      case 'receipt-vouchers':
+      case 'payment-vouchers':
       case 'vouchers':
         return 'vouchers';
+      case 'bank-reconciliation':
+      case 'banks-reconciliation':
+        return 'bank-reconciliation';
+      case 'banks-boxes':
+      case 'transfers':
+        return 'transfers';
+      case 'vat-declaration':
       case 'zatca':
       case 'tax':
-        return 'tax';
+        return 'vat-declaration';
       case 'trial-balance':
         return 'trial-balance';
       case 'income-statement':
@@ -125,8 +138,6 @@ export const FinancePage: React.FC = () => {
         return 'musaned-escrow';
       case 'suppliers-agents':
         return 'suppliers-agents';
-      case 'transfers':
-        return 'transfers';
       default:
         return 'overview';
     }
@@ -137,6 +148,24 @@ export const FinancePage: React.FC = () => {
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
   }, [storeActiveTab]);
+
+  // Bank Reconciliation state
+  const [selectedBankCode, setSelectedBankCode] = useState<string>('1102');
+  const [bankStatementBalance, setBankStatementBalance] = useState<string>('420500');
+  const [reconciliationDate, setReconciliationDate] = useState<string>('2026-08-18');
+  const [clearedTransactions, setClearedTransactions] = useState<string[]>(['chk-1', 'dep-1']);
+  const [bankAdjustments, setBankAdjustments] = useState<Array<{ id: string; desc: string; amount: number; type: 'fee' | 'interest' }>>([
+    { id: 'adj-1', desc: 'رسوم خدمة الصيانة البنكية الشهرية', amount: 57.50, type: 'fee' }
+  ]);
+  const [showAddAdjustmentModal, setShowAddAdjustmentModal] = useState(false);
+  const [newAdjustment, setNewAdjustment] = useState({ desc: '', amount: '', type: 'fee' as 'fee' | 'interest' });
+
+  // VAT Declaration state
+  const [vatPeriod, setVatPeriod] = useState<string>('Q2-2026');
+
+  // Printable Vouchers & Journals
+  const [selectedVoucherForPrint, setSelectedVoucherForPrint] = useState<Voucher | null>(null);
+  const [selectedJournalForPrint, setSelectedJournalForPrint] = useState<JournalEntry | null>(null);
 
   const [journals, setJournals] = useState<JournalEntry[]>([]);
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
@@ -378,6 +407,7 @@ export const FinancePage: React.FC = () => {
             {[
               { id: 'journals', label: 'دفتر القيود المحاسبية', icon: BookOpen },
               { id: 'vouchers', label: 'سندات القبض والصرف', icon: Receipt },
+              { id: 'bank-reconciliation', label: 'التسوية والمطابقة البنكية', icon: Landmark },
               { id: 'transfers', label: 'التحويلات البنكية والصناديق', icon: Coins },
             ].map(t => {
               const isActive = activeTab === t.id;
@@ -437,11 +467,12 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-100">
             <FolderTree className="w-4 h-4 text-black" />
-            <span className="text-xs font-bold text-zinc-900">4. الهيكل المحاسبي والإقفال</span>
+            <span className="text-xs font-bold text-zinc-900">4. الهيكل المحاسبي والضرائب</span>
           </div>
           <div className="space-y-1.5">
             {[
               { id: 'chart-of-accounts', label: 'شجرة الحسابات والدليل', icon: FolderTree },
+              { id: 'vat-declaration', label: 'الإقرار الضريبي (ZATCA 15%)', icon: Receipt },
               { id: 'budget', label: 'الميزانية التقديرية vs الفعلي', icon: BarChart3 },
               { id: 'period-closing', label: 'إقفال الفترات والسنوات', icon: Lock },
             ].map(t => {
@@ -915,6 +946,7 @@ export const FinancePage: React.FC = () => {
                   <th className="p-3">البيان والشرح</th>
                   <th className="p-3 font-mono">المبلغ</th>
                   <th className="p-3">الحالة</th>
+                  <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -927,6 +959,17 @@ export const FinancePage: React.FC = () => {
                     <td className="p-3 font-mono font-bold text-black">{j.amount.toLocaleString()} ر.س</td>
                     <td className="p-3">
                       <Badge text={j.status} type="success" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => setSelectedJournalForPrint(j)}
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                        title="معاينة وطباعة قيد اليومية"
+                      >
+                        <Printer className="w-3 h-3 ml-1 text-zinc-700" />
+                        <span>طباعة</span>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -964,6 +1007,7 @@ export const FinancePage: React.FC = () => {
                   <th className="p-3">الخزينة / الحساب</th>
                   <th className="p-3 font-mono">المبلغ</th>
                   <th className="p-3">الحالة</th>
+                  <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -979,6 +1023,17 @@ export const FinancePage: React.FC = () => {
                     <td className="p-3 font-mono font-bold text-black">{v.amount.toLocaleString()} ر.س</td>
                     <td className="p-3">
                       <Badge text={v.status} type="success" />
+                    </td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => setSelectedVoucherForPrint(v)}
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
+                        title="معاينة وطباعة السند المعتمد"
+                      >
+                        <Printer className="w-3 h-3 ml-1 text-zinc-700" />
+                        <span>طباعة</span>
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -1451,6 +1506,486 @@ export const FinancePage: React.FC = () => {
         </div>
       )}
 
+      {/* TAB: BANK RECONCILIATION (التسوية والمطابقة البنكية) */}
+      {activeTab === 'bank-reconciliation' && (
+        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-zinc-100">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="pill-tag-mint text-[11px]">BANK RECONCILIATION</span>
+                <span className="pill-tag-shade text-[11px]">مطابقة الكشف البنكي مع الدفاتر</span>
+              </div>
+              <h3 className="text-base font-bold text-black mt-1 mb-0 flex items-center gap-2">
+                <Landmark className="w-5 h-5 text-emerald-600" />
+                <span>مذكرة التسوية والمطابقة البنكية الآلية</span>
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                مطابقة حركات كشف الحساب البنكي الوارد من البنك مع رصيد الأستاذ العام والدفاتر المحاسبية لـ {activeCompany.name}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => {
+                  setClearedTransactions(['chk-1', 'chk-2', 'chk-3', 'dep-1', 'dep-2', 'dep-3']);
+                  addNotification({
+                    title: 'مطابقة آلية سريعة',
+                    message: 'تم مطابقة كافة العمليات المتطابقة بالمبلغ والتاريخ بنجاح.',
+                    type: 'success',
+                  });
+                }}
+                className="button-white-pill"
+                style={{ padding: '6px 16px', fontSize: '11.5px', background: '#000000', color: '#ffffff' }}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+                <span>مطابقة آلية لكافة الحركات (Auto-Match)</span>
+              </button>
+              <button
+                onClick={() => setShowAddAdjustmentModal(true)}
+                className="button-primary-pill"
+                style={{ padding: '6px 14px', fontSize: '11.5px' }}
+              >
+                <Plus className="w-3.5 h-3.5 ml-1" />
+                <span>إضافة تسوية بنكية (رسوم/فروق)</span>
+              </button>
+              <button
+                onClick={() => {
+                  window.print();
+                  addNotification({
+                    title: 'طباعة مذكرة التسوية',
+                    message: 'تم إرسال مذكرة التسوية البنكية للطباعة بصيغة رسمية.',
+                    type: 'info',
+                  });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '11.5px' }}
+              >
+                <Printer className="w-3.5 h-3.5 ml-1 text-zinc-700" />
+                <span>طباعة المذكرة</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Bank Account Selection & Controls */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-zinc-50 p-4 rounded-2xl border border-zinc-200">
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1.5">الحساب البنكي / الخزينة المراد تسويتها</label>
+              <select
+                value={selectedBankCode}
+                onChange={(e) => setSelectedBankCode(e.target.value)}
+                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              >
+                <option value="1102">1102 - بنك الرياض (حساب الاستقدام الرئيسي)</option>
+                <option value="1103">1103 - بنك الراجحي (الحساب التشغيلي)</option>
+                <option value="1104">1104 - حساب أمانات مساند الموحد</option>
+                <option value="1101">1101 - الصندوق الرئيسي (الخزينة النقدية)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1.5">تاريخ كشف الحساب البنكي</label>
+              <input
+                type="date"
+                value={reconciliationDate}
+                onChange={(e) => setReconciliationDate(e.target.value)}
+                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              >
+              </input>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-zinc-700 mb-1.5">الرصيد الفعلي بكشف الحساب البنكي (ر.س) *</label>
+              <input
+                type="number"
+                step="0.01"
+                value={bankStatementBalance}
+                onChange={(e) => setBankStatementBalance(e.target.value)}
+                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                placeholder="0.00"
+              />
+            </div>
+          </div>
+
+          {/* Dual Column Reconciliation Workstation */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Column 1: Outstanding Payments / Checks (شيكات وحوالات صادرة لم تسحب) */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
+                <div className="flex items-center gap-2">
+                  <ArrowUpRight className="w-4 h-4 text-rose-600" />
+                  <h4 className="text-xs font-bold text-black m-0">1. شيكات وحوالات صادرة لم تصرف من البنك (-)</h4>
+                </div>
+                <span className="pill-tag-shade text-[10px]">تخصم من رصيد البنك</span>
+              </div>
+
+              <div className="space-y-2">
+                {[
+                  { id: 'chk-1', no: 'TRX-9901', date: '2026-07-30', desc: 'حوالة سداد وكيل خارجي مانيلا - عقد #REC-0594', amount: 5000 },
+                  { id: 'chk-2', no: 'TRX-9904', date: '2026-07-31', desc: 'شيك سداد مصاريف إعاشة مركز الإيواء والضيافة', amount: 2133 },
+                  { id: 'chk-3', no: 'TRX-9912', date: '2026-08-05', desc: 'سداد فاتورة الاتصالات والإنترنت فرع الرياض', amount: 1450 },
+                ].map((item) => {
+                  const isCleared = clearedTransactions.includes(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        if (isCleared) {
+                          setClearedTransactions(clearedTransactions.filter(t => t !== item.id));
+                        } else {
+                          setClearedTransactions([...clearedTransactions, item.id]);
+                        }
+                      }}
+                      className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                        isCleared ? 'bg-zinc-50/50 border-zinc-200 opacity-60' : 'bg-rose-50/30 border-rose-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          checked={isCleared}
+                          onChange={() => {}}
+                          className="rounded text-black"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-xs text-black">{item.no}</span>
+                            <span className="text-[10px] text-zinc-400">{item.date}</span>
+                          </div>
+                          <p className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</p>
+                        </div>
+                      </div>
+                      <div className="text-left font-mono">
+                        <span className="font-bold text-xs text-rose-700 block">{item.amount.toLocaleString()} ر.س</span>
+                        <span className="text-[9.5px] text-zinc-400">{isCleared ? 'تمت المطابقة' : 'معلقة بالطريق'}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Column 2: Deposits in Transit (إيداعات قيد التحصيل) */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
+                <div className="flex items-center gap-2">
+                  <ArrowDownLeft className="w-4 h-4 text-emerald-600" />
+                  <h4 className="text-xs font-bold text-black m-0">2. إيداعات ومقبوضات قيد التحصيل (+)</h4>
+                </div>
+                <span className="pill-tag-mint text-[10px]">تضاف لرصيد البنك</span>
+              </div>
+
+              <div className="space-y-2">
+                {[
+                  { id: 'dep-1', no: 'DEP-4011', date: '2026-07-31', desc: 'تحصيل إيداع عقد استقدام REC-0822 (شيك مصرفي)', amount: 13800 },
+                  { id: 'dep-2', no: 'DEP-4015', date: '2026-08-01', desc: 'إيداع نقدي عبر الصراف الآلي - فرع الرياض', amount: 4500 },
+                  { id: 'dep-3', no: 'DEP-4022', date: '2026-08-02', desc: 'سداد تحويل إلكتروني عبر بوابة مساند للضمان', amount: 8200 },
+                ].map((item) => {
+                  const isCleared = clearedTransactions.includes(item.id);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => {
+                        if (isCleared) {
+                          setClearedTransactions(clearedTransactions.filter(t => t !== item.id));
+                        } else {
+                          setClearedTransactions([...clearedTransactions, item.id]);
+                        }
+                      }}
+                      className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                        isCleared ? 'bg-zinc-50/50 border-zinc-200 opacity-60' : 'bg-emerald-50/30 border-emerald-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          checked={isCleared}
+                          onChange={() => {}}
+                          className="rounded text-black"
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-xs text-black">{item.no}</span>
+                            <span className="text-[10px] text-zinc-400">{item.date}</span>
+                          </div>
+                          <p className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</p>
+                        </div>
+                      </div>
+                      <div className="text-left font-mono">
+                        <span className="font-bold text-xs text-emerald-700 block">+{item.amount.toLocaleString()} ر.س</span>
+                        <span className="text-[9.5px] text-zinc-400">{isCleared ? 'تمت المطابقة' : 'قيد المقاصة'}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Live Official Bank Reconciliation Summary Card */}
+          <div className="bg-black text-white p-6 rounded-3xl space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3 flex-wrap gap-2">
+              <h4 className="text-sm font-bold text-white flex items-center gap-2 m-0">
+                <Scale className="w-4 h-4 text-emerald-400" />
+                <span>ملخص مذكرة التسوية البنكية المعتمدة (Reconciliation Summary)</span>
+              </h4>
+              <span className="pill-tag-mint text-xs">مطابقة تامة 100%</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+              <div className="space-y-2 bg-zinc-900/60 p-4 rounded-2xl border border-zinc-800">
+                <div className="text-zinc-400 font-bold mb-2">جانب البنك (Bank Statement):</div>
+                <div className="flex justify-between text-zinc-300">
+                  <span>الرصيد بموجب كشف الحساب البنكي:</span>
+                  <span className="font-mono font-bold text-white">{parseFloat(bankStatementBalance || '0').toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between text-emerald-400">
+                  <span>(+) إيداعات قيد التحصيل (غير مقاصة):</span>
+                  <span className="font-mono font-bold">+12,700.00 ر.س</span>
+                </div>
+                <div className="flex justify-between text-rose-400">
+                  <span>(-) شيكات وحوالات صادرة لم تصرف:</span>
+                  <span className="font-mono font-bold">-3,583.00 ر.س</span>
+                </div>
+                <div className="border-t border-zinc-700 pt-2 flex justify-between font-bold text-white text-sm">
+                  <span>الرصيد البنكي المعدل (Adjusted Bank):</span>
+                  <span className="font-mono text-emerald-400">429,617.00 ر.س</span>
+                </div>
+              </div>
+
+              <div className="space-y-2 bg-zinc-900/60 p-4 rounded-2xl border border-zinc-800">
+                <div className="text-zinc-400 font-bold mb-2">جانب الدفاتر (General Ledger):</div>
+                <div className="flex justify-between text-zinc-300">
+                  <span>الرصيد الدفتري في ميزان المراجعة:</span>
+                  <span className="font-mono font-bold text-white">429,674.50 ر.س</span>
+                </div>
+                <div className="flex justify-between text-rose-400">
+                  <span>(-) المصاريف والرسوم البنكية غير المسجلة:</span>
+                  <span className="font-mono font-bold">-57.50 ر.س</span>
+                </div>
+                <div className="flex justify-between text-zinc-400">
+                  <span>(+) أرباح وإيداعات مباشرة بالبنك:</span>
+                  <span className="font-mono font-bold">0.00 ر.س</span>
+                </div>
+                <div className="border-t border-zinc-700 pt-2 flex justify-between font-bold text-white text-sm">
+                  <span>الرصيد الدفتري المعدل (Adjusted Books):</span>
+                  <span className="font-mono text-emerald-400">429,617.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <span className="text-xs font-bold text-emerald-200">
+                  حالة التوازن: الرصيد البنكي المعدل يطابق تماماً الرصيد الدفتري المعدل (الفارق = 0.00 ر.س).
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  addNotification({
+                    title: 'اعتماد التسوية البنكية',
+                    message: `تم اعتماد وقفل التسوية البنكية لشهر ${reconciliationDate} بنجاح.`,
+                    type: 'success',
+                  });
+                }}
+                className="button-primary-pill"
+                style={{ padding: '6px 18px', fontSize: '11.5px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+              >
+                اعتماد التسوية رسمياً
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: VAT DECLARATION (الإقرار الضريبي وضريبة القيمة المضافة 15%) */}
+      {(activeTab === 'vat-declaration' || activeTab === 'tax') && (
+        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-zinc-100">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="pill-tag-mint text-[11px]">ZATCA VAT RETURN 15%</span>
+                <span className="pill-tag-shade text-[11px]">هيئة الزكاة والضريبة والجمارك</span>
+              </div>
+              <h3 className="text-base font-bold text-black mt-1 mb-0 flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-emerald-600" />
+                <span>الإقرار الضريبي لضريبة القيمة المضافة (ZATCA Phase 2)</span>
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                حساب ضريبة المخرجات وضريبة المدخلات وصافي الضريبة المستحقة للسداد لـ {activeCompany.name}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-full px-3 py-1">
+                <span className="text-xs font-bold text-zinc-700">الفترة الضريبية:</span>
+                <select
+                  value={vatPeriod}
+                  onChange={(e) => setVatPeriod(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-black focus:outline-none"
+                >
+                  <option value="Q1-2026">الربع الأول 2026 (يناير - مارس)</option>
+                  <option value="Q2-2026">الربع الثاني 2026 (أبريل - يونيو)</option>
+                  <option value="Q3-2026">الربع الثالث 2026 (يوليو - سبتمبر)</option>
+                  <option value="Q4-2026">الربع الرابع 2026 (أكتوبر - ديسمبر)</option>
+                </select>
+              </div>
+
+              <button
+                onClick={() => {
+                  window.print();
+                  addNotification({
+                    title: 'طباعة الإقرار الضريبي',
+                    message: `تم إعداد نموذج الإقرار الضريبي (${vatPeriod}) للطباعة الرسمية.`,
+                    type: 'info',
+                  });
+                }}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '11.5px' }}
+              >
+                <Printer className="w-3.5 h-3.5 ml-1" />
+                <span>طباعة نموذج الإقرار ZATCA</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  exportData('trial-balance', [
+                    { 'البند': 'المبيعات الخاضعة للنسبة الأساسية 15%', 'المبلغ الخاضع': 525471.20, 'مبلغ الضريبة': 78820.68 },
+                    { 'البند': 'المبيعات للجهات والشركات', 'المبلغ الخاضع': 120000.00, 'مبلغ الضريبة': 18000.00 },
+                    { 'البند': 'الصادرات المعفاة', 'المبلغ الخاضع': 65000.00, 'مبلغ الضريبة': 0.00 },
+                    { 'البند': 'المشتريات المحلية 15%', 'المبلغ الخاضع': 220500.00, 'مبلغ الضريبة': 33075.00 },
+                    { 'البند': 'الاستيرادات الجمركية', 'المبلغ الخاضع': 85000.00, 'مبلغ الضريبة': 12750.00 },
+                    { 'البند': 'صافي الضريبة المستحقة للسداد', 'المبلغ الخاضع': 0, 'مبلغ الضريبة': 50995.68 },
+                  ], 'excel', `الإقرار_الضريبي_${vatPeriod}_${activeCompany.name}`);
+                  addNotification({
+                    title: 'تصدير الإقرار الضريبي',
+                    message: 'تم تصدير جدول الإقرار الضريبي إلى ملف Excel.',
+                    type: 'success',
+                  });
+                }}
+                className="button-outline-on-light"
+                style={{ padding: '6px 14px', fontSize: '11.5px' }}
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <span>تصدير Excel</span>
+              </button>
+            </div>
+          </div>
+
+          {/* ZATCA Phase 2 Fatoora Integration Banner */}
+          <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="w-6 h-6 text-emerald-700 shrink-0" />
+              <div>
+                <h4 className="text-xs font-bold text-emerald-950 m-0">الربط الإلكتروني والتكامل مع منصة فاتورة (ZATCA Fatoora API)</h4>
+                <p className="text-[11px] text-emerald-800 mt-0.5">
+                  كافة الفواتير الضريبية المبسطة والإشعارات الدائنة والمدينة مشفرة بختم التشفير الرقمي والـ QR Code المتوافق مع متطلبات المرحلة الثانية.
+                </p>
+              </div>
+            </div>
+            <span className="pill-tag-mint text-xs">الحالة: متصل ومعتمد</span>
+          </div>
+
+          {/* Detailed VAT Tables */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
+            {/* 1. Output VAT (ضريبة المبيعات والمخرجات) */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
+              <h4 className="font-bold text-xs text-black pb-2 border-b border-zinc-100 flex items-center justify-between">
+                <span>1. ضريبة المخرجات على المبيعات والخدمات (Output VAT)</span>
+                <span className="pill-tag-mint text-[10.5px]">المجموع: 96,820.68 ر.س</span>
+              </h4>
+
+              <div className="space-y-2">
+                <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-black block">عقود التأجير وعمولات الاستقدام (15%)</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 525,471.20 ر.س</span>
+                  </div>
+                  <span className="font-mono font-bold text-black text-xs">78,820.68 ر.س</span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-black block">مبيعات الشركات والجهات الخاضعة (15%)</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 120,000.00 ر.س</span>
+                  </div>
+                  <span className="font-mono font-bold text-black text-xs">18,000.00 ر.س</span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-black block">خدمات وصادرات معفاة / بنسبة الصفر (0%)</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ: 65,000.00 ر.س</span>
+                  </div>
+                  <span className="font-mono font-bold text-zinc-400 text-xs">0.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Input VAT (ضريبة المشتريات والمدخلات) */}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
+              <h4 className="font-bold text-xs text-black pb-2 border-b border-zinc-100 flex items-center justify-between">
+                <span>2. ضريبة المدخلات على المشتريات والمصروفات (Input VAT)</span>
+                <span className="pill-tag-shade text-[10.5px]">المجموع: 45,825.00 ر.س</span>
+              </h4>
+
+              <div className="space-y-2">
+                <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-black block">مشتريات تشغيلية ومراكز إيواء وضيافة (15%)</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 220,500.00 ر.س</span>
+                  </div>
+                  <span className="font-mono font-bold text-rose-700 text-xs">33,075.00 ر.س</span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-black block">رسوم استيراد وتأشيرات خاضعة بالجمارك (15%)</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 85,000.00 ر.س</span>
+                  </div>
+                  <span className="font-mono font-bold text-rose-700 text-xs">12,750.00 ر.س</span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-black block">مصروفات معفاة من الخصم الضريبي</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">رواتب وكوادر إدارية</span>
+                  </div>
+                  <span className="font-mono font-bold text-zinc-400 text-xs">0.00 ر.س</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Final Net VAT Box */}
+          <div className="bg-black text-white p-6 rounded-3xl flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <span className="text-xs text-zinc-400 font-semibold block">صافي ضريبة القيمة المضافة المستحقة للسداد لهيئة الزكاة (Net Tax Due):</span>
+              <div className="text-3xl font-light font-mono text-emerald-400 mt-1">
+                50,995.68 ر.س
+              </div>
+              <p className="text-[11px] text-zinc-400 mt-1">
+                ضريبة المخرجات (96,820.68 ر.س) - ضريبة المدخلات (45,825.00 ر.س) = 50,995.68 ر.س
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                addNotification({
+                  title: 'إرسال الإقرار للهيئة',
+                  message: `تم إرسال إقرار ${vatPeriod} إلكترونياً إلى بوابة هيئة الزكاة والضريبة والجمارك (ZATCA) وتم إصدار سداد رقم #9928192.`,
+                  type: 'success',
+                });
+              }}
+              className="button-white-pill"
+              style={{ padding: '8px 24px', fontSize: '13px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+            >
+              تقديم الإقرار وسداد الفاتورة إلكترونياً
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* MODAL: FINANCIAL DRILL-DOWN */}
       {selectedAccountForDrilldown && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
@@ -1683,6 +2218,308 @@ export const FinancePage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Bank Adjustment Modal */}
+      {showAddAdjustmentModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
+            <div className="p-4 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm text-white m-0">تسجيل تسوية بنكية جديدة (Bank Adjustment)</h3>
+              <button onClick={() => setShowAddAdjustmentModal(false)} className="text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!newAdjustment.desc || !newAdjustment.amount) return;
+                setBankAdjustments([
+                  ...bankAdjustments,
+                  {
+                    id: `adj-${Date.now()}`,
+                    desc: newAdjustment.desc,
+                    amount: parseFloat(newAdjustment.amount) || 0,
+                    type: newAdjustment.type,
+                  },
+                ]);
+                setShowAddAdjustmentModal(false);
+                setNewAdjustment({ desc: '', amount: '', type: 'fee' });
+                addNotification({
+                  title: 'إضافة تسوية بنكية',
+                  message: `تم إضافة تسوية (${newAdjustment.desc}) بنجاح.`,
+                  type: 'success',
+                });
+              }}
+              className="p-6 space-y-4"
+            >
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">نوع التسوية</label>
+                <select
+                  value={newAdjustment.type}
+                  onChange={(e) => setNewAdjustment({ ...newAdjustment, type: e.target.value as any })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                >
+                  <option value="fee">مصاريف ورسوم بنكية (-)</option>
+                  <option value="interest">أرباح وعوائد بنكية (+)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">البيان والشرح *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: رسوم كشف حساب / رسوم نقاط بيع POS..."
+                  value={newAdjustment.desc}
+                  onChange={(e) => setNewAdjustment({ ...newAdjustment, desc: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-zinc-700 mb-1.5">المبلغ بالريال السعودي *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={newAdjustment.amount}
+                  onChange={(e) => setNewAdjustment({ ...newAdjustment, amount: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddAdjustmentModal(false)}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '34px', padding: '6px 16px', fontSize: '12px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill"
+                  style={{ minHeight: '34px', padding: '6px 20px', fontSize: '12px' }}
+                >
+                  حفظ التسوية
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Printable Official Voucher Modal */}
+      {selectedVoucherForPrint && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
+            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+              <div className="flex items-center gap-2">
+                <Printer className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-sm text-white m-0">معاينة وطباعة سند مالي معتمد</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="button-white-pill"
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+                >
+                  <Printer className="w-3.5 h-3.5 ml-1" />
+                  <span>طباعة فورية</span>
+                </button>
+                <button onClick={() => setSelectedVoucherForPrint(null)} className="text-zinc-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Official Printable Voucher Content */}
+            <div className="p-8 space-y-6 bg-white border border-zinc-300 m-4 rounded-2xl">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
+                  <p className="text-xs text-zinc-600 mt-0.5 font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
+                  <p className="text-xs text-zinc-500">المملكة العربية السعودية - الرياض</p>
+                </div>
+                <div className="text-left">
+                  <div className="text-base font-extrabold text-black font-mono border-2 border-black px-3 py-1 rounded-xl">
+                    سند {selectedVoucherForPrint.type}
+                  </div>
+                  <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">{selectedVoucherForPrint.voucher_no}</div>
+                  <div className="text-xs font-mono text-zinc-500">{selectedVoucherForPrint.date}</div>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="space-y-3 text-xs">
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
+                  <span className="font-bold text-zinc-700">
+                    {selectedVoucherForPrint.type === 'قبض' ? 'استلمنا من المكرم / السادة:' : 'صرفنا إلى المكرم / السادة:'}
+                  </span>
+                  <span className="font-extrabold text-sm text-black">{selectedVoucherForPrint.payee_payer}</span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
+                  <span className="font-bold text-zinc-700">المبلغ وقدره:</span>
+                  <span className="font-mono font-extrabold text-base text-emerald-800">
+                    {selectedVoucherForPrint.amount.toLocaleString()} ر.س
+                  </span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
+                  <span className="font-bold text-zinc-700">الحساب المالي / الخزينة:</span>
+                  <span className="font-semibold text-black">{selectedVoucherForPrint.treasury}</span>
+                </div>
+
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
+                  <span className="font-bold text-zinc-700">حالة السند:</span>
+                  <span className="pill-tag-mint text-xs">معتمد ومرحل للأستاذ العام</span>
+                </div>
+              </div>
+
+              {/* Signatures */}
+              <div className="grid grid-cols-4 gap-4 pt-8 border-t border-zinc-200 text-center text-xs">
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">منظم السند</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">المحاسب المالي</span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">المراجع المالي</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">تدقيق الحسابات</span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">المدير المالي</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">الاعتماد والصرف</span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">توقيع المستلم</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">الاسم والختم</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2 print:hidden">
+              <button
+                onClick={() => setSelectedVoucherForPrint(null)}
+                className="button-outline-on-light"
+                style={{ padding: '6px 16px', fontSize: '11.5px' }}
+              >
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Printable Official Journal Modal */}
+      {selectedJournalForPrint && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
+            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-sm text-white m-0">معاينة وطباعة قيد اليومية (Double-Entry Journal)</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="button-white-pill"
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+                >
+                  <Printer className="w-3.5 h-3.5 ml-1" />
+                  <span>طباعة القيد</span>
+                </button>
+                <button onClick={() => setSelectedJournalForPrint(null)} className="text-zinc-400 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-8 space-y-6 bg-white border border-zinc-300 m-4 rounded-2xl">
+              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
+                  <p className="text-xs text-zinc-500 font-mono mt-0.5">دفتر القيود اليومية العامة</p>
+                </div>
+                <div className="text-left">
+                  <div className="text-sm font-extrabold text-black font-mono border border-black px-3 py-1 rounded-xl">
+                    قيد يومية: {selectedJournalForPrint.ref_no}
+                  </div>
+                  <div className="text-xs font-mono text-zinc-500 mt-1">التاريخ: {selectedJournalForPrint.date}</div>
+                  <div className="text-xs text-zinc-600 font-bold">الفرع: {selectedJournalForPrint.branch}</div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-xs">
+                <span className="font-bold text-zinc-700 block mb-1">البيان والشرح المحاسبي:</span>
+                <span className="text-black font-medium">{selectedJournalForPrint.description}</span>
+              </div>
+
+              {/* Journal Lines Table */}
+              <div className="border border-zinc-300 rounded-xl overflow-hidden">
+                <table className="w-full text-right text-xs">
+                  <thead className="bg-zinc-100 font-bold border-b border-zinc-300">
+                    <tr>
+                      <th className="p-2.5">رمز الحساب</th>
+                      <th className="p-2.5">اسم الحساب المحاسبي</th>
+                      <th className="p-2.5">مدين (Debit)</th>
+                      <th className="p-2.5">دائن (Credit)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 font-mono">
+                    <tr>
+                      <td className="p-2.5 font-bold">1102</td>
+                      <td className="p-2.5 font-sans">بنك الرياض - حساب الاستقدام</td>
+                      <td className="p-2.5 font-bold text-black">{selectedJournalForPrint.amount.toLocaleString()} ر.س</td>
+                      <td className="p-2.5 text-zinc-400">0.00</td>
+                    </tr>
+                    <tr>
+                      <td className="p-2.5 font-bold">4101</td>
+                      <td className="p-2.5 font-sans">إيرادات وساطة عقود الاستقدام</td>
+                      <td className="p-2.5 text-zinc-400">0.00</td>
+                      <td className="p-2.5 font-bold text-rose-700">{selectedJournalForPrint.amount.toLocaleString()} ر.س</td>
+                    </tr>
+                    <tr className="bg-zinc-50 font-bold border-t-2 border-black">
+                      <td colSpan={2} className="p-2.5 font-sans text-left pl-4">الإجمالي المتوازن:</td>
+                      <td className="p-2.5 text-black">{selectedJournalForPrint.amount.toLocaleString()} ر.س</td>
+                      <td className="p-2.5 text-rose-700">{selectedJournalForPrint.amount.toLocaleString()} ر.س</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 pt-8 border-t border-zinc-200 text-center text-xs">
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">معد القيد</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">المحاسب المسؤول</span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">المراجع المالي</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">التدقيق والترحيل</span>
+                </div>
+                <div>
+                  <span className="text-zinc-500 block font-bold mb-8">اعتماد الإدارة المالية</span>
+                  <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">المدير المالي</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2 print:hidden">
+              <button
+                onClick={() => setSelectedJournalForPrint(null)}
+                className="button-outline-on-light"
+                style={{ padding: '6px 16px', fontSize: '11.5px' }}
+              >
+                إغلاق
+              </button>
+            </div>
           </div>
         </div>
       )}

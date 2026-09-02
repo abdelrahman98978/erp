@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { exportData } from '../services/exportService';
 import { useCostCenters, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
-import { PieChart, Plus, FileSpreadsheet, FileText, Search, X } from 'lucide-react';
+import { PieChart, Plus, FileSpreadsheet, FileText, Search, X, Trash2 } from 'lucide-react';
 
 export interface CostCenterRecord {
   id: string;
@@ -51,7 +51,7 @@ const DEFAULT_MOCK_COST_CENTERS: CostCenterRecord[] = [
 export const CostCentersPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawCostCenters = [], isLoading } = useCostCenters();
-  const { createItem } = useTableMutation('cost_centers');
+  const { createItem, deleteItem } = useTableMutation('cost_centers');
 
   const costCenters: CostCenterRecord[] = rawCostCenters.length > 0 ? rawCostCenters : DEFAULT_MOCK_COST_CENTERS;
 
@@ -214,18 +214,19 @@ export const CostCentersPage: React.FC = () => {
                 <th className="p-3.5">المنصرف الفعلي</th>
                 <th className="p-3.5">المتبقي</th>
                 <th className="p-3.5">نسبة الاستهلاك</th>
+                <th className="p-3.5 text-center">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-zinc-400">
+                  <td colSpan={8} className="py-10 text-center text-zinc-400">
                     جاري استرجاع مراكز التكلفة...
                   </td>
                 </tr>
               ) : filteredCostCenters.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-zinc-400">
+                  <td colSpan={8} className="py-10 text-center text-zinc-400">
                     لا توجد مراكز تكلفة مسجلة
                   </td>
                 </tr>
@@ -254,6 +255,19 @@ export const CostCentersPage: React.FC = () => {
                           </div>
                           <span className="text-[11px] font-mono font-bold text-zinc-700">{spentPct}%</span>
                         </div>
+                      </td>
+                      <td className="p-3.5 text-center">
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`هل أنت متأكد من حذف مركز التكلفة (${c.name})؟`)) {
+                              deleteItem.mutate(c.id);
+                            }
+                          }}
+                          className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
+                          title="حذف المركز"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   );

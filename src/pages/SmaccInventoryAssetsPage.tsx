@@ -6,7 +6,8 @@ import {
   RefreshCw,
   Box,
   Layers,
-  FileSpreadsheet
+  FileSpreadsheet,
+  ArrowRightLeft
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 import { useAppStore } from '../stores/appStore';
@@ -14,7 +15,7 @@ import { exportData } from '../services/exportService';
 
 export const SmaccInventoryAssetsPage: React.FC = () => {
   const { addNotification } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'assets' | 'inventory' | 'stock-vouchers'>('assets');
+  const [activeTab, setActiveTab] = useState<'fixed-assets' | 'inventory' | 'stock-vouchers'>('fixed-assets');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Modals state
@@ -28,29 +29,30 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
     name: '',
     category: 'وسائل النقل والسيارات',
     purchaseDate: '2026-08-18',
-    cost: '',
+    cost: '85000',
     depreciationRate: '20',
-    salvageValue: '0',
+    accumulatedDepreciation: '0',
+    bookValue: '85000',
   });
 
-  // New Inventory Item State
+  // New Item State
   const [newItem, setNewItem] = useState({
     sku: 'INV-105',
     name: '',
     category: 'خدمات استقدام',
     unit: 'عقد',
-    costPrice: '',
-    salePrice: '',
-    reorderLevel: '5',
-    taxRate: '15',
+    costPrice: '10000',
+    salePrice: '15000',
+    currentStock: 10,
+    status: 'متوفر',
   });
 
   // New Stock Voucher State
   const [newStockVoucher, setNewStockVoucher] = useState({
-    voucherNo: 'STK-2026-012',
-    type: 'إضافة' as 'إضافة' | 'صرف',
+    voucherNo: 'STK-2026-004',
+    type: 'إضافة',
     date: '2026-08-18',
-    itemSku: 'INV-101',
+    item: 'INV-101',
     qty: '1',
     reason: '',
   });
@@ -88,54 +90,77 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
+      {/* Top Banner */}
       <div
         className="card-feature-cinematic"
         style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           background: '#000000',
-          borderRadius: '16px',
+          color: '#FFF',
           padding: '28px',
-          color: '#FFFFFF',
+          borderRadius: '16px',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          flexWrap: 'wrap',
+          gap: '16px',
         }}
       >
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Box className="w-5 h-5 text-champagne-light" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC ASSETS & STOCK</span>
-                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الأصول والإهلاك والمخازن</span>
-              </div>
-              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-                إدارة الأصول الثابتة والمخزون
-              </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
-                سجل الأصول والإهلاكات الدوري، دليل الأصناف والمنتجات، وأذونات الصرف والإضافة
-              </p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+            <Box className="w-5 h-5" />
           </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC FINANCIAL ENGINE</span>
+            </div>
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+              إدارة الأصول الثابتة والمخزون
+            </h1>
+            <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
+              سجل الأصول، احتساب الإهلاك الآلي، وإدارة الأصناف وأذونات الصرف والإضافة
+            </p>
+          </div>
+        </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setIsAssetModalOpen(true)}
-              className="button-white-pill"
-              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
-            >
-              <Plus className="w-3.5 h-3.5 ml-1" />
-              <span>+ إضافة أصل ثابت</span>
-            </button>
-            <button
-              onClick={() => setIsItemModalOpen(true)}
-              className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
-            >
-              <Plus className="w-3.5 h-3.5 ml-1" />
-              <span>+ تعريف صنف جديد</span>
-            </button>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            className="button-white-pill"
+            onClick={() => setIsAssetModalOpen(true)}
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <Plus className="w-4 h-4 ml-1 text-black" />
+            <span>إضافة أصل ثابت</span>
+          </button>
+          <button
+            className="button-white-pill"
+            onClick={() => exportData('branches', [], 'excel')}
+            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
+            <span>تصدير تقرير الأصول</span>
+          </button>
+        </div>
+      </div>
+
+      {/* KPI Stats */}
+      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
+          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي قيمة الأصول</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>1,840,000 ر.س</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>شامل السيارات والمباني</span>
+        </div>
+
+        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مجمع الإهلاك السنوي</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>245,600 ر.س</div>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>قسط ثابت معتمد</span>
+        </div>
+
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>أصناف الخدمات المتاحة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>24 صنف</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مخزون عقود نشط</span>
         </div>
       </div>
 
@@ -143,7 +168,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
           { id: 'fixed-assets', label: 'الأصول الثابتة والإهلاك', icon: Building2 },
-          { id: 'items-catalog', label: 'دليل الأصناف والمخزون', icon: Layers },
+          { id: 'inventory', label: 'دليل الأصناف والمخزون', icon: Layers },
           { id: 'stock-vouchers', label: 'أذونات الصرف والإضافة', icon: ArrowRightLeft },
         ].map(tab => {
           const isActive = activeTab === tab.id;

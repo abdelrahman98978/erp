@@ -10,6 +10,7 @@ interface TransferRequest {
   contract_number: string;
   maid_name: string;
   nationality: string;
+  job?: string;
   old_sponsor: string;
   old_sponsor_phone: string;
   new_sponsor: string;
@@ -71,7 +72,7 @@ export const SponsorshipTransferPage: React.FC = () => {
     realErpDataStore.getRecords<TransferRequest>('sponsorship_transfers', MOCK_TRANSFERS).then(data => setTransfers(data));
   }, []);
 
-  const displayedTransfers = transfers.filter(t => {
+  const filteredTransfers = transfers.filter(t => {
     const matchesSearch =
       t.contract_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.maid_name.includes(searchQuery) ||
@@ -83,6 +84,9 @@ export const SponsorshipTransferPage: React.FC = () => {
     if (storeActiveTab === 'transferred-done') return t.status === 'تم النقل';
     return true;
   });
+
+  const trialCount = transfers.filter(t => t.status === 'فترة التجربة').length;
+  const completedCount = transfers.filter(t => t.status === 'تم النقل').length;
 
   const handleConfirmTransfer = async (row: TransferRequest) => {
     const updated = await realErpDataStore.updateRecord<TransferRequest>(
