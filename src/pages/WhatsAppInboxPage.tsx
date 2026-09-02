@@ -74,7 +74,7 @@ export const WhatsAppInboxPage: React.FC = () => {
     setActiveChat(updatedChat);
 
     try {
-      await realErpDataStore.saveRecord('whatsapp_messages', updatedChat);
+      await realErpDataStore.updateRecord<WhatsAppChat>('whatsapp_messages', activeChat.id, updatedChat);
     } catch (err) {
       console.warn('Could not persist chat message:', err);
     }
@@ -105,7 +105,7 @@ export const WhatsAppInboxPage: React.FC = () => {
     setNewChatName('');
     setNewChatPhone('');
 
-    await realErpDataStore.saveRecord('whatsapp_messages', newChat);
+    await realErpDataStore.addRecord<WhatsAppChat>('whatsapp_messages', newChat);
     addNotification({
       title: 'محادثة جديدة',
       message: `تم فتح محادثة فورية مع العميل (${newChatName}).`,

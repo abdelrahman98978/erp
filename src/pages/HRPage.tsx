@@ -236,6 +236,8 @@ const DEFAULT_MOCK_PROMOTIONS: PromotionRecord[] = [
   }
 ];
 
+export type HrSubTab = 'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' | 'end-of-service' | 'gosi' | 'maids-hr';
+
 export const HRPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawEmployees = [] } = useEmployees();
@@ -255,8 +257,6 @@ export const HRPage: React.FC = () => {
   }, [rawEmployees]);
 
   const storeActiveTab = useAppStore(state => state.activeTab);
-
-  type HrSubTab = 'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' | 'end-of-service' | 'gosi' | 'maids-hr';
 
   const getMappedTab = (tabKey: string): HrSubTab => {
     switch (tabKey) {

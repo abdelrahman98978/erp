@@ -266,7 +266,7 @@ export const ComplaintsPage: React.FC = () => {
       notes: `تسوية مالية وتعويض عن الشكوى: ${ticket.description}`
     };
 
-    await realErpDataStore.saveRecord('payment_vouchers', newVoucher);
+    await realErpDataStore.addRecord('payment_vouchers', newVoucher);
     addNotification({
       title: 'توليد سند صرف تسوية مالية',
       message: `تم توليد سند الصرف رقم #${newVoucher.voucher_no} بمبلغ (1,500 ر.س) للعميل (${ticket.client_name}) وترحيله لمحاسبة SMACC.`,

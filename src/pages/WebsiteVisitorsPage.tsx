@@ -167,12 +167,12 @@ export const WebsiteVisitorsPage: React.FC = () => {
     };
 
     try {
-      await realErpDataStore.saveRecord('clients', newClient);
+      await realErpDataStore.addRecord('clients', newClient);
       const updatedVisitors = (visitors.length > 0 ? visitors : MOCK_VISITORS).map(item =>
         item.id === v.id ? { ...item, is_lead: true } : item
       );
       setVisitors(updatedVisitors);
-      await realErpDataStore.saveRecord('website_visitors', { ...v, is_lead: true });
+      await realErpDataStore.updateRecord<Visitor>('website_visitors', v.id, { is_lead: true });
 
       addNotification({
         title: 'تم تحويل الزائر إلى عميل CRM',
