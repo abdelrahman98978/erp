@@ -4,7 +4,8 @@ import { exportData } from '../services/exportService';
 import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
-import { Headphones, Plus, FileSpreadsheet, FileText, Search, Clock, AlertTriangle, MessageSquare, Building2, Check, X, ShieldAlert, Send, Trash2 } from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
+import { Headphones, Plus, FileSpreadsheet, FileText, Search, Clock, AlertTriangle, MessageSquare, Building2, Check, X, ShieldAlert, Send, Trash2, Receipt, DollarSign } from 'lucide-react';
 
 export interface ComplaintTicket {
   id: string;
@@ -245,6 +246,31 @@ export const ComplaintsPage: React.FC = () => {
       title: 'تحديث حالة الشكوى',
       message: `تم تغيير حالة التذكرة #${selectedTicket.ticket_no} إلى (${status}).`,
       type: status === 'تم الحل وإغلاق الشكوى' ? 'success' : 'info',
+    });
+    setSelectedTicket(null);
+  };
+
+  const handleGeneratePaymentVoucher = async (ticket: ComplaintTicket) => {
+    const voucherNo = `PV-2026-0${Math.floor(Math.random() * 800 + 100)}`;
+    const newVoucher = {
+      id: `PV-${Date.now().toString().slice(-6)}`,
+      voucher_no: voucherNo,
+      beneficiary_name: ticket.client_name,
+      amount: 1500,
+      payment_type: 'تحويل بنكي تسوية شكوى',
+      account_name: 'مصروفات تسويات ورد مبالغ عقود (5204)',
+      cost_center: 'مركز العمليات والاستقدام',
+      reference_doc: `${ticket.ticket_no} / ${ticket.contract_ref}`,
+      status: 'معتمد وجاهز للتحويل',
+      date: new Date().toISOString().split('T')[0],
+      notes: `تسوية مالية وتعويض عن الشكوى: ${ticket.description}`
+    };
+
+    await realErpDataStore.saveRecord('payment_vouchers', newVoucher);
+    addNotification({
+      title: 'توليد سند صرف تسوية مالية',
+      message: `تم توليد سند الصرف رقم #${newVoucher.voucher_no} بمبلغ (1,500 ر.س) للعميل (${ticket.client_name}) وترحيله لمحاسبة SMACC.`,
+      type: 'success',
     });
     setSelectedTicket(null);
   };
@@ -1030,6 +1056,15 @@ export const ComplaintsPage: React.FC = () => {
               <div className="flex gap-2 justify-end pt-3 border-t border-zinc-100 flex-wrap">
                 <button className="button-outline-on-light" onClick={() => setSelectedTicket(null)} style={{ minHeight: '36px', padding: '6px 14px', fontSize: '12.5px' }}>
                   إلغاء
+                </button>
+                <button 
+                  className="button-outline-on-light text-emerald-700 border-emerald-300 hover:bg-emerald-50 flex items-center gap-1"
+                  onClick={() => handleGeneratePaymentVoucher(selectedTicket)} 
+                  style={{ minHeight: '36px', padding: '6px 12px', fontSize: '12px' }}
+                  title="توليد سند صرف مالي مباشر في قيود ومحاسبة SMACC"
+                >
+                  <Receipt className="w-3.5 h-3.5" />
+                  <span>توليد سند صرف تسوية (SMACC)</span>
                 </button>
                 <button className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50" onClick={() => handleResolveTicket('مرفوعة للمشرف')} style={{ minHeight: '36px', padding: '6px 14px', fontSize: '12.5px' }}>
                   تصعيد للمشرف

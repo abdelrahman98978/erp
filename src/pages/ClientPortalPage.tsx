@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, CheckCircle2, Clock, ShieldCheck, Download, 
   Search, Eye, MessageCircle, AlertCircle, Sparkles, 
   Building2, Phone, Calendar, ArrowRight, UserCheck, Check,
-  CreditCard, Landmark, Plane, User, Lock, Award
+  CreditCard, Landmark, Plane, User, Lock, Award, Printer, QrCode
 } from 'lucide-react';
 import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard } from '../components/kas/KasCards';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 interface ClientContract {
   id: string;
@@ -26,51 +27,84 @@ interface ClientContract {
   flightDetails?: string;
 }
 
+const DEFAULT_MOCK_CONTRACTS: ClientContract[] = [
+  {
+    id: 'c-101',
+    contractNumber: 'MSN-2026-8941',
+    workerName: 'مريم أديس تيجيست',
+    profession: 'عاملة منزلية',
+    nationality: 'إثيوبيا',
+    passportNumber: 'EP8894120',
+    status: 'حجز الطيران',
+    progressPct: 85,
+    startDate: '2026-07-15',
+    expectedArrival: '2026-09-05',
+    amount: 14500,
+    paidAmount: 14500,
+    guaranteeDaysLeft: 90,
+    agencyName: 'وكالة دماس الدولية (DAMAS ETH)',
+    flightDetails: 'الخطوط السعودية SV-840 - الوصول: مطار الملك خالد الدولي بالرياض',
+  },
+  {
+    id: 'c-102',
+    contractNumber: 'MSN-2026-7730',
+    workerName: 'جويسانتي فلوريس',
+    profession: 'عاملة منزلية ورعاية كبار سن',
+    nationality: 'الفلبين',
+    passportNumber: 'P9920145',
+    status: 'مكتمل ومسلم',
+    progressPct: 100,
+    startDate: '2026-05-10',
+    expectedArrival: '2026-07-20',
+    amount: 18500,
+    paidAmount: 18500,
+    guaranteeDaysLeft: 48,
+    agencyName: 'بلاتينيوم مانيلا (PLATINUM PH)',
+    flightDetails: 'تم الوصول والتسليم بنجاح',
+  },
+];
+
 export const ClientPortalPage: React.FC = () => {
   const { activeCompany } = useCompany();
   const [nationalIdOrPhone, setNationalIdOrPhone] = useState('');
-  const [authenticated, setAuthenticated] = useState(true); // Demo mode active
   const [selectedContract, setSelectedContract] = useState<ClientContract | null>(null);
+  const [contractsList, setContractsList] = useState<ClientContract[]>(DEFAULT_MOCK_CONTRACTS);
 
-  const [contracts] = useState<ClientContract[]>([
-    {
-      id: 'c-101',
-      contractNumber: 'MSN-2026-8941',
-      workerName: 'مريم أديس تيجيست',
-      profession: 'عاملة منزلية',
-      nationality: 'إثيوبيا',
-      passportNumber: 'EP8894120',
-      status: 'حجز الطيران',
-      progressPct: 85,
-      startDate: '2026-07-15',
-      expectedArrival: '2026-09-05',
-      amount: 14500,
-      paidAmount: 14500,
-      guaranteeDaysLeft: 90,
-      agencyName: 'وكالة دماس الدولية (DAMAS ETH)',
-      flightDetails: 'الخطوط السعودية SV-840 - الوصول: مطار الملك خالد الدولي بالرياض',
-    },
-    {
-      id: 'c-102',
-      contractNumber: 'MSN-2026-7730',
-      workerName: 'جويسانتي فلوريس',
-      profession: 'عاملة منزلية ورعاية كبار سن',
-      nationality: 'الفلبين',
-      passportNumber: 'P9920145',
-      status: 'مكتمل ومسلم',
-      progressPct: 100,
-      startDate: '2026-05-10',
-      expectedArrival: '2026-07-20',
-      amount: 18500,
-      paidAmount: 18500,
-      guaranteeDaysLeft: 48,
-      agencyName: 'بلاتينيوم مانيلا (PLATINUM PH)',
-      flightDetails: 'تم الوصول والتسليم بنجاح',
-    },
-  ]);
+  useEffect(() => {
+    realErpDataStore.getRecords<any>('contracts').then(records => {
+      if (records && records.length > 0) {
+        const mapped: ClientContract[] = records.map((r, i) => ({
+          id: r.id || `c-${i}`,
+          contractNumber: r.contract_no || r.id || `MSN-2026-${String(i + 1).padStart(4, '0')}`,
+          workerName: r.worker_name || r.maid_name || 'عاملة منزلية معتمدة',
+          profession: r.profession || 'عاملة منزلية',
+          nationality: r.nationality || 'إثيوبيا',
+          passportNumber: r.passport_number || 'EP9920145',
+          status: (r.status || 'حجز الطيران') as any,
+          progressPct: r.status === 'مكتمل ومسلم' ? 100 : r.status === 'حجز الطيران' ? 85 : 50,
+          startDate: r.created_at?.slice(0, 10) || '2026-07-15',
+          expectedArrival: r.expected_arrival || '2026-09-10',
+          amount: Number(r.amount) || 14500,
+          paidAmount: Number(r.paid_amount || r.amount) || 14500,
+          guaranteeDaysLeft: Number(r.guarantee_days_left) || 90,
+          agencyName: r.agency_name || 'وكالة دماس الدولية (DAMAS ETH)',
+          flightDetails: r.flight_details || 'الخطوط السعودية SV-840 - الوصول: مطار الملك خالد الدولي',
+        }));
+        setContractsList(mapped);
+      }
+    });
+  }, []);
 
-  const activeContracts = contracts.filter(c => c.status !== 'مكتمل ومسلم');
-  const completedContracts = contracts.filter(c => c.status === 'مكتمل ومسلم');
+  const filteredContracts = contractsList.filter(c => {
+    if (!nationalIdOrPhone.trim()) return true;
+    const q = nationalIdOrPhone.toLowerCase();
+    return c.contractNumber.toLowerCase().includes(q) ||
+           c.workerName.includes(q) ||
+           c.passportNumber.toLowerCase().includes(q);
+  });
+
+  const activeContracts = filteredContracts.filter(c => c.status !== 'مكتمل ومسلم');
+  const completedContracts = filteredContracts.filter(c => c.status === 'مكتمل ومسلم');
 
   return (
     <div className="space-y-6">
@@ -121,6 +155,31 @@ export const ClientPortalPage: React.FC = () => {
             </a>
           </div>
         </div>
+      </div>
+
+      {/* Contract Quick Lookup Search Bar */}
+      <div className="card-pricing p-4 rounded-2xl bg-white border border-zinc-200 shadow-sm flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 shrink-0">
+          <Search className="w-5 h-5" />
+        </div>
+        <div className="flex-1">
+          <label className="block text-[11px] font-bold text-zinc-500 mb-0.5">البحث الفوري عن العقود ومراحل العمالة</label>
+          <input
+            type="text"
+            value={nationalIdOrPhone}
+            onChange={e => setNationalIdOrPhone(e.target.value)}
+            placeholder="أدخل رقم العقد (MSN-...)، أو اسم العاملة، أو رقم الجواز للتحقق والتتبع المباشر..."
+            className="w-full bg-transparent text-xs text-black font-semibold placeholder:text-zinc-400 focus:outline-none"
+          />
+        </div>
+        {nationalIdOrPhone && (
+          <button
+            onClick={() => setNationalIdOrPhone('')}
+            className="text-xs text-zinc-400 hover:text-black font-bold px-2 py-1"
+          >
+            مسح
+          </button>
+        )}
       </div>
 
       {/* 4 Signature KPI Cards Row matching exact design screenshot */}
@@ -176,7 +235,7 @@ export const ClientPortalPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {contracts.map((contract) => (
+          {filteredContracts.map((contract) => (
             <div 
               key={contract.id}
               className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all space-y-4 bg-white dark:bg-zinc-900"
@@ -282,6 +341,20 @@ export const ClientPortalPage: React.FC = () => {
             </div>
 
             <div className="space-y-3 text-xs">
+              {/* Official Verification QR Stamp */}
+              <div className="p-3 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shadow-sm">
+                    <QrCode className="w-6 h-6 text-champagne-light" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-black dark:text-white">شهادة تتبع حالة العقد المعتمدة رسمياً</div>
+                    <div className="text-[10px] text-zinc-500 font-mono">MUSANED VERIFICATION: #{selectedContract.contractNumber}</div>
+                  </div>
+                </div>
+                <span className="pill-tag-mint text-[10px]">ساري ومعتمد</span>
+              </div>
+
               <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl space-y-1.5">
                 <div className="flex justify-between">
                   <span className="text-slate-500">اسم العامل/ة:</span>
@@ -295,27 +368,59 @@ export const ClientPortalPage: React.FC = () => {
                   <span className="text-slate-500">المهنة والجنسية:</span>
                   <span className="font-medium text-slate-800 dark:text-slate-200">{selectedContract.profession} - {selectedContract.nationality}</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">الوكالة المصدرة:</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">{selectedContract.agencyName}</span>
+                </div>
               </div>
 
               <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl space-y-1.5 border border-emerald-200/50 dark:border-emerald-800/40">
                 <div className="flex justify-between">
                   <span className="text-emerald-800 dark:text-emerald-300">حالة العقد عبر مساند:</span>
-                  <span className="font-bold text-emerald-700 dark:text-emerald-400">{selectedContract.status}</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">{selectedContract.status} ({selectedContract.progressPct}%)</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-emerald-800 dark:text-emerald-300">فترة الضمان النظامي:</span>
                   <span className="font-bold text-emerald-700 dark:text-emerald-400">{selectedContract.guaranteeDaysLeft} يوماً (سارية)</span>
                 </div>
+                {selectedContract.flightDetails && (
+                  <div className="flex justify-between pt-1 border-t border-emerald-100 dark:border-emerald-900/40">
+                    <span className="text-emerald-800 dark:text-emerald-300">بيانات الرحلة والقدوم:</span>
+                    <span className="font-bold text-emerald-900 dark:text-emerald-200">{selectedContract.flightDetails}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-between items-center gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex-wrap">
               <button
-                onClick={() => setSelectedContract(null)}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 font-bold text-xs"
+                type="button"
+                onClick={() => window.print()}
+                className="button-primary-pill text-xs font-bold inline-flex items-center gap-1.5 shadow-sm"
+                style={{ padding: '6px 16px', minHeight: '34px' }}
               >
-                إغلاق
+                <Printer className="w-3.5 h-3.5" />
+                <span>طباعة شهادة التتبع الرسمية</span>
               </button>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`https://wa.me/966500000000?text=${encodeURIComponent(`السلام عليكم، استفسار بخصوص العقد رقم ${selectedContract.contractNumber} للعاملة ${selectedContract.workerName}`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="button-outline-on-light text-xs font-bold inline-flex items-center gap-1"
+                  style={{ minHeight: '34px', padding: '6px 14px' }}
+                >
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>دعم العملاء</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setSelectedContract(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 font-bold text-xs"
+                >
+                  إغلاق
+                </button>
+              </div>
             </div>
           </div>
         </div>

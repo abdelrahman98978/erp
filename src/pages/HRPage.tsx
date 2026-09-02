@@ -12,7 +12,7 @@ import {
   CalendarMinus, DollarSign, AlertCircle, Clock, Award, ShieldCheck, 
   X, Trash2, TrendingUp, Shield, Key, Sparkles, Check, ChevronRight,
   Briefcase, Building2, Star, CheckCircle2, UserCog, Edit3,
-  FileSignature, Scale, Printer, Fingerprint, Eye, Download, Lock
+  FileSignature, Scale, Printer, Fingerprint, Eye, Download, Lock, Calculator
 } from 'lucide-react';
 import { WpsPayrollEngine, EmployeePayrollRecord, WpsSifHeader } from '../services/wpsPayrollEngine';
 
@@ -256,7 +256,9 @@ export const HRPage: React.FC = () => {
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
-  const getMappedTab = (tabKey: string): 'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' => {
+  type HrSubTab = 'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll' | 'end-of-service' | 'gosi' | 'maids-hr';
+
+  const getMappedTab = (tabKey: string): HrSubTab => {
     switch (tabKey) {
       case 'promotions':
       case 'employee-promotions':
@@ -286,12 +288,21 @@ export const HRPage: React.FC = () => {
       case 'salary':
       case 'salaries':
         return 'payroll';
+      case 'end-of-service':
+      case 'eos':
+        return 'end-of-service';
+      case 'gosi-insurance':
+      case 'gosi':
+        return 'gosi';
+      case 'maids-hr':
+      case 'domestic-fleet':
+        return 'maids-hr';
       default:
         return 'employees';
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'employees' | 'promotions' | 'signatures' | 'vacations' | 'advances' | 'sanctions' | 'permissions' | 'rewards' | 'payroll'>(() => getMappedTab(storeActiveTab));
+  const [activeTab, setActiveTab] = useState<HrSubTab>(() => getMappedTab(storeActiveTab));
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
@@ -317,6 +328,17 @@ export const HRPage: React.FC = () => {
   const [salary, setSalary] = useState('8000');
   const [createSystemUser, setCreateSystemUser] = useState(true);
   const [assignedRole, setAssignedRole] = useState('Sales Agent');
+
+  // End of Service Calculator State
+  const [eosSalary, setEosSalary] = useState<number>(8000);
+  const [eosYears, setEosYears] = useState<number>(4);
+  const [eosMonths, setEosMonths] = useState<number>(6);
+  const [eosReason, setEosReason] = useState<'termination' | 'resignation' | 'force_majeure'>('termination');
+
+  // GOSI Calculator State
+  const [gosiEmpType, setGosiEmpType] = useState<'saudi' | 'non_saudi'>('saudi');
+  const [gosiBasic, setGosiBasic] = useState<number>(6000);
+  const [gosiHousing, setGosiHousing] = useState<number>(1500);
   const [enable2FA, setEnable2FA] = useState(true);
 
   // Form State for Promotion
@@ -810,6 +832,9 @@ export const HRPage: React.FC = () => {
           { id: 'permissions', label: `طلبات الأذونات (${permissions.length})`, icon: Clock },
           { id: 'rewards', label: `طلبات المكافآت (${rewards.length})`, icon: Award },
           { id: 'payroll', label: 'مسير الرواتب (WPS)', icon: ShieldCheck },
+          { id: 'end-of-service', label: 'حاسبة نهاية الخدمة ⚖️', icon: Calculator },
+          { id: 'gosi', label: 'التأمينات الاجتماعية (GOSI) 🛡️', icon: ShieldCheck },
+          { id: 'maids-hr', label: 'أسطول العمالة والتشغيل 👥', icon: Users },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -1461,6 +1486,414 @@ export const HRPage: React.FC = () => {
                     </tr>
                   );
                 })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: End of Service Calculator (Articles 84 & 85) */}
+      {activeTab === 'end-of-service' && (() => {
+        const totalYears = eosYears + eosMonths / 12;
+        const first5Years = Math.min(totalYears, 5);
+        const after5Years = Math.max(0, totalYears - 5);
+        const first5Award = first5Years * (eosSalary / 2);
+        const after5Award = after5Years * eosSalary;
+        const fullAward = first5Award + after5Award;
+
+        let payoutPct = 1;
+        let legalArticle = 'المادة (84) من نظام العمل: يستحق العامل مكافأة كاملة عن مدة خدمته (أجر نصف شهر عن كل سنة من السنوات الخمس الأولى، وأجر شهر كامل عن كل سنة تالية).';
+
+        if (eosReason === 'resignation') {
+          if (totalYears < 2) {
+            payoutPct = 0;
+            legalArticle = 'المادة (85) من نظام العمل (استقالة): مدة الخدمة أقل من سنتين، لا يستحق العامل أي مكافأة.';
+          } else if (totalYears < 5) {
+            payoutPct = 1 / 3;
+            legalArticle = 'المادة (85) من نظام العمل (استقالة): مدة الخدمة بين سنتين و5 سنوات، يستحق العامل ثلث (1/3) المكافأة النظامية.';
+          } else if (totalYears < 10) {
+            payoutPct = 2 / 3;
+            legalArticle = 'المادة (85) من نظام العمل (استقالة): مدة الخدمة بين 5 و10 سنوات، يستحق العامل ثلثي (2/3) المكافأة النظامية.';
+          } else {
+            payoutPct = 1;
+            legalArticle = 'المادة (85) من نظام العمل (استقالة): بلغت مدة الخدمة 10 سنوات فأكثر، يستحق العامل المكافأة كاملة.';
+          }
+        } else if (eosReason === 'force_majeure') {
+          payoutPct = 1;
+          legalArticle = 'المادة (87) من نظام العمل: انتهاء الخدمة لظروف قاهرة أو ترك العمل لسبب مشروع، يستحق العامل المكافأة كاملة.';
+        }
+
+        const finalAmount = fullAward * payoutPct;
+
+        return (
+          <div className="space-y-6 font-sans">
+            <div className="card-pricing p-6 rounded-3xl bg-white border border-zinc-200 shadow-sm">
+              <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-100 flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center">
+                    <Calculator className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-black">
+                      حاسبة مكافأة نهاية الخدمة المعتمدة (نظام العمل السعودي)
+                    </h3>
+                    <p className="text-xs text-zinc-500">
+                      احتساب آلي دقيق متطابق 100% مع نصوص المواد (84، 85، 87) للوائح وزارة الموارد البشرية
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => window.print()}
+                    className="button-primary-pill text-xs font-bold inline-flex items-center gap-1.5"
+                    style={{ minHeight: '34px', padding: '6px 16px' }}
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>طباعة مسير المخالصة</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Inputs Column */}
+                <div className="space-y-4 md:col-span-1 p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
+                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-2">بيانات احتساب التصفية</h4>
+                  
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">الراتب الأساسي الأخير (شامل بدل السكن) *</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={eosSalary}
+                        onChange={e => setEosSalary(Math.max(0, Number(e.target.value)))}
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                      />
+                      <span className="absolute left-3 top-2 text-xs text-zinc-400">ر.س</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-700 mb-1">سنوات الخدمة</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={eosYears}
+                        onChange={e => setEosYears(Math.max(0, Number(e.target.value)))}
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-700 mb-1">الأشهر الإضافية</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="11"
+                        value={eosMonths}
+                        onChange={e => setEosMonths(Math.min(11, Math.max(0, Number(e.target.value))))}
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">سبب انتهاء العلاقة العمالية *</label>
+                    <select
+                      value={eosReason}
+                      onChange={e => setEosReason(e.target.value as any)}
+                      className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-semibold focus:border-black focus:outline-none"
+                    >
+                      <option value="termination">إنهاء العقد من صاحب العمل / انتهاء المدة (المادة 84)</option>
+                      <option value="resignation">استقالة العامل برغبته (المادة 85)</option>
+                      <option value="force_majeure">ظروف قاهرة أو فسخ مشروع (المادة 87)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Calculation Results Column */}
+                <div className="md:col-span-2 space-y-4 flex flex-col justify-between">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200">
+                      <span className="text-[11px] text-zinc-500 font-bold block">مكافأة السنوات الـ 5 الأولى</span>
+                      <div className="text-lg font-extrabold font-mono text-black mt-1">
+                        {first5Award.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ر.س
+                      </div>
+                      <span className="text-[10px] text-zinc-400">({first5Years.toFixed(1)} سنة × نصف راتب)</span>
+                    </div>
+
+                    <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200">
+                      <span className="text-[11px] text-zinc-500 font-bold block">مكافأة ما بعد الـ 5 سنوات</span>
+                      <div className="text-lg font-extrabold font-mono text-black mt-1">
+                        {after5Award.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ر.س
+                      </div>
+                      <span className="text-[10px] text-zinc-400">({after5Years.toFixed(1)} سنة × راتب كامل)</span>
+                    </div>
+
+                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+                      <span className="text-[11px] text-emerald-800 font-bold block">صافي المكافأة المستحقة للصرف</span>
+                      <div className="text-xl font-extrabold font-mono text-emerald-900 mt-1">
+                        {finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ر.س
+                      </div>
+                      <span className="text-[10px] text-emerald-700 font-bold">نسبة الاستحقاق: {Math.round(payoutPct * 100)}%</span>
+                    </div>
+                  </div>
+
+                  {/* Legal Explanation Box */}
+                  <div className="p-4 bg-purple-50/60 rounded-2xl border border-purple-200 space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-purple-950">
+                      <Scale className="w-4 h-4 text-purple-700" />
+                      <span>السند النظامي للحسبة:</span>
+                    </div>
+                    <p className="text-xs text-purple-900 leading-relaxed font-sans">
+                      {legalArticle}
+                    </p>
+                  </div>
+
+                  {/* Accounting Provision Action */}
+                  <div className="p-4 bg-zinc-50 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                      <span className="font-bold text-xs text-black block">قيد مخصص نهاية الخدمة (SMACC)</span>
+                      <span className="text-[11px] text-zinc-500">حساب مدين: مصروف مكافأة نهاية الخدمة (5105) | حساب دائن: مخصص نهاية الخدمة (2104)</span>
+                    </div>
+                    <button
+                      onClick={() => addNotification({
+                        title: 'ترحيل مخصص نهاية الخدمة',
+                        message: `تم إنشاء قيد محاسبي مزدوج بمبلغ (${finalAmount.toFixed(2)} ر.س) في قيود SMACC.`,
+                        type: 'success',
+                      })}
+                      className="button-outline-on-light text-xs font-bold py-1.5 px-3"
+                    >
+                      ترحيل القيد للمحاسبة
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Tab: GOSI Social Insurance Calculator */}
+      {activeTab === 'gosi' && (() => {
+        const wage = Math.min(45000, gosiBasic + gosiHousing);
+        const isSaudi = gosiEmpType === 'saudi';
+
+        const annuitiesEmployer = isSaudi ? wage * 0.09 : 0;
+        const annuitiesEmployee = isSaudi ? wage * 0.09 : 0;
+        const hazardEmployer = wage * 0.02;
+        const sanedEmployer = isSaudi ? wage * 0.0075 : 0;
+        const sanedEmployee = isSaudi ? wage * 0.0075 : 0;
+
+        const totalEmployer = annuitiesEmployer + hazardEmployer + sanedEmployer;
+        const totalEmployee = annuitiesEmployee + sanedEmployee;
+        const grandTotal = totalEmployer + totalEmployee;
+
+        return (
+          <div className="space-y-6 font-sans">
+            <div className="card-pricing p-6 rounded-3xl bg-white border border-zinc-200 shadow-sm">
+              <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-100 flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-black">
+                      حاسبة اشتراكات التأمينات الاجتماعية (GOSI) ونظام ساند
+                    </h3>
+                    <p className="text-xs text-zinc-500">
+                      حساب حصة المنشأة والاستقطاع الشهري للموظف وفق أحدث نسب المؤسسة العامة للتأمينات الاجتماعية
+                    </p>
+                  </div>
+                </div>
+                <span className="pill-tag-mint text-xs">مطابق للائحة 2026</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Inputs */}
+                <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-4">
+                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-2">بيانات الاشتراك الخاضع للتقاعد</h4>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">فئة المشترك *</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setGosiEmpType('saudi')}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${gosiEmpType === 'saudi' ? 'bg-black text-white border-black' : 'bg-white text-zinc-700 border-zinc-200'}`}
+                      >
+                        سعودي (21.5%)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setGosiEmpType('non_saudi')}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${gosiEmpType === 'non_saudi' ? 'bg-black text-white border-black' : 'bg-white text-zinc-700 border-zinc-200'}`}
+                      >
+                        غير سعودي (2%)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">الراتب الأساسي *</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={gosiBasic}
+                        onChange={e => setGosiBasic(Math.max(0, Number(e.target.value)))}
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                      />
+                      <span className="absolute left-3 top-2 text-xs text-zinc-400">ر.س</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-700 mb-1">بدل السكن الخاضع للتأمينات *</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={gosiHousing}
+                        onChange={e => setGosiHousing(Math.max(0, Number(e.target.value)))}
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                      />
+                      <span className="absolute left-3 top-2 text-xs text-zinc-400">ر.س</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-zinc-100 rounded-xl text-[11px] text-zinc-600">
+                    الأجر الخاضع للاشتراك المحسوب: <strong className="font-mono text-black">{wage.toLocaleString()} ر.س</strong> (الحد الأقصى 45,000 ر.س).
+                  </div>
+                </div>
+
+                {/* Contribution Breakdown */}
+                <div className="md:col-span-2 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+                      <span className="text-[11px] text-emerald-800 font-bold block">تحمل المنشأة الشهري ({isSaudi ? '11.75%' : '2%'})</span>
+                      <div className="text-xl font-extrabold font-mono text-emerald-900 mt-1">
+                        {totalEmployer.toFixed(2)} ر.س
+                      </div>
+                      <span className="text-[10px] text-emerald-700">تتحمله الشركة كمصروف تشغيلي</span>
+                    </div>
+
+                    <div className="p-4 bg-rose-50 rounded-2xl border border-rose-200">
+                      <span className="text-[11px] text-rose-800 font-bold block">استقطاع الموظف ({isSaudi ? '9.75%' : '0%'})</span>
+                      <div className="text-xl font-extrabold font-mono text-rose-900 mt-1">
+                        {totalEmployee.toFixed(2)} ر.س
+                      </div>
+                      <span className="text-[10px] text-rose-700">يخصم شهرياً من مسير الرواتب</span>
+                    </div>
+
+                    <div className="p-4 bg-zinc-900 text-white rounded-2xl">
+                      <span className="text-[11px] text-zinc-400 font-bold block">إجمالي سداد الفاتورة لـ GOSI</span>
+                      <div className="text-xl font-extrabold font-mono text-emerald-400 mt-1">
+                        {grandTotal.toFixed(2)} ر.س
+                      </div>
+                      <span className="text-[10px] text-zinc-400">سداد الفاتورة الموحدة للفرع</span>
+                    </div>
+                  </div>
+
+                  {/* Details Table */}
+                  <div className="overflow-hidden rounded-2xl border border-zinc-200">
+                    <table className="w-full text-right text-xs">
+                      <thead className="bg-zinc-100 text-zinc-700 font-bold">
+                        <tr>
+                          <th className="p-3">فرع الاشتراك</th>
+                          <th className="p-3 text-center">النسبة الإجمالية</th>
+                          <th className="p-3 text-center">حصة المنشأة</th>
+                          <th className="p-3 text-left">حصة المشترك (الاستقطاع)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-100 font-mono">
+                        <tr>
+                          <td className="p-3 font-sans font-medium text-black">فرع المعاشات (التقاعد)</td>
+                          <td className="p-3 text-center font-bold">{isSaudi ? '18%' : 'غير منطبق'}</td>
+                          <td className="p-3 text-center text-emerald-700">{annuitiesEmployer.toFixed(2)} ر.س (9%)</td>
+                          <td className="p-3 text-left text-rose-700">{annuitiesEmployee.toFixed(2)} ر.س (9%)</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 font-sans font-medium text-black">فرع الأخطار المهنية</td>
+                          <td className="p-3 text-center font-bold">2%</td>
+                          <td className="p-3 text-center text-emerald-700">{hazardEmployer.toFixed(2)} ر.س (2%)</td>
+                          <td className="p-3 text-left text-zinc-400">0.00 ر.س (0%)</td>
+                        </tr>
+                        <tr>
+                          <td className="p-3 font-sans font-medium text-black">نظام التعطل عن العمل (ساند)</td>
+                          <td className="p-3 text-center font-bold">{isSaudi ? '1.5%' : 'غير منطبق'}</td>
+                          <td className="p-3 text-center text-emerald-700">{sanedEmployer.toFixed(2)} ر.س (0.75%)</td>
+                          <td className="p-3 text-left text-rose-700">{sanedEmployee.toFixed(2)} ر.س (0.75%)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Tab: Domestic Workers HR Fleet (أسطول العمالة والتشغيل) */}
+      {activeTab === 'maids-hr' && (
+        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div>
+              <h3 className="text-base font-bold text-black">سجل أسطول العمالة المنزلية والتشغيل المعتمد</h3>
+              <p className="text-xs text-zinc-500">إدارة العاملات على كفالة المنشأة، الإقامات، والتأمين الصحي</p>
+            </div>
+            <span className="pill-tag-mint text-xs">إجمالي الأسطول: 6 عاملات</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs text-zinc-700">
+              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <tr>
+                  <th className="p-3.5">كود العاملة</th>
+                  <th className="p-3.5">الاسم الكامل</th>
+                  <th className="p-3.5">الجنسية والمهنة</th>
+                  <th className="p-3.5">رقم الإقامة / الحدود</th>
+                  <th className="p-3.5">حالة التشغيل والموقع</th>
+                  <th className="p-3.5">الراتب الشهري</th>
+                  <th className="p-3.5">التأمين الصحي</th>
+                  <th className="p-3.5 text-center">الإجراء</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-100">
+                {[
+                  { id: 'MD-101', name: 'MARIA SANTOS CORTEZ', nationality: 'الفلبين', job: 'عاملة منزلية وضيافة', iqama: '2498102931', status: 'مؤجرة لعميل (عقد نشط)', salary: 1500, insurance: 'ساري المفعول', location: 'حي النرجس - الرياض' },
+                  { id: 'MD-102', name: 'ALEMITU BEKELE', nationality: 'إثيوبيا', job: 'عاملة منزلية شاملة', iqama: '2501928410', status: 'في مركز الإيواء (متاحة)', salary: 1200, insurance: 'ساري المفعول', location: 'مركز إيواء السليم - الغرفة 102' },
+                  { id: 'MD-103', name: 'FLORENCE NABATANZI', nationality: 'أوغندا', job: 'مربية أطفال', iqama: '2491029481', status: 'مؤجرة لعميل (عقد نشط)', salary: 1300, insurance: 'ساري المفعول', location: 'حي الياسمين - الرياض' },
+                  { id: 'MD-104', name: 'FATIMA BEGUM', nationality: 'بنغلاديش', job: 'طباخة منزلية', iqama: '2489102938', status: 'بانتظار نقل الكفالة', salary: 1400, insurance: 'ساري المفعول', location: 'فرع الإدارة الرئيسي' },
+                  { id: 'MD-105', name: 'JACINTA WANJIRU', nationality: 'كينيا', job: 'عاملة منزلية', iqama: '2510294819', status: 'في مركز الإيواء (متاحة)', salary: 1200, insurance: 'ساري المفعول', location: 'مركز إيواء السليم - الغرفة 105' },
+                ].map(w => (
+                  <tr key={w.id} className="hover:bg-zinc-50">
+                    <td className="p-3.5 font-mono font-bold text-black">{w.id}</td>
+                    <td className="p-3.5 font-bold text-black">{w.name}</td>
+                    <td className="p-3.5">
+                      <div>{w.job}</div>
+                      <div className="text-[11px] text-zinc-400">{w.nationality}</div>
+                    </td>
+                    <td className="p-3.5 font-mono font-bold text-zinc-700">{w.iqama}</td>
+                    <td className="p-3.5">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${w.status.includes('مؤجرة') ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                        {w.status}
+                      </span>
+                      <div className="text-[10px] text-zinc-400 mt-0.5">{w.location}</div>
+                    </td>
+                    <td className="p-3.5 font-mono font-bold text-emerald-700">{w.salary} ر.س</td>
+                    <td className="p-3.5"><Badge text={w.insurance} type="success" /></td>
+                    <td className="p-3.5 text-center">
+                      <button
+                        onClick={() => window.print()}
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '26px' }}
+                        title="طباعة بطاقة العمل التعريفية"
+                      >
+                        <Printer className="w-3 h-3 ml-1" />
+                        <span>بطاقة</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

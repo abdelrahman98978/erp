@@ -986,26 +986,114 @@ export const RecruitmentContractsPage: React.FC = () => {
               </button>
             </div>
             <DualBrandingDocumentGenerator
-              documentTitle="عقد توسط في استقدام عمالة منزلية"
+              documentTitle="عقد توسط في استقدام عمالة منزلية موحد (مساند)"
               documentNumber={selectedContractForPrint.contract_number}
               date={new Date().toISOString().slice(0, 10)}
             >
-              <div className="flex flex-col gap-2 text-xs">
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">اسم العميل:</span>
-                  <strong className="text-black">{selectedContractForPrint.client_name}</strong>
+              <div className="flex flex-col gap-4 text-xs font-sans text-zinc-800">
+                {/* Contract Status & Musaned Badge */}
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-black">رقم توثيق منصة مساند:</span>
+                    <span className="font-mono font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-lg border border-purple-200">
+                      {selectedContractForPrint.musaned_number || 'MSN-2026-99201'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-black">حالة العقد:</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                      {selectedContractForPrint.stage} - ساري وموثق
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">رقم توثيق مساند:</span>
-                  <strong className="text-purple-700 font-mono font-bold">{selectedContractForPrint.musaned_number || 'MSN-992011'}</strong>
+
+                {/* Parties Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* First Party (Company) */}
+                  <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-1.5">
+                    <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                      الطرف الأول (المرخص له بالاستقدام)
+                    </h4>
+                    <div className="flex justify-between"><span className="text-zinc-500">الاسم التجاري:</span><strong className="text-black">مجموعة السليم للاستقدام</strong></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">رقم ترخيص الاستقدام:</span><span className="font-mono font-bold text-black">390102</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">السجل التجاري:</span><span className="font-mono font-bold text-black">1010884920</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">الفرع الموثق:</span><span className="font-bold text-black">{selectedContractForPrint.branch || 'الفرع الرئيسي - الرياض'}</span></div>
+                  </div>
+
+                  {/* Second Party (Employer) */}
+                  <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-1.5">
+                    <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                      الطرف الثاني (صاحب العمل المستقدم)
+                    </h4>
+                    <div className="flex justify-between"><span className="text-zinc-500">اسم صاحب العمل:</span><strong className="text-black">{selectedContractForPrint.client_name}</strong></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">رقم الهوية / الإقامة:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_national_id || '1088741920'}</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">رقم الجوال:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_phone}</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">مدينة التسليم:</span><span className="font-bold text-black">{selectedContractForPrint.delivery_city || 'الرياض'}</span></div>
+                  </div>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">العاملة والجنسية:</span>
-                  <strong className="text-black">{selectedContractForPrint.maid_name} ({selectedContractForPrint.nationality})</strong>
+
+                {/* Worker Details */}
+                <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
+                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                    بيانات ومواصفات العمالة المنزلية محل العقد
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+                    <div><span className="text-zinc-500 block">اسم العامل/ة:</span><strong className="text-black">{selectedContractForPrint.maid_name}</strong></div>
+                    <div><span className="text-zinc-500 block">الجنسية:</span><strong className="text-black">{selectedContractForPrint.nationality}</strong></div>
+                    <div><span className="text-zinc-500 block">المهنة:</span><strong className="text-black">عاملة منزلية شاملة</strong></div>
+                    <div><span className="text-zinc-500 block">رقم جواز السفر:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.maid_passport || 'EP889201'}</span></div>
+                    <div><span className="text-zinc-500 block">الراتب الشهري:</span><strong className="font-mono text-black">1,500 ر.س</strong></div>
+                    <div><span className="text-zinc-500 block">المكتب الخارجي:</span><strong className="text-black">{selectedContractForPrint.external_office || 'وكالة إرساليات معتمدة'}</strong></div>
+                    <div><span className="text-zinc-500 block">مدة الضمان النظامية:</span><strong className="text-emerald-700 font-bold">{selectedContractForPrint.warranty_status || '90 يوماً'}</strong></div>
+                    <div><span className="text-zinc-500 block">التأمين على العقد:</span><strong className="text-emerald-700 font-bold">ساري لمدة 24 شهراً</strong></div>
+                  </div>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">إجمالي المبلغ:</span>
-                  <strong className="text-emerald-700 font-mono font-bold">{(selectedContractForPrint.amount ?? 0).toLocaleString()} ر.س</strong>
+
+                {/* Legal Terms & Obligations */}
+                <div className="p-3.5 bg-zinc-50/80 rounded-2xl border border-zinc-200 space-y-1 text-[11px] text-zinc-700 leading-relaxed">
+                  <h4 className="font-bold text-xs text-black mb-1">الشروط والأحكام والالتزامات النظامية:</h4>
+                  <p>1. يلتزم الطرف الأول باستقدام العاملة المحددة وفق اشتراطات لائحة عمال الخدمة المنزلية وقواعد منصة مساند خلال مدة أقصاها 90 يوماً من تاريخ التوثيق.</p>
+                  <p>2. يضمن الطرف الأول العاملة لمدة 90 يوماً تبدأ من تاريخ دخولها المملكة أو استلامها ضد: (رفض العمل، الهروب، الحمل، أو عدم اللياقة الطبية والصحية).</p>
+                  <p>3. يشمل هذا العقد وثيقة التأمين الإلزامي على عقود العمالة المنزلية الصادرة عن شركات التأمين المعتمدة برعاية البنك المركزي السعودي ولمدة سنتين.</p>
+                  <p>4. تم تحصيل المبلغ الإجمالي عبر القنوات المالية النظامية وقيدها بالحساب البنكي المخصص لمنصة مساند.</p>
+                </div>
+
+                {/* Financial Breakdown Table */}
+                <div className="overflow-hidden rounded-xl border border-zinc-200">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-zinc-100 text-zinc-700 font-bold">
+                      <tr>
+                        <th className="p-2.5">البيان المالي</th>
+                        <th className="p-2.5 text-center">المبلغ الأساسي</th>
+                        <th className="p-2.5 text-center">ضريبة القيمة المضافة (15%)</th>
+                        <th className="p-2.5 text-left">الإجمالي المستحق</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-zinc-100 font-mono">
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-black">خدمات التوسط والاستقدام الشاملة</td>
+                        <td className="p-2.5 text-center">{(selectedContractForPrint.amount ?? 14500).toLocaleString()} ر.س</td>
+                        <td className="p-2.5 text-center">{((selectedContractForPrint.amount ?? 14500) * 0.15).toLocaleString()} ر.س</td>
+                        <td className="p-2.5 text-left font-bold text-emerald-700">{((selectedContractForPrint.amount ?? 14500) * 1.15).toLocaleString()} ر.س</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Signatures & Seal Block */}
+                <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
+                  <div className="text-center space-y-6">
+                    <div className="font-bold text-black text-xs">ختم وتوقيع الطرف الأول (الشركة)</div>
+                    <div className="w-24 h-24 mx-auto border-2 border-dashed border-emerald-600/40 rounded-full flex items-center justify-center bg-emerald-50/50">
+                      <span className="text-[10px] font-bold text-emerald-800 text-center leading-tight">مجموعة السليم<br />ختم الاعتماد الرسمي<br />مساند</span>
+                    </div>
+                  </div>
+                  <div className="text-center space-y-6">
+                    <div className="font-bold text-black text-xs">توقيع الطرف الثاني (صاحب العمل)</div>
+                    <div className="w-full h-16 border-b-2 border-zinc-400 mt-8 flex items-end justify-center">
+                      <span className="text-[11px] text-zinc-400">التوقيع الإلكتروني معتمد بموجب النفاذ الوطني</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </DualBrandingDocumentGenerator>

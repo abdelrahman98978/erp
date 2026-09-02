@@ -3,7 +3,7 @@ import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { Stamp, Plus, FileSpreadsheet, FileText, Search, Printer, RefreshCw, X, CheckCircle } from 'lucide-react';
+import { Stamp, Plus, FileSpreadsheet, FileText, Search, Printer, RefreshCw, X, CheckCircle, QrCode, Award } from 'lucide-react';
 
 export interface IngazDelegation {
   id: string;
@@ -65,6 +65,7 @@ export const IngazPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const [delegations, setDelegations] = useState<IngazDelegation[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [selectedDelegationForPrint, setSelectedDelegationForPrint] = useState<IngazDelegation | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -146,17 +147,7 @@ export const IngazPage: React.FC = () => {
   };
 
   const handlePrintDelegation = (row: IngazDelegation) => {
-    exportData('operations', [{
-      'رقم التفويض': row.delegation_number,
-      'العميل المستفيد': row.client_name,
-      'رقم الهوية': row.sponsor_id,
-      'رقم التأشيرة': row.visa_number,
-      'المكتب الخارجي': row.foreign_office,
-      'المهنة والجنسية': `${row.profession} - ${row.nationality}`,
-      'رسوم التفويض': `${row.fee_amount} ر.س`,
-      'حالة التوثيق': row.status,
-      'التاريخ': row.created_at
-    }], 'print', `وثيقة تفويض إلكتروني - ${row.delegation_number}`);
+    setSelectedDelegationForPrint(row);
   };
 
   const handleSyncWithEnjaz = async (row: IngazDelegation) => {
@@ -593,6 +584,119 @@ export const IngazPage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Official Enjaz & Chamber Delegation Printable Certificate Modal */}
+      {selectedDelegationForPrint && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Stamp className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">شهادة تفويض إلكتروني وتصديق الغرفة التجارية</h3>
+              </div>
+              <button
+                onClick={() => setSelectedDelegationForPrint(null)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Printable Document Body */}
+            <div className="p-6 bg-white border-2 border-zinc-900 rounded-2xl space-y-4 font-sans text-xs">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
+                <div>
+                  <h2 className="text-base font-extrabold text-black">المملكة العربية السعودية - وزارة الخارجية</h2>
+                  <div className="text-[11px] text-zinc-600 font-bold">منصة التأشيرات الإلكترونية (إنجاز) • تصديق الغرفة التجارية</div>
+                  <div className="text-[10px] text-emerald-800 font-mono font-bold mt-0.5">ENJAZ REF: {selectedDelegationForPrint.delegation_number}</div>
+                </div>
+                <div className="w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center">
+                  <QrCode className="w-10 h-10 text-champagne-light" />
+                </div>
+              </div>
+
+              {/* Status Banner */}
+              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-emerald-900">حالة التفويض:</span>
+                  <span className="font-bold text-emerald-800 bg-white px-2.5 py-0.5 rounded-lg border border-emerald-300">
+                    {selectedDelegationForPrint.status} - معتمد ومصدق
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono font-bold text-emerald-800">رسوم التوثيق: {(selectedDelegationForPrint.fee_amount ?? 350).toFixed(2)} ر.س</span>
+              </div>
+
+              {/* Sponsor & Visa Details Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
+                  <span className="text-[10px] text-zinc-400 font-bold block">بيانات صاحب العمل (المفوض)</span>
+                  <div className="font-bold text-sm text-black">{selectedDelegationForPrint.client_name}</div>
+                  <div className="text-zinc-600 text-[11px] font-mono">رقم الهوية: {selectedDelegationForPrint.sponsor_id}</div>
+                </div>
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
+                  <span className="text-[10px] text-zinc-400 font-bold block">بيانات التأشيرة الصادرة</span>
+                  <div className="font-mono font-bold text-sm text-purple-700">{selectedDelegationForPrint.visa_number}</div>
+                  <div className="text-zinc-600 text-[11px]">{selectedDelegationForPrint.profession} • {selectedDelegationForPrint.nationality}</div>
+                </div>
+              </div>
+
+              {/* Delegated Agency Details */}
+              <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
+                <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">المكتب الخارجي المفوض بإنجاز المعاملة</h4>
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                  <div><span className="text-zinc-500">اسم الوكالة المفوضة:</span> <strong className="text-black">{selectedDelegationForPrint.foreign_office}</strong></div>
+                  <div><span className="text-zinc-500">الدولة المعتمدة:</span> <strong className="text-black">{selectedDelegationForPrint.nationality}</strong></div>
+                  <div><span className="text-zinc-500">تاريخ التفويض:</span> <span className="font-mono text-black">{selectedDelegationForPrint.created_at}</span></div>
+                  <div><span className="text-zinc-500">جهة التوثيق:</span> <strong className="text-emerald-700 font-bold">الغرفة التجارية الصناعية بالرياض</strong></div>
+                </div>
+              </div>
+
+              {/* Official Declaration */}
+              <div className="p-3 bg-zinc-50/80 rounded-xl border border-zinc-200 text-[11px] text-zinc-700 leading-relaxed">
+                يقر صاحب العمل بتفويض المكتب الخارجي المذكور أعلاه لإنهاء إجراءات تفييز وتصديق الجوازات لدى سفارة خادم الحرمين الشريفين وفق أنظمة وزارة الخارجية ومنصة إنجاز الموحدة.
+              </div>
+
+              {/* Chamber Seal & Digital Verification */}
+              <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
+                <div className="text-center space-y-3">
+                  <div className="font-bold text-black text-xs">ختم وتصديق الغرفة التجارية الإلكتروني</div>
+                  <div className="w-24 h-24 mx-auto border-2 border-dashed border-emerald-600/40 rounded-full flex items-center justify-center bg-emerald-50/50">
+                    <span className="text-[10px] font-bold text-emerald-800 text-center leading-tight">الغرفة التجارية<br />تصديق إلكتروني<br />معتمد 2026</span>
+                  </div>
+                </div>
+                <div className="text-center space-y-3">
+                  <div className="font-bold text-black text-xs">توقيع المفوض / صاحب العمل</div>
+                  <div className="w-full h-16 border-b-2 border-zinc-400 mt-8 flex items-end justify-center">
+                    <span className="text-[11px] text-zinc-400">توثيق إلكتروني مؤكد عبر مساند</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-between items-center gap-2 pt-4 border-t border-zinc-100 mt-4">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="button-primary-pill text-xs font-bold inline-flex items-center gap-1.5"
+                style={{ minHeight: '36px', padding: '6px 20px' }}
+              >
+                <Printer className="w-4 h-4" />
+                <span>طباعة شهادة التفويض فوراً</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedDelegationForPrint(null)}
+                className="button-outline-on-light text-xs font-bold"
+                style={{ minHeight: '36px', padding: '6px 18px' }}
+              >
+                إغلاق
+              </button>
+            </div>
           </div>
         </div>
       )}

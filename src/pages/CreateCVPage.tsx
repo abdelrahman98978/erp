@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { FileText, FileSpreadsheet, ArrowRight, ArrowLeft, Check, Upload, User, Award, Paperclip } from 'lucide-react';
+import { FileText, FileSpreadsheet, ArrowRight, ArrowLeft, Check, Upload, User, Award, Paperclip, Printer, QrCode, X } from 'lucide-react';
 
 export const CreateCVPage: React.FC = () => {
   const { setActiveTab, addNotification } = useAppStore();
   const [activeStep, setActiveStep] = useState<number>(1);
+  const [showPrintPreview, setShowPrintPreview] = useState(false);
 
   const [formData, setFormData] = useState({
     // 1. Basic & Agency
@@ -134,7 +135,16 @@ export const CreateCVPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setShowPrintPreview(true)}
+            className="button-white-pill flex items-center gap-1.5 shadow-sm"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: 'bold' }}
+          >
+            <Printer className="w-4 h-4 text-emerald-600" />
+            <span>معاينة كرت السيرة للطباعة</span>
+          </button>
           <button
             type="button"
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
@@ -510,6 +520,111 @@ export const CreateCVPage: React.FC = () => {
           </div>
         )}
       </form>
+
+      {/* Printable Worker CV Card Modal */}
+      {showPrintPreview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Printer className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">بطاقة السيرة الذاتية الرسمية للعمالة (CV Profile)</h3>
+              </div>
+              <button
+                onClick={() => setShowPrintPreview(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Printable Document Body */}
+            <div className="p-6 bg-white border-2 border-zinc-900 rounded-2xl space-y-4 font-sans text-xs">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
+                <div>
+                  <h2 className="text-base font-extrabold text-black">مجموعة السليم للاستقدام</h2>
+                  <div className="text-[11px] text-zinc-500">Al-Saleem Recruitment Group | ترخيص استقدام: 390102</div>
+                  <div className="text-[10px] text-zinc-400 font-mono mt-0.5">معتمد من مساند ووزارة الموارد البشرية</div>
+                </div>
+                <div className="w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center">
+                  <QrCode className="w-10 h-10 text-champagne-light" />
+                </div>
+              </div>
+
+              {/* Main Worker Profile Info */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Photo Placeholder */}
+                <div className="col-span-1 bg-zinc-100 rounded-2xl border border-zinc-200 p-3 flex flex-col items-center justify-center min-h-[160px] text-center">
+                  <User className="w-16 h-16 text-zinc-400 mb-2" />
+                  <span className="text-[11px] font-bold text-black">{formData.full_name_ar || formData.full_name_en || 'اسم العاملة'}</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">{formData.full_name_en || 'CANDIDATE FULL NAME'}</span>
+                  <span className="pill-tag-mint text-[9px] mt-2">لائقة طبياً</span>
+                </div>
+
+                {/* Details Table */}
+                <div className="col-span-2 space-y-1.5">
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">الجنسية:</span><strong className="text-black">{formData.nationality_id}</strong></div>
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">المهنة:</span><strong className="text-black">{formData.job_title}</strong></div>
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">الديانة:</span><strong className="text-black">{formData.religion}</strong></div>
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">العمر:</span><strong className="text-black font-mono">{formData.age} سنة</strong></div>
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">الحالة الاجتماعية:</span><strong className="text-black">{formData.marital_status} ({formData.children_count} أطفال)</strong></div>
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">رقم الجواز:</span><strong className="text-black font-mono">{formData.passport_number || 'EP9920145'}</strong></div>
+                  <div className="flex justify-between py-1 border-b border-zinc-100"><span className="text-zinc-500">الراتب الشهري:</span><strong className="text-emerald-700 font-mono font-bold">{formData.monthly_salary} ر.س</strong></div>
+                </div>
+              </div>
+
+              {/* Skills Matrix */}
+              <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200">
+                <h4 className="font-bold text-xs text-black mb-2">مصفوفة المهارات واللغات:</h4>
+                <div className="grid grid-cols-3 gap-2 text-[11px]">
+                  <div className="flex items-center gap-1.5">{formData.baby_care ? '✅' : '❌'} رعاية الأطفال</div>
+                  <div className="flex items-center gap-1.5">{formData.elderly_care ? '✅' : '❌'} كبار السن</div>
+                  <div className="flex items-center gap-1.5">{formData.cooking_arabic ? '✅' : '❌'} الطبخ الخليجي</div>
+                  <div className="flex items-center gap-1.5">{formData.cleaning ? '✅' : '❌'} النظافة العامة</div>
+                  <div className="flex items-center gap-1.5">{formData.washing_ironing ? '✅' : '❌'} الغسيل والكي</div>
+                  <div className="flex items-center gap-1.5">{formData.driving ? '✅' : '❌'} قيادة السيارة</div>
+                  <div>اللغة العربية: <strong>{formData.arabic_level}</strong></div>
+                  <div>اللغة الإنجليزية: <strong>{formData.english_level}</strong></div>
+                  <div>الخبرة: <strong>{formData.experience_type}</strong></div>
+                </div>
+              </div>
+
+              {/* Guarantee & Agency Seal */}
+              <div className="flex items-center justify-between pt-3 border-t border-zinc-200">
+                <div>
+                  <div className="text-[11px] font-bold text-black">المكتب الخارجي المعتمد: {formData.office_id}</div>
+                  <div className="text-[10px] text-zinc-500">الضمان النظامي: 90 يوماً من تاريخ الوصول شامل الهروب ورفض العمل</div>
+                </div>
+                <div className="w-20 h-20 border border-dashed border-zinc-400 rounded-full flex items-center justify-center text-[9px] font-bold text-zinc-400 text-center">
+                  ختم السيرة<br />المعتمد
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-between items-center gap-2 pt-4 border-t border-zinc-100 mt-4">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="button-primary-pill text-xs font-bold inline-flex items-center gap-1.5"
+                style={{ minHeight: '36px', padding: '6px 20px' }}
+              >
+                <Printer className="w-4 h-4" />
+                <span>طباعة الكرت فوراً</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowPrintPreview(false)}
+                className="button-outline-on-light text-xs font-bold"
+                style={{ minHeight: '36px', padding: '6px 18px' }}
+              >
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

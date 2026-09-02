@@ -184,6 +184,17 @@ export const realErpDataStore = {
   },
 
   /**
+   * Alias for addRecord to save a single record
+   */
+  async saveRecord<T extends { id: string | number }>(
+    entityKey: string,
+    newRecord: T,
+    initialSeed: T[] = []
+  ): Promise<T[]> {
+    return this.addRecord<T>(entityKey, newRecord, initialSeed);
+  },
+
+  /**
    * Update an existing record permanently
    */
   async updateRecord<T extends { id: string | number }>(

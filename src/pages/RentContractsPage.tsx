@@ -862,26 +862,114 @@ export const RentContractsPage: React.FC = () => {
               </button>
             </div>
             <DualBrandingDocumentGenerator
-              documentTitle="عقد تقديم خدمات تأجير عمالة منزلية"
+              documentTitle="عقد تقديم خدمات تأجير وتشغيل العمالة المنزلية والمهنية المعتمد"
               documentNumber={selectedContractForPrint.contract_number}
               date={new Date().toISOString().slice(0, 10)}
             >
-              <div className="flex flex-col gap-2 text-xs">
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">اسم العميل:</span>
-                  <strong className="text-black">{selectedContractForPrint.client_name}</strong>
+              <div className="flex flex-col gap-4 text-xs font-sans text-zinc-800">
+                {/* Contract Status Banner */}
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-black">نوع الباقة التأجيرية:</span>
+                    <span className="font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                      {selectedContractForPrint.package_name || 'باقة التأجير المرن'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-black">حالة العقد:</span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800">
+                      {selectedContractForPrint.status} - ساري المفعول
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">العاملة المؤجرة:</span>
-                  <strong className="text-black">{selectedContractForPrint.maid_name}</strong>
+
+                {/* Parties Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* First Party (Lessor Company) */}
+                  <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-1.5">
+                    <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                      الطرف الأول (الشركة المؤجرة والمشغلة)
+                    </h4>
+                    <div className="flex justify-between"><span className="text-zinc-500">الاسم التجاري:</span><strong className="text-black">مجموعة السليم للتشغيل والتأجير</strong></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">رقم ترخيص التأجير:</span><span className="font-mono font-bold text-black">770291</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">السجل التجاري:</span><span className="font-mono font-bold text-black">1010884920</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">الفرع الموثق:</span><span className="font-bold text-black">{selectedContractForPrint.branch || 'الفرع الرئيسي'}</span></div>
+                  </div>
+
+                  {/* Second Party (Lessee Client) */}
+                  <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-1.5">
+                    <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                      الطرف الثاني (العميل المستأجر)
+                    </h4>
+                    <div className="flex justify-between"><span className="text-zinc-500">اسم المستأجر:</span><strong className="text-black">{selectedContractForPrint.client_name}</strong></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">الهوية الوطنية / الإقامة:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_national_id || '1099201844'}</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">رقم الجوال:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_phone}</span></div>
+                    <div className="flex justify-between"><span className="text-zinc-500">حالة السداد:</span><span className="font-bold text-emerald-700">{selectedContractForPrint.payment_status}</span></div>
+                  </div>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">مدة العقد:</span>
-                  <strong className="text-black">{selectedContractForPrint.duration_months} شهر ({selectedContractForPrint.start_date} إلى {selectedContractForPrint.end_date})</strong>
+
+                {/* Worker & Rental Duration Details */}
+                <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
+                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                    بيانات العاملة وفترة التأجير المعتمدة
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+                    <div><span className="text-zinc-500 block">اسم العامل/ة:</span><strong className="text-black">{selectedContractForPrint.maid_name}</strong></div>
+                    <div><span className="text-zinc-500 block">الجنسية:</span><strong className="text-black">{selectedContractForPrint.nationality}</strong></div>
+                    <div><span className="text-zinc-500 block">المهنة:</span><strong className="text-black">خدمات منزلية وضيافة</strong></div>
+                    <div><span className="text-zinc-500 block">مدة العقد:</span><strong className="text-black font-mono">{selectedContractForPrint.duration_months} أشهر</strong></div>
+                    <div><span className="text-zinc-500 block">تاريخ البدء:</span><span className="font-mono text-black">{selectedContractForPrint.start_date}</span></div>
+                    <div><span className="text-zinc-500 block">تاريخ الانتهاء:</span><span className="font-mono text-black">{selectedContractForPrint.end_date}</span></div>
+                    <div><span className="text-zinc-500 block">التأمين الصحي:</span><strong className="text-emerald-700 font-bold">مغطى بالكامل (مجلس الضمان)</strong></div>
+                    <div><span className="text-zinc-500 block">سياسة الاستبدال:</span><strong className="text-emerald-700 font-bold">استبدال مجاني خلال 48 ساعة</strong></div>
+                  </div>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-zinc-100">
-                  <span className="text-zinc-500 font-semibold">الإجمالي شامل الضريبة:</span>
-                  <strong className="text-emerald-700 font-mono font-bold">{(selectedContractForPrint.total_amount ?? 0).toLocaleString()} ر.س</strong>
+
+                {/* Terms of Rental */}
+                <div className="p-3.5 bg-zinc-50/80 rounded-2xl border border-zinc-200 space-y-1 text-[11px] text-zinc-700 leading-relaxed">
+                  <h4 className="font-bold text-xs text-black mb-1">شروط والتزامات عقد التأجير:</h4>
+                  <p>1. تظل العاملة على كفالة وإشراف الطرف الأول القانوني والمالي طوال فترة سريان العقد.</p>
+                  <p>2. يلتزم الطرف الثاني بتوفير بيئة عمل ملائمة وسكن آمن وساعات راحة كافية وفق الأنظمة المرعية في المملكة.</p>
+                  <p>3. في حال رغبة العاملة بعدم الاستمرار أو حدوث عارض صحي، تلتزم الشركة باستبدال العاملة خلال 48 ساعة دون رسوم إضافية.</p>
+                  <p>4. يحظر تشغيل العاملة لدى غير المستأجر أو خارج النطاق السكني المحدد في هذا العقد.</p>
+                </div>
+
+                {/* Financial Table */}
+                <div className="overflow-hidden rounded-xl border border-zinc-200">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-zinc-100 text-zinc-700 font-bold">
+                      <tr>
+                        <th className="p-2.5">الباقة / البيان</th>
+                        <th className="p-2.5 text-center">التكلفة الشهرية</th>
+                        <th className="p-2.5 text-center">ضريبة القيمة المضافة (15%)</th>
+                        <th className="p-2.5 text-left">الإجمالي المستحق</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-zinc-100 font-mono">
+                      <tr>
+                        <td className="p-2.5 font-sans font-medium text-black">{selectedContractForPrint.package_name || 'باقة التأجير الشهري'} ({selectedContractForPrint.duration_months} شهر)</td>
+                        <td className="p-2.5 text-center">{(selectedContractForPrint.monthly_cost ?? 2500).toLocaleString()} ر.س / شهر</td>
+                        <td className="p-2.5 text-center">{((selectedContractForPrint.tax_amount || (selectedContractForPrint.total_amount * 0.15 / 1.15)) ?? 375).toLocaleString()} ر.س</td>
+                        <td className="p-2.5 text-left font-bold text-emerald-700">{(selectedContractForPrint.total_amount ?? 2875).toLocaleString()} ر.س</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Signatures & Seal Block */}
+                <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
+                  <div className="text-center space-y-6">
+                    <div className="font-bold text-black text-xs">ختم وتوقيع الطرف الأول (الشركة المؤجرة)</div>
+                    <div className="w-24 h-24 mx-auto border-2 border-dashed border-emerald-600/40 rounded-full flex items-center justify-center bg-emerald-50/50">
+                      <span className="text-[10px] font-bold text-emerald-800 text-center leading-tight">مجموعة السليم<br />إدارة التشغيل والتأجير<br />معتمد</span>
+                    </div>
+                  </div>
+                  <div className="text-center space-y-6">
+                    <div className="font-bold text-black text-xs">توقيع الطرف الثاني (المستأجر)</div>
+                    <div className="w-full h-16 border-b-2 border-zinc-400 mt-8 flex items-end justify-center">
+                      <span className="text-[11px] text-zinc-400">التوقيع الإلكتروني وتأكيد الاستلام</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </DualBrandingDocumentGenerator>

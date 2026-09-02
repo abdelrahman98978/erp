@@ -28,6 +28,7 @@ export interface OrderRecord {
   responsible_employee?: string;
   branch: string;
   office_name?: string;
+  notes?: string;
   created_at: string;
 }
 
@@ -225,6 +226,7 @@ export const OrdersPage: React.FC = () => {
       (activeFilter === 'contracted' && ord.contract_status === 'تم التعاقد') ||
       (activeFilter === 'incomplete' && (ord.timer_status === 'حرج' || ord.status === 'تحت الإجراء')) ||
       (activeFilter === 'urgent' && ord.timer_status === 'حرج') ||
+      (activeFilter === 'renew' && (ord.request_type?.includes('تجديد') || ord.notes?.includes('تجديد') || ord.status === 'تحت الإجراء')) ||
       (activeFilter === 'professional' && ord.request_type === 'معينة') ||
       (activeFilter === 'special' && ord.request_type === 'حسب المواصفات') ||
       (activeFilter === 'known' && ord.request_type === 'معروفة');

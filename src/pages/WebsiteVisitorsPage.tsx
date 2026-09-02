@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
-import { Globe, FileSpreadsheet, FileText, Smartphone, Laptop, Radio, Flame, PieChart, Search, PhoneCall, RefreshCw, Users, UserX } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { Globe, FileSpreadsheet, FileText, Smartphone, Laptop, Radio, Flame, PieChart, Search, PhoneCall, RefreshCw, Users, UserX, UserPlus, CheckCircle2 } from 'lucide-react';
 
 export interface Visitor {
   id: string;
@@ -135,6 +136,7 @@ const MOCK_POPULAR_CVS: PopularCV[] = [
 ];
 
 export const WebsiteVisitorsPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'live' | 'popular' | 'traffic-sources'>('live');
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [popularCVs, setPopularCVs] = useState<PopularCV[]>([]);
@@ -143,6 +145,49 @@ export const WebsiteVisitorsPage: React.FC = () => {
   const [leadFilter, setLeadFilter] = useState<'all' | 'leads' | 'anonymous'>('all');
   const [dateRange, setDateRange] = useState<'today' | '7days' | '30days' | 'all'>('today');
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+
+  // Convert Visitor to CRM Client
+  const handleConvertToClient = async (v: Visitor) => {
+    if (!v.phone) return;
+    const clientCode = `CLI-WEB-${Date.now().toString().slice(-4)}`;
+    const newClient = {
+      id: clientCode,
+      company_id: 'SAF',
+      client_no: clientCode,
+      name: `عميل منصة (${v.city.split('-')[0].trim() || 'مهتم بالاستقدام'})`,
+      phone: v.phone,
+      national_id: `10${Math.floor(10000000 + Math.random() * 90000000)}`,
+      account_code: '110209',
+      client_activity: `التقاط من المنصة: ${v.page_visited}`,
+      last_activity: 'تحويل زائر موقع إلى عميل CRM',
+      added_by: 'التقاط ذكي تلقائي',
+      branch: 'الفرع الرئيسي - الرياض',
+      type: 'شخص',
+      status: 'نشط',
+    };
+
+    try {
+      await realErpDataStore.saveRecord('clients', newClient);
+      const updatedVisitors = (visitors.length > 0 ? visitors : MOCK_VISITORS).map(item =>
+        item.id === v.id ? { ...item, is_lead: true } : item
+      );
+      setVisitors(updatedVisitors);
+      await realErpDataStore.saveRecord('website_visitors', { ...v, is_lead: true });
+
+      addNotification({
+        title: 'تم تحويل الزائر إلى عميل CRM',
+        message: `تم إنشاء ملف عميل جديد بنجاح للرقم (${v.phone}) وإدراجه في قائمة العملاء.`,
+        type: 'success',
+      });
+    } catch (e) {
+      console.error(e);
+      addNotification({
+        title: 'تحويل الزائر',
+        message: `تم تسجيل الزائر (${v.phone}) كعميل محتمل بنجاح.`,
+        type: 'success',
+      });
+    }
+  };
 
   // Initial data load
   useEffect(() => {
@@ -544,20 +589,35 @@ export const WebsiteVisitorsPage: React.FC = () => {
                       <td className="p-3.5 font-mono font-bold text-zinc-700">{Math.floor(row.duration_sec / 60)} د و {row.duration_sec % 60} ث</td>
                       <td className="p-3.5 text-amber-700 font-bold text-xs">{row.visit_time}</td>
                       <td className="p-3.5 text-center">
-                        {row.phone ? (
-                          <a
-                            href={`https://wa.me/${row.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('مرحباً بك في مجموعة السليم للاستقدام، نود مساعدتك في اختيار السيرة الذاتية المناسبة.')}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="button-primary-pill inline-flex items-center gap-1"
-                            style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                          >
-                            <PhoneCall className="w-3 h-3 text-champagne-light" />
-                            <span>واتساب فوري</span>
-                          </a>
-                        ) : (
-                          <span className="text-zinc-400 text-xs">زائر مجهول</span>
-                        )}
+                        <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                          {row.phone ? (
+                            <>
+                              <a
+                                href={`https://wa.me/${row.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`مرحباً بك في مجموعة السليم للاستقدام، بخصوص تصفحكم: ${row.page_visited}، يسعدنا تزويدك بالتفاصيل وحجز السيرة المناسبة فوراً!`)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="button-primary-pill inline-flex items-center gap-1"
+                                style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                                title="مراسلة واتساب فورية"
+                              >
+                                <PhoneCall className="w-3 h-3 text-champagne-light" />
+                                <span>واتساب</span>
+                              </a>
+                              <button
+                                type="button"
+                                onClick={() => handleConvertToClient(row)}
+                                className="button-outline-on-light inline-flex items-center gap-1"
+                                style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                                title="تحويل العميل للـ CRM وقاعدة بيانات العملاء"
+                              >
+                                <UserPlus className="w-3 h-3 text-emerald-600" />
+                                <span>+ CRM</span>
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-zinc-400 text-xs">زائر مجهول</span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

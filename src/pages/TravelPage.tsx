@@ -4,7 +4,7 @@ import { exportData } from '../services/exportService';
 import { useCompany } from '../contexts/CompanyContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { Plane, Plus, FileSpreadsheet, Search, X, Check, CheckCircle, Trash2 } from 'lucide-react';
+import { Plane, Plus, FileSpreadsheet, Search, X, Check, CheckCircle, Trash2, Printer, QrCode, Car } from 'lucide-react';
 
 export interface FlightRecord {
   id: string;
@@ -101,6 +101,7 @@ export const TravelPage: React.FC = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedFlightForPrint, setSelectedFlightForPrint] = useState<FlightRecord | null>(null);
 
   useEffect(() => {
     realErpDataStore.getRecords<FlightRecord>('flights', MOCK_FLIGHTS).then(data => {
@@ -428,6 +429,14 @@ export const TravelPage: React.FC = () => {
                         </button>
                       )}
                       <button
+                        onClick={() => setSelectedFlightForPrint(f)}
+                        className="button-outline-on-light"
+                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '26px' }}
+                        title="طباعة أمر استقبال وتفويج السائق"
+                      >
+                        <Printer className="w-3 h-3" />
+                      </button>
+                      <button
                         onClick={() => handleDeleteFlight(f)}
                         className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
                         title="حذف الرحلة"
@@ -571,6 +580,111 @@ export const TravelPage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Airport Reception Order Printable Modal */}
+      {selectedFlightForPrint && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
+          <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Car className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">أمر استقبال وتفويج سائق المطار الرسمي</h3>
+              </div>
+              <button
+                onClick={() => setSelectedFlightForPrint(null)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Printable Order Body */}
+            <div className="p-6 bg-white border-2 border-zinc-900 rounded-2xl space-y-4 font-sans text-xs">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
+                <div>
+                  <h2 className="text-base font-extrabold text-black">مجموعة السليم للاستقدام - إدارة الحركة والترحيل</h2>
+                  <div className="text-[11px] text-zinc-500">أمر تفويج واستقبال عمالة من صالة القدوم الدولية</div>
+                  <div className="text-[10px] text-purple-700 font-mono font-bold mt-0.5">ORDER ID: #{selectedFlightForPrint.id}-ARRIV</div>
+                </div>
+                <div className="w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center">
+                  <QrCode className="w-10 h-10 text-champagne-light" />
+                </div>
+              </div>
+
+              {/* Grid: Driver & Flight Info */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
+                  <span className="text-[10px] text-zinc-400 font-bold block">السائق والمركبة المخصصة</span>
+                  <div className="font-bold text-sm text-black">{selectedFlightForPrint.driver_assigned || 'كابتن الحركة المناوب'}</div>
+                  <div className="text-zinc-500 text-[11px]">مكلف بالاستقبال والتوصيل المباشر</div>
+                </div>
+                <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-1">
+                  <span className="text-[10px] text-emerald-700 font-bold block">موعد ومطار الهبوط</span>
+                  <div className="font-bold text-sm text-emerald-900">{selectedFlightForPrint.flight_date} - الساعة {selectedFlightForPrint.flight_time}</div>
+                  <div className="text-emerald-800 text-[11px]">{selectedFlightForPrint.arrival_airport}</div>
+                </div>
+              </div>
+
+              {/* Worker & Flight Specification */}
+              <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
+                <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">تفاصيل الرحلة والعمالة القادمة</h4>
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                  <div><span className="text-zinc-500">اسم العامل/ة:</span> <strong className="text-black">{selectedFlightForPrint.maid_name}</strong></div>
+                  <div><span className="text-zinc-500">الجنسية:</span> <strong className="text-black">{selectedFlightForPrint.nationality}</strong></div>
+                  <div><span className="text-zinc-500">رقم الجواز:</span> <span className="font-mono font-bold text-black">{selectedFlightForPrint.passport_number}</span></div>
+                  <div><span className="text-zinc-500">شركة الطيران:</span> <strong className="text-black">{selectedFlightForPrint.airline}</strong></div>
+                  <div><span className="text-zinc-500">رقم الرحلة:</span> <span className="font-mono font-bold text-purple-700">{selectedFlightForPrint.flight_number}</span></div>
+                  <div><span className="text-zinc-500">رقم التذكرة:</span> <span className="font-mono text-black">{selectedFlightForPrint.ticket_number}</span></div>
+                  <div><span className="text-zinc-500">العميل الكفيل:</span> <strong className="text-black">{selectedFlightForPrint.client_name}</strong></div>
+                  <div><span className="text-zinc-500">الوجهة بعد الاستقبال:</span> <strong className="text-emerald-700 font-bold">مركز الإيواء والضيافة الرئيسي</strong></div>
+                </div>
+              </div>
+
+              {/* Driver Instructions */}
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 space-y-1">
+                <span className="font-bold block">تعليمات السائق في المطار:</span>
+                <p>1. التواجد في صالة الوصول قبل موعد هبوط الطائرة بـ 45 دقيقة مع رفع لوحة باسم العاملة والمجموعة.</p>
+                <p>2. مطابقة رقم الجواز واسم العاملة والتحقق من الحقائب والأمتعة قبل مغادرة المطار.</p>
+                <p>3. تسليم العاملة لمشرفة مركز الإيواء وتوقيع محضر الاستلام فور الوصول.</p>
+              </div>
+
+              {/* Signatures */}
+              <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
+                <div className="text-center space-y-4">
+                  <div className="font-bold text-black text-xs">توقيع مسؤول الحركة والعمليات</div>
+                  <div className="w-full h-8 border-b border-zinc-400"></div>
+                </div>
+                <div className="text-center space-y-4">
+                  <div className="font-bold text-black text-xs">توقيع واستلام كابتن الاستقبال</div>
+                  <div className="w-full h-8 border-b border-zinc-400"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-between items-center gap-2 pt-4 border-t border-zinc-100 mt-4">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="button-primary-pill text-xs font-bold inline-flex items-center gap-1.5"
+                style={{ minHeight: '36px', padding: '6px 20px' }}
+              >
+                <Printer className="w-4 h-4" />
+                <span>طباعة أمر الاستقبال فوراً</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedFlightForPrint(null)}
+                className="button-outline-on-light text-xs font-bold"
+                style={{ minHeight: '36px', padding: '6px 18px' }}
+              >
+                إغلاق
+              </button>
+            </div>
           </div>
         </div>
       )}

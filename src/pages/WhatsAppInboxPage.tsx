@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
-import { MessageSquare, PhoneCall, Send, Search, FileSpreadsheet, FileText, CheckCheck, Sparkles } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { MessageSquare, PhoneCall, Send, Search, FileSpreadsheet, FileText, CheckCheck, Sparkles, Plus, X, Users } from 'lucide-react';
 
 interface WhatsAppChat {
   id: string;
@@ -29,10 +30,16 @@ const PRESET_TEMPLATES = [
 ];
 
 export const WhatsAppInboxPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [chats, setChats] = useState<WhatsAppChat[]>(MOCK_CHATS);
   const [activeChat, setActiveChat] = useState<WhatsAppChat>(MOCK_CHATS[0]);
   const [replyText, setReplyText] = useState('');
   const [searchFilter, setSearchFilter] = useState('');
+  const [showNewChatModal, setShowNewChatModal] = useState(false);
+  const [clientOptions, setClientOptions] = useState<any[]>([]);
+  const [newChatName, setNewChatName] = useState('');
+  const [newChatPhone, setNewChatPhone] = useState('');
+
   const [messages, setMessages] = useState([
     { sender: 'client', text: 'السلام عليكم، هل وصلت التأشيرة من مساند؟', time: '10:45 ص' },
     { sender: 'system', text: 'أهلاً بك أختي سارة! تم تفييز العقد رقم #594 ونحن بانتظار صدور التذكرة اليوم.', time: '10:47 ص' }
@@ -45,17 +52,65 @@ export const WhatsAppInboxPage: React.FC = () => {
         setActiveChat(data[0]);
       }
     });
+
+    realErpDataStore.getRecords<any>('clients').then(clis => {
+      if (clis && clis.length > 0) {
+        setClientOptions(clis);
+      }
+    });
   }, []);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim()) return;
     const newMsg = { sender: 'system', text: replyText, time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }) };
     setMessages(prev => [...prev, newMsg]);
+    const sentText = replyText;
     setReplyText('');
 
-    const updated = chats.map(c => c.id === activeChat.id ? { ...c, last_message: replyText, time: 'الآن' } : c);
+    const updatedChat: WhatsAppChat = { ...activeChat, last_message: sentText, time: 'الآن' };
+    const updated = chats.map(c => c.id === activeChat.id ? updatedChat : c);
     setChats(updated);
+    setActiveChat(updatedChat);
+
+    try {
+      await realErpDataStore.saveRecord('whatsapp_messages', updatedChat);
+    } catch (err) {
+      console.warn('Could not persist chat message:', err);
+    }
+  };
+
+  const handleStartNewChat = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newChatName || !newChatPhone) return;
+
+    const formattedPhone = newChatPhone.startsWith('+') ? newChatPhone : `+966${newChatPhone.replace(/^0/, '')}`;
+    const newChat: WhatsAppChat = {
+      id: `chat-${Date.now()}`,
+      client_name: newChatName,
+      phone: formattedPhone,
+      last_message: 'مرحباً بك في مجموعة السليم للاستقدام',
+      time: 'الآن',
+      unread_count: 0,
+      status: 'نشط',
+    };
+
+    const updated = [newChat, ...chats];
+    setChats(updated);
+    setActiveChat(newChat);
+    setMessages([
+      { sender: 'system', text: `مرحباً ${newChatName}، يسعدنا تواصلك مع مجموعة السليم للاستقدام. كيف يمكننا مساعدتك اليوم؟`, time: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }) }
+    ]);
+    setShowNewChatModal(false);
+    setNewChatName('');
+    setNewChatPhone('');
+
+    await realErpDataStore.saveRecord('whatsapp_messages', newChat);
+    addNotification({
+      title: 'محادثة جديدة',
+      message: `تم فتح محادثة فورية مع العميل (${newChatName}).`,
+      type: 'success',
+    });
   };
 
   const handleSelectTemplate = (templateText: string) => {
@@ -104,6 +159,14 @@ export const WhatsAppInboxPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setShowNewChatModal(true)}
+            className="button-white-pill flex items-center gap-1.5 shadow-sm"
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', color: '#000000', backgroundColor: '#ffffff', fontWeight: 'bold' }}
+          >
+            <Plus className="w-4 h-4 text-emerald-600" />
+            <span>+ محادثة جديدة مع عميل</span>
+          </button>
           <button
             onClick={() => exportData('clients', chats, 'excel', 'سجل محادثات الواتساب')}
             className="button-outline-on-dark"
@@ -242,7 +305,20 @@ export const WhatsAppInboxPage: React.FC = () => {
                 <span className="text-[11px] font-mono text-champagne-dark font-bold">{activeChat.phone}</span>
               </div>
             </div>
-            <Badge text="متصل بـ WhatsApp Cloud API" type="gold" />
+            <div className="flex items-center gap-2">
+              <a
+                href={`https://wa.me/${activeChat.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(replyText || 'مرحباً بك من مجموعة السليم للاستقدام')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="button-outline-on-light inline-flex items-center gap-1.5"
+                style={{ minHeight: '30px', padding: '4px 12px', fontSize: '11px' }}
+                title="فتح تطبيق WhatsApp Web المباشر"
+              >
+                <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
+                <span>فتح WhatsApp Web</span>
+              </a>
+              <Badge text="متصل بـ WhatsApp Cloud API" type="gold" />
+            </div>
           </div>
 
           {/* Messages Body */}
@@ -286,6 +362,97 @@ export const WhatsAppInboxPage: React.FC = () => {
           </form>
         </div>
       </div>
+
+      {/* New Chat Modal */}
+      {showNewChatModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                <PhoneCall className="w-4 h-4 text-emerald-400" />
+                <span>بدء محادثة واتساب جديدة مع عميل</span>
+              </h3>
+              <button
+                onClick={() => setShowNewChatModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleStartNewChat} className="p-6 space-y-4">
+              {/* Quick Select From CRM Clients */}
+              {clientOptions.length > 0 && (
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                    اختر عميلاً مسجلاً في المنظومة (اختياري)
+                  </label>
+                  <select
+                    onChange={e => {
+                      const selected = clientOptions.find(c => c.id === e.target.value);
+                      if (selected) {
+                        setNewChatName(selected.name);
+                        setNewChatPhone(selected.phone);
+                      }
+                    }}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    defaultValue=""
+                  >
+                    <option value="" disabled>-- اختر من قائمة العملاء --</option>
+                    {clientOptions.map((c: any) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} ({c.phone})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: خالد بن فهد العتيبي"
+                  value={newChatName}
+                  onChange={e => setNewChatName(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الجوال (واتساب) *</label>
+                <input
+                  type="text"
+                  placeholder="05XXXXXXXX أو +9665XXXXXXXX"
+                  value={newChatPhone}
+                  onChange={e => setNewChatPhone(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowNewChatModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                  style={{ minHeight: '34px', padding: '6px 16px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold"
+                  style={{ minHeight: '34px', padding: '6px 20px', background: '#10b981', borderColor: '#10b981' }}
+                >
+                  بدء المحادثة الآن
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
