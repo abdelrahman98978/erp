@@ -50,7 +50,9 @@ if (typeof window !== 'undefined') {
   // Auto-recover from stale chunks after new deployments
   window.addEventListener('vite:preloadError', (event) => {
     console.warn('Vite preload chunk mismatch detected, reloading newest version...', event);
-    window.location.reload();
+    const url = new URL(window.location.href);
+    url.searchParams.set('_v', Date.now().toString());
+    window.location.replace(url.toString());
   });
 }
 
