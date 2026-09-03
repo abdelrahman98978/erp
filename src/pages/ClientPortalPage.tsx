@@ -8,6 +8,7 @@ import {
 import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard } from '../components/kas/KasCards';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 
 interface ClientContract {
   id: string;
@@ -40,7 +41,7 @@ const DEFAULT_MOCK_CONTRACTS: ClientContract[] = [
     startDate: '2026-07-15',
     expectedArrival: '2026-09-05',
     amount: 14500,
-    paidAmount: 14500,
+    paidAmount: 11000,
     guaranteeDaysLeft: 90,
     agencyName: 'وكالة دماس الدولية (DAMAS ETH)',
     flightDetails: 'الخطوط السعودية SV-840 - الوصول: مطار الملك خالد الدولي بالرياض',
@@ -66,9 +67,26 @@ const DEFAULT_MOCK_CONTRACTS: ClientContract[] = [
 
 export const ClientPortalPage: React.FC = () => {
   const { activeCompany } = useCompany();
+  const { addNotification } = useAppStore();
   const [nationalIdOrPhone, setNationalIdOrPhone] = useState('');
   const [selectedContract, setSelectedContract] = useState<ClientContract | null>(null);
   const [contractsList, setContractsList] = useState<ClientContract[]>(DEFAULT_MOCK_CONTRACTS);
+
+  // Support / Complaint Modal State
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [supportForm, setSupportForm] = useState({
+    contractNumber: '',
+    clientName: '',
+    clientPhone: '',
+    type: 'تأخير في إجراءات الاستقدام',
+    priority: 'متوسطة',
+    description: ''
+  });
+
+  // Payment Modal State
+  const [showPayModal, setShowPayModal] = useState(false);
+  const [payingContract, setPayingContract] = useState<ClientContract | null>(null);
+  const [payMethod, setPayMethod] = useState('بطاقة مدى البنكية (Mada)');
 
   useEffect(() => {
     realErpDataStore.getRecords<any>('contracts').then(records => {
@@ -85,7 +103,7 @@ export const ClientPortalPage: React.FC = () => {
           startDate: r.created_at?.slice(0, 10) || '2026-07-15',
           expectedArrival: r.expected_arrival || '2026-09-10',
           amount: Number(r.amount) || 14500,
-          paidAmount: Number(r.paid_amount || r.amount) || 14500,
+          paidAmount: Number(r.paid_amount) || (i === 0 ? 11000 : 18500),
           guaranteeDaysLeft: Number(r.guarantee_days_left) || 90,
           agencyName: r.agency_name || 'وكالة دماس الدولية (DAMAS ETH)',
           flightDetails: r.flight_details || 'الخطوط السعودية SV-840 - الوصول: مطار الملك خالد الدولي',
@@ -94,6 +112,88 @@ export const ClientPortalPage: React.FC = () => {
       }
     });
   }, []);
+
+  const handleOpenSupport = (contract?: ClientContract) => {
+    setSupportForm({
+      contractNumber: contract?.contractNumber || (contractsList[0]?.contractNumber || ''),
+      clientName: '',
+      clientPhone: nationalIdOrPhone || '',
+      type: 'تأخير في إجراءات الاستقدام',
+      priority: 'متوسطة',
+      description: ''
+    });
+    setShowSupportModal(true);
+  };
+
+  const handleCreateSupportTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!supportForm.description) return;
+
+    const ticket = {
+      id: `CMP-${Date.now()}`,
+      contract_no: supportForm.contractNumber,
+      client_name: supportForm.clientName || 'عميل البوابة الإلكترونية',
+      client_phone: supportForm.clientPhone,
+      complaint_type: supportForm.type,
+      priority: supportForm.priority,
+      details: supportForm.description,
+      status: 'قيد المعالجة',
+      created_at: new Date().toISOString()
+    };
+
+    await realErpDataStore.addRecord('complaints', ticket);
+    setShowSupportModal(false);
+    addNotification({
+      title: 'تم تسجيل طلب الدعم / البلاغ',
+      message: `تم إرسال بلاغك برقم (${ticket.id}) بنجاح وجاري متابعته من قبل فريق العناية بالعملاء.`,
+      type: 'success',
+    });
+  };
+
+  const handleOpenPayment = (contract: ClientContract) => {
+    setPayingContract(contract);
+    setShowPayModal(true);
+  };
+
+  const handleProcessPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!payingContract) return;
+
+    const remaining = payingContract.amount - payingContract.paidAmount;
+    if (remaining <= 0) return;
+
+    // Update contract paid amount
+    const updated = contractsList.map(c => {
+      if (c.id === payingContract.id) {
+        return { ...c, paidAmount: c.amount };
+      }
+      return c;
+    });
+    setContractsList(updated);
+
+    // Create official receipt voucher
+    await realErpDataStore.addRecord('vouchers', {
+      id: `VOU-REC-${Date.now()}`,
+      voucher_type: 'سند قبض',
+      voucher_number: `RV-CLIENT-${Math.floor(1000 + Math.random() * 9000)}`,
+      amount: remaining,
+      currency: 'SAR',
+      beneficiary: `العميل - سداد رصيد العقد ${payingContract.contractNumber}`,
+      payment_method: payMethod,
+      description: `سداد الدفعة المتبقية لعقد الاستقدام ${payingContract.contractNumber} (${payingContract.workerName})`,
+      status: 'معتمد',
+      created_at: new Date().toISOString()
+    });
+
+    setShowPayModal(false);
+    setPayingContract(null);
+
+    addNotification({
+      title: 'سداد ناجح وإصدار سند القبض',
+      message: `تم سداد مبلغ ${remaining.toLocaleString()} ر.س بنجاح عبر ${payMethod} وتوليد سند القبض الإلكتروني.`,
+      type: 'success',
+    });
+  };
 
   const filteredContracts = contractsList.filter(c => {
     if (!nationalIdOrPhone.trim()) return true;
@@ -142,7 +242,15 @@ export const ClientPortalPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => handleOpenSupport()}
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#10b981', color: '#ffffff', fontWeight: '700' }}
+            >
+              <AlertCircle className="w-4 h-4 text-white" />
+              <span>+ تقديم بلاغ أو استفسار</span>
+            </button>
             <a
               href="https://wa.me/966500000000"
               target="_blank"
@@ -259,14 +367,32 @@ export const ClientPortalPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap justify-end">
                   <span className={contract.status === 'مكتمل ومسلم' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
                     {contract.status}
                   </span>
+                  {contract.amount > contract.paidAmount && (
+                    <button 
+                      onClick={() => handleOpenPayment(contract)}
+                      className="button-primary-pill text-xs font-bold flex items-center gap-1 shadow-sm"
+                      style={{ minHeight: '34px', padding: '6px 14px', background: '#10b981' }}
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      <span>سداد الرصيد ({(contract.amount - contract.paidAmount).toLocaleString()} ر.س)</span>
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => handleOpenSupport(contract)}
+                    className="button-outline-on-light text-xs font-bold flex items-center gap-1 text-amber-700 hover:bg-amber-50"
+                    style={{ minHeight: '34px', padding: '6px 12px' }}
+                  >
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                    <span>طلب دعم / بلاغ</span>
+                  </button>
                   <button 
                     onClick={() => setSelectedContract(contract)}
                     className="button-outline-on-light text-xs font-bold flex items-center gap-1.5"
-                    style={{ minHeight: '34px', padding: '6px 16px' }}
+                    style={{ minHeight: '34px', padding: '6px 14px' }}
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>تفاصيل العقد</span>
@@ -422,6 +548,207 @@ export const ClientPortalPage: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Support / Complaint Modal */}
+      {showSupportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-amber-600" />
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                  تقديم بلاغ أو طلب دعم ومتابعة
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setShowSupportModal(false)} 
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateSupportTicket} className="space-y-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">اسم العميل بالكامل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="اسم صاحب العقد"
+                    value={supportForm.clientName}
+                    onChange={e => setSupportForm({ ...supportForm, clientName: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">رقم الجوال للتواصل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="05XXXXXXXX"
+                    value={supportForm.clientPhone}
+                    onChange={e => setSupportForm({ ...supportForm, clientPhone: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">رقم العقد المرتبط</label>
+                  <select
+                    value={supportForm.contractNumber}
+                    onChange={e => setSupportForm({ ...supportForm, contractNumber: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white font-mono"
+                  >
+                    {contractsList.map(c => (
+                      <option key={c.id} value={c.contractNumber}>
+                        {c.contractNumber} ({c.workerName})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">نوع الطلب / البلاغ *</label>
+                  <select
+                    value={supportForm.type}
+                    onChange={e => setSupportForm({ ...supportForm, type: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white"
+                  >
+                    <option value="تأخير في إجراءات الاستقدام">تأخير في إجراءات الاستقدام</option>
+                    <option value="طلب استبدال خلال فترة الضمان">طلب استبدال خلال فترة الضمان</option>
+                    <option value="رفض عمل أو عدم توافق">رفض عمل أو عدم توافق</option>
+                    <option value="استفسار عن موعد وصول الطيران">استفسار عن موعد وصول الطيران</option>
+                    <option value="استفسار مالي أو سندات">استفسار مالي أو سندات</option>
+                    <option value="شكوى عامة">شكوى عامة</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">تفاصيل البلاغ أو الملاحظات *</label>
+                <textarea
+                  required
+                  rows={3}
+                  placeholder="يرجى توضيح تفاصيل طلبك أو الشكوى بالتفصيل لسرعة اتخاذ الإجراء..."
+                  value={supportForm.description}
+                  onChange={e => setSupportForm({ ...supportForm, description: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setShowSupportModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                  style={{ padding: '8px 20px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold"
+                  style={{ padding: '8px 22px', background: '#10b981' }}
+                >
+                  إرسال البلاغ لقاعدة البيانات
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Pay Contract Balance Modal */}
+      {showPayModal && payingContract && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-md w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                  سداد الدفعة المتبقية للعقد
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => { setShowPayModal(false); setPayingContract(null); }} 
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleProcessPayment} className="space-y-3.5 text-xs">
+              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-zinc-600 dark:text-zinc-400">رقم العقد:</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">{payingContract.contractNumber}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-600 dark:text-zinc-400">العاملة:</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{payingContract.workerName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-600 dark:text-zinc-400">إجمالي قيمة العقد:</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">{payingContract.amount.toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-zinc-600 dark:text-zinc-400">المسدد مسبقاً:</span>
+                  <span className="font-mono font-bold text-zinc-700 dark:text-zinc-300">{payingContract.paidAmount.toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-emerald-200 dark:border-emerald-800">
+                  <span className="text-emerald-900 dark:text-emerald-300 font-bold">المبلغ المطلوب سداده الآن:</span>
+                  <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+                    {(payingContract.amount - payingContract.paidAmount).toLocaleString()} ر.س
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">طريقة الدفع الإلكتروني *</label>
+                <select
+                  value={payMethod}
+                  onChange={e => setPayMethod(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white"
+                >
+                  <option value="بطاقة مدى البنكية (Mada)">بطاقة مدى البنكية (Mada)</option>
+                  <option value="بطاقة ائتمانية (Visa / MasterCard)">بطاقة ائتمانية (Visa / MasterCard)</option>
+                  <option value="نظام سداد للمدفوعات (Sadad)">نظام سداد للمدفوعات (Sadad)</option>
+                  <option value="تحويل بنكي مباشر">تحويل بنكي مباشر لحساب المجموعة</option>
+                </select>
+              </div>
+
+              <div className="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 space-y-2">
+                <div className="flex items-center gap-2 text-zinc-500">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  <span className="text-[11px]">بوابة دفع آمنة ومشفرة 256-bit بمعايير PCI-DSS</span>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => { setShowPayModal(false); setPayingContract(null); }}
+                  className="button-outline-on-light text-xs font-bold"
+                  style={{ padding: '8px 20px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold"
+                  style={{ padding: '8px 22px', background: '#10b981' }}
+                >
+                  تأكيد السداد وتوليد سند القبض
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

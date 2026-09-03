@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
@@ -11,6 +11,8 @@ import {
   Layers, MapPin, Search
 } from 'lucide-react';
 import { KasKpiCard } from '../components/kas/KasCards';
+import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 
 export interface BranchEntity {
   id: string;
@@ -290,14 +292,32 @@ export const BranchDepartmentsPage: React.FC = () => {
   const [activeCategoryFilter, setActiveCategoryFilter] = useState<'all' | 'فرع منطقي' | 'شركة مجموعة' | 'مكتب خارجي'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showAddDeptModal, setShowAddDeptModal] = useState(false);
+  const [showAddEntityModal, setShowAddEntityModal] = useState(false);
+  const { addNotification } = useAppStore();
 
-  // Form State
+  // SubDepartment Form State
   const [deptForm, setDeptForm] = useState({
     name: '',
     description: '',
     head: '',
     kpi: 'أداء 100%'
   });
+
+  // Entity / Branch Form State
+  const [entityForm, setEntityForm] = useState({
+    name: '',
+    code: '',
+    category: 'فرع منطقي' as 'فرع منطقي' | 'شركة مجموعة' | 'مكتب خارجي',
+    location: '',
+    manager: '',
+    staff_count: '6'
+  });
+
+  useEffect(() => {
+    realErpDataStore.getRecords<BranchEntity>('branch_entities', ALL_GROUP_ENTITIES).then(data => {
+      setEntities(data);
+    });
+  }, []);
 
   const filteredEntities = useMemo(() => {
     return entities.filter(e => {
@@ -337,7 +357,7 @@ export const BranchDepartmentsPage: React.FC = () => {
     };
   }, [entities]);
 
-  const handleAddSubDepartment = (e: React.FormEvent) => {
+  const handleAddSubDepartment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!deptForm.name || !deptForm.description) return;
 
@@ -351,7 +371,7 @@ export const BranchDepartmentsPage: React.FC = () => {
       kpi: deptForm.kpi,
     };
 
-    setEntities(prev => prev.map(eItem => {
+    const nextEntities = entities.map(eItem => {
       if (eItem.id === selectedEntityId) {
         return {
           ...eItem,
@@ -360,10 +380,63 @@ export const BranchDepartmentsPage: React.FC = () => {
         };
       }
       return eItem;
-    }));
+    });
 
+    setEntities(nextEntities);
+    await realErpDataStore.saveRecords('branch_entities', nextEntities);
     setShowAddDeptModal(false);
     setDeptForm({ name: '', description: '', head: '', kpi: 'أداء 100%' });
+
+    addNotification({
+      title: 'إضافة قسم تخصصي',
+      message: `تم إضافة قسم (${newDept.name}) بنجاح وحفظه في قاعدة البيانات.`,
+      type: 'success',
+    });
+  };
+
+  const handleCreateEntity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!entityForm.name || !entityForm.code) return;
+
+    const newEnt: BranchEntity = {
+      id: `b-${Date.now()}`,
+      name: entityForm.name,
+      code: entityForm.code.toUpperCase(),
+      category: entityForm.category,
+      location: entityForm.location || 'المملكة العربية السعودية',
+      manager: entityForm.manager || 'الإدارة العامة',
+      staff_count: parseInt(entityForm.staff_count) || 6,
+      departments: [
+        {
+          id: `d-${Date.now()}-1`,
+          name: 'إدارة العمليات والتشغيل',
+          description: 'الإشراف على خطط العمل اليومية وخدمة العملاء.',
+          head: entityForm.manager || 'المدير التنفيذي',
+          staff_count: 3,
+          status: 'مفعل',
+          kpi: 'جاهزية 100%'
+        }
+      ]
+    };
+
+    const updated = await realErpDataStore.addRecord<BranchEntity>('branch_entities', newEnt, ALL_GROUP_ENTITIES);
+    setEntities(updated);
+    setSelectedEntityId(newEnt.id);
+    setShowAddEntityModal(false);
+    setEntityForm({
+      name: '',
+      code: '',
+      category: 'فرع منطقي',
+      location: '',
+      manager: '',
+      staff_count: '6'
+    });
+
+    addNotification({
+      title: 'إضافة كيان جديد للمجموعة',
+      message: `تم تسجيل (${newEnt.name}) وتثبيته في قاعدة بيانات الهيكلية بنجاح.`,
+      type: 'success',
+    });
   };
 
   return (
@@ -403,6 +476,15 @@ export const BranchDepartmentsPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={() => setShowAddEntityModal(true)}
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#10b981', color: '#ffffff', fontWeight: '700' }}
+            >
+              <Plus className="w-4 h-4 text-white" />
+              <span>+ إضافة فرع / شركة جديدة</span>
+            </button>
+
             <button
               onClick={() => setShowAddDeptModal(true)}
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-champagne"
@@ -734,6 +816,121 @@ export const BranchDepartmentsPage: React.FC = () => {
                 >
                   <Check className="w-4 h-4" />
                   <span>اعتماد القسم التخصصي</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Entity / Branch Modal */}
+      {showAddEntityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                  إضافة فرع أو شركة مجموعة جديدة
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setShowAddEntityModal(false)} 
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateEntity} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">اسم الفرع / الكيان المؤسسي *</label>
+                <input
+                  type="text"
+                  placeholder="مثال: فرع مكة المكرمة أو شركة توباز للأعمال الذكية..."
+                  value={entityForm.name}
+                  onChange={e => setEntityForm({ ...entityForm, name: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">كود الكيان المختصر (Code) *</label>
+                  <input
+                    type="text"
+                    placeholder="مثال: BR-MAK"
+                    value={entityForm.code}
+                    onChange={e => setEntityForm({ ...entityForm, code: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono text-slate-900 dark:text-white uppercase"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">تصنيف الكيان *</label>
+                  <select
+                    value={entityForm.category}
+                    onChange={e => setEntityForm({ ...entityForm, category: e.target.value as any })}
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                  >
+                    <option value="فرع منطقي">فرع منطقي وإقليمي</option>
+                    <option value="شركة مجموعة">شركة شقيقة بالمجموعة</option>
+                    <option value="مكتب خارجي">مكتب خارجي دولي</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">الموقع الجغرافي / المدينة</label>
+                  <input
+                    type="text"
+                    placeholder="مثال: مكة المكرمة - العزيزية"
+                    value={entityForm.location}
+                    onChange={e => setEntityForm({ ...entityForm, location: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">المدير المسؤول</label>
+                  <input
+                    type="text"
+                    placeholder="اسم مدير الفرع أو المسؤول"
+                    value={entityForm.manager}
+                    onChange={e => setEntityForm({ ...entityForm, manager: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">عدد الموظفين المبدئي</label>
+                <input
+                  type="number"
+                  value={entityForm.staff_count}
+                  onChange={e => setEntityForm({ ...entityForm, staff_count: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono text-slate-900 dark:text-white"
+                />
+              </div>
+
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                <button 
+                  type="button" 
+                  onClick={() => setShowAddEntityModal(false)} 
+                  className="button-outline-on-light text-xs font-bold"
+                  style={{ padding: '8px 20px' }}
+                >
+                  إلغاء
+                </button>
+                <button 
+                  type="submit" 
+                  className="button-primary-pill text-xs font-bold flex items-center gap-2"
+                  style={{ padding: '8px 22px', background: '#10b981' }}
+                >
+                  <Check className="w-4 h-4" />
+                  <span>حفظ وتفعيل الكيان بقاعدة البيانات</span>
                 </button>
               </div>
             </form>

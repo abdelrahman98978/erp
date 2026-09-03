@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Globe2, Building2, UploadCloud, FileText, CheckCircle2, 
   Clock, DollarSign, Search, Plus, Filter, Download, 
@@ -8,9 +8,10 @@ import {
 import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard, KasSupplierCard } from '../components/kas/KasCards';
 import { useAppStore } from '../stores/appStore';
+import { realErpDataStore } from '../services/realErpDataStore';
 import { exportData } from '../services/exportService';
 
-interface AgencyCandidate {
+export interface AgencyCandidate {
   id: string;
   maidName: string;
   passportNumber: string;
@@ -23,7 +24,56 @@ interface AgencyCandidate {
   commissionUsd: number;
   paymentStatus: 'PAID' | 'UNPAID';
   uploadedAt: string;
+  agencyName?: string;
 }
+
+const INITIAL_AGENCY_CANDIDATES: AgencyCandidate[] = [
+  {
+    id: 'cand-1',
+    maidName: 'مريم أديس تيجيست',
+    passportNumber: 'EP8894120',
+    nationality: 'إثيوبيا',
+    age: 26,
+    profession: 'عاملة منزلية',
+    medicalStatus: 'FIT',
+    visaStatus: 'ISSUED',
+    ticketStatus: 'BOOKED',
+    commissionUsd: 1100,
+    paymentStatus: 'PAID',
+    uploadedAt: '2026-08-10',
+    agencyName: 'DAMAS ETHIOPIA'
+  },
+  {
+    id: 'cand-2',
+    maidName: 'حليمة كيبيدي',
+    passportNumber: 'EP9920140',
+    nationality: 'إثيوبيا',
+    age: 24,
+    profession: 'عاملة منزلية',
+    medicalStatus: 'FIT',
+    visaStatus: 'READY',
+    ticketStatus: 'PENDING',
+    commissionUsd: 1100,
+    paymentStatus: 'UNPAID',
+    uploadedAt: '2026-08-22',
+    agencyName: 'DAMAS ETHIOPIA'
+  },
+  {
+    id: 'cand-3',
+    maidName: 'فاطمة محمد نور',
+    passportNumber: 'EP7731209',
+    nationality: 'إثيوبيا',
+    age: 29,
+    profession: 'طباخة منزلية',
+    medicalStatus: 'PENDING',
+    visaStatus: 'APPLIED',
+    ticketStatus: 'PENDING',
+    commissionUsd: 1200,
+    paymentStatus: 'UNPAID',
+    uploadedAt: '2026-08-28',
+    agencyName: 'DAMAS ETHIOPIA'
+  },
+];
 
 export const ForeignAgencyPortalPage: React.FC = () => {
   const { activeCompany } = useCompany();
@@ -31,51 +81,24 @@ export const ForeignAgencyPortalPage: React.FC = () => {
   const [activeAgency, setActiveAgency] = useState('DAMAS ETHIOPIA');
   const [searchQuery, setSearchQuery] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showBatchPayoutModal, setShowBatchPayoutModal] = useState(false);
+  const [candidates, setCandidates] = useState<AgencyCandidate[]>([]);
 
-  const [candidates, setCandidates] = useState<AgencyCandidate[]>([
-    {
-      id: 'cand-1',
-      maidName: 'مريم أديس تيجيست',
-      passportNumber: 'EP8894120',
-      nationality: 'إثيوبيا',
-      age: 26,
-      profession: 'عاملة منزلية',
-      medicalStatus: 'FIT',
-      visaStatus: 'ISSUED',
-      ticketStatus: 'BOOKED',
-      commissionUsd: 1100,
-      paymentStatus: 'PAID',
-      uploadedAt: '2026-08-10',
-    },
-    {
-      id: 'cand-2',
-      maidName: 'حليمة كيبيدي',
-      passportNumber: 'EP9920140',
-      nationality: 'إثيوبيا',
-      age: 24,
-      profession: 'عاملة منزلية',
-      medicalStatus: 'FIT',
-      visaStatus: 'READY',
-      ticketStatus: 'PENDING',
-      commissionUsd: 1100,
-      paymentStatus: 'UNPAID',
-      uploadedAt: '2026-08-22',
-    },
-    {
-      id: 'cand-3',
-      maidName: 'فاطمة محمد نور',
-      passportNumber: 'EP7731209',
-      nationality: 'إثيوبيا',
-      age: 29,
-      profession: 'طباخة منزلية',
-      medicalStatus: 'PENDING',
-      visaStatus: 'APPLIED',
-      ticketStatus: 'PENDING',
-      commissionUsd: 1200,
-      paymentStatus: 'UNPAID',
-      uploadedAt: '2026-08-28',
-    },
-  ]);
+  // Manual Candidate Form State
+  const [newCandForm, setNewCandForm] = useState({
+    maidName: '',
+    passportNumber: '',
+    nationality: 'إثيوبيا',
+    age: '25',
+    profession: 'عاملة منزلية',
+    commissionUsd: '1100'
+  });
+
+  useEffect(() => {
+    realErpDataStore.getRecords<AgencyCandidate>('agency_candidates', INITIAL_AGENCY_CANDIDATES).then(data => {
+      setCandidates(data);
+    });
+  }, []);
 
   const totalUsdBalance = candidates.reduce((sum, c) => c.paymentStatus === 'UNPAID' ? sum + c.commissionUsd : sum, 0);
   const totalPaidUsd = candidates.reduce((sum, c) => c.paymentStatus === 'PAID' ? sum + c.commissionUsd : sum, 0);
@@ -84,6 +107,158 @@ export const ForeignAgencyPortalPage: React.FC = () => {
     c.maidName.includes(searchQuery) ||
     c.passportNumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleSettleCommission = async (cand: AgencyCandidate) => {
+    const updated = await realErpDataStore.updateRecord<AgencyCandidate>(
+      'agency_candidates',
+      cand.id,
+      { paymentStatus: 'PAID' },
+      INITIAL_AGENCY_CANDIDATES
+    );
+    setCandidates(updated);
+
+    // Auto generate cash/bank disbursement voucher
+    await realErpDataStore.addRecord('vouchers', {
+      id: `VOU-PAY-${Date.now()}`,
+      voucher_type: 'سند صرف',
+      voucher_number: `PV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      amount: cand.commissionUsd * 3.75,
+      amount_usd: cand.commissionUsd,
+      currency: 'SAR',
+      beneficiary: `وكالة ${activeAgency} - تسوية عمولة (${cand.maidName})`,
+      payment_method: 'تحويل بنكي دولي',
+      description: `سداد عمولة استقدام للعاملة ${cand.maidName} (جواز: ${cand.passportNumber})`,
+      status: 'معتمد',
+      created_at: new Date().toISOString(),
+    });
+
+    addNotification({
+      title: 'سداد عمولة وكالة خارجية',
+      message: `تم سداد عمولة (${cand.maidName}) بمبلغ $${cand.commissionUsd} (${(cand.commissionUsd * 3.75).toLocaleString()} ر.س) وتوليد سند الصرف بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleAdvanceStatus = async (cand: AgencyCandidate) => {
+    let nextVisa = cand.visaStatus;
+    let nextTicket = cand.ticketStatus;
+
+    if (cand.visaStatus === 'APPLIED') nextVisa = 'READY';
+    else if (cand.visaStatus === 'READY') nextVisa = 'ISSUED';
+    else if (cand.visaStatus === 'ISSUED' && cand.ticketStatus === 'PENDING') nextTicket = 'BOOKED';
+
+    const updated = await realErpDataStore.updateRecord<AgencyCandidate>(
+      'agency_candidates',
+      cand.id,
+      { visaStatus: nextVisa, ticketStatus: nextTicket },
+      INITIAL_AGENCY_CANDIDATES
+    );
+    setCandidates(updated);
+    addNotification({
+      title: 'تحديث مسار العاملة',
+      message: `تم تحديث مسار المعاملة للعاملة (${cand.maidName}) إلى (تأشيرة: ${nextVisa} | طيران: ${nextTicket}).`,
+      type: 'info',
+    });
+  };
+
+  const handleDeleteCandidate = async (cand: AgencyCandidate) => {
+    if (window.confirm(`هل أنت متأكد من حذف السيرة الذاتية للمرشحة (${cand.maidName})؟`)) {
+      const updated = await realErpDataStore.deleteRecord<AgencyCandidate>(
+        'agency_candidates',
+        cand.id,
+        INITIAL_AGENCY_CANDIDATES
+      );
+      setCandidates(updated);
+      addNotification({
+        title: 'حذف سيرة مرشحة',
+        message: `تم حذف المرشحة (${cand.maidName}) من قائمة الوكالة.`,
+        type: 'error',
+      });
+    }
+  };
+
+  const handleBatchPayout = async () => {
+    const unpaid = candidates.filter(c => c.paymentStatus === 'UNPAID');
+    if (unpaid.length === 0) return;
+
+    const totalUsd = unpaid.reduce((sum, c) => sum + c.commissionUsd, 0);
+    const totalSar = totalUsd * 3.75;
+
+    let current = candidates;
+    for (const cand of unpaid) {
+      current = await realErpDataStore.updateRecord<AgencyCandidate>(
+        'agency_candidates',
+        cand.id,
+        { paymentStatus: 'PAID' },
+        INITIAL_AGENCY_CANDIDATES
+      );
+    }
+    setCandidates(current);
+
+    await realErpDataStore.addRecord('vouchers', {
+      id: `VOU-PAY-BATCH-${Date.now()}`,
+      voucher_type: 'سند صرف',
+      voucher_number: `PV-BATCH-${Math.floor(1000 + Math.random() * 9000)}`,
+      amount: totalSar,
+      amount_usd: totalUsd,
+      currency: 'SAR',
+      beneficiary: `وكالة ${activeAgency} - سداد مجمع لعمولات ${unpaid.length} مرشحة`,
+      payment_method: 'سويفت بنكي دولي (SWIFT)',
+      description: `سداد مجمع للعمولات المستحقة لـ (${unpaid.length}) عاملة بقيمة $${totalUsd.toLocaleString()}`,
+      status: 'معتمد',
+      created_at: new Date().toISOString(),
+    });
+
+    setShowBatchPayoutModal(false);
+    addNotification({
+      title: 'سداد مجمع للعمولات الدولية',
+      message: `تم سداد مستحقات ${unpaid.length} مرشحة بإجمالي $${totalUsd.toLocaleString()} (${totalSar.toLocaleString()} ر.س) وإصدار سند الصرف الموحد.`,
+      type: 'success',
+    });
+  };
+
+  const handleManualAddCandidate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCandForm.maidName || !newCandForm.passportNumber) return;
+
+    const newC: AgencyCandidate = {
+      id: `cand-${Date.now()}`,
+      maidName: newCandForm.maidName,
+      passportNumber: newCandForm.passportNumber.toUpperCase(),
+      nationality: newCandForm.nationality,
+      age: parseInt(newCandForm.age) || 25,
+      profession: newCandForm.profession,
+      medicalStatus: 'FIT',
+      visaStatus: 'READY',
+      ticketStatus: 'PENDING',
+      commissionUsd: parseFloat(newCandForm.commissionUsd) || 1100,
+      paymentStatus: 'UNPAID',
+      uploadedAt: new Date().toISOString().slice(0, 10),
+      agencyName: activeAgency,
+    };
+
+    const updated = await realErpDataStore.addRecord<AgencyCandidate>(
+      'agency_candidates',
+      newC,
+      INITIAL_AGENCY_CANDIDATES
+    );
+    setCandidates(updated);
+    setShowUploadModal(false);
+    setNewCandForm({
+      maidName: '',
+      passportNumber: '',
+      nationality: 'إثيوبيا',
+      age: '25',
+      profession: 'عاملة منزلية',
+      commissionUsd: '1100'
+    });
+
+    addNotification({
+      title: 'تسجيل مرشحة جديدة',
+      message: `تمت إضافة المرشحة (${newC.maidName}) وحفظها بقاعدة البيانات بنجاح.`,
+      type: 'success',
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -112,68 +287,68 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                   {activeAgency}
                 </span>
               </div>
-              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-                بوابة الوكلاء والمكاتب الخارجية المعتمدة دولياً
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '6px 0 0 0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+                بوابة الوكلاء بالخارج وتدقيق السير الذاتية
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
-                رفع وتدقيق السير الذاتية بالدفعة، الفحوصات الطبية، حجوزات الطيران، ومطابقة الحسابات بالدولار ($ USD)
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
+                إدارة السير الذاتية المرفوعة من مكاتب إثيوبيا، الفلبين، والهند وتتبع الفحوصات والعمولات بالدولار
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
+            {totalUsdBalance > 0 && (
+              <button
+                onClick={() => setShowBatchPayoutModal(true)}
+                className="button-white-pill flex items-center gap-1.5"
+                style={{ fontSize: '12px', padding: '8px 18px', minHeight: '38px', background: '#10b981', color: '#ffffff' }}
+              >
+                <DollarSign className="w-4 h-4" />
+                <span>سداد مجمع للعمولات (${totalUsdBalance.toLocaleString()})</span>
+              </button>
+            )}
             <button
               onClick={() => setShowUploadModal(true)}
-              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
+              className="button-white-pill flex items-center gap-1.5"
+              style={{ fontSize: '12px', padding: '8px 18px', minHeight: '38px' }}
             >
-              <UploadCloud className="w-4 h-4 text-emerald-700" />
-              <span>+ رفع دفعة سير ذاتية (Batch CV)</span>
+              <Plus className="w-4 h-4 text-black" />
+              <span>إضافة / رفع سيرة جديدة</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        {/* Card 1: White Card */}
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي السير المرفوعة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {candidates.length} سيرة
-          </div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل معتمد ومدقق</span>
-        </div>
-
-        {/* Card 2: Pistachio Band Card */}
-        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>سير جاهزة للتفييز والحجز</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {candidates.filter(c => c.visaStatus === 'READY' || c.visaStatus === 'ISSUED').length} جاهزة
-          </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>فحص طبي FIT معتمد</span>
-        </div>
-
-        {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>مستحقات معلقة بالدولار</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            ${totalUsdBalance.toLocaleString()}
-          </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>ما يعادل {(totalUsdBalance * 3.75).toLocaleString()} ر.س</span>
-        </div>
-
-        {/* Card 4: White Card */}
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الحوالات المحولة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            ${totalPaidUsd.toLocaleString()}
-          </div>
-          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-full h-full bg-emerald-500 rounded-full" />
-          </div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>حساب بنكي مسوى 100%</span>
-        </div>
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KasKpiCard
+          title="إجمالي السير المرفوعة"
+          value={candidates.length.toString()}
+          subtitle="سيرة ذاتية قيد المعالجة"
+          icon={FileText}
+          variant="emerald"
+        />
+        <KasKpiCard
+          title="التأشيرات المنجزة"
+          value={candidates.filter(c => c.visaStatus === 'ISSUED').length.toString()}
+          subtitle="تأشيرة صادرة من السفارة"
+          icon={CheckCircle2}
+          variant="sky"
+        />
+        <KasKpiCard
+          title="العمولات المستحقة للوكالة"
+          value={`$${totalUsdBalance.toLocaleString()}`}
+          subtitle={`${(totalUsdBalance * 3.75).toLocaleString()} ر.س معلق`}
+          icon={Clock}
+          variant="gold"
+        />
+        <KasKpiCard
+          title="إجمالي العمولات المسددة"
+          value={`$${totalPaidUsd.toLocaleString()}`}
+          subtitle={`${(totalPaidUsd * 3.75).toLocaleString()} ر.س محول`}
+          icon={DollarSign}
+          variant="purple"
+        />
       </div>
 
       {/* Search & Actions Bar */}
@@ -233,6 +408,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                 <th className="p-4">تذكرة الطيران</th>
                 <th className="p-4">العمولة ($ USD)</th>
                 <th className="p-4">حالة السداد</th>
+                <th className="p-4 text-center">الإجراءات والعمليات</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -270,6 +446,35 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                       {cand.paymentStatus === 'PAID' ? '✓ مسدد' : 'مستحق'}
                     </span>
                   </td>
+                  <td className="p-4">
+                    <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                      {cand.paymentStatus === 'UNPAID' && (
+                        <button
+                          onClick={() => handleSettleCommission(cand)}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] inline-flex items-center gap-1 transition-all"
+                          title="سداد عمولة العاملة وإصدار سند صرف"
+                        >
+                          <DollarSign className="w-3 h-3" />
+                          <span>سداد</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleAdvanceStatus(cand)}
+                        className="px-2 py-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-[11px] font-bold inline-flex items-center gap-1 transition-all"
+                        title="ترقية مرحلة التأشيرة أو حجز الطيران"
+                      >
+                        <Plane className="w-3 h-3 text-cyan-600" />
+                        <span>ترقية المسار</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCandidate(cand)}
+                        className="p-1 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-600 transition-colors"
+                        title="حذف السيرة"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -277,89 +482,174 @@ export const ForeignAgencyPortalPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Upload Batch CV Modal */}
-      {showUploadModal && (
+      {/* Batch Payout Modal */}
+      {showBatchPayoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-5">
+          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-md w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
               <div className="flex items-center gap-2">
-                <UploadCloud className="w-5 h-5 text-emerald-600" />
+                <DollarSign className="w-5 h-5 text-emerald-600" />
                 <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
-                  رفع دفعة سير ذاتية جديدة (Batch Upload)
+                  سداد مجمع لعمولات الوكالة
                 </h3>
               </div>
               <button 
-                onClick={() => setShowUploadModal(false)}
-                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-600 flex items-center justify-center"
+                onClick={() => setShowBatchPayoutModal(false)}
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
               >
                 ✕
               </button>
             </div>
 
-            <div className="border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl p-8 text-center space-y-3 bg-zinc-50/50 dark:bg-zinc-800/20">
-              <UploadCloud className="w-12 h-12 text-emerald-600 mx-auto animate-bounce" />
-              <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">
-                  اسحب وأفلت ملف إكسيل السير أو ملفات الـ PDF هنا
-                </p>
-                <p className="text-[11px] text-zinc-400 mt-1">
-                  يدعم ملفات .xlsx, .csv, وصور الجوازات والفحوصات الطبية
-                </p>
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-zinc-600 dark:text-zinc-400">الوكالة المستفيدة:</span>
+                <span className="font-bold text-slate-900 dark:text-white">{activeAgency}</span>
               </div>
-              <button 
-                onClick={() => {
-                  const simulatedCand: AgencyCandidate = {
-                    id: `cand-${Date.now()}`,
-                    maidName: 'سارة ألمو ديستا (سيرة جديدة)',
-                    passportNumber: `EP${Math.floor(1000000 + Math.random() * 9000000)}`,
-                    nationality: 'إثيوبيا',
-                    age: 25,
-                    profession: 'عاملة منزلية',
-                    medicalStatus: 'FIT',
-                    visaStatus: 'READY',
-                    ticketStatus: 'PENDING',
-                    commissionUsd: 1100,
-                    paymentStatus: 'UNPAID',
-                    uploadedAt: new Date().toISOString().slice(0, 10),
-                  };
-                  setCandidates([simulatedCand, ...candidates]);
-                  setShowUploadModal(false);
-                  addNotification({
-                    title: 'استيراد وتدقيق السير الذاتية',
-                    message: `تم رفع السيرة الذاتية (${simulatedCand.maidName}) ومطابقتها فورياً مع متطلبات مساند.`,
-                    type: 'success',
-                  });
-                }}
-                className="button-primary-pill text-xs font-bold" 
-                style={{ padding: '8px 22px' }}
-              >
-                اختيار ملفات ومطابقة السير الذاتية
-              </button>
+              <div className="flex justify-between text-xs">
+                <span className="text-zinc-600 dark:text-zinc-400">عدد المرشحات المستحقات:</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-400">{candidates.filter(c => c.paymentStatus === 'UNPAID').length} عاملة</span>
+              </div>
+              <div className="flex justify-between text-xs pt-2 border-t border-emerald-200 dark:border-emerald-800">
+                <span className="text-zinc-600 dark:text-zinc-400">إجمالي المبلغ بالدولار:</span>
+                <span className="font-extrabold text-sm text-slate-900 dark:text-white">${totalUsdBalance.toLocaleString()} USD</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-zinc-600 dark:text-zinc-400">المعادل بالريال السعودي (3.75):</span>
+                <span className="font-extrabold text-sm text-emerald-600">{(totalUsdBalance * 3.75).toLocaleString()} ر.س</span>
+              </div>
             </div>
+
+            <p className="text-[11px] text-zinc-500">
+              * سيقوم النظام تلقائياً بتوليد سند صرف مالي رسمي وتحديث حالة جميع المرشحات إلى "مسدد" في قاعدة البيانات.
+            </p>
 
             <div className="flex justify-end gap-2 pt-2">
               <button
-                onClick={() => setShowUploadModal(false)}
+                type="button"
+                onClick={() => setShowBatchPayoutModal(false)}
                 className="button-outline-on-light text-xs font-bold"
                 style={{ padding: '8px 20px' }}
               >
                 إلغاء
               </button>
               <button
-                onClick={() => {
-                  setShowUploadModal(false);
-                  addNotification({
-                    title: 'استلام دفعة السير الذاتية',
-                    message: 'تم استلام دفعة السير الذاتية وجاري تدقيقها ومطابقتها مع مساند بنجاح.',
-                    type: 'success',
-                  });
-                }}
+                type="button"
+                onClick={handleBatchPayout}
                 className="button-primary-pill text-xs font-bold"
-                style={{ padding: '8px 22px' }}
+                style={{ padding: '8px 22px', background: '#10b981' }}
               >
-                بدء الرفع والتدقيق
+                تأكيد السداد المجمع وإصدار السند
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Upload & Add Candidate Modal */}
+      {showUploadModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <UploadCloud className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                  إضافة مرشحة جديدة / رفع سيرة
+                </h3>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setShowUploadModal(false)}
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleManualAddCandidate} className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">اسم المرشحة بالكامل</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="مثال: مريم أديس تسفاي"
+                    value={newCandForm.maidName}
+                    onChange={(e) => setNewCandForm({ ...newCandForm, maidName: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">رقم جواز السفر</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="مثال: EP8891234"
+                    value={newCandForm.passportNumber}
+                    onChange={(e) => setNewCandForm({ ...newCandForm, passportNumber: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">الجنسية</label>
+                  <select
+                    value={newCandForm.nationality}
+                    onChange={(e) => setNewCandForm({ ...newCandForm, nationality: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white"
+                  >
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="الهند">الهند</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                    <option value="كينيا">كينيا</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">المهنة</label>
+                  <select
+                    value={newCandForm.profession}
+                    onChange={(e) => setNewCandForm({ ...newCandForm, profession: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white"
+                  >
+                    <option value="عاملة منزلية">عاملة منزلية</option>
+                    <option value="طباخة منزلية">طباخة منزلية</option>
+                    <option value="رعاية كبار سن">رعاية كبار سن</option>
+                    <option value="سائق خاص">سائق خاص</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">العمولة ($ USD)</label>
+                  <input
+                    type="number"
+                    value={newCandForm.commissionUsd}
+                    onChange={(e) => setNewCandForm({ ...newCandForm, commissionUsd: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => setShowUploadModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                  style={{ padding: '8px 20px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold"
+                  style={{ padding: '8px 22px' }}
+                >
+                  حفظ السيرة بقاعدة البيانات
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

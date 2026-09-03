@@ -79,6 +79,9 @@ export const insertTableRecord = async (
   tableName: string,
   recordData: Record<string, any>
 ): Promise<{ data: any | null; error: string | null }> => {
+  if (isDummySupabase) {
+    return { data: { id: recordData.id || `${tableName}-${Date.now()}`, ...recordData }, error: null };
+  }
   const { data, error } = await supabase
     .from(tableName)
     .insert([recordData])
@@ -98,6 +101,9 @@ export const updateTableRecord = async (
   id: string | number,
   recordData: Record<string, any>
 ): Promise<{ data: any | null; error: string | null }> => {
+  if (isDummySupabase) {
+    return { data: { id, ...recordData }, error: null };
+  }
   const { data, error } = await supabase
     .from(tableName)
     .update(recordData)
@@ -117,6 +123,9 @@ export const deleteTableRecord = async (
   tableName: string,
   id: string | number
 ): Promise<{ success: boolean; error: string | null }> => {
+  if (isDummySupabase) {
+    return { success: true, error: null };
+  }
   const { error } = await supabase.from(tableName).delete().eq('id', id);
   if (error) {
     return { success: false, error: error.message };
