@@ -10,7 +10,8 @@ import {
   DataScopeLevel,
   DataScopeName,
   ModuleAction,
-  RecordAccessContext
+  RecordAccessContext,
+  DEFAULT_IAM_COMPANIES
 } from '../types/iam';
 import { iamPolicyEngine } from '../services/iamPolicyEngine';
 
@@ -36,56 +37,7 @@ const DEFAULT_SUPER_ADMIN: IamUser = {
 };
 
 // 4 Official Corporate Group Companies
-const DEFAULT_COMPANIES: IamCompany[] = [
-  {
-    id: '22222222-2222-2222-2222-222222222221',
-    tenantId: '11111111-1111-1111-1111-111111111111',
-    code: 'SAF',
-    legalName: 'شركة الصفا الماسي للاستقدام',
-    commercialName: 'الصفا الماسي للاستقدام (SAF RC01)',
-    crNumber: '1010123456',
-    vatNumber: '310123456700003',
-    primaryColor: '#0284c7',
-    isGroupParent: false,
-    status: 'نشط',
-  },
-  {
-    id: '22222222-2222-2222-2222-222222222222',
-    tenantId: '11111111-1111-1111-1111-111111111111',
-    code: 'YAQ',
-    legalName: 'شركة الياقوت الشرقية للتشغيل والتأجير',
-    commercialName: 'الياقوت الشرقية للتشغيل (YAQ RC02)',
-    crNumber: '1010234567',
-    vatNumber: '310234567800003',
-    primaryColor: '#b91c1c',
-    isGroupParent: false,
-    status: 'نشط',
-  },
-  {
-    id: '22222222-2222-2222-2222-222222222223',
-    tenantId: '11111111-1111-1111-1111-111111111111',
-    code: 'TOP',
-    legalName: 'شركة توب تالنت الدولية للتوظيف',
-    commercialName: 'توب تالنت الدولية للتوظيف (TOP RC03)',
-    crNumber: '1010345678',
-    vatNumber: '310345678900003',
-    primaryColor: '#0d9488',
-    isGroupParent: false,
-    status: 'نشط',
-  },
-  {
-    id: '22222222-2222-2222-2222-222222222224',
-    tenantId: '11111111-1111-1111-1111-111111111111',
-    code: 'KAS',
-    legalName: 'مؤسسة كاس وسحابة اعتماد للمنافسات والتشغيل',
-    commercialName: 'كاس للمنافسات والتشغيل (KAS RC04)',
-    crNumber: '1010789234',
-    vatNumber: '310284759200003',
-    primaryColor: '#CFA64A',
-    isGroupParent: false,
-    status: 'نشط',
-  },
-];
+const DEFAULT_COMPANIES: IamCompany[] = DEFAULT_IAM_COMPANIES;
 
 const DATA_SCOPE_NAMES: Record<DataScopeLevel, DataScopeName> = {
   0: 'No Access',

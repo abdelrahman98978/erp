@@ -72,5 +72,21 @@ describe('Executive Export Suite & Security Standards', () => {
     expect(SECTION_CONFIGS['ats_candidates']).toBeDefined();
     expect(SECTION_CONFIGS['contracts']).toBeDefined();
   });
+
+  it('should support and safely execute all 10 export formats (Word, XML, HTML, TSV, Markdown, Excel, PDF, CSV, Print, JSON)', () => {
+    const sampleData = [
+      { id: '1', name: 'فرع الرياض', city: 'الرياض', budget: 50000 },
+      { id: '2', name: 'فرع الدمام', city: 'الدمام', budget: 35000 }
+    ];
+
+    const allFormats = ['excel', 'pdf', 'csv', 'print', 'json', 'word', 'xml', 'html', 'tsv', 'markdown'] as const;
+
+    allFormats.forEach(fmt => {
+      expect(() => {
+        exportData('branches', sampleData, fmt, 'تقرير الفروع الإقليمية');
+      }).not.toThrow();
+    });
+  });
 });
+
 

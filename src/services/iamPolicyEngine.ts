@@ -24,6 +24,7 @@ import {
   DataScopeName,
   ModuleAction,
   RecordAccessContext,
+  DEFAULT_IAM_COMPANIES,
 } from '../types/iam';
 
 class IamPolicyEngine {
@@ -32,7 +33,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getCompanies(): Promise<IamCompany[]> {
-    if (isDummySupabase) return [];
+    if (isDummySupabase) return DEFAULT_IAM_COMPANIES;
     try {
       const { data, error } = await supabase
         .from('iam_companies')
@@ -40,7 +41,7 @@ class IamPolicyEngine {
         .order('is_group_parent', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map(c => ({
+      const list = (data || []).map(c => ({
         id: c.id,
         tenantId: c.tenant_id,
         code: c.code,
@@ -53,9 +54,10 @@ class IamPolicyEngine {
         isGroupParent: Boolean(c.is_group_parent),
         status: c.status as any,
       }));
+      return list.length > 0 ? list : DEFAULT_IAM_COMPANIES;
     } catch (err) {
       console.warn('Fallback getCompanies:', err);
-      return [];
+      return DEFAULT_IAM_COMPANIES;
     }
   }
 
