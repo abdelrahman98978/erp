@@ -754,11 +754,7 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.external_office || r.office || "PLATINUM BROTHERS INT'L",
       r.passport_number || r.pass || '',
       r.status || 'متاح'
-    ],
-    totalRowCalculator: (data: any[]) => {
-      const totalSalary = data.reduce((sum, r) => sum + (Number(r.salary || r.price) || 0), 0);
-      return ['المجموع الإجمالي / المتوسط العام', '', '', '', '', '', '', '', totalSalary, '', '', `${data.length} سيرة`];
-    }
+    ]
   }
 };
 
