@@ -71,6 +71,18 @@ const customFetch: typeof fetch = async (input, init) => {
   const isLoopbackBlocked = isRemoteEnvironment() && isLocalHost(url);
 
   if (isDummySupabase || isLoopbackBlocked || url.includes('dummy-supabase') || url.includes('dummy')) {
+    if (url.includes('/auth/v1/')) {
+      return new Response(JSON.stringify({
+        access_token: 'dummy-token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        refresh_token: 'dummy-refresh-token',
+        user: null
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
     return new Response(JSON.stringify([]), {
       status: 200,
       headers: {
