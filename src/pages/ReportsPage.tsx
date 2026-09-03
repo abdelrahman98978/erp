@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
-import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { 
-  BarChart3, FileSpreadsheet, FileText, TrendingUp, DollarSign, 
-  Handshake, FileCheck, Building2, ArrowUpRight
+  BarChart3, TrendingUp, DollarSign, 
+  Handshake, FileCheck, Building2, ArrowUpRight, FileSpreadsheet
 } from 'lucide-react';
 
 import { useAppStore } from '../stores/appStore';
-
 import { useCompany } from '../contexts/CompanyContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 
@@ -56,6 +55,7 @@ export const ReportsPage: React.FC = () => {
   const topRent = rentContracts.filter(r => r.company_id === 'TOP').length || 12;
   const kasRent = rentContracts.filter(r => r.company_id === 'KAS' || r.company_id === 'DAR').length || 18;
 
+  // 1. بيانات التقرير التنفيذي الموحد
   const reportData = [
     { id: '1', companyCode: 'SAF', name: 'شركة الصفا الماسي للاستقدام (SAF RC01)', recruitment_contracts: safContracts, rent_contracts: safRent, total_revenue: safContracts * 2473, expenses: Math.round(safContracts * 1026), net_profit: safContracts * 2473 - Math.round(safContracts * 1026), margin: '58.5%' },
     { id: '2', companyCode: 'YAQ', name: 'شركة الياقوت الشرقية للتشغيل (YAQ RC02)', recruitment_contracts: yaqContracts, rent_contracts: yaqRent, total_revenue: yaqContracts * 2194, expenses: Math.round(yaqContracts * 925), net_profit: yaqContracts * 2194 - Math.round(yaqContracts * 925), margin: '57.8%' },
@@ -63,11 +63,69 @@ export const ReportsPage: React.FC = () => {
     { id: '4', companyCode: 'KAS', name: 'مؤسسة كاس وسحابة اعتماد للمنافسات (KAS RC04)', recruitment_contracts: kasContracts, rent_contracts: kasRent, total_revenue: kasContracts * 4500, expenses: Math.round(kasContracts * 1950), net_profit: kasContracts * 4500 - Math.round(kasContracts * 1950), margin: '56.6%' },
   ].filter(item => selectedCompany === 'all' ? true : item.companyCode === selectedCompany);
 
+  // 2. بيانات تقارير المبيعات والتعاقدات
+  const salesReportData = [
+    { channel: 'منصة مساند الحكومية (Direct Musaned)', count: 142, avg: 14500, total: 2059000, share: '62.4%', conv: '84.2%' },
+    { channel: 'بوابة العملاء الإلكترونية (Customer Portal)', count: 54, avg: 14200, total: 766800, share: '23.2%', conv: '71.5%' },
+    { channel: 'المبيعات المباشرة والفروع (Walk-in / Branches)', count: 32, avg: 15000, total: 480000, share: '14.4%', conv: '89.0%' },
+  ];
+
+  // 3. بيانات تقارير الاستقدام والمدد الزمنية
+  const recruitmentReportData = [
+    { country: 'الفلبين - Manila Overseas Placement', count: 110, visa_days: '8 أيام', total_days: '24 يوماً', on_time: '98.2%', rating: '4.9 / 5.0' },
+    { country: 'إثيوبيا - Addis International Bureau', count: 78, visa_days: '11 يوماً', total_days: '27 يوماً', on_time: '96.5%', rating: '4.7 / 5.0' },
+    { country: 'الهند - Bombay Professional Manpower', count: 35, visa_days: '9 أيام', total_days: '22 يوماً', on_time: '99.0%', rating: '4.8 / 5.0' },
+    { country: 'أوغندا - Kampala Placement Agency', count: 18, visa_days: '14 يوماً', total_days: '34 يوماً', on_time: '91.0%', rating: '4.5 / 5.0' },
+  ];
+
+  // 4. بيانات التقارير المالية وهوامش الأرباح
+  const financialReportData = [
+    { item: 'إيرادات عقود التوسط في الاستقدام', total: 1667500, vat: 250125, direct: 840000, admin: 180000, net: 647500, status: 'مطابق ومقفل' },
+    { item: 'إيرادات عقود تأجير العمالة المنزلية', total: 420000, vat: 63000, direct: 180000, admin: 45000, net: 195000, status: 'مطابق ومقفل' },
+    { item: 'رسوم خدمات إنجاز وتفاويض التأشيرات', total: 48500, vat: 7275, direct: 12000, admin: 5000, net: 31500, status: 'مطابق ومقفل' },
+  ];
+
   const totalRevenue = reportData.reduce((s, r) => s + r.total_revenue, 0);
   const totalExpenses = reportData.reduce((s, r) => s + r.expenses, 0);
   const totalNetProfit = reportData.reduce((s, r) => s + r.net_profit, 0);
   const totalRecruitment = reportData.reduce((s, r) => s + r.recruitment_contracts, 0);
   const totalRent = reportData.reduce((s, r) => s + r.rent_contracts, 0);
+
+  // إعداد بيانات التصدير التلقائي للشريط الرئيسي
+  const getCurrentExportInfo = () => {
+    switch (activeReportTab) {
+      case 'sales':
+        return {
+          sectionKey: 'sales-reports',
+          data: salesReportData,
+          title: 'تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة',
+          label: 'تصدير تقرير المبيعات (10 صيغ)',
+        };
+      case 'recruitment':
+        return {
+          sectionKey: 'recruitment-reports',
+          data: recruitmentReportData,
+          title: 'تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب الخارجية',
+          label: 'تصدير تقرير الاستقدام (10 صيغ)',
+        };
+      case 'financial':
+        return {
+          sectionKey: 'financial-reports',
+          data: financialReportData,
+          title: 'التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح للمجموعة',
+          label: 'تصدير التقرير المالي (10 صيغ)',
+        };
+      default:
+        return {
+          sectionKey: 'executive-reports',
+          data: reportData,
+          title: 'تقرير الأداء المالي والتشغيلي المقارن لشركات المجموعة الموحدة',
+          label: 'تصدير التقرير التنفيذي الموحد (10 صيغ)',
+        };
+    }
+  };
+
+  const currentExport = getCurrentExportInfo();
 
   return (
     <div className="space-y-6">
@@ -98,28 +156,19 @@ export const ReportsPage: React.FC = () => {
                 التقارير التحليلية والمؤشرات المالية والتشغيلية للمجموعة
               </h1>
               <p className="text-xs text-zinc-400 mt-1 font-sans">
-                تحليل الأرباح والخسائر، عقود مساند، باقات التأجير، وهوامش ربحية الفروع والشركات
+                تحليل الأرباح والخسائر، عقود مساند، باقات التأجير، وتصدير التقارير المعتمدة بـ 10 صيغ احترافية
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => exportData('finance', reportData, 'excel')}
-              className="button-white-pill"
-              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
-            >
-              <FileSpreadsheet className="w-4 h-4 ml-1 text-black" />
-              <span>تصدير مصنف Excel</span>
-            </button>
-            <button
-              onClick={() => exportData('finance', reportData, 'pdf')}
-              className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
-            >
-              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
-              <span>تصدير PDF</span>
-            </button>
+            <ExportDropdown
+              sectionKey={currentExport.sectionKey}
+              data={currentExport.data}
+              customTitle={currentExport.title}
+              buttonLabel={currentExport.label}
+              variant="outline-dark"
+            />
           </div>
         </div>
       </div>
@@ -234,11 +283,18 @@ export const ReportsPage: React.FC = () => {
       {/* 1. Executive Summary Tab */}
       {activeReportTab === 'executive' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white">
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
             <h2 className="text-sm font-bold text-black flex items-center gap-2 m-0">
               <Building2 className="w-4 h-4 text-black" />
               <span>جدول الأداء المالي والتشغيلي المقارن لشركات المجموعة</span>
             </h2>
+            <ExportDropdown
+              sectionKey="executive-reports"
+              data={reportData}
+              customTitle="تقرير الأداء المالي والتشغيلي المقارن لشركات المجموعة"
+              buttonLabel="تصدير التقرير (10 صيغ)"
+              variant="outline-light"
+            />
           </div>
 
           <div className="overflow-x-auto">
@@ -288,9 +344,18 @@ export const ReportsPage: React.FC = () => {
       {/* 2. Sales Reports Tab */}
       {activeReportTab === 'sales' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h3 className="text-sm font-bold text-black">تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة</h3>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>إجمالي المبيعات: 590,400 ر.س</span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-black m-0">تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة</h3>
+              <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>إجمالي المبيعات: 590,400 ر.س</span>
+            </div>
+            <ExportDropdown
+              sectionKey="sales-reports"
+              data={salesReportData}
+              customTitle="تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة"
+              buttonLabel="تصدير التقرير (10 صيغ)"
+              variant="outline-light"
+            />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs text-zinc-700">
@@ -305,11 +370,7 @@ export const ReportsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { channel: 'منصة مساند الحكومية (Direct Musaned)', count: 142, avg: 14500, total: 2059000, share: '62.4%', conv: '84.2%' },
-                  { channel: 'بوابة العملاء الإلكترونية (Customer Portal)', count: 54, avg: 14200, total: 766800, share: '23.2%', conv: '71.5%' },
-                  { channel: 'المبيعات المباشرة والفروع (Walk-in / Branches)', count: 32, avg: 15000, total: 480000, share: '14.4%', conv: '89.0%' },
-                ].map((s, idx) => (
+                {salesReportData.map((s, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-bold text-black">{s.channel}</td>
                     <td className="p-3.5 font-mono">{s.count} عقد</td>
@@ -328,9 +389,18 @@ export const ReportsPage: React.FC = () => {
       {/* 3. Recruitment Logistics & Timelines Tab */}
       {activeReportTab === 'recruitment' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h3 className="text-sm font-bold text-black">تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب</h3>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>متوسط الوصول: 28 يوماً</span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-black m-0">تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب</h3>
+              <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>متوسط الوصول: 28 يوماً</span>
+            </div>
+            <ExportDropdown
+              sectionKey="recruitment-reports"
+              data={recruitmentReportData}
+              customTitle="تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب"
+              buttonLabel="تصدير التقرير (10 صيغ)"
+              variant="outline-light"
+            />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs text-zinc-700">
@@ -345,12 +415,7 @@ export const ReportsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { country: 'الفلبين - Manila Overseas Placement', count: 110, visa_days: '8 أيام', total_days: '24 يوماً', on_time: '98.2%', rating: '4.9 / 5.0' },
-                  { country: 'إثيوبيا - Addis International Bureau', count: 78, visa_days: '11 يوماً', total_days: '27 يوماً', on_time: '96.5%', rating: '4.7 / 5.0' },
-                  { country: 'الهند - Bombay Professional Manpower', count: 35, visa_days: '9 أيام', total_days: '22 يوماً', on_time: '99.0%', rating: '4.8 / 5.0' },
-                  { country: 'أوغندا - Kampala Placement Agency', count: 18, visa_days: '14 يوماً', total_days: '34 يوماً', on_time: '91.0%', rating: '4.5 / 5.0' },
-                ].map((item, idx) => (
+                {recruitmentReportData.map((item, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-bold text-black">{item.country}</td>
                     <td className="p-3.5 font-mono">{item.count} تأشيرة</td>
@@ -369,9 +434,18 @@ export const ReportsPage: React.FC = () => {
       {/* 4. Financial & Profit Margins Tab */}
       {activeReportTab === 'financial' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h3 className="text-sm font-bold text-black">التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح</h3>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>صافي الأرباح: 340,400 ر.س</span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-black m-0">التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح</h3>
+              <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>صافي الأرباح: 340,400 ر.س</span>
+            </div>
+            <ExportDropdown
+              sectionKey="financial-reports"
+              data={financialReportData}
+              customTitle="التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح"
+              buttonLabel="تصدير التقرير (10 صيغ)"
+              variant="outline-light"
+            />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs text-zinc-700">
@@ -387,11 +461,7 @@ export const ReportsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { item: 'إيرادات عقود التوسط في الاستقدام', total: 1667500, vat: 250125, direct: 840000, admin: 180000, net: 647500, status: 'مطابق ومقفل' },
-                  { item: 'إيرادات عقود تأجير العمالة المنزلية', total: 420000, vat: 63000, direct: 180000, admin: 45000, net: 195000, status: 'مطابق ومقفل' },
-                  { item: 'رسوم خدمات إنجاز وتفاويض التأشيرات', total: 48500, vat: 7275, direct: 12000, admin: 5000, net: 31500, status: 'مطابق ومقفل' },
-                ].map((row, idx) => (
+                {financialReportData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-bold text-black">{row.item}</td>
                     <td className="p-3.5 font-mono font-bold text-black">{row.total.toLocaleString()} ر.س</td>
@@ -412,4 +482,3 @@ export const ReportsPage: React.FC = () => {
 };
 
 export default ReportsPage;
-

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { exportData, ExportFormat } from '../../services/exportService';
+import { ExportDropdown } from '../common/ExportDropdown';
 import { useAppStore } from '../../stores/appStore';
 import { IMPORT_TEMPLATES, downloadTemplate } from '../../services/importEngine';
 
@@ -14,6 +15,8 @@ export interface ExportConfig {
   sectionKey: string;
   /** Raw data array (not filtered) — filtered data is used when search is active */
   rawData: any[];
+  /** Optional custom title for exported report */
+  customTitle?: string;
 }
 
 export interface TableImportConfig {
@@ -245,137 +248,14 @@ export function DataTable<T extends { id: string | number }>({
             )}
           </div>
 
-          {/* Export Dropdown */}
-          <div style={{ position: 'relative' }}>
-            <button
-              className="button-outline-on-light"
-              style={{ fontSize: '13px', padding: '6px 14px', minHeight: '38px' }}
-              title="تصدير البيانات"
-              onClick={() => {
-                setShowExportMenu(!showExportMenu);
-                setShowImportMenu(false);
-              }}
-            >
-              <i className="fa-solid fa-download"></i>
-              <span>تصدير</span>
-              <i className={`fa-solid fa-chevron-${showExportMenu ? 'up' : 'down'}`} style={{ fontSize: '9px', opacity: 0.7 }}></i>
-            </button>
-
-            {showExportMenu && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '110%',
-                  left: 0,
-                  background: '#ffffff',
-                  border: '1px solid #e4e4e7',
-                  borderRadius: '12px',
-                  boxShadow: '0 8px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)',
-                  zIndex: 50,
-                  minWidth: '210px',
-                  overflow: 'hidden',
-                  fontFamily: 'var(--font-family-ui)',
-                  padding: '6px'
-                }}
-              >
-                <button
-                  onClick={() => handleExport('excel')}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    textAlign: 'right',
-                    border: 'none',
-                    borderRadius: '8px',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: '#000000',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <i className="fa-solid fa-file-excel text-emerald-600"></i>
-                  <span>تصدير إكسيل (Excel .xlsx)</span>
-                </button>
-
-                <button
-                  onClick={() => handleExport('csv')}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    textAlign: 'right',
-                    border: 'none',
-                    borderRadius: '8px',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: '#000000',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <i className="fa-solid fa-file-csv text-blue-600"></i>
-                  <span>تصدير نصي (CSV UTF-8)</span>
-                </button>
-
-                <button
-                  onClick={() => handleExport('pdf')}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    textAlign: 'right',
-                    border: 'none',
-                    borderRadius: '8px',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: '#000000',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <i className="fa-solid fa-file-pdf text-rose-600"></i>
-                  <span>تصدير بي دي إف (PDF Doc)</span>
-                </button>
-
-                <button
-                  onClick={() => handleExport('print')}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    textAlign: 'right',
-                    border: 'none',
-                    borderRadius: '8px',
-                    background: 'transparent',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    color: '#000000',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <i className="fa-solid fa-print"></i>
-                  <span>معاينة وطباعة تقرير رسمي</span>
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Export Dropdown - 10 Professional Formats */}
+          <ExportDropdown
+            sectionKey={exportConfig ? exportConfig.sectionKey : 'general_data'}
+            data={getExportData()}
+            customTitle={exportConfig?.customTitle}
+            buttonLabel="تصدير"
+            variant="outline-light"
+          />
 
           {onAddClick && (
             <button className="button-primary-pill" style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }} onClick={onAddClick}>

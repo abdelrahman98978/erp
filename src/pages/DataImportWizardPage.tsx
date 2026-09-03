@@ -1,5 +1,7 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { ExportDropdown } from '../components/common/ExportDropdown';
+import { realErpDataStore } from '../services/realErpDataStore';
 import {
   IMPORT_TEMPLATES,
   ImportTemplate,
@@ -18,7 +20,7 @@ import {
 import { 
   Database, History, RotateCcw, Check, ArrowLeft, ArrowRight, 
   UploadCloud, FileSpreadsheet, Search, X, AlertCircle, AlertTriangle, 
-  CheckCircle2, Link2, Unlink2, Info, Download, Sparkles, Layers
+  CheckCircle2, Link2, Unlink2, Info, Download, Sparkles, Layers, ChevronDown
 } from 'lucide-react';
 
 type WizardStep = 'select-type' | 'upload' | 'mapping' | 'review' | 'results' | 'history';
@@ -34,6 +36,29 @@ export const DataImportWizardPage: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Data Records & Multi-format Export state
+  const [recordsMap, setRecordsMap] = useState<Record<string, any[]>>({});
+  const [openFormatMenu, setOpenFormatMenu] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    Promise.all(
+      IMPORT_TEMPLATES.map(async (tmpl) => {
+        try {
+          const recs = await realErpDataStore.getRecords<any>(tmpl.entityKey, tmpl.exampleRows as any);
+          return [tmpl.entityKey, recs] as const;
+        } catch {
+          return [tmpl.entityKey, tmpl.exampleRows] as const;
+        }
+      })
+    ).then((entries) => {
+      if (isMounted) {
+        setRecordsMap(Object.fromEntries(entries));
+      }
+    });
+    return () => { isMounted = false; };
+  }, []);
 
   // History state
   const [history] = useState<ImportHistoryEntry[]>(() => getImportHistory());
@@ -297,15 +322,69 @@ export const DataImportWizardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); downloadTemplate(tmpl); }}
-                  className="button-outline-on-light w-full flex items-center justify-center gap-1.5"
-                  style={{ padding: '4px', fontSize: '11px', minHeight: '28px' }}
-                >
-                  <Download className="w-3 h-3" />
-                  <span>تحميل قالب Excel</span>
-                </button>
+                <div className="pt-2.5 border-t border-zinc-100 flex items-center gap-1.5 mt-2" onClick={e => e.stopPropagation()}>
+                  {/* Template Download Menu */}
+                  <div className="relative flex-1">
+                    <button
+                      type="button"
+                      onClick={() => setOpenFormatMenu(openFormatMenu === tmpl.entityKey ? null : tmpl.entityKey)}
+                      className="button-outline-on-light w-full flex items-center justify-between gap-1 text-[11px] px-2 py-1 min-h-[30px]"
+                      title="تحميل قالب الإدخال بالصيغ المعتمدة"
+                    >
+                      <span className="flex items-center gap-1">
+                        <Download className="w-3 h-3 text-emerald-600" />
+                        <span>القالب</span>
+                      </span>
+                      <ChevronDown className="w-2.5 h-2.5 text-zinc-400" />
+                    </button>
+
+                    {openFormatMenu === tmpl.entityKey && (
+                      <div
+                        className="absolute bottom-full mb-1 right-0 w-44 bg-white rounded-xl shadow-xl border border-zinc-200 py-1.5 z-30 font-sans text-right"
+                        onClick={e => e.stopPropagation()}
+                      >
+                        <div className="px-3 py-1 text-[10px] font-bold text-zinc-400 border-b border-zinc-100">
+                          صيغ قوالب الإدخال
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { downloadTemplate(tmpl, 'xlsx'); setOpenFormatMenu(null); }}
+                          className="w-full text-right px-3 py-1.5 text-xs text-zinc-800 hover:bg-zinc-50 flex items-center justify-between"
+                        >
+                          <span className="text-zinc-700">مصنف إكسل</span>
+                          <span className="text-emerald-600 font-mono font-bold text-[10px]">.XLSX</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { downloadTemplate(tmpl, 'csv'); setOpenFormatMenu(null); }}
+                          className="w-full text-right px-3 py-1.5 text-xs text-zinc-800 hover:bg-zinc-50 flex items-center justify-between"
+                        >
+                          <span className="text-zinc-700">جدول نصي</span>
+                          <span className="text-blue-600 font-mono font-bold text-[10px]">.CSV</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { downloadTemplate(tmpl, 'json'); setOpenFormatMenu(null); }}
+                          className="w-full text-right px-3 py-1.5 text-xs text-zinc-800 hover:bg-zinc-50 flex items-center justify-between"
+                        >
+                          <span className="text-zinc-700">كائن برمجي</span>
+                          <span className="text-amber-600 font-mono font-bold text-[10px]">.JSON</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 10-Format Professional Data & Report Export */}
+                  <div className="flex-shrink-0">
+                    <ExportDropdown
+                      sectionKey={tmpl.entityKey}
+                      data={recordsMap[tmpl.entityKey] || tmpl.exampleRows}
+                      customTitle={`سجل وتقارير ${tmpl.displayName} المعتمدة`}
+                      buttonLabel="تصدير"
+                      variant="compact"
+                    />
+                  </div>
+                </div>
               </div>
             ))}
           </div>

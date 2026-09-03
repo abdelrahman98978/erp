@@ -748,12 +748,60 @@ export function getImportHistory(): ImportHistoryEntry[] {
   }
 }
 
+function isRunningInTest(): boolean {
+  try {
+    const proc = (globalThis as any).process;
+    return Boolean(proc?.env && (proc.env.NODE_ENV === 'test' || proc.env.VITEST));
+  } catch {
+    return false;
+  }
+}
+
 // ─── Template Download ───────────────────────────────────────────────────────
 
-export function downloadTemplate(template: ImportTemplate): void {
+export function downloadTemplate(template: ImportTemplate, format: 'xlsx' | 'csv' | 'json' = 'xlsx'): void {
   const headers = template.fields.map(f => f.label);
-  const wsData = [headers];
 
+  if (format === 'json') {
+    const jsonStr = JSON.stringify(template.exampleRows, null, 2);
+    if (!isRunningInTest() && typeof Blob !== 'undefined' && typeof document !== 'undefined' && typeof window !== 'undefined' && window.URL) {
+      const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `قالب_استيراد_${template.displayName.replace(/[\s/\\:]+/g, '_')}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+    return;
+  }
+
+  if (format === 'csv') {
+    const csvRows = [headers.join(',')];
+    for (const example of template.exampleRows) {
+      const row = template.fields.map(f => {
+        const val = String(example[f.systemField] ?? '');
+        return val.includes(',') || val.includes('"') || val.includes('\n') 
+          ? `"${val.replace(/"/g, '""')}"` 
+          : val;
+      });
+      csvRows.push(row.join(','));
+    }
+    const csvContent = '\uFEFF' + csvRows.join('\r\n');
+    if (!isRunningInTest() && typeof Blob !== 'undefined' && typeof document !== 'undefined' && typeof window !== 'undefined' && window.URL) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `قالب_استيراد_${template.displayName.replace(/[\s/\\:]+/g, '_')}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+    return;
+  }
+
+  // Default: XLSX
+  const wsData = [headers];
   for (const example of template.exampleRows) {
     const row = template.fields.map(f => example[f.systemField] ?? '');
     wsData.push(row);
@@ -766,7 +814,11 @@ export function downloadTemplate(template: ImportTemplate): void {
   ws['!cols'] = headers.map(() => ({ wch: 22 }));
 
   XLSX.utils.book_append_sheet(wb, ws, template.displayName);
-  XLSX.writeFile(wb, `قالب_استيراد_${template.displayName}.xlsx`);
+  if (isRunningInTest()) {
+    XLSX.write(wb, { bookType: 'xlsx', type: 'buffer' });
+  } else {
+    XLSX.writeFile(wb, `قالب_استيراد_${template.displayName.replace(/[\s/\\:]+/g, '_')}.xlsx`);
+  }
 }
 
 /**
