@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Download, 
   FileSpreadsheet, 
@@ -40,12 +41,68 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number; width: number } | null>(null);
   const { addNotification } = useAppStore();
+
+  const updatePosition = useCallback(() => {
+    if (buttonRef.current && typeof window !== 'undefined') {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const menuWidth = Math.min(420, window.innerWidth - 24);
+      
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      
+      let top = rect.bottom + 6;
+      // If tight below (< 380px) and more space above, open upwards
+      if (spaceBelow < 380 && spaceAbove > spaceBelow) {
+        top = Math.max(16, rect.top - Math.min(520, spaceAbove - 16) - 6);
+      } else if (top + 500 > window.innerHeight) {
+        top = Math.max(16, window.innerHeight - 520);
+      }
+
+      let right = window.innerWidth - rect.right;
+      if (window.innerWidth < 640) {
+        right = Math.max(8, (window.innerWidth - menuWidth) / 2);
+      } else {
+        if (right + menuWidth > window.innerWidth - 16) {
+          right = 16;
+        }
+        if (right < 16) {
+          right = 16;
+        }
+      }
+
+      setMenuPosition({
+        top,
+        right,
+        width: menuWidth,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      updatePosition();
+      const handleReposition = () => updatePosition();
+      window.addEventListener('resize', handleReposition);
+      window.addEventListener('scroll', handleReposition, true);
+      return () => {
+        window.removeEventListener('resize', handleReposition);
+        window.removeEventListener('scroll', handleReposition, true);
+      };
+    }
+  }, [isOpen, updatePosition]);
 
   // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -196,8 +253,9 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
   ];
 
   return (
-    <div className={`relative inline-block text-right ${className}`} ref={dropdownRef}>
+    <div className={`relative inline-block text-right ${className}`}>
       <button
+        ref={buttonRef}
         onClick={() => !isExporting && setIsOpen(!isOpen)}
         disabled={isExporting}
         className={`${getButtonClass()} flex items-center gap-2 font-bold transition-all shadow-sm active:scale-95 ${isExporting ? 'opacity-70 cursor-wait' : ''}`}
@@ -218,106 +276,130 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
         <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {/* Luxury Dropdown Menu */}
-      {isOpen && (
-        <div className="absolute left-0 sm:right-auto mt-2 w-80 sm:w-[420px] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl z-50 p-2.5 animate-in fade-in zoom-in-95 duration-150 max-h-[82vh] overflow-y-auto">
-          {/* Header Info */}
-          <div className="px-3.5 py-2.5 border-b border-zinc-100 dark:border-zinc-800/80 mb-2 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs font-black text-slate-900 dark:text-white">
-                تصدير الكشوفات والتقارير (10 صيغ)
+      {/* Luxury Dropdown Menu rendered via Portal into body to prevent stacking context or card clipping */}
+      {isOpen && typeof document !== 'undefined' && createPortal(
+        <>
+          {/* Backdrop to prevent click-through and close cleanly */}
+          <div
+            className="fixed inset-0 z-[99998] bg-black/25 backdrop-blur-[1px] transition-opacity"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
+          />
+
+          <div
+            ref={dropdownRef}
+            style={{
+              position: 'fixed',
+              top: `${menuPosition?.top ?? 80}px`,
+              right: `${menuPosition?.right ?? 16}px`,
+              width: `${menuPosition?.width ?? 400}px`,
+              maxHeight: '82vh',
+              zIndex: 99999,
+            }}
+            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-2.5 animate-in fade-in zoom-in-95 duration-150 overflow-y-auto font-sans text-right"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Info */}
+            <div className="px-3.5 py-2.5 border-b border-zinc-100 dark:border-zinc-800/80 mb-2 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm z-10">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-500" />
+                <span className="text-xs font-black text-slate-900 dark:text-white">
+                  تصدير الكشوفات والتقارير (10 صيغ)
+                </span>
+              </div>
+              <span className="text-[11px] font-mono text-zinc-400 font-bold">
+                {data.length} سجل جاهز
               </span>
             </div>
-            <span className="text-[11px] font-mono text-zinc-400 font-bold">
-              {data.length} سجل جاهز
-            </span>
-          </div>
 
-          {/* Section 1: Executive & Office Documents */}
-          <div className="mb-2">
-            <div className="px-3 py-1 text-[10px] font-black text-zinc-400 uppercase tracking-wider">
-              المستندات التنفيذية والتقارير المعتمدة
-            </div>
-            <div className="space-y-1 mt-1">
-              {documentFormats.map((fmt) => {
-                const Icon = fmt.icon;
-                return (
-                  <button
-                    key={fmt.id}
-                    onClick={() => handleExport(fmt.id)}
-                    className="w-full text-right p-2.5 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60 transition-all flex items-start gap-3 group"
-                  >
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${fmt.bgColor} group-hover:scale-105 transition-transform`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          {fmt.title}
-                        </span>
-                        {fmt.badge && (
-                          <span className="pill-tag-mint text-[9px] font-black py-0.5 px-2">
-                            {fmt.badge}
-                          </span>
-                        )}
+            {/* Section 1: Executive & Office Documents */}
+            <div className="mb-2">
+              <div className="px-3 py-1 text-[10px] font-black text-zinc-400 uppercase tracking-wider">
+                المستندات التنفيذية والتقارير المعتمدة
+              </div>
+              <div className="space-y-1 mt-1">
+                {documentFormats.map((fmt) => {
+                  const Icon = fmt.icon;
+                  return (
+                    <button
+                      key={fmt.id}
+                      onClick={() => handleExport(fmt.id)}
+                      className="w-full text-right p-2.5 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60 transition-all flex items-start gap-3 group"
+                    >
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${fmt.bgColor} group-hover:scale-105 transition-transform`}>
+                        <Icon className="w-4 h-4" />
                       </div>
-                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight line-clamp-1 font-normal">
-                        {fmt.desc}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
 
-          {/* Section 2: Data Interchange & Integration */}
-          <div>
-            <div className="px-3 py-1 text-[10px] font-black text-zinc-400 uppercase tracking-wider border-t border-zinc-100 dark:border-zinc-800/80 pt-2">
-              تكامل البيانات والأنظمة المحاسبية والبنكية
-            </div>
-            <div className="space-y-1 mt-1">
-              {dataFormats.map((fmt) => {
-                const Icon = fmt.icon;
-                return (
-                  <button
-                    key={fmt.id}
-                    onClick={() => handleExport(fmt.id)}
-                    className="w-full text-right p-2.5 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60 transition-all flex items-start gap-3 group"
-                  >
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${fmt.bgColor} group-hover:scale-105 transition-transform`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-xs font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          {fmt.title}
-                        </span>
-                        {fmt.badge && (
-                          <span className="pill-tag-mint text-[9px] font-black py-0.5 px-2">
-                            {fmt.badge}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                            {fmt.title}
                           </span>
-                        )}
+                          {fmt.badge && (
+                            <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                              {fmt.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight line-clamp-1 font-normal">
+                          {fmt.desc}
+                        </p>
                       </div>
-                      <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight line-clamp-1 font-normal">
-                        {fmt.desc}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Section 2: Data Interchange & Integration */}
+            <div className="mb-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+              <div className="px-3 py-1 text-[10px] font-black text-zinc-400 uppercase tracking-wider">
+                تكامل البيانات والأنظمة المحاسبية والبنكية
+              </div>
+              <div className="space-y-1 mt-1">
+                {dataFormats.map((fmt) => {
+                  const Icon = fmt.icon;
+                  return (
+                    <button
+                      key={fmt.id}
+                      onClick={() => handleExport(fmt.id)}
+                      className="w-full text-right p-2.5 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-800/80 border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60 transition-all flex items-start gap-3 group"
+                    >
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${fmt.bgColor} group-hover:scale-105 transition-transform`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-black text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                            {fmt.title}
+                          </span>
+                          {fmt.badge && (
+                            <span className="text-[9px] px-2 py-0.5 rounded-full font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                              {fmt.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[10.5px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight line-clamp-1 font-normal">
+                          {fmt.desc}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer Note */}
+            <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 px-3 py-1.5 flex items-center justify-between text-[10px] text-zinc-400 font-medium">
+              <span>ترميز عربي موحد UTF-8</span>
+              <span>مطابق لمعايير ZATCA & SAMA & WPS</span>
             </div>
           </div>
-
-          {/* Footer Note */}
-          <div className="mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 px-3 py-1.5 flex items-center justify-between text-[10px] text-zinc-400 font-medium">
-            <span>ترميز عربي موحد UTF-8</span>
-            <span>مطابق لمعايير ZATCA & SAMA & WPS</span>
-          </div>
-        </div>
+        </>,
+        document.body
       )}
     </div>
   );

@@ -60,6 +60,16 @@ export const DataImportWizardPage: React.FC = () => {
     return () => { isMounted = false; };
   }, []);
 
+  useEffect(() => {
+    const handleGlobalClick = () => {
+      setOpenFormatMenu(null);
+    };
+    if (openFormatMenu) {
+      document.addEventListener('click', handleGlobalClick);
+      return () => document.removeEventListener('click', handleGlobalClick);
+    }
+  }, [openFormatMenu]);
+
   // History state
   const [history] = useState<ImportHistoryEntry[]>(() => getImportHistory());
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -298,7 +308,9 @@ export const DataImportWizardPage: React.FC = () => {
               <div
                 key={tmpl.entityKey}
                 onClick={() => handleSelectTemplate(tmpl)}
-                className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 cursor-pointer hover:border-black transition-all flex flex-col justify-between"
+                className={`card-pricing p-4 bg-white rounded-2xl border border-zinc-200 cursor-pointer hover:border-black transition-all flex flex-col justify-between relative ${
+                  openFormatMenu === tmpl.entityKey ? 'z-30 border-black shadow-lg' : 'z-10'
+                }`}
               >
                 <div>
                   <div className="flex items-center gap-2 mb-2">
