@@ -6,7 +6,10 @@ import { useJournals, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { chartOfAccountsService } from '../services/accounting/chartOfAccountsService';
 import { useAppStore } from '../stores/appStore';
-import { BookOpen, Plus, FileSpreadsheet, FileText, Search, Upload, Eye, X, Check, AlertTriangle, Trash2, Printer, ShieldCheck } from 'lucide-react';
+import { 
+  BookOpen, Plus, FileSpreadsheet, FileText, Search, Upload, Eye, 
+  X, Check, AlertTriangle, Trash2, Printer, ShieldCheck, RefreshCw 
+} from 'lucide-react';
 
 export interface JournalLineItem {
   id: string;
@@ -78,9 +81,9 @@ const DEFAULT_MOCK_JOURNALS: JournalRecord[] = [
 
 export const JournalsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
-  const { setActiveTab } = useAppStore();
+  const { setActiveTab, addNotification } = useAppStore();
   const { data: rawJournals = [], isLoading } = useJournals();
-  const { createItem } = useTableMutation('company_journal_entries');
+  const { createItem, deleteItem } = useTableMutation('company_journal_entries');
 
   const journals: JournalRecord[] = rawJournals.length > 0 ? rawJournals : DEFAULT_MOCK_JOURNALS;
   const accountsList = chartOfAccountsService.getAccountsByCompany(activeCompanyId);
@@ -175,6 +178,54 @@ export const JournalsPage: React.FC = () => {
     await createItem.mutateAsync(newRecord);
     setShowAddModal(false);
     setDescription('');
+    addNotification({
+      title: 'ترحيل قيد محاسبي',
+      message: `تم ترحيل واعتماد القيد المحاسبي #${entryNumber} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleReverseJournal = async (j: JournalRecord) => {
+    if (!window.confirm(`هل أنت متأكد من إنشاء قيد عكسي للقيد #${j.entry_number}؟`)) return;
+
+    const reverseNumber = `${j.entry_number}-REV`;
+    const newReverseEntry: any = {
+      company_id: j.company_id,
+      entry_number: reverseNumber,
+      entry_date: new Date().toISOString().slice(0, 10),
+      entry_type: 'REVERSAL',
+      source_module: 'GENERAL_LEDGER',
+      source_reference: j.entry_number,
+      description: `عكس قيد محاسبي رقم (${j.entry_number}): ${j.description}`,
+      total_debit: j.total_credit,
+      total_credit: j.total_debit,
+      branch_name: j.branch_name,
+      cost_center_code: j.cost_center_code,
+      status: 'POSTED',
+      created_by: 'النظام المحاسبي الآلي',
+      created_at: new Date().toISOString(),
+    };
+
+    await createItem.mutateAsync(newReverseEntry);
+    if (selectedJournal?.id === j.id) {
+      setSelectedJournal(null);
+    }
+    addNotification({
+      title: 'عكس القيد المحاسبي',
+      message: `تم توليد وترحيل القيد العكسي #${reverseNumber} وموازنة الحسابات بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleDeleteJournal = async (j: JournalRecord) => {
+    if (window.confirm(`هل تريد بالتأكيد حذف القيد #${j.entry_number}؟`)) {
+      await deleteItem.mutateAsync(j.id);
+      addNotification({
+        title: 'حذف القيد',
+        message: `تم حذف القيد #${j.entry_number} بنجاح.`,
+        type: 'error',
+      });
+    }
   };
 
   const filteredJournals = journals.filter((j) => {
@@ -364,15 +415,35 @@ export const JournalsPage: React.FC = () => {
                       />
                     </td>
                     <td className="p-3.5 text-center">
-                      <button
-                        onClick={() => setSelectedJournal(j)}
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                        title="عرض تفاصيل أطراف القيد"
-                      >
-                        <Eye className="w-3 h-3 ml-1" />
-                        <span>معاينة</span>
-                      </button>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => setSelectedJournal(j)}
+                          className="button-outline-on-light"
+                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          title="عرض تفاصيل أطراف القيد"
+                        >
+                          <Eye className="w-3 h-3 ml-1" />
+                          <span>معاينة</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleReverseJournal(j)}
+                          className="button-outline-on-light text-amber-700 hover:bg-amber-50"
+                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          title="عكس القيد وتوليد قيد مضاد متوازن"
+                        >
+                          <RefreshCw className="w-3 h-3 ml-1 text-amber-600" />
+                          <span>عكس القيد</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteJournal(j)}
+                          className="p-1 text-zinc-400 hover:text-rose-600 rounded transition"
+                          title="حذف القيد"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -682,7 +753,17 @@ export const JournalsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2 print:hidden">
+            <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between gap-2 print:hidden">
+              <button
+                onClick={() => handleReverseJournal(selectedJournal)}
+                className="button-outline-on-light text-amber-700 hover:bg-amber-50 flex items-center gap-1 font-bold"
+                style={{ padding: '6px 14px', fontSize: '11.5px' }}
+                title="إنشاء قيد محاسبي عكسي لهذا القيد"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-amber-600" />
+                <span>عكس هذا القيد المحاسبي</span>
+              </button>
+
               <button
                 onClick={() => setSelectedJournal(null)}
                 className="button-outline-on-light"

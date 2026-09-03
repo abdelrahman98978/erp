@@ -8,8 +8,9 @@ import { useAppStore } from '../stores/appStore';
 import { 
   ShoppingBag, Plus, FileSpreadsheet, FileText, Search, Clock, 
   CheckCheck, Eye, X, ArrowLeft, Trash2, Edit, AlertTriangle, 
-  Sparkles, Filter, Check
+  Sparkles, Filter, Check, MessageCircle
 } from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface OrderRecord {
   id: string;
@@ -29,6 +30,7 @@ export interface OrderRecord {
   branch: string;
   office_name?: string;
   notes?: string;
+  total_amount?: number;
   created_at: string;
 }
 
@@ -188,6 +190,7 @@ export const OrdersPage: React.FC = () => {
   };
 
   const handleConvertToContract = async (order: OrderRecord) => {
+    // 1. Update order status
     await updateItem.mutateAsync({
       id: order.id,
       data: {
@@ -195,9 +198,42 @@ export const OrdersPage: React.FC = () => {
         contract_status: 'تم التعاقد',
       },
     });
+
+    // 2. Persist new contract into 'contracts' table via realErpDataStore
+    const companyCode = activeCompanyId !== 'all' ? activeCompanyId : 'SAF';
+    const contractNumber = `${companyCode}-RC-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
+    const musanedNumber = `MSN-${Date.now().toString().slice(-6)}`;
+    const amt = order.total_amount || 14500;
+    const tax = amt * 0.15;
+
+    const newContract = {
+      id: contractNumber,
+      company_id: companyCode,
+      contract_number: contractNumber,
+      musaned_number: musanedNumber,
+      client_name: order.client_name,
+      client_phone: order.client_phone,
+      client_national_id: '10' + Date.now().toString().slice(-8),
+      client_type: 'شخص' as const,
+      delivery_city: 'الرياض',
+      maid_name: order.maid_name || 'عاملة مختارة',
+      nationality: order.nationality || 'الفلبين',
+      external_office: order.office_name || "PLATINUM BROTHERS INT'L",
+      amount: amt,
+      tax_amount: tax,
+      total_amount: amt + tax,
+      stage: 'عقود جديدة' as const,
+      warranty_status: 'ساري (90 يوماً)',
+      payment_status: 'تم التحصيل',
+      branch: order.branch || 'فرع الرياض الرئيسي',
+      created_at: new Date().toISOString(),
+    };
+
+    await realErpDataStore.addRecord('contracts', newContract);
+
     addNotification({
       title: 'تحويل الطلب إلى عقد مساند',
-      message: `تم تحويل الطلب #${order.id} بنجاح إلى مرحلة العقد الموثق.`,
+      message: `تم تحويل الطلب #${order.id} بنجاح إلى عقد استقدام موثق برقم #${contractNumber} وإضافته لسجل العقود.`,
       type: 'success',
     });
   };
@@ -460,6 +496,16 @@ export const OrdersPage: React.FC = () => {
                             <span>موثق</span>
                           </span>
                         )}
+
+                        <a
+                          href={`https://wa.me/${ord.client_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`السلام عليكم ورحمة الله، عميلنا العزيز ${ord.client_name} بخصوص طلب الاستقدام الخاص بكم #${ord.id}`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 rounded-full hover:bg-emerald-50 text-emerald-600 transition-colors"
+                          title="مراسلة العميل عبر واتساب"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                        </a>
 
                         <button
                           onClick={() => setEditingOrder({ ...ord })}

@@ -5,7 +5,12 @@ import { useRentContracts, useTableMutation } from '../hooks/queries/useErpQueri
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
 import { useAppStore } from '../stores/appStore';
-import { Plus, FileSpreadsheet, Search, Handshake, X } from 'lucide-react';
+import { 
+  Plus, FileSpreadsheet, Search, Handshake, X, Car, Users, CheckCircle2, 
+  Trash2, Edit, Layers, Calendar, DollarSign, Eye, EyeOff, RefreshCw, 
+  UserCheck, Sparkles 
+} from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface RentContractRecord {
   id: string;
@@ -44,6 +49,30 @@ interface RentPackage {
   is_visible: boolean;
 }
 
+export interface RentalDriver {
+  id: string;
+  name: string;
+  nat: string;
+  lic: string;
+  lic_status: string;
+  car: string;
+  client: string;
+  salary: number;
+  status: string;
+}
+
+export interface RentalMaid {
+  id: string;
+  name: string;
+  nat: string;
+  pass: string;
+  skill: string;
+  client: string;
+  end: string;
+  price: number;
+  status: string;
+}
+
 const MOCK_PACKAGES: RentPackage[] = [
   {
     id: 'PKG-01',
@@ -71,6 +100,33 @@ const MOCK_PACKAGES: RentPackage[] = [
     days_count: 90,
     is_visible: true,
   },
+  {
+    id: 'PKG-03',
+    title: 'باقة ستة أشهر - عمالة منزلية فلبينية متميزة',
+    nationality: 'الفلبين',
+    order: 3,
+    rent_type: '6 أشهر',
+    duration: '6 أشهر',
+    price_before_tax: 18000,
+    tax: 2700,
+    total_price: 20700,
+    days_count: 180,
+    is_visible: true,
+  },
+];
+
+const MOCK_DRIVERS: RentalDriver[] = [
+  { id: 'DRV-01', name: 'RAJESH KUMAR', nat: 'الهند', lic: 'DL-992810', lic_status: 'سارية', car: 'تويوتا كامري 2024 (لوحة 4410)', client: 'عبدالرحمن السليم', salary: 2200, status: 'مؤجر ونشط' },
+  { id: 'DRV-02', name: 'MOHAMMED ISLAM', nat: 'بنغلاديش', lic: 'DL-882711', lic_status: 'سارية', car: 'هيونداي H1 (لوحة 7721)', client: 'حساب مجموعة السليم', salary: 2000, status: 'مؤجر ونشط' },
+  { id: 'DRV-03', name: 'ALI HASSAN', nat: 'باكستان', lic: 'DL-119283', lic_status: 'سارية', car: 'نيسان صني (لوحة 3312)', client: 'غير معين (متاح للتأجير)', salary: 2000, status: 'متاح للتعاقد' },
+  { id: 'DRV-04', name: 'SURESH PATEL', nat: 'الهند', lic: 'DL-773829', lic_status: 'سارية', car: 'غير معين', client: 'غير معين (متاح للتأجير)', salary: 2200, status: 'متاح للتعاقد' },
+];
+
+const MOCK_MAIDS: RentalMaid[] = [
+  { id: 'DOM-01', name: 'SITI NURHALIZA', nat: 'إندونيسيا', pass: 'IQ-22910481', skill: 'عاملة منزلية + طبخ سعودي', client: 'سعود بن فهد التميمي', end: '2026-11-15', price: 3200, status: 'مؤجرة حالياً' },
+  { id: 'DOM-02', name: 'MARITESS SANTOS', nat: 'الفلبين', pass: 'IQ-23491029', skill: 'رعاية أطفال + إتقان الإنجليزية', client: 'د. منيرة القحطاني', end: '2026-10-30', price: 3500, status: 'مؤجرة حالياً' },
+  { id: 'DOM-03', name: 'TIGIST ALEMU', nat: 'إثيوبيا', pass: 'IQ-24810293', skill: 'نظافة وغسيل ورعاية منزلية', client: 'متاح للتعاقد الفوري', end: '-', price: 2800, status: 'متاح للتأجير' },
+  { id: 'DOM-04', name: 'FATIMA NABATANZI', nat: 'أوغندا', pass: 'IQ-25910284', skill: 'عاملة منزلية ورعاية كبار سن', client: 'متاح للتعاقد الفوري', end: '-', price: 2700, status: 'متاح للتأجير' },
 ];
 
 const DEFAULT_MOCK_RENT_CONTRACTS: RentContractRecord[] = [
@@ -168,6 +224,231 @@ export const RentContractsPage: React.FC = () => {
   const [durationMonths, setDurationMonths] = useState('1');
   const [monthlyCost, setMonthlyCost] = useState('3000');
   const [branch, setBranch] = useState('فرع الرياض الرئيسي');
+
+  // Sub-modules state with realErpDataStore persistence
+  const [rentalDrivers, setRentalDrivers] = useState<RentalDriver[]>([]);
+  const [rentalMaids, setRentalMaids] = useState<RentalMaid[]>([]);
+  const [rentPackages, setRentPackages] = useState<RentPackage[]>([]);
+
+  // Modals for sub-modules
+  const [showAddDriverModal, setShowAddDriverModal] = useState(false);
+  const [showAddMaidModal, setShowAddMaidModal] = useState(false);
+  const [showAddPackageModal, setShowAddPackageModal] = useState(false);
+
+  // Form states for sub-modules
+  const [driverForm, setDriverForm] = useState({
+    name: '',
+    nat: 'الهند',
+    lic: '',
+    lic_status: 'سارية',
+    car: 'غير معين (متاح للتأجير)',
+    salary: '2200',
+  });
+
+  const [maidForm, setMaidForm] = useState({
+    name: '',
+    nat: 'إندونيسيا',
+    pass: '',
+    skill: 'عاملة منزلية شاملة وطبخ',
+    price: '3200',
+  });
+
+  const [packageForm, setPackageForm] = useState({
+    title: '',
+    nationality: 'إندونيسيا',
+    rent_type: 'شهري',
+    duration: 'شهر واحد',
+    price_before_tax: '3000',
+    days_count: '30',
+  });
+
+  useEffect(() => {
+    realErpDataStore.getRecords<RentalDriver>('rental_drivers', MOCK_DRIVERS).then(setRentalDrivers);
+    realErpDataStore.getRecords<RentalMaid>('rental_maids', MOCK_MAIDS).then(setRentalMaids);
+    realErpDataStore.getRecords<RentPackage>('rent_packages', MOCK_PACKAGES).then(setRentPackages);
+  }, []);
+
+  // Sub-module handlers
+  const handleAddDriver = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!driverForm.name) return;
+
+    const newDriver: RentalDriver = {
+      id: `DRV-${String(rentalDrivers.length + 1).padStart(2, '0')}`,
+      name: driverForm.name,
+      nat: driverForm.nat,
+      lic: driverForm.lic || `DL-${Date.now().toString().slice(-6)}`,
+      lic_status: driverForm.lic_status,
+      car: driverForm.car,
+      client: 'غير معين (متاح للتأجير)',
+      salary: parseFloat(driverForm.salary) || 2200,
+      status: 'متاح للتعاقد',
+    };
+
+    const updated = await realErpDataStore.addRecord('rental_drivers', newDriver, MOCK_DRIVERS);
+    setRentalDrivers(updated);
+    setShowAddDriverModal(false);
+    setDriverForm({
+      name: '',
+      nat: 'الهند',
+      lic: '',
+      lic_status: 'سارية',
+      car: 'غير معين (متاح للتأجير)',
+      salary: '2200',
+    });
+
+    addNotification({
+      title: 'إضافة سائق جديد',
+      message: `تم تسجيل السائق (${newDriver.name}) في أسطول التأجير.`,
+      type: 'success',
+    });
+  };
+
+  const handleToggleDriverStatus = async (d: RentalDriver) => {
+    const nextStatus = d.status === 'مؤجر ونشط' ? 'متاح للتعاقد' : 'مؤجر ونشط';
+    const nextClient = nextStatus === 'مؤجر ونشط' ? 'قيد التعاقد' : 'غير معين (متاح للتأجير)';
+    const updated = await realErpDataStore.updateRecord('rental_drivers', d.id, { status: nextStatus, client: nextClient }, MOCK_DRIVERS);
+    setRentalDrivers(updated);
+    addNotification({
+      title: 'تحديث حالة السائق',
+      message: `تم تغيير حالة السائق (${d.name}) إلى (${nextStatus}).`,
+      type: 'info',
+    });
+  };
+
+  const handleDeleteDriver = async (d: RentalDriver) => {
+    if (window.confirm(`هل أنت متأكد من حذف السائق (${d.name})؟`)) {
+      const updated = await realErpDataStore.deleteRecord('rental_drivers', d.id, MOCK_DRIVERS);
+      setRentalDrivers(updated);
+      addNotification({
+        title: 'حذف سائق',
+        message: `تم حذف السائق (${d.name}) بنجاح.`,
+        type: 'error',
+      });
+    }
+  };
+
+  const handleAddMaid = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!maidForm.name) return;
+
+    const newMaid: RentalMaid = {
+      id: `DOM-${String(rentalMaids.length + 1).padStart(2, '0')}`,
+      name: maidForm.name,
+      nat: maidForm.nat,
+      pass: maidForm.pass || `IQ-${Date.now().toString().slice(-8)}`,
+      skill: maidForm.skill,
+      client: 'متاح للتعاقد الفوري',
+      end: '-',
+      price: parseFloat(maidForm.price) || 3000,
+      status: 'متاح للتأجير',
+    };
+
+    const updated = await realErpDataStore.addRecord('rental_maids', newMaid, MOCK_MAIDS);
+    setRentalMaids(updated);
+    setShowAddMaidModal(false);
+    setMaidForm({
+      name: '',
+      nat: 'إندونيسيا',
+      pass: '',
+      skill: 'عاملة منزلية شاملة وطبخ',
+      price: '3200',
+    });
+
+    addNotification({
+      title: 'إضافة عاملة تأجير',
+      message: `تم تسجيل العاملة (${newMaid.name}) في قائمة التأجير المتاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleFastCreateContractFromMaid = (m: RentalMaid) => {
+    setMaidName(m.name);
+    setNationality(m.nat);
+    setMonthlyCost(String(m.price));
+    setDurationMonths('1');
+    setShowAddModal(true);
+    addNotification({
+      title: 'إنشاء عقد تأجير',
+      message: `تم اختيار العاملة (${m.name}) وتعبئة بيانات العقد تلقائياً.`,
+      type: 'info',
+    });
+  };
+
+  const handleDeleteMaid = async (m: RentalMaid) => {
+    if (window.confirm(`هل أنت متأكد من حذف العاملة (${m.name})؟`)) {
+      const updated = await realErpDataStore.deleteRecord('rental_maids', m.id, MOCK_MAIDS);
+      setRentalMaids(updated);
+      addNotification({
+        title: 'حذف عاملة',
+        message: `تم حذف العاملة (${m.name}) بنجاح.`,
+        type: 'error',
+      });
+    }
+  };
+
+  const handleAddPackage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!packageForm.title) return;
+
+    const base = parseFloat(packageForm.price_before_tax) || 3000;
+    const pTax = base * 0.15;
+    const pTotal = base + pTax;
+
+    const newPkg: RentPackage = {
+      id: `PKG-${String(rentPackages.length + 1).padStart(2, '0')}`,
+      title: packageForm.title,
+      nationality: packageForm.nationality,
+      order: rentPackages.length + 1,
+      rent_type: packageForm.rent_type,
+      duration: packageForm.duration,
+      price_before_tax: base,
+      tax: pTax,
+      total_price: pTotal,
+      days_count: parseInt(packageForm.days_count) || 30,
+      is_visible: true,
+    };
+
+    const updated = await realErpDataStore.addRecord('rent_packages', newPkg, MOCK_PACKAGES);
+    setRentPackages(updated);
+    setShowAddPackageModal(false);
+    setPackageForm({
+      title: '',
+      nationality: 'إندونيسيا',
+      rent_type: 'شهري',
+      duration: 'شهر واحد',
+      price_before_tax: '3000',
+      days_count: '30',
+    });
+
+    addNotification({
+      title: 'إضافة باقة تأجير',
+      message: `تم إضافة باقة (${newPkg.title}) بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleTogglePackageVisibility = async (pkg: RentPackage) => {
+    const updated = await realErpDataStore.updateRecord('rent_packages', pkg.id, { is_visible: !pkg.is_visible }, MOCK_PACKAGES);
+    setRentPackages(updated);
+    addNotification({
+      title: 'تعديل ظهور الباقة',
+      message: `تم تحديث ظهور الباقة (${pkg.title}) للعملاء.`,
+      type: 'info',
+    });
+  };
+
+  const handleDeletePackage = async (pkg: RentPackage) => {
+    if (window.confirm(`هل أنت متأكد من حذف الباقة (${pkg.title})؟`)) {
+      const updated = await realErpDataStore.deleteRecord('rent_packages', pkg.id, MOCK_PACKAGES);
+      setRentPackages(updated);
+      addNotification({
+        title: 'حذف باقة',
+        message: `تم حذف الباقة بنجاح.`,
+        type: 'error',
+      });
+    }
+  };
 
   const months = parseInt(durationMonths) || 1;
   const monthly = parseFloat(monthlyCost) || 3000;
@@ -450,11 +731,28 @@ export const RentContractsPage: React.FC = () => {
       {/* 2. Rental Drivers View */}
       {activeTab === 'drivers' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-              سائقين خاصين بنظام التأجير والتشغيل المرن
-            </h2>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>4 سائقين متاحين ومعينين</span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                سائقين خاصين بنظام التأجير والتشغيل المرن
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                إدارة أسطول السائقين المؤهلين للشركات والعائلات ومتابعة رخص القيادة
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                {rentalDrivers.length} سائقين مسجلين
+              </span>
+              <button
+                onClick={() => setShowAddDriverModal(true)}
+                className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                style={{ minHeight: '34px', padding: '6px 16px' }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ تسجيل سائق جديد</span>
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -470,15 +768,11 @@ export const RentContractsPage: React.FC = () => {
                   <th className="p-3.5">العميل الحالي</th>
                   <th className="p-3.5">الراتب الشهري</th>
                   <th className="p-3.5">حالة التشغيل</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { id: 'DRV-01', name: 'RAJESH KUMAR', nat: 'الهند', lic: 'DL-992810', lic_status: 'سارية', car: 'تويوتا كامري 2024 (لوحة 4410)', client: 'عبدالرحمن السليم', salary: 2200, status: 'مؤجر ونشط' },
-                  { id: 'DRV-02', name: 'MOHAMMED ISLAM', nat: 'بنغلاديش', lic: 'DL-882711', lic_status: 'سارية', car: 'هيونداي H1 (لوحة 7721)', client: 'حساب مجموعة السليم', salary: 2000, status: 'مؤجر ونشط' },
-                  { id: 'DRV-03', name: 'ALI HASSAN', nat: 'باكستان', lic: 'DL-119283', lic_status: 'سارية', car: 'نيسان صني (لوحة 3312)', client: 'غير معين (متاح للتأجير)', salary: 2000, status: 'متاح للتعاقد' },
-                  { id: 'DRV-04', name: 'SURESH PATEL', nat: 'الهند', lic: 'DL-773829', lic_status: 'سارية', car: 'غير معين', client: 'غير معين (متاح للتأجير)', salary: 2200, status: 'متاح للتعاقد' },
-                ].map((d) => (
+                {rentalDrivers.map((d) => (
                   <tr key={d.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{d.id}</td>
                     <td className="p-3.5 font-bold text-black">{d.name}</td>
@@ -488,7 +782,32 @@ export const RentContractsPage: React.FC = () => {
                     <td className="p-3.5 font-semibold text-black">{d.car}</td>
                     <td className="p-3.5 text-zinc-600">{d.client}</td>
                     <td className="p-3.5 font-mono font-bold text-emerald-700">{d.salary} ر.س</td>
-                    <td className="p-3.5"><Badge text={d.status} type={d.status.includes('نشط') ? 'purple' : 'success'} /></td>
+                    <td className="p-3.5">
+                      <Badge 
+                        text={d.status} 
+                        type={d.status.includes('نشط') ? 'purple' : 'success'} 
+                      />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => handleToggleDriverStatus(d)}
+                          className="button-outline-on-light text-[11px] font-bold text-zinc-700 hover:bg-zinc-100"
+                          style={{ minHeight: '26px', padding: '2px 8px' }}
+                          title="تغيير حالة توفر السائق"
+                        >
+                          <RefreshCw className="w-3 h-3 ml-1 inline text-zinc-500" />
+                          <span>تبديل الحالة</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteDriver(d)}
+                          className="p-1 text-zinc-400 hover:text-rose-600 rounded transition"
+                          title="حذف السائق"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -500,11 +819,28 @@ export const RentContractsPage: React.FC = () => {
       {/* 3. Rental Domestic Maids View */}
       {activeTab === 'domestic' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-              عاملات منزليات بنظام التأجير الشهري والسنوي
-            </h2>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>6 عاملات مسجلات</span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                عاملات منزليات بنظام التأجير الشهري والسنوي
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                إدارة العاملات المتوفرات للتأجير الفوري مع إمكانية تحويلهن لعقد تأجير مباشر
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                {rentalMaids.length} عاملات مسجلات
+              </span>
+              <button
+                onClick={() => setShowAddMaidModal(true)}
+                className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                style={{ minHeight: '34px', padding: '6px 16px' }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ إضافة عاملة تأجير جديدة</span>
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -520,15 +856,11 @@ export const RentContractsPage: React.FC = () => {
                   <th className="p-3.5">تاريخ نهاية عقد التأجير</th>
                   <th className="p-3.5">سعر الإيجار الشهري</th>
                   <th className="p-3.5">حالة التوفر</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { id: 'DOM-01', name: 'SITI NURHALIZA', nat: 'إندونيسيا', pass: 'IQ-22910481', skill: 'عاملة منزلية + طبخ سعودي', client: 'سعود بن فهد التميمي', end: '2026-11-15', price: 3200, status: 'مؤجرة حالياً' },
-                  { id: 'DOM-02', name: 'MARITESS SANTOS', nat: 'الفلبين', pass: 'IQ-23491029', skill: 'رعاية أطفال + إتقان الإنجليزية', client: 'د. منيرة القحطاني', end: '2026-10-30', price: 3500, status: 'مؤجرة حالياً' },
-                  { id: 'DOM-03', name: 'TIGIST ALEMU', nat: 'إثيوبيا', pass: 'IQ-24810293', skill: 'نظافة وغسيل ورعاية منزلية', client: 'متاح للتعاقد الفوري', end: '-', price: 2800, status: 'متاح للتأجير' },
-                  { id: 'DOM-04', name: 'FATIMA NABATANZI', nat: 'أوغندا', pass: 'IQ-25910284', skill: 'عاملة منزلية ورعاية كبار سن', client: 'متاح للتعاقد الفوري', end: '-', price: 2700, status: 'متاح للتأجير' },
-                ].map((m) => (
+                {rentalMaids.map((m) => (
                   <tr key={m.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{m.id}</td>
                     <td className="p-3.5 font-bold text-black">{m.name}</td>
@@ -538,11 +870,140 @@ export const RentContractsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{m.client}</td>
                     <td className="p-3.5 font-mono text-zinc-500">{m.end}</td>
                     <td className="p-3.5 font-mono font-bold text-emerald-700">{m.price} ر.س</td>
-                    <td className="p-3.5"><Badge text={m.status} type={m.status.includes('مؤجرة') ? 'primary' : 'success'} /></td>
+                    <td className="p-3.5">
+                      <Badge 
+                        text={m.status} 
+                        type={m.status.includes('مؤجرة') ? 'primary' : 'success'} 
+                      />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => handleFastCreateContractFromMaid(m)}
+                          className="button-primary-pill text-[11px] font-bold flex items-center gap-1 shadow-sm"
+                          style={{ minHeight: '26px', padding: '2px 8px', backgroundColor: '#000000' }}
+                          title="إنشاء عقد تأجير مباشر لهذه العاملة"
+                        >
+                          <Sparkles className="w-3 h-3 text-emerald-400" />
+                          <span>إنشاء عقد فوري</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteMaid(m)}
+                          className="p-1 text-zinc-400 hover:text-rose-600 rounded transition"
+                          title="حذف العاملة"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Rental Packages View */}
+      {activeTab === 'packages' && (
+        <div className="space-y-6">
+          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
+            <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  باقات تأجير العمالة المنزلية والتشغيل المرن
+                </h2>
+                <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                  تحديد أسعار الباقات الشهرية والموسمية، ونسب الضريبة، وتخصيص الباقات بحسب الجنسية
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  {rentPackages.length} باقات معتمدة
+                </span>
+                <button
+                  onClick={() => setShowAddPackageModal(true)}
+                  className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                  style={{ minHeight: '34px', padding: '6px 16px' }}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ إضافة باقة تأجير جديدة</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {rentPackages.map((pkg) => (
+                  <div 
+                    key={pkg.id} 
+                    className="p-5 rounded-3xl border border-zinc-200 hover:border-black/30 transition shadow-sm bg-gradient-to-b from-white to-zinc-50 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="pill-tag-mint text-[11px] font-bold">
+                          {pkg.nationality}
+                        </span>
+                        <Badge 
+                          text={pkg.is_visible ? 'ظاهرة للعملاء' : 'مخفية'} 
+                          type={pkg.is_visible ? 'success' : 'warning'} 
+                        />
+                      </div>
+                      <h3 className="font-bold text-black text-sm mb-2">{pkg.title}</h3>
+                      <div className="flex items-center gap-2 text-xs text-zinc-500 mb-4">
+                        <Calendar className="w-3.5 h-3.5 text-zinc-400" />
+                        <span>نوع الباقة: {pkg.rent_type} ({pkg.duration} - {pkg.days_count} يوم)</span>
+                      </div>
+
+                      <div className="p-3 bg-zinc-100 rounded-2xl mb-4 space-y-1.5 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">السعر قبل الضريبة:</span>
+                          <strong className="font-mono text-black">{pkg.price_before_tax.toLocaleString()} ر.س</strong>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-zinc-500">ضريبة القيمة المضافة (15%):</span>
+                          <span className="font-mono text-zinc-600">{pkg.tax.toLocaleString()} ر.س</span>
+                        </div>
+                        <div className="flex justify-between pt-1 border-t border-zinc-200">
+                          <span className="font-bold text-black">الإجمالي شامل الضريبة:</span>
+                          <strong className="font-mono font-bold text-emerald-700 text-sm">{pkg.total_price.toLocaleString()} ر.س</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-zinc-200">
+                      <button
+                        onClick={() => handleTogglePackageVisibility(pkg)}
+                        className="button-outline-on-light text-[11px] font-medium flex items-center gap-1 flex-1 justify-center"
+                        style={{ minHeight: '28px' }}
+                      >
+                        {pkg.is_visible ? <EyeOff className="w-3 h-3 text-zinc-500" /> : <Eye className="w-3 h-3 text-emerald-600" />}
+                        <span>{pkg.is_visible ? 'إخفاء' : 'إظهار'}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setNationality(pkg.nationality);
+                          setMonthlyCost(String(pkg.price_before_tax));
+                          setShowAddModal(true);
+                        }}
+                        className="button-primary-pill text-[11px] font-bold flex items-center gap-1 flex-1 justify-center"
+                        style={{ minHeight: '28px', backgroundColor: '#000000' }}
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>حجز باقة</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeletePackage(pkg)}
+                        className="p-1.5 text-zinc-400 hover:text-rose-600 rounded-full transition"
+                        title="حذف الباقة"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -973,6 +1434,333 @@ export const RentContractsPage: React.FC = () => {
                 </div>
               </div>
             </DualBrandingDocumentGenerator>
+          </div>
+        </div>
+      )}
+      {/* Modals for Sub-modules */}
+
+      {/* 1. Add Driver Modal */}
+      {showAddDriverModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <Car className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">تسجيل سائق جديد في أسطول التأجير</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddDriverModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddDriver} className="space-y-4 pt-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم السائق الكامل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="RAJESH KUMAR"
+                    value={driverForm.name}
+                    onChange={(e) => setDriverForm({ ...driverForm, name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">الجنسية</label>
+                  <select
+                    value={driverForm.nat}
+                    onChange={(e) => setDriverForm({ ...driverForm, nat: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="الهند">الهند</option>
+                    <option value="باكستان">باكستان</option>
+                    <option value="بنغلاديش">بنغلاديش</option>
+                    <option value="مصر">مصر</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="السودان">السودان</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم رخصة القيادة</label>
+                  <input
+                    type="text"
+                    placeholder="DL-992810"
+                    value={driverForm.lic}
+                    onChange={(e) => setDriverForm({ ...driverForm, lic: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">حالة الرخصة</label>
+                  <select
+                    value={driverForm.lic_status}
+                    onChange={(e) => setDriverForm({ ...driverForm, lic_status: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="سارية">سارية</option>
+                    <option value="بانتظار التجديد">بانتظار التجديد</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">المركبة المسندة</label>
+                  <input
+                    type="text"
+                    placeholder="تويوتا كامري 2024"
+                    value={driverForm.car}
+                    onChange={(e) => setDriverForm({ ...driverForm, car: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">الراتب الشهري (ر.س)</label>
+                  <input
+                    type="number"
+                    value={driverForm.salary}
+                    onChange={(e) => setDriverForm({ ...driverForm, salary: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddDriverModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold shadow-md"
+                >
+                  حفظ وتسجيل السائق
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Add Maid Modal */}
+      {showAddMaidModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">إضافة عاملة جديدة في قائمة التأجير</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddMaidModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddMaid} className="space-y-4 pt-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العاملة *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="SITI NURHALIZA"
+                    value={maidForm.name}
+                    onChange={(e) => setMaidForm({ ...maidForm, name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">الجنسية</label>
+                  <select
+                    value={maidForm.nat}
+                    onChange={(e) => setMaidForm({ ...maidForm, nat: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="إندونيسيا">إندونيسيا</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم الإقامة أو الجواز</label>
+                  <input
+                    type="text"
+                    placeholder="IQ-22910481"
+                    value={maidForm.pass}
+                    onChange={(e) => setMaidForm({ ...maidForm, pass: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">سعر التأجير الشهري (ر.س)</label>
+                  <input
+                    type="number"
+                    value={maidForm.price}
+                    onChange={(e) => setMaidForm({ ...maidForm, price: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 font-bold mb-1">المهنة والمهارات</label>
+                <input
+                  type="text"
+                  placeholder="عاملة منزلية شاملة + طبخ سعودي + غسيل"
+                  value={maidForm.skill}
+                  onChange={(e) => setMaidForm({ ...maidForm, skill: e.target.value })}
+                  className="text-input w-full"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddMaidModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold shadow-md"
+                >
+                  حفظ وإضافة العاملة
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Add Package Modal */}
+      {showAddPackageModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <Layers className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">إضافة باقة تأجير جديدة</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddPackageModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddPackage} className="space-y-4 pt-4 text-xs">
+              <div>
+                <label className="block text-zinc-600 font-bold mb-1">عنوان الباقة *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="باقة الستة أشهر - عمالة كينية ممتازة"
+                  value={packageForm.title}
+                  onChange={(e) => setPackageForm({ ...packageForm, title: e.target.value })}
+                  className="text-input w-full"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">الجنسية المخصصة</label>
+                  <select
+                    value={packageForm.nationality}
+                    onChange={(e) => setPackageForm({ ...packageForm, nationality: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="إندونيسيا">إندونيسيا</option>
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="أوغندا">أوغندا</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">نوع التأجير</label>
+                  <select
+                    value={packageForm.rent_type}
+                    onChange={(e) => setPackageForm({ ...packageForm, rent_type: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="شهري">شهري</option>
+                    <option value="3 أشهر">3 أشهر</option>
+                    <option value="6 أشهر">6 أشهر</option>
+                    <option value="سنوي">سنوي</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">السعر الأساسي قبل الضريبة (ر.س)</label>
+                  <input
+                    type="number"
+                    required
+                    value={packageForm.price_before_tax}
+                    onChange={(e) => setPackageForm({ ...packageForm, price_before_tax: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">عدد الأيام</label>
+                  <input
+                    type="number"
+                    value={packageForm.days_count}
+                    onChange={(e) => setPackageForm({ ...packageForm, days_count: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-[11px] space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-zinc-500">ضريبة القيمة المضافة المحسوبة (15%):</span>
+                  <span className="font-mono font-bold text-black">{((parseFloat(packageForm.price_before_tax) || 0) * 0.15).toLocaleString()} ر.س</span>
+                </div>
+                <div className="flex justify-between font-bold text-emerald-800">
+                  <span>الإجمالي شامل الضريبة:</span>
+                  <span className="font-mono">{((parseFloat(packageForm.price_before_tax) || 0) * 1.15).toLocaleString()} ر.س</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddPackageModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold shadow-md"
+                >
+                  إضافة الباقة
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

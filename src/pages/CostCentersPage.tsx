@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { exportData } from '../services/exportService';
 import { useCostCenters, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
-import { PieChart, Plus, FileSpreadsheet, FileText, Search, X, Trash2 } from 'lucide-react';
+import { useAppStore } from '../stores/appStore';
+import { 
+  PieChart, Plus, FileSpreadsheet, FileText, Search, X, Trash2, 
+  DollarSign, ArrowDownRight, CheckCircle2 
+} from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface CostCenterRecord {
   id: string;
@@ -51,16 +56,68 @@ const DEFAULT_MOCK_COST_CENTERS: CostCenterRecord[] = [
 export const CostCentersPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawCostCenters = [], isLoading } = useCostCenters();
-  const { createItem, deleteItem } = useTableMutation('cost_centers');
+  const { createItem, updateItem, deleteItem } = useTableMutation('cost_centers');
+  const { addNotification } = useAppStore();
 
   const costCenters: CostCenterRecord[] = rawCostCenters.length > 0 ? rawCostCenters : DEFAULT_MOCK_COST_CENTERS;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
+  // Record Expense State
+  const [selectedCostCenterForExpense, setSelectedCostCenterForExpense] = useState<CostCenterRecord | null>(null);
+  const [expenseAmount, setExpenseAmount] = useState('');
+  const [expenseDescription, setExpenseDescription] = useState('');
+  const [expenseBeneficiary, setExpenseBeneficiary] = useState('');
+  const [expensePaymentMethod, setExpensePaymentMethod] = useState('تحويل بنكي');
+
   const [name, setName] = useState('');
   const [managerName, setManagerName] = useState('');
   const [budget, setBudget] = useState('50000');
+
+  const handleRecordExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCostCenterForExpense || !expenseAmount) return;
+
+    const amt = parseFloat(expenseAmount) || 0;
+    const newSpent = (selectedCostCenterForExpense.actual_spent || 0) + amt;
+
+    // 1. Update cost center actual_spent
+    await updateItem.mutateAsync({
+      id: selectedCostCenterForExpense.id,
+      data: {
+        actual_spent: newSpent,
+      },
+    });
+
+    // 2. Automatically register a disbursement voucher in 'vouchers'
+    const voucher = {
+      id: `VOUCH-CC-${Date.now().toString().slice(-5)}`,
+      voucher_number: `PAY-CC-${Date.now().toString().slice(-4)}`,
+      voucher_type: 'سند صرف',
+      date: new Date().toISOString().slice(0, 10),
+      beneficiary: expenseBeneficiary || selectedCostCenterForExpense.name,
+      amount: amt,
+      payment_method: expensePaymentMethod,
+      description: `مصروف مسجل على ${selectedCostCenterForExpense.name} [${selectedCostCenterForExpense.code}]: ${expenseDescription}`,
+      status: 'معتمد ومصروف',
+      created_by: 'إدارة مراكز التكلفة',
+      company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
+      created_at: new Date().toISOString(),
+    };
+    await realErpDataStore.addRecord('vouchers', voucher);
+
+    addNotification({
+      title: 'تسجيل مصروف على مركز التكلفة',
+      message: `تم قيد مصروف بقيمة ${amt.toLocaleString()} ر.س على (${selectedCostCenterForExpense.name}) وتوليد سند صرف رسمي في المحاسبة.`,
+      type: 'success',
+    });
+
+    setSelectedCostCenterForExpense(null);
+    setExpenseAmount('');
+    setExpenseDescription('');
+    setExpenseBeneficiary('');
+  };
 
   const handleAddCostCenter = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,17 +314,28 @@ export const CostCentersPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-3.5 text-center">
-                        <button
-                          onClick={() => {
-                            if (window.confirm(`هل أنت متأكد من حذف مركز التكلفة (${c.name})؟`)) {
-                              deleteItem.mutate(c.id);
-                            }
-                          }}
-                          className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
-                          title="حذف المركز"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => setSelectedCostCenterForExpense(c)}
+                            className="button-outline-on-light text-rose-700 hover:bg-rose-50 flex items-center gap-1 font-bold"
+                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            title="تسجيل مصروف وقيد سند صرف"
+                          >
+                            <DollarSign className="w-3 h-3 text-rose-600" />
+                            <span>تسجيل مصروف</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`هل أنت متأكد من حذف مركز التكلفة (${c.name})؟`)) {
+                                deleteItem.mutate(c.id);
+                              }
+                            }}
+                            className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
+                            title="حذف المركز"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -343,6 +411,108 @@ export const CostCentersPage: React.FC = () => {
                   style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
                 >
                   حفظ واعتماد المركز
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Record Expense Modal */}
+      {selectedCostCenterForExpense && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans animate-in fade-in zoom-in-95">
+            <div className="p-5 bg-black text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-rose-400" />
+                <h3 className="font-bold text-base text-white m-0">
+                  قيد وتسجيل مصروف على مركز التكلفة
+                </h3>
+              </div>
+              <button 
+                onClick={() => setSelectedCostCenterForExpense(null)} 
+                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 bg-zinc-50 border-b border-zinc-200 text-xs">
+              <div className="text-zinc-500 font-medium">مركز التكلفة المحدد:</div>
+              <div className="font-bold text-black text-sm mt-0.5">{selectedCostCenterForExpense.name} ({selectedCostCenterForExpense.code})</div>
+              <div className="flex justify-between mt-2 pt-2 border-t border-zinc-200 font-mono text-[11px]">
+                <span>الميزانية: {selectedCostCenterForExpense.budget.toLocaleString()} ر.س</span>
+                <span className="text-rose-700">المنصرف: {selectedCostCenterForExpense.actual_spent.toLocaleString()} ر.س</span>
+                <span className="text-emerald-700 font-bold">المتبقي: {(selectedCostCenterForExpense.budget - selectedCostCenterForExpense.actual_spent).toLocaleString()} ر.س</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleRecordExpense} className="p-6 space-y-4 bg-white text-black text-xs">
+              <div>
+                <label className="block font-bold text-zinc-700 mb-1">مبلغ المصروف (ر.س) *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  required
+                  placeholder="2500"
+                  value={expenseAmount}
+                  onChange={(e) => setExpenseAmount(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-zinc-700 mb-1">بيان وشرح المصروف *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="سداد فواتير، رسوم حكومية، مستلزمات إيواء..."
+                  value={expenseDescription}
+                  onChange={(e) => setExpenseDescription(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-zinc-700 mb-1">المستفيد / الجهة</label>
+                  <input
+                    type="text"
+                    placeholder="اسم المورد أو المستفيد..."
+                    value={expenseBeneficiary}
+                    onChange={(e) => setExpenseBeneficiary(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-zinc-700 mb-1">طريقة الصرف</label>
+                  <select
+                    value={expensePaymentMethod}
+                    onChange={(e) => setExpensePaymentMethod(e.target.value)}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="تحويل بنكي">تحويل بنكي</option>
+                    <option value="نقداً من الخزينة">نقداً من الخزينة</option>
+                    <option value="شيك بنكي">شيك بنكي</option>
+                    <option value="بطاقة مدى">بطاقة مدى</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCostCenterForExpense(null)}
+                  className="button-outline-on-light"
+                  style={{ minHeight: '36px', padding: '6px 16px', fontSize: '13px' }}
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill bg-rose-600 hover:bg-rose-700 text-white font-bold"
+                  style={{ minHeight: '36px', padding: '6px 20px', fontSize: '13px' }}
+                >
+                  قيد المصروف وتوليد سند صرف
                 </button>
               </div>
             </form>

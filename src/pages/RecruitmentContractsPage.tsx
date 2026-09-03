@@ -6,7 +6,13 @@ import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
 import { MusanedMasterIntegrationHub } from '../components/musaned/MusanedMasterIntegrationHub';
 import { useAppStore } from '../stores/appStore';
-import { FileSignature, Plus, FileSpreadsheet, FileText, Search, ArrowLeft, Printer, X, LayoutGrid, List } from 'lucide-react';
+import { 
+  FileSignature, Plus, FileSpreadsheet, FileText, Search, ArrowLeft, 
+  Printer, X, LayoutGrid, List, Send, ShieldCheck, ShieldAlert, DollarSign, Plane, 
+  RefreshCw, AlertCircle, Trash2, CheckCircle2, Check, Clock, Edit, 
+  CheckCheck, Shield, ChevronRight, Filter
+} from 'lucide-react';
+import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface RecruitmentContractItem {
   id: string;
@@ -65,6 +71,20 @@ interface ReturnRequest {
   notes: string;
   status: string;
   request_date: string;
+}
+
+interface InsurancePolicy {
+  id: string;
+  contract_number: string;
+  client_name: string;
+  maid_name: string;
+  company: string;
+  policy_no: string;
+  coverage: string;
+  status: string;
+  start_date: string;
+  end_date: string;
+  premium_sar: number;
 }
 
 const STAGES_LIST: RecruitmentContractItem['stage'][] = [
@@ -131,6 +151,48 @@ const MOCK_RETURNS: ReturnRequest[] = [
   },
 ];
 
+const MOCK_INSURANCE: InsurancePolicy[] = [
+  {
+    id: 'INS-01',
+    contract_number: 'SAF-RC-2026-0001',
+    client_name: 'بندر صالح الهويريني',
+    maid_name: 'MARIA SANTOS',
+    company: 'شركة تكافل الراجحي للتأمين',
+    policy_no: 'TR-REC-9982104',
+    coverage: '24 شهراً (شامل الهروب ورفض العمل والوفاة)',
+    status: 'سارية المفعول',
+    start_date: '2026-01-15',
+    end_date: '2028-01-14',
+    premium_sar: 450,
+  },
+  {
+    id: 'INS-02',
+    contract_number: 'SAF-RC-2026-0002',
+    client_name: 'سارة خالد الدوسري',
+    maid_name: 'ALEMITU BEKELE',
+    company: 'الشركة التعاونية للتأمين (Tawuniya)',
+    policy_no: 'TAW-2026-887412',
+    coverage: '24 شهراً (شامل تكاليف إعادة الاستقدام)',
+    status: 'سارية المفعول',
+    start_date: '2026-02-01',
+    end_date: '2028-01-31',
+    premium_sar: 450,
+  },
+  {
+    id: 'INS-03',
+    contract_number: 'SAF-RC-2026-0003',
+    client_name: 'محمد عبدالله العتيبي',
+    maid_name: 'JOYCE MWANGI',
+    company: 'شركة سلامة للتأمين التعاوني',
+    policy_no: 'SLM-REC-554190',
+    coverage: '24 شهراً (حماية أصحاب العمل)',
+    status: 'سارية المفعول',
+    start_date: '2026-03-10',
+    end_date: '2028-03-09',
+    premium_sar: 450,
+  },
+];
+
 export const RecruitmentContractsPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawContracts = [] } = useRecruitmentContracts();
@@ -183,6 +245,315 @@ export const RecruitmentContractsPage: React.FC = () => {
   const [externalOffice] = useState("PLATINUM BROTHERS INT'L");
   const [amountInput, setAmountInput] = useState('14500');
   const [branch, setBranch] = useState('فرع الرياض الرئيسي');
+
+  // Sub-modules state with realErpDataStore persistence
+  const [dispatches, setDispatches] = useState<DispatchRecord[]>([]);
+  const [extensions, setExtensions] = useState<ExtensionRequest[]>([]);
+  const [returns, setReturns] = useState<ReturnRequest[]>([]);
+  const [insurancePolicies, setInsurancePolicies] = useState<InsurancePolicy[]>([]);
+
+  // Modals for sub-modules
+  const [showAddDispatchModal, setShowAddDispatchModal] = useState(false);
+  const [showAddExtensionModal, setShowAddExtensionModal] = useState(false);
+  const [showAddReturnModal, setShowAddReturnModal] = useState(false);
+  const [showAddInsuranceModal, setShowAddInsuranceModal] = useState(false);
+
+  // Forms for sub-modules
+  const [dispatchForm, setDispatchForm] = useState({
+    contract_number: '',
+    client_name: '',
+    maid_name: '',
+    nationality: 'الفلبين',
+    office_name: "PLATINUM BROTHERS INT'L",
+    arrival_station: 'مطار الملك خالد الدولي بالرياض',
+    cost_usd: '1200',
+  });
+
+  const [extensionForm, setExtensionForm] = useState({
+    contract_number: '',
+    client_name: '',
+    maid_name: '',
+    extension_years: '2',
+    applicant: 'العميل مباشرة عبر مساند',
+  });
+
+  const [returnForm, setReturnForm] = useState({
+    contract_number: '',
+    client_name: '',
+    maid_name: '',
+    notes: 'عدم رغبة العاملة بالعمل خلال فترة التجربة النظامية',
+    refund_amount: '12500',
+  });
+
+  const [insuranceForm, setInsuranceForm] = useState({
+    contract_number: '',
+    client_name: '',
+    maid_name: '',
+    company: 'شركة تكافل الراجحي للتأمين',
+    policy_no: '',
+    coverage: '24 شهراً (شامل الهروب ورفض العمل وتكاليف الاستبدال)',
+    premium_sar: '450',
+  });
+
+  useEffect(() => {
+    realErpDataStore.getRecords<DispatchRecord>('dispatches', MOCK_DISPATCHES).then(setDispatches);
+    realErpDataStore.getRecords<ExtensionRequest>('contract_extensions', MOCK_EXTENSIONS).then(setExtensions);
+    realErpDataStore.getRecords<ReturnRequest>('contract_returns', MOCK_RETURNS).then(setReturns);
+    realErpDataStore.getRecords<InsurancePolicy>('contract_insurance', MOCK_INSURANCE).then(setInsurancePolicies);
+  }, []);
+
+  // Sub-modules actions
+  const handleAddDispatch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dispatchForm.contract_number || !dispatchForm.client_name || !dispatchForm.maid_name) return;
+
+    const newDisp: DispatchRecord = {
+      id: `DISP-${String(dispatches.length + 1).padStart(2, '0')}`,
+      contract_number: dispatchForm.contract_number,
+      client_name: dispatchForm.client_name,
+      maid_name: dispatchForm.maid_name,
+      nationality: dispatchForm.nationality,
+      office_name: dispatchForm.office_name,
+      contract_status: 'ساري',
+      dispatch_status: 'تم إرسال الجواز للسفارة',
+      dispatch_date: new Date().toISOString().slice(0, 10),
+      arrival_station: dispatchForm.arrival_station,
+      cost_usd: parseFloat(dispatchForm.cost_usd) || 1200,
+    };
+
+    const updated = await realErpDataStore.addRecord('dispatches', newDisp, MOCK_DISPATCHES);
+    setDispatches(updated);
+    setShowAddDispatchModal(false);
+    setDispatchForm({
+      contract_number: '',
+      client_name: '',
+      maid_name: '',
+      nationality: 'الفلبين',
+      office_name: "PLATINUM BROTHERS INT'L",
+      arrival_station: 'مطار الملك خالد الدولي بالرياض',
+      cost_usd: '1200',
+    });
+
+    addNotification({
+      title: 'تسجيل إرسالية وتفويج',
+      message: `تم تسجيل إرسالية العاملة (${newDisp.maid_name}) بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleAdvanceDispatch = async (disp: DispatchRecord) => {
+    const STAGE_FLOW = [
+      'تم إرسال الجواز للسفارة',
+      'صدور التأشيرة وقفل الجواز',
+      'حجز تذكرة طيران',
+      'تم الوصول والاستقبال بالمطار'
+    ];
+    const currIdx = STAGE_FLOW.indexOf(disp.dispatch_status);
+    const nextStatus = currIdx >= 0 && currIdx < STAGE_FLOW.length - 1 ? STAGE_FLOW[currIdx + 1] : STAGE_FLOW[STAGE_FLOW.length - 1];
+
+    const updated = await realErpDataStore.updateRecord('dispatches', disp.id, { dispatch_status: nextStatus }, MOCK_DISPATCHES);
+    setDispatches(updated);
+
+    addNotification({
+      title: 'تحديث حالة الإرسالية',
+      message: `تم ترقية حالة الإرسالية #${disp.id} إلى (${nextStatus}).`,
+      type: 'info',
+    });
+  };
+
+  const handleDeleteDispatch = async (disp: DispatchRecord) => {
+    if (window.confirm(`هل أنت متأكد من حذف الإرسالية #${disp.id}؟`)) {
+      const updated = await realErpDataStore.deleteRecord('dispatches', disp.id, MOCK_DISPATCHES);
+      setDispatches(updated);
+      addNotification({
+        title: 'حذف الإرسالية',
+        message: `تم حذف الإرسالية #${disp.id} بنجاح.`,
+        type: 'error',
+      });
+    }
+  };
+
+  const handleAddExtension = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!extensionForm.contract_number || !extensionForm.client_name) return;
+
+    const newExt: ExtensionRequest = {
+      id: `EXT-${String(extensions.length + 1).padStart(2, '0')}`,
+      contract_number: extensionForm.contract_number,
+      client_name: extensionForm.client_name,
+      maid_name: extensionForm.maid_name || 'عاملة معينة',
+      extension_years: parseInt(extensionForm.extension_years) || 2,
+      applicant: extensionForm.applicant,
+      request_date: new Date().toISOString().slice(0, 10),
+      status: 'قيد المراجعة والاعتماد',
+    };
+
+    const updated = await realErpDataStore.addRecord('contract_extensions', newExt, MOCK_EXTENSIONS);
+    setExtensions(updated);
+    setShowAddExtensionModal(false);
+    setExtensionForm({
+      contract_number: '',
+      client_name: '',
+      maid_name: '',
+      extension_years: '2',
+      applicant: 'العميل مباشرة عبر مساند',
+    });
+
+    addNotification({
+      title: 'طلب تمديد عقد',
+      message: `تم تسجيل طلب تمديد العقد #${newExt.contract_number} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleApproveExtension = async (ext: ExtensionRequest) => {
+    const updated = await realErpDataStore.updateRecord('contract_extensions', ext.id, { status: 'معتمد رسمياً' }, MOCK_EXTENSIONS);
+    setExtensions(updated);
+
+    // Update contract warranty if exists
+    const matchingContract = contracts.find(c => c.contract_number === ext.contract_number);
+    if (matchingContract) {
+      await updateItem.mutateAsync({
+        id: matchingContract.id,
+        data: { warranty_status: `ممدد رسمياً (${ext.extension_years} سنوات إضافية)` }
+      });
+    }
+
+    addNotification({
+      title: 'اعتماد تمديد العقد',
+      message: `تم اعتماد تمديد العقد #${ext.contract_number} وتحديث الضمان تلقائياً.`,
+      type: 'success',
+    });
+  };
+
+  const handleRejectExtension = async (ext: ExtensionRequest) => {
+    const updated = await realErpDataStore.updateRecord('contract_extensions', ext.id, { status: 'مرفوض' }, MOCK_EXTENSIONS);
+    setExtensions(updated);
+    addNotification({
+      title: 'رفض طلب التمديد',
+      message: `تم رفض طلب التمديد للطلب #${ext.id}.`,
+      type: 'warning',
+    });
+  };
+
+  const handleAddReturn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!returnForm.contract_number || !returnForm.client_name) return;
+
+    const newRet: ReturnRequest = {
+      id: `RET-${String(returns.length + 1).padStart(2, '0')}`,
+      contract_number: returnForm.contract_number,
+      client_name: returnForm.client_name,
+      maid_name: returnForm.maid_name || 'عاملة مسترجعة',
+      notes: returnForm.notes,
+      status: 'قيد مراجعة التسوية المالية',
+      request_date: new Date().toISOString().slice(0, 10),
+    };
+
+    const updated = await realErpDataStore.addRecord('contract_returns', newRet, MOCK_RETURNS);
+    setReturns(updated);
+    setShowAddReturnModal(false);
+    setReturnForm({
+      contract_number: '',
+      client_name: '',
+      maid_name: '',
+      notes: 'عدم رغبة العاملة بالعمل خلال فترة التجربة النظامية',
+      refund_amount: '12500',
+    });
+
+    addNotification({
+      title: 'طلب استرجاع عقد',
+      message: `تم تسجيل طلب استرجاع العقد #${newRet.contract_number} وإحالته للمحاسبة.`,
+      type: 'warning',
+    });
+  };
+
+  const handleProcessReturn = async (ret: ReturnRequest) => {
+    const refundAmt = 12500;
+    // 1. Update return status
+    const updated = await realErpDataStore.updateRecord('contract_returns', ret.id, { status: 'تمت التسوية وصرف الاسترداد' }, MOCK_RETURNS);
+    setReturns(updated);
+
+    // 2. Update contract stage to مرتجع
+    const matchingContract = contracts.find(c => c.contract_number === ret.contract_number);
+    if (matchingContract) {
+      await updateItem.mutateAsync({
+        id: matchingContract.id,
+        data: { stage: 'مرتجع', payment_status: 'مسترد للعميل' }
+      });
+    }
+
+    // 3. Automatically generate disbursement voucher in vouchers table
+    const refundVoucher = {
+      id: `VOUCH-REF-${Date.now().toString().slice(-5)}`,
+      voucher_number: `PAY-REF-${Date.now().toString().slice(-4)}`,
+      voucher_type: 'سند صرف',
+      date: new Date().toISOString().slice(0, 10),
+      beneficiary: ret.client_name,
+      amount: refundAmt,
+      payment_method: 'تحويل بنكي فوري (سريع)',
+      description: `صرف مستحقات استرجاع عقد استقدام #${ret.contract_number} - العاملة: ${ret.maid_name}`,
+      status: 'معتمد ومصروف',
+      created_by: 'النظام المحاسبي الآلي',
+      company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
+      created_at: new Date().toISOString(),
+    };
+    await realErpDataStore.addRecord('vouchers', refundVoucher);
+
+    addNotification({
+      title: 'إتمام التسوية وصرف الاسترداد',
+      message: `تم اعتماد استرجاع العقد #${ret.contract_number} وتوليد سند صرف مالي بقيمة ${refundAmt.toLocaleString()} ر.س في المحاسبة.`,
+      type: 'success',
+    });
+  };
+
+  const handleAddInsurance = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!insuranceForm.contract_number || !insuranceForm.client_name) return;
+
+    const newPol: InsurancePolicy = {
+      id: `INS-${String(insurancePolicies.length + 1).padStart(2, '0')}`,
+      contract_number: insuranceForm.contract_number,
+      client_name: insuranceForm.client_name,
+      maid_name: insuranceForm.maid_name || 'عاملة مؤمن عليها',
+      company: insuranceForm.company,
+      policy_no: insuranceForm.policy_no || `POL-${Date.now().toString().slice(-6)}`,
+      coverage: insuranceForm.coverage,
+      status: 'سارية المفعول',
+      start_date: new Date().toISOString().slice(0, 10),
+      end_date: new Date(Date.now() + 24 * 30 * 86400000).toISOString().slice(0, 10),
+      premium_sar: parseFloat(insuranceForm.premium_sar) || 450,
+    };
+
+    const updated = await realErpDataStore.addRecord('contract_insurance', newPol, MOCK_INSURANCE);
+    setInsurancePolicies(updated);
+    setShowAddInsuranceModal(false);
+    setInsuranceForm({
+      contract_number: '',
+      client_name: '',
+      maid_name: '',
+      company: 'شركة تكافل الراجحي للتأمين',
+      policy_no: '',
+      coverage: '24 شهراً (شامل الهروب ورفض العمل وتكاليف الاستبدال)',
+      premium_sar: '450',
+    });
+
+    addNotification({
+      title: 'إصدار وثيقة تأمين مساند',
+      message: `تم إصدار وثيقة التأمين #${newPol.policy_no} بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleFileInsuranceClaim = async (pol: InsurancePolicy) => {
+    const updated = await realErpDataStore.updateRecord('contract_insurance', pol.id, { status: 'تم رفع مطالبة تعويض لمساند' }, MOCK_INSURANCE);
+    setInsurancePolicies(updated);
+    addNotification({
+      title: 'رفع مطالبة تأمينية لمساند',
+      message: `تم رفع مطالبة التعويض للبوليصة #${pol.policy_no} لصالح العميل (${pol.client_name}).`,
+      type: 'info',
+    });
+  };
 
   const handleAddContract = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -479,9 +850,19 @@ export const RecruitmentContractsPage: React.FC = () => {
                   حماية صاحب العمل والعاملة المنزلية ضد انقطاع العمل، هروب العمالة، الوفاة، أو التعويضات المالية
                 </p>
               </div>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                وثائق سارية: 3 بوالص
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                  وثائق سارية: {insurancePolicies.length} بوالص
+                </span>
+                <button
+                  onClick={() => setShowAddInsuranceModal(true)}
+                  className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                  style={{ minHeight: '34px', padding: '6px 16px' }}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ إصدار وثيقة تأمين جديدة</span>
+                </button>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
@@ -497,50 +878,11 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <th className="p-3.5">فترة السريان</th>
                     <th className="p-3.5">قسط التأمين</th>
                     <th className="p-3.5">الحالة</th>
+                    <th className="p-3.5 text-center">الإجراءات</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
-                  {[
-                    {
-                      id: 'INS-01',
-                      contract_number: 'SAF-RC-2026-0001',
-                      client_name: 'بندر صالح الهويريني',
-                      maid_name: 'MARIA SANTOS',
-                      company: 'شركة تكافل الراجحي للتأمين',
-                      policy_no: 'TR-REC-9982104',
-                      coverage: '24 شهراً (شامل الهروب ورفض العمل والوفاة)',
-                      status: 'سارية المفعول',
-                      start_date: '2026-01-15',
-                      end_date: '2028-01-14',
-                      premium_sar: 450,
-                    },
-                    {
-                      id: 'INS-02',
-                      contract_number: 'SAF-RC-2026-0002',
-                      client_name: 'سارة خالد الدوسري',
-                      maid_name: 'ALEMITU BEKELE',
-                      company: 'الشركة التعاونية للتأمين (Tawuniya)',
-                      policy_no: 'TAW-2026-887412',
-                      coverage: '24 شهراً (شامل تكاليف إعادة الاستقدام)',
-                      status: 'سارية المفعول',
-                      start_date: '2026-02-01',
-                      end_date: '2028-01-31',
-                      premium_sar: 450,
-                    },
-                    {
-                      id: 'INS-03',
-                      contract_number: 'SAF-RC-2026-0003',
-                      client_name: 'محمد عبدالله العتيبي',
-                      maid_name: 'JOYCE MWANGI',
-                      company: 'شركة سلامة للتأمين التعاوني',
-                      policy_no: 'SLM-REC-554190',
-                      coverage: '24 شهراً (حماية أصحاب العمل)',
-                      status: 'سارية المفعول',
-                      start_date: '2026-03-10',
-                      end_date: '2028-03-09',
-                      premium_sar: 450,
-                    },
-                  ].map(pol => (
+                  {insurancePolicies.map(pol => (
                     <tr key={pol.id} className="hover:bg-zinc-50">
                       <td className="p-3.5 font-mono font-bold text-black">{pol.policy_no}</td>
                       <td className="p-3.5 font-mono text-zinc-600">{pol.contract_number}</td>
@@ -550,7 +892,27 @@ export const RecruitmentContractsPage: React.FC = () => {
                       <td className="p-3.5 text-zinc-600">{pol.coverage}</td>
                       <td className="p-3.5 font-mono text-zinc-500">{pol.start_date} إلى {pol.end_date}</td>
                       <td className="p-3.5 font-mono font-bold text-black">{pol.premium_sar} ر.س</td>
-                      <td className="p-3.5"><Badge text={pol.status} type="success" /></td>
+                      <td className="p-3.5">
+                        <Badge 
+                          text={pol.status} 
+                          type={pol.status.includes('مطالبة') ? 'warning' : 'success'} 
+                        />
+                      </td>
+                      <td className="p-3.5 text-center">
+                        {!pol.status.includes('مطالبة') ? (
+                          <button
+                            onClick={() => handleFileInsuranceClaim(pol)}
+                            className="button-outline-on-light text-[11px] font-bold text-amber-700 hover:bg-amber-50"
+                            style={{ minHeight: '26px', padding: '2px 8px' }}
+                            title="رفع مطالبة تعويض لدى شركة التأمين ومساند"
+                          >
+                            <ShieldAlert className="w-3 h-3 ml-1 inline text-amber-600" />
+                            <span>رفع مطالبة</span>
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-zinc-400 font-medium">قيد التعويض</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -563,13 +925,28 @@ export const RecruitmentContractsPage: React.FC = () => {
       {/* 3. Dispatches Full View */}
       {activeTab === 'dispatches' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-              سجل إرساليات المكاتب الخارجية وتفويج العمالة
-            </h2>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              الإرساليات النشطة: {MOCK_DISPATCHES.length} إرسالية
-            </span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                سجل إرساليات المكاتب الخارجية وتفويج العمالة
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                متابعة حركة جوازات العمالة، التأشيرات بالسفارة، حجز التذاكر، ومحطة الوصول
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                الإرساليات النشطة: {dispatches.length} إرسالية
+              </span>
+              <button
+                onClick={() => setShowAddDispatchModal(true)}
+                className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                style={{ minHeight: '34px', padding: '6px 16px' }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ تسجيل إرسالية وتفويج</span>
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -585,20 +962,46 @@ export const RecruitmentContractsPage: React.FC = () => {
                   <th className="p-3.5">تاريخ الإرسالية</th>
                   <th className="p-3.5">محطة الوصول</th>
                   <th className="p-3.5">التكلفة ($)</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {MOCK_DISPATCHES.map(d => (
+                {dispatches.map(d => (
                   <tr key={d.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{d.id}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{d.contract_number}</td>
                     <td className="p-3.5 font-bold text-black">{d.client_name}</td>
                     <td className="p-3.5 font-bold text-black">{d.maid_name} ({d.nationality})</td>
                     <td className="p-3.5 text-zinc-600">{d.office_name}</td>
-                    <td className="p-3.5"><Badge text={d.dispatch_status} type="primary" /></td>
+                    <td className="p-3.5">
+                      <Badge 
+                        text={d.dispatch_status} 
+                        type={d.dispatch_status.includes('وصول') ? 'success' : 'primary'} 
+                      />
+                    </td>
                     <td className="p-3.5 font-mono text-zinc-500">{d.dispatch_date}</td>
                     <td className="p-3.5 text-zinc-700">{d.arrival_station}</td>
                     <td className="p-3.5 font-mono font-bold text-emerald-700">${d.cost_usd}</td>
+                    <td className="p-3.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => handleAdvanceDispatch(d)}
+                          className="button-outline-on-light text-[11px] font-bold text-emerald-800 hover:bg-emerald-50"
+                          style={{ minHeight: '26px', padding: '2px 8px' }}
+                          title="ترقية مسار الإرسالية للمرحلة التالية"
+                        >
+                          <Plane className="w-3 h-3 ml-1 inline text-emerald-600" />
+                          <span>ترقية المسار</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteDispatch(d)}
+                          className="p-1 text-zinc-400 hover:text-rose-600 rounded transition"
+                          title="حذف الإرسالية"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -610,13 +1013,28 @@ export const RecruitmentContractsPage: React.FC = () => {
       {/* 4. Extensions Requests View */}
       {activeTab === 'extensions' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-              طلبات تمديد وتجديد عقود الاستقدام
-            </h2>
-            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-              الطلبات: {MOCK_EXTENSIONS.length} طلب
-            </span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                طلبات تمديد وتجديد عقود الاستقدام
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                إدارة طلبات استمرار العمالة والتجديد المباشر بموافقة الأطراف
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+                الطلبات: {extensions.length} طلب
+              </span>
+              <button
+                onClick={() => setShowAddExtensionModal(true)}
+                className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                style={{ minHeight: '34px', padding: '6px 16px' }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ طلب تمديد عقد جديد</span>
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -631,10 +1049,11 @@ export const RecruitmentContractsPage: React.FC = () => {
                   <th className="p-3.5">مقدم الطلب</th>
                   <th className="p-3.5">تاريخ التقديم</th>
                   <th className="p-3.5">الحالة</th>
+                  <th className="p-3.5 text-center">الإجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {MOCK_EXTENSIONS.map(ext => (
+                {extensions.map(ext => (
                   <tr key={ext.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{ext.id}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{ext.contract_number}</td>
@@ -643,7 +1062,36 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-emerald-800">{ext.extension_years} سنوات</td>
                     <td className="p-3.5 text-zinc-600">{ext.applicant}</td>
                     <td className="p-3.5 font-mono text-zinc-500">{ext.request_date}</td>
-                    <td className="p-3.5"><Badge text={ext.status} type="success" /></td>
+                    <td className="p-3.5">
+                      <Badge 
+                        text={ext.status} 
+                        type={ext.status.includes('معتمد') ? 'success' : ext.status.includes('مرفوض') ? 'danger' : 'warning'} 
+                      />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      {!ext.status.includes('معتمد') && !ext.status.includes('مرفوض') ? (
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            onClick={() => handleApproveExtension(ext)}
+                            className="px-2 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[11px] font-bold flex items-center gap-1"
+                            title="اعتماد التمديد وتحديث ضمان العقد"
+                          >
+                            <Check className="w-3 h-3" />
+                            <span>اعتماد</span>
+                          </button>
+                          <button
+                            onClick={() => handleRejectExtension(ext)}
+                            className="px-2 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-800 text-[11px] font-bold flex items-center gap-1"
+                            title="رفض طلب التمديد"
+                          >
+                            <X className="w-3 h-3" />
+                            <span>رفض</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-zinc-400 font-medium">مكتمل</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -655,13 +1103,28 @@ export const RecruitmentContractsPage: React.FC = () => {
       {/* 5. Returns Requests View */}
       {activeTab === 'returns' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-              طلبات استرجاع العقود والتسويات المالية
-            </h2>
-            <span className="pill-tag-shade" style={{ fontSize: '11px' }}>
-              الطلبات: {MOCK_RETURNS.length} طلب
-            </span>
+          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                طلبات استرجاع العقود والتسويات المالية
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                معالجة حالات رفض العمل وعدم التوافق وإصدار سندات الصرف والاسترداد المالي
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="pill-tag-shade" style={{ fontSize: '11px' }}>
+                الطلبات: {returns.length} طلب
+              </span>
+              <button
+                onClick={() => setShowAddReturnModal(true)}
+                className="button-primary-pill text-xs font-bold flex items-center gap-1.5 shadow-md"
+                style={{ minHeight: '34px', padding: '6px 16px' }}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ تسجيل طلب استرجاع عقد</span>
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -675,10 +1138,11 @@ export const RecruitmentContractsPage: React.FC = () => {
                   <th className="p-3.5">سبب الاسترجاع وملاحظات التسوية</th>
                   <th className="p-3.5">تاريخ الطلب</th>
                   <th className="p-3.5">حالة الاسترجاع المالي</th>
+                  <th className="p-3.5 text-center">الإجراء المالي</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {MOCK_RETURNS.map(ret => (
+                {returns.map(ret => (
                   <tr key={ret.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{ret.id}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{ret.contract_number}</td>
@@ -686,7 +1150,27 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <td className="p-3.5 text-black">{ret.maid_name}</td>
                     <td className="p-3.5 text-zinc-700">{ret.notes}</td>
                     <td className="p-3.5 font-mono text-zinc-500">{ret.request_date}</td>
-                    <td className="p-3.5"><Badge text={ret.status} type="danger" /></td>
+                    <td className="p-3.5">
+                      <Badge 
+                        text={ret.status} 
+                        type={ret.status.includes('صرف') || ret.status.includes('تم') ? 'success' : 'danger'} 
+                      />
+                    </td>
+                    <td className="p-3.5 text-center">
+                      {!ret.status.includes('صرف') && !ret.status.includes('تم') ? (
+                        <button
+                          onClick={() => handleProcessReturn(ret)}
+                          className="button-primary-pill text-[11px] font-bold flex items-center gap-1 mx-auto shadow-sm"
+                          style={{ minHeight: '26px', padding: '2px 10px', backgroundColor: '#059669' }}
+                          title="اعتماد الإرجاع وتوليد سند صرف استرداد مالي تلقائي"
+                        >
+                          <DollarSign className="w-3 h-3" />
+                          <span>تسوية وصرف استرداد</span>
+                        </button>
+                      ) : (
+                        <span className="text-[10px] font-bold text-emerald-700">تم الصرف المالي ✓</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1097,6 +1581,450 @@ export const RecruitmentContractsPage: React.FC = () => {
                 </div>
               </div>
             </DualBrandingDocumentGenerator>
+          </div>
+        </div>
+      )}
+      {/* Modals for Sub-modules */}
+
+      {/* 1. Add Dispatch Modal */}
+      {showAddDispatchModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <Plane className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">تسجيل إرسالية وتفويج عمالة جديدة</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddDispatchModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddDispatch} className="space-y-4 pt-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم العقد *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="SAF-RC-2026-0001"
+                    value={dispatchForm.contract_number}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, contract_number: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العميل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="محمد عبدالله"
+                    value={dispatchForm.client_name}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, client_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العاملة *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="MARIA SANTOS"
+                    value={dispatchForm.maid_name}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, maid_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">الجنسية</label>
+                  <select
+                    value={dispatchForm.nationality}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, nationality: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="الفلبين">الفلبين</option>
+                    <option value="إندونيسيا">إندونيسيا</option>
+                    <option value="كينيا">كينيا</option>
+                    <option value="أوغندا">أوغندا</option>
+                    <option value="إثيوبيا">إثيوبيا</option>
+                    <option value="سريلانكا">سريلانكا</option>
+                    <option value="بنغلاديش">بنغلاديش</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 font-bold mb-1">المكتب الخارجي الشريك</label>
+                <input
+                  type="text"
+                  value={dispatchForm.office_name}
+                  onChange={(e) => setDispatchForm({ ...dispatchForm, office_name: e.target.value })}
+                  className="text-input w-full"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">محطة الوصول بالمملكة</label>
+                  <select
+                    value={dispatchForm.arrival_station}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, arrival_station: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="مطار الملك خالد الدولي بالرياض">مطار الملك خالد الدولي بالرياض</option>
+                    <option value="مطار الملك عبدالعزيز بجدة">مطار الملك عبدالعزيز بجدة</option>
+                    <option value="مطار الملك فهد بالدمام">مطار الملك فهد بالدمام</option>
+                    <option value="مطار الأمير محمد بن عبدالعزيز بالمدينة">مطار الأمير محمد بن عبدالعزيز بالمدينة</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">تكلفة الإرسالية الخارجية ($)</label>
+                  <input
+                    type="number"
+                    value={dispatchForm.cost_usd}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, cost_usd: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddDispatchModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold shadow-md"
+                >
+                  حفظ وتسجيل الإرسالية
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Add Extension Modal */}
+      {showAddExtensionModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">تقديم طلب تمديد عقد استقدام</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddExtensionModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddExtension} className="space-y-4 pt-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم العقد الأصلي *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="SAF-RC-2025-0890"
+                    value={extensionForm.contract_number}
+                    onChange={(e) => setExtensionForm({ ...extensionForm, contract_number: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العميل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="محمد عبدالله"
+                    value={extensionForm.client_name}
+                    onChange={(e) => setExtensionForm({ ...extensionForm, client_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العاملة</label>
+                  <input
+                    type="text"
+                    placeholder="JOYCE MWANGI"
+                    value={extensionForm.maid_name}
+                    onChange={(e) => setExtensionForm({ ...extensionForm, maid_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">مدة التمديد المطلوبة</label>
+                  <select
+                    value={extensionForm.extension_years}
+                    onChange={(e) => setExtensionForm({ ...extensionForm, extension_years: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="1">سنة واحدة (1)</option>
+                    <option value="2">سنتان (2)</option>
+                    <option value="3">3 سنوات</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 font-bold mb-1">مقدم الطلب وقناة التقديم</label>
+                <input
+                  type="text"
+                  value={extensionForm.applicant}
+                  onChange={(e) => setExtensionForm({ ...extensionForm, applicant: e.target.value })}
+                  className="text-input w-full"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddExtensionModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold shadow-md"
+                >
+                  إرسال طلب التمديد
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Add Return Modal */}
+      {showAddReturnModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-rose-600" />
+                <h3 className="font-bold text-black text-base">تسجيل طلب استرجاع عقد وتسوية مالية</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddReturnModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddReturn} className="space-y-4 pt-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم العقد *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="SAF-RC-2026-0033"
+                    value={returnForm.contract_number}
+                    onChange={(e) => setReturnForm({ ...returnForm, contract_number: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العميل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="فهد إبراهيم السبيعي"
+                    value={returnForm.client_name}
+                    onChange={(e) => setReturnForm({ ...returnForm, client_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العاملة</label>
+                  <input
+                    type="text"
+                    placeholder="FATIMA BEGUM"
+                    value={returnForm.maid_name}
+                    onChange={(e) => setReturnForm({ ...returnForm, maid_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">مبلغ الاسترداد التقديري (ر.س)</label>
+                  <input
+                    type="number"
+                    value={returnForm.refund_amount}
+                    onChange={(e) => setReturnForm({ ...returnForm, refund_amount: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 font-bold mb-1">سبب الاسترجاع وملاحظات التسوية *</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={returnForm.notes}
+                  onChange={(e) => setReturnForm({ ...returnForm, notes: e.target.value })}
+                  className="text-input w-full"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddReturnModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-md"
+                >
+                  تسجيل طلب الاسترجاع
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Add Insurance Modal */}
+      {showAddInsuranceModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-black text-base">إصدار وثيقة تأمين مساند جديدة (24 شهراً)</h3>
+              </div>
+              <button 
+                onClick={() => setShowAddInsuranceModal(false)}
+                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddInsurance} className="space-y-4 pt-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم العقد *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="SAF-RC-2026-0004"
+                    value={insuranceForm.contract_number}
+                    onChange={(e) => setInsuranceForm({ ...insuranceForm, contract_number: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العميل *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="سلطان المنصور"
+                    value={insuranceForm.client_name}
+                    onChange={(e) => setInsuranceForm({ ...insuranceForm, client_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">اسم العاملة</label>
+                  <input
+                    type="text"
+                    placeholder="LUCY WANJIRU"
+                    value={insuranceForm.maid_name}
+                    onChange={(e) => setInsuranceForm({ ...insuranceForm, maid_name: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">شركة التأمين المعتمدة</label>
+                  <select
+                    value={insuranceForm.company}
+                    onChange={(e) => setInsuranceForm({ ...insuranceForm, company: e.target.value })}
+                    className="text-input w-full"
+                  >
+                    <option value="شركة تكافل الراجحي للتأمين">شركة تكافل الراجحي للتأمين</option>
+                    <option value="الشركة التعاونية للتأمين (Tawuniya)">الشركة التعاونية للتأمين (Tawuniya)</option>
+                    <option value="شركة سلامة للتأمين التعاوني">شركة سلامة للتأمين التعاوني</option>
+                    <option value="شركة المتوسط والخليج للتأمين (ميدغلف)">شركة المتوسط والخليج للتأمين (ميدغلف)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">رقم الوثيقة (تلقائي إن ترك فارغاً)</label>
+                  <input
+                    type="text"
+                    placeholder="TR-REC-9982105"
+                    value={insuranceForm.policy_no}
+                    onChange={(e) => setInsuranceForm({ ...insuranceForm, policy_no: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-600 font-bold mb-1">قسط التأمين الإلزامي (ر.س)</label>
+                  <input
+                    type="number"
+                    value={insuranceForm.premium_sar}
+                    onChange={(e) => setInsuranceForm({ ...insuranceForm, premium_sar: e.target.value })}
+                    className="text-input w-full"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-zinc-600 font-bold mb-1">حدود التغطية التأمينية</label>
+                <input
+                  type="text"
+                  value={insuranceForm.coverage}
+                  onChange={(e) => setInsuranceForm({ ...insuranceForm, coverage: e.target.value })}
+                  className="text-input w-full"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddInsuranceModal(false)}
+                  className="button-outline-on-light text-xs font-bold"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs font-bold shadow-md"
+                >
+                  إصدار وتوثيق الوثيقة
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
