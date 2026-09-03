@@ -906,7 +906,7 @@ export const CVsBankPage: React.FC = () => {
                         : cv.status === 'مؤجر'
                         ? 'primary'
                         : cv.status === 'تراجع'
-                        ? 'error'
+                        ? 'danger'
                         : 'warning'
                     }
                   />

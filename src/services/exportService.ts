@@ -755,7 +755,6 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.passport_number || r.pass || '',
       r.status || 'متاح'
     ],
-    numericColumns: [6, 8],
     totalRowCalculator: (data: any[]) => {
       const totalSalary = data.reduce((sum, r) => sum + (Number(r.salary || r.price) || 0), 0);
       return ['المجموع الإجمالي / المتوسط العام', '', '', '', '', '', '', '', totalSalary, '', '', `${data.length} سيرة`];
