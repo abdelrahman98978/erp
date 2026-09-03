@@ -29,9 +29,19 @@ const PRESET_TEMPLATES = [
   { id: 't-4', title: '⏳ تذكير انتهاء فترة التجربة (90 يوم)', text: 'نود تذكيركم بقرب انتهاء فترة الضمان والتجربة النظامية (90 يوماً). نرجو تقييم الخدمة أو إبلاغنا بأي ملاحظات.' }
 ];
 
+const normalizeChat = (c: any): WhatsAppChat => ({
+  id: String(c?.id || `chat-${Date.now()}`),
+  client_name: String(c?.client_name || 'عميل واتساب'),
+  phone: String(c?.phone || c?.sender_number || ''),
+  last_message: String(c?.last_message || c?.message_text || ''),
+  time: String(c?.time || (c?.created_at ? new Date(c.created_at).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }) : 'الآن')),
+  unread_count: Number(c?.unread_count) || 0,
+  status: c?.status || 'نشط',
+});
+
 export const WhatsAppInboxPage: React.FC = () => {
   const { addNotification } = useAppStore();
-  const [chats, setChats] = useState<WhatsAppChat[]>(MOCK_CHATS);
+  const [chats, setChats] = useState<WhatsAppChat[]>(MOCK_CHATS.map(normalizeChat));
   const [activeChat, setActiveChat] = useState<WhatsAppChat>(MOCK_CHATS[0]);
   const [replyText, setReplyText] = useState('');
   const [searchFilter, setSearchFilter] = useState('');
@@ -47,9 +57,10 @@ export const WhatsAppInboxPage: React.FC = () => {
 
   useEffect(() => {
     realErpDataStore.getRecords<WhatsAppChat>('whatsapp_messages', MOCK_CHATS).then(data => {
-      if (data && data.length > 0) {
-        setChats(data);
-        setActiveChat(data[0]);
+      if (Array.isArray(data) && data.length > 0) {
+        const normalized = data.map(normalizeChat);
+        setChats(normalized);
+        setActiveChat(normalized[0]);
       }
     });
 
@@ -118,9 +129,9 @@ export const WhatsAppInboxPage: React.FC = () => {
   };
 
   const filteredChats = chats.filter(c =>
-    c.client_name.includes(searchFilter) ||
-    c.phone.includes(searchFilter) ||
-    c.last_message.includes(searchFilter)
+    (c?.client_name || '').includes(searchFilter) ||
+    (c?.phone || (c as any)?.sender_number || '').includes(searchFilter) ||
+    (c?.last_message || (c as any)?.message_text || '').includes(searchFilter)
   );
 
   return (

@@ -1656,11 +1656,27 @@ export const HRPage: React.FC = () => {
                       <span className="text-[11px] text-zinc-500">حساب مدين: مصروف مكافأة نهاية الخدمة (5105) | حساب دائن: مخصص نهاية الخدمة (2104)</span>
                     </div>
                     <button
-                      onClick={() => addNotification({
-                        title: 'ترحيل مخصص نهاية الخدمة',
-                        message: `تم إنشاء قيد محاسبي مزدوج بمبلغ (${finalAmount.toFixed(2)} ر.س) في قيود SMACC.`,
-                        type: 'success',
-                      })}
+                      onClick={async () => {
+                        const jv = {
+                          id: `JV-${Date.now().toString().slice(-6)}`,
+                          journal_number: `JV-EOSB-${Date.now().toString().slice(-4)}`,
+                          date: new Date().toISOString().slice(0, 10),
+                          description: `قيد تسوية مخصص مكافأة نهاية الخدمة للموظف (مبلغ ${finalAmount.toFixed(2)} ر.س)`,
+                          debit: Number(finalAmount.toFixed(2)),
+                          credit: Number(finalAmount.toFixed(2)),
+                          status: 'مرحل',
+                          lines: [
+                            { account_code: '5105', account_name: 'مصروف مكافأة نهاية الخدمة', debit: Number(finalAmount.toFixed(2)), credit: 0 },
+                            { account_code: '2104', account_name: 'مخصص مكافأة نهاية الخدمة', debit: 0, credit: Number(finalAmount.toFixed(2)) }
+                          ]
+                        };
+                        await realErpDataStore.addRecord('journals', jv);
+                        addNotification({
+                          title: 'ترحيل مخصص نهاية الخدمة',
+                          message: `تم إنشاء وترحيل قيد محاسبي مزدوج رقم (${jv.journal_number}) بمبلغ (${finalAmount.toFixed(2)} ر.س) في قيود SMACC بنجاح.`,
+                          type: 'success',
+                        });
+                      }}
                       className="button-outline-on-light text-xs font-bold py-1.5 px-3"
                     >
                       ترحيل القيد للمحاسبة

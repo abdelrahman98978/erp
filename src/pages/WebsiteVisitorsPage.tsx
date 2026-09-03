@@ -135,6 +135,32 @@ const MOCK_POPULAR_CVS: PopularCV[] = [
   }
 ];
 
+const normalizeVisitor = (v: any): Visitor => ({
+  id: String(v?.id || `VIS-${Math.floor(Math.random() * 900 + 100)}`),
+  ip_address: String(v?.ip_address || v?.visitor_ip || '185.220.101.5'),
+  country: String(v?.country || 'المملكة العربية السعودية'),
+  city: String(v?.city || 'الرياض'),
+  device: String(v?.device || v?.device_type || 'Windows 11'),
+  browser: String(v?.browser || 'Chrome'),
+  page_visited: String(v?.page_visited || 'الرئيسية'),
+  source: (v?.source as Visitor['source']) || 'Direct',
+  duration_sec: Number(v?.duration_sec) || 120,
+  is_lead: Boolean(v?.is_lead),
+  phone: v?.phone ? String(v.phone) : undefined,
+  visit_time: String(v?.visit_time || (v?.visited_at ? new Date(v.visited_at).toLocaleTimeString('ar-SA') : 'الآن')),
+});
+
+const normalizePopularCV = (cv: any): PopularCV => ({
+  id: String(cv?.id || `CV-${Math.random()}`),
+  cv_code: String(cv?.cv_code || ''),
+  name: String(cv?.name || ''),
+  nationality: String(cv?.nationality || ''),
+  profession: String(cv?.profession || ''),
+  views_count: Number(cv?.views_count) || 0,
+  reservation_count: Number(cv?.reservation_count) || 0,
+  conversion_rate: String(cv?.conversion_rate || '0%'),
+});
+
 export const WebsiteVisitorsPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'live' | 'popular' | 'traffic-sources'>('live');
@@ -148,17 +174,18 @@ export const WebsiteVisitorsPage: React.FC = () => {
 
   // Convert Visitor to CRM Client
   const handleConvertToClient = async (v: Visitor) => {
-    if (!v.phone) return;
+    if (!v?.phone) return;
     const clientCode = `CLI-WEB-${Date.now().toString().slice(-4)}`;
+    const cityName = (v.city || '').split('-')[0].trim() || 'مهتم بالاستقدام';
     const newClient = {
       id: clientCode,
       company_id: 'SAF',
       client_no: clientCode,
-      name: `عميل منصة (${v.city.split('-')[0].trim() || 'مهتم بالاستقدام'})`,
+      name: `عميل منصة (${cityName})`,
       phone: v.phone,
       national_id: `10${Math.floor(10000000 + Math.random() * 90000000)}`,
       account_code: '110209',
-      client_activity: `التقاط من المنصة: ${v.page_visited}`,
+      client_activity: `التقاط من المنصة: ${v.page_visited || ''}`,
       last_activity: 'تحويل زائر موقع إلى عميل CRM',
       added_by: 'التقاط ذكي تلقائي',
       branch: 'الفرع الرئيسي - الرياض',
@@ -196,13 +223,19 @@ export const WebsiteVisitorsPage: React.FC = () => {
       realErpDataStore.getRecords<Visitor>('website_visitors', MOCK_VISITORS),
       realErpDataStore.getRecords<PopularCV>('popular_cvs', MOCK_POPULAR_CVS),
     ]).then(([visitorsData, cvsData]) => {
-      setVisitors(visitorsData);
-      setPopularCVs(cvsData);
+      const normalizedVisitors = Array.isArray(visitorsData) && visitorsData.length > 0
+        ? visitorsData.map(normalizeVisitor)
+        : MOCK_VISITORS.map(normalizeVisitor);
+      const normalizedCVs = Array.isArray(cvsData) && cvsData.length > 0
+        ? cvsData.map(normalizePopularCV)
+        : MOCK_POPULAR_CVS.map(normalizePopularCV);
+      setVisitors(normalizedVisitors);
+      setPopularCVs(normalizedCVs);
       setIsLoading(false);
       setLastRefresh(new Date());
     }).catch(() => {
-      setVisitors(MOCK_VISITORS);
-      setPopularCVs(MOCK_POPULAR_CVS);
+      setVisitors(MOCK_VISITORS.map(normalizeVisitor));
+      setPopularCVs(MOCK_POPULAR_CVS.map(normalizePopularCV));
       setIsLoading(false);
     });
   }, []);
@@ -212,29 +245,35 @@ export const WebsiteVisitorsPage: React.FC = () => {
     const interval = setInterval(() => {
       realErpDataStore.getRecords<Visitor>('website_visitors', MOCK_VISITORS)
         .then(data => {
-          setVisitors(data);
+          if (Array.isArray(data) && data.length > 0) {
+            setVisitors(data.map(normalizeVisitor));
+          }
           setLastRefresh(new Date());
-        });
+        })
+        .catch(() => {});
     }, 30000);
     return () => clearInterval(interval);
   }, []);
 
   // All visitors (fallback to mock)
-  const allVisitors = visitors.length > 0 ? visitors : MOCK_VISITORS;
-  const allCVs = popularCVs.length > 0 ? popularCVs : MOCK_POPULAR_CVS;
+  const allVisitors = (visitors.length > 0 ? visitors : MOCK_VISITORS).map(normalizeVisitor);
+  const allCVs = (popularCVs.length > 0 ? popularCVs : MOCK_POPULAR_CVS).map(normalizePopularCV);
 
   // Dynamic KPI calculations
   const totalViewsToday = allVisitors.length;
-  const activeLeadsCount = allVisitors.filter(v => v.is_lead).length;
+  const activeLeadsCount = allVisitors.filter(v => Boolean(v?.is_lead)).length;
   const conversionRate = totalViewsToday > 0 ? ((activeLeadsCount / totalViewsToday) * 100).toFixed(1) : '0';
   const avgDurationMin = allVisitors.length > 0
-    ? (allVisitors.reduce((sum, v) => sum + v.duration_sec, 0) / allVisitors.length / 60).toFixed(1)
+    ? (allVisitors.reduce((sum, v) => sum + (Number(v?.duration_sec) || 0), 0) / allVisitors.length / 60).toFixed(1)
     : '0';
 
   // Top nationality calculation
   const topNationality = useMemo(() => {
     const countryCounts: Record<string, number> = {};
-    allVisitors.forEach(v => { countryCounts[v.country] = (countryCounts[v.country] || 0) + 1; });
+    allVisitors.forEach(v => {
+      const c = v?.country || 'المملكة العربية السعودية';
+      countryCounts[c] = (countryCounts[c] || 0) + 1;
+    });
     const sorted = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
     if (sorted.length === 0) return { name: '-', pct: '0' };
     const topPct = totalViewsToday > 0 ? ((sorted[0][1] / totalViewsToday) * 100).toFixed(0) : '0';
@@ -244,7 +283,10 @@ export const WebsiteVisitorsPage: React.FC = () => {
   // Dynamic traffic source stats (TAB 3)
   const sourceStats = useMemo(() => {
     const sources: Record<string, number> = {};
-    allVisitors.forEach(v => { sources[v.source] = (sources[v.source] || 0) + 1; });
+    allVisitors.forEach(v => {
+      const s = v?.source || 'Direct';
+      sources[s] = (sources[s] || 0) + 1;
+    });
     return Object.entries(sources)
       .map(([source, count]) => ({
         source,
@@ -256,14 +298,16 @@ export const WebsiteVisitorsPage: React.FC = () => {
 
   // Dynamic device distribution (TAB 3)
   const deviceStats = useMemo(() => {
-    const mobileKeywords = ['iPhone', 'Samsung', 'Galaxy', 'Android', 'Mobile', 'iPad'];
+    const mobileKeywords = ['iphone', 'samsung', 'galaxy', 'android', 'mobile', 'ipad'];
     let mobileCount = 0;
     allVisitors.forEach(v => {
-      if (mobileKeywords.some(k => v.device.includes(k) || v.browser.includes(k))) {
+      const dev = String(v?.device || (v as any)?.device_type || '').toLowerCase();
+      const brow = String(v?.browser || '').toLowerCase();
+      if (mobileKeywords.some(k => (Boolean(dev) && dev.includes(k)) || (Boolean(brow) && brow.includes(k)))) {
         mobileCount++;
       }
     });
-    const desktopCount = allVisitors.length - mobileCount;
+    const desktopCount = Math.max(0, allVisitors.length - mobileCount);
     const mobilePct = totalViewsToday > 0 ? Math.round((mobileCount / totalViewsToday) * 100) : 0;
     const desktopPct = totalViewsToday > 0 ? Math.round((desktopCount / totalViewsToday) * 100) : 0;
     return { mobilePct, desktopPct, mobileCount, desktopCount };
@@ -281,18 +325,26 @@ export const WebsiteVisitorsPage: React.FC = () => {
   // Filtered visitors with lead filter + search
   const filteredVisitors = allVisitors.filter(v => {
     // Lead filter
-    if (leadFilter === 'leads' && !v.is_lead) return false;
-    if (leadFilter === 'anonymous' && v.is_lead) return false;
+    if (leadFilter === 'leads' && !v?.is_lead) return false;
+    if (leadFilter === 'anonymous' && v?.is_lead) return false;
 
     // Search filter
     if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
+    const q = String(searchQuery || '').toLowerCase();
+    const id = String(v?.id || '').toLowerCase();
+    const city = String(v?.city || '').toLowerCase();
+    const ip = String(v?.ip_address || (v as any)?.visitor_ip || '').toLowerCase();
+    const page = String(v?.page_visited || '').toLowerCase();
+    const src = String(v?.source || '').toLowerCase();
+    const dev = String(v?.device || (v as any)?.device_type || '').toLowerCase();
+
     return (
-      v.id.toLowerCase().includes(q) ||
-      v.city.toLowerCase().includes(q) ||
-      v.ip_address.includes(q) ||
-      v.page_visited.toLowerCase().includes(q) ||
-      v.source.toLowerCase().includes(q)
+      id.includes(q) ||
+      city.includes(q) ||
+      ip.includes(q) ||
+      page.includes(q) ||
+      src.includes(q) ||
+      dev.includes(q)
     );
   });
 
@@ -301,8 +353,15 @@ export const WebsiteVisitorsPage: React.FC = () => {
     setIsLoading(true);
     realErpDataStore.getRecords<Visitor>('website_visitors', MOCK_VISITORS)
       .then(data => {
-        setVisitors(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setVisitors(data.map(normalizeVisitor));
+        } else {
+          setVisitors(MOCK_VISITORS.map(normalizeVisitor));
+        }
         setLastRefresh(new Date());
+        setIsLoading(false);
+      })
+      .catch(() => {
         setIsLoading(false);
       });
   };
@@ -570,30 +629,30 @@ export const WebsiteVisitorsPage: React.FC = () => {
                   {filteredVisitors.map((row) => (
                     <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5">
-                        <div className="font-mono font-bold text-black">{row.ip_address}</div>
+                        <div className="font-mono font-bold text-black">{row.ip_address || '-'}</div>
                         {row.phone && <div className="text-[11px] text-zinc-500 font-mono font-bold">{row.phone}</div>}
                       </td>
-                      <td className="p-3.5 font-semibold text-black">{row.city}</td>
+                      <td className="p-3.5 font-semibold text-black">{row.city || '-'}</td>
                       <td className="p-3.5">
                         <Badge
-                          text={row.device}
+                          text={row.device || 'غير معروف'}
                           type="info"
                         />
                       </td>
                       <td className="p-3.5">
                         <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${row.source === 'TikTok Ads' ? 'bg-black text-white' : row.source === 'Google Search' ? 'bg-zinc-100 text-black' : row.source === 'Musaned Direct' ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-zinc-50 text-zinc-700'}`}>
-                          {row.source}
+                          {row.source || 'Direct'}
                         </span>
                       </td>
-                      <td className="p-3.5 font-semibold text-champagne-dark text-xs">{row.page_visited}</td>
-                      <td className="p-3.5 font-mono font-bold text-zinc-700">{Math.floor(row.duration_sec / 60)} د و {row.duration_sec % 60} ث</td>
-                      <td className="p-3.5 text-amber-700 font-bold text-xs">{row.visit_time}</td>
+                      <td className="p-3.5 font-semibold text-champagne-dark text-xs">{row.page_visited || '-'}</td>
+                      <td className="p-3.5 font-mono font-bold text-zinc-700">{Math.floor((Number(row.duration_sec) || 0) / 60)} د و {(Number(row.duration_sec) || 0) % 60} ث</td>
+                      <td className="p-3.5 text-amber-700 font-bold text-xs">{row.visit_time || '-'}</td>
                       <td className="p-3.5 text-center">
                         <div className="flex items-center justify-center gap-1.5 flex-wrap">
                           {row.phone ? (
                             <>
                               <a
-                                href={`https://wa.me/${row.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`مرحباً بك في مجموعة السليم للاستقدام، بخصوص تصفحكم: ${row.page_visited}، يسعدنا تزويدك بالتفاصيل وحجز السيرة المناسبة فوراً!`)}`}
+                                href={`https://wa.me/${(row.phone || '').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`مرحباً بك في مجموعة السليم للاستقدام، بخصوص تصفحكم: ${row.page_visited || ''}، يسعدنا تزويدك بالتفاصيل وحجز السيرة المناسبة فوراً!`)}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="button-primary-pill inline-flex items-center gap-1"

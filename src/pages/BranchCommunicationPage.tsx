@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { useAppStore } from '../stores/appStore';
 import { ArrowLeftRight, Plus, Send, Lock, MessageSquare, Building2, Check, X, ShieldCheck } from 'lucide-react';
 
 export interface BranchMessage {
@@ -83,6 +84,7 @@ const MOCK_TRANSFERS: InterBranchTransferReq[] = [
 ];
 
 export const BranchCommunicationPage: React.FC = () => {
+  const { addNotification } = useAppStore();
   const [activeChannel, setActiveChannel] = useState('المجموعة العامة');
   const [messages, setMessages] = useState<BranchMessage[]>([]);
   const [transfers, setTransfers] = useState<InterBranchTransferReq[]>([]);
@@ -90,7 +92,8 @@ export const BranchCommunicationPage: React.FC = () => {
   const [showTransferModal, setShowTransferModal] = useState(false);
 
   useEffect(() => {
-    realErpDataStore.getRecords<BranchMessage>('branch_communications', MOCK_BRANCH_MESSAGES).then(data => setMessages(data));
+    realErpDataStore.getRecords<BranchMessage>('branch_communications', MOCK_BRANCH_MESSAGES).then(setMessages);
+    realErpDataStore.getRecords<InterBranchTransferReq>('inter_branch_transfers', MOCK_TRANSFERS).then(setTransfers);
   }, []);
 
   // New Transfer Request Form State
@@ -100,7 +103,7 @@ export const BranchCommunicationPage: React.FC = () => {
     details: ''
   });
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessageText.trim()) return;
 
@@ -109,17 +112,18 @@ export const BranchCommunicationPage: React.FC = () => {
       sender_name: 'مشرف admin',
       sender_branch: 'الإدارة العامة - الرياض',
       sender_role: 'Administrator',
-      content: newMessageText,
+      content: newMessageText.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       channel: activeChannel,
       priority: 'عادي'
     };
 
-    setMessages([...messages, newMsg]);
+    const updated = await realErpDataStore.addRecord<BranchMessage>('branch_communications', newMsg, MOCK_BRANCH_MESSAGES);
+    setMessages(updated);
     setNewMessageText('');
   };
 
-  const handleCreateTransfer = (e: React.FormEvent) => {
+  const handleCreateTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!transferForm.details.trim()) return;
 
@@ -129,14 +133,33 @@ export const BranchCommunicationPage: React.FC = () => {
       from_branch: 'الإدارة العامة (الرياض)',
       to_branch: transferForm.to_branch,
       req_type: transferForm.req_type,
-      details: transferForm.details,
+      details: transferForm.details.trim(),
       status: 'بانتظار الاعتماد',
       created_at: new Date().toISOString().replace('T', ' ').slice(0, 16)
     };
 
-    setTransfers([newTr, ...transfers]);
+    const updated = await realErpDataStore.addRecord<InterBranchTransferReq>('inter_branch_transfers', newTr, MOCK_TRANSFERS);
+    setTransfers(updated);
     setShowTransferModal(false);
     setTransferForm({ to_branch: 'فرع جدة - طريق الملك', req_type: 'مناقلة عمالة', details: '' });
+
+    addNotification({
+      title: 'إرسال طلب مناقلة',
+      message: `تم إرسال طلب المناقلة (${newTr.request_no}) إلى (${newTr.to_branch}) وحفظه بقاعدة البيانات بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  const handleUpdateTransferStatus = async (tr: InterBranchTransferReq, newStatus: 'تم القبول والتحويل' | 'مرفوض') => {
+    const updated = transfers.map(item => item.id === tr.id ? { ...item, status: newStatus } : item);
+    setTransfers(updated);
+    await realErpDataStore.importRealRecordsBatch('inter_branch_transfers', updated);
+
+    addNotification({
+      title: 'تحديث حالة المناقلة',
+      message: `تم تحديث الطلب (${tr.request_no}) إلى (${newStatus}).`,
+      type: newStatus === 'تم القبول والتحويل' ? 'success' : 'info',
+    });
   };
 
   const filteredMessages = messages.filter(m => activeChannel === 'المجموعة العامة' || m.channel === activeChannel);
@@ -161,135 +184,145 @@ export const BranchCommunicationPage: React.FC = () => {
       >
         <div className="flex items-center gap-3">
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <ArrowLeftRight className="w-5 h-5" />
+            <ArrowLeftRight className="w-5 h-5 text-champagne-light" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>BRANCH DISPATCH & TRANSFERS</span>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>ENTERPRISE SYNC & RELAY</span>
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-              مركز التواصل والمناقلات بين فروع الشركة
+            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              قنوات التنسيق والمناقلات السريعة بين الفروع
             </h1>
             <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#a1a1aa', fontWeight: 420 }}>
-              مجموعة خالد السليم • البث المباشر بين الفروع، التعاميم الرسمية، مناقلات العمالة والسيولة
+              ربط فوري مشفر بين الإدارة العامة، فروع جدة والشرقية، ومركز الإيواء للمناقلات وتنسيق الكوادر
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div>
           <button
-            className="button-white-pill"
             onClick={() => setShowTransferModal(true)}
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+            className="button-white-pill"
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <Plus className="w-4 h-4 ml-1" />
-            <span>+ طلب مناقلة بين الفروع</span>
+            <Plus className="w-3.5 h-3.5 ml-1 text-black" />
+            <span>طلب مناقلة بين الفروع</span>
           </button>
         </div>
       </div>
 
-      {/* Branch Metrics Cards */}
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>الفرع الرئيسي (الرياض)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>14 متصل</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تزامن 100%</span>
-        </div>
-
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>فرع جدة (الغربية)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>8 متصلين</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>18 تفويض معتمد</span>
-        </div>
-
-        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>فرع الخبر (الشرقية)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>6 متصلين</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>جاهز للاستلام</span>
-        </div>
-
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>مركز الإيواء والتغذية</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>61 عاملة</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>6 متاحات للمناقلة</span>
-        </div>
-      </div>
-
-      {/* Main Grid Layout: Left Channels Menu & Right Chat View */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Left Channels Menu */}
+      {/* Grid: Live Messenger + Channels */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Col: Channel Selector */}
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
           <h3 className="text-sm font-bold text-black mb-3 flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-black" />
-            <span>قنوات التواصل بين الفروع</span>
+            <span>قنوات التواصل الرسمية</span>
           </h3>
 
-          <div className="space-y-1">
+          <div className="space-y-2">
             {[
-              { id: 'المجموعة العامة', name: '📢 #المجموعة العامة (التعاميم)', badge: 'كل الفروع' },
-              { id: 'فرع الرياض', name: '🏛️ #فرع-الرياض-الرئيسي', badge: '14 نشط' },
-              { id: 'فرع جدة', name: '🏖️ #فرع-جدة-الغربية', badge: '8 نشط' },
-              { id: 'فرع الشرقية', name: '🛢️ #فرع-الخبر-الشرقية', badge: '6 نشط' },
-              { id: 'قسم الإيواء', name: '🏡 #قسم-الإيواء-والسكن', badge: '61 عاملة' }
-            ].map(c => (
-              <div
-                key={c.id}
-                onClick={() => setActiveChannel(c.id)}
-                className={`p-2.5 rounded-full cursor-pointer text-xs flex items-center justify-between transition-all ${activeChannel === c.id ? 'bg-black text-white font-bold' : 'bg-transparent text-zinc-700 hover:bg-zinc-50'}`}
+              { name: 'المجموعة العامة', desc: 'كافة الفروع والإدارات', badge: `${messages.length} رسالة` },
+              { name: 'فرع جدة', desc: 'استقبال المطار وعقود الغربية', badge: 'نشط' },
+              { name: 'قسم الإيواء', desc: 'رعاية النزيلات والخدمات الطبية', badge: 'عاجل' },
+              { name: 'الإدارة المالية', desc: 'التحصيل والمطابقات المحاسبية', badge: 'خاص' }
+            ].map(ch => (
+              <button
+                key={ch.name}
+                onClick={() => setActiveChannel(ch.name)}
+                style={{
+                  width: '100%',
+                  textAlign: 'right',
+                  padding: '12px',
+                  borderRadius: '16px',
+                  border: '1px solid',
+                  borderColor: activeChannel === ch.name ? '#000000' : '#f4f4f5',
+                  backgroundColor: activeChannel === ch.name ? '#000000' : '#fafafa',
+                  color: activeChannel === ch.name ? '#ffffff' : '#27272a',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
               >
-                <span>{c.name}</span>
-                <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeChannel === c.id ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-zinc-600'}`}>
-                  {c.badge}
+                <div>
+                  <div className="font-bold text-xs" style={{ color: activeChannel === ch.name ? '#ffffff' : '#000000' }}>{ch.name}</div>
+                  <div className="text-[11px] mt-0.5" style={{ color: activeChannel === ch.name ? '#a1a1aa' : '#71717a' }}>{ch.desc}</div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '10px',
+                    padding: '2px 8px',
+                    borderRadius: '9999px',
+                    fontWeight: 700,
+                    backgroundColor: activeChannel === ch.name ? 'rgba(255,255,255,0.2)' : '#f4f4f5',
+                    color: activeChannel === ch.name ? '#ffffff' : '#52525b',
+                  }}
+                >
+                  {ch.badge}
                 </span>
-              </div>
+              </button>
             ))}
+          </div>
+
+          <div className="mt-4 p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
+            <span className="text-[11px] text-zinc-500 flex items-center justify-center gap-1">
+              <Lock className="w-3 h-3 text-zinc-400" />
+              <span>تشفير SSL متوافق مع الحوكمة الداخلية</span>
+            </span>
           </div>
         </div>
 
-        {/* Right Messages & Direct Chat View */}
-        <div className="md:col-span-2 card-pricing flex flex-col justify-between" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff', minHeight: '460px' }}>
+        {/* Right Col: Live Chat Feed */}
+        <div className="lg:col-span-2 card-pricing flex flex-col justify-between" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff', minHeight: '440px' }}>
           <div>
-            <div className="border-b border-zinc-100 pb-3 mb-3 flex justify-between items-center">
-              <h3 className="text-sm font-bold text-black m-0">
-                قناة المحادثة: {activeChannel}
-              </h3>
-              <div className="inline-flex items-center gap-1 bg-champagne-pale text-champagne-dark px-2.5 py-1 rounded-full text-[11px] font-bold border border-champagne/30">
-                <Lock className="w-3 h-3 text-champagne-dark" />
-                <span>تشفير مباشر آمن 256-bit</span>
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+              <div>
+                <h3 className="text-sm font-bold text-black m-0">{activeChannel}</h3>
+                <span className="text-[11px] text-zinc-400">سجل الرسائل الحية المحفوظ في قاعدة البيانات</span>
               </div>
+              <span className="pill-tag-mint" style={{ fontSize: '10px' }}>مباشر Live</span>
             </div>
 
-            {/* Messages Stream */}
-            <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-              {filteredMessages.map(m => (
-                <div
-                  key={m.id}
-                  className={`p-3.5 rounded-2xl text-xs ${m.priority === 'تعميم رسمي' ? 'bg-zinc-900 text-white border border-zinc-800' : m.priority === 'عاجل' ? 'bg-rose-50 text-rose-950 border border-rose-200' : 'bg-zinc-50 text-black border border-zinc-200'}`}
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold">
-                      {m.sender_name} <span className="text-[11px] font-normal opacity-70">({m.sender_branch} • {m.sender_role})</span>
-                    </span>
-                    <span className="text-[11px] font-mono opacity-60">{m.timestamp}</span>
-                  </div>
-                  <p className="m-0 leading-relaxed font-sans">
-                    {m.content}
-                  </p>
+            {/* Chat History Box */}
+            <div className="space-y-3 overflow-y-auto max-h-[300px] pr-1">
+              {filteredMessages.length === 0 ? (
+                <div className="p-8 text-center text-zinc-400 text-xs">
+                  لا توجد رسائل في هذه القناة. ابدأ بكتابة رسالة في الأسفل.
                 </div>
-              ))}
+              ) : (
+                filteredMessages.map(msg => (
+                  <div key={msg.id} className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
+                    <div className="flex items-center justify-between mb-1 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">{msg.sender_name}</span>
+                        <span className="text-[10px] text-zinc-400 font-mono">({msg.sender_branch})</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-zinc-400">{msg.timestamp}</span>
+                    </div>
+                    <p className="text-xs text-zinc-800 leading-relaxed m-0 font-sans">{msg.content}</p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
-          {/* New Message Input */}
-          <form onSubmit={handleSendMessage} className="flex gap-2 mt-4 pt-3 border-t border-zinc-100">
+          {/* Chat Input Field */}
+          <form onSubmit={handleSendMessage} className="mt-4 pt-3 border-t border-zinc-100 flex gap-2">
             <input
               type="text"
+              placeholder={`أرسل رسالة فورية إلى (${activeChannel})...`}
               value={newMessageText}
               onChange={e => setNewMessageText(e.target.value)}
-              placeholder={`اكتب رسالة أو تعميم لقناة (${activeChannel})...`}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-2 px-4 text-xs text-black focus:border-black focus:outline-none"
+              className="flex-1 bg-zinc-50 border border-zinc-200 rounded-full px-4 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+              style={{ minHeight: '40px' }}
             />
-            <button type="submit" className="button-primary-pill" style={{ minHeight: '36px', padding: '6px 18px', fontSize: '12px' }}>
+            <button
+              type="submit"
+              className="button-primary-pill"
+              style={{ padding: '8px 20px', fontSize: '12.5px', minHeight: '40px' }}
+            >
               <Send className="w-3.5 h-3.5 ml-1" />
               <span>إرسال</span>
             </button>
@@ -299,11 +332,12 @@ export const BranchCommunicationPage: React.FC = () => {
 
       {/* Inter-Branch Transfer Requests Table */}
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-        <div className="p-4 border-b border-zinc-100 bg-white">
-          <h3 className="text-sm font-bold text-black flex items-center gap-2">
+        <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
+          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
             <ArrowLeftRight className="w-4 h-4 text-black" />
             <span>سجل طلبات المناقلات والتنسيق بين الفروع (Inter-Branch Transfers Log)</span>
           </h3>
+          <span className="pill-tag-mint text-[11px]">{transfers.length} طلب مناقلة</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -317,6 +351,7 @@ export const BranchCommunicationPage: React.FC = () => {
                 <th className="p-3.5">التفاصيل والملاحظات</th>
                 <th className="p-3.5">الحالة والاعتماد</th>
                 <th className="p-3.5">التاريخ</th>
+                <th className="p-3.5 text-center">الإجراء</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -328,9 +363,31 @@ export const BranchCommunicationPage: React.FC = () => {
                   <td className="p-3.5 font-semibold text-black">{t.req_type}</td>
                   <td className="p-3.5 text-zinc-600 text-xs">{t.details}</td>
                   <td className="p-3.5">
-                    <Badge text={t.status} type={t.status === 'تم القبول والتحويل' ? 'success' : 'warning'} />
+                    <Badge text={t.status} type={t.status === 'تم القبول والتحويل' ? 'success' : t.status === 'مرفوض' ? 'danger' : 'warning'} />
                   </td>
                   <td className="p-3.5 font-mono text-[11px] text-zinc-400">{t.created_at}</td>
+                  <td className="p-3.5 text-center">
+                    {t.status === 'بانتظار الاعتماد' ? (
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button
+                          onClick={() => handleUpdateTransferStatus(t, 'تم القبول والتحويل')}
+                          className="button-primary-pill"
+                          style={{ padding: '2px 8px', fontSize: '10px', minHeight: '24px' }}
+                        >
+                          قبول
+                        </button>
+                        <button
+                          onClick={() => handleUpdateTransferStatus(t, 'مرفوض')}
+                          className="button-outline-on-light"
+                          style={{ padding: '2px 8px', fontSize: '10px', minHeight: '24px' }}
+                        >
+                          رفض
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-zinc-400 font-semibold">تم البت</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -340,7 +397,7 @@ export const BranchCommunicationPage: React.FC = () => {
 
       {/* Create Inter-Branch Transfer Request Modal */}
       {showTransferModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">

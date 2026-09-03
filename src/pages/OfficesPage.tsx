@@ -135,6 +135,7 @@ export const OfficesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedOfficeStatement, setSelectedOfficeStatement] = useState<ForeignOffice | null>(null);
+  const [selectedOfficeCredentials, setSelectedOfficeCredentials] = useState<ForeignOffice | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   // New Office Form State
@@ -414,6 +415,13 @@ export const OfficesPage: React.FC = () => {
                   <span>كشف حساب ($)</span>
                 </button>
                 <button
+                  onClick={() => setSelectedOfficeCredentials(office)}
+                  className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                  title="بيانات بوابة الوكيل"
+                >
+                  <Key className="w-3.5 h-3.5" />
+                </button>
+                <button
                   onClick={() => handleDeleteOffice(office)}
                   className="p-1.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/60 text-slate-400 hover:text-rose-600 transition"
                   title="حذف"
@@ -482,12 +490,8 @@ export const OfficesPage: React.FC = () => {
                         </button>
                         <button
                           className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-                          onClick={() => addNotification({
-                            title: 'بوابة الوكيل الخارجي',
-                            message: `تم إعادة إرسال بيانات الدخول لبوابة الوكيل لـ (${row.name}) بنجاح.`,
-                            type: 'info'
-                          })}
-                          title="البوابة"
+                          onClick={() => setSelectedOfficeCredentials(row)}
+                          title="بيانات بوابة الوكيل"
                         >
                           <Key className="w-3.5 h-3.5" />
                         </button>
@@ -717,6 +721,77 @@ export const OfficesPage: React.FC = () => {
                     إغلاق
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* AGENT PORTAL CREDENTIALS MODAL */}
+      {selectedOfficeCredentials && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white relative">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <Key className="w-4 h-4 text-champagne-dark" />
+                <span>بيانات دخول بوابة الوكيل الخارجي</span>
+              </h3>
+              <button
+                onClick={() => setSelectedOfficeCredentials(null)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4 text-xs font-sans">
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <div className="text-zinc-500 mb-1">الوكالة المعتمدة:</div>
+                <div className="font-bold text-sm text-black dark:text-white">{selectedOfficeCredentials.name}</div>
+                <div className="text-[11px] text-zinc-400 font-mono mt-0.5">الدولة: {selectedOfficeCredentials.nationality} | كود الحساب: {selectedOfficeCredentials.account_code}</div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-zinc-500 font-semibold mb-1">اسم المستخدم / البريد المعتمد للبوابة</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={`agent.${(selectedOfficeCredentials.account_code || 'ext').toLowerCase()}@alsulaim-portal.com`}
+                    className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-3 font-mono font-bold text-black dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-zinc-500 font-semibold mb-1">رمز الدخول المشفر (Access Key)</label>
+                  <input
+                    type="text"
+                    readOnly
+                    value={`AGNT-SEC-${selectedOfficeCredentials.account_code || 'KEY'}-2026`}
+                    className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 px-3 font-mono font-bold text-champagne-dark"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`اسم المستخدم: agent.${(selectedOfficeCredentials.account_code || 'ext').toLowerCase()}@alsulaim-portal.com\nرمز الدخول: AGNT-SEC-${selectedOfficeCredentials.account_code || 'KEY'}-2026`);
+                    addNotification({
+                      title: 'تم نسخ بيانات الدخول',
+                      message: 'تم نسخ اسم المستخدم ورمز الدخول إلى الحافظة بنجاح.',
+                      type: 'success'
+                    });
+                  }}
+                  className="button-primary-pill text-xs py-2 px-4"
+                >
+                  نسخ البيانات
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOfficeCredentials(null)}
+                  className="button-outline-on-light text-xs py-2 px-4"
+                >
+                  إغلاق
+                </button>
               </div>
             </div>
           </div>

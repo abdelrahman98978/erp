@@ -32,6 +32,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getCompanies(): Promise<IamCompany[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('iam_companies')
@@ -59,6 +60,7 @@ class IamPolicyEngine {
   }
 
   public async getBranches(companyId?: string): Promise<IamBranch[]> {
+    if (isDummySupabase) return [];
     try {
       let query = supabase.from('iam_branches').select('*').order('name', { ascending: true });
       if (companyId) query = query.eq('company_id', companyId);
@@ -83,6 +85,7 @@ class IamPolicyEngine {
   }
 
   public async getDepartments(companyId?: string): Promise<IamDepartment[]> {
+    if (isDummySupabase) return [];
     try {
       let query = supabase.from('iam_departments').select('*').order('name', { ascending: true });
       if (companyId) query = query.eq('company_id', companyId);
@@ -111,6 +114,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getUsers(): Promise<IamUser[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('iam_users')
@@ -144,6 +148,7 @@ class IamPolicyEngine {
   }
 
   public async getUserMemberships(userId: string): Promise<IamMembership[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('iam_memberships')
@@ -237,6 +242,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getRoles(): Promise<IamRole[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('iam_roles').select('*').order('name', { ascending: true });
       if (error) throw error;
@@ -257,6 +263,7 @@ class IamPolicyEngine {
   }
 
   public async getPermissions(): Promise<IamPermission[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('iam_permissions').select('*').order('module', { ascending: true });
       if (error) throw error;
@@ -277,6 +284,7 @@ class IamPolicyEngine {
   }
 
   public async getRolePermissions(roleId: string): Promise<string[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('iam_role_permissions')

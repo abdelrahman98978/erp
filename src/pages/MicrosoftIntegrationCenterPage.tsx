@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
-import { MsProjectTask, PowerBiDashboardItem } from '../types';
+import { MsProjectTask, PowerBiDashboardItem, CompanyId } from '../types';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { 
   Building2, 
@@ -12,7 +12,8 @@ import {
   Plus, 
   ExternalLink, 
   Sparkles,
-  GitFork
+  GitFork,
+  X
 } from 'lucide-react';
 
 const INITIAL_TASKS: MsProjectTask[] = [
@@ -56,6 +57,26 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'project' | 'powerbi' | 'visio'>('project');
   const [projectTasks, setProjectTasks] = useState<MsProjectTask[]>([]);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
+  // Form State
+  const [projectForm, setProjectForm] = useState<{
+    taskName: string;
+    companyId: CompanyId;
+    assignedResource: string;
+    startDate: string;
+    endDate: string;
+    progressPercent: string;
+    milestone: boolean;
+  }>({
+    taskName: '',
+    companyId: 'SAF',
+    assignedResource: '',
+    startDate: new Date().toISOString().slice(0, 10),
+    endDate: new Date(Date.now() + 60 * 24 * 3600 * 1000).toISOString().slice(0, 10),
+    progressPercent: '10',
+    milestone: false
+  });
 
   useEffect(() => {
     realErpDataStore.getRecords<MsProjectTask>('ms_project_tasks', INITIAL_TASKS).then(data => setProjectTasks(data));
@@ -91,6 +112,43 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
     },
   ]);
 
+  const handleCreateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!projectForm.taskName.trim()) return;
+
+    const progress = Math.min(100, Math.max(0, Number(projectForm.progressPercent) || 0));
+    const newTask: MsProjectTask = {
+      id: `MSP-${104 + projectTasks.length}`,
+      taskName: projectForm.taskName.trim(),
+      companyId: projectForm.companyId,
+      assignedResource: projectForm.assignedResource.trim() || 'فريق التطوير والتشغيل',
+      startDate: projectForm.startDate,
+      endDate: projectForm.endDate,
+      progressPercent: progress,
+      status: progress === 100 ? 'مكتمل' : 'قيد التنفيذ',
+      milestone: projectForm.milestone,
+    };
+
+    const updated = await realErpDataStore.addRecord<MsProjectTask>('ms_project_tasks', newTask, INITIAL_TASKS);
+    setProjectTasks(updated);
+    setShowAddProjectModal(false);
+    setProjectForm({
+      taskName: '',
+      companyId: 'SAF',
+      assignedResource: '',
+      startDate: new Date().toISOString().slice(0, 10),
+      endDate: new Date(Date.now() + 60 * 24 * 3600 * 1000).toISOString().slice(0, 10),
+      progressPercent: '10',
+      milestone: false
+    });
+
+    addNotification({
+      title: 'مزامنة Microsoft Project',
+      message: `تم إنشاء مشروع (${newTask.taskName}) وحفظه في جدول المشاريع بنجاح.`,
+      type: 'success',
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Banner */}
@@ -120,7 +178,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 مركز تكامل ميكروسوفت المؤسسي (Project + Power BI + Visio)
               </h1>
               <p className="text-xs text-zinc-400 mt-1 font-sans">
-                ربط مباشر مع بيئة Microsoft 365 لإدارة المشاريع، التحليلات المتقدمة مع RLS، والهياكل التنظيمية الديناميكية
+                ربط مباشر مع بيئة Microsoft 365 لإدارة المشاريع، التحليلات المتقدمة مع RLS، والهياكل التنظيمية الديناميكية بقاعدة البيانات
               </p>
             </div>
           </div>
@@ -137,8 +195,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
       {/* Tabs Selector */}
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'project', label: 'Microsoft Project (المشاريع والمهام)', icon: Clock },
-          { id: 'powerbi', label: 'Power BI Analytics (التحليلات RLS)', icon: BarChart3 },
+          { id: 'project', label: `Microsoft Project (المشاريع والمهام - ${projectTasks.length})`, icon: Clock },
+          { id: 'powerbi', label: `Power BI Analytics (التحليلات RLS - ${powerbiDashboards.length})`, icon: BarChart3 },
           { id: 'visio', label: 'Visio Org Architect (الهيكل الإداري)', icon: GitFork },
         ].map((tab) => {
           const isActive = activeTab === tab.id;
@@ -180,18 +238,12 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
             </h3>
             <button
               type="button"
-              onClick={() => {
-                addNotification({
-                  title: 'مزامنة Microsoft Project',
-                  message: 'تم إرسال طلب المزامنة السحابية وتحديث مسار ومراحل المشروع بنجاح مع Azure DevOps / M365.',
-                  type: 'success',
-                });
-              }}
+              onClick={() => setShowAddProjectModal(true)}
               className="button-primary-pill"
               style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
             >
               <Plus className="w-3.5 h-3.5 ml-1" />
-              <span>مزامنة مشروع جديد</span>
+              <span>+ مزامنة مشروع جديد</span>
             </button>
           </div>
 
@@ -323,6 +375,118 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 <div className="text-[10px] text-zinc-500 mt-0.5">3 فروع | 75 موظف</div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: Add MS Project Task */}
+      {showAddProjectModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
+            <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
+              <h3 className="text-sm font-bold text-black m-0">مزامنة مشروع جديد في Microsoft Project</h3>
+              <button onClick={() => setShowAddProjectModal(false)} className="text-zinc-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateProject} className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">اسم المشروع / المبادرة *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="مثال: حملة استقدام الربع الرابع 2026"
+                  value={projectForm.taskName}
+                  onChange={e => setProjectForm({ ...projectForm, taskName: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الشركة التابعة</label>
+                  <select
+                    value={projectForm.companyId}
+                    onChange={e => setProjectForm({ ...projectForm, companyId: e.target.value as CompanyId })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="SAF">شركة السفير الماسي (SAF)</option>
+                    <option value="YAQ">شركة ياقوت نجد (YAQ)</option>
+                    <option value="TOP">شركة توباز للاستقدام (TOP)</option>
+                    <option value="KAS">دار الرواد / كاس للتجارة (KAS)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">المسؤول المعتمد</label>
+                  <input
+                    type="text"
+                    placeholder="اسم المسؤول..."
+                    value={projectForm.assignedResource}
+                    onChange={e => setProjectForm({ ...projectForm, assignedResource: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">تاريخ البدء</label>
+                  <input
+                    type="date"
+                    value={projectForm.startDate}
+                    onChange={e => setProjectForm({ ...projectForm, startDate: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">تاريخ الانتهاء المستهدف</label>
+                  <input
+                    type="date"
+                    value={projectForm.endDate}
+                    onChange={e => setProjectForm({ ...projectForm, endDate: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 items-center">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">نسبة الإنجاز الحالية (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={projectForm.progressPercent}
+                    onChange={e => setProjectForm({ ...projectForm, progressPercent: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div className="pt-4 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="milestone"
+                    checked={projectForm.milestone}
+                    onChange={e => setProjectForm({ ...projectForm, milestone: e.target.checked })}
+                    className="rounded text-black"
+                  />
+                  <label htmlFor="milestone" className="text-xs text-zinc-700 font-semibold cursor-pointer">
+                    محطة رئيسية (Milestone)
+                  </label>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAddProjectModal(false)}
+                  className="button-outline-on-light text-xs py-1.5 px-4"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs py-1.5 px-5"
+                >
+                  حفظ ومزامنة المشروع
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

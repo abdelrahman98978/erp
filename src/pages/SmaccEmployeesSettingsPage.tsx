@@ -1,17 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Users,
   Plus,
   Search,
   Calculator,
+  Save,
+  Building2,
+  FileSpreadsheet,
+  CheckCircle2
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 import { useAppStore } from '../stores/appStore';
+import { realErpDataStore } from '../services/realErpDataStore';
+import { exportData } from '../services/exportService';
+
+export interface SmaccEmployee {
+  id: string;
+  name: string;
+  nationalId: string;
+  jobTitle: string;
+  department: string;
+  basicSalary: number;
+  housingAllowance: number;
+  transportAllowance: number;
+  totalSalary: number;
+  status: string;
+}
+
+const INITIAL_EMPLOYEES: SmaccEmployee[] = [
+  { id: 'EMP-001', name: 'أحمد محمود السعيد', nationalId: '1098231456', jobTitle: 'بائع ومحصل مبيعات', department: 'قسم المبيعات والتحصيل', basicSalary: 4500, housingAllowance: 1500, transportAllowance: 500, totalSalary: 6500, status: 'نشط' },
+  { id: 'EMP-002', name: 'فهد عبد الله العتيبي', nationalId: '1087654321', jobTitle: 'أخصائي شؤون استقدام', department: 'إدارة الاستقدام والمتابعة', basicSalary: 5500, housingAllowance: 1500, transportAllowance: 600, totalSalary: 7600, status: 'نشط' },
+  { id: 'EMP-003', name: 'سارة خالد الدوسري', nationalId: '1023456789', jobTitle: 'محاسبة مالية ومسؤولة ZATCA', department: 'الإدارة المالية', basicSalary: 6000, housingAllowance: 1800, transportAllowance: 700, totalSalary: 8500, status: 'نشط' },
+  { id: 'EMP-004', name: 'مريم العنزي', nationalId: '1034567890', jobTitle: 'مشرفة مركز الإيواء والرعاية', department: 'قسم الإيواء والرعاية', basicSalary: 4800, housingAllowance: 1200, transportAllowance: 500, totalSalary: 6500, status: 'نشط' },
+];
 
 export const SmaccEmployeesSettingsPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const [activeTab, setActiveTab] = useState<'employees' | 'settings' | 'numbering'>('employees');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Database Persistent State
+  const [employees, setEmployees] = useState<SmaccEmployee[]>([]);
 
   // Modals state
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
@@ -44,9 +73,9 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
     nationalId: '',
     jobTitle: 'أخصائي استقدام',
     department: 'قسم العمليات التشغيلية',
-    basicSalary: '',
-    housingAllowance: '',
-    transportAllowance: '',
+    basicSalary: '5000',
+    housingAllowance: '1250',
+    transportAllowance: '500',
     bankName: 'مصرف الراجحي',
     iban: '',
   });
@@ -57,6 +86,21 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
     lastSalary: '5000',
     result: 0,
   });
+
+  // Load from realErpDataStore
+  useEffect(() => {
+    realErpDataStore.getRecords<SmaccEmployee>('employees', INITIAL_EMPLOYEES).then(data => {
+      setEmployees(data);
+    });
+
+    realErpDataStore.getRecords<any>('system_settings', []).then(stored => {
+      if (stored && stored.length > 0) {
+        const first = stored[0];
+        if (first.companySettings) setCompanySettings(first.companySettings);
+        if (first.numberingRules) setNumberingRules(first.numberingRules);
+      }
+    });
+  }, []);
 
   const calculateEosb = () => {
     const yrs = parseFloat(eosbCalc.years) || 0;
@@ -75,24 +119,77 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
     });
   };
 
-  const handleSaveEmployee = (e: React.FormEvent) => {
+  const handleSaveEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newEmp.name.trim()) return;
+
+    const basic = Number(newEmp.basicSalary) || 0;
+    const housing = Number(newEmp.housingAllowance) || 0;
+    const transport = Number(newEmp.transportAllowance) || 0;
+    const total = basic + housing + transport;
+
+    const empRecord: SmaccEmployee = {
+      id: `EMP-00${employees.length + 1}`,
+      name: newEmp.name.trim(),
+      nationalId: newEmp.nationalId.trim() || '1000000000',
+      jobTitle: newEmp.jobTitle,
+      department: newEmp.department,
+      basicSalary: basic,
+      housingAllowance: housing,
+      transportAllowance: transport,
+      totalSalary: total,
+      status: 'نشط'
+    };
+
+    const updated = await realErpDataStore.addRecord<SmaccEmployee>('employees', empRecord, INITIAL_EMPLOYEES);
+    setEmployees(updated);
     setIsEmployeeModalOpen(false);
+    setNewEmp({
+      name: '',
+      nationalId: '',
+      jobTitle: 'أخصائي استقدام',
+      department: 'قسم العمليات التشغيلية',
+      basicSalary: '5000',
+      housingAllowance: '1250',
+      transportAllowance: '500',
+      bankName: 'مصرف الراجحي',
+      iban: '',
+    });
+
     addNotification({
       title: 'تسجيل موظف جديد',
-      message: `تم تسجيل الموظف (${newEmp.name || 'موظف جديد'}) وإعداد مسير الراتب الخاص به بنجاح.`,
+      message: `تم حفظ الموظف (${empRecord.name}) في قاعدة بيانات SMACC وحفظ مسير الراتب (${total.toLocaleString()} ر.س) بنجاح.`,
       type: 'success',
     });
   };
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      id: 'SYS-SETTINGS-01',
+      companySettings,
+      numberingRules,
+      updated_at: new Date().toISOString()
+    };
+    await realErpDataStore.importRealRecordsBatch('system_settings', [payload]);
+
     addNotification({
       title: 'حفظ الإعدادات المالية',
-      message: 'تم حفظ إعدادات المنشأة وقواعد الترقيم التلقائي بنجاح في SMACC.',
+      message: 'تم حفظ إعدادات المنشأة وقواعد الترقيم التلقائي بنجاح في قاعدة بيانات SMACC.',
       type: 'success',
     });
   };
+
+  const filteredEmployees = useMemo(() => {
+    if (!searchQuery.trim()) return employees;
+    const q = searchQuery.toLowerCase().trim();
+    return employees.filter(emp =>
+      (emp.name || '').toLowerCase().includes(q) ||
+      (emp.nationalId || '').toLowerCase().includes(q) ||
+      (emp.jobTitle || '').toLowerCase().includes(q) ||
+      (emp.department || '').toLowerCase().includes(q)
+    );
+  }, [employees, searchQuery]);
 
   return (
     <div className="space-y-6">
@@ -125,7 +222,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               إدارة الموظفين والإعدادات العامة
             </h1>
             <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              سجل الموظفين والرواتب، الترقيم التلقائي والتفويضات، وإعدادات المنشأة الضريبية
+              سجل الموظفين والرواتب، الترقيم التلقائي والتفويضات، وإعدادات المنشأة الضريبية متصلة بقاعدة البيانات
             </p>
           </div>
         </div>
@@ -138,14 +235,14 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               padding: '6px 16px',
               borderRadius: '9999px',
               fontWeight: activeTab === 'employees' ? 550 : 420,
-              background: activeTab === 'employees' ? '#ffffff' : 'transparent',
-              color: activeTab === 'employees' ? '#000000' : '#d4d4d8',
+              backgroundColor: activeTab === 'employees' ? '#ffffff' : 'transparent',
+              color: activeTab === 'employees' ? '#000000' : '#ffffff',
+              transition: 'all 0.15s ease',
               border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
             }}
           >
-            سجل الموظفين
+            سجل الموظفين والرواتب ({employees.length})
           </button>
           <button
             onClick={() => setActiveTab('settings')}
@@ -153,14 +250,14 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               padding: '6px 16px',
               borderRadius: '9999px',
               fontWeight: activeTab === 'settings' ? 550 : 420,
-              background: activeTab === 'settings' ? '#ffffff' : 'transparent',
-              color: activeTab === 'settings' ? '#000000' : '#d4d4d8',
+              backgroundColor: activeTab === 'settings' ? '#ffffff' : 'transparent',
+              color: activeTab === 'settings' ? '#000000' : '#ffffff',
+              transition: 'all 0.15s ease',
               border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
             }}
           >
-            إعدادات النظام العامة
+            إعدادات المنشأة والضريبة
           </button>
           <button
             onClick={() => setActiveTab('numbering')}
@@ -168,31 +265,30 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               padding: '6px 16px',
               borderRadius: '9999px',
               fontWeight: activeTab === 'numbering' ? 550 : 420,
-              background: activeTab === 'numbering' ? '#ffffff' : 'transparent',
-              color: activeTab === 'numbering' ? '#000000' : '#d4d4d8',
+              backgroundColor: activeTab === 'numbering' ? '#ffffff' : 'transparent',
+              color: activeTab === 'numbering' ? '#000000' : '#ffffff',
+              transition: 'all 0.15s ease',
               border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
             }}
           >
-            الترقيم التلقائي والتفويضات
+            قواعد الترقيم التلقائي
           </button>
         </div>
       </div>
 
-      {/* TAB 1: Employees List */}
+      {/* TAB 1: Employees Directory */}
       {activeTab === 'employees' && (
-        <div className="space-y-6">
-          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="space-y-4">
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
               <input
                 type="text"
-                placeholder="البحث بالاسم أو رقم الهوية..."
+                placeholder="البحث في الموظفين..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="text-input"
-                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
               />
             </div>
 
@@ -213,13 +309,22 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 <Calculator className="w-4 h-4 ml-1 text-champagne-dark" />
                 <span>حاسبة مكافأة نهاية الخدمة</span>
               </button>
+              <button
+                onClick={() => exportData('employees', employees, 'excel')}
+                className="button-outline-on-light"
+                style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
+              >
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
+                <span>تصدير إكسل</span>
+              </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-xs">
             <table className="w-full text-right text-xs text-zinc-700">
               <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
+                  <th className="p-3.5">الرقم</th>
                   <th className="p-3.5">اسم الموظف</th>
                   <th className="p-3.5">الهوية / الإقامة</th>
                   <th className="p-3.5">المسمى الوظيفي</th>
@@ -227,18 +332,33 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                   <th className="p-3.5">الراتب الأساسي</th>
                   <th className="p-3.5">البدلات الشاملة</th>
                   <th className="p-3.5">إجمالي الراتب</th>
+                  <th className="p-3.5">الحالة</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 font-sans">
-                <tr className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-bold text-black">أحمد محمود السعيد</td>
-                  <td className="p-3.5 font-mono text-zinc-500">1098231456</td>
-                  <td className="p-3.5 text-black font-semibold">بائع ومحصل مبيعات</td>
-                  <td className="p-3.5 text-zinc-600">قسم المبيعات والتحصيل</td>
-                  <td className="p-3.5 font-bold font-mono text-black">4,500 ر.س</td>
-                  <td className="p-3.5 text-zinc-500 font-mono">1,500 ر.س</td>
-                  <td className="p-3.5 font-bold font-mono text-champagne-dark">6,000.00 ر.س</td>
-                </tr>
+                {filteredEmployees.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="p-8 text-center text-zinc-400 text-xs">
+                      لا يوجد موظفون مطابقون. اضغط على "+ إضافة موظف جديد" لتسجيل موظف.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredEmployees.map(emp => (
+                    <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
+                      <td className="p-3.5 font-mono text-zinc-400 text-[11px]">{emp.id}</td>
+                      <td className="p-3.5 font-bold text-black">{emp.name}</td>
+                      <td className="p-3.5 font-mono text-zinc-500">{emp.nationalId}</td>
+                      <td className="p-3.5 text-black font-semibold">{emp.jobTitle}</td>
+                      <td className="p-3.5 text-zinc-600">{emp.department}</td>
+                      <td className="p-3.5 font-bold font-mono text-black">{emp.basicSalary.toLocaleString()} ر.س</td>
+                      <td className="p-3.5 text-zinc-500 font-mono">{(emp.housingAllowance + emp.transportAllowance).toLocaleString()} ر.س</td>
+                      <td className="p-3.5 font-bold font-mono text-champagne-dark">{emp.totalSalary.toLocaleString()} ر.س</td>
+                      <td className="p-3.5">
+                        <span className="pill-tag-mint" style={{ fontSize: '10px' }}>{emp.status}</span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -248,7 +368,10 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       {/* TAB 2: General Settings */}
       {activeTab === 'settings' && (
         <form onSubmit={handleSaveSettings} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h3 className="font-bold text-black text-base border-b border-zinc-100 pb-3">إعدادات المنشأة والنظام الضريبي</h3>
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+            <h3 className="font-bold text-black text-base m-0">إعدادات المنشأة والنظام الضريبي</h3>
+            <span className="pill-tag-mint text-xs">حفظ دائم في قاعدة البيانات</span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
               <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم المنشأة / التجاري</label>
@@ -286,13 +409,32 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
               />
             </div>
+            <div>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">الفرع الرئيسي المعتمد</label>
+              <input
+                type="text"
+                value={companySettings.mainBranch}
+                onChange={e => setCompanySettings({ ...companySettings, mainBranch: e.target.value })}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">نسبة ضريبة القيمة المضافة</label>
+              <input
+                type="text"
+                value={companySettings.vatRate}
+                readOnly
+                className="w-full bg-zinc-100 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-zinc-600 font-bold"
+              />
+            </div>
           </div>
           <button
             type="submit"
-            className="button-primary-pill mt-6"
+            className="button-primary-pill mt-6 flex items-center gap-1.5"
             style={{ padding: '8px 24px', fontSize: '13px', minHeight: '38px' }}
           >
-            حفظ إعدادات المنشأة
+            <Save className="w-4 h-4" />
+            <span>حفظ إعدادات المنشأة</span>
           </button>
         </form>
       )}
@@ -300,7 +442,10 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       {/* TAB 3: Auto Numbering Rules */}
       {activeTab === 'numbering' && (
         <form onSubmit={handleSaveSettings} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h3 className="font-bold text-black text-base border-b border-zinc-100 pb-3">الترقيم التلقائي وتفويضات الاعتماد</h3>
+          <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+            <h3 className="font-bold text-black text-base m-0">الترقيم التلقائي وتفويضات الاعتماد</h3>
+            <span className="pill-tag-mint text-xs">قواعد التسلسل الرقمي</span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
               <label className="text-xs text-zinc-700 block mb-1 font-semibold">بادئة سندات القبض والصرف</label>
@@ -320,13 +465,32 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
               />
             </div>
+            <div>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">بادئة الفواتير الإلكترونية ZATCA</label>
+              <input
+                type="text"
+                value={numberingRules.invoicePrefix}
+                onChange={e => setNumberingRules({ ...numberingRules, invoicePrefix: e.target.value })}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-zinc-700 block mb-1 font-semibold">الرقم التسلسلي الافتتاحي</label>
+              <input
+                type="text"
+                value={numberingRules.invoiceStart}
+                onChange={e => setNumberingRules({ ...numberingRules, invoiceStart: e.target.value })}
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              />
+            </div>
           </div>
           <button
             type="submit"
-            className="button-primary-pill mt-6"
+            className="button-primary-pill mt-6 flex items-center gap-1.5"
             style={{ padding: '8px 24px', fontSize: '13px', minHeight: '38px' }}
           >
-            حفظ قواعد الترقيم
+            <Save className="w-4 h-4" />
+            <span>حفظ قواعد الترقيم</span>
           </button>
         </form>
       )}
@@ -336,23 +500,23 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
         isOpen={isEmployeeModalOpen}
         onClose={() => setIsEmployeeModalOpen(false)}
         title="إضافة موظف جديد في سجل HR"
-        subtitle="أدخل بيانات الموظف والراتب الأساسي والبدلات"
+        subtitle="أدخل بيانات الموظف والراتب الأساسي والبدلات لحفظه بقاعدة البيانات"
         onSubmit={handleSaveEmployee}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الاسم الكامل للموظف</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الاسم الكامل للموظف *</label>
             <input
               type="text"
               required
-              placeholder="اسم الموظف..."
+              placeholder="مثال: تركي سالم العتيبي"
               value={newEmp.name}
               onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
               className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الهوية الوطنية / الإقامة</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">رقم الهوية الوطنية / الإقامة *</label>
             <input
               type="text"
               required
@@ -363,7 +527,30 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
             />
           </div>
           <div>
-            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الراتب الأساسي (ر.س)</label>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">المسمى الوظيفي</label>
+            <input
+              type="text"
+              value={newEmp.jobTitle}
+              onChange={e => setNewEmp({ ...newEmp, jobTitle: e.target.value })}
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">القسم / الإدارة</label>
+            <select
+              value={newEmp.department}
+              onChange={e => setNewEmp({ ...newEmp, department: e.target.value })}
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+            >
+              <option value="قسم العمليات التشغيلية">قسم العمليات التشغيلية</option>
+              <option value="إدارة الاستقدام والمتابعة">إدارة الاستقدام والمتابعة</option>
+              <option value="الإدارة المالية">الإدارة المالية</option>
+              <option value="قسم المبيعات والتحصيل">قسم المبيعات والتحصيل</option>
+              <option value="مركز الإيواء والرعاية">مركز الإيواء والرعاية</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">الراتب الأساسي (ر.س) *</label>
             <input
               type="number"
               required
@@ -381,6 +568,25 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               value={newEmp.housingAllowance}
               onChange={e => setNewEmp({ ...newEmp, housingAllowance: e.target.value })}
               className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">بدل النقل والمواصلات (ر.س)</label>
+            <input
+              type="number"
+              placeholder="0.00"
+              value={newEmp.transportAllowance}
+              onChange={e => setNewEmp({ ...newEmp, transportAllowance: e.target.value })}
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم البنك المعتمد</label>
+            <input
+              type="text"
+              value={newEmp.bankName}
+              onChange={e => setNewEmp({ ...newEmp, bankName: e.target.value })}
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
             />
           </div>
         </div>

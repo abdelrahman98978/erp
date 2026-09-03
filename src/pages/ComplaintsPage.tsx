@@ -287,14 +287,15 @@ export const ComplaintsPage: React.FC = () => {
   };
 
   const filteredTickets = complaints.filter(ticket => {
-    const matchesSearch = ticket.ticket_no.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          ticket.client_name.includes(searchQuery) ||
-                          ticket.client_phone.includes(searchQuery);
-    const matchesStatus = statusFilter === 'all' || ticket.status === statusFilter;
-    const matchesPriority = priorityFilter === 'all' || ticket.priority === priorityFilter;
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = (ticket?.ticket_no || '').toLowerCase().includes(q) ||
+                          (ticket?.client_name || '').toLowerCase().includes(q) ||
+                          (ticket?.client_phone || '').includes(searchQuery);
+    const matchesStatus = statusFilter === 'all' || ticket?.status === statusFilter;
+    const matchesPriority = priorityFilter === 'all' || ticket?.priority === priorityFilter;
 
     if (activeTab === 'escalated') {
-      return matchesSearch && (ticket.priority === 'عاجل طارئ' || ticket.status === 'مرفوعة للمشرف');
+      return matchesSearch && (ticket?.priority === 'عاجل طارئ' || ticket?.status === 'مرفوعة للمشرف');
     }
     return matchesSearch && matchesStatus && matchesPriority;
   });

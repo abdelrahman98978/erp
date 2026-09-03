@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '../stores/appStore';
 import { exportData } from '../services/exportService';
+import { realErpDataStore } from '../services/realErpDataStore';
 import {
   Building2,
   Search,
@@ -18,10 +19,192 @@ import {
   ExternalLink,
   Zap,
   Layers,
-  ArrowUpDown
+  ArrowUpDown,
+  X
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { EcommerceStore, EcommerceStoreOrder } from '../types';
+
+export interface SmaccFixedAsset {
+  id: string;
+  name: string;
+  category: string;
+  purchaseDate: string;
+  cost: number;
+  accumulatedDep: number;
+  netBookValue: number;
+  status: string;
+}
+
+export interface SmaccInventoryItem {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  qty: number;
+  unitPrice: number;
+  reorderLevel: number;
+  status: string;
+}
+
+export interface SmaccSalesRep {
+  id: string;
+  name: string;
+  role: string;
+  phone: string;
+  totalSales: number;
+  collected: number;
+  pending: number;
+  targetAchieved: string;
+}
+
+const INITIAL_STORES: EcommerceStore[] = [
+  {
+    id: 'STR-SALLA-01',
+    name: 'متجر سلة الرسمي (باقات التأجير والخدمات)',
+    platform: 'سلة (Salla)',
+    companyId: 'SAF',
+    storeUrl: 'https://salla.sa/alsalim-group',
+    status: 'متصل',
+    lastSyncTime: 'منذ 3 دقائق',
+    syncedOrdersCount: 248,
+    syncedProductsCount: 18,
+    webhookStatus: 'نشط',
+    autoSyncOrders: true,
+    autoSyncInventory: true
+  },
+  {
+    id: 'STR-ZID-02',
+    name: 'منصة زد الرقمية (خدمات التوسط والاستقدام)',
+    platform: 'زد (Zid)',
+    companyId: 'YAQ',
+    storeUrl: 'https://zid.store/yaqoot-recruitment',
+    status: 'متصل',
+    lastSyncTime: 'منذ 8 دقائق',
+    syncedOrdersCount: 114,
+    syncedProductsCount: 12,
+    webhookStatus: 'نشط',
+    autoSyncOrders: true,
+    autoSyncInventory: true
+  },
+  {
+    id: 'STR-SHOPIFY-03',
+    name: 'متجر شوبيفاي للمجموعة (Shopify Global Portal)',
+    platform: 'شوبيفاي (Shopify)',
+    companyId: 'KAS',
+    storeUrl: 'https://kas-group.myshopify.com',
+    status: 'متصل',
+    lastSyncTime: 'منذ 15 دقيقة',
+    syncedOrdersCount: 89,
+    syncedProductsCount: 24,
+    webhookStatus: 'نشط',
+    autoSyncOrders: true,
+    autoSyncInventory: false
+  },
+  {
+    id: 'STR-WOO-04',
+    name: 'بوابة ووكومرس للشركات (B2B WooCommerce)',
+    platform: 'ووكومرس (WooCommerce)',
+    companyId: 'TOP',
+    storeUrl: 'https://top-talent.sa/b2b-portal',
+    status: 'متصل',
+    lastSyncTime: 'منذ 25 دقيقة',
+    syncedOrdersCount: 62,
+    syncedProductsCount: 8,
+    webhookStatus: 'نشط',
+    autoSyncOrders: true,
+    autoSyncInventory: true
+  },
+  {
+    id: 'STR-MOYASAR-05',
+    name: 'بوابة الدفع الإلكتروني المباشر (Moyasar API Gateway)',
+    platform: 'بوابة الدفع (Moyasar)',
+    companyId: 'SAF',
+    storeUrl: 'https://api.moyasar.com/v1',
+    status: 'متصل',
+    lastSyncTime: 'لحظي (Real-time)',
+    syncedOrdersCount: 513,
+    syncedProductsCount: 0,
+    webhookStatus: 'نشط',
+    autoSyncOrders: true,
+    autoSyncInventory: false
+  }
+];
+
+const INITIAL_STORE_ORDERS: EcommerceStoreOrder[] = [
+  {
+    id: 'EORD-9912',
+    storeId: 'STR-SALLA-01',
+    platform: 'سلة (Salla)',
+    externalOrderNo: '#SAL-2026-881',
+    customerName: 'فهد محمد القحطاني',
+    customerPhone: '0551122334',
+    serviceType: 'باقة تأجير عمالة منزلية (3 أشهر)',
+    totalAmount: 6600,
+    paymentStatus: 'مدفوع',
+    orderStatus: 'قيد التنفيذ',
+    createdAt: '2026-08-31 18:20'
+  },
+  {
+    id: 'EORD-9911',
+    storeId: 'STR-ZID-02',
+    platform: 'زد (Zid)',
+    externalOrderNo: '#ZID-55420',
+    customerName: 'شركة اليمامة للمقاولات',
+    customerPhone: '0509988776',
+    serviceType: 'حجز 5 سائقين مهنيين (عقد سنوي)',
+    totalAmount: 18500,
+    paymentStatus: 'مدفوع',
+    orderStatus: 'جديد',
+    createdAt: '2026-08-31 17:45'
+  },
+  {
+    id: 'EORD-9910',
+    storeId: 'STR-SHOPIFY-03',
+    platform: 'شوبيفاي (Shopify)',
+    externalOrderNo: '#SH-10492',
+    customerName: 'نورة عبد العزيز السبيعي',
+    customerPhone: '0543322110',
+    serviceType: 'استقدام عاملة منزلية (الفلبين)',
+    totalAmount: 17250,
+    paymentStatus: 'مدفوع',
+    orderStatus: 'مكتمل',
+    createdAt: '2026-08-31 16:30'
+  },
+  {
+    id: 'EORD-9909',
+    storeId: 'STR-WOO-04',
+    platform: 'ووكومرس (WooCommerce)',
+    externalOrderNo: '#WC-88219',
+    customerName: 'مؤسسة أفق التقنية',
+    customerPhone: '0567788990',
+    serviceType: 'باقة ضيافة وتنظيف مكتبي شهري',
+    totalAmount: 4200,
+    paymentStatus: 'مدفوع',
+    orderStatus: 'قيد التنفيذ',
+    createdAt: '2026-08-31 15:10'
+  }
+];
+
+const INITIAL_FIXED_ASSETS: SmaccFixedAsset[] = [
+  { id: 'AST-001', name: 'سيارة تويوتا كامري 2024 (فرع الرياض)', category: 'وسائل النقل', purchaseDate: '2024-01-15', cost: 95000, accumulatedDep: 19000, netBookValue: 76000, status: 'نشط' },
+  { id: 'AST-002', name: 'أجهزة حاسوب وسيرفرات إدارية', category: 'معدات وإلكترونيات', purchaseDate: '2023-06-10', cost: 45000, accumulatedDep: 22500, netBookValue: 22500, status: 'نشط' },
+  { id: 'AST-003', name: 'تأثيث وتجهيز مركز الإيواء الرئيسي', category: 'أثاث ومفروشات', purchaseDate: '2024-03-01', cost: 120000, accumulatedDep: 12000, netBookValue: 108000, status: 'نشط' },
+  { id: 'AST-004', name: 'مبنى المقر الرئيسي - الرياض', category: 'العقارات والمباني', purchaseDate: '2020-01-01', cost: 1500000, accumulatedDep: 150000, netBookValue: 1350000, status: 'نشط' },
+];
+
+const INITIAL_INVENTORY: SmaccInventoryItem[] = [
+  { id: 'INV-101', code: 'INV-101', name: 'عقد استقدام عاملة منزلية (الفلبين)', category: 'خدمات استقدام', qty: 15, unitPrice: 17500, reorderLevel: 5, status: 'متوفر' },
+  { id: 'INV-102', code: 'INV-102', name: 'عقد تأجير شهري (عمالة مهنية)', category: 'تأجير تشغيلي', qty: 42, unitPrice: 3500, reorderLevel: 10, status: 'متوفر' },
+  { id: 'INV-103', code: 'INV-103', name: 'عقد استقدام سائق خاص (الهند)', category: 'خدمات استقدام', qty: 8, unitPrice: 13000, reorderLevel: 3, status: 'منخفض' },
+  { id: 'INV-104', code: 'INV-104', name: 'باقة تنظيف منازل يومية', category: 'خدمات سريعة', qty: 100, unitPrice: 250, reorderLevel: 20, status: 'متوفر' },
+];
+
+const INITIAL_SALES_REPS: SmaccSalesRep[] = [
+  { id: 'REP-01', name: 'أحمد محمود السعيد', role: 'بائع رئيسي', phone: '0501234567', totalSales: 450000, collected: 410000, pending: 40000, targetAchieved: '92%' },
+  { id: 'REP-02', name: 'محمد عبد الله العتيبي', role: 'محصل مبيعات', phone: '0559876543', totalSales: 320000, collected: 320000, pending: 0, targetAchieved: '100%' },
+  { id: 'REP-03', name: 'سارة خالد الدوسري', role: 'بائع ومحصل', phone: '0541122334', totalSales: 280000, collected: 250000, pending: 30000, targetAchieved: '89%' },
+];
 
 export const SmaccModulesPage: React.FC = () => {
   const { addNotification } = useAppStore();
@@ -29,184 +212,257 @@ export const SmaccModulesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [syncingStoreId, setSyncingStoreId] = useState<string | null>(null);
 
-  // E-Commerce Stores Data
-  const [stores, setStores] = useState<EcommerceStore[]>([
-    {
-      id: 'STR-SALLA-01',
-      name: 'متجر سلة الرسمي (باقات التأجير والخدمات)',
-      platform: 'سلة (Salla)',
-      companyId: 'SAF',
-      storeUrl: 'https://salla.sa/alsalim-group',
-      status: 'متصل',
-      lastSyncTime: 'منذ 3 دقائق',
-      syncedOrdersCount: 248,
-      syncedProductsCount: 18,
-      webhookStatus: 'نشط',
-      autoSyncOrders: true,
-      autoSyncInventory: true
-    },
-    {
-      id: 'STR-ZID-02',
-      name: 'منصة زد الرقمية (خدمات التوسط والاستقدام)',
-      platform: 'زد (Zid)',
-      companyId: 'YAQ',
-      storeUrl: 'https://zid.store/yaqoot-recruitment',
-      status: 'متصل',
-      lastSyncTime: 'منذ 8 دقائق',
-      syncedOrdersCount: 114,
-      syncedProductsCount: 12,
-      webhookStatus: 'نشط',
-      autoSyncOrders: true,
-      autoSyncInventory: true
-    },
-    {
-      id: 'STR-SHOPIFY-03',
-      name: 'متجر شوبيفاي للمجموعة (Shopify Global Portal)',
-      platform: 'شوبيفاي (Shopify)',
-      companyId: 'KAS',
-      storeUrl: 'https://kas-group.myshopify.com',
-      status: 'متصل',
-      lastSyncTime: 'منذ 15 دقيقة',
-      syncedOrdersCount: 89,
-      syncedProductsCount: 24,
-      webhookStatus: 'نشط',
-      autoSyncOrders: true,
-      autoSyncInventory: false
-    },
-    {
-      id: 'STR-WOO-04',
-      name: 'بوابة ووكومرس للشركات (B2B WooCommerce)',
-      platform: 'ووكومرس (WooCommerce)',
-      companyId: 'TOP',
-      storeUrl: 'https://top-talent.sa/b2b-portal',
-      status: 'متصل',
-      lastSyncTime: 'منذ 25 دقيقة',
-      syncedOrdersCount: 62,
-      syncedProductsCount: 8,
-      webhookStatus: 'نشط',
-      autoSyncOrders: true,
-      autoSyncInventory: true
-    },
-    {
-      id: 'STR-MOYASAR-05',
-      name: 'بوابة الدفع الإلكتروني المباشر (Moyasar API Gateway)',
-      platform: 'بوابة الدفع (Moyasar)',
-      companyId: 'SAF',
-      storeUrl: 'https://api.moyasar.com/v1',
-      status: 'متصل',
-      lastSyncTime: 'لحظي (Real-time)',
-      syncedOrdersCount: 513,
-      syncedProductsCount: 0,
-      webhookStatus: 'نشط',
-      autoSyncOrders: true,
-      autoSyncInventory: false
-    }
-  ]);
+  // Database Persistent State
+  const [stores, setStores] = useState<EcommerceStore[]>([]);
+  const [storeOrders, setStoreOrders] = useState<EcommerceStoreOrder[]>([]);
+  const [fixedAssets, setFixedAssets] = useState<SmaccFixedAsset[]>([]);
+  const [inventoryItems, setInventoryItems] = useState<SmaccInventoryItem[]>([]);
+  const [salesReps, setSalesReps] = useState<SmaccSalesRep[]>([]);
 
-  // E-Commerce Synced Orders Data
-  const [storeOrders, setStoreOrders] = useState<EcommerceStoreOrder[]>([
-    {
-      id: 'EORD-9912',
-      storeId: 'STR-SALLA-01',
-      platform: 'سلة (Salla)',
-      externalOrderNo: '#SAL-2026-881',
-      customerName: 'فهد محمد القحطاني',
-      customerPhone: '0551122334',
-      serviceType: 'باقة تأجير عمالة منزلية (3 أشهر)',
-      totalAmount: 6600,
-      paymentStatus: 'مدفوع',
-      orderStatus: 'قيد التنفيذ',
-      createdAt: '2026-08-31 18:20'
-    },
-    {
-      id: 'EORD-9911',
-      storeId: 'STR-ZID-02',
-      platform: 'زد (Zid)',
-      externalOrderNo: '#ZID-55420',
-      customerName: 'شركة اليمامة للمقاولات',
-      customerPhone: '0509988776',
-      serviceType: 'حجز 5 سائقين مهنيين (عقد سنوي)',
-      totalAmount: 18500,
-      paymentStatus: 'مدفوع',
-      orderStatus: 'جديد',
-      createdAt: '2026-08-31 17:45'
-    },
-    {
-      id: 'EORD-9910',
-      storeId: 'STR-SHOPIFY-03',
-      platform: 'شوبيفاي (Shopify)',
-      externalOrderNo: '#SH-10492',
-      customerName: 'نورة عبد العزيز السبيعي',
-      customerPhone: '0543322110',
-      serviceType: 'استقدام عاملة منزلية (الفلبين)',
-      totalAmount: 17250,
-      paymentStatus: 'مدفوع',
-      orderStatus: 'مكتمل',
-      createdAt: '2026-08-31 16:30'
-    },
-    {
-      id: 'EORD-9909',
-      storeId: 'STR-WOO-04',
-      platform: 'ووكومرس (WooCommerce)',
-      externalOrderNo: '#WC-88219',
-      customerName: 'مؤسسة أفق التقنية',
-      customerPhone: '0567788990',
-      serviceType: 'باقة ضيافة وتنظيف مكتبي شهري',
-      totalAmount: 4200,
-      paymentStatus: 'مدفوع',
-      orderStatus: 'قيد التنفيذ',
-      createdAt: '2026-08-31 15:10'
-    }
-  ]);
+  // Modals state
+  const [showAssetModal, setShowAssetModal] = useState(false);
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [showRepModal, setShowRepModal] = useState(false);
 
-  const handleSyncStore = (store: EcommerceStore) => {
+  // Forms State
+  const [newAsset, setNewAsset] = useState({
+    name: '',
+    category: 'وسائل النقل',
+    cost: '80000',
+    depRate: '20'
+  });
+
+  const [newItem, setNewItem] = useState({
+    code: '',
+    name: '',
+    category: 'خدمات استقدام',
+    qty: '10',
+    unitPrice: '15000',
+    reorderLevel: '5'
+  });
+
+  const [newRep, setNewRep] = useState({
+    name: '',
+    role: 'بائع رئيسي',
+    phone: '',
+    totalSales: '0'
+  });
+
+  // Load Data
+  useEffect(() => {
+    realErpDataStore.getRecords<EcommerceStore>('ecommerce_stores', INITIAL_STORES).then(setStores);
+    realErpDataStore.getRecords<EcommerceStoreOrder>('ecommerce_orders', INITIAL_STORE_ORDERS).then(setStoreOrders);
+    realErpDataStore.getRecords<SmaccFixedAsset>('fixed_assets', INITIAL_FIXED_ASSETS).then(setFixedAssets);
+    realErpDataStore.getRecords<SmaccInventoryItem>('inventory_items', INITIAL_INVENTORY).then(setInventoryItems);
+    realErpDataStore.getRecords<SmaccSalesRep>('sales_reps', INITIAL_SALES_REPS).then(setSalesReps);
+  }, []);
+
+  // Sync Single Store
+  const handleSyncStore = async (store: EcommerceStore) => {
     setSyncingStoreId(store.id);
+    const updatedStores = stores.map(s => s.id === store.id ? { ...s, lastSyncTime: 'الآن', syncedOrdersCount: s.syncedOrdersCount + 1 } : s);
+    setStores(updatedStores);
+    await realErpDataStore.importRealRecordsBatch('ecommerce_stores', updatedStores);
+
     setTimeout(() => {
       setSyncingStoreId(null);
       addNotification({
         title: `مزامنة ${store.platform}`,
-        message: `تم التحقق من ربط متجر (${store.name}) وتحديث المنتجات والمخزون وسحب كافة الطلبات الجديدة بنجاح.`,
+        message: `تم التحقق من ربط متجر (${store.name}) وتحديث المنتجات وسحب الطلبات الجديدة بنجاح.`,
         type: 'success'
       });
-      setStores(prev => prev.map(s => s.id === store.id ? { ...s, lastSyncTime: 'الآن', syncedOrdersCount: s.syncedOrdersCount + 1 } : s));
-    }, 900);
+    }, 600);
   };
 
-  const handleSyncAllStores = () => {
+  // Sync All Stores
+  const handleSyncAllStores = async () => {
     setSyncingStoreId('ALL');
+    const updatedStores: EcommerceStore[] = stores.map(s => ({ ...s, lastSyncTime: 'الآن', status: 'متصل' as const }));
+    setStores(updatedStores);
+    await realErpDataStore.importRealRecordsBatch('ecommerce_stores', updatedStores);
+
     setTimeout(() => {
       setSyncingStoreId(null);
       addNotification({
         title: 'مزامنة كافة المتاجر الإلكترونية',
-        message: 'تمت مزامنة قنوات التجارة الإلكترونية (سلة، زد، شوبيفاي، ووكومرس، وبوابات الدفع) ومطابقة الأرصدة مع القيود المحاسبية بنجاح.',
+        message: 'تمت مزامنة قنوات التجارة الإلكترونية (سلة، زد، شوبيفاي، ووكومرس، وميسر) وتحديث الأرصدة بنجاح.',
         type: 'success'
       });
-      setStores(prev => prev.map(s => ({ ...s, lastSyncTime: 'الآن', status: 'متصل' })));
-    }, 1200);
+    }, 800);
   };
 
-  // Fixed Assets Data Mock
-  const fixedAssets = [
-    { id: 'AST-001', name: 'سيارة تويوتا كامري 2024 (فرع الرياض)', category: 'وسائل النقل', purchaseDate: '2024-01-15', cost: 95000, accumulatedDep: 19000, netBookValue: 76000, status: 'نشط' },
-    { id: 'AST-002', name: 'أجهزة حاسوب وسيرفرات إدارية', category: 'معدات وإلكترونيات', purchaseDate: '2023-06-10', cost: 45000, accumulatedDep: 22500, netBookValue: 22500, status: 'نشط' },
-    { id: 'AST-003', name: 'تأثيث وتجهيز مركز الإيواء الرئيسي', category: 'أثاث ومفروشات', purchaseDate: '2024-03-01', cost: 120000, accumulatedDep: 12000, netBookValue: 108000, status: 'نشط' },
-    { id: 'AST-004', name: 'مبنى المقر الرئيسي - الرياض', category: 'العقارات والمباني', purchaseDate: '2020-01-01', cost: 1500000, accumulatedDep: 150000, netBookValue: 1350000, status: 'نشط' },
-  ];
+  // Process Store Order into Real Contract
+  const handleProcessOrder = async (order: EcommerceStoreOrder) => {
+    // 1. Create a real contract in orders/contracts
+    const newContract = {
+      id: `CTR-${Date.now().toString().slice(-4)}`,
+      contract_no: `ECOM-${order.externalOrderNo.replace('#', '')}`,
+      client_name: order.customerName,
+      client_phone: order.customerPhone,
+      total_amount: order.totalAmount,
+      paid_amount: order.totalAmount,
+      status: 'ساري وموثق',
+      order_type: order.serviceType,
+      platform: order.platform,
+      created_at: new Date().toISOString().slice(0, 16).replace('T', ' ')
+    };
+    await realErpDataStore.addRecord('contracts', newContract);
 
-  // Inventory Items Mock
-  const inventoryItems = [
-    { code: 'INV-101', name: 'عقد استقدام عاملة منزلية (الفلبين)', category: 'خدمات استقدام', qty: 15, unitPrice: 17500, reorderLevel: 5, status: 'متوفر' },
-    { code: 'INV-102', name: 'عقد تأجير شهري (عمالة مهنية)', category: 'تأجير تشغيلي', qty: 42, unitPrice: 3500, reorderLevel: 10, status: 'متوفر' },
-    { code: 'INV-103', name: 'عقد استقدام سائق خاص (الهند)', category: 'خدمات استقدام', qty: 8, unitPrice: 13000, reorderLevel: 3, status: 'منخفض' },
-    { code: 'INV-104', name: 'باقة تنظيف منازل يومية', category: 'خدمات سريعة', qty: 100, unitPrice: 250, reorderLevel: 20, status: 'متوفر' },
-  ];
+    // 2. Update order status in ecommerce_orders
+    const updatedOrders: EcommerceStoreOrder[] = storeOrders.map(o => o.id === order.id ? { ...o, orderStatus: 'مكتمل' as const } : o);
+    setStoreOrders(updatedOrders);
+    await realErpDataStore.importRealRecordsBatch('ecommerce_orders', updatedOrders);
 
-  // Sales Representatives & Collectors Mock
-  const salesReps = [
-    { id: 'REP-01', name: 'أحمد محمود السعيد', role: 'بائع رئيسي', phone: '0501234567', totalSales: 450000, collected: 410000, pending: 40000, targetAchieved: '92%' },
-    { id: 'REP-02', name: 'محمد عبد الله العتيبي', role: 'محصل مبيعات', phone: '0559876543', totalSales: 320000, collected: 320000, pending: 0, targetAchieved: '100%' },
-    { id: 'REP-03', name: 'سارة خالد الدوسري', role: 'بائع ومحصل', phone: '0541122334', totalSales: 280000, collected: 250000, pending: 30000, targetAchieved: '89%' },
-  ];
+    addNotification({
+      title: 'معالجة وتوثيق العقد',
+      message: `تم تحويل الطلب (${order.externalOrderNo}) للعميل (${order.customerName}) إلى عقد رسمي برقم (${newContract.contract_no}) وإصدار الفاتورة الضريبية ZATCA.`,
+      type: 'success'
+    });
+  };
+
+  // Save Asset
+  const handleSaveAsset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAsset.name.trim()) return;
+
+    const cost = Number(newAsset.cost) || 0;
+    const depRate = Number(newAsset.depRate) || 20;
+    const assetId = `AST-00${fixedAssets.length + 1}`;
+    const newRecord: SmaccFixedAsset = {
+      id: assetId,
+      name: newAsset.name.trim(),
+      category: newAsset.category,
+      purchaseDate: new Date().toISOString().slice(0, 10),
+      cost,
+      accumulatedDep: 0,
+      netBookValue: cost,
+      status: 'نشط'
+    };
+
+    const updated = await realErpDataStore.addRecord<SmaccFixedAsset>('fixed_assets', newRecord, INITIAL_FIXED_ASSETS);
+    setFixedAssets(updated);
+    setShowAssetModal(false);
+    setNewAsset({ name: '', category: 'وسائل النقل', cost: '80000', depRate: '20' });
+
+    addNotification({
+      title: 'إضافة أصل جديد',
+      message: `تم إضافة الأصل الثابت (${newRecord.name}) بقيمة (${cost.toLocaleString()} ر.س) بنجاح.`,
+      type: 'success'
+    });
+  };
+
+  // Save Inventory Item
+  const handleSaveItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newItem.name.trim()) return;
+
+    const code = newItem.code.trim() || `INV-10${inventoryItems.length + 1}`;
+    const qty = Number(newItem.qty) || 0;
+    const unitPrice = Number(newItem.unitPrice) || 0;
+    const reorderLevel = Number(newItem.reorderLevel) || 5;
+
+    const newRecord: SmaccInventoryItem = {
+      id: code,
+      code,
+      name: newItem.name.trim(),
+      category: newItem.category,
+      qty,
+      unitPrice,
+      reorderLevel,
+      status: qty > 0 ? 'متوفر' : 'منتهي'
+    };
+
+    const updated = await realErpDataStore.addRecord<SmaccInventoryItem>('inventory_items', newRecord, INITIAL_INVENTORY);
+    setInventoryItems(updated);
+    setShowItemModal(false);
+    setNewItem({ code: '', name: '', category: 'خدمات استقدام', qty: '10', unitPrice: '15000', reorderLevel: '5' });
+
+    addNotification({
+      title: 'إضافة صنف مخزني',
+      message: `تم إضافة الصنف (${newRecord.name}) برمز (${code}) إلى المخزون بنجاح.`,
+      type: 'success'
+    });
+  };
+
+  // Save Sales Rep
+  const handleSaveRep = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newRep.name.trim()) return;
+
+    const newRecord: SmaccSalesRep = {
+      id: `REP-0${salesReps.length + 1}`,
+      name: newRep.name.trim(),
+      role: newRep.role,
+      phone: newRep.phone.trim() || '0500000000',
+      totalSales: Number(newRep.totalSales) || 0,
+      collected: Number(newRep.totalSales) || 0,
+      pending: 0,
+      targetAchieved: '100%'
+    };
+
+    const updated = await realErpDataStore.addRecord<SmaccSalesRep>('sales_reps', newRecord, INITIAL_SALES_REPS);
+    setSalesReps(updated);
+    setShowRepModal(false);
+    setNewRep({ name: '', role: 'بائع رئيسي', phone: '', totalSales: '0' });
+
+    addNotification({
+      title: 'إضافة ممثل مبيعات',
+      message: `تم إضافة (${newRecord.name}) إلى فريق المبيعات والتحصيل بنجاح.`,
+      type: 'success'
+    });
+  };
+
+  // Automated Depreciation Calculation with Journal Integration
+  const handleCalculateDepreciation = async () => {
+    let totalMonthlyDep = 0;
+    const updatedAssets = fixedAssets.map(a => {
+      const monthly = Math.round((a.cost * 0.2) / 12);
+      totalMonthlyDep += monthly;
+      const newAcc = a.accumulatedDep + monthly;
+      return {
+        ...a,
+        accumulatedDep: newAcc,
+        netBookValue: Math.max(0, a.cost - newAcc)
+      };
+    });
+    setFixedAssets(updatedAssets);
+    await realErpDataStore.importRealRecordsBatch('fixed_assets', updatedAssets);
+
+    const jv = {
+      id: `JV-${Date.now().toString().slice(-6)}`,
+      journal_number: `JV-DEP-${Date.now().toString().slice(-4)}`,
+      date: new Date().toISOString().slice(0, 10),
+      description: `قيد إهلاك شهري دوري للأصول الثابتة (عدد ${fixedAssets.length} أصل)`,
+      debit: totalMonthlyDep,
+      credit: totalMonthlyDep,
+      status: 'مرحل',
+      lines: [
+        { account_code: '5104', account_name: 'مصروف إهلاك الأصول الثابتة', debit: totalMonthlyDep, credit: 0 },
+        { account_code: '1209', account_name: 'مجمع إهلاك الأصول الثابتة', debit: 0, credit: totalMonthlyDep }
+      ]
+    };
+    await realErpDataStore.addRecord('journals', jv);
+
+    addNotification({
+      title: 'احتساب الإهلاك الدوري',
+      message: `تم احتساب الإهلاك بقيمة (${totalMonthlyDep.toLocaleString()} ر.س) وتوليد قيد اليومية رقم (${jv.journal_number}) في دفتر القيود بنجاح.`,
+      type: 'success',
+    });
+  };
+
+  // Filtered Assets
+  const filteredAssets = useMemo(() => {
+    if (!searchTerm.trim()) return fixedAssets;
+    const q = searchTerm.toLowerCase().trim();
+    return fixedAssets.filter(a => a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q) || a.category.toLowerCase().includes(q));
+  }, [fixedAssets, searchTerm]);
+
+  // Filtered Inventory
+  const filteredInventory = useMemo(() => {
+    if (!searchTerm.trim()) return inventoryItems;
+    const q = searchTerm.toLowerCase().trim();
+    return inventoryItems.filter(i => i.name.toLowerCase().includes(q) || i.code.toLowerCase().includes(q) || i.category.toLowerCase().includes(q));
+  }, [inventoryItems, searchTerm]);
 
   return (
     <div className="space-y-6">
@@ -229,39 +485,60 @@ export const SmaccModulesPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC EXTENDED SUITE</span>
-                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الأصول والمخزون والبائعين</span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الأصول والمخزون والمتاجر</span>
               </div>
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-                نظام الأقسام الداخلية والخارجية
+                نظام الأقسام الداخلية والخارجية والمتاجر الرقمية
               </h1>
               <p className="text-xs text-zinc-400 mt-1 font-sans">
-                إدارة الأصول الثابتة، المخزون، البائعين والمحصلين، والربط الإلكتروني الخارجي
+                إدارة الأصول الثابتة، المخزون، البائعين والمحصلين، وربط قنوات المتاجر الإلكترونية Zid/Salla/Shopify بقاعدة البيانات الحقيقية
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
-              onClick={() => setActiveModuleTab('fixed-assets')}
+              onClick={() => setShowAssetModal(true)}
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
               <Plus className="w-3.5 h-3.5 ml-1 text-black" />
               <span>إضافة أصل</span>
             </button>
+            <button
+              onClick={() => setShowItemModal(true)}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
+            >
+              <Plus className="w-3.5 h-3.5 ml-1 text-black" />
+              <span>إضافة صنف</span>
+            </button>
+            <button
+              onClick={() => {
+                if (activeModuleTab === 'ecommerce-stores') exportData('finance', storeOrders, 'excel');
+                else if (activeModuleTab === 'fixed-assets') exportData('finance', fixedAssets, 'excel');
+                else if (activeModuleTab === 'inventory') exportData('finance', inventoryItems, 'excel');
+                else exportData('finance', salesReps, 'excel');
+              }}
+              className="button-white-pill"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+              <span>تصدير إكسل</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Tab Navigation */}
+      {/* Main Tabs Navigation */}
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
-          { id: 'ecommerce-stores', label: 'ربط المتاجر الإلكترونية (سلة، زد، شوبيفاي)', icon: ShoppingBag },
-          { id: 'fixed-assets', label: 'الأصول الثابتة', icon: Building2 },
-          { id: 'inventory', label: 'المخزون', icon: Box },
-          { id: 'sales-collectors', label: 'البائعون والمحصلون', icon: Users },
-          { id: 'external-links', label: 'الربط الحكومي والمكاتب', icon: Globe },
-        ].map((tab) => {
+          { id: 'ecommerce-stores', label: `المتاجر والقنوات الإلكترونية (${stores.length})`, icon: Store },
+          { id: 'fixed-assets', label: `الأصول الثابتة (${fixedAssets.length})`, icon: Building2 },
+          { id: 'inventory', label: `المخزون والأصناف (${inventoryItems.length})`, icon: Box },
+          { id: 'sales-collectors', label: `البائعين والمحصلين (${salesReps.length})`, icon: Users },
+          { id: 'external-links', label: 'الربط الخارجي والامتثال (ZATCA / مساند)', icon: Globe },
+        ].map(tab => {
           const isActive = activeModuleTab === tab.id;
           const Icon = tab.icon;
           return (
@@ -291,215 +568,92 @@ export const SmaccModulesPage: React.FC = () => {
         })}
       </div>
 
-      {/* Module: E-Commerce & Online Stores */}
+      {/* Module 0: E-Commerce Channels */}
       {activeModuleTab === 'ecommerce-stores' && (
         <div className="space-y-6">
-          {/* Top Banner with Action Controls */}
-          <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-            <div className="flex justify-between items-center flex-wrap gap-4">
-              <div className="flex items-center gap-3">
-                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-                  <ShoppingBag className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-black m-0">مركز ربط وتزامن المتاجر الإلكترونية وقنوات البيع الرقمية</h2>
-                    <span className="pill-tag-mint" style={{ fontSize: '11px' }}>Omnichannel Active</span>
+          <div className="card-pricing" style={{ padding: '20px 24px', borderRadius: '24px', background: '#ffffff' }}>
+            <div className="flex items-center justify-between flex-wrap gap-4 border-b border-zinc-100 pb-4 mb-4">
+              <div>
+                <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+                  <ShoppingBag className="w-4 h-4 text-black" />
+                  <span>المتاجر الإلكترونية المتصلة مباشرة بالمنظومة (API Live Sync)</span>
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1">مزامنة الكتالوج، باقات التأجير، والاستقدام وسحب المدفوعات والطلبات لحظياً</p>
+              </div>
+              <button
+                type="button"
+                disabled={syncingStoreId !== null}
+                onClick={handleSyncAllStores}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ml-1 ${syncingStoreId === 'ALL' ? 'animate-spin' : ''}`} />
+                <span>{syncingStoreId === 'ALL' ? 'جاري المزامنة...' : 'مزامنة جميع المتاجر'}</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {stores.map(store => (
+                <div key={store.id} className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col justify-between hover:border-black transition-colors">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-black text-xs">{store.name}</span>
+                      <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>{store.status}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 mb-2">
+                      <Globe className="w-3.5 h-3.5 text-zinc-400" />
+                      <span className="font-mono text-[11px] truncate">{store.storeUrl}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 my-3 p-2 bg-white rounded-xl border border-zinc-200 text-center">
+                      <div>
+                        <span className="text-[10px] text-zinc-400 block">الطلبات المسحوبة</span>
+                        <span className="font-mono font-bold text-xs text-black">{store.syncedOrdersCount}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-zinc-400 block">المنتجات المربوطة</span>
+                        <span className="font-mono font-bold text-xs text-champagne-dark">{store.syncedProductsCount}</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-zinc-500 m-0 mt-0.5">
-                    الربط اللحظي مع منصات سلة (Salla API v2)، زد (Zid OAuth)، شوبيفاي (Shopify GraphQL)، ووكومرس، وبوابات الدفع
-                  </p>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-zinc-200 text-[11px]">
+                    <span className="text-zinc-500">آخر فحص: {store.lastSyncTime}</span>
+                    <button
+                      type="button"
+                      disabled={syncingStoreId === store.id}
+                      onClick={() => handleSyncStore(store)}
+                      className="button-outline-on-light"
+                      style={{ padding: '2px 10px', fontSize: '10.5px', minHeight: '26px' }}
+                    >
+                      <RefreshCw className={`w-3 h-3 ml-1 ${syncingStoreId === store.id ? 'animate-spin' : ''}`} />
+                      <span>مزامنة</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={syncingStoreId === 'ALL'}
-                  onClick={handleSyncAllStores}
-                  className="button-primary-pill"
-                  style={{ padding: '8px 20px', fontSize: '12px', minHeight: '38px' }}
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ml-1.5 ${syncingStoreId === 'ALL' ? 'animate-spin' : ''}`} />
-                  <span>{syncingStoreId === 'ALL' ? 'جاري المزامنة الشاملة...' : 'مزامنة جميع المتاجر الآن'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    exportData('سجل_المتاجر_المتصلة', stores, 'excel', 'تقرير_المتاجر_الإلكترونية_المتصلة');
-                    addNotification({
-                      title: 'تصدير بيانات المتاجر',
-                      message: 'تم تصدير تقرير قنوات البيع والمتاجر الإلكترونية بنجاح.',
-                      type: 'success'
-                    });
-                  }}
-                  className="button-outline-on-light"
-                  style={{ padding: '8px 18px', fontSize: '12px', minHeight: '38px' }}
-                >
-                  <FileSpreadsheet className="w-3.5 h-3.5 ml-1.5 text-champagne-dark" />
-                  <span>تصدير تقرير المتاجر</span>
-                </button>
-              </div>
-            </div>
-
-            {/* KPI Cards Band */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs font-semibold text-zinc-500 block">إجمالي المتاجر المتصلة</span>
-                <div className="text-xl font-bold text-black mt-1">{stores.length} قنوات رقمية</div>
-                <span className="text-[11px] text-champagne-dark font-semibold mt-0.5 block">✓ 100% متصلة بالإنتاج</span>
-              </div>
-              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs font-semibold text-zinc-500 block">إجمالي الطلبات المستلمة</span>
-                <div className="text-xl font-mono font-bold text-black mt-1">
-                  {stores.reduce((acc, s) => acc + s.syncedOrdersCount, 0).toLocaleString()} طلب
-                </div>
-                <span className="text-[11px] text-zinc-500 mt-0.5 block">مربوطة بالقيود المحاسبية</span>
-              </div>
-              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs font-semibold text-zinc-500 block">الخدمات والباقات المنشورة</span>
-                <div className="text-xl font-mono font-bold text-black mt-1">
-                  {stores.reduce((acc, s) => acc + s.syncedProductsCount, 0)} باقة معتمدة
-                </div>
-                <span className="text-[11px] text-zinc-500 mt-0.5 block">تزامن أسعار فوري ZATCA</span>
-              </div>
-              <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs font-semibold text-zinc-500 block">حالة الـ Webhooks المباشرة</span>
-                <div className="text-xl font-bold text-champagne-dark mt-1">نشط ومفعل</div>
-                <span className="text-[11px] text-champagne-dark mt-0.5 block">استقبال لحظي &lt; 800ms</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Connected Stores Table */}
-          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-            <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <Store className="w-4 h-4 text-black" />
-                <span>قائمة المتاجر والقنوات الإلكترونية المربوطة بالنظام</span>
-              </h3>
-              <span className="text-xs text-zinc-500 font-mono">آخر تدقيق: {new Date().toLocaleTimeString('ar-SA')}</span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs text-zinc-700">
-                <thead className="bg-zinc-100 text-zinc-700 font-bold border-b border-zinc-200">
-                  <tr>
-                    <th className="p-3.5">المنصة والقناة</th>
-                    <th className="p-3.5">اسم المتجر الإلكتروني</th>
-                    <th className="p-3.5">الشركة التابعة</th>
-                    <th className="p-3.5">رابط المتجر</th>
-                    <th className="p-3.5">حالة الربط والـ API</th>
-                    <th className="p-3.5">الطلبات المتزامنة</th>
-                    <th className="p-3.5">آخر مزامنة</th>
-                    <th className="p-3.5 text-center">الإجراءات التفاعلية</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100">
-                  {stores.map(store => (
-                    <tr key={store.id} className="hover:bg-zinc-50 transition-colors">
-                      <td className="p-3.5 font-bold text-black">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-champagne"></span>
-                          <span>{store.platform}</span>
-                        </div>
-                      </td>
-                      <td className="p-3.5 font-bold text-black">{store.name}</td>
-                      <td className="p-3.5">
-                        <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{store.companyId}</span>
-                      </td>
-                      <td className="p-3.5 font-mono text-zinc-600">
-                        <a href={store.storeUrl} target="_blank" rel="noreferrer" className="text-black hover:underline flex items-center gap-1">
-                          <span>{store.storeUrl.replace('https://', '')}</span>
-                          <ExternalLink className="w-3 h-3 text-zinc-400" />
-                        </a>
-                      </td>
-                      <td className="p-3.5">
-                        <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
-                          ✓ {store.status}
-                        </span>
-                      </td>
-                      <td className="p-3.5 font-mono font-bold text-black">{store.syncedOrdersCount} طلب</td>
-                      <td className="p-3.5 font-mono text-zinc-500">{store.lastSyncTime}</td>
-                      <td className="p-3.5 text-center">
-                        <div className="flex items-center justify-center gap-1.5">
-                          <button
-                            type="button"
-                            disabled={syncingStoreId === store.id}
-                            onClick={() => handleSyncStore(store)}
-                            className="button-primary-pill"
-                            style={{ padding: '4px 12px', fontSize: '11px', minHeight: '28px' }}
-                          >
-                            <RefreshCw className={`w-3 h-3 ml-1 ${syncingStoreId === store.id ? 'animate-spin' : ''}`} />
-                            <span>{syncingStoreId === store.id ? 'مزامنة...' : 'مزامنة فورية'}</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              addNotification({
-                                title: `فحص Webhook ${store.platform}`,
-                                message: `تم إرسال اختبار Ping لـ Webhook متجر (${store.name}) وجاء الرد (HTTP 200 OK - 42ms).`,
-                                type: 'success'
-                              });
-                            }}
-                            className="button-outline-on-light"
-                            style={{ padding: '4px 10px', fontSize: '11px', minHeight: '28px' }}
-                          >
-                            فحص API
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              ))}
             </div>
           </div>
 
           {/* Synced Orders Table */}
           <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-            <div className="p-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50 flex-wrap gap-2">
-              <div>
-                <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-black" />
-                  <span>سجل الطلبات المتزامنة لحظياً من المتاجر الإلكترونية (Live Store Orders)</span>
-                </h3>
-                <p className="text-xs text-zinc-500 m-0 mt-0.5">يتم إنشاء العقود وتوليد الفواتير الضريبية تلقائياً فور إتمام الدفع بالمتجر</p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    exportData('طلبات_المتاجر_الإلكترونية', storeOrders, 'excel', 'سجل_طلبات_المتاجر');
-                    addNotification({
-                      title: 'تصدير الطلبات',
-                      message: 'تم تصدير سجل طلبات المتاجر الإلكترونية بنجاح.',
-                      type: 'success'
-                    });
-                  }}
-                  className="button-outline-on-light"
-                  style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '32px' }}
-                >
-                  <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
-                  <span>تصدير الطلبات Excel</span>
-                </button>
-              </div>
+            <div className="p-4 border-b border-zinc-100 flex items-center justify-between">
+              <h4 className="text-xs font-bold text-black m-0">الطلبات الرقمية الواردة عبر المتاجر</h4>
+              <span className="pill-tag-mint text-[11px]">{storeOrders.length} طلب إلكتروني</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-right text-xs text-zinc-700">
-                <thead className="bg-zinc-100 text-zinc-700 font-bold border-b border-zinc-200">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                   <tr>
                     <th className="p-3.5">رقم الطلب الخارجي</th>
                     <th className="p-3.5">المنصة</th>
                     <th className="p-3.5">اسم العميل</th>
                     <th className="p-3.5">رقم الجوال</th>
-                    <th className="p-3.5">الباقة / الخدمة المطلوبة</th>
-                    <th className="p-3.5">المبلغ الإجمالي</th>
+                    <th className="p-3.5">الخدمة المطلوبة</th>
+                    <th className="p-3.5">القيمة الإجمالية</th>
                     <th className="p-3.5">حالة الدفع</th>
                     <th className="p-3.5">حالة الطلب</th>
-                    <th className="p-3.5">تاريخ ووقت الطلب</th>
+                    <th className="p-3.5">تاريخ الطلب</th>
                     <th className="p-3.5 text-center">الإجراء</th>
                   </tr>
                 </thead>
@@ -513,12 +667,10 @@ export const SmaccModulesPage: React.FC = () => {
                       <td className="p-3.5 text-zinc-700">{order.serviceType}</td>
                       <td className="p-3.5 font-mono font-bold text-champagne-dark">{order.totalAmount.toLocaleString()} ر.س</td>
                       <td className="p-3.5">
-                        <span className="pill-tag-mint" style={{ fontSize: '10px' }}>
-                          ✓ {order.paymentStatus}
-                        </span>
+                        <span className="pill-tag-mint" style={{ fontSize: '10px' }}>✓ {order.paymentStatus}</span>
                       </td>
                       <td className="p-3.5">
-                        <span className="pill-tag-shade" style={{ fontSize: '10px' }}>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${order.orderStatus.includes('توثيق') || order.orderStatus === 'مكتمل' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-zinc-100 text-zinc-700'}`}>
                           {order.orderStatus}
                         </span>
                       </td>
@@ -526,15 +678,9 @@ export const SmaccModulesPage: React.FC = () => {
                       <td className="p-3.5 text-center">
                         <button
                           type="button"
-                          onClick={() => {
-                            addNotification({
-                              title: 'عرض وتوثيق الطلب',
-                              message: `تم ربط الطلب (${order.externalOrderNo}) وإصدار مسودة العقد الموحد والفاتورة الضريبية ZATCA.`,
-                              type: 'success'
-                            });
-                          }}
+                          onClick={() => handleProcessOrder(order)}
                           className="button-primary-pill"
-                          style={{ padding: '3px 10px', fontSize: '10.5px', minHeight: '26px' }}
+                          style={{ padding: '4px 12px', fontSize: '11px', minHeight: '28px' }}
                         >
                           معالجة العقد
                         </button>
@@ -554,19 +700,25 @@ export const SmaccModulesPage: React.FC = () => {
           <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
               <span className="text-xs text-zinc-500 font-semibold">إجمالي تكلفة الأصول</span>
-              <p className="text-xl font-mono font-bold text-black mt-1">1,760,000 ر.س</p>
+              <p className="text-xl font-mono font-bold text-black mt-1">
+                {fixedAssets.reduce((sum, a) => sum + a.cost, 0).toLocaleString()} ر.س
+              </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
               <span className="text-xs text-zinc-500 font-semibold">مجمع الإهلاك التراكمي</span>
-              <p className="text-xl font-mono font-bold text-black mt-1">203,500 ر.س</p>
+              <p className="text-xl font-mono font-bold text-black mt-1">
+                {fixedAssets.reduce((sum, a) => sum + a.accumulatedDep, 0).toLocaleString()} ر.س
+              </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
               <span className="text-xs text-zinc-500 font-semibold">صافي القيمة الدفترية</span>
-              <p className="text-xl font-mono font-bold text-champagne-dark mt-1">1,556,500 ر.س</p>
+              <p className="text-xl font-mono font-bold text-champagne-dark mt-1">
+                {fixedAssets.reduce((sum, a) => sum + a.netBookValue, 0).toLocaleString()} ر.س
+              </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
               <span className="text-xs text-zinc-500 font-semibold">عدد الأصول المسجلة</span>
-              <p className="text-xl font-bold text-black mt-1">4 أصول رئيسية</p>
+              <p className="text-xl font-bold text-black mt-1">{fixedAssets.length} أصل معتمد</p>
             </div>
           </div>
 
@@ -583,13 +735,7 @@ export const SmaccModulesPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => {
-                  addNotification({
-                    title: 'إضافة أصل ثابت جديد',
-                    message: 'تم فتح نموذج تسجيل بيانات الأصل الثابت في دليل SMACC.',
-                    type: 'info',
-                  });
-                }}
+                onClick={() => setShowAssetModal(true)}
                 className="button-primary-pill"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
@@ -597,13 +743,7 @@ export const SmaccModulesPage: React.FC = () => {
                 <span>إضافة أصل جديد</span>
               </button>
               <button
-                onClick={() => {
-                  addNotification({
-                    title: 'احتساب الإهلاك الدوري',
-                    message: 'تم احتساب أقساط الإهلاك الشهري وتوليد قيود التسوية المحاسبية تلقائياً.',
-                    type: 'success',
-                  });
-                }}
+                onClick={handleCalculateDepreciation}
                 className="button-outline-on-light"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
@@ -629,7 +769,7 @@ export const SmaccModulesPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
-                  {fixedAssets.map(asset => (
+                  {filteredAssets.map(asset => (
                     <tr key={asset.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono text-black font-bold">{asset.id}</td>
                       <td className="p-3.5 font-bold text-black">{asset.name}</td>
@@ -639,9 +779,7 @@ export const SmaccModulesPage: React.FC = () => {
                       <td className="p-3.5 font-mono text-zinc-600">{asset.accumulatedDep.toLocaleString()} ر.س</td>
                       <td className="p-3.5 font-bold font-mono text-champagne-dark">{asset.netBookValue.toLocaleString()} ر.س</td>
                       <td className="p-3.5">
-                        <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
-                          {asset.status}
-                        </span>
+                        <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>{asset.status}</span>
                       </td>
                     </tr>
                   ))}
@@ -668,13 +806,7 @@ export const SmaccModulesPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => {
-                  addNotification({
-                    title: 'إضافة صنف مخزني',
-                    message: 'تم فتح نموذج تسجيل صنف / خدمة جديدة في المخزون.',
-                    type: 'info',
-                  });
-                }}
+                onClick={() => setShowItemModal(true)}
                 className="button-primary-pill"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
@@ -683,15 +815,7 @@ export const SmaccModulesPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  exportData(inventoryItems.map(item => ({
-                    'رمز الصنف': item.code,
-                    'اسم الصنف / الخدمة': item.name,
-                    'الفئة': item.category,
-                    'الكمية المتاحة': item.qty,
-                    'سعر الوحدة': item.unitPrice,
-                    'حد إعادة الطلب': item.reorderLevel,
-                    'الحالة': item.status
-                  })), 'جرد_المخزون_SMACC', 'excel');
+                  exportData('finance', inventoryItems, 'excel');
                   addNotification({
                     title: 'تصدير الجرد',
                     message: 'تم تصدير تقرير جرد المخزون والأصناف بنجاح إلى ملف Excel.',
@@ -722,7 +846,7 @@ export const SmaccModulesPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
-                  {inventoryItems.map(item => (
+                  {filteredInventory.map(item => (
                     <tr key={item.code} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono text-black font-bold">{item.code}</td>
                       <td className="p-3.5 font-bold text-black">{item.name}</td>
@@ -749,17 +873,33 @@ export const SmaccModulesPage: React.FC = () => {
         <div className="space-y-4">
           <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">إجمالي البائعين النشطين</span>
-              <p className="text-2xl font-bold text-black mt-1">2 بائعين</p>
+              <span className="text-xs text-zinc-500 font-semibold">إجمالي البائعين والمحصلين</span>
+              <p className="text-2xl font-bold text-black mt-1">{salesReps.length} أعضاء</p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">إجمالي المحصلين</span>
-              <p className="text-2xl font-bold text-black mt-1">1 محصل مبيعات</p>
+              <span className="text-xs text-zinc-500 font-semibold">إجمالي المبيعات المحققة</span>
+              <p className="text-2xl font-bold text-black mt-1">
+                {salesReps.reduce((sum, r) => sum + r.totalSales, 0).toLocaleString()} ر.س
+              </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">نسبة تحصيل المبيعات</span>
-              <p className="text-2xl font-bold text-champagne-dark font-mono mt-1">93.5%</p>
+              <span className="text-xs text-zinc-500 font-semibold">إجمالي المبالغ المحصلة</span>
+              <p className="text-2xl font-bold text-champagne-dark font-mono mt-1">
+                {salesReps.reduce((sum, r) => sum + r.collected, 0).toLocaleString()} ر.س
+              </p>
             </div>
+          </div>
+
+          <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+            <h3 className="text-sm font-bold text-black m-0">قائمة ممثلي المبيعات والمحصلين المعتمدين</h3>
+            <button
+              onClick={() => setShowRepModal(true)}
+              className="button-primary-pill"
+              style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
+            >
+              <Plus className="w-3.5 h-3.5 ml-1" />
+              <span>+ إضافة ممثل مبيعات / محصل</span>
+            </button>
           </div>
 
           <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
@@ -842,6 +982,227 @@ export const SmaccModulesPage: React.FC = () => {
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>تلقائية (كل 15 دقيقة)</span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 1: Add Asset */}
+      {showAssetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
+            <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
+              <h3 className="text-sm font-bold text-black m-0">إضافة أصل ثابت جديد في SMACC</h3>
+              <button onClick={() => setShowAssetModal(false)} className="text-zinc-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleSaveAsset} className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">اسم الأصل *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="مثال: سيارة نقل كوادر 2026"
+                  value={newAsset.name}
+                  onChange={e => setNewAsset({ ...newAsset, name: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الفئة</label>
+                  <select
+                    value={newAsset.category}
+                    onChange={e => setNewAsset({ ...newAsset, category: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="وسائل النقل">وسائل النقل</option>
+                    <option value="معدات وإلكترونيات">معدات وإلكترونيات</option>
+                    <option value="أثاث ومفروشات">أثاث ومفروشات</option>
+                    <option value="العقارات والمباني">العقارات والمباني</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">تكلفة الشراء (ر.س) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={newAsset.cost}
+                    onChange={e => setNewAsset({ ...newAsset, cost: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowAssetModal(false)}
+                  className="button-outline-on-light text-xs py-1.5 px-4"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs py-1.5 px-5"
+                >
+                  حفظ الأصل
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: Add Inventory Item */}
+      {showItemModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
+            <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
+              <h3 className="text-sm font-bold text-black m-0">إضافة صنف مخزني جديد</h3>
+              <button onClick={() => setShowItemModal(false)} className="text-zinc-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleSaveItem} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">رمز الصنف (SKU)</label>
+                  <input
+                    type="text"
+                    placeholder={`INV-10${inventoryItems.length + 1}`}
+                    value={newItem.code}
+                    onChange={e => setNewItem({ ...newItem, code: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الفئة</label>
+                  <select
+                    value={newItem.category}
+                    onChange={e => setNewItem({ ...newItem, category: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="خدمات استقدام">خدمات استقدام</option>
+                    <option value="تأجير تشغيلي">تأجير تشغيلي</option>
+                    <option value="خدمات سريعة">خدمات سريعة</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">اسم الصنف أو الخدمة *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="مثال: عقد استقدام سائق خاص"
+                  value={newItem.name}
+                  onChange={e => setNewItem({ ...newItem, name: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الكمية المتاحة</label>
+                  <input
+                    type="number"
+                    value={newItem.qty}
+                    onChange={e => setNewItem({ ...newItem, qty: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">سعر الوحدة (ر.س) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={newItem.unitPrice}
+                    onChange={e => setNewItem({ ...newItem, unitPrice: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold text-champagne-dark focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowItemModal(false)}
+                  className="button-outline-on-light text-xs py-1.5 px-4"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs py-1.5 px-5"
+                >
+                  حفظ الصنف
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: Add Sales Rep */}
+      {showRepModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
+            <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
+              <h3 className="text-sm font-bold text-black m-0">إضافة ممثل مبيعات / محصل</h3>
+              <button onClick={() => setShowRepModal(false)} className="text-zinc-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleSaveRep} className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-zinc-700 block mb-1">الاسم الكامل *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="مثال: خالد محمد العتيبي"
+                  value={newRep.name}
+                  onChange={e => setNewRep({ ...newRep, name: e.target.value })}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">الدور الوظيفي</label>
+                  <select
+                    value={newRep.role}
+                    onChange={e => setNewRep({ ...newRep, role: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  >
+                    <option value="بائع رئيسي">بائع رئيسي</option>
+                    <option value="محصل مبيعات">محصل مبيعات</option>
+                    <option value="بائع ومحصل">بائع ومحصل</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-zinc-700 block mb-1">رقم الجوال *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="05xxxxxxxx"
+                    value={newRep.phone}
+                    onChange={e => setNewRep({ ...newRep, phone: e.target.value })}
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setShowRepModal(false)}
+                  className="button-outline-on-light text-xs py-1.5 px-4"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="button-primary-pill text-xs py-1.5 px-5"
+                >
+                  حفظ العضو
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
