@@ -145,6 +145,26 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
       INITIAL_CANDIDATES
     );
     setCandidates(updated);
+
+    if (targetIdx === stagesList.length - 1) {
+      await realErpDataStore.addRecord('employees', {
+        id: `EMP-${Date.now().toString().slice(-4)}`,
+        name: candidate.name,
+        email: `${candidate.name.toLowerCase().replace(/\s+/g, '.')}@alsulaim.sa`,
+        phone: candidate.phone,
+        department: candidate.targetBranch || 'الإدارة العامة',
+        role: candidate.appliedPosition || 'موظف تشغيلي',
+        status: 'نشط',
+        company_id: 'SAF',
+        salary: candidate.expectedSalary || 5000,
+        hire_date: new Date().toISOString().slice(0, 10),
+      });
+      addNotification({
+        title: 'توظيف مرشح رسمي',
+        message: `تم ترقية المرشح (${candidate.name}) لمرحلة التعيين وإنشاء ملفه الوظيفي تلقائياً في سجل الموظفين (HR).`,
+        type: 'success',
+      });
+    }
   };
 
   const filteredCandidates = candidates.filter((c) => {

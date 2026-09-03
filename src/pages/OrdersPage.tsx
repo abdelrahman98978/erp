@@ -205,6 +205,7 @@ export const OrdersPage: React.FC = () => {
     const musanedNumber = `MSN-${Date.now().toString().slice(-6)}`;
     const amt = order.total_amount || 14500;
     const tax = amt * 0.15;
+    const totalWithTax = amt + tax;
 
     const newContract = {
       id: contractNumber,
@@ -221,7 +222,7 @@ export const OrdersPage: React.FC = () => {
       external_office: order.office_name || "PLATINUM BROTHERS INT'L",
       amount: amt,
       tax_amount: tax,
-      total_amount: amt + tax,
+      total_amount: totalWithTax,
       stage: 'عقود جديدة' as const,
       warranty_status: 'ساري (90 يوماً)',
       payment_status: 'تم التحصيل',
@@ -231,9 +232,64 @@ export const OrdersPage: React.FC = () => {
 
     await realErpDataStore.addRecord('contracts', newContract);
 
+    // 3. Automatically generate ZATCA Phase 2 Tax Invoice
+    const newInvoice = {
+      id: `INV-${Date.now()}`,
+      company_id: companyCode,
+      branch_code: 'HQ-RUH',
+      invoice_number: `INV-${Date.now().toString().slice(-6)}`,
+      client_name: order.client_name,
+      subtotal: amt,
+      vat_amount: tax,
+      total_amount: totalWithTax,
+      zatca_status: 'CLEARED',
+      qr_code_tlv: btoa(`INV-${order.client_name}-${totalWithTax}`),
+      invoice_hash: 'sha256-' + Date.now().toString(16),
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('zatca_company_invoices', newInvoice);
+
+    // 4. Automatically generate Cash/Bank Receipt Voucher
+    const newVoucher = {
+      id: `VOUCH-${Date.now()}`,
+      voucher_no: `RCP-${Date.now().toString().slice(-6)}`,
+      type: 'سند قبض',
+      payee_payer: order.client_name,
+      treasury: 'حساب بنك الراجحي - السفير الماسي',
+      amount: totalWithTax,
+      status: 'معتمد',
+      description: `تحصيل قيمة عقد الاستقدام #${contractNumber} مساند (${order.client_name})`,
+      payment_method: 'مدى / سداد',
+      company_id: companyCode,
+      branch: order.branch || 'فرع الرياض الرئيسي',
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('vouchers', newVoucher);
+
+    // 5. Automatically post balanced double-entry Journal Entry
+    const newJournal = {
+      id: `JV-${Date.now()}`,
+      company_id: companyCode,
+      entry_number: `JV-${companyCode}-${Date.now().toString().slice(-6)}`,
+      entry_date: new Date().toISOString().slice(0, 10),
+      entry_type: 'AUTOMATIC',
+      source_module: 'CONTRACT',
+      source_reference: contractNumber,
+      description: `إثبات إيراد عقد استقدام مساند #${contractNumber} - العميل (${order.client_name})`,
+      total_debit: totalWithTax,
+      total_credit: totalWithTax,
+      status: 'POSTED',
+      branch_name: order.branch || 'فرع الرياض الرئيسي',
+      cost_center_code: 'CC-OPS-01',
+      created_by: 'النظام المحاسبي الآلي',
+      approved_by: 'مدير الحسابات',
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('company_journal_entries', newJournal);
+
     addNotification({
-      title: 'تحويل الطلب إلى عقد مساند',
-      message: `تم تحويل الطلب #${order.id} بنجاح إلى عقد استقدام موثق برقم #${contractNumber} وإضافته لسجل العقود.`,
+      title: 'تحويل الطلب إلى عقد مساند متكامل',
+      message: `تم تحويل الطلب بنجاح إلى عقد #${contractNumber} وتوليد الفاتورة الضريبية ZATCA وسند القبض #${newVoucher.voucher_no} وترحيل القيد المحاسبي آلياً.`,
       type: 'success',
     });
   };

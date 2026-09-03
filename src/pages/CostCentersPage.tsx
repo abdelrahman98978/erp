@@ -107,9 +107,30 @@ export const CostCentersPage: React.FC = () => {
     };
     await realErpDataStore.addRecord('vouchers', voucher);
 
+    // 3. Automatically post balanced double-entry Journal Entry for the expense
+    const newJournal = {
+      id: `JV-${Date.now()}`,
+      company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
+      entry_number: `JV-EXP-${Date.now().toString().slice(-6)}`,
+      entry_date: new Date().toISOString().slice(0, 10),
+      entry_type: 'AUTOMATIC',
+      source_module: 'EXPENSE',
+      source_reference: voucher.id,
+      description: `قيد مصروف مركز تكلفة (${selectedCostCenterForExpense.name}): ${expenseDescription || 'مصروفات تشغيلية'}`,
+      total_debit: amt,
+      total_credit: amt,
+      status: 'POSTED',
+      branch_name: 'فرع الرياض الرئيسي',
+      cost_center_code: selectedCostCenterForExpense.code,
+      created_by: 'النظام المحاسبي الآلي',
+      approved_by: 'المدير المالي',
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('company_journal_entries', newJournal);
+
     addNotification({
-      title: 'تسجيل مصروف على مركز التكلفة',
-      message: `تم قيد مصروف بقيمة ${amt.toLocaleString()} ر.س على (${selectedCostCenterForExpense.name}) وتوليد سند صرف رسمي في المحاسبة.`,
+      title: 'تسجيل مصروف وقيد محاسبي',
+      message: `تم قيد مصروف بقيمة ${amt.toLocaleString()} ر.س على (${selectedCostCenterForExpense.name}) وتوليد سند صرف وقيد محاسبي مزدوج تلقائياً.`,
       type: 'success',
     });
 

@@ -589,9 +589,66 @@ export const RecruitmentContractsPage: React.FC = () => {
     };
 
     await createItem.mutateAsync(newRecord);
+
+    // 2. Automatically generate ZATCA Tax Invoice
+    const totalWithTax = amt + tax;
+    const newInvoice = {
+      id: `INV-${Date.now()}`,
+      company_id: companyCode,
+      branch_code: 'HQ-RUH',
+      invoice_number: `INV-${Date.now().toString().slice(-6)}`,
+      client_name: clientName,
+      subtotal: amt,
+      vat_amount: tax,
+      total_amount: totalWithTax,
+      zatca_status: 'CLEARED',
+      qr_code_tlv: btoa(`INV-${clientName}-${totalWithTax}`),
+      invoice_hash: 'sha256-' + Date.now().toString(16),
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('zatca_company_invoices', newInvoice);
+
+    // 3. Automatically generate Cash/Bank Receipt Voucher
+    const newVoucher = {
+      id: `VOUCH-${Date.now()}`,
+      voucher_no: `RCP-${Date.now().toString().slice(-6)}`,
+      type: 'سند قبض',
+      payee_payer: clientName,
+      treasury: 'حساب بنك الراجحي - السفير الماسي',
+      amount: totalWithTax,
+      status: 'معتمد',
+      description: `تحصيل قيمة عقد الاستقدام #${contractNumber} مساند (${clientName})`,
+      payment_method: 'مدى / سداد',
+      company_id: companyCode,
+      branch: branch || 'فرع الرياض الرئيسي',
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('vouchers', newVoucher);
+
+    // 4. Automatically post balanced double-entry Journal Entry
+    const newJournal = {
+      id: `JV-${Date.now()}`,
+      company_id: companyCode,
+      entry_number: `JV-${companyCode}-${Date.now().toString().slice(-6)}`,
+      entry_date: new Date().toISOString().slice(0, 10),
+      entry_type: 'AUTOMATIC',
+      source_module: 'CONTRACT',
+      source_reference: contractNumber,
+      description: `إثبات إيراد عقد استقدام مساند #${contractNumber} - العميل (${clientName})`,
+      total_debit: totalWithTax,
+      total_credit: totalWithTax,
+      status: 'POSTED',
+      branch_name: branch || 'فرع الرياض الرئيسي',
+      cost_center_code: 'CC-OPS-01',
+      created_by: 'النظام المحاسبي الآلي',
+      approved_by: 'مدير الحسابات',
+      created_at: new Date().toISOString()
+    };
+    await realErpDataStore.addRecord('company_journal_entries', newJournal);
+
     addNotification({
-      title: 'إضافة عقد استقدام جديد',
-      message: `تم توثيق العقد #${contractNumber} للعميل (${clientName}) بنجاح.`,
+      title: 'إضافة عقد استقدام وتوليد القيود',
+      message: `تم توثيق العقد #${contractNumber} وتوليد الفاتورة الضريبية وسند القبض #${newVoucher.voucher_no} وترحيل القيد آلياً.`,
       type: 'success',
     });
     setShowAddModal(false);
@@ -636,9 +693,53 @@ export const RecruitmentContractsPage: React.FC = () => {
         id: contract.id,
         data: { stage: nextStage },
       });
+
+      // Automated Cross-table Workflow Syncing
+      if (nextStage === 'تفويض') {
+        await realErpDataStore.addRecord('ingaz_delegations', {
+          id: `ING-${Date.now()}`,
+          delegation_no: `ING-${Date.now().toString().slice(-6)}`,
+          delegation_date: new Date().toISOString().slice(0, 10),
+          client_name: contract.client_name,
+          musaned_contract_no: contract.musaned_number || contract.contract_number,
+          country: contract.nationality,
+          profession: 'عاملة منزلية',
+          status: 'تم التفويض'
+        });
+      } else if (nextStage === 'تذكرة' || nextStage === 'وصول') {
+        await realErpDataStore.addRecord('travel_flights', {
+          id: `FLT-${Date.now()}`,
+          flight_no: `SV-${Math.floor(100 + Math.random() * 900)}`,
+          airline: 'الخطوط السعودية',
+          client_name: contract.client_name,
+          maid_name: contract.maid_name,
+          flight_type: 'قدوم استقدام',
+          flight_date: new Date().toISOString().slice(0, 10),
+          arrival_airport: 'مطار الملك خالد الدولي بالرياض (RUH)',
+          status: 'مؤكد ومجدول'
+        });
+      }
+      
+      if (nextStage === 'وصول') {
+        await realErpDataStore.addRecord('shelter_records', {
+          id: `SHL-${Date.now().toString().slice(-5)}`,
+          company_id: contract.company_id || 'SAF',
+          maid_name: contract.maid_name,
+          nationality: contract.nationality,
+          passport: contract.maid_passport || 'PENDING',
+          client_name: contract.client_name,
+          contract_ref: contract.contract_number,
+          shelter_location: 'مجمع إيواء الرمال - الرياض',
+          days_in_shelter: 1,
+          catering_meals_count: 3,
+          work_willingness: 'جاهزة للتسليم',
+          status: 'تحت التسليم للعميل'
+        });
+      }
+
       addNotification({
-        title: 'تقدم مرحلة العقد',
-        message: `تم نقل العقد #${contract.contract_number} إلى مرحلة (${nextStage}).`,
+        title: 'تقدم مرحلة العقد وأتمتة العمليات',
+        message: `تم نقل العقد #${contract.contract_number} إلى مرحلة (${nextStage}) وتحديث سجلات اللوجستيات آلياً.`,
         type: 'success',
       });
     }

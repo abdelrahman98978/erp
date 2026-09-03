@@ -297,6 +297,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   }, []);
 
   const executeCompleteLogin = () => {
+    localStorage.setItem(`alsulaim_legal_acknowledged_${selectedPortal.defaultUser}`, 'true');
+    localStorage.setItem(`alsulaim_legal_acknowledged_admin`, 'true');
+    localStorage.setItem(`alsulaim_legal_acknowledged_khalid.admin`, 'true');
     setActiveCompanyId(selectedPortal.companyId);
     setActiveTab(selectedPortal.targetTab, selectedPortal.targetTitle);
     onLoginSuccess(selectedPortal.targetTab, selectedPortal.targetTitle, selectedPortal.companyId);

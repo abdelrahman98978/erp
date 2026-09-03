@@ -390,6 +390,21 @@ export const BranchDepartmentsPage: React.FC = () => {
 
     setEntities(nextEntities);
     await realErpDataStore.saveRecords('branch_entities', nextEntities);
+
+    // Also persist to PostgreSQL branch_departments table
+    await realErpDataStore.addRecord('branch_departments', {
+      id: `DEP-${Date.now()}`,
+      dept_code: `DEP-${Date.now().toString().slice(-4)}`,
+      dept_name: newDept.name,
+      manager_name: newDept.head,
+      branch: selectedEntity?.name || 'الفرع الرئيسي',
+      employees_count: 2,
+      status: 'نشط',
+      description: newDept.description,
+      kpi: newDept.kpi,
+      head: newDept.head
+    });
+
     setShowAddDeptModal(false);
     setDeptForm({ name: '', description: '', head: '', kpi: 'أداء 100%' });
 
@@ -427,6 +442,19 @@ export const BranchDepartmentsPage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord<BranchEntity>('branch_entities', newEnt, ALL_GROUP_ENTITIES);
     setEntities(updated);
+
+    // Also persist to PostgreSQL branches table
+    await realErpDataStore.addRecord('branches', {
+      id: `BR-${Date.now()}`,
+      company_id: 'SAF',
+      code: newEnt.code,
+      name: newEnt.name,
+      city: newEnt.location || 'الرياض',
+      phone: '0112345678',
+      manager_name: newEnt.manager,
+      is_active: true
+    });
+
     setSelectedEntityId(newEnt.id);
     setShowAddEntityModal(false);
     setEntityForm({
@@ -439,8 +467,8 @@ export const BranchDepartmentsPage: React.FC = () => {
     });
 
     addNotification({
-      title: 'إضافة كيان جديد للمجموعة',
-      message: `تم تسجيل (${newEnt.name}) وتثبيته في قاعدة بيانات الهيكلية بنجاح.`,
+      title: 'إضافة كيان أو فرع جديد',
+      message: `تم تأسيس الكيان (${newEnt.name}) وتثبيته في قاعدة بيانات المنظومة بنجاح.`,
       type: 'success',
     });
   };
