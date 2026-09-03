@@ -309,62 +309,69 @@ export const RentPackagesPage: React.FC = () => {
       {/* TAB 1: PACKAGES LIST */}
       {activeTab === 'packages' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {packages.map((pkg) => (
-            <div key={pkg.id} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div className="flex justify-between items-start mb-3">
-                  <span className="pill-tag-shade" style={{ fontSize: '11px' }}>{pkg.category}</span>
-                  <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{pkg.active_contracts} عقد نشط</span>
-                </div>
+          {packages.map((pkg) => {
+            const monthlyRate = Number(pkg.monthly_rate ?? (pkg as any).price ?? 0);
+            const activeCount = Number(pkg.active_contracts ?? 0);
+            const discountPct = Number(pkg.discount_percentage ?? 0);
+            const featuresList = Array.isArray(pkg.features) ? pkg.features : [];
 
-                <h3 className="text-base font-bold text-black mb-1">{pkg.name}</h3>
-                <p className="text-xs text-zinc-500 mb-4">{pkg.terms_summary}</p>
-
-                <div className="py-3 px-4 bg-zinc-50 rounded-2xl mb-4 border border-zinc-100 flex justify-between items-baseline">
-                  <div>
-                    <span className="text-2xl font-mono font-bold text-black">{pkg.monthly_rate.toLocaleString()}</span>
-                    <span className="text-xs text-zinc-500 mr-1">ر.س / شهر</span>
+            return (
+              <div key={pkg.id} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div className="flex justify-between items-start mb-3">
+                    <span className="pill-tag-shade" style={{ fontSize: '11px' }}>{pkg.category || 'أفراد وعائلات'}</span>
+                    <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{activeCount} عقد نشط</span>
                   </div>
-                  {pkg.discount_percentage > 0 && (
-                    <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>خصم {pkg.discount_percentage}%</span>
-                  )}
+
+                  <h3 className="text-base font-bold text-black mb-1">{pkg.name}</h3>
+                  <p className="text-xs text-zinc-500 mb-4">{pkg.terms_summary || ''}</p>
+
+                  <div className="py-3 px-4 bg-zinc-50 rounded-2xl mb-4 border border-zinc-100 flex justify-between items-baseline">
+                    <div>
+                      <span className="text-2xl font-mono font-bold text-black">{monthlyRate.toLocaleString()}</span>
+                      <span className="text-xs text-zinc-500 mr-1">ر.س / شهر</span>
+                    </div>
+                    {discountPct > 0 && (
+                      <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>خصم {discountPct}%</span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 mb-6">
+                    <span className="text-xs text-zinc-500 font-bold block mb-1">المزايا والضمانات المشمولة:</span>
+                    <ul className="space-y-1.5 text-xs text-zinc-700">
+                      {featuresList.map((feat, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-champagne-dark shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                <div className="space-y-2 mb-6">
-                  <span className="text-xs text-zinc-500 font-bold block mb-1">المزايا والضمانات المشمولة:</span>
-                  <ul className="space-y-1.5 text-xs text-zinc-700">
-                    {pkg.features.map((feat, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 text-champagne-dark shrink-0" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="flex gap-2 border-t border-zinc-100 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => handleEditPackage(pkg)}
+                    className="button-outline-on-light flex-1"
+                    style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
+                  >
+                    <PenSquare className="w-3.5 h-3.5 ml-1" />
+                    <span>تعديل الباقة</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCreateContract(pkg)}
+                    className="button-primary-pill flex-1"
+                    style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
+                  >
+                    <FileSignature className="w-3.5 h-3.5 ml-1" />
+                    <span>إنشاء عقد</span>
+                  </button>
                 </div>
               </div>
-
-              <div className="flex gap-2 border-t border-zinc-100 pt-4">
-                <button
-                  type="button"
-                  onClick={() => handleEditPackage(pkg)}
-                  className="button-outline-on-light flex-1"
-                  style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
-                >
-                  <PenSquare className="w-3.5 h-3.5 ml-1" />
-                  <span>تعديل الباقة</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleCreateContract(pkg)}
-                  className="button-primary-pill flex-1"
-                  style={{ fontSize: '12px', minHeight: '34px', padding: '4px 10px' }}
-                >
-                  <FileSignature className="w-3.5 h-3.5 ml-1" />
-                  <span>إنشاء عقد</span>
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
