@@ -42,6 +42,14 @@ const isLocalHost = (url: string): boolean =>
   url.startsWith('http://127.') || url.startsWith('http://localhost') || url.startsWith('http://0.0.0.0');
 
 export const getStandaloneSupabaseStatus = async (): Promise<StandaloneSupabaseStatus> => {
+  if (isDummySupabase) {
+    return {
+      url: SUPABASE_URL,
+      studioUrl: '',
+      isLocal: false,
+      connected: false,
+    };
+  }
   try {
     const { error } = await supabase.from('clients').select('id').limit(1);
     return {

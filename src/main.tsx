@@ -46,6 +46,12 @@ if (typeof window !== 'undefined') {
       }
     }
   });
+
+  // Auto-recover from stale chunks after new deployments
+  window.addEventListener('vite:preloadError', (event) => {
+    console.warn('Vite preload chunk mismatch detected, reloading newest version...', event);
+    window.location.reload();
+  });
 }
 
 // Initialize Sentry Real-Time Error Monitoring & Performance Tracking
