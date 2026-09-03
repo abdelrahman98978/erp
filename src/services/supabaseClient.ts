@@ -22,12 +22,29 @@ export const isDummySupabase =
   SUPABASE_URL.includes('dummy-supabase') ||
   SUPABASE_URL.includes('dummy');
 
+const customFetch: typeof fetch = async (input, init) => {
+  const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : '');
+  if (isDummySupabase || url.includes('dummy-supabase') || url.includes('dummy')) {
+    return new Response(JSON.stringify([]), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'content-range': '0-0/0',
+      },
+    });
+  }
+  return fetch(input, init);
+};
+
 export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
     storageKey: 'erp-supabase-auth',
+  },
+  global: {
+    fetch: customFetch,
   },
 });
 

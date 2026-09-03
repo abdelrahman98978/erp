@@ -3,7 +3,7 @@
  * Connected directly to PostgreSQL via Supabase with Realtime & Offline Resilience.
  */
 
-import { supabase } from './supabaseClient';
+import { supabase, isDummySupabase } from './supabaseClient';
 import { RealZatcaEngine } from './realZatcaEngine';
 import { tafqeet } from './tafqeetService';
 import { BOQItem, TenderRecord, SupplierRecord } from '../types/tenders';
@@ -21,6 +21,7 @@ class KasEtmadRealService {
   // ============================================================================
 
   public async getTenders(): Promise<TenderRecord[]> {
+    if (isDummySupabase) return [];
     try {
       const { data: tenders, error } = await supabase
         .from('kas_tenders')
@@ -322,6 +323,7 @@ class KasEtmadRealService {
   // ============================================================================
 
   public async getSuppliers(): Promise<SupplierRecord[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('kas_suppliers')
@@ -470,6 +472,7 @@ class KasEtmadRealService {
   // ============================================================================
 
   public async getContracts(): Promise<KasEtmadContract[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('kas_contracts').select('*').order('created_at', { ascending: false });
       if (error) throw error;
@@ -490,6 +493,7 @@ class KasEtmadRealService {
   }
 
   public async getExpenses(): Promise<KasEtmadExpense[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('kas_expenses').select('*').order('expense_date', { ascending: false });
       if (error) throw error;
@@ -509,6 +513,7 @@ class KasEtmadRealService {
   }
 
   public async getStaff(): Promise<KasEtmadStaff[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('kas_staff').select('*').order('created_at', { ascending: true });
       if (error) throw error;

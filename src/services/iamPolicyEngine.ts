@@ -392,6 +392,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getDelegations(companyId?: string): Promise<IamDelegation[]> {
+    if (isDummySupabase) return [];
     try {
       let query = supabase.from('iam_delegations').select('*').order('created_at', { ascending: false });
       if (companyId) query = query.eq('company_id', companyId);
@@ -444,6 +445,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getAccessRequests(): Promise<IamAccessRequest[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('iam_access_requests').select('*').order('created_at', { ascending: false });
       if (error) throw error;
@@ -467,6 +469,7 @@ class IamPolicyEngine {
   }
 
   public async getAccessReviews(): Promise<IamAccessReview[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('iam_access_reviews').select('*').order('created_at', { ascending: false });
       if (error) throw error;
@@ -493,6 +496,7 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getActiveSessions(): Promise<IamUserSession[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase.from('iam_user_sessions').select('*').order('created_at', { ascending: false });
       if (error) throw error;
@@ -515,6 +519,7 @@ class IamPolicyEngine {
   }
 
   public async getAuditLogs(limit: number = 100): Promise<IamAuditLog[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('iam_audit_logs')
@@ -702,6 +707,7 @@ class IamPolicyEngine {
   }
 
   public async logAudit(log: Omit<IamAuditLog, 'id' | 'createdAt'>): Promise<void> {
+    if (isDummySupabase) return;
     try {
       await supabase.from('iam_audit_logs').insert([
         {
