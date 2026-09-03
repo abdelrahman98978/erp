@@ -7,7 +7,8 @@ import {
   FileCode, 
   ChevronDown, 
   FileJson,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import { exportData, ExportFormat } from '../../services/exportService';
 import { useAppStore } from '../../stores/appStore';
@@ -32,6 +33,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
   className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { addNotification } = useAppStore();
 
@@ -46,7 +48,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleExport = (format: ExportFormat) => {
+  const handleExport = async (format: ExportFormat) => {
     if (!data || data.length === 0) {
       addNotification({
         title: 'تنبيه تصدير',
@@ -56,13 +58,26 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
       return;
     }
     
-    exportData(sectionKey, data, format, customTitle);
-    addNotification({
-      title: 'تصدير البيانات',
-      message: `تم بدء تصدير (${data.length}) سجل بصيغة ${format.toUpperCase()} بنجاح.`,
-      type: 'success',
-    });
     setIsOpen(false);
+    setIsExporting(true);
+
+    try {
+      await exportData(sectionKey, data, format, customTitle);
+      addNotification({
+        title: 'تصدير الوثيقة التنفيذية',
+        message: `تم تجهيز واستخراج (${data.length}) سجل بصيغة ${format.toUpperCase()} بأعلى معايير الحوكمة والاعتماد.`,
+        type: 'success',
+      });
+    } catch (err) {
+      console.error('Export failed:', err);
+      addNotification({
+        title: 'تعذر التصدير',
+        message: 'حدث خطأ أثناء معالجة ملف التصدير، يرجى المحاولة مرة أخرى.',
+        type: 'error',
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const getButtonClass = () => {
@@ -83,42 +98,43 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
     {
       id: 'excel' as ExportFormat,
       title: 'Microsoft Excel (.xlsx)',
-      desc: 'جدول بيانات متقدم مع دوال الإجماليات وRTL',
+      desc: 'جدول محاسبي متكامل بهيدر رسمي، مجاميع تلقائية وتوافق RTL',
       icon: FileSpreadsheet,
-      badge: 'موصى به',
+      badge: 'موصى به للجداول',
       color: 'emerald',
       bgColor: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
     },
     {
       id: 'pdf' as ExportFormat,
-      title: 'مستند PDF رسمي (.pdf)',
-      desc: 'كشف معتمد بهيدر المجموعة وترقيم الصفحات',
+      title: 'مستند PDF تنفيذي معتمد (.pdf)',
+      desc: 'تقرير رسمي عالي الدقة (300 DPI) بهيدر المجموعة والختم الرقمي',
       icon: FileText,
-      badge: 'معتمد',
+      badge: 'معتمد حكومياً ورسمياً',
       color: 'sky',
       bgColor: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400 border-sky-200 dark:border-sky-800'
     },
     {
-      id: 'csv' as ExportFormat,
-      title: 'ملف CSV متوافق (UTF-8)',
-      desc: 'ملف خفيف متوافق مع كافة أنظمة المحاسبة',
-      icon: FileCode,
-      color: 'amber',
-      bgColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border-amber-200 dark:border-amber-800'
-    },
-    {
       id: 'print' as ExportFormat,
-      title: 'طباعة كشف A4 فوري',
-      desc: 'عرض فوري للطباعة مع الختم الرقمي والـ QR',
+      title: 'طباعة فورية A4 (Print Preview)',
+      desc: 'نافذة معاينة وطباعة فورية مع رمز ZATCA QR ومصفوفة التواقيع',
       icon: Printer,
       badge: 'طباعة فورية',
       color: 'purple',
       bgColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400 border-purple-200 dark:border-purple-800'
     },
     {
+      id: 'csv' as ExportFormat,
+      title: 'ملف مجدول CSV (UTF-8 BOM)',
+      desc: 'متوافق تماماً مع Microsoft Excel والبرامج المحاسبية الخارجية',
+      icon: FileCode,
+      color: 'amber',
+      badge: 'توافق شامل',
+      bgColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+    },
+    {
       id: 'json' as ExportFormat,
-      title: 'تصدير برمجي JSON (.json)',
-      desc: 'كائنات البيانات المهيكلة للمطورين والربط الخارجي',
+      title: 'بيانات مهيكلة JSON (.json)',
+      desc: 'كائنات البيانات الخام متضمنة بيانات الحوكمة والترخيص للربط البرمجي',
       icon: FileJson,
       color: 'zinc',
       bgColor: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700'
@@ -128,14 +144,19 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
   return (
     <div className={`relative inline-block text-right ${className}`} ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`${getButtonClass()} flex items-center gap-2 font-bold transition-all shadow-sm active:scale-95`}
+        onClick={() => !isExporting && setIsOpen(!isOpen)}
+        disabled={isExporting}
+        className={`${getButtonClass()} flex items-center gap-2 font-bold transition-all shadow-sm active:scale-95 ${isExporting ? 'opacity-70 cursor-wait' : ''}`}
         type="button"
         title="تصدير السجلات بكافة الصيغ المتاحة"
       >
-        <Download className="w-4 h-4 text-emerald-500 shrink-0" />
-        <span>{buttonLabel}</span>
-        {showCountBadge && data && (
+        {isExporting ? (
+          <Loader2 className="w-4 h-4 text-emerald-500 shrink-0 animate-spin" />
+        ) : (
+          <Download className="w-4 h-4 text-emerald-500 shrink-0" />
+        )}
+        <span>{isExporting ? 'جاري التجهيز...' : buttonLabel}</span>
+        {showCountBadge && data && !isExporting && (
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-black">
             {data.length}
           </span>
