@@ -20,75 +20,124 @@ export interface AuthState {
 
 export const authService = {
   /**
-   * Sign in with email/username and password
+   * Resolve username or email to standard system email
+   */
+  resolveEmail(identifier: string): string {
+    const clean = identifier.trim().toLowerCase();
+    if (clean.includes('@')) return clean;
+
+    const USERNAME_EMAIL_MAP: Record<string, string> = {
+      'khalid.admin': 'khalid@alsulaim.sa',
+      'khalid': 'khalid@alsulaim.sa',
+      'super.admin': 'admin@alsulaim.sa',
+      'admin': 'admin@alsulaim.sa',
+      'finance.manager': 'finance@alsulaim.sa',
+      'finance': 'finance@alsulaim.sa',
+      'operation.user': 'ops@alsulaim.sa',
+      'ops': 'ops@alsulaim.sa',
+      'saf.manager': 'saf.manager@alsulaim.sa',
+      'yaq.operations': 'yaq.operations@alsulaim.sa',
+      'top.hr': 'top.hr@alsulaim.sa',
+      'kas.tenders': 'kas.tenders@alsulaim.sa',
+    };
+
+    return USERNAME_EMAIL_MAP[clean] || `${clean}@alsulaim.sa`;
+  },
+
+  /**
+   * Sign in with real email/username and password against Supabase & PostgreSQL
    */
   async signIn(identifier: string, password: string) {
-    // If running in demo mode without real Supabase env vars, bypass network calls
-    if (isDummySupabase) {
-      if (identifier && password) {
-        const demoUser: UserProfile = {
-          id: 'USR-ADMIN-001',
-          username: identifier,
-          full_name: 'سليمان خالد السليم',
-          email: identifier.includes('@') ? identifier : 'admin@alsulaim.com.sa',
-          role: 'رئيس المجموعة',
-          branch: 'الفرع الرئيسي',
-          status: 'نشط',
-          created_at: new Date().toISOString()
-        };
-        return { data: demoUser, error: null };
-      }
+    if (!identifier?.trim() || !password?.trim()) {
       return { data: null, error: { message: 'يرجى إدخال اسم المستخدم وكلمة المرور' } };
     }
 
+    const email = this.resolveEmail(identifier);
+
     try {
-      // First try Supabase auth
-      const { data: emailData, error: emailError } = await supabase.auth.signInWithPassword({
-        email: identifier,
+      // 1. Authenticate with real Supabase GoTrue Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
         password
       });
 
-      if (!emailError && emailData?.user) {
-        return this.getUserProfile(emailData.user.id);
+      if (!authError && authData?.user) {
+        const profile = await this.getUserProfile(authData.user.id);
+        if (profile.data) {
+          localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(profile.data));
+          return profile;
+        }
+
+        // Construct from auth metadata
+        const meta = authData.user.user_metadata || {};
+        const fallbackProfile: UserProfile = {
+          id: authData.user.id,
+          username: meta.username || identifier,
+          full_name: meta.full_name || 'مستخدم النظام المعتمد',
+          email: authData.user.email || email,
+          role: meta.role || 'مسؤول نظام',
+          branch: meta.branch || 'الفرع الرئيسي',
+          status: 'نشط',
+          created_at: authData.user.created_at || new Date().toISOString()
+        };
+        localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(fallbackProfile));
+        return { data: fallbackProfile, error: null };
       }
 
-      // If email fails, try username by looking up system_users
-      const { data: userData } = await supabase
-        .from('system_users')
-        .select('email')
-        .eq('username', identifier)
-        .eq('status', 'نشط')
-        .single();
-
-      if (userData?.email) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: userData.email,
-          password
-        });
-        if (!error && data?.user) {
-          return this.getUserProfile(data.user.id);
+      // If Supabase returned credentials error, reject strictly
+      if (authError) {
+        const msg = authError.message?.toLowerCase() || '';
+        if (msg.includes('invalid login credentials') || msg.includes('invalid') || msg.includes('credentials')) {
+          return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' } };
         }
       }
-    } catch (e) {
-      console.warn('Supabase auth bypass/fallback engaged:', e);
+    } catch (netErr: any) {
+      console.warn('Network error reaching Supabase Auth:', netErr);
     }
 
-    // Enterprise Fallback Super Admin User (Demo & Offline Mode)
-    if (identifier && password) {
-      const demoUser: UserProfile = {
-        id: 'USR-ADMIN-001',
-        username: identifier,
-        full_name: 'سليمان خالد السليم',
-        email: identifier.includes('@') ? identifier : 'admin@alsulaim.com.sa',
-        role: 'رئيس المجموعة',
-        branch: 'الفرع الرئيسي',
-        status: 'نشط',
-        created_at: new Date().toISOString()
-      };
-      return { data: demoUser, error: null };
+    // 2. Offline master fallback check with strict password validation
+    const KNOWN_OFFLINE_USERS: Record<string, { pass: string; profile: UserProfile }> = {
+      'khalid@alsulaim.sa': {
+        pass: 'Alsulaim@2026',
+        profile: { id: 'USR-KHALID-01', username: 'khalid.admin', full_name: 'خالد السليم', email: 'khalid@alsulaim.sa', role: 'رئيس المجموعة', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'admin@alsulaim.sa': {
+        pass: 'Alsulaim@2026',
+        profile: { id: 'USR-ADMIN-01', username: 'super.admin', full_name: 'مشرف الإدارة المركزية', email: 'admin@alsulaim.sa', role: 'المدير العام', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'finance@alsulaim.sa': {
+        pass: 'Alsulaim@2026',
+        profile: { id: 'USR-FIN-01', username: 'finance.manager', full_name: 'أحمد المحاسب المالي', email: 'finance@alsulaim.sa', role: 'مدير الحسابات', branch: 'فرع الرياض الرئيسي', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'ops@alsulaim.sa': {
+        pass: 'Alsulaim@2026',
+        profile: { id: 'USR-OPS-01', username: 'operation.user', full_name: 'فهد العمليات والتشغيل', email: 'ops@alsulaim.sa', role: 'مشرف تشغيل', branch: 'فرع جدة', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'saf.manager@alsulaim.sa': {
+        pass: 'SafRecruit@2026',
+        profile: { id: 'USR-SAF-01', username: 'saf.manager', full_name: 'سليمان خالد (الصفا الماسي)', email: 'saf.manager@alsulaim.sa', role: 'مدير استقدام', branch: 'فرع الرياض', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'yaq.operations@alsulaim.sa': {
+        pass: 'YaqootRent@2026',
+        profile: { id: 'USR-YAQ-01', username: 'yaq.operations', full_name: 'عبدالرحمن العتيبي (الياقوت)', email: 'yaq.operations@alsulaim.sa', role: 'مدير تأجير', branch: 'فرع الدمام', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'top.hr@alsulaim.sa': {
+        pass: 'TopTalent@2026',
+        profile: { id: 'USR-TOP-01', username: 'top.hr', full_name: 'سارة خالد (توب تالنت)', email: 'top.hr@alsulaim.sa', role: 'مدير توظيف ATS', branch: 'فرع الخبر', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'kas.tenders@alsulaim.sa': {
+        pass: 'KasEtmad@2026',
+        profile: { id: 'USR-KAS-01', username: 'kas.tenders', full_name: 'م. بندر الهويريني (كاس واعتماد)', email: 'kas.tenders@alsulaim.sa', role: 'مدير منافسات', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
+      }
+    };
+
+    const offlineMatch = KNOWN_OFFLINE_USERS[email];
+    if (offlineMatch && offlineMatch.pass === password) {
+      localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(offlineMatch.profile));
+      return { data: offlineMatch.profile, error: null };
     }
 
-    return { data: null, error: { message: 'اسم المستخدم أو البريد الإلكتروني أو كلمة المرور غير صحيحة' } };
+    return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' } };
   },
 
   /**

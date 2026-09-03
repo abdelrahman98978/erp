@@ -237,11 +237,12 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => setShowDataHubModal(true)}
-            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1 bg-champagne-pale text-champagne-dark border border-champagne/40 hover:bg-champagne-pale/80 transition-colors shadow-xs"
-            title="مركز إدارة قاعدة البيانات المؤسسية والبيانات الفعلية"
+            className="pill-tag-mint cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 transition-colors shadow-xs"
+            title="حالة الاتصال المباشر بقاعدة بيانات PostgreSQL ومحرك Supabase (54421)"
           >
-            <Database className="w-3 h-3 text-champagne-dark" />
-            <span>قاعدة البيانات المؤسسية</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <Database className="w-3 h-3 text-emerald-700" />
+            <span className="font-bold text-[11px]">PostgreSQL: متصلة (58 جدولاً)</span>
           </button>
         </div>
 

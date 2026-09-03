@@ -547,8 +547,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       setIs2FAStep(true);
       setTimerSeconds(45);
     } else {
-      setIs2FAStep(true);
-      setTimerSeconds(45);
+      setLocalError(result.error || 'اسم المستخدم أو كلمة المرور غير صحيحة. يرجى التحقق من صحة البيانات.');
     }
   };
 
@@ -1019,7 +1018,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   {/* Direct One-Click Instant Access for Testing/Demo */}
                   <button
                     type="button"
-                    onClick={executeCompleteLogin}
+                    onClick={async () => {
+                      setLocalError(null);
+                      const res = await signIn(selectedPortal.defaultUser, selectedPortal.defaultPass);
+                      if (res.success) {
+                        executeCompleteLogin();
+                      } else {
+                        setLocalError(res.error || 'فشل الدخول للمنظومة');
+                      }
+                    }}
                     className="button-outline-on-light"
                     style={{
                       width: '100%',
@@ -1036,7 +1043,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     }}
                   >
                     <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>دخول فوري مباشر لهذه المنظومة</span>
+                    <span>دخول فوري معتمد لمنظومة {selectedPortal.nameAr}</span>
                   </button>
                 </form>
 

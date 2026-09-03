@@ -10,6 +10,7 @@ import { ImpersonationProvider } from './contexts/ImpersonationContext';
 import { RBACProvider } from './contexts/RBACContext';
 
 import { useAppStore } from './stores/appStore';
+import { authService } from './services/authService';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
@@ -145,6 +146,13 @@ const MainContent: React.FC = () => {
   };
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem('ALSULAIM_AUTH_USER');
+      localStorage.removeItem('erp-supabase-auth');
+      authService.signOut();
+    } catch (e) {
+      // ignore
+    }
     setFlowState('landing');
   };
 

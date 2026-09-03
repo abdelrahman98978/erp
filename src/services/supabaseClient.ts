@@ -1,24 +1,15 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const DEFAULT_SUPABASE_URL = 'https://dummy-supabase.supabase.co';
-const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvY2FsaG9zdCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzA0MDY3MjAwLCJleHAiOjIwMTk2NDMyMDB9.dummy';
+const DEFAULT_SUPABASE_URL = 'http://127.0.0.1:54421';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 const SUPABASE_URL: string = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
 const SUPABASE_ANON_KEY: string = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
-
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-  if (import.meta.env.DEV) {
-    console.info(
-      'ERP Info: Supabase cloud env vars are not set. Running in fast offline-first dual storage mode.'
-    );
-  }
-}
 
 export const STANDALONE_SUPABASE_URL = SUPABASE_URL;
 export const STANDALONE_SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
 
 export const isDummySupabase =
-  !import.meta.env.VITE_SUPABASE_URL ||
   SUPABASE_URL.includes('dummy-supabase') ||
   SUPABASE_URL.includes('dummy');
 
