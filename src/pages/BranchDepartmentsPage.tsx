@@ -315,40 +315,46 @@ export const BranchDepartmentsPage: React.FC = () => {
 
   useEffect(() => {
     realErpDataStore.getRecords<BranchEntity>('branch_entities', ALL_GROUP_ENTITIES).then(data => {
-      setEntities(data);
+      if (Array.isArray(data) && data.length > 0) {
+        setEntities(data);
+      } else {
+        setEntities(ALL_GROUP_ENTITIES);
+      }
     });
   }, []);
 
   const filteredEntities = useMemo(() => {
     return entities.filter(e => {
+      if (!e) return false;
       if (activeCategoryFilter !== 'all' && e.category !== activeCategoryFilter) {
         return false;
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchName = e.name.toLowerCase().includes(q);
-        const matchCode = e.code.toLowerCase().includes(q);
-        const matchLoc = e.location.toLowerCase().includes(q);
-        const matchMgr = e.manager.toLowerCase().includes(q);
-        const matchDept = e.departments.some(d => d.name.toLowerCase().includes(q) || d.head.toLowerCase().includes(q));
+        const matchName = (e.name || '').toLowerCase().includes(q);
+        const matchCode = (e.code || '').toLowerCase().includes(q);
+        const matchLoc = (e.location || '').toLowerCase().includes(q);
+        const matchMgr = (e.manager || '').toLowerCase().includes(q);
+        const matchDept = (e.departments || []).some(d => (d?.name || '').toLowerCase().includes(q) || (d?.head || '').toLowerCase().includes(q));
         if (!matchName && !matchCode && !matchLoc && !matchMgr && !matchDept) return false;
       }
       return true;
     });
   }, [entities, activeCategoryFilter, searchQuery]);
 
-  const selectedEntity = entities.find(e => e.id === selectedEntityId) || filteredEntities[0] || entities[0];
+  const selectedEntity = entities.find(e => e?.id === selectedEntityId) || filteredEntities[0] || entities[0] || ALL_GROUP_ENTITIES[0];
 
   // Overall KPI statistics
   const stats = useMemo(() => {
-    const totalStaff = entities.reduce((acc, curr) => acc + curr.staff_count, 0);
-    const totalDepts = entities.reduce((acc, curr) => acc + curr.departments.length, 0);
-    const branchesCount = entities.filter(e => e.category === 'فرع منطقي').length;
-    const companiesCount = entities.filter(e => e.category === 'شركة مجموعة').length;
-    const agenciesCount = entities.filter(e => e.category === 'مكتب خارجي').length;
+    const list = entities && entities.length > 0 ? entities : ALL_GROUP_ENTITIES;
+    const totalStaff = list.reduce((acc, curr) => acc + (curr?.staff_count || 0), 0);
+    const totalDepts = list.reduce((acc, curr) => acc + ((curr?.departments || []).length), 0);
+    const branchesCount = list.filter(e => e?.category === 'فرع منطقي').length;
+    const companiesCount = list.filter(e => e?.category === 'شركة مجموعة').length;
+    const agenciesCount = list.filter(e => e?.category === 'مكتب خارجي').length;
 
     return {
-      totalEntities: entities.length,
+      totalEntities: list.length,
       totalStaff,
       totalDepts,
       branchesCount,
@@ -491,23 +497,23 @@ export const BranchDepartmentsPage: React.FC = () => {
               style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
               <Plus className="w-4 h-4 text-champagne-dark" />
-              <span>+ إضافة قسم لـ ({selectedEntity.code})</span>
+              <span>+ إضافة قسم لـ ({selectedEntity?.code || 'الفرع'})</span>
             </button>
 
             <ExportDropdown
               sectionKey="branches"
               data={entities.flatMap(ent =>
-                ent.departments.map(d => ({
-                  entity_code: ent.code,
-                  entity_name: ent.name,
-                  category: ent.category,
-                  location: ent.location,
-                  manager: ent.manager,
-                  dept_name: d.name,
-                  head: d.head,
-                  staff_count: d.staff_count,
-                  kpi: d.kpi,
-                  status: d.status,
+                (ent?.departments || []).map(d => ({
+                  entity_code: ent?.code || '',
+                  entity_name: ent?.name || '',
+                  category: ent?.category || 'فرع منطقي',
+                  location: ent?.location || '',
+                  manager: ent?.manager || '',
+                  dept_name: d?.name || '',
+                  head: d?.head || '',
+                  staff_count: d?.staff_count || 0,
+                  kpi: d?.kpi || '',
+                  status: d?.status || 'مفعل',
                 }))
               )}
               variant="outline-dark"
@@ -638,7 +644,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 isSelected ? 'text-champagne-light/70' : 'text-zinc-500 dark:text-zinc-400'
               }`}>
                 <span className="truncate max-w-[140px]">{e.manager}</span>
-                <span className="font-bold text-[11px] shrink-0 font-mono">{e.departments.length} أقسام • {e.staff_count} موظف</span>
+                <span className="font-bold text-[11px] shrink-0 font-mono">{(e.departments || []).length} أقسام • {e.staff_count || 0} موظف</span>
               </div>
             </div>
           );
@@ -658,7 +664,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   {selectedEntity.category}
                 </span>
                 <span className="pill-tag-shade text-xs font-mono">
-                  👥 إجمالي الكادر: {selectedEntity.staff_count} موظف
+                  👥 إجمالي الكادر: {selectedEntity.staff_count || 0} موظف
                 </span>
               </div>
               <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -691,12 +697,12 @@ export const BranchDepartmentsPage: React.FC = () => {
               <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
             </h3>
             <span className="pill-tag-mint text-xs font-mono">
-              {selectedEntity.departments.length} أقسام تشغيلية
+              {(selectedEntity.departments || []).length} أقسام تشغيلية
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {selectedEntity.departments.map(dept => (
+            {(selectedEntity.departments || []).map(dept => (
               <div 
                 key={dept.id} 
                 className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-champagne/40 transition-all flex flex-col justify-between group bg-white dark:bg-zinc-900"
