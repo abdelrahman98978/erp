@@ -59,6 +59,7 @@ const RecruitmentContractsPage = lazyWithRetry(() => import('./pages/Recruitment
 const MusanedIntegrationPlanPage = lazyWithRetry(() => import('./pages/MusanedIntegrationPlanPage').then(m => ({ default: m.MusanedIntegrationPlanPage })));
 const RentContractsPage = lazyWithRetry(() => import('./pages/RentContractsPage').then(m => ({ default: m.RentContractsPage })));
 const CreateCVPage = lazyWithRetry(() => import('./pages/CreateCVPage').then(m => ({ default: m.CreateCVPage })));
+const CVsBankPage = lazyWithRetry(() => import('./pages/CVsBankPage').then(m => ({ default: m.CVsBankPage })));
 const OrdersPage = lazyWithRetry(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
 const ShelterPage = lazyWithRetry(() => import('./pages/ShelterPage').then(m => ({ default: m.ShelterPage })));
 const SponsorshipTransferPage = lazyWithRetry(() => import('./pages/SponsorshipTransferPage').then(m => ({ default: m.SponsorshipTransferPage })));
@@ -285,14 +286,17 @@ const MainContent: React.FC = () => {
         return <RentPackagesPage />;
 
       case 'create-cv':
+        return <CreateCVPage />;
+
       case 'cvs-recruitment':
       case 'cvs-rental':
+      case 'rental-cvs':
       case 'cvs-backout':
       case 'cvs-deleted':
       case 'cvs-pending':
       case 'cvs-reserved':
       case 'cvs':
-        return <CreateCVPage />;
+        return <CVsBankPage />;
 
       case 'orders':
       case 'all-orders':

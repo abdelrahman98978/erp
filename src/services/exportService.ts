@@ -737,6 +737,29 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.rate || r.margin || '',
       r.status || ''
     ]
+  },
+  cvs: {
+    sectionTitle: 'سجل بنك السير الذاتية المعتمدة (استقدام وتأجير)',
+    headers: ['كود السيرة', 'اسم العاملة (إنجليزي)', 'اسم العاملة (عربي)', 'الجنسية', 'المهنة', 'النوع', 'العمر', 'الديانة', 'الراتب (ر.س)', 'المكتب الخارجي', 'رقم الجواز', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.cv_code || r.code || r.id || '',
+      r.maid_name || r.name || r.full_name_en || '',
+      r.maid_name_ar || r.full_name_ar || '',
+      r.nationality || r.nat || '',
+      r.job || r.profession || r.skill || 'عاملة منزلية',
+      r.type || 'استقدام',
+      r.age || 28,
+      r.religion || 'مسلمة',
+      r.salary || r.price || 1500,
+      r.external_office || r.office || "PLATINUM BROTHERS INT'L",
+      r.passport_number || r.pass || '',
+      r.status || 'متاح'
+    ],
+    numericColumns: [6, 8],
+    totalRowCalculator: (data: any[]) => {
+      const totalSalary = data.reduce((sum, r) => sum + (Number(r.salary || r.price) || 0), 0);
+      return ['المجموع الإجمالي / المتوسط العام', '', '', '', '', '', '', '', totalSalary, '', '', `${data.length} سيرة`];
+    }
   }
 };
 
