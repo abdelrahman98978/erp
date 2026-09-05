@@ -127,9 +127,33 @@ export const authService = {
         pass: 'TopTalent@2026',
         profile: { id: 'USR-TOP-01', username: 'top.hr', full_name: 'سارة خالد (توب تالنت)', email: 'top.hr@alsulaim.sa', role: 'مدير توظيف ATS', branch: 'فرع الخبر', status: 'نشط', created_at: '2026-08-01' }
       },
+      'top.recruiter@alsulaim.sa': {
+        pass: 'TopTalent@2026',
+        profile: { id: 'USR-TOP-02', username: 'top.recruiter', full_name: 'سارة خالد (توب تالنت ATS)', email: 'top.recruiter@alsulaim.sa', role: 'مدير توظيف ATS', branch: 'فرع الخبر', status: 'نشط', created_at: '2026-08-01' }
+      },
       'kas.tenders@alsulaim.sa': {
         pass: 'KasEtmad@2026',
         profile: { id: 'USR-KAS-01', username: 'kas.tenders', full_name: 'م. بندر الهويريني (كاس واعتماد)', email: 'kas.tenders@alsulaim.sa', role: 'مدير منافسات', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'kas.supervisor@alsulaim.sa': {
+        pass: 'KasTrading@2026',
+        profile: { id: 'USR-KAS-02', username: 'kas.supervisor', full_name: 'م. بندر الهويريني (شركة كاس)', email: 'kas.supervisor@alsulaim.sa', role: 'KAS General Manager', branch: 'المقر الرئيسي — الرياض', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'shelter.supervisor@alsulaim.sa': {
+        pass: 'ShelterCare@2026',
+        profile: { id: 'USR-SHE-01', username: 'shelter.supervisor', full_name: 'نورة السليمان (مشرفة الإيواء والسكن)', email: 'shelter.supervisor@alsulaim.sa', role: 'Shelter Supervisor', branch: 'مركز إيواء الرياض الرئيسي', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'client@alsulaim.sa': {
+        pass: 'ClientPortal@2026',
+        profile: { id: 'USR-CLI-01', username: 'client.user', full_name: 'عبدالله محمد (بوابة المستفيدين)', email: 'client@alsulaim.sa', role: 'عميل مستفيد', branch: 'أونلاين', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'agent.manila@agency.ph': {
+        pass: 'AgencyPartner@2026',
+        profile: { id: 'USR-AGN-01', username: 'manila.agent', full_name: 'Manila International Agency', email: 'agent.manila@agency.ph', role: 'وكيل دولي معتمد', branch: 'الفلبين - مانيلا', status: 'نشط', created_at: '2026-08-01' }
+      },
+      'store.manager@alsulaim.sa': {
+        pass: 'StoreOnline@2026',
+        profile: { id: 'USR-STR-01', username: 'store.manager', full_name: 'عمر القنوات الرقمية (المتاجر)', email: 'store.manager@alsulaim.sa', role: 'مدير المتاجر الإلكترونية', branch: 'الرقمي', status: 'نشط', created_at: '2026-08-01' }
       }
     };
 
