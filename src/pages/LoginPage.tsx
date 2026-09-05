@@ -300,8 +300,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     return SYSTEM_PORTALS[0];
   };
 
-  const [selectedPortal, setSelectedPortal] = useState<SystemPortalOption>(getInitialPortal);
-  const [selectedCategory, setSelectedCategory] = useState<'شركات المجموعة' | 'البوابات الرقمية' | 'الإدارة والسيطرة'>('شركات المجموعة');
+  const initialPortal = getInitialPortal();
+  const [selectedPortal, setSelectedPortal] = useState<SystemPortalOption>(initialPortal);
+  const [selectedCategory, setSelectedCategory] = useState<SystemPortalOption['category']>(initialPortal.category);
+
+  // Ensure category is always strictly synchronized with selected portal
+  useEffect(() => {
+    if (selectedPortal && selectedPortal.category !== selectedCategory) {
+      setSelectedCategory(selectedPortal.category);
+    }
+  }, [selectedPortal]);
 
   const [username, setUsername] = useState(selectedPortal.defaultUser);
   const [password, setPassword] = useState(selectedPortal.defaultPass);
@@ -671,46 +679,61 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {/* ========================================================================= */}
       <div className="w-full max-w-5xl mb-4">
         {/* Category Tabs */}
-        <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+        <div className="flex items-center justify-between gap-2 mb-2.5 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-zinc-600 flex items-center gap-1.5">
+            <span className="text-xs font-bold text-zinc-700 flex items-center gap-1.5">
               <Building2 className="w-3.5 h-3.5 text-black" />
               <span>اختر منظومة الدخول المستقلة:</span>
             </span>
           </div>
 
           <div className="flex items-center gap-1 bg-zinc-200/80 p-1 rounded-2xl">
-            {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  const firstInCat = SYSTEM_PORTALS.find(p => p.category === cat);
-                  if (firstInCat) handleSelectPortal(firstInCat);
-                }}
-                className={`px-3 py-1 text-xs font-bold rounded-xl transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-black text-white shadow-sm'
-                    : 'text-zinc-600 hover:text-black'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map((cat) => {
+              const count = SYSTEM_PORTALS.filter(p => p.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    const firstInCat = SYSTEM_PORTALS.find(p => p.category === cat);
+                    if (firstInCat) handleSelectPortal(firstInCat);
+                  }}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
+                    selectedCategory === cat
+                      ? 'bg-black text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-black'
+                  }`}
+                >
+                  <span>{cat}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                    selectedCategory === cat ? 'bg-white/20 text-white' : 'bg-zinc-300/80 text-zinc-700'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Portals Pill Matrix */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className={`grid gap-2.5 ${
+          selectedCategory === 'شركات المجموعة'
+            ? 'grid-cols-1 sm:grid-cols-3'
+            : selectedCategory === 'البوابات الرقمية'
+            ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
+            : 'grid-cols-1 max-w-xl mx-auto'
+        }`}>
           {SYSTEM_PORTALS.filter(p => p.category === selectedCategory).map((portal) => {
             const isCurrent = selectedPortal.id === portal.id;
             return (
               <button
                 key={portal.id}
                 type="button"
+                dir={currentLanguage.dir}
                 onClick={() => handleSelectPortal(portal)}
-                className={`flex items-start gap-2.5 p-2.5 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
+                className={`flex items-start gap-2.5 p-3 rounded-2xl border text-start transition-all cursor-pointer relative overflow-hidden ${
                   isCurrent
                     ? 'bg-white border-black shadow-md ring-2 ring-black/10'
                     : 'bg-white/85 border-zinc-200 hover:border-zinc-300 hover:bg-white hover:shadow-sm'
@@ -722,15 +745,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   />
                 )}
                 <div 
-                  className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
                   style={{
                     background: `${portal.themeColor}15`,
                     color: portal.themeColor
                   }}
                 >
-                  {renderPortalIcon(portal.iconName, 'w-3.5 h-3.5')}
+                  {renderPortalIcon(portal.iconName, 'w-4 h-4')}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 text-start">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <span className="text-xs font-bold text-black truncate">{portal.nameAr}</span>
                     {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark shrink-0" />}
@@ -1095,7 +1118,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       </>
                     ) : (
                       <>
-                        <span>دخول منظومة {selectedPortal.nameAr}</span>
+                        <span>دخول {selectedPortal.nameAr.startsWith('بوابة') ? selectedPortal.nameAr : `منظومة ${selectedPortal.nameAr}`}</span>
                         <ArrowLeft className="w-4 h-4" />
                       </>
                     )}
@@ -1129,7 +1152,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     }}
                   >
                     <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>دخول فوري معتمد لمنظومة {selectedPortal.nameAr}</span>
+                    <span>دخول فوري معتمد • {selectedPortal.nameAr}</span>
                   </button>
                 </form>
 
