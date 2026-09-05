@@ -30,6 +30,7 @@ import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
@@ -151,12 +152,15 @@ const DEFAULT_MOCK_VOUCHERS: VoucherRecord[] = [
 ];
 
 export const SmaccAccountingPage: React.FC = () => {
-  const { addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
   const { activeCompanyId, activeCompany } = useCompany();
 
   const [activeTab, setActiveTab] = useState<
     'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing'
-  >('coa');
+  >(() => {
+    if (storeActiveTab === 'receipt-vouchers' || storeActiveTab === 'payment-vouchers') return 'vouchers';
+    return 'coa';
+  });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLedgerAccount, setSelectedLedgerAccount] = useState('1101');
@@ -198,6 +202,16 @@ export const SmaccAccountingPage: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [activeCompanyId]);
+
+  useEffect(() => {
+    if (storeActiveTab === 'receipt-vouchers') {
+      setActiveTab('vouchers');
+      setVoucherType('قبض');
+    } else if (storeActiveTab === 'payment-vouchers') {
+      setActiveTab('vouchers');
+      setVoucherType('صرف');
+    }
+  }, [storeActiveTab]);
 
   // Convert raw accounts list to SMACC Tree Hierarchy
   const accountTree: SmaccAccountNode[] = useMemo(() => {
@@ -934,7 +948,7 @@ export const SmaccAccountingPage: React.FC = () => {
               <h3 className="text-sm font-bold text-black m-0">سندات القبض وسندات الصرف الرسمية</h3>
               <p className="text-xs text-zinc-500 m-0">توثيق المتحصلات والمصروفات مع الترحيل الآلي الفوري للقيود</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => {
                   setVoucherType('قبض');
@@ -957,6 +971,12 @@ export const SmaccAccountingPage: React.FC = () => {
                 <ArrowUpRight className="w-4 h-4 ml-1" />
                 <span>+ سند صرف جديد</span>
               </button>
+              <ExportDropdown
+                sectionKey="vouchers"
+                data={vouchers}
+                customTitle={`سندات القبض والصرف (SMACC) - ${activeCompany.name}`}
+                buttonLabel="تصدير السندات (10 صيغ)"
+              />
             </div>
           </div>
 

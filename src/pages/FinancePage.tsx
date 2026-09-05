@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
@@ -144,9 +145,19 @@ export const FinancePage: React.FC = () => {
   };
 
   const [activeTab, setActiveTab] = useState<FinanceTab>(() => getMappedTab(storeActiveTab));
+  const [voucherFilterType, setVoucherFilterType] = useState<'all' | 'قبض' | 'صرف'>(() => {
+    if (storeActiveTab === 'receipt-vouchers') return 'قبض';
+    if (storeActiveTab === 'payment-vouchers') return 'صرف';
+    return 'all';
+  });
 
   useEffect(() => {
     setActiveTab(getMappedTab(storeActiveTab));
+    if (storeActiveTab === 'receipt-vouchers') {
+      setVoucherFilterType('قبض');
+    } else if (storeActiveTab === 'payment-vouchers') {
+      setVoucherFilterType('صرف');
+    }
   }, [storeActiveTab]);
 
   // Bank Reconciliation state
@@ -208,6 +219,7 @@ export const FinancePage: React.FC = () => {
     treasury: 'بنك الراجحي',
     amount: '',
   });
+  const [voucherSearchQuery, setVoucherSearchQuery] = useState('');
 
   const [journalForm, setJournalForm] = useState({
     description: '',
@@ -980,68 +992,314 @@ export const FinancePage: React.FC = () => {
       )}
 
       {/* TAB 6: VOUCHERS */}
-      {activeTab === 'vouchers' && (
-        <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
-            <h3 className="text-sm font-bold text-black m-0">سجل سندات القبض والصرف</h3>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => exportData('vouchers', vouchers, 'excel', `سندات القبض والصرف - ${activeCompany.name}`)}
-                className="button-outline-on-light"
-                style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
-                <span>Excel</span>
-              </button>
+      {activeTab === 'vouchers' && (() => {
+        const receiptCount = vouchers.filter((v) => v.type === 'قبض').length;
+        const paymentCount = vouchers.filter((v) => v.type === 'صرف').length;
+        const totalReceipts = vouchers.filter((v) => v.type === 'قبض').reduce((sum, v) => sum + v.amount, 0);
+        const totalPayments = vouchers.filter((v) => v.type === 'صرف').reduce((sum, v) => sum + v.amount, 0);
+        const netCashFlow = totalReceipts - totalPayments;
+
+        const displayedVouchers = vouchers.filter((v) => {
+          if (voucherFilterType === 'قبض' && v.type !== 'قبض') return false;
+          if (voucherFilterType === 'صرف' && v.type !== 'صرف') return false;
+          if (voucherSearchQuery.trim()) {
+            const q = voucherSearchQuery.toLowerCase();
+            return (
+              v.voucher_no.toLowerCase().includes(q) ||
+              v.payee_payer.toLowerCase().includes(q) ||
+              v.treasury.toLowerCase().includes(q) ||
+              v.amount.toString().includes(q) ||
+              v.date.includes(q)
+            );
+          }
+          return true;
+        });
+
+        const currentSectionTitle =
+          voucherFilterType === 'قبض'
+            ? 'سندات القبض النقدية والبنكية'
+            : voucherFilterType === 'صرف'
+            ? 'سندات الصرف والمصروفات'
+            : 'سجل سندات القبض والصرف';
+
+        const currentSubtitle =
+          voucherFilterType === 'قبض'
+            ? 'توثيق المقبوضات النقدية والشيكات والتحويلات البنكية الواردة للشركة مع الترحيل المالي الفوري'
+            : voucherFilterType === 'صرف'
+            ? 'توثيق المصروفات التشغيلية والمستحقات والمدفوعات النقدية والبنكية الصادرة'
+            : 'إدارة وتوثيق كافة الحركات المالية النقدية والبنكية المقبوضة والمصروفة';
+
+        return (
+          <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6 shadow-sm">
+            {/* Header with Title and Action Buttons */}
+            <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-zinc-100">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-black m-0">{currentSectionTitle}</h3>
+                  <span
+                    className={`text-[10.5px] px-2.5 py-0.5 rounded-full font-bold ${
+                      voucherFilterType === 'قبض'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : voucherFilterType === 'صرف'
+                        ? 'bg-rose-100 text-rose-800'
+                        : 'bg-zinc-100 text-zinc-800'
+                    }`}
+                  >
+                    {voucherFilterType === 'قبض'
+                      ? 'مقبوضات واردة'
+                      : voucherFilterType === 'صرف'
+                      ? 'مصروفات صادرة'
+                      : 'شامل القبض والصرف'}
+                  </span>
+                </div>
+                <p className="text-xs text-zinc-500 m-0 mt-1">{currentSubtitle}</p>
+              </div>
+
+              {/* Quick Action Buttons */}
+              <div className="flex items-center flex-wrap gap-2">
+                {/* Add Receipt Voucher Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVoucherForm({
+                      type: 'قبض',
+                      payee_payer: '',
+                      treasury: 'بنك الراجحي - الحساب التشغيلي',
+                      amount: '',
+                    });
+                    setShowAddVoucherModal(true);
+                  }}
+                  className="button-primary-pill shadow-sm flex items-center gap-1"
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '11.5px',
+                    minHeight: '32px',
+                    background: '#10b981',
+                    borderColor: '#10b981',
+                    color: '#ffffff',
+                  }}
+                  title="إصدار سند قبض نقدي أو بنكي جديد"
+                >
+                  <ArrowDownLeft className="w-3.5 h-3.5 ml-1" />
+                  <span>+ إضافة سند قبض جديد</span>
+                </button>
+
+                {/* Add Payment Voucher Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVoucherForm({
+                      type: 'صرف',
+                      payee_payer: '',
+                      treasury: 'بنك الراجحي - الحساب التشغيلي',
+                      amount: '',
+                    });
+                    setShowAddVoucherModal(true);
+                  }}
+                  className="button-primary-pill shadow-sm flex items-center gap-1"
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '11.5px',
+                    minHeight: '32px',
+                    background: '#e11d48',
+                    borderColor: '#e11d48',
+                    color: '#ffffff',
+                  }}
+                  title="إصدار سند صرف أو مصروف جديد"
+                >
+                  <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
+                  <span>+ إضافة سند صرف جديد</span>
+                </button>
+
+                {/* 10-Format Export Dropdown */}
+                <ExportDropdown
+                  sectionKey="vouchers"
+                  data={displayedVouchers}
+                  customTitle={`${currentSectionTitle} - ${activeCompany.name}`}
+                  buttonLabel="تصدير السندات (10 صيغ)"
+                />
+              </div>
+            </div>
+
+            {/* KPI Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="p-3.5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between">
+                <div>
+                  <div className="text-[11px] font-bold text-emerald-800">إجمالي المقبوضات (سندات القبض)</div>
+                  <div className="text-base font-mono font-bold text-emerald-900 mt-0.5">
+                    {totalReceipts.toLocaleString()} <span className="text-[10px] font-sans">ر.س</span>
+                  </div>
+                  <div className="text-[10px] text-emerald-600 mt-0.5">{receiptCount} سند قبض مسجل</div>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                  <ArrowDownLeft className="w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-rose-50/50 rounded-2xl border border-rose-100 flex items-center justify-between">
+                <div>
+                  <div className="text-[11px] font-bold text-rose-800">إجمالي المصروفات (سندات الصرف)</div>
+                  <div className="text-base font-mono font-bold text-rose-900 mt-0.5">
+                    {totalPayments.toLocaleString()} <span className="text-[10px] font-sans">ر.س</span>
+                  </div>
+                  <div className="text-[10px] text-rose-600 mt-0.5">{paymentCount} سند صرف مسجل</div>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-700">
+                  <ArrowUpRight className="w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between">
+                <div>
+                  <div className="text-[11px] font-bold text-zinc-700">صافي التدفق النقدي</div>
+                  <div
+                    className={`text-base font-mono font-bold mt-0.5 ${
+                      netCashFlow >= 0 ? 'text-zinc-900' : 'text-rose-600'
+                    }`}
+                  >
+                    {netCashFlow.toLocaleString()} <span className="text-[10px] font-sans">ر.س</span>
+                  </div>
+                  <div className="text-[10px] text-zinc-500 mt-0.5">الفرق بين المقبوضات والمدفوعات</div>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center text-zinc-800">
+                  <Landmark className="w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-amber-50/50 rounded-2xl border border-amber-100 flex items-center justify-between">
+                <div>
+                  <div className="text-[11px] font-bold text-amber-800">السندات المعروضة حالياً</div>
+                  <div className="text-base font-mono font-bold text-amber-900 mt-0.5">
+                    {displayedVouchers.length} <span className="text-[10px] font-sans">سند</span>
+                  </div>
+                  <div className="text-[10px] text-amber-700 mt-0.5">
+                    {voucherFilterType === 'all'
+                      ? 'جميع السندات'
+                      : voucherFilterType === 'قبض'
+                      ? 'تصفية: قبض فقط'
+                      : 'تصفية: صرف فقط'}
+                  </div>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+                  <Receipt className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+
+            {/* Filter Pills & Search Bar */}
+            <div className="flex items-center justify-between flex-wrap gap-3 pt-2">
+              <div className="flex items-center gap-1.5 p-1 bg-zinc-100 rounded-full">
+                <button
+                  type="button"
+                  onClick={() => setVoucherFilterType('all')}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                    voucherFilterType === 'all'
+                      ? 'bg-black text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-black'
+                  }`}
+                >
+                  الكل ({vouchers.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVoucherFilterType('قبض')}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
+                    voucherFilterType === 'قبض'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-emerald-700'
+                  }`}
+                >
+                  <ArrowDownLeft className="w-3 h-3" />
+                  <span>سندات القبض ({receiptCount})</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVoucherFilterType('صرف')}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
+                    voucherFilterType === 'صرف'
+                      ? 'bg-rose-600 text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-rose-700'
+                  }`}
+                >
+                  <ArrowUpRight className="w-3 h-3" />
+                  <span>سندات الصرف ({paymentCount})</span>
+                </button>
+              </div>
+
+              {/* Search Box */}
+              <div className="relative min-w-[240px]">
+                <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <input
+                  type="text"
+                  placeholder="بحث برقم السند، المستفيد، الخزينة..."
+                  value={voucherSearchQuery}
+                  onChange={(e) => setVoucherSearchQuery(e.target.value)}
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-8 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+                />
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto rounded-2xl border border-zinc-200">
+              <table className="w-full text-right text-xs text-zinc-700">
+                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <tr>
+                    <th className="p-3">رقم السند</th>
+                    <th className="p-3">النوع</th>
+                    <th className="p-3">التاريخ</th>
+                    <th className="p-3">المدفوع له / القابض</th>
+                    <th className="p-3">الخزينة / الحساب</th>
+                    <th className="p-3 font-mono">المبلغ</th>
+                    <th className="p-3">الحالة</th>
+                    <th className="p-3 text-center">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {displayedVouchers.length > 0 ? (
+                    displayedVouchers.map((v) => (
+                      <tr key={v.id} className="hover:bg-zinc-50 transition-colors">
+                        <td className="p-3 font-mono font-bold text-black">{v.voucher_no}</td>
+                        <td className="p-3">
+                          <Badge
+                            text={v.type === 'قبض' ? 'سند قبض' : 'سند صرف'}
+                            type={v.type === 'قبض' ? 'success' : 'danger'}
+                          />
+                        </td>
+                        <td className="p-3 text-zinc-500 font-mono">{v.date}</td>
+                        <td className="p-3 font-bold text-black">{v.payee_payer}</td>
+                        <td className="p-3 text-zinc-600">{v.treasury}</td>
+                        <td className="p-3 font-mono font-bold text-black">{v.amount.toLocaleString()} ر.س</td>
+                        <td className="p-3">
+                          <Badge text={v.status} type="success" />
+                        </td>
+                        <td className="p-3 text-center">
+                          <button
+                            onClick={() => setSelectedVoucherForPrint(v)}
+                            className="button-outline-on-light hover:bg-zinc-100 transition-colors"
+                            style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                            title="معاينة وطباعة السند المعتمد"
+                          >
+                            <Printer className="w-3 h-3 ml-1 text-zinc-700" />
+                            <span>طباعة السند</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="p-8 text-center text-zinc-400">
+                        <Receipt className="w-8 h-8 mx-auto mb-2 text-zinc-300" />
+                        <p className="text-xs font-bold text-zinc-600 m-0">لا توجد سندات مطابقة لمعايير البحث والتصفية</p>
+                        <p className="text-[11px] text-zinc-400 m-0 mt-1">يمكنك إضافة سند جديد أو تغيير معايير البحث أعلاه</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
-                <tr>
-                  <th className="p-3">رقم السند</th>
-                  <th className="p-3">النوع</th>
-                  <th className="p-3">التاريخ</th>
-                  <th className="p-3">المدفوع له / القابض</th>
-                  <th className="p-3">الخزينة / الحساب</th>
-                  <th className="p-3 font-mono">المبلغ</th>
-                  <th className="p-3">الحالة</th>
-                  <th className="p-3 text-center">الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100">
-                {vouchers.map((v) => (
-                  <tr key={v.id} className="hover:bg-zinc-50">
-                    <td className="p-3 font-mono font-bold text-black">{v.voucher_no}</td>
-                    <td className="p-3">
-                      <Badge text={v.type} type={v.type === 'قبض' ? 'success' : 'danger'} />
-                    </td>
-                    <td className="p-3 text-zinc-500 font-mono">{v.date}</td>
-                    <td className="p-3 font-bold text-black">{v.payee_payer}</td>
-                    <td className="p-3 text-zinc-600">{v.treasury}</td>
-                    <td className="p-3 font-mono font-bold text-black">{v.amount.toLocaleString()} ر.س</td>
-                    <td className="p-3">
-                      <Badge text={v.status} type="success" />
-                    </td>
-                    <td className="p-3 text-center">
-                      <button
-                        onClick={() => setSelectedVoucherForPrint(v)}
-                        className="button-outline-on-light"
-                        style={{ padding: '2px 8px', fontSize: '10.5px', minHeight: '24px' }}
-                        title="معاينة وطباعة السند المعتمد"
-                      >
-                        <Printer className="w-3 h-3 ml-1 text-zinc-700" />
-                        <span>طباعة</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* TAB 7: SUPPLIERS / FOREIGN AGENCIES ($) */}
       {activeTab === 'suppliers-agents' && (
