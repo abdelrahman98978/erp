@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useCompany } from '../contexts/CompanyContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
@@ -250,14 +251,13 @@ export const FinancialRequestsPage: React.FC = () => {
             <span>+ إنشاء طلب مالي جديد</span>
           </button>
 
-          <button
-            onClick={() => exportData('financial_requests', currentDisplayList, 'excel', `الطلبات المالية - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
+          <ExportDropdown
+            sectionKey="financial_requests"
+            data={currentDisplayList}
+            customTitle={`الطلبات المالية والمصروفات - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الطلبات المالية (10 صيغ)"
+          />
         </div>
       </div>
 

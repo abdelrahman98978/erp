@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Globe, FileSpreadsheet, FileText, Smartphone, Laptop, Radio, Flame, PieChart, Search, PhoneCall, RefreshCw, Users, UserX, UserPlus, CheckCircle2 } from 'lucide-react';
@@ -436,22 +437,13 @@ export const WebsiteVisitorsPage: React.FC = () => {
             ))}
           </div>
 
-          <button
-            className="button-white-pill"
-            onClick={() => exportData('website_visitors', allVisitors, 'excel')}
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
-            <span>Excel</span>
-          </button>
-          <button
-            className="button-white-pill"
-            onClick={() => exportData('website_visitors', allVisitors, 'pdf')}
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-500" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="website_visitors"
+            data={filteredVisitors}
+            customTitle="سجل زوار المنصة والعملاء المحتملين"
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الزوار (10 صيغ)"
+          />
         </div>
       </div>
 

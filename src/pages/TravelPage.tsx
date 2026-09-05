@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useCompany } from '../contexts/CompanyContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
@@ -244,14 +245,13 @@ export const TravelPage: React.FC = () => {
             <span>+ جدولة رحلة طيران</span>
           </button>
 
-          <button
-            onClick={() => exportData('travel_flights', currentDisplayList, 'excel', `رحلات الطيران - ${activeCompany.name}`)}
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
-            <span>Excel</span>
-          </button>
+          <ExportDropdown
+            sectionKey="travel"
+            data={currentDisplayList}
+            customTitle={`سجل رحلات الطيران والخدمات اللوجستية - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الرحلات (10 صيغ)"
+          />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
@@ -189,22 +190,13 @@ export const ActivityLogPage: React.FC = () => {
               <RefreshCw className="w-3.5 h-3.5 ml-1 text-cyan-400" />
               <span>تحديث</span>
             </button>
-            <button
-              className="button-outline-on-dark"
-              onClick={() => handleExport('excel')}
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-light" />
-              <span>Excel</span>
-            </button>
-            <button
-              className="button-outline-on-dark"
-              onClick={() => handleExport('pdf')}
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            >
-              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
-              <span>PDF</span>
-            </button>
+            <ExportDropdown
+              sectionKey="activity_log"
+              data={filteredActivities}
+              customTitle="سجل النشاط والرقابة الأمنية الموحد"
+              variant="outline-dark"
+              buttonLabel="تصدير السجل الأمني (10 صيغ)"
+            />
             <button
               className="button-outline-on-dark"
               onClick={handleClearLogs}

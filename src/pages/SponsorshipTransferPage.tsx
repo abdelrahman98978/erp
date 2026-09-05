@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { RefreshCw, Plus, FileSpreadsheet, FileText, Search, Clock, Check, X, Trash2 } from 'lucide-react';
@@ -201,22 +202,13 @@ export const SponsorshipTransferPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ إضافة طلب نقل كفالة</span>
           </button>
-          <button
-            className="button-outline-on-light"
-            onClick={() => exportData('sponsorship-transfer', transfers, 'excel')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
-            <span>Excel</span>
-          </button>
-          <button
-            className="button-outline-on-light"
-            onClick={() => exportData('sponsorship-transfer', transfers, 'pdf')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-600" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="sponsorship_transfers"
+            data={filteredTransfers}
+            customTitle="سجل طلبات نقل الكفالة والتنازل"
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات نقل الكفالة (10 صيغ)"
+          />
         </div>
       </div>
 

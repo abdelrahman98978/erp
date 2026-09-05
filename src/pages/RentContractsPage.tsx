@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useRentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
@@ -571,14 +572,13 @@ export const RentContractsPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ إضافة عقد تأجير جديد</span>
           </button>
-          <button
-            onClick={() => exportData('rent_contracts', currentDisplayList, 'excel', `عقود التأجير - ${activeCompany.name}`)}
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
-            <span>Excel</span>
-          </button>
+          <ExportDropdown
+            sectionKey="rent-contracts"
+            data={currentDisplayList}
+            customTitle={`عقود التأجير التشغيلي - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات التأجير (10 صيغ)"
+          />
         </div>
       </div>
 

@@ -15,6 +15,7 @@ import {
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 import { useAppStore } from '../stores/appStore';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 
 export interface FixedAsset {
@@ -389,18 +390,13 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1 text-black" />
             <span>إضافة أصل ثابت</span>
           </button>
-          <button
-            className="button-white-pill"
-            onClick={() => {
-              if (activeTab === 'fixed-assets') exportData('finance', assets, 'excel');
-              else if (activeTab === 'inventory') exportData('finance', items, 'excel');
-              else exportData('finance', vouchers, 'excel');
-            }}
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
-            <span>تصدير إكسل</span>
-          </button>
+          <ExportDropdown
+            sectionKey="inventory_assets"
+            data={activeTab === 'fixed-assets' ? assets : activeTab === 'inventory' ? items : vouchers}
+            customTitle="سجل الأصول والمستودعات والمخزون SMACC"
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الأصول والمخزون (10 صيغ)"
+          />
         </div>
       </div>
 

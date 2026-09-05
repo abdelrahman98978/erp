@@ -448,7 +448,23 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.nationality || '',
       r.airline || '',
       r.flight_number || '',
-      r.airport || '',
+      r.airport || r.arrival_airport || '',
+      r.flight_date || '',
+      r.status || ''
+    ]
+  },
+  travel_flights: {
+    sectionTitle: 'سجل رحلات الطيران والخدمات اللوجستية',
+    headers: ['رقم الرحلة ERP', 'نوع السفر', 'اسم العميل', 'اسم العاملة', 'الجنسية', 'شركة الطيران', 'رقم التذكرة / الرحلة', 'المطار المقصود', 'تاريخ الوصول / المغادرة', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.travel_type || '',
+      r.client_name || '',
+      r.maid_name || '',
+      r.nationality || '',
+      r.airline || '',
+      r.flight_number || '',
+      r.airport || r.arrival_airport || '',
       r.flight_date || '',
       r.status || ''
     ]
@@ -533,6 +549,20 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.status || 'نشط'
     ]
   },
+  system_users: {
+    sectionTitle: 'سجل مستخدمي النظام والصلاحيات الإدارية',
+    headers: ['الاسم', 'اسم المستخدم', 'الدور الوظيفي', 'الفرع المسؤول', 'رقم الجوال', 'البريد الإلكتروني', 'المصادقة الثنائية 2FA', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.name || '',
+      r.username || '',
+      r.role || '',
+      r.branch || '',
+      r.phone || '',
+      r.email || '',
+      r.two_factor_enabled ? 'مفعّل' : 'غير مفعّل',
+      r.status || 'نشط'
+    ]
+  },
 
   // 23. زوار المنصة والعملاء المحتملون
   website_visitors: {
@@ -570,6 +600,20 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
 
   // 27. تفويضات التأشيرات ومنصة إنجاز
   ingaz_delegations: {
+    sectionTitle: 'سجل تفويضات التأشيرات ومنصة إنجاز الدولية',
+    headers: ['رقم التفويض', 'رقم التأشيرة', 'اسم المستقدم', 'رقم الهوية', 'المكتب الخارجي', 'الدولة', 'حالة التفويض', 'تاريخ التفويض'],
+    dataMapper: (r: any) => [
+      r.delegation_number || r.id || '',
+      r.visa_number || '',
+      r.client_name || '',
+      r.client_national_id || '',
+      r.external_office || '',
+      r.country || '',
+      r.status || '',
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : ''
+    ]
+  },
+  ingaz: {
     sectionTitle: 'سجل تفويضات التأشيرات ومنصة إنجاز الدولية',
     headers: ['رقم التفويض', 'رقم التأشيرة', 'اسم المستقدم', 'رقم الهوية', 'المكتب الخارجي', 'الدولة', 'حالة التفويض', 'تاريخ التفويض'],
     dataMapper: (r: any) => [
@@ -754,6 +798,80 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
       r.external_office || r.office || "PLATINUM BROTHERS INT'L",
       r.passport_number || r.pass || '',
       r.status || 'متاح'
+    ]
+  },
+  agency_candidates: {
+    sectionTitle: 'سجل مرشحي الوكالات الخارجية وسير الاستقدام',
+    headers: ['كود السيرة', 'اسم المرشحة', 'رقم الجواز', 'الجنسية', 'المهنة', 'العمر', 'الوكالة المصدرة', 'حالة التأشيرة', 'حالة الطيران', 'العمولة ($)', 'المقابل بالريال (ر.س)', 'حالة السداد'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.maidName || r.maid_name || '',
+      r.passportNumber || r.passport_number || '',
+      r.nationality || '',
+      r.profession || '',
+      r.age || '',
+      r.agencyName || r.agency_name || '',
+      r.visaStatus || '',
+      r.ticketStatus || '',
+      r.commissionUsd || 0,
+      ((r.commissionUsd || 0) * 3.75),
+      r.isPaid ? 'تم السداد' : 'معلق'
+    ]
+  },
+  inventory_assets: {
+    sectionTitle: 'سجل الأصول والمستودعات والمخزون',
+    headers: ['كود الصنف / الأصل', 'اسم الصنف', 'التصنيف', 'الكمية المتوفرة', 'سعر الوحدة (ر.س)', 'القيمة الإجمالية (ر.س)', 'المستودع / الموقع', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.code || r.item_code || r.id || '',
+      r.name || r.item_name || '',
+      r.category || '',
+      r.quantity || r.stock || 0,
+      r.unit_price || r.price || 0,
+      (r.quantity || r.stock || 0) * (r.unit_price || r.price || 0),
+      r.warehouse || r.location || '',
+      r.status || 'متوفر'
+    ]
+  },
+  financial_requests: {
+    sectionTitle: 'سجل الطلبات المالية وسندات الصرف والقبض',
+    headers: ['رقم الطلب', 'نوع السند', 'المستفيد', 'المبلغ (ر.س)', 'طريقة الدفع', 'البيان والتفاصيل', 'الحالة', 'تاريخ الإنشاء'],
+    dataMapper: (r: any) => [
+      r.voucher_number || r.id || '',
+      r.voucher_type || r.type || 'سند صرف',
+      r.beneficiary || r.paid_to || '',
+      r.amount || 0,
+      r.payment_method || 'تحويل بنكي',
+      r.description || r.notes || '',
+      r.status || 'معتمد',
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : ''
+    ]
+  },
+  sponsorship_transfers: {
+    sectionTitle: 'سجل طلبات نقل الكفالة والتنازل',
+    headers: ['رقم الطلب', 'اسم العاملة', 'الجنسية', 'الكفيل الحالي', 'الكفيل الجديد', 'المبلغ المطلوب (ر.س)', 'حالة التنازل', 'تاريخ الطلب'],
+    dataMapper: (r: any) => [
+      r.id || r.transfer_number || '',
+      r.maid_name || r.worker_name || '',
+      r.nationality || '',
+      r.current_sponsor || '',
+      r.new_sponsor || '',
+      r.amount || r.cost || 0,
+      r.status || 'قيد الإجراء',
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : ''
+    ]
+  },
+  'sponsorship-transfer': {
+    sectionTitle: 'سجل طلبات نقل الكفالة والتنازل',
+    headers: ['رقم الطلب', 'اسم العاملة', 'الجنسية', 'الكفيل الحالي', 'الكفيل الجديد', 'المبلغ المطلوب (ر.س)', 'حالة التنازل', 'تاريخ الطلب'],
+    dataMapper: (r: any) => [
+      r.id || r.transfer_number || '',
+      r.maid_name || r.worker_name || '',
+      r.nationality || '',
+      r.current_sponsor || '',
+      r.new_sponsor || '',
+      r.amount || r.cost || 0,
+      r.status || 'قيد الإجراء',
+      r.created_at ? new Date(r.created_at).toLocaleDateString('ar-SA') : ''
     ]
   }
 };

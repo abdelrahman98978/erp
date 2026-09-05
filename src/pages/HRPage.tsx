@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useEmployees, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { Employee360DigitalFileModal } from '../components/hr/Employee360DigitalFileModal';
@@ -797,6 +798,14 @@ export const HRPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ إدراج موظف جديد</span>
           </button>
+
+          <ExportDropdown
+            sectionKey="employees"
+            data={filteredEmployees}
+            customTitle={`سجل الموظفين والكادر الوظيفي - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الموظفين (10 صيغ)"
+          />
 
           <button
             onClick={() => handleExportWPS('SIF')}

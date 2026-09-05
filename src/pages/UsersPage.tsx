@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
@@ -485,14 +486,13 @@ export const UsersPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ مستخدم جديد</span>
           </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('system_users', filteredUsers, 'excel')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-light" />
-            <span>Excel</span>
-          </button>
+          <ExportDropdown
+            sectionKey="users"
+            data={filteredUsers}
+            customTitle="سجل مستخدمي النظام والصلاحيات الإدارية"
+            variant="outline-dark"
+            buttonLabel="تصدير بيانات المستخدمين (10 صيغ)"
+          />
         </div>
       </div>
 

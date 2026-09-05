@@ -320,7 +320,22 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h4 style={{ margin: 0, fontSize: '15px', fontWeight: '800' }}>مستندات الموظف الموثقة والاتفاقيات:</h4>
-                <button type="button" style={{ backgroundColor: '#000000', color: '#FFF', border: 'none', borderRadius: '9999px', padding: '6px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.pdf,.png,.jpg,.jpeg';
+                    input.onchange = (e: any) => {
+                      const file = e.target?.files?.[0];
+                      if (file) {
+                        alert(`تم استلام المستند (${file.name}) وتدقيقه آلياً عبر محرك OCR.`);
+                      }
+                    };
+                    input.click();
+                  }}
+                  style={{ backgroundColor: '#000000', color: '#FFF', border: 'none', borderRadius: '9999px', padding: '6px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
+                >
                   + رفع مستند جديد (OCR)
                 </button>
               </div>

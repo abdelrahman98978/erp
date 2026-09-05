@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Stamp, Plus, FileSpreadsheet, FileText, Search, Printer, RefreshCw, X, CheckCircle, QrCode, Award } from 'lucide-react';
@@ -223,22 +224,13 @@ export const IngazPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ إضافة تفويض جديد</span>
           </button>
-          <button
-            onClick={() => exportData('ingaz', filteredDelegations, 'excel')}
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
-            <span>Excel</span>
-          </button>
-          <button
-            onClick={() => exportData('ingaz', filteredDelegations, 'pdf')}
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-600" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="ingaz_delegations"
+            data={filteredDelegations}
+            customTitle="سجل تفويضات التأشيرات ومنصة إنجاز الدولية"
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات التفويضات (10 صيغ)"
+          />
         </div>
       </div>
 

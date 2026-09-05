@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useZatcaInvoices, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
@@ -198,22 +199,13 @@ export const ZATCAPage: React.FC = () => {
             <Key className="w-4 h-4 ml-1 text-amber-400" />
             <span>شهادة CSID والربط</span>
           </button>
-          <button
-            onClick={() => exportData('zatca', filteredInvoices, 'excel', `فواتير هيئة الزكاة - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
-            <span>Excel</span>
-          </button>
-          <button
-            onClick={() => exportData('zatca', filteredInvoices, 'pdf', `فواتير هيئة الزكاة - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="zatca"
+            data={filteredInvoices}
+            customTitle={`فواتير هيئة الزكاة والضريبة والجمارك ZATCA - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير الفواتير (10 صيغ)"
+          />
         </div>
       </div>
 

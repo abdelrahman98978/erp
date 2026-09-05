@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useRecruitmentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
@@ -833,22 +834,13 @@ export const RecruitmentContractsPage: React.FC = () => {
             <span>+ إضافة عقد استقدام</span>
           </button>
 
-          <button
-            onClick={() => exportData('recruitment_contracts', currentDisplayList, 'excel', `عقود الاستقدام - ${activeCompany.name}`)}
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
-            <span>Excel</span>
-          </button>
-          <button
-            onClick={() => exportData('recruitment_contracts', currentDisplayList, 'pdf', `عقود الاستقدام - ${activeCompany.name}`)}
-            className="button-outline-on-light"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', background: '#ffffff' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-600" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="recruitment-contracts"
+            data={currentDisplayList}
+            customTitle={`عقود الاستقدام المباشرة (Musaned) - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات العقود (10 صيغ)"
+          />
         </div>
       </div>
 

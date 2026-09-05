@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useCostCenters, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -220,22 +221,13 @@ export const CostCentersPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>+ إضافة مركز تكلفة جديد</span>
           </button>
-          <button
-            onClick={() => exportData('cost_centers', filteredCostCenters, 'excel', `مراكز التكلفة - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-          <button
-            onClick={() => exportData('cost_centers', filteredCostCenters, 'pdf', `مراكز التكلفة - ${activeCompany.name}`)}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="cost_centers"
+            data={filteredCostCenters}
+            customTitle={`مراكز التكلفة - ${activeCompany.name}`}
+            variant="outline-dark"
+            buttonLabel="تصدير التقارير (10 صيغ)"
+          />
         </div>
       </div>
 

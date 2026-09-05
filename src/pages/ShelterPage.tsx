@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useShelterRecords, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -409,18 +410,13 @@ export const ShelterPage: React.FC = () => {
               <Bed className="w-3.5 h-3.5 ml-1 text-black" />
               <span>+ إضافة غرفة</span>
             </button>
-            <button
-              onClick={() => {
-                if (activeSubTab === 'rooms') exportData('shelter', rooms, 'excel');
-                else if (activeSubTab === 'catering') exportData('shelter', cateringMeals, 'excel');
-                else exportData('shelter', shelterItems, 'excel');
-              }}
-              className="button-white-pill"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
-              <span>تصدير إكسل</span>
-            </button>
+            <ExportDropdown
+              sectionKey="shelter"
+              data={activeSubTab === 'rooms' ? rooms : activeSubTab === 'catering' ? cateringMeals : filteredItems}
+              customTitle="سجل مراكز الإيواء والتسكين والإعاشة"
+              variant="outline-dark"
+              buttonLabel="تصدير كشوفات الإيواء (10 صيغ)"
+            />
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useClients, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -184,32 +185,13 @@ export const ClientsPage: React.FC = () => {
             <span>استيراد Excel</span>
           </button>
 
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('clients', filteredClients, 'excel')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('clients', filteredClients, 'pdf')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
-
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('clients', filteredClients, 'print')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <Printer className="w-4 h-4 ml-1" />
-            <span>طباعة</span>
-          </button>
+          <ExportDropdown
+            sectionKey="clients"
+            data={filteredClients}
+            customTitle={`سجل العملاء وإدارة علاقات العملاء (CRM) - ${activeCompanyId}`}
+            variant="outline-dark"
+            buttonLabel="تصدير وطباعة العملاء (10 صيغ)"
+          />
         </div>
       </div>
 

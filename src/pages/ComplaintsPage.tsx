@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -353,22 +354,13 @@ export const ComplaintsPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>تسجيل شكوى عميل</span>
           </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('complaints', filteredTickets, 'excel')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>Excel</span>
-          </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('complaints', filteredTickets, 'pdf')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="complaints"
+            data={filteredTickets}
+            customTitle="سجل الشكاوى والنزاعات والتعويضات"
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الشكاوى (10 صيغ)"
+          />
         </div>
       </div>
 

@@ -10,6 +10,7 @@ import { KasKpiCard, KasSupplierCard } from '../components/kas/KasCards';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 
 export interface AgencyCandidate {
   id: string;
@@ -365,32 +366,13 @@ export const ForeignAgencyPortalPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <button 
-            onClick={() => {
-              exportData('operations', filteredCandidates.map(c => ({
-                'الاسم': c.maidName,
-                'رقم الجواز': c.passportNumber,
-                'المهنة': c.profession,
-                'الجنسية': c.nationality,
-                'الفحص الطبي': c.medicalStatus,
-                'حالة التأشيرة': c.visaStatus,
-                'تذكرة الطيران': c.ticketStatus,
-                'العمولة ($)': c.commissionUsd,
-                'حالة السداد': c.paymentStatus,
-                'تاريخ الرفع': c.uploadedAt,
-              })), 'excel', `كشف حساب السير والمستحقات - ${activeAgency}`);
-              addNotification({
-                title: 'تصدير كشف الحساب',
-                message: `تم تصدير كشف حساب السير والعمولات بالدولار لـ (${activeAgency}) بنجاح.`,
-                type: 'success',
-              });
-            }}
-            className="button-outline-on-light text-xs font-bold flex items-center gap-1.5"
-            style={{ minHeight: '36px', padding: '6px 18px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>تصدير كشف الحساب ($)</span>
-          </button>
+          <ExportDropdown
+            sectionKey="agency_candidates"
+            data={filteredCandidates}
+            customTitle={`كشف حساب وسير الوكالة الخارجية (${activeAgency})`}
+            buttonLabel="تصدير كشف السير والعمولات"
+            variant="outline-light"
+          />
         </div>
       </div>
 

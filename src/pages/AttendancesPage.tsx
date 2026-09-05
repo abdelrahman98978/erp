@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
+import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { ClipboardCheck, FileSpreadsheet, FileText, Upload, Plus, Search, X, Check, CloudUpload } from 'lucide-react';
 
@@ -134,22 +135,13 @@ export const AttendancesPage: React.FC = () => {
             <Plus className="w-4 h-4 ml-1" />
             <span>تسجيل يدوي</span>
           </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('attendances', attendances, 'excel')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
-            <span>Excel</span>
-          </button>
-          <button
-            className="button-outline-on-dark"
-            onClick={() => exportData('attendances', attendances, 'pdf')}
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-          >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
-            <span>PDF</span>
-          </button>
+          <ExportDropdown
+            sectionKey="attendances"
+            data={filteredAttendances}
+            customTitle="سجل الحضور والانصراف والبصمة الذكية"
+            variant="outline-dark"
+            buttonLabel="تصدير كشوفات الحضور (10 صيغ)"
+          />
         </div>
       </div>
 
