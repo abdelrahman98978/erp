@@ -39,6 +39,7 @@ export interface NavItem {
   href?: string;
   badge?: string | number;
   badgeType?: 'primary' | 'success' | 'warning' | 'danger' | 'purple' | 'info';
+  exclusiveToCompany?: CompanyId | 'KAS' | 'SAF' | 'YAQ' | 'TOP';
   children?: NavItem[];
 }
 

@@ -9,7 +9,7 @@ import {
   CreditCard, PiggyBank, UserCheck, MapPin, 
   SlidersHorizontal, GitPullRequest, Radio, FolderSync,
   Cloud, UploadCloud, Clock, UserCog, Settings,
-  MessageSquare, Send, Globe, PackageCheck, LucideIcon, Scale
+  MessageSquare, Send, Globe, PackageCheck, LucideIcon, Scale, Briefcase
 } from 'lucide-react';
 
 interface AppTile {
@@ -80,16 +80,16 @@ const ALL_SYSTEM_APPS: AppTile[] = [
     metricBadge: '34 عقد إيجار'
   },
   {
-    id: 'tenders-boq',
-    titleKey: 'tenders-boq',
-    defaultTitle: 'المناقصات وجداول الكميات (BOQ)',
-    subKey: 'tendersBoqSub',
-    defaultSubtitle: 'محاكاة إكسيل الذكية، التسعير، الضريبة 15%، التفقيط التلقائي، ومنافسات كاس للتجارة.',
-    icon: Building2,
-    href: 'tenders-boq',
-    category: 'operations',
-    categoryLabel: 'المناقصات والتوريدات',
-    metricBadge: 'شركة كاس للتجارة'
+    id: 'kas-suite',
+    titleKey: 'kas-suite',
+    defaultTitle: 'البوابة المستقلة لشركة كاس (KAS Suite)',
+    subKey: 'kasSuiteSub',
+    defaultSubtitle: 'منظومة معزولة كلياً: منصة اعتماد، جداول الكميات BOQ، سجل الموردين، والفوترة ZATCA.',
+    icon: Briefcase,
+    href: 'kas-suite',
+    category: 'governance',
+    categoryLabel: 'الأجنحة المستقلة والمنافسات',
+    metricBadge: 'جناح مستقل KAS'
   },
   {
     id: 'rent-packages',

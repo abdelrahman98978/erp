@@ -185,8 +185,8 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                     cursor: 'pointer',
                   }}
                 >
-                  <Sparkles className="w-4 h-4 text-emerald-700" />
-                  <span>دخول سحابة اعتماد كاس</span>
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <span>دخول البوابة المستقلة لشركة كاس (KAS Suite)</span>
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               </div>

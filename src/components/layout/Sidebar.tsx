@@ -3,6 +3,7 @@ import { SIDEBAR_MENU } from '../../data/sidebarMenu';
 import { NavItem } from '../../types';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useIamSession } from '../../contexts/IamSessionContext';
+import { useCompany } from '../../contexts/CompanyContext';
 import { 
   X, Search, ChevronDown, ChevronLeft, ChevronRight, 
   ListTree, Columns, LayoutGrid, CircleDot, Folder,
@@ -79,6 +80,7 @@ export type SidebarDisplayMode = 'tree' | 'compact' | 'cards';
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClose }) => {
   const { t, currentLanguage } = useLanguage();
   const { hasPermission, isSuperAdmin, dataScopeName, activeCompany } = useIamSession();
+  const { activeCompanyId } = useCompany();
   const isRtl = currentLanguage.dir === 'rtl';
   const [displayMode, setDisplayMode] = useState<SidebarDisplayMode>('tree');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -110,6 +112,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
     return <CircleDot className={className} />;
   };
 
+  // Multi-Company & Tenant Isolation Gate (Hides KAS completely from other companies)
+  const isCompanyMatch = (item: NavItem): boolean => {
+    if (!item.exclusiveToCompany) return true;
+    const currentCode = (activeCompany?.code || activeCompanyId || '').toUpperCase();
+    if (item.exclusiveToCompany === 'KAS') {
+      return currentCode === 'KAS';
+    }
+    return currentCode === item.exclusiveToCompany.toUpperCase();
+  };
+
   // RBAC Permission Check (Deny by Default)
   const isItemAuthorized = (item: NavItem): boolean => {
     if (isSuperAdmin) return true;
@@ -118,11 +130,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
     return hasPermission(requiredPerm);
   };
 
-  // Filter items if user typed in quick search + RBAC Gate
+  // Filter items if user typed in quick search + RBAC Gate + Company Isolation Gate
   const filteredMenu = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
     const filterItem = (item: NavItem): NavItem | null => {
+      // 0. Company Isolation Gate: Deny cross-company exclusive items
+      if (!isCompanyMatch(item)) return null;
+
       // 1. RBAC Gate: Deny unauthorized items
       if (!isItemAuthorized(item)) return null;
 
@@ -140,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
     };
 
     return SIDEBAR_MENU.map((item) => filterItem(item)).filter((i): i is NavItem => i !== null);
-  }, [searchQuery, t, hasPermission, isSuperAdmin]);
+  }, [searchQuery, t, hasPermission, isSuperAdmin, activeCompany, activeCompanyId]);
 
   const renderTreeItem = (item: NavItem, level: number = 0) => {
     const hasChildren = item.children && item.children.length > 0;

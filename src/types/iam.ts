@@ -12,7 +12,9 @@ export type AccountType =
   | 'Employee'
   | 'Auditor'
   | 'Shared Services'
-  | 'Shelter Supervisor';
+  | 'Shelter Supervisor'
+  | 'KAS General Manager'
+  | 'KAS Tenders Specialist';
 
 export type UserStatus = 'نشط' | 'معلق' | 'موقوف' | 'منتهي الصلاحية';
 

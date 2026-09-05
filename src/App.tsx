@@ -102,6 +102,7 @@ const SmaccEmployeesSettingsPage = lazyWithRetry(() => import('./pages/SmaccEmpl
 const LegalCompliancePage = lazyWithRetry(() => import('./pages/LegalCompliancePage').then(m => ({ default: m.LegalCompliancePage })));
 const TendersBOQPage = lazyWithRetry(() => import('./pages/TendersBOQPage').then(m => ({ default: m.TendersBOQPage })));
 const KasEtimadCloudPage = lazyWithRetry(() => import('./pages/KasEtimadCloudPage').then(m => ({ default: m.KasEtimadCloudPage })));
+const KasSuitePortalPage = lazyWithRetry(() => import('./pages/KasSuitePortalPage').then(m => ({ default: m.KasSuitePortalPage })));
 const IdentityAccessManagementPage = lazyWithRetry(() => import('./pages/IdentityAccessManagementPage').then(m => ({ default: m.IdentityAccessManagementPage })));
 const ClientPortalPage = lazyWithRetry(() => import('./pages/ClientPortalPage').then(m => ({ default: m.ClientPortalPage })));
 const ForeignAgencyPortalPage = lazyWithRetry(() => import('./pages/ForeignAgencyPortalPage').then(m => ({ default: m.ForeignAgencyPortalPage })));
@@ -221,7 +222,7 @@ const MainContent: React.FC = () => {
           <CompanySelectorPortal 
             onSelectCompany={(companyId: CompanyId) => {
               if (companyId === 'KAS' || companyId === 'kas') {
-                handleSelectTab('kas-etmad', 'منظومة سحابة اعتماد (KAS Etmad Cloud Suite)');
+                handleSelectTab('kas-suite', 'البوابة المستقلة لشركة كاس (KAS Suite)');
               } else {
                 handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية');
               }
@@ -521,6 +522,16 @@ const MainContent: React.FC = () => {
       case 'kas-tenders':
       case 'boq-analytics':
         return <TendersBOQPage />;
+
+      case 'kas-suite':
+      case 'kas-portal':
+      case 'kas-standalone':
+      case 'kas-company':
+        return (
+          <KasSuitePortalPage 
+            onReturnToErp={() => handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')} 
+          />
+        );
 
       case 'kas-etmad':
       case 'kas-etmad-cloud':
