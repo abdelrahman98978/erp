@@ -9,8 +9,12 @@ import { generateZatcaQR } from '../services/zatcaPhase2Service';
 import { kasEtmadRealService } from '../services/kasEtmadRealService';
 import { RealBoqEngine } from '../services/realBoqEngine';
 import { RealZatcaEngine } from '../services/realZatcaEngine';
-import { KasMonafasatSpreadsheetView } from '../components/tenders/KasMonafasatSpreadsheetView';
-import { KasEtimadCloudPage } from './KasEtimadCloudPage';
+const KasMonafasatSpreadsheetView = React.lazy(() => 
+  import('../components/tenders/KasMonafasatSpreadsheetView').then(m => ({ default: m.KasMonafasatSpreadsheetView }))
+);
+const KasEtimadCloudPage = React.lazy(() => 
+  import('./KasEtimadCloudPage').then(m => ({ default: m.KasEtimadCloudPage }))
+);
 import { KasTenderItem } from '../types/kasMonafasat';
 import { BOQItem, TenderRecord, SupplierRecord } from '../types/tenders';
 import { KasKpiCard, KasTenderCard, KasSupplierCard } from '../components/kas/KasCards';
@@ -1257,12 +1261,26 @@ export const TendersBOQPage: React.FC = () => {
 
       {/* Tab 0: Comprehensive Google Sheet / Monafasat Master View */}
       {activeTab === 'kas-sheet' && (
-        <KasMonafasatSpreadsheetView onConvertToBOQ={handleConvertKasItemToBOQ} />
+        <React.Suspense fallback={
+          <div className="p-8 text-center bg-white rounded-2xl border border-zinc-200 shadow-sm animate-pulse space-y-3">
+            <div className="inline-block w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-sm font-bold text-zinc-700">جاري تحميل سجل منافسات كاس الشامل...</div>
+          </div>
+        }>
+          <KasMonafasatSpreadsheetView onConvertToBOQ={handleConvertKasItemToBOQ} />
+        </React.Suspense>
       )}
 
       {/* Tab 0.5: Cloned Inova Etmad Cloud Suite */}
       {activeTab === 'etmad-cloud' && (
-        <KasEtimadCloudPage />
+        <React.Suspense fallback={
+          <div className="p-8 text-center bg-white rounded-2xl border border-zinc-200 shadow-sm animate-pulse space-y-3">
+            <div className="inline-block w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-sm font-bold text-zinc-700">جاري تحميل سحابة منصة اعتماد...</div>
+          </div>
+        }>
+          <KasEtimadCloudPage />
+        </React.Suspense>
       )}
 
       {/* Tab 1: Live Interactive Excel-Style BOQ Table */}
