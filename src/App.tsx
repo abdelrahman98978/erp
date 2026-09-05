@@ -62,6 +62,7 @@ const CreateCVPage = lazyWithRetry(() => import('./pages/CreateCVPage').then(m =
 const CVsBankPage = lazyWithRetry(() => import('./pages/CVsBankPage').then(m => ({ default: m.CVsBankPage })));
 const OrdersPage = lazyWithRetry(() => import('./pages/OrdersPage').then(m => ({ default: m.OrdersPage })));
 const ShelterPage = lazyWithRetry(() => import('./pages/ShelterPage').then(m => ({ default: m.ShelterPage })));
+const ShelterSuitePortalPage = lazyWithRetry(() => import('./pages/ShelterSuitePortalPage').then(m => ({ default: m.ShelterSuitePortalPage })));
 const SponsorshipTransferPage = lazyWithRetry(() => import('./pages/SponsorshipTransferPage').then(m => ({ default: m.SponsorshipTransferPage })));
 const TravelPage = lazyWithRetry(() => import('./pages/TravelPage').then(m => ({ default: m.TravelPage })));
 const ComplaintsPage = lazyWithRetry(() => import('./pages/ComplaintsPage').then(m => ({ default: m.ComplaintsPage })));
@@ -330,6 +331,11 @@ const MainContent: React.FC = () => {
       case 'room-management':
       case 'food-catering':
         return <ShelterPage />;
+
+      case 'shelter-suite':
+      case 'shelter-portal':
+      case 'shelter-housing-suite':
+        return <ShelterSuitePortalPage />;
 
       case 'sponsorship-transfer':
       case 'transfer-requests':

@@ -11,7 +11,8 @@ export type AccountType =
   | 'Department Manager'
   | 'Employee'
   | 'Auditor'
-  | 'Shared Services';
+  | 'Shared Services'
+  | 'Shelter Supervisor';
 
 export type UserStatus = 'نشط' | 'معلق' | 'موقوف' | 'منتهي الصلاحية';
 

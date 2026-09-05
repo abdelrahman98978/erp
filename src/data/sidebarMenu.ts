@@ -109,6 +109,7 @@ export const SIDEBAR_MENU: NavItem[] = [
         title: 'إدارة مراكز الإيواء والتسكين',
         icon: 'Hotel',
         children: [
+          { id: 'shelter-suite', title: 'بوابة الإيواء المستقلة (Standalone)', icon: 'Hotel', href: 'shelter-suite', badge: 'جديد', badgeType: 'primary' },
           { id: 'create-shelter', title: 'تسكين عاملة جديد بالإيواء', icon: 'Home', href: 'create-shelter' },
           { id: 'shelter', title: 'العاملات المقيمات داخل الإيواء', icon: 'Building2', href: 'shelter', badge: 44, badgeType: 'primary' },
           { id: 'room-management', title: 'إدارة الغرف وتوزيع الأسرة', icon: 'Bed', href: 'room-management' },

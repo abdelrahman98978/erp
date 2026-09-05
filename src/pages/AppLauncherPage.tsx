@@ -118,14 +118,14 @@ const ALL_SYSTEM_APPS: AppTile[] = [
   {
     id: 'shelter',
     titleKey: 'shelter',
-    defaultTitle: 'مراكز الإيواء والتغذية',
+    defaultTitle: 'منظومة مراكز الإيواء والسكن المستقلة',
     subKey: 'shelterSub',
-    defaultSubtitle: 'متابعة السكن، التغذية اليومية، الفرز الطبي، وإدارة الطاقة الاستيعابية.',
+    defaultSubtitle: 'بوابة متكاملة مستقلة: إدارة الغرف، الأسرة، التغذية، العيادة الطبية، والترحيل (HRSD).',
     icon: Hotel,
-    href: 'shelter',
+    href: 'shelter-suite',
     category: 'operations',
-    categoryLabel: 'الخدمات اللوجستية',
-    metricBadge: '18 نزيلة بالإيواء'
+    categoryLabel: 'الخدمات اللوجستية والإيواء',
+    metricBadge: 'منظومة مستقلة • 9 أقسام'
   },
   {
     id: 'sponsorship-transfer',

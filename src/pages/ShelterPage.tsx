@@ -395,6 +395,23 @@ export const ShelterPage: React.FC = () => {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
+              type="button"
+              onClick={() => useAppStore.getState().setActiveTab('shelter-suite', 'منظومة مراكز الإيواء المستقلة')}
+              className="button-white-pill shadow-sm"
+              style={{
+                fontSize: '12px',
+                padding: '6px 16px',
+                minHeight: '38px',
+                background: '#10b981',
+                borderColor: '#10b981',
+                color: '#ffffff',
+              }}
+              title="الانتقال إلى واجهة منظومة الإيواء والسكن المستقلة بكامل شاشتها"
+            >
+              <Hotel className="w-3.5 h-3.5 ml-1 text-white" />
+              <span>البوابة المستقلة للإيواء والسكن 🡵</span>
+            </button>
+            <button
               onClick={() => setShowAddModal(true)}
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}

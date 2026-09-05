@@ -22,7 +22,8 @@ import {
   Briefcase,
   UserCheck,
   Fingerprint,
-  ScanFace
+  ScanFace,
+  Hotel
 } from 'lucide-react';
 import { performRealBiometricAuth, checkWebAuthnSupport, BiometricAuthResult } from '../services/webAuthnBiometricService';
 
@@ -206,6 +207,29 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
       { label: 'متاجر متصلة', value: '5 متاجر' },
       { label: 'طلبات مستلمة', value: '1,026' },
       { label: 'استجابة Webhook', value: '<800ms' }
+    ]
+  },
+  {
+    id: 'shelter',
+    key: 'shelter',
+    companyId: 'SAF',
+    nameAr: 'بوابة مراكز الإيواء والتسكين والرعاية',
+    nameEn: 'Shelter, Housing & Care Suite (HRSD)',
+    category: 'البوابات الرقمية',
+    license: 'ترخيص مراكز الإيواء والضيافة HRSD-MOL',
+    tagBadge: 'منظومة الإيواء المستقلة',
+    iconName: 'Hotel',
+    themeColor: '#0d9488',
+    gradient: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
+    description: 'بوابة مشرفات ومشرفي الإيواء: إدارة الغرف والأسرة، التغذية، الفحص الطبي، والترحيل المستقل.',
+    defaultUser: 'shelter.supervisor@alsulaim.sa',
+    defaultPass: 'ShelterCare@2026',
+    targetTab: 'shelter-suite',
+    targetTitle: 'منظومة وبوابة مراكز الإيواء والتسكين المستقلة',
+    kpis: [
+      { label: 'طاقة استيعابية', value: '120 سرير' },
+      { label: 'نزيلات حالياً', value: '44 نزيلة' },
+      { label: 'معايير HRSD', value: '100% امتثال' }
     ]
   },
   {
@@ -758,6 +782,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
                  selectedPortal.id === 'client' ? <UserCheck className="w-8 h-8" /> :
                  selectedPortal.id === 'agent' ? <Globe className="w-8 h-8" /> :
+                 selectedPortal.id === 'shelter' ? <Hotel className="w-8 h-8" /> :
                  selectedPortal.id === 'ecommerce' ? <Store className="w-8 h-8" /> :
                  selectedPortal.id === 'kas' ? <FileText className="w-8 h-8" /> :
                  <Building2 className="w-8 h-8" />}
