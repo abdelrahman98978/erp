@@ -23,7 +23,14 @@ import {
   UserCheck,
   Fingerprint,
   ScanFace,
-  Hotel
+  Hotel,
+  Eye,
+  EyeOff,
+  Mail,
+  AlertCircle,
+  ChevronDown,
+  Check,
+  User
 } from 'lucide-react';
 import { performRealBiometricAuth, checkWebAuthnSupport, BiometricAuthResult } from '../services/webAuthnBiometricService';
 
@@ -256,6 +263,21 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     ]
   }
 ];
+
+const renderPortalIcon = (iconName: string, className = "w-4 h-4") => {
+  switch (iconName) {
+    case 'Building2': return <Building2 className={className} />;
+    case 'Users': return <Users className={className} />;
+    case 'Sparkles': return <Sparkles className={className} />;
+    case 'Briefcase': return <Briefcase className={className} />;
+    case 'UserCheck': return <UserCheck className={className} />;
+    case 'Globe': return <Globe className={className} />;
+    case 'Store': return <Store className={className} />;
+    case 'Hotel': return <Hotel className={className} />;
+    case 'ShieldCheck': return <ShieldCheck className={className} />;
+    default: return <Building2 className={className} />;
+  }
+};
 
 interface LoginPageProps {
   onLoginSuccess: (targetTab?: string, targetTitle?: string, targetCompanyId?: CompanyId) => void;
@@ -631,7 +653,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      backgroundColor: '#f8fafc',
+      background: 'radial-gradient(ellipse at 50% 0%, #ffffff 0%, #f4f6f8 60%, #e6ebf0 100%)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -639,7 +661,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       padding: 'clamp(12px, 2.5vw, 24px)',
       fontFamily: 'var(--font-family-ui)',
       direction: currentLanguage.dir,
-      fontFeatureSettings: '"ss03" 1'
+      fontFeatureSettings: '"ss03" 1',
+      position: 'relative',
+      overflow: 'hidden'
     }}>
 
       {/* ========================================================================= */}
@@ -678,7 +702,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         </div>
 
         {/* Portals Pill Matrix */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           {SYSTEM_PORTALS.filter(p => p.category === selectedCategory).map((portal) => {
             const isCurrent = selectedPortal.id === portal.id;
             return (
@@ -686,10 +710,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 key={portal.id}
                 type="button"
                 onClick={() => handleSelectPortal(portal)}
-                className={`flex flex-col p-2.5 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
+                className={`flex items-start gap-2.5 p-2.5 rounded-2xl border text-right transition-all cursor-pointer relative overflow-hidden ${
                   isCurrent
                     ? 'bg-white border-black shadow-md ring-2 ring-black/10'
-                    : 'bg-white/80 border-zinc-200 hover:border-zinc-300 hover:bg-white'
+                    : 'bg-white/85 border-zinc-200 hover:border-zinc-300 hover:bg-white hover:shadow-sm'
                 }`}
               >
                 {isCurrent && (
@@ -697,11 +721,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     style={{ position: 'absolute', top: 0, right: 0, left: 0, height: '3px', background: portal.themeColor }} 
                   />
                 )}
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-xs font-bold text-black truncate">{portal.nameAr}</span>
-                  {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark flex-shrink-0" />}
+                <div 
+                  className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                  style={{
+                    background: `${portal.themeColor}15`,
+                    color: portal.themeColor
+                  }}
+                >
+                  {renderPortalIcon(portal.iconName, 'w-3.5 h-3.5')}
                 </div>
-                <span className="text-[10px] text-zinc-500 truncate">{portal.license}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <span className="text-xs font-bold text-black truncate">{portal.nameAr}</span>
+                    {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark shrink-0" />}
+                  </div>
+                  <span className="text-[10px] text-zinc-500 truncate block">{portal.license}</span>
+                </div>
               </button>
             );
           })}
@@ -752,13 +787,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             style={{
               position: 'relative',
               zIndex: 20,
-              maxWidth: '410px',
+              maxWidth: '420px',
+              width: '90%',
               padding: '32px 28px',
-              borderRadius: '20px',
+              borderRadius: '24px',
               background: 'rgba(255, 255, 255, 0.94)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid #e4e4e7',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.06)',
+              border: '1px solid rgba(228, 228, 231, 0.8)',
+              boxShadow: '0 20px 40px -15px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)',
               textAlign: 'center',
               transition: 'transform 0.2s ease-out'
             }}
@@ -766,17 +802,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <div className="flex justify-center mb-3">
               <div 
                 style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '18px',
-                  background: selectedPortal.themeColor,
+                  width: '68px',
+                  height: '68px',
+                  borderRadius: '20px',
+                  background: selectedPortal.gradient || selectedPortal.themeColor,
                   color: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 'bold',
-                  fontSize: '22px',
-                  boxShadow: '0 6px 16px rgba(0,0,0,0.12)'
+                  boxShadow: `0 10px 25px -5px ${selectedPortal.themeColor}55`
                 }}
               >
                 {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
@@ -784,7 +819,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                  selectedPortal.id === 'agent' ? <Globe className="w-8 h-8" /> :
                  selectedPortal.id === 'shelter' ? <Hotel className="w-8 h-8" /> :
                  selectedPortal.id === 'ecommerce' ? <Store className="w-8 h-8" /> :
-                 selectedPortal.id === 'kas' ? <FileText className="w-8 h-8" /> :
+                 selectedPortal.id === 'kas' ? <Briefcase className="w-8 h-8" /> :
                  <Building2 className="w-8 h-8" />}
               </div>
             </div>
@@ -804,7 +839,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               {selectedPortal.description}
             </p>
 
-            <div className="mt-3 p-2 bg-zinc-50 border border-zinc-200 rounded-xl text-[11px] font-bold text-zinc-700">
+            <div className="mt-3 p-2 bg-zinc-50 border border-zinc-200/80 rounded-xl text-[11px] font-bold text-zinc-700">
               {selectedPortal.license}
             </div>
 
@@ -823,6 +858,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   <span style={{ fontSize: '11px', color: '#71717a' }}>{kpi.label}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Compliance and Vision Badges */}
+            <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-center gap-3 text-[10px] text-zinc-400 font-medium">
+              <span className="flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                <span>ZATCA Phase 2</span>
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-sky-600" />
+                <span>مساند HRSD</span>
+              </span>
+              <span>•</span>
+              <span>رؤية 2030</span>
             </div>
           </div>
         </div>
@@ -850,12 +900,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     padding: '5px 12px',
                     fontSize: '12px',
                     minHeight: '32px',
-                    borderRadius: '9999px'
+                    borderRadius: '9999px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
                   }}
                 >
                   <span>{currentLanguage.flag}</span>
                   <span>{currentLanguage.nativeName}</span>
-                  <i className="fa-solid fa-chevron-down" style={{ fontSize: '10px' }} aria-hidden="true"></i>
+                  <ChevronDown className="w-3 h-3 text-zinc-500" />
                 </button>
 
                 {showLangMenu && (
@@ -889,16 +942,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                           borderRadius: '9999px',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '8px',
+                          justifyContent: 'space-between',
                           cursor: 'pointer',
-                          background: currentLanguage.code === lang.code ? '#c1fbd4' : 'transparent',
+                          background: currentLanguage.code === lang.code ? '#f4f4f5' : 'transparent',
                           color: '#000000',
-                          fontWeight: currentLanguage.code === lang.code ? '600' : '420',
+                          fontWeight: currentLanguage.code === lang.code ? '600' : '400',
                           fontSize: '13px'
                         }}
                       >
-                        <span>{lang.flag}</span>
-                        <span>{lang.nativeName}</span>
+                        <div className="flex items-center gap-2">
+                          <span>{lang.flag}</span>
+                          <span>{lang.nativeName}</span>
+                        </div>
+                        {currentLanguage.code === lang.code && (
+                          <Check className="w-3.5 h-3.5 text-black" />
+                        )}
                       </button>
                     ))}
                   </div>
@@ -909,10 +967,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {displayedError && (
               <div style={{
                 padding: '10px 14px',
-                borderRadius: '8px',
-                background: '#ffdad6',
-                border: '1px solid #fca5a5',
-                color: '#ba1a1a',
+                borderRadius: '10px',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                color: '#991b1b',
                 fontSize: '12.5px',
                 fontWeight: '500',
                 marginBottom: '16px',
@@ -920,7 +978,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 alignItems: 'center',
                 gap: '8px'
               }}>
-                <i className="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                 <span>{displayedError}</span>
               </div>
             )}
@@ -954,7 +1012,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       اسم المستخدم أو البريد الإلكتروني للمنظومة
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-user" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '14px' }}></i>
+                      <User className="w-4 h-4 text-zinc-400 absolute pointer-events-none" style={{ insetInlineStart: '14px' }} />
                       <input
                         id="login-username"
                         type="text"
@@ -976,7 +1034,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       {t('password', 'كلمة المرور')}
                     </label>
                     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <i className="fa-solid fa-lock" aria-hidden="true" style={{ position: 'absolute', insetInlineStart: '14px', color: '#71717a', fontSize: '14px' }}></i>
+                      <Lock className="w-4 h-4 text-zinc-400 absolute pointer-events-none" style={{ insetInlineStart: '14px' }} />
                       <input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
@@ -995,9 +1053,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
                         aria-pressed={showPassword}
-                        style={{ position: 'absolute', insetInlineEnd: '14px', border: 'none', background: 'transparent', color: '#71717a', cursor: 'pointer' }}
+                        style={{ position: 'absolute', insetInlineEnd: '14px', border: 'none', background: 'transparent', color: '#71717a', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                       >
-                        <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} aria-hidden="true"></i>
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -1321,16 +1379,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               )}
 
               {biometricStatus === 'success' ? (
-                <div style={{ color: '#000000', fontSize: '48px' }}>
-                  <i className="fa-solid fa-circle-check" aria-hidden="true"></i>
+                <div className="flex items-center justify-center">
+                  <CheckCircle2 className="w-14 h-14 text-emerald-600" />
                 </div>
               ) : biometricModal === 'fingerprint' ? (
-                <div style={{ color: '#000000', fontSize: '48px' }}>
-                  <i className="fa-solid fa-fingerprint" aria-hidden="true"></i>
+                <div className="flex items-center justify-center">
+                  <Fingerprint className="w-14 h-14 text-zinc-900 animate-pulse" />
                 </div>
               ) : (
-                <div style={{ color: '#000000', fontSize: '48px' }}>
-                  <i className="fa-solid fa-face-viewfinder" aria-hidden="true"></i>
+                <div className="flex items-center justify-center">
+                  <ScanFace className="w-14 h-14 text-zinc-900 animate-pulse" />
                 </div>
               )}
             </div>
