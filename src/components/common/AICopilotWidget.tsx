@@ -17,6 +17,8 @@ interface ChatMessage {
   };
 }
 
+export type AssistantPersona = 'faris' | 'noura';
+
 interface AICopilotWidgetProps {
   onNavigate?: (tab: string, title: string) => void;
 }
@@ -27,18 +29,29 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const [isOpen, setIsOpen] = useState(false);
   const [inputQuery, setInputQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [persona, setPersona] = useState<AssistantPersona>(() => {
+    return (localStorage.getItem('assistant_persona') as AssistantPersona) || 'faris';
+  });
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(() => {
     return localStorage.getItem('faris_voice_enabled') === 'true';
   });
   const [isListening, setIsListening] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
 
+  const getInitialWelcome = (p: AssistantPersona, compName: string) => {
+    if (p === 'noura') {
+      return `أهلاً بكِ عزيزتي! أنا "نُورة"، مرشدتكِ الرقمية الذكية لمجموعة خالد السليم.
+يسعدني تقديم الإرشاد والمساعدة الفورية في خدمات الأقسام النسائية ومراكز الإيواء وبيانات ${compName} بأعلى درجات الخصوصية والموثوقية.`;
+    }
+    return `أهلاً بك! أنا "فارس"، مرشدك الرقمي الذكي لمجموعة خالد السليم.
+يسعدني مساعدتك في استعراض بيانات ${compName}، تتبع عقود مساند، فحص جداول كميات كاس، أو مراجعة الحسابات والفوترة المشفرة ZATCA.`;
+  };
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome-1',
       sender: 'ai',
-      text: `أهلاً بك! أنا "فارس"، مرشدك الرقمي الذكي لمجموعة خالد السليم.
-يسعدني مساعدتك في استعراض بيانات ${activeCompany.name}، تتبع عقود مساند، فحص جداول كميات كاس، أو مراجعة الحسابات والفوترة المشفرة ZATCA.`,
+      text: getInitialWelcome((localStorage.getItem('assistant_persona') as AssistantPersona) || 'faris', activeCompany.name),
       timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -57,22 +70,61 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   useEffect(() => {
     const handleOpenAssistant = (event: any) => {
       setIsOpen(true);
+      if (event.detail?.persona && (event.detail.persona === 'faris' || event.detail.persona === 'noura')) {
+        setPersona(event.detail.persona);
+        localStorage.setItem('assistant_persona', event.detail.persona);
+      }
       if (event.detail?.query) {
         handleSendMessage(event.detail.query);
       }
     };
 
+    const handlePersonaChange = (event: any) => {
+      if (event.detail?.persona && (event.detail.persona === 'faris' || event.detail.persona === 'noura')) {
+        setPersona(event.detail.persona);
+      }
+    };
+
     window.addEventListener('open-faris-assistant', handleOpenAssistant);
+    window.addEventListener('assistant-persona-changed', handlePersonaChange);
     return () => {
       window.removeEventListener('open-faris-assistant', handleOpenAssistant);
+      window.removeEventListener('assistant-persona-changed', handlePersonaChange);
     };
   }, [activeCompany]);
 
+  // Switch persona manually
+  const switchPersona = (newPersona: AssistantPersona) => {
+    if (newPersona === persona) return;
+    setPersona(newPersona);
+    localStorage.setItem('assistant_persona', newPersona);
+    window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: newPersona } }));
+
+    const newGreeting = newPersona === 'noura'
+      ? `أهلاً بكِ! تحولت المحادثة الآن إلى "نُورة" المرشدة الرقمية الذكية. يسعدني خدمتكِ ومساعدتكِ في كافة إجراءات المنظومة ومراكز الإيواء.`
+      : `أهلاً بك! تحولت المحادثة الآن إلى "فارس" المرشد الرقمي الذكي. جاهز لمساعدتك في العمليات ومنافسات كاس والأنظمة المركزية.`;
+
+    setMessages(prev => [
+      ...prev,
+      {
+        id: `switch-${Date.now()}`,
+        sender: 'ai',
+        text: newGreeting,
+        timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+      },
+    ]);
+
+    if (voiceEnabled) {
+      speakText(newGreeting, newPersona);
+    }
+  };
+
   // Voice Speech Synthesis
-  const speakText = (text: string) => {
+  const speakText = (text: string, overridePersona?: AssistantPersona) => {
     if (!voiceEnabled || !('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
+      const currentPers = overridePersona || persona;
       // Strip bullet points and technical brackets for natural speech
       const cleanText = text
         .replace(/•/g, '')
@@ -82,8 +134,38 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'ar-SA';
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
+
+      // Select system Arabic voices
+      const voices = window.speechSynthesis.getVoices();
+      const arabicVoices = voices.filter(v => v.lang && v.lang.toLowerCase().includes('ar'));
+
+      if (currentPers === 'noura') {
+        utterance.pitch = 1.25;
+        utterance.rate = 0.98;
+        const femaleVoice = arabicVoices.find(v => {
+          const n = v.name.toLowerCase();
+          return n.includes('female') || n.includes('salma') || n.includes('zariyah') || 
+                 n.includes('laila') || n.includes('fatima') || n.includes('zeina') || 
+                 n.includes('hoda') || n.includes('mariam') || n.includes('sana') || n.includes('nour');
+        }) || arabicVoices[1] || arabicVoices[0];
+
+        if (femaleVoice) {
+          utterance.voice = femaleVoice;
+        }
+      } else {
+        utterance.pitch = 1.0;
+        utterance.rate = 1.0;
+        const maleVoice = arabicVoices.find(v => {
+          const n = v.name.toLowerCase();
+          return n.includes('male') || n.includes('maged') || n.includes('naayf') || 
+                 n.includes('hamed') || n.includes('tarik') || n.includes('shakir');
+        }) || arabicVoices[0];
+
+        if (maleVoice) {
+          utterance.voice = maleVoice;
+        }
+      }
+
       window.speechSynthesis.speak(utterance);
     } catch (e) {
       console.warn('Speech synthesis error:', e);
@@ -145,8 +227,17 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     }
   };
 
-  // Dynamic Contextual Quick Prompts based on activeCompany
+  // Dynamic Contextual Quick Prompts based on activeCompany & persona
   const getContextualPrompts = () => {
+    if (persona === 'noura') {
+      return [
+        { label: '🏢 مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية وحالة النزيلات في مراكز الإيواء؟' },
+        { label: '👩‍💼 كوادر الصفا والياقوت النسائية', query: 'أريد معرفة جاهزية الكوادر النسائية وعقود التشغيل المرن' },
+        { label: '🩺 الرعاية الصحية والغذائية', query: 'ما هي مؤشرات الرعاية الصحية والغذائية للنزيلات في المراكز؟' },
+        { label: '🛡️ حماية الخصوصية و HRSD', query: 'استعرض إجراءات حماية الخصوصية والامتثال لوزارة الموارد البشرية' },
+      ];
+    }
+
     const companyId = activeCompany.id;
 
     if (companyId === 'KAS' || companyId === 'kas') {
@@ -209,7 +300,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     setInputQuery('');
     setIsTyping(true);
 
-    // Faris AI Contextual Reasoning Engine
+    // Faris / Noura AI Contextual Reasoning Engine
     setTimeout(() => {
       let aiResponse = '';
       let actionBtn: { label: string; actionKey: string } | undefined = undefined;
@@ -268,10 +359,14 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 • نسبة الامتثال الضريبي لشركات المجموعة: 100%.`;
         actionBtn = { label: 'فتح بوابة الفوترة المشفرة ZATCA', actionKey: 'zatca-hub' };
       } else {
-        aiResponse = `أهلاً بك! تم استلام طلبك: "${textToSend}".
+        aiResponse = persona === 'noura'
+          ? `أهلاً بكِ عزيزتي! تم استلام استفساركِ: "${textToSend}".
+أنا "نُورة" مرشدتكِ الذكية، ومهمتي مرافقتكِ وتوجيهكِ في إدارة الأقسام النسائية ومراكز الإيواء والتسكين وكافة قطاعات المجموعة بأعلى موثوقية وخصوصية.
+اختاري القسم أو الخدمة التي تودين الوصول إليها وسأرشدكِ فوراً.`
+          : `أهلاً بك! تم استلام طلبك: "${textToSend}".
 أنا "فارس" مرشدك الذكي، ومهمتي توجيهك ومساعدتك في إدارة كافة قطاعات المجموعة (الصفا الماسي للاستقدام، الياقوت للتشغيل والتأجير، توب تالنت للـ ATS، كاس للمنافسات واعتماد، ومراكز الإيواء).
 اختر القسم الذي تود الانتقال إليه وسأقوم بنقلك فوراً.`;
-        actionBtn = { label: 'فتح مركز القيادة والتحكم الموحد', actionKey: 'group-command' };
+        actionBtn = { label: persona === 'noura' ? 'فتح بوابة مراكز الإيواء والرعاية' : 'فتح مركز القيادة والتحكم الموحد', actionKey: persona === 'noura' ? 'shelter' : 'group-command' };
       }
 
       const newAiMsg: ChatMessage = {
@@ -328,7 +423,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             }}
           >
             <span className="live-pulse-dot" />
-            <span>فارس جاهز لمساعدتك!</span>
+            <span>{persona === 'noura' ? 'نُورة جاهزة لمساعدتكِ!' : 'فارس جاهز لمساعدتك!'}</span>
             <button
               type="button"
               onClick={(e) => {
@@ -356,7 +451,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             setIsOpen(!isOpen);
             setShowTooltip(false);
           }}
-          aria-label="تحدث مع فارس"
+          aria-label={persona === 'noura' ? 'تحدث مع نُورة' : 'تحدث مع فارس'}
           style={{
             position: 'relative',
             width: '64px',
@@ -392,8 +487,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           ) : (
             <div className="relative w-full h-full flex items-center justify-center pt-1 overflow-hidden">
               <img
-                src="/mascot.png"
-                alt="فارس - المساعد الرقمي الذكي"
+                src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+                alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية' : 'فارس - المساعد الرقمي الذكي'}
                 className="w-14 h-14 object-contain object-top drop-shadow-md transition-transform hover:scale-110"
               />
               {/* Online Green Indicator Dot */}
@@ -422,9 +517,9 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             position: 'fixed',
             bottom: '96px',
             left: '24px',
-            width: '410px',
+            width: '430px',
             maxWidth: 'calc(100vw - 32px)',
-            maxHeight: '620px',
+            maxHeight: '640px',
             height: '84vh',
             backgroundColor: '#ffffff',
             borderRadius: '24px',
@@ -442,15 +537,16 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           {/* Header - Luxury White with Champagne Gold */}
           <div
             style={{
-              padding: '14px 18px',
+              padding: '12px 16px',
               background: 'linear-gradient(to bottom, #ffffff, #faf8f5)',
               borderBottom: '1px solid #e4e4e7',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              gap: '8px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div
                 style={{
                   width: '42px',
@@ -467,33 +563,84 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 }}
               >
                 <img
-                  src="/mascot.png"
-                  alt="فارس"
+                  src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+                  alt={persona === 'noura' ? 'نُورة' : 'فارس'}
                   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#091725' }}>
-                    فارس • المرشد الرقمي
+                  <h4 style={{ margin: 0, fontSize: '14.5px', fontWeight: 800, color: '#091725' }}>
+                    {persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}
                   </h4>
                   <span className="live-pulse-dot" />
                 </div>
-                <span style={{ fontSize: '11px', color: '#71717a', display: 'block', marginTop: '2px' }}>
-                  {activeCompany.name} • دعم مباشر وتوجيه فوري
+                <span style={{ fontSize: '10.5px', color: '#71717a', display: 'block', marginTop: '1px' }}>
+                  {persona === 'noura' ? 'الأقسام النسائية ومراكز الإيواء • توجيه معتمد' : `${activeCompany.name} • دعم مباشر وتوجيه فوري`}
                 </span>
               </div>
             </div>
 
-            {/* Action Buttons: Voice Toggle & Close */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {/* Action Buttons: Persona Switcher, Voice Toggle & Close */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {/* Persona Switcher Pill [ 👨 فارس | 👩 نُورة ] */}
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: '#f4f4f5',
+                  borderRadius: '9999px',
+                  padding: '2px',
+                  border: '1px solid #e4e4e7',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => switchPersona('faris')}
+                  title="التبديل إلى فارس"
+                  style={{
+                    padding: '3px 7px',
+                    borderRadius: '9999px',
+                    border: 'none',
+                    background: persona === 'faris' ? '#ffffff' : 'transparent',
+                    color: persona === 'faris' ? '#091725' : '#71717a',
+                    fontSize: '10.5px',
+                    fontWeight: persona === 'faris' ? 800 : 600,
+                    boxShadow: persona === 'faris' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  👨 فارس
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchPersona('noura')}
+                  title="التبديل إلى نُورة"
+                  style={{
+                    padding: '3px 7px',
+                    borderRadius: '9999px',
+                    border: 'none',
+                    background: persona === 'noura' ? '#ffffff' : 'transparent',
+                    color: persona === 'noura' ? '#b45309' : '#71717a',
+                    fontSize: '10.5px',
+                    fontWeight: persona === 'noura' ? 800 : 600,
+                    boxShadow: persona === 'noura' ? '0 1px 3px rgba(207, 166, 74, 0.25)' : 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  👩 نُورة
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={toggleVoice}
                 title={voiceEnabled ? 'تعطيل القراءة الصوتية' : 'تفعيل القراءة الصوتية بالذكاء الاصطناعي'}
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: voiceEnabled ? '#fefce8' : 'transparent',
                   border: voiceEnabled ? '1px solid #CFA64A' : 'none',
@@ -512,8 +659,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 onClick={() => setIsOpen(false)}
                 title="إغلاق"
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '8px',
                   background: 'transparent',
                   border: 'none',
@@ -524,7 +671,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   justifyContent: 'center',
                 }}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -597,7 +744,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   alignItems: 'flex-start',
                 }}
               >
-                {/* Faris Avatar next to AI messages */}
+                {/* Assistant Avatar next to AI messages */}
                 {msg.sender === 'ai' && (
                   <div
                     style={{
@@ -615,8 +762,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     }}
                   >
                     <img
-                      src="/mascot.png"
-                      alt="فارس"
+                      src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+                      alt={persona === 'noura' ? 'نُورة' : 'فارس'}
                       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     />
                   </div>
@@ -641,7 +788,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     {msg.text}
                   </div>
 
-                  {/* Faris Direct Action Button */}
+                  {/* Direct Action Button */}
                   {msg.actionButton && onNavigate && (
                     <button
                       type="button"
@@ -734,7 +881,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 }}
               >
                 <RefreshCw className="w-4 h-4 animate-spin text-amber-600" />
-                <span>فارس يحلل السجلات ويستخرج البيانات...</span>
+                <span>{persona === 'noura' ? 'نُورة تحلل السجلات وتستخرج البيانات...' : 'فارس يحلل السجلات ويستخرج البيانات...'}</span>
               </div>
             )}
             <div ref={chatEndRef} />
@@ -759,7 +906,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             <button
               type="button"
               onClick={toggleListening}
-              title={isListening ? 'إيقاف الاستماع' : 'تحدث بالمايكروفون إلى فارس'}
+              title={isListening ? 'إيقاف الاستماع' : (persona === 'noura' ? 'تحدثي بالمايكروفون إلى نُورة' : 'تحدث بالمايكروفون إلى فارس')}
               style={{
                 width: '38px',
                 height: '38px',
@@ -782,7 +929,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
               type="text"
               value={inputQuery}
               onChange={e => setInputQuery(e.target.value)}
-              placeholder={isListening ? 'جاري الاستماع لصوتك الآن...' : 'اكتب سؤالك أو اطلب إجراءً من فارس...'}
+              placeholder={isListening ? 'جاري الاستماع لصوتك الآن...' : (persona === 'noura' ? 'اكتبي استفساركِ أو اطلبي إجراءً من نُورة...' : 'اكتب سؤالك أو اطلب إجراءً من فارس...')}
               style={{
                 flex: 1,
                 padding: '9px 14px',

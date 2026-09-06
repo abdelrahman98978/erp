@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SystemPortalOption } from '../../pages/LoginPage';
 
 interface SaudiAssistantMascotProps {
@@ -6,7 +6,47 @@ interface SaudiAssistantMascotProps {
   isRtl?: boolean;
 }
 
-const getPortalGreeting = (portalId: string, nameAr: string): { title: string; desc: string; badge: string } => {
+const getPortalGreeting = (
+  portalId: string, 
+  nameAr: string, 
+  persona: 'faris' | 'noura'
+): { title: string; desc: string; badge: string } => {
+  if (persona === 'noura') {
+    switch (portalId) {
+      case 'shelter':
+        return {
+          title: 'أهلاً بكِ في بوابة مراكز الإيواء والتسكين!',
+          desc: 'أنا "نُورة"، مرشدتكِ الرقمية المعتمدة للقسم النسائي. يسعدني مساعدتكِ في متابعة شؤون النزيلات، التغذية، والفحوصات الطبية الممتثلة لمعايير HRSD.',
+          badge: 'مرشدة معتمدة للقسم النسائي'
+        };
+      case 'saf':
+        return {
+          title: 'أهلاً بكِ في شركة الصفا الماسي!',
+          desc: 'أنا "نُورة"، يسعدني توجيهكِ في عقود استقدام الأفراد والعمالة المنزلية وإصدار التأشيرات الفورية الموثقة عبر مساند.',
+          badge: 'خدمة السيدات والأسرة'
+        };
+      case 'yaq':
+        return {
+          title: 'مرحباً بكِ في شركة الياقوت الشرقية!',
+          desc: 'أنا "نُورة"، مرشدتكِ لباقات التشغيل المرن والتأجير المخصص للكوادر المهنية والمنزلية لقطاعي الأفراد والأعمال.',
+          badge: 'حلول تشغيلية معتمدة'
+        };
+      case 'client':
+        return {
+          title: 'مرحباً بكِ في بوابة الخدمة الذاتية!',
+          desc: 'أنا "نُورة"، أساعدكِ في تتبع طلباتكِ وعقودكِ وسداد الفواتير ZATCA بأمان وخصوصية تامة.',
+          badge: 'خدمة المستفيدات 24/7'
+        };
+      default:
+        return {
+          title: `أهلاً بكِ في ${nameAr}!`,
+          desc: 'أنا "نُورة"، مرشدتكِ الرقمية الذكية لمجموعة خالد السليم. أدخلي بياناتكِ أو استعيني بي لتوجيهكِ المباشر.',
+          badge: 'المرشدة الرقمية المعتمدة'
+        };
+    }
+  }
+
+  // Faris Persona Greetings
   switch (portalId) {
     case 'kas':
       return {
@@ -75,13 +115,49 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
   selectedPortal,
   isRtl = true
 }) => {
-  const greeting = getPortalGreeting(selectedPortal.id, selectedPortal.nameAr);
+  const isShelter = selectedPortal.id === 'shelter';
+
+  const [persona, setPersona] = useState<'faris' | 'noura'>(() => {
+    if (isShelter) return 'noura';
+    return (localStorage.getItem('assistant_persona') as 'faris' | 'noura') || 'faris';
+  });
+
+  // Automatically switch to Noura when shelter portal is selected
+  useEffect(() => {
+    if (isShelter) {
+      setPersona('noura');
+    }
+  }, [selectedPortal.id, isShelter]);
+
+  // Sync with global persona changes
+  useEffect(() => {
+    const handlePersonaChange = (event: any) => {
+      if (event.detail?.persona && (event.detail.persona === 'faris' || event.detail.persona === 'noura')) {
+        setPersona(event.detail.persona);
+      }
+    };
+    window.addEventListener('assistant-persona-changed', handlePersonaChange);
+    return () => {
+      window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+    };
+  }, []);
+
+  const switchPersona = (newPersona: 'faris' | 'noura') => {
+    setPersona(newPersona);
+    localStorage.setItem('assistant_persona', newPersona);
+    window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: newPersona } }));
+  };
+
+  const greeting = getPortalGreeting(selectedPortal.id, selectedPortal.nameAr, persona);
 
   const handleOpenChat = () => {
     window.dispatchEvent(
       new CustomEvent('open-faris-assistant', {
         detail: {
-          query: `مرحباً فارس، أحتاج مساعدة في الدخول إلى ${selectedPortal.nameAr}`
+          persona,
+          query: persona === 'noura'
+            ? `مرحباً نُورة، أحتاج مساعدة في الدخول إلى ${selectedPortal.nameAr}`
+            : `مرحباً فارس، أحتاج مساعدة في الدخول إلى ${selectedPortal.nameAr}`
         }
       })
     );
@@ -91,8 +167,8 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
     <div className="relative flex flex-col items-center justify-end select-none pointer-events-auto">
       {/* Speech Bubble / Dynamic Greeting Card */}
       <div 
-        key={selectedPortal.id}
-        className="speech-bubble-anim relative z-30 max-w-[320px] mb-2 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-colors"
+        key={`${selectedPortal.id}-${persona}`}
+        className="speech-bubble-anim relative z-30 max-w-[340px] mb-2 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-colors"
         style={{
           boxShadow: '0 16px 32px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04)'
         }}
@@ -107,21 +183,52 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
           }}
         />
 
-        {/* Header with Live Status Dot */}
+        {/* Header with Live Status Dot and Persona Switcher */}
         <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-zinc-100">
           <div className="flex items-center gap-1.5">
             <span className="live-pulse-dot" />
             <span className="text-[11px] font-extrabold text-zinc-900 flex items-center gap-1">
-              <span>فارس • المرشد الرقمي</span>
+              <span>{persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}</span>
             </span>
           </div>
 
-          <span 
-            className="text-[9.5px] font-bold px-2 py-0.5 rounded-full text-white shrink-0"
-            style={{ background: selectedPortal.themeColor }}
-          >
-            {greeting.badge}
-          </span>
+          <div className="flex items-center gap-1.5">
+            {/* Persona Switcher Pill */}
+            <div 
+              className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => switchPersona('faris')}
+                className={`px-1.5 py-0.5 rounded-full text-[9px] font-extrabold transition-all ${
+                  persona === 'faris'
+                    ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
+                    : 'text-zinc-500 hover:text-zinc-800'
+                }`}
+              >
+                👨 فارس
+              </button>
+              <button
+                type="button"
+                onClick={() => switchPersona('noura')}
+                className={`px-1.5 py-0.5 rounded-full text-[9px] font-extrabold transition-all ${
+                  persona === 'noura'
+                    ? 'bg-white text-amber-700 shadow-xs border border-champagne/40'
+                    : 'text-zinc-500 hover:text-zinc-800'
+                }`}
+              >
+                👩 نُورة
+              </button>
+            </div>
+
+            <span 
+              className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white shrink-0"
+              style={{ background: selectedPortal.themeColor }}
+            >
+              {greeting.badge}
+            </span>
+          </div>
         </div>
 
         {/* Greeting Title */}
@@ -137,7 +244,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
         {/* Interactive Chat Prompt Button */}
         <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[10.5px]">
           <span className="font-bold text-amber-700 flex items-center gap-1">
-            <span>تحدث مع فارس</span>
+            <span>{persona === 'noura' ? 'تحدثي مع نُورة' : 'تحدث مع فارس'}</span>
             <span>←</span>
           </span>
           <span className="text-zinc-400">انقر للبدء</span>
@@ -148,12 +255,12 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
       <div 
         className="relative z-20 flex flex-col items-center cursor-pointer group"
         onClick={handleOpenChat}
-        title="انقر للتحدث مع فارس"
+        title={persona === 'noura' ? 'انقر للتحدث مع نُورة' : 'انقر للتحدث مع فارس'}
       >
         <div className="mascot-float relative transition-transform group-hover:scale-105">
           <img
-            src="/mascot.png"
-            alt="فارس - المرشد الرقمي الذكي لمجموعة خالد السليم"
+            src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+            alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية لمجموعة خالد السليم' : 'فارس - المرشد الرقمي الذكي لمجموعة خالد السليم'}
             className="w-auto h-[360px] sm:h-[400px] lg:h-[430px] object-contain drop-shadow-xl"
             loading="eager"
             decoding="async"
@@ -175,3 +282,5 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
     </div>
   );
 };
+
+export default SaudiAssistantMascot;

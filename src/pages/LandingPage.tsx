@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { CompanyLogo } from '../components/common/CompanyLogo';
 import { CompanyId } from '../types';
@@ -17,6 +17,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
   const { currentLanguage } = useLanguage();
   const { setActiveCompanyId } = useCompany();
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [persona, setPersona] = useState<'faris' | 'noura'>(() => {
+    return (localStorage.getItem('assistant_persona') as 'faris' | 'noura') || 'faris';
+  });
+
+  useEffect(() => {
+    const handlePersonaChange = (event: any) => {
+      if (event.detail?.persona && (event.detail.persona === 'faris' || event.detail.persona === 'noura')) {
+        setPersona(event.detail.persona);
+      }
+    };
+    window.addEventListener('assistant-persona-changed', handlePersonaChange);
+    return () => {
+      window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+    };
+  }, []);
+
+  const switchPersona = (newPersona: 'faris' | 'noura') => {
+    setPersona(newPersona);
+    localStorage.setItem('assistant_persona', newPersona);
+    window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: newPersona } }));
+  };
 
   const handleSelect = (id: CompanyId | string) => {
     if (id !== 'login') {
@@ -314,45 +335,82 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               }}
             />
 
-            {/* Speech Bubble / Welcoming Card - Clickable to open Faris Chat */}
+            {/* Speech Bubble / Welcoming Card - Clickable to open Assistant Chat */}
             <div 
-              className="speech-bubble-anim relative z-30 max-w-[320px] mb-2 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-all group"
+              className="speech-bubble-anim relative z-30 max-w-[340px] mb-2 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-all group"
               style={{
                 boxShadow: '0 16px 36px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04)'
               }}
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('open-faris-assistant', {
-                  detail: { query: 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم' }
+                  detail: { 
+                    persona,
+                    query: persona === 'noura'
+                      ? 'مرحباً نُورة، حدثيني عن خدمات الأقسام النسائية ومراكز الإيواء ومنظومة مجموعة السليم'
+                      : 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم' 
+                  }
                 }));
               }}
-              title="انقر لبدء محادثة مباشرة مع فارس"
+              title={persona === 'noura' ? 'انقر لبدء محادثة مباشرة مع نُورة' : 'انقر لبدء محادثة مباشرة مع فارس'}
             >
               {/* Pointer Triangle */}
               <div 
                 className="absolute -bottom-2 right-12 w-3.5 h-3.5 bg-white border-b border-l border-zinc-200 rotate-[-45deg]"
               />
 
-              <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-zinc-100">
+              <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-zinc-100">
                 <div className="flex items-center gap-1.5">
                   <span className="live-pulse-dot" />
-                  <span className="text-[11px] font-extrabold text-zinc-900">فارس • المرشد الرقمي الذكي</span>
+                  <span className="text-[11px] font-extrabold text-zinc-900">
+                    {persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}
+                  </span>
                 </div>
-                <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-champagne-pale text-champagne-dark border border-champagne/30">
-                  مساعد تفاعلي 24/7
-                </span>
+
+                {/* Persona Switcher Pill [ 👨 فارس | 👩 نُورة ] */}
+                <div 
+                  className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    onClick={() => switchPersona('faris')}
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition-all ${
+                      persona === 'faris'
+                        ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
+                        : 'text-zinc-500 hover:text-zinc-800'
+                    }`}
+                  >
+                    👨 فارس
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchPersona('noura')}
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition-all ${
+                      persona === 'noura'
+                        ? 'bg-white text-amber-700 shadow-xs border border-champagne/40'
+                        : 'text-zinc-500 hover:text-zinc-800'
+                    }`}
+                  >
+                    👩 نُورة
+                  </button>
+                </div>
               </div>
 
               <h4 className="text-[13px] font-bold text-zinc-900 mb-1">
                 أهلاً بكم في مجموعة خالد السليم!
               </h4>
               <p className="text-[11px] text-zinc-600 leading-relaxed m-0">
-                أنا <strong className="text-zinc-950">فارس</strong>، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.
+                {persona === 'noura' ? (
+                  <>أنا <strong className="text-zinc-950">نُورة</strong>، مرشدتكم الرقمية الذكية. يسعدني مرافقتكم وإرشادكم لخدمات الأقسام النسائية ومراكز الإيواء والتسكين ومنظومة المجموعة بالكامل.</>
+                ) : (
+                  <>أنا <strong className="text-zinc-950">فارس</strong>، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.</>
+                )}
               </p>
 
               <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
                 <span className="font-bold text-amber-700 group-hover:text-amber-600 flex items-center gap-1 transition-colors">
                   <MessageSquare className="w-3.5 h-3.5" />
-                  <span>تحدث مع فارس الآن</span>
+                  <span>{persona === 'noura' ? 'تحدث مع نُورة الآن' : 'تحدث مع فارس الآن'}</span>
                   <span>←</span>
                 </span>
                 <span className="text-[10px] text-zinc-400">انقر للبدء</span>
@@ -364,15 +422,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               className="relative z-20 flex flex-col items-center cursor-pointer group"
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('open-faris-assistant', {
-                  detail: { query: 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟' }
+                  detail: { 
+                    persona,
+                    query: persona === 'noura'
+                      ? 'مرحباً نُورة، كيف يمكنني بدء استخدام المنظومة والوصول للأقسام النسائية ومراكز الإيواء؟'
+                      : 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟' 
+                  }
                 }));
               }}
-              title="انقر للتحدث مع فارس"
+              title={persona === 'noura' ? 'انقر للتحدث مع نُورة' : 'انقر للتحدث مع فارس'}
             >
               <div className="mascot-float transition-transform group-hover:scale-105">
                 <img
-                  src="/mascot.png"
-                  alt="فارس - المرشد الرقمي الذكي لمجموعة خالد السليم"
+                  src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+                  alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية لمجموعة خالد السليم' : 'فارس - المرشد الرقمي الذكي لمجموعة خالد السليم'}
                   className="w-auto h-[380px] sm:h-[440px] lg:h-[470px] object-contain drop-shadow-2xl"
                   loading="eager"
                 />
