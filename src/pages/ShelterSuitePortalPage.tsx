@@ -343,7 +343,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden bg-zinc-100 text-zinc-900" dir="rtl">
+    <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden bg-[#0d1013] text-zinc-100 font-sans" dir="rtl">
       {/* 1. Dedicated Shelter Navigation Sidebar */}
       <ShelterNavigationSidebar
         activeDepartment={activeDepartment}
@@ -356,26 +356,26 @@ export const ShelterSuitePortalPage: React.FC = () => {
       />
 
       {/* 2. Main Work Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-zinc-50">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#0f1316]">
         {/* Top Control Bar */}
-        <header className="h-16 bg-white border-b border-zinc-200 px-6 flex items-center justify-between gap-4 shrink-0 shadow-sm">
+        <header className="h-16 bg-[#14181c] border-b border-white/10 px-6 flex items-center justify-between gap-4 shrink-0 shadow-md">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-2xl bg-zinc-900 text-white flex items-center justify-center shrink-0 shadow-md">
-              <Hotel className="w-5 h-5 text-emerald-400" />
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md">
+              <Hotel className="w-5 h-5 text-amber-400" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-sm font-bold text-zinc-950 m-0 truncate">
+                <h1 className="text-sm font-bold text-white m-0 truncate">
                   منظومة وبوابة مراكز الإيواء والتسكين والرعاية المستقلة
                 </h1>
-                <span className="text-[10.5px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <span className="text-[10.5px] px-2.5 py-0.5 rounded-full font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
                   {SHELTER_BRANCHES.find((b) => b.id === selectedBranch)?.name || 'كافة الفروع'}
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-mono bg-zinc-100 text-zinc-600">
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-mono bg-white/5 text-zinc-400 border border-white/10">
                   HRSD-MOL Compliant
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-500 m-0 truncate">
+              <p className="text-[11px] text-zinc-400 m-0 truncate">
                 إدارة السكن، الغرف، التغذية، الفرز الطبي، والمغادرة بموجب اشتراطات وزارة الموارد البشرية
               </p>
             </div>
@@ -386,15 +386,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowCheckinModal(true)}
-              className="button-primary-pill shadow-sm flex items-center gap-1.5"
-              style={{
-                background: '#10b981',
-                borderColor: '#10b981',
-                padding: '6px 14px',
-                fontSize: '11.5px',
-                minHeight: '32px',
-                color: '#ffffff',
-              }}
+              className="px-3.5 py-1.5 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>تسكين نزيلة</span>
@@ -403,30 +395,27 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowRoomModal(true)}
-              className="button-outline-on-light flex items-center gap-1"
-              style={{ padding: '6px 12px', fontSize: '11px', minHeight: '32px' }}
+              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
-              <Bed className="w-3.5 h-3.5 text-zinc-700" />
+              <Bed className="w-3.5 h-3.5 text-zinc-400" />
               <span>+ غرفة</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowMealModal(true)}
-              className="button-outline-on-light flex items-center gap-1"
-              style={{ padding: '6px 12px', fontSize: '11px', minHeight: '32px' }}
+              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
-              <Utensils className="w-3.5 h-3.5 text-amber-600" />
+              <Utensils className="w-3.5 h-3.5 text-amber-400" />
               <span>+ وجبة</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowClinicModal(true)}
-              className="button-outline-on-light flex items-center gap-1"
-              style={{ padding: '6px 12px', fontSize: '11px', minHeight: '32px' }}
+              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
-              <Stethoscope className="w-3.5 h-3.5 text-rose-600" />
+              <Stethoscope className="w-3.5 h-3.5 text-rose-400" />
               <span>+ فحص طبي</span>
             </button>
 
@@ -442,12 +431,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setGlobalActiveTab('dashboard', 'لوحة التحكم')}
-              className="button-outline-on-light flex items-center gap-1 hover:bg-zinc-100"
-              style={{ padding: '6px 12px', fontSize: '11px', minHeight: '32px' }}
+              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
               title="العودة إلى الـ ERP العام"
             >
               <span>الـ ERP العام</span>
-              <ArrowRight className="w-3 h-3 text-zinc-500" />
+              <ArrowRight className="w-3 h-3 text-zinc-400" />
             </button>
           </div>
         </header>
@@ -459,59 +447,97 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'dashboard' && (
             <div className="space-y-6">
-              {/* Metric Hero Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex items-center justify-between">
-                  <div>
-                    <div className="text-xs text-zinc-500 font-bold">إجمالي النزيلات المقيدات</div>
-                    <div className="text-2xl font-bold font-mono text-zinc-950 mt-1">
-                      {sidebarStats.totalInmates} <span className="text-xs font-sans text-zinc-500">نزيلة</span>
+              {/* Grand Hero Platform Banner */}
+              <div className="bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] border border-amber-500/20 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase font-bold">
+                        SHELTER & CARE ENTERPRISE SUITE
+                      </span>
+                      <span className="text-[11px] text-zinc-400 font-mono">نظام التسكين والإعاشة المركزي — اعتماد 100%</span>
                     </div>
-                    <div className="text-[11px] text-emerald-600 mt-1 flex items-center gap-1 font-semibold">
+                    <h2 className="text-xl font-display font-black text-white m-0 tracking-tight flex items-center gap-2">
+                      مركز العمليات والمؤشرات التنفيذية — مراكز الإيواء والتسكين
+                    </h2>
+                    <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed m-0">
+                      إدارة الطاقة الاستيعابية للأجنحة، الرعاية الصحية اليومية، جداول الإعاشة، وفرز النزيلات للتنازل أو الترحيل بموجب اشتراطات وزارة الموارد البشرية.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setShowCheckinModal(true)}
+                      className="px-4 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-lg shadow-amber-400/20"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>تسكين نزيلة جديدة</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveDepartment('compliance')}
+                      className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/15 text-zinc-200 hover:bg-white/10 hover:text-white font-semibold text-xs transition-all flex items-center gap-1.5"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                      <span>ملف التفتيش HRSD</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Grand Executive KPI Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-zinc-400 font-bold">إجمالي النزيلات المقيدات</div>
+                    <div className="text-2xl font-display font-black font-mono text-amber-400 mt-1">
+                      {sidebarStats.totalInmates} <span className="text-xs font-sans text-zinc-400">نزيلة</span>
+                    </div>
+                    <div className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1 font-medium">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>{sidebarStats.insideCount} داخل مباني الإيواء حالياً</span>
                     </div>
                   </div>
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shadow-md">
                     <Hotel className="w-6 h-6" />
                   </div>
                 </div>
 
-                <div className="p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex items-center justify-between">
+                <div className="p-4 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-zinc-500 font-bold">الأسرة والطاقة الاستيعابية</div>
-                    <div className="text-2xl font-bold font-mono text-blue-900 mt-1">
-                      {sidebarStats.availableBeds} <span className="text-xs font-sans text-zinc-500">سرير متاح</span>
+                    <div className="text-xs text-zinc-400 font-bold">الأسرة والطاقة الاستيعابية</div>
+                    <div className="text-2xl font-display font-black font-mono text-cyan-400 mt-1">
+                      {sidebarStats.availableBeds} <span className="text-xs font-sans text-zinc-400">سرير متاح</span>
                     </div>
-                    <div className="text-[11px] text-zinc-500 mt-1">من إجمالي طاقة استيعابية 120 سريراً</div>
+                    <div className="text-[11px] text-zinc-400 mt-1">من إجمالي طاقة استيعابية 120 سريراً</div>
                   </div>
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shadow-md">
                     <Bed className="w-6 h-6" />
                   </div>
                 </div>
 
-                <div className="p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex items-center justify-between">
+                <div className="p-4 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-zinc-500 font-bold">وجبات الإعاشة والتغذية اليوم</div>
-                    <div className="text-2xl font-bold font-mono text-amber-900 mt-1">
-                      {sidebarStats.cateringToday} <span className="text-xs font-sans text-zinc-500">وجبة</span>
+                    <div className="text-xs text-zinc-400 font-bold">وجبات الإعاشة والتغذية اليوم</div>
+                    <div className="text-2xl font-display font-black font-mono text-amber-300 mt-1">
+                      {sidebarStats.cateringToday} <span className="text-xs font-sans text-zinc-400">وجبة</span>
                     </div>
-                    <div className="text-[11px] text-amber-700 mt-1">موزعة عبر 3 وجبات معتمدة صحياً</div>
+                    <div className="text-[11px] text-amber-400 mt-1">موزعة عبر 3 وجبات معتمدة صحياً</div>
                   </div>
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shadow-md">
                     <Utensils className="w-6 h-6" />
                   </div>
                 </div>
 
-                <div className="p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex items-center justify-between">
+                <div className="p-4 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-zinc-500 font-bold">حالات العزل والفرز الطبي</div>
-                    <div className="text-2xl font-bold font-mono text-rose-900 mt-1">
-                      {sidebarStats.medicalQuarantine} <span className="text-xs font-sans text-zinc-500">حالة عزل</span>
+                    <div className="text-xs text-zinc-400 font-bold">حالات العزل والفرز الطبي</div>
+                    <div className="text-2xl font-display font-black font-mono text-rose-400 mt-1">
+                      {sidebarStats.medicalQuarantine} <span className="text-xs font-sans text-zinc-400">حالة عزل</span>
                     </div>
-                    <div className="text-[11px] text-rose-600 mt-1">تحت الرعاية الطبية والعلاج الوقائي</div>
+                    <div className="text-[11px] text-rose-400 mt-1">تحت الرعاية الطبية والعلاج الوقائي</div>
                   </div>
-                  <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shadow-md">
                     <Stethoscope className="w-6 h-6" />
                   </div>
                 </div>
@@ -520,8 +546,8 @@ export const ShelterSuitePortalPage: React.FC = () => {
               {/* Quick Status Bar & Distribution */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Visual Nationality & Willingness Matrix */}
-                <div className="p-5 bg-white rounded-3xl border border-zinc-200 space-y-4 shadow-sm">
-                  <h3 className="text-sm font-bold text-zinc-900 m-0">توزيع النزيلات حسب الجنسية</h3>
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-white/10 space-y-4 shadow-lg">
+                  <h3 className="text-sm font-bold text-white m-0">توزيع النزيلات حسب الجنسية</h3>
                   <div className="space-y-3">
                     {[
                       { nat: 'الفلبين', count: 18, color: 'bg-emerald-500', pct: '41%' },
@@ -531,12 +557,12 @@ export const ShelterSuitePortalPage: React.FC = () => {
                     ].map((item) => (
                       <div key={item.nat}>
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="font-semibold text-zinc-800">{item.nat}</span>
-                          <span className="font-mono text-zinc-500">
+                          <span className="font-semibold text-zinc-200">{item.nat}</span>
+                          <span className="font-mono text-zinc-400">
                             {item.count} نزيلة ({item.pct})
                           </span>
                         </div>
-                        <div className="w-full h-2 bg-zinc-100 rounded-full overflow-hidden">
+                        <div className="w-full h-2 bg-black/50 rounded-full overflow-hidden border border-white/5">
                           <div className={`h-full ${item.color}`} style={{ width: item.pct }} />
                         </div>
                       </div>
@@ -545,34 +571,34 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 </div>
 
                 {/* Operations & Capacity Summary */}
-                <div className="p-5 bg-white rounded-3xl border border-zinc-200 space-y-4 shadow-sm">
-                  <h3 className="text-sm font-bold text-zinc-900 m-0">جاهزية مراكز الإيواء الميدانية</h3>
-                  <div className="space-y-2.5 text-xs text-zinc-700">
-                    <div className="p-3 bg-zinc-50 rounded-2xl flex items-center justify-between">
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-white/10 space-y-4 shadow-lg">
+                  <h3 className="text-sm font-bold text-white m-0">جاهزية مراكز الإيواء الميدانية</h3>
+                  <div className="space-y-2.5 text-xs text-zinc-300">
+                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-emerald-600" />
-                        <span className="font-bold">مقر الرياض الرئيسي</span>
+                        <Building2 className="w-4 h-4 text-emerald-400" />
+                        <span className="font-bold text-white">مقر الرياض الرئيسي</span>
                       </div>
                       <Badge text="طاقة: 40 سرير (إشغال 45%)" type="success" />
                     </div>
-                    <div className="p-3 bg-zinc-50 rounded-2xl flex items-center justify-between">
+                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-blue-600" />
-                        <span className="font-bold">مركز ترانزيت جدة (المطار)</span>
+                        <Building2 className="w-4 h-4 text-cyan-400" />
+                        <span className="font-bold text-white">مركز ترانزيت جدة (المطار)</span>
                       </div>
                       <Badge text="طاقة: 25 سرير (إشغال 20%)" type="info" />
                     </div>
-                    <div className="p-3 bg-zinc-50 rounded-2xl flex items-center justify-between">
+                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-purple-600" />
-                        <span className="font-bold">فرع المنطقة الشرقية (الدمام)</span>
+                        <Building2 className="w-4 h-4 text-purple-400" />
+                        <span className="font-bold text-white">فرع المنطقة الشرقية (الدمام)</span>
                       </div>
                       <Badge text="طاقة: 30 سرير (إشغال 30%)" type="success" />
                     </div>
-                    <div className="p-3 bg-zinc-50 rounded-2xl flex items-center justify-between">
+                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-amber-600" />
-                        <span className="font-bold">فرع المجمعة وسدير</span>
+                        <Building2 className="w-4 h-4 text-amber-400" />
+                        <span className="font-bold text-white">فرع المجمعة وسدير</span>
                       </div>
                       <Badge text="طاقة: 25 سرير (إشغال 15%)" type="warning" />
                     </div>
@@ -580,14 +606,14 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 </div>
 
                 {/* Compliance & Emergency */}
-                <div className="p-5 bg-zinc-900 text-white rounded-3xl space-y-4 shadow-sm flex flex-col justify-between">
+                <div className="p-5 bg-gradient-to-b from-[#182026] to-[#121619] text-white rounded-2xl border border-white/10 space-y-4 shadow-lg flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                         <ShieldCheck className="w-4 h-4" />
                         <span>امتثال التفتيش الحكومي HRSD</span>
                       </span>
-                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-mono">
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">
                         100% متوافق
                       </span>
                     </div>
@@ -597,11 +623,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-zinc-800 flex items-center justify-between">
+                  <div className="pt-3 border-t border-white/10 flex items-center justify-between">
                     <button
                       type="button"
                       onClick={() => setActiveDepartment('compliance')}
-                      className="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1"
+                      className="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1"
                     >
                       <span>عرض سجلات التفتيش والتقارير</span>
                       <ChevronLeft className="w-3.5 h-3.5" />
@@ -612,25 +638,25 @@ export const ShelterSuitePortalPage: React.FC = () => {
               </div>
 
               {/* Quick Table of Inmates */}
-              <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-sm space-y-4">
+              <div className="bg-[#14181c] rounded-2xl border border-white/10 p-5 shadow-lg space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div>
-                    <h3 className="text-sm font-bold text-zinc-900 m-0">النزيلات المتواجدات حالياً بمقر الإيواء</h3>
-                    <p className="text-xs text-zinc-500 m-0 mt-0.5">سجل لحظي بالأسماء، الجنسيات، ومقر الغرفة</p>
+                    <h3 className="text-sm font-bold text-white m-0">النزيلات المتواجدات حالياً بمقر الإيواء</h3>
+                    <p className="text-xs text-zinc-400 m-0 mt-0.5">سجل لحظي بالأسماء، الجنسيات، ومقر الغرفة</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setActiveDepartment('checkin')}
-                    className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
+                    className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
                   >
                     <span>فتح مكتب الاستقبال والتسكين الكامل</span>
                     <ChevronLeft className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="overflow-x-auto rounded-2xl border border-zinc-200">
-                  <table className="w-full text-right text-xs text-zinc-700">
-                    <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <div className="overflow-x-auto rounded-xl border border-white/10">
+                  <table className="w-full text-right text-xs text-zinc-300">
+                    <thead className="bg-black/60 text-zinc-400 font-bold border-b border-white/10">
                       <tr>
                         <th className="p-3">رقم السجل</th>
                         <th className="p-3">اسم النزيلة</th>
@@ -643,16 +669,16 @@ export const ShelterSuitePortalPage: React.FC = () => {
                         <th className="p-3">الحالة</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-white/5">
                       {filteredInmates.slice(0, 5).map((item) => (
-                        <tr key={item.id} className="hover:bg-zinc-50">
-                          <td className="p-3 font-mono font-bold text-zinc-900">{item.id}</td>
-                          <td className="p-3 font-bold text-black">{item.maid_name}</td>
-                          <td className="p-3">{item.nationality}</td>
-                          <td className="p-3 font-mono text-zinc-600">{item.passport}</td>
-                          <td className="p-3">{item.shelter_location}</td>
-                          <td className="p-3 font-mono font-bold text-emerald-800">{item.days_in_shelter} يوم</td>
-                          <td className="p-3 font-mono text-amber-800">{item.catering_meals_count} وجبة</td>
+                        <tr key={item.id} className="hover:bg-white/5">
+                          <td className="p-3 font-mono font-bold text-amber-400">{item.id}</td>
+                          <td className="p-3 font-bold text-white">{item.maid_name}</td>
+                          <td className="p-3 text-zinc-300">{item.nationality}</td>
+                          <td className="p-3 font-mono text-zinc-400">{item.passport}</td>
+                          <td className="p-3 text-zinc-300">{item.shelter_location}</td>
+                          <td className="p-3 font-mono font-bold text-emerald-400">{item.days_in_shelter} يوم</td>
+                          <td className="p-3 font-mono text-amber-300">{item.catering_meals_count} وجبة</td>
                           <td className="p-3">
                             <Badge
                               text={item.work_willingness}
@@ -682,10 +708,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'checkin' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">مكتب الاستقبال والتسكين المباشر</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">مكتب الاستقبال والتسكين المباشر</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     تسجيل وصول النزيلات الجدد، استلام الأمتعة والعهد، وتحديث بيانات التسكين المباشر
                   </p>
                 </div>
@@ -693,8 +719,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowCheckinModal(true)}
-                    className="button-primary-pill shadow-sm"
-                    style={{ background: '#10b981', borderColor: '#10b981', padding: '7px 16px', fontSize: '12px', color: '#ffffff' }}
+                    className="px-4 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
                   >
                     <Plus className="w-4 h-4 ml-1" />
                     <span>+ تسكين نزيلة جديدة</span>
@@ -715,15 +740,15 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   placeholder="بحث برقم الجواز، اسم النزيلة، أو العميل..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white border border-zinc-200 rounded-full py-2 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black shadow-sm"
+                  className="w-full bg-[#14181c] border border-white/15 rounded-full py-2 pr-9 pl-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 shadow-md"
                 />
               </div>
 
               {/* Inmates Table */}
-              <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
+              <div className="bg-[#14181c] rounded-2xl border border-white/10 shadow-lg overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-right text-xs text-zinc-700">
-                    <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <table className="w-full text-right text-xs text-zinc-300">
+                    <thead className="bg-black/60 text-zinc-400 font-bold border-b border-white/10">
                       <tr>
                         <th className="p-3">رقم النزيلة</th>
                         <th className="p-3">اسم النزيلة</th>
@@ -737,16 +762,16 @@ export const ShelterSuitePortalPage: React.FC = () => {
                         <th className="p-3 text-center">إجراءات النزيلة</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-white/5">
                       {filteredInmates.map((item) => (
-                        <tr key={item.id} className="hover:bg-zinc-50">
-                          <td className="p-3 font-mono font-bold text-zinc-900">{item.id}</td>
-                          <td className="p-3 font-bold text-black">{item.maid_name}</td>
-                          <td className="p-3">{item.nationality}</td>
-                          <td className="p-3 font-mono text-zinc-600">{item.passport}</td>
-                          <td className="p-3 text-zinc-600">{item.client_name || '—'}</td>
-                          <td className="p-3">{item.shelter_location}</td>
-                          <td className="p-3 font-mono font-bold text-emerald-800">{item.days_in_shelter} يوم</td>
+                        <tr key={item.id} className="hover:bg-white/5">
+                          <td className="p-3 font-mono font-bold text-amber-400">{item.id}</td>
+                          <td className="p-3 font-bold text-white">{item.maid_name}</td>
+                          <td className="p-3 text-zinc-300">{item.nationality}</td>
+                          <td className="p-3 font-mono text-zinc-400">{item.passport}</td>
+                          <td className="p-3 text-zinc-400">{item.client_name || '—'}</td>
+                          <td className="p-3 text-zinc-300">{item.shelter_location}</td>
+                          <td className="p-3 font-mono font-bold text-emerald-400">{item.days_in_shelter} يوم</td>
                           <td className="p-3">
                             <Badge
                               text={item.work_willingness}
@@ -767,8 +792,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(item, 'متاح للنقل')}
-                                className="button-outline-on-light"
-                                style={{ padding: '2px 8px', fontSize: '10px', minHeight: '24px' }}
+                                className="px-2.5 py-1 rounded-lg border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-[10.5px] font-semibold transition-all"
                                 title="تحويل لمتاح للنقل والتنازل"
                               >
                                 <span>نقل كفالة</span>
@@ -776,8 +800,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(item, 'مرحلة الترحيل')}
-                                className="button-outline-on-light text-rose-700 hover:bg-rose-50"
-                                style={{ padding: '2px 8px', fontSize: '10px', minHeight: '24px' }}
+                                className="px-2.5 py-1 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-[10.5px] font-semibold transition-all"
                                 title="تحويل لمرحلة الترحيل والسفر"
                               >
                                 <span>ترحيل</span>
@@ -785,11 +808,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setSelectedInmateForPrint(item)}
-                                className="button-outline-on-light"
-                                style={{ padding: '2px 8px', fontSize: '10px', minHeight: '24px' }}
+                                className="p-1.5 rounded-lg border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
                                 title="طباعة بطاقة نزيلة الإيواء المعتمدة"
                               >
-                                <Printer className="w-3 h-3 text-zinc-700" />
+                                <Printer className="w-3 h-3 text-zinc-300" />
                               </button>
                             </div>
                           </td>
@@ -807,10 +829,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'rooms' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">إدارة الغرف وتوزيع الأسرة والمهاجع</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">إدارة الغرف وتوزيع الأسرة والمهاجع</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     متابعة الطاقة الاستيعابية، الأسرة الشاغرة، وتوزيع الغرف حسب الجنسيات والتعقيم الدوري
                   </p>
                 </div>
@@ -818,8 +840,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowRoomModal(true)}
-                    className="button-primary-pill shadow-sm"
-                    style={{ background: '#000000', padding: '7px 16px', fontSize: '12px', color: '#ffffff' }}
+                    className="px-4 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
                   >
                     <Plus className="w-4 h-4 ml-1" />
                     <span>+ إضافة غرفة / مهجع جديد</span>
@@ -837,35 +858,35 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 {rooms.map((r) => (
                   <div
                     key={r.id}
-                    className="p-5 rounded-3xl border border-zinc-200 bg-white flex flex-col justify-between hover:border-black transition-all shadow-sm"
+                    className="p-5 rounded-2xl border border-white/10 bg-[#14181c] flex flex-col justify-between hover:border-amber-500/40 transition-all shadow-lg"
                   >
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="font-bold text-zinc-950 text-sm">{r.room}</span>
+                        <span className="font-bold text-white text-sm">{r.room}</span>
                         <Badge
                           text={r.status}
                           type={r.status.includes('شاغر') || r.status.includes('متاح') ? 'success' : 'danger'}
                         />
                       </div>
-                      <p className="text-xs text-zinc-500 mb-2">{r.type}</p>
-                      <div className="p-2.5 bg-zinc-50 rounded-2xl border border-zinc-100 mb-3">
+                      <p className="text-xs text-zinc-400 mb-2">{r.type}</p>
+                      <div className="p-2.5 bg-black/40 rounded-xl border border-white/5 mb-3">
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="text-zinc-600 font-semibold">معدل الإشغال:</span>
-                          <span className="font-mono font-bold text-zinc-900">
+                          <span className="text-zinc-400 font-semibold">معدل الإشغال:</span>
+                          <span className="font-mono font-bold text-amber-400">
                             {r.occupied} / {r.totalBeds} أسرة
                           </span>
                         </div>
-                        <div className="w-full h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+                        <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-emerald-500"
+                            className="h-full bg-amber-400"
                             style={{ width: `${Math.min(100, (r.occupied / r.totalBeds) * 100)}%` }}
                           />
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
-                      <span className="text-emerald-700 font-bold flex items-center gap-1 text-[11px]">
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                      <span className="text-emerald-400 font-bold flex items-center gap-1 text-[11px]">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>{r.clean}</span>
                       </span>
@@ -882,8 +903,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                             type: 'success',
                           });
                         }}
-                        className="button-outline-on-light"
-                        style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                        className="px-2.5 py-1 rounded-lg border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-[11px] font-semibold transition-all"
                       >
                         + تسكين سريع
                       </button>
@@ -897,12 +917,15 @@ export const ShelterSuitePortalPage: React.FC = () => {
           {/* =========================================================================
               DEPARTMENT 4: CATERING & DAILY MEALS
              ========================================================================= */}
+          {/* =========================================================================
+              DEPARTMENT 4: CATERING & DAILY MEALS
+             ========================================================================= */}
           {activeDepartment === 'catering' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">سجل الإعاشة والتغذية والتموين اليومي</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">سجل الإعاشة والتغذية والتموين اليومي</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     توثيق استلام وتوزيع الوجبات الغذائية الثلاث (فطور، غداء، عشاء) ومراقبة معايير الجودة
                   </p>
                 </div>
@@ -910,8 +933,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowMealModal(true)}
-                    className="button-primary-pill shadow-sm"
-                    style={{ background: '#d97706', borderColor: '#d97706', padding: '7px 16px', fontSize: '12px', color: '#ffffff' }}
+                    className="px-4 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
                   >
                     <Plus className="w-4 h-4 ml-1" />
                     <span>+ تسجيل وجبة جماعية</span>
@@ -926,39 +948,39 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
               {/* Meals Schedule Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-white rounded-3xl border border-zinc-200 shadow-sm space-y-2">
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-500">وجبة الإفطار (07:30 AM)</span>
+                    <span className="text-xs font-bold text-zinc-400">وجبة الإفطار (07:30 AM)</span>
                     <Badge text="تم التوزيع" type="success" />
                   </div>
-                  <div className="text-sm font-bold text-zinc-900">إفطار صباحي متكامل + حليب وعصائر طازجة</div>
-                  <div className="text-[11px] text-zinc-500">متعهد الإعاشة: مخابز وحلويات الريان</div>
+                  <div className="text-sm font-bold text-white">إفطار صباحي متكامل + حليب وعصائر طازجة</div>
+                  <div className="text-[11px] text-zinc-400">متعهد الإعاشة: مخابز وحلويات الريان</div>
                 </div>
 
-                <div className="p-4 bg-white rounded-3xl border border-zinc-200 shadow-sm space-y-2">
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-500">وجبة الغداء (01:30 PM)</span>
+                    <span className="text-xs font-bold text-zinc-400">وجبة الغداء (01:30 PM)</span>
                     <Badge text="تم التوزيع" type="success" />
                   </div>
-                  <div className="text-sm font-bold text-zinc-900">أرز ولحوم طازجة وخضار وفواكه</div>
-                  <div className="text-[11px] text-zinc-500">متعهد الإعاشة: مطابخ ومطاعم السليم المعتمدة</div>
+                  <div className="text-sm font-bold text-white">أرز ولحوم طازجة وخضار وفواكه</div>
+                  <div className="text-[11px] text-zinc-400">متعهد الإعاشة: مطابخ ومطاعم السليم المعتمدة</div>
                 </div>
 
-                <div className="p-4 bg-white rounded-3xl border border-zinc-200 shadow-sm space-y-2">
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-zinc-500">وجبة العشاء (08:00 PM)</span>
+                    <span className="text-xs font-bold text-zinc-400">وجبة العشاء (08:00 PM)</span>
                     <Badge text="جاهز للتوزيع" type="warning" />
                   </div>
-                  <div className="text-sm font-bold text-zinc-900">وجبة خفيفة، معجنات صحية وفاكهة</div>
-                  <div className="text-[11px] text-zinc-500">المشرفة المسؤولة: أميرة الشمري</div>
+                  <div className="text-sm font-bold text-white">وجبة خفيفة، معجنات صحية وفاكهة</div>
+                  <div className="text-[11px] text-zinc-400">المشرفة المسؤولة: أميرة الشمري</div>
                 </div>
               </div>
 
               {/* Catering Table */}
-              <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
+              <div className="bg-[#14181c] rounded-2xl border border-white/10 shadow-lg overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-right text-xs text-zinc-700">
-                    <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <table className="w-full text-right text-xs text-zinc-300">
+                    <thead className="bg-black/60 text-zinc-400 font-bold border-b border-white/10">
                       <tr>
                         <th className="p-3">التاريخ</th>
                         <th className="p-3">مقر الإيواء</th>
@@ -970,16 +992,16 @@ export const ShelterSuitePortalPage: React.FC = () => {
                         <th className="p-3">حالة الاستلام</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-white/5">
                       {cateringMeals.map((row) => (
-                        <tr key={row.id} className="hover:bg-zinc-50">
-                          <td className="p-3 font-mono text-black">{row.date}</td>
-                          <td className="p-3 font-bold text-black">{row.place}</td>
-                          <td className="p-3 font-semibold text-black">{row.meal}</td>
-                          <td className="p-3 font-mono font-bold text-black">{row.count} وجبة</td>
-                          <td className="p-3 text-zinc-600">{row.vendor}</td>
-                          <td className="p-3 font-mono font-bold text-emerald-800">{row.cost.toLocaleString()} ر.س</td>
-                          <td className="p-3 text-zinc-700">{row.sup}</td>
+                        <tr key={row.id} className="hover:bg-white/5">
+                          <td className="p-3 font-mono text-zinc-300">{row.date}</td>
+                          <td className="p-3 font-bold text-white">{row.place}</td>
+                          <td className="p-3 font-semibold text-zinc-200">{row.meal}</td>
+                          <td className="p-3 font-mono font-bold text-amber-300">{row.count} وجبة</td>
+                          <td className="p-3 text-zinc-400">{row.vendor}</td>
+                          <td className="p-3 font-mono font-bold text-emerald-400">{row.cost.toLocaleString()} ر.س</td>
+                          <td className="p-3 text-zinc-300">{row.sup}</td>
                           <td className="p-3">
                             <Badge text={row.status} type="success" />
                           </td>
@@ -997,10 +1019,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'clinic' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">العيادة الطبية والفحص المخبري وجناح العزل</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">العيادة الطبية والفحص المخبري وجناح العزل</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     الفحص الطبي الشامل عند الوصول، متابعة الأمراض السارية، وإدارة جناح العزل الطبي المؤقت
                   </p>
                 </div>
@@ -1008,8 +1030,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowClinicModal(true)}
-                    className="button-primary-pill shadow-sm"
-                    style={{ background: '#e11d48', borderColor: '#e11d48', padding: '7px 16px', fontSize: '12px', color: '#ffffff' }}
+                    className="px-4 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
                   >
                     <Plus className="w-4 h-4 ml-1" />
                     <span>+ توثيق كشف طبي جديد</span>
@@ -1025,11 +1046,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
               {/* Medical Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {medicalChecks.map((med) => (
-                  <div key={med.id} className="p-5 bg-white rounded-3xl border border-zinc-200 shadow-sm space-y-3">
+                  <div key={med.id} className="p-5 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <div className="font-bold text-zinc-900 text-sm">{med.inmate_name}</div>
-                        <div className="text-xs font-mono text-zinc-500">{med.passport}</div>
+                        <div className="font-bold text-white text-sm">{med.inmate_name}</div>
+                        <div className="text-xs font-mono text-zinc-400">{med.passport}</div>
                       </div>
                       <Badge
                         text={med.result}
@@ -1037,29 +1058,29 @@ export const ShelterSuitePortalPage: React.FC = () => {
                       />
                     </div>
 
-                    <div className="p-3 bg-zinc-50 rounded-2xl space-y-1.5 text-xs text-zinc-700">
+                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 space-y-1.5 text-xs text-zinc-300">
                       <div className="flex justify-between">
-                        <span className="text-zinc-500">نوع الفحص:</span>
-                        <span className="font-semibold">{med.check_type}</span>
+                        <span className="text-zinc-400">نوع الفحص:</span>
+                        <span className="font-semibold text-white">{med.check_type}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-500">درجة الحرارة:</span>
-                        <span className="font-mono font-bold text-rose-700">{med.temperature}</span>
+                        <span className="text-zinc-400">درجة الحرارة:</span>
+                        <span className="font-mono font-bold text-rose-400">{med.temperature}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-zinc-500">ضغط الدم:</span>
-                        <span className="font-mono font-bold text-zinc-900">{med.blood_pressure}</span>
+                        <span className="text-zinc-400">ضغط الدم:</span>
+                        <span className="font-mono font-bold text-zinc-200">{med.blood_pressure}</span>
                       </div>
                       {med.isolation_wing && (
-                        <div className="flex justify-between text-rose-700 font-bold">
+                        <div className="flex justify-between text-rose-400 font-bold">
                           <span>جناح العزل:</span>
                           <span>{med.isolation_wing}</span>
                         </div>
                       )}
                     </div>
 
-                    <p className="text-xs text-zinc-600 leading-relaxed m-0">{med.notes}</p>
-                    <div className="pt-2 border-t border-zinc-100 flex justify-between text-[11px] text-zinc-400">
+                    <p className="text-xs text-zinc-400 leading-relaxed m-0">{med.notes}</p>
+                    <div className="pt-2 border-t border-white/10 flex justify-between text-[11px] text-zinc-500">
                       <span>الفاحص: {med.nurse_doctor}</span>
                       <span className="font-mono">{med.date}</span>
                     </div>
@@ -1074,10 +1095,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'welfare' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">شؤون النزيلات، الرغبة في العمل والتنازل</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">شؤون النزيلات، الرغبة في العمل والتنازل</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     دراسة الحالات النفسية والاجتماعية، توجيه الراغبات بالعمل لنقل الخدمات والتأجير، والوساطة في النزاعات
                   </p>
                 </div>
@@ -1090,15 +1111,15 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Willing to Work */}
-                <div className="p-5 bg-white rounded-3xl border border-emerald-200 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between border-b border-emerald-100 pb-3">
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-emerald-500/30 shadow-lg space-y-4">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                      <h3 className="text-sm font-bold text-emerald-950 m-0">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                      <h3 className="text-sm font-bold text-white m-0">
                         النزيلات الراغبات في العمل (متاح للتنازل / التأجير)
                       </h3>
                     </div>
-                    <span className="text-xs font-mono font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
                       {filteredInmates.filter((i) => i.work_willingness === 'ترغب بالعمل').length} نزيلة
                     </span>
                   </div>
@@ -1109,19 +1130,18 @@ export const ShelterSuitePortalPage: React.FC = () => {
                       .map((item) => (
                         <div
                           key={item.id}
-                          className="p-3.5 rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-between"
+                          className="p-3.5 rounded-xl border border-white/10 bg-black/40 flex items-center justify-between"
                         >
                           <div>
-                            <div className="font-bold text-zinc-950 text-xs">{item.maid_name}</div>
-                            <div className="text-[11px] text-zinc-500">
+                            <div className="font-bold text-white text-xs">{item.maid_name}</div>
+                            <div className="text-[11px] text-zinc-400">
                               {item.nationality} • جواز: {item.passport}
                             </div>
                           </div>
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(item, 'متاح للنقل')}
-                            className="button-primary-pill"
-                            style={{ background: '#10b981', padding: '3px 10px', fontSize: '10.5px', color: '#fff' }}
+                            className="px-3 py-1 rounded-xl bg-amber-400 text-black font-bold text-[11px] hover:bg-amber-300 transition-all shadow-sm"
                           >
                             إدراج بقائمة التنازل
                           </button>
@@ -1131,15 +1151,15 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 </div>
 
                 {/* Not Willing to Work */}
-                <div className="p-5 bg-white rounded-3xl border border-rose-200 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between border-b border-rose-100 pb-3">
+                <div className="p-5 bg-[#14181c] rounded-2xl border border-rose-500/30 shadow-lg space-y-4">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <div className="flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5 text-rose-600" />
-                      <h3 className="text-sm font-bold text-rose-950 m-0">
+                      <AlertCircle className="w-5 h-5 text-rose-400" />
+                      <h3 className="text-sm font-bold text-white m-0">
                         النزيلات الرافضات للعمل (إحالة للوساطة أو الترحيل)
                       </h3>
                     </div>
-                    <span className="text-xs font-mono font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded-full">
                       {filteredInmates.filter((i) => i.work_willingness === 'لا ترغب بالعمل').length} نزيلة
                     </span>
                   </div>
@@ -1150,19 +1170,18 @@ export const ShelterSuitePortalPage: React.FC = () => {
                       .map((item) => (
                         <div
                           key={item.id}
-                          className="p-3.5 rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-between"
+                          className="p-3.5 rounded-xl border border-white/10 bg-black/40 flex items-center justify-between"
                         >
                           <div>
-                            <div className="font-bold text-zinc-950 text-xs">{item.maid_name}</div>
-                            <div className="text-[11px] text-zinc-500">
+                            <div className="font-bold text-white text-xs">{item.maid_name}</div>
+                            <div className="text-[11px] text-zinc-400">
                               {item.nationality} • جواز: {item.passport}
                             </div>
                           </div>
                           <button
                             type="button"
                             onClick={() => handleUpdateStatus(item, 'مرحلة الترحيل')}
-                            className="button-primary-pill"
-                            style={{ background: '#e11d48', padding: '3px 10px', fontSize: '10.5px', color: '#fff' }}
+                            className="px-3 py-1 rounded-xl bg-rose-600 text-white font-bold text-[11px] hover:bg-rose-500 transition-all shadow-sm"
                           >
                             جدولة للترحيل والسفر
                           </button>
@@ -1177,12 +1196,15 @@ export const ShelterSuitePortalPage: React.FC = () => {
           {/* =========================================================================
               DEPARTMENT 7: DEPORTATION & REPATRIATION
              ========================================================================= */}
+          {/* =========================================================================
+              DEPARTMENT 7: DEPORTATION & REPATRIATION
+             ========================================================================= */}
           {activeDepartment === 'deportation' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">وحدة الترحيل والمغادرة وتنسيق المطار</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">وحدة الترحيل والمغادرة وتنسيق المطار</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     إصدار تأشيرات الخروج النهائي، حجوزات التذاكر، تسليم الأمتعة، والتنسيق مع سائقي الحافلات للمطارات
                   </p>
                 </div>
@@ -1193,10 +1215,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 />
               </div>
 
-              <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
+              <div className="bg-[#14181c] rounded-2xl border border-white/10 shadow-lg overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-right text-xs text-zinc-700">
-                    <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                  <table className="w-full text-right text-xs text-zinc-300">
+                    <thead className="bg-black/60 text-zinc-400 font-bold border-b border-white/10">
                       <tr>
                         <th className="p-3">رقم السجل</th>
                         <th className="p-3">اسم النزيلة</th>
@@ -1209,18 +1231,18 @@ export const ShelterSuitePortalPage: React.FC = () => {
                         <th className="p-3 text-center">الإجراء</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-white/5">
                       {filteredInmates
                         .filter((i) => i.status === 'مرحلة الترحيل')
                         .map((item) => (
-                          <tr key={item.id} className="hover:bg-zinc-50">
-                            <td className="p-3 font-mono font-bold text-black">{item.id}</td>
-                            <td className="p-3 font-bold text-black">{item.maid_name}</td>
-                            <td className="p-3">{item.nationality}</td>
-                            <td className="p-3 font-mono text-zinc-600">{item.passport}</td>
-                            <td className="p-3 text-emerald-700 font-bold">صادرة ومسددة (أبشر)</td>
-                            <td className="p-3 font-mono text-zinc-800">SV-824 (مؤكد)</td>
-                            <td className="p-3">مطار الملك خالد الدولي (الرياض)</td>
+                          <tr key={item.id} className="hover:bg-white/5">
+                            <td className="p-3 font-mono font-bold text-amber-400">{item.id}</td>
+                            <td className="p-3 font-bold text-white">{item.maid_name}</td>
+                            <td className="p-3 text-zinc-300">{item.nationality}</td>
+                            <td className="p-3 font-mono text-zinc-400">{item.passport}</td>
+                            <td className="p-3 text-emerald-400 font-bold">صادرة ومسددة (أبشر)</td>
+                            <td className="p-3 font-mono text-zinc-300">SV-824 (مؤكد)</td>
+                            <td className="p-3 text-zinc-300">مطار الملك خالد الدولي (الرياض)</td>
                             <td className="p-3">
                               <Badge text="مرحلة الترحيل" type="danger" />
                             </td>
@@ -1228,8 +1250,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(item, 'تم الترحيل')}
-                                className="button-outline-on-light"
-                                style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                                className="px-2.5 py-1 rounded-lg border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-[11px] font-semibold transition-all"
                               >
                                 تأكيد المغادرة والترحيل
                               </button>
@@ -1248,9 +1269,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'branches' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm">
-                <h2 className="text-base font-bold text-zinc-900 m-0">شبكة فروع ومقرات مراكز الإيواء بالمملكة</h2>
-                <p className="text-xs text-zinc-500 m-0 mt-1">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg">
+                <h2 className="text-base font-bold text-white m-0">شبكة فروع ومقرات مراكز الإيواء بالمملكة</h2>
+                <p className="text-xs text-zinc-400 m-0 mt-1">
                   المراكز المعتمدة والمرخصة من وزارة الموارد البشرية للتسكين المؤقت والإعاشة لشركات المجموعة
                 </p>
               </div>
@@ -1298,37 +1319,37 @@ export const ShelterSuitePortalPage: React.FC = () => {
                     status: 'نشط وجاهز للاستقبال',
                   },
                 ].map((branch) => (
-                  <div key={branch.name} className="p-5 bg-white rounded-3xl border border-zinc-200 shadow-sm space-y-3">
+                  <div key={branch.name} className="p-5 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="text-sm font-bold text-zinc-950 m-0">{branch.name}</h3>
-                        <p className="text-xs text-zinc-500 m-0 mt-0.5">{branch.city}</p>
+                        <h3 className="text-sm font-bold text-white m-0">{branch.name}</h3>
+                        <p className="text-xs text-zinc-400 m-0 mt-0.5">{branch.city}</p>
                       </div>
                       <Badge text="مرخص ومعتمد" type="success" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-xs text-zinc-700 p-3 bg-zinc-50 rounded-2xl">
+                    <div className="grid grid-cols-2 gap-2 text-xs text-zinc-300 p-3 bg-black/40 rounded-xl border border-white/5">
                       <div>
-                        <span className="text-zinc-500 block text-[10.5px]">السعة القصوى:</span>
-                        <span className="font-bold text-zinc-950">{branch.capacity}</span>
+                        <span className="text-zinc-400 block text-[10.5px]">السعة القصوى:</span>
+                        <span className="font-bold text-white">{branch.capacity}</span>
                       </div>
                       <div>
-                        <span className="text-zinc-500 block text-[10.5px]">الإشغال الحالي:</span>
-                        <span className="font-bold text-emerald-800">{branch.current}</span>
+                        <span className="text-zinc-400 block text-[10.5px]">الإشغال الحالي:</span>
+                        <span className="font-bold text-emerald-400">{branch.current}</span>
                       </div>
                       <div>
-                        <span className="text-zinc-500 block text-[10.5px]">المشرف المسؤول:</span>
-                        <span className="font-bold text-zinc-900">{branch.manager}</span>
+                        <span className="text-zinc-400 block text-[10.5px]">المشرف المسؤول:</span>
+                        <span className="font-bold text-zinc-200">{branch.manager}</span>
                       </div>
                       <div>
-                        <span className="text-zinc-500 block text-[10.5px]">هاتف المركز:</span>
-                        <span className="font-mono text-zinc-800">{branch.phone}</span>
+                        <span className="text-zinc-400 block text-[10.5px]">هاتف المركز:</span>
+                        <span className="font-mono text-zinc-300">{branch.phone}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-zinc-100">
-                      <span>رقم الترخيص: <span className="font-mono">{branch.license}</span></span>
-                      <span className="text-emerald-700 font-bold">{branch.status}</span>
+                    <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-white/10">
+                      <span>رقم الترخيص: <span className="font-mono text-amber-400">{branch.license}</span></span>
+                      <span className="text-emerald-400 font-bold">{branch.status}</span>
                     </div>
                   </div>
                 ))}
@@ -1341,10 +1362,10 @@ export const ShelterSuitePortalPage: React.FC = () => {
              ========================================================================= */}
           {activeDepartment === 'compliance' && (
             <div className="space-y-6">
-              <div className="bg-white p-5 rounded-3xl border border-zinc-200 shadow-sm flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-[#14181c] p-5 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-base font-bold text-zinc-900 m-0">مركز الامتثال، التفتيش والتقارير الرسمية</h2>
-                  <p className="text-xs text-zinc-500 m-0 mt-1">
+                  <h2 className="text-base font-bold text-white m-0">مركز الامتثال، التفتيش والتقارير الرسمية</h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-1">
                     إصدار وتصدير السجلات المعتمدة لجولات التفتيش والرقابة بوزارة الموارد البشرية بـ 10 صيغ رسمية
                   </p>
                 </div>
@@ -1390,13 +1411,13 @@ export const ShelterSuitePortalPage: React.FC = () => {
                     status: 'محدث أسبوعياً',
                   },
                 ].map((card) => (
-                  <div key={card.title} className="p-5 bg-white rounded-3xl border border-zinc-200 shadow-sm space-y-3">
+                  <div key={card.title} className="p-5 bg-[#14181c] rounded-2xl border border-white/10 shadow-lg space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-zinc-950 text-xs">{card.title}</span>
+                      <span className="font-bold text-white text-xs">{card.title}</span>
                       <Badge text={card.status} type="success" />
                     </div>
-                    <p className="text-xs text-zinc-600 leading-relaxed m-0">{card.desc}</p>
-                    <div className="pt-2 border-t border-zinc-100 flex items-center justify-between">
+                    <p className="text-xs text-zinc-400 leading-relaxed m-0">{card.desc}</p>
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between">
                       <ExportDropdown
                         sectionKey="shelter"
                         data={filteredInmates}
@@ -1418,11 +1439,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
       {/* 1. Inmate Checkin Modal */}
       {showCheckinModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-[#14181c] rounded-2xl shadow-2xl border border-white/15 overflow-hidden text-zinc-100">
+            <div className="p-4 bg-[#182026] border-b border-white/10 text-white flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Hotel className="w-4 h-4 text-emerald-400" />
+                <Hotel className="w-4 h-4 text-amber-400" />
                 <h3 className="font-bold text-sm text-white m-0">تسكين نزيلة جديدة بمركز الإيواء</h3>
               </div>
               <button onClick={() => setShowCheckinModal(false)} className="text-zinc-400 hover:text-white">
@@ -1432,24 +1453,24 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
             <form onSubmit={handleCreateCheckin} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">اسم العاملة / النزيلة *</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1">اسم العاملة / النزيلة *</label>
                 <input
                   type="text"
                   required
                   placeholder="الاسم الرباعي للعاملة..."
                   value={checkinForm.maid_name}
                   onChange={(e) => setCheckinForm({ ...checkinForm, maid_name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">الجنسية *</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">الجنسية *</label>
                   <select
                     value={checkinForm.nationality}
                     onChange={(e) => setCheckinForm({ ...checkinForm, nationality: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   >
                     <option value="الفلبين">الفلبين</option>
                     <option value="إندونيسيا">إندونيسيا</option>
@@ -1460,24 +1481,24 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">رقم الجواز *</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">رقم الجواز *</label>
                   <input
                     type="text"
                     required
                     placeholder="مثال: PH982341..."
                     value={checkinForm.passport}
                     onChange={(e) => setCheckinForm({ ...checkinForm, passport: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">مركز / فرع الإيواء المحدد *</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1">مركز / فرع الإيواء المحدد *</label>
                 <select
                   value={checkinForm.shelter_location}
                   onChange={(e) => setCheckinForm({ ...checkinForm, shelter_location: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                 >
                   <option value="الرياض - المقر الرئيسي (حي الياسمين)">الرياض - المقر الرئيسي (حي الياسمين)</option>
                   <option value="جدة - مركز ترانزيت المطار">جدة - مركز ترانزيت المطار</option>
@@ -1488,11 +1509,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">الرغبة في العمل</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">الرغبة في العمل</label>
                   <select
                     value={checkinForm.work_willingness}
                     onChange={(e) => setCheckinForm({ ...checkinForm, work_willingness: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   >
                     <option value="ترغب بالعمل">ترغب بالعمل (متاح للتنازل)</option>
                     <option value="لا ترغب بالعمل">لا ترغب بالعمل (ترحيل)</option>
@@ -1500,30 +1521,28 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">اسم العميل / المستفيد</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">اسم العميل / المستفيد</label>
                   <input
                     type="text"
                     placeholder="اختياري..."
                     value={checkinForm.client_name}
                     onChange={(e) => setCheckinForm({ ...checkinForm, client_name: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowCheckinModal(false)}
-                  className="button-outline-on-light"
-                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                  className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold transition-all"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="button-primary-pill"
-                  style={{ background: '#10b981', borderColor: '#10b981', padding: '6px 16px', fontSize: '12px', color: '#fff' }}
+                  className="px-5 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all shadow-md shadow-amber-400/20"
                 >
                   تأكيد التسكين
                 </button>
@@ -1535,9 +1554,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
       {/* 2. Room Modal */}
       {showRoomModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#14181c] rounded-2xl shadow-2xl border border-white/15 overflow-hidden text-zinc-100">
+            <div className="p-4 bg-[#182026] border-b border-white/10 text-white flex items-center justify-between">
               <h3 className="font-bold text-sm text-white m-0">إضافة غرفة / مهجع إيواء جديد</h3>
               <button onClick={() => setShowRoomModal(false)} className="text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -1546,24 +1565,24 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
             <form onSubmit={handleCreateRoom} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">اسم الغرفة أو المهجع *</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1">اسم الغرفة أو المهجع *</label>
                 <input
                   type="text"
                   required
                   placeholder="مثال: جناح د - غرفة 401"
                   value={roomForm.room}
                   onChange={(e) => setRoomForm({ ...roomForm, room: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">عدد الأسرة *</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">عدد الأسرة *</label>
                   <select
                     value={roomForm.totalBeds}
                     onChange={(e) => setRoomForm({ ...roomForm, totalBeds: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   >
                     <option value="2">2 سرير</option>
                     <option value="4">4 أسرة</option>
@@ -1572,29 +1591,27 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">تخصيص النزيلات</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">تخصيص النزيلات</label>
                   <input
                     type="text"
                     value={roomForm.type}
                     onChange={(e) => setRoomForm({ ...roomForm, type: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowRoomModal(false)}
-                  className="button-outline-on-light"
-                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                  className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold transition-all"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="button-primary-pill"
-                  style={{ background: '#000000', padding: '6px 16px', fontSize: '12px', color: '#fff' }}
+                  className="px-5 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all shadow-md shadow-amber-400/20"
                 >
                   حفظ الغرفة
                 </button>
@@ -1606,9 +1623,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
       {/* 3. Meal Modal */}
       {showMealModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#14181c] rounded-2xl shadow-2xl border border-white/15 overflow-hidden text-zinc-100">
+            <div className="p-4 bg-[#182026] border-b border-white/10 text-white flex items-center justify-between">
               <h3 className="font-bold text-sm text-white m-0">تسجيل وجبة جماعية وإعاشة</h3>
               <button onClick={() => setShowMealModal(false)} className="text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -1618,11 +1635,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <form onSubmit={handleCreateMeal} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">نوع الوجبة</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">نوع الوجبة</label>
                   <select
                     value={mealForm.meal}
                     onChange={(e) => setMealForm({ ...mealForm, meal: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   >
                     <option value="وجبة إفطار">وجبة إفطار</option>
                     <option value="وجبة غداء">وجبة غداء</option>
@@ -1631,60 +1648,58 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">عدد الوجبات</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">عدد الوجبات</label>
                   <input
                     type="number"
                     value={mealForm.count}
                     onChange={(e) => setMealForm({ ...mealForm, count: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">المطعم / متعهد الإعاشة</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1">المطعم / متعهد الإعاشة</label>
                 <input
                   type="text"
                   value={mealForm.vendor}
                   onChange={(e) => setMealForm({ ...mealForm, vendor: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">التكلفة (ر.س)</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">التكلفة (ر.س)</label>
                   <input
                     type="number"
                     value={mealForm.cost}
                     onChange={(e) => setMealForm({ ...mealForm, cost: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">المشرف المستلم</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">المشرف المستلم</label>
                   <input
                     type="text"
                     value={mealForm.sup}
                     onChange={(e) => setMealForm({ ...mealForm, sup: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowMealModal(false)}
-                  className="button-outline-on-light"
-                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                  className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold transition-all"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="button-primary-pill"
-                  style={{ background: '#d97706', borderColor: '#d97706', padding: '6px 16px', fontSize: '12px', color: '#fff' }}
+                  className="px-5 py-2 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all shadow-md shadow-amber-400/20"
                 >
                   توثيق الوجبة
                 </button>
@@ -1696,9 +1711,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
       {/* 4. Clinic Modal */}
       {showClinicModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-zinc-950 text-white flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#14181c] rounded-2xl shadow-2xl border border-white/15 overflow-hidden text-zinc-100">
+            <div className="p-4 bg-[#182026] border-b border-white/10 text-white flex items-center justify-between">
               <h3 className="font-bold text-sm text-white m-0">تسجيل فحص طبي وكشف صحي</h3>
               <button onClick={() => setShowClinicModal(false)} className="text-zinc-400 hover:text-white">
                 <X className="w-5 h-5" />
@@ -1707,24 +1722,24 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
             <form onSubmit={handleCreateClinic} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">اسم النزيلة *</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1">اسم النزيلة *</label>
                 <input
                   type="text"
                   required
                   placeholder="اسم العاملة..."
                   value={clinicForm.inmate_name}
                   onChange={(e) => setClinicForm({ ...clinicForm, inmate_name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">نوع الكشف</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">نوع الكشف</label>
                   <select
                     value={clinicForm.check_type}
                     onChange={(e) => setClinicForm({ ...clinicForm, check_type: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   >
                     <option value="فحص وصول أولي">فحص وصول أولي</option>
                     <option value="متابعة دورية">متابعة دورية</option>
@@ -1733,11 +1748,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">النتيجة الطبية</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">النتيجة الطبية</label>
                   <select
                     value={clinicForm.result}
                     onChange={(e) => setClinicForm({ ...clinicForm, result: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-amber-400"
                   >
                     <option value="سليم ولائق صحياً">سليم ولائق صحياً</option>
                     <option value="يحتاج راحة وأدوية">يحتاج راحة وأدوية</option>
@@ -1749,48 +1764,46 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">الحرارة</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">الحرارة</label>
                   <input
                     type="text"
                     value={clinicForm.temperature}
                     onChange={(e) => setClinicForm({ ...clinicForm, temperature: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-700 mb-1">ضغط الدم</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1">ضغط الدم</label>
                   <input
                     type="text"
                     value={clinicForm.blood_pressure}
                     onChange={(e) => setClinicForm({ ...clinicForm, blood_pressure: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono focus:outline-none focus:border-black"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl py-2 px-3 text-xs text-white font-mono focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zinc-700 mb-1">ملاحظات الطبيب / الممرضة</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1">ملاحظات الطبيب / الممرضة</label>
                 <textarea
                   rows={2}
                   value={clinicForm.notes}
                   onChange={(e) => setClinicForm({ ...clinicForm, notes: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:outline-none focus:border-black"
+                  className="w-full bg-black/50 border border-white/15 rounded-2xl py-2 px-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                 />
               </div>
 
-              <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowClinicModal(false)}
-                  className="button-outline-on-light"
-                  style={{ padding: '6px 14px', fontSize: '12px' }}
+                  className="px-4 py-2 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold transition-all"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="button-primary-pill"
-                  style={{ background: '#e11d48', borderColor: '#e11d48', padding: '6px 16px', fontSize: '12px', color: '#fff' }}
+                  className="px-5 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-500 transition-all shadow-md shadow-rose-600/20"
                 >
                   حفظ التقرير الطبي
                 </button>

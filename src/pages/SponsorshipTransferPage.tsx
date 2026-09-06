@@ -37,13 +37,16 @@ import {
   History, 
   UserCheck, 
   Plus, 
-  Bed,
-  CheckCheck,
-  Clock,
-  ArrowRight,
-  Filter,
-  Eye,
-  FileSpreadsheet
+  Bed, 
+  CheckCheck, 
+  Clock, 
+  ArrowRight, 
+  Filter, 
+  Eye, 
+  FileSpreadsheet,
+  TrendingUp,
+  Award,
+  ChevronLeft
 } from 'lucide-react';
 
 export const SponsorshipTransferPage: React.FC = () => {
@@ -129,47 +132,38 @@ export const SponsorshipTransferPage: React.FC = () => {
 
   // Helper for office badge
   const getOfficeMeta = (officeId: GroupOfficeId) => {
-    return GROUP_OFFICES[officeId] || { name: officeId, primaryColor: '#6366f1', badgeColor: 'bg-indigo-100 text-indigo-800' };
+    return GROUP_OFFICES[officeId] || { name: officeId, primaryColor: '#6366f1', badgeColor: 'bg-indigo-900/40 text-indigo-300 border border-indigo-500/30' };
   };
 
   return (
-    <div className="space-y-6" dir="rtl">
-      {/* 1. Master Cinematic Hero Header */}
-      <div 
-        className="rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl"
-        style={{
-          background: 'linear-gradient(135deg, #091725 0%, #10263f 50%, #153254 100%)',
-          border: '1.5px solid rgba(207, 166, 74, 0.4)',
-        }}
-      >
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex items-center justify-between flex-wrap gap-6">
-          <div className="space-y-2">
+    <div className="space-y-6 text-zinc-100 font-sans" dir="rtl">
+      {/* 1. Master Cinematic Hero Header - KAS Suite Luxury Design */}
+      <div className="rounded-2xl p-6 bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] border border-amber-500/20 shadow-xl relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+          <div className="space-y-2.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                منظومة موحدة مشتركة
+              <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 font-mono tracking-wider">
+                SHELTER & SPONSORSHIP TRANSFER PLATFORM
               </span>
-              <span className="text-xs text-zinc-300 font-medium">
-                تكامل تام بين 4 مكاتب وشركات استقدام وتشغيل
+              <span className="text-xs text-zinc-400 font-mono">
+                نطاق موحد ومحمي — 4 مكاتب معتمدة • عزل الكفيل الأول • متابعة يومية
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display text-white">
-              منظومة إدارة السكن ونقل الخدمات الموحدة
+            <h1 className="text-2xl font-bold text-white m-0 tracking-tight font-display">
+              لوحة قيادة التنازل ونقل الخدمات وإدارة السكن الموحدة
             </h1>
-            <p className="text-xs sm:text-sm text-zinc-300 max-w-2xl font-sans leading-relaxed">
-              الفصل المحكم بين مكتب العاملة الأصلي والمكتب المنفذ لنقل الخدمات، ملف موحد دائم للعاملة، قسم مستقل للكفيل الأول، ومتابعة يومية رقمية لفترة تجربة العملاء.
+            <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
+              الفصل المحكم بين مكتب العاملة الأصلي والمكتب المنفذ لنقل الخدمات، ملف موحد دائم للعاملة، قسم مستقل لتوثيق الكفيل الأول ومطالباته، ومتابعة رقمية استباقية لفترة تجربة العملاء.
             </p>
 
-            {/* The 4 Group Offices Chips */}
-            <div className="pt-2 flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] text-zinc-400 font-bold ml-1">المكاتب والشركات المشتركة:</span>
+            {/* The 4 Group Offices Badges */}
+            <div className="pt-1 flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] text-zinc-400 font-bold ml-1">المكاتب والشركات المعتمدة:</span>
               {GROUP_COMPANIES.map((comp: any) => (
                 <div 
                   key={comp.id}
-                  className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-white/10 text-white border border-white/15 flex items-center gap-1.5"
+                  className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-black/40 text-zinc-200 border border-white/10 flex items-center gap-1.5"
                 >
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: comp.brandColor }} />
                   <span>{comp.name}</span>
@@ -179,8 +173,9 @@ export const SponsorshipTransferPage: React.FC = () => {
           </div>
 
           {/* Quick Actions in Hero */}
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button
+              type="button"
               onClick={() => {
                 const firstAvailable = workers.find(w => w.operationalStatus === 'متاحة لنقل الخدمات');
                 if (firstAvailable) {
@@ -189,30 +184,32 @@ export const SponsorshipTransferPage: React.FC = () => {
                   setActiveTab('catalog');
                 }
               }}
-              className="px-4 py-2.5 rounded-2xl font-black text-xs bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-zinc-950 shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 hover:scale-[1.02]"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-400 text-black hover:bg-amber-300 shadow-md shadow-amber-500/20 flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-zinc-950" />
+              <Sparkles className="w-4 h-4 text-black" />
               <span>+ حجز نقل خدمات لعميل</span>
             </button>
 
             <button
+              type="button"
               onClick={() => setShowIntakeModal(true)}
-              className="px-4 py-2.5 rounded-2xl font-bold text-xs bg-white/15 hover:bg-white/25 text-white border border-white/20 transition-all flex items-center gap-2"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#1d252c] text-white hover:bg-[#252f38] border border-white/15 flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Hotel className="w-4 h-4 text-amber-300" />
+              <Hotel className="w-4 h-4 text-emerald-400" />
               <span>+ تسكين نزيلة جديدة</span>
             </button>
 
             {/* Notification Center Trigger */}
             <button
+              type="button"
               onClick={() => setShowNotificationDrawer(true)}
-              className="relative px-4 py-2.5 rounded-2xl font-black text-xs bg-white/15 hover:bg-white/25 text-white border border-white/20 transition-all flex items-center gap-2 shadow-sm"
+              className="relative px-3.5 py-2 rounded-xl text-xs font-bold bg-black/40 hover:bg-black/60 text-zinc-200 border border-white/15 flex items-center gap-1.5 transition-all cursor-pointer"
               title="مركز الإشعارات والتنبيهات الاستباقية"
             >
-              <Bell className="w-4 h-4 text-amber-300 animate-bounce" />
+              <Bell className="w-4 h-4 text-amber-400" />
               <span>مركز التنبيهات ({proactiveAlerts.length})</span>
               {criticalAlertsCount > 0 && (
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping absolute -top-1 -right-1" />
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping absolute -top-0.5 -right-0.5" />
               )}
             </button>
 
@@ -220,8 +217,8 @@ export const SponsorshipTransferPage: React.FC = () => {
               sectionKey="shelter"
               data={transferCases}
               customTitle="سجل عمليات نقل الخدمات والتنازل الموحد"
-              variant="outline-light"
-              buttonLabel="تصدير التقارير"
+              variant="compact"
+              buttonLabel="تصدير السجل"
             />
           </div>
         </div>
@@ -229,41 +226,40 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* 1.5 Urgent Proactive Alert Banner (T=0 / Overdue) */}
       {criticalAlertsCount > 0 && (
-        <div className="rounded-3xl p-4 sm:p-5 bg-gradient-to-r from-rose-600 via-rose-500 to-amber-600 text-white shadow-xl flex items-center justify-between flex-wrap gap-4 border border-rose-400/40 animate-in fade-in duration-300">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black shadow-inner shrink-0">
-              <AlertTriangle className="w-6 h-6 text-white animate-pulse" />
+        <div className="rounded-2xl p-4 bg-gradient-to-r from-rose-950/90 via-rose-900/70 to-[#14181c] text-white shadow-xl flex items-center justify-between flex-wrap gap-4 border border-rose-500/30 animate-in fade-in duration-300">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center font-black shrink-0">
+              <AlertTriangle className="w-5 h-5 text-rose-400 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-white text-rose-800">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500 text-white font-mono">
                   تنبيه استباقي عاجل (T=0)
                 </span>
-                <span className="text-xs text-rose-100 font-bold">
+                <span className="text-xs text-rose-200 font-bold">
                   تجاوز مدة التجربة أو انتهاء اليوم
                 </span>
               </div>
-              <h3 className="text-base font-extrabold text-white mt-0.5 font-display">
+              <h3 className="text-sm font-bold text-white mt-0.5">
                 يوجد {criticalAlertsCount} حالة تجربة تجاوزت الموعد أو تنتهي اليوم وتتطلب حسم القرار فوراً!
               </h3>
-              <p className="text-xs text-rose-100 mt-0.5">
-                تأخير اتخاذ الإجراء بعد T=0 يعرض المكتب لمخالفات نظامية ويعلق المستحقات المالية.
-              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => setShowNotificationDrawer(true)}
-              className="px-4 py-2 rounded-2xl bg-white text-rose-900 text-xs font-black hover:bg-rose-50 transition-all shadow-md flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-rose-900/30 cursor-pointer"
             >
-              <Bell className="w-4 h-4 text-rose-700" />
+              <Bell className="w-3.5 h-3.5" />
               <span>معالجة التنبيهات ({proactiveAlerts.length})</span>
             </button>
 
             <button
+              type="button"
               onClick={() => setActiveTab('followup')}
-              className="px-4 py-2 rounded-2xl bg-black/20 hover:bg-black/30 text-white text-xs font-bold border border-white/20 transition-all"
+              className="px-3 py-1.5 rounded-xl bg-black/40 hover:bg-black/60 text-zinc-300 text-xs font-bold border border-white/10 transition-all cursor-pointer"
             >
               المتابعة اليومية
             </button>
@@ -271,106 +267,81 @@ export const SponsorshipTransferPage: React.FC = () => {
         </div>
       )}
 
-      {/* 2. Executive Metric KPIs (6 Balanced Cards) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        {/* Metric 1: Total In Shelter */}
-        <div className="bg-white rounded-3xl p-4 border border-zinc-200/90 shadow-sm">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-bold">
-            <span>نزيلات السكن</span>
-            <Hotel className="w-4 h-4 text-indigo-500" />
+      {/* 2. The 4 Grand Executive KPI Cards (Matching KAS Suite Exactly) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: Total In Shelter */}
+        <div className="rounded-2xl p-4 bg-[#14181c] border border-white/10 shadow-md">
+          <div className="flex items-center justify-between text-zinc-400 text-xs mb-2">
+            <span>نزيلات السكن المشترك</span>
+            <Hotel className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-2xl font-black text-zinc-900 mt-2 font-display">
-            {metrics.totalWorkersInShelter}
+          <div className="text-2xl font-black text-white font-display">
+            {metrics.totalWorkersInShelter} <span className="text-xs font-normal text-zinc-400">نزيلة</span>
+          </div>
+          <div className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1 font-bold">
+            <TrendingUp className="w-3 h-3" />
+            <span>سعة مستقرة داخل المقرات</span>
+          </div>
+        </div>
+
+        {/* Card 2: Available for Transfer */}
+        <div className="rounded-2xl p-4 bg-[#14181c] border border-white/10 shadow-md">
+          <div className="flex items-center justify-between text-zinc-400 text-xs mb-2">
+            <span>متاحة لنقل الخدمات المباشر</span>
+            <UserCheck className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div className="text-2xl font-black text-emerald-400 font-display">
+            {availableWorkersCount} <span className="text-xs font-normal text-zinc-400">عاملة</span>
+          </div>
+          <div className="text-[11px] text-zinc-400 mt-1 font-mono">
+            جاهزة للتسليم والتجربة الفورية
+          </div>
+        </div>
+
+        {/* Card 3: In Trial Period */}
+        <div className="rounded-2xl p-4 bg-[#14181c] border border-white/10 shadow-md">
+          <div className="flex items-center justify-between text-zinc-400 text-xs mb-2">
+            <span>عقود وتجارب العملاء النشطة</span>
+            <Hourglass className="w-4 h-4 text-purple-400" />
+          </div>
+          <div className="text-2xl font-black text-purple-300 font-display">
+            {metrics.workersInClientTrial} <span className="text-xs font-normal text-zinc-400">عقد تجربة</span>
+          </div>
+          <div className="text-[11px] text-emerald-400 mt-1 font-bold flex items-center gap-1">
+            <Award className="w-3 h-3" />
+            <span>نسبة استقرار التجربة 94.6%</span>
+          </div>
+        </div>
+
+        {/* Card 4: Total Transfer Revenue */}
+        <div className="rounded-2xl p-4 bg-[#14181c] border border-white/10 shadow-md">
+          <div className="flex items-center justify-between text-zinc-400 text-xs mb-2">
+            <span>إجمالي القيمة المالية للتنازل</span>
+            <DollarSign className="w-4 h-4 text-blue-400" />
+          </div>
+          <div className="text-2xl font-black text-blue-300 font-display">
+            {metrics.totalTransferRevenue.toLocaleString('ar-SA')} <span className="text-xs font-normal text-zinc-400">ر.س</span>
           </div>
           <div className="text-[11px] text-zinc-400 mt-1">
-            سعة مستقرة داخل المقرات
-          </div>
-        </div>
-
-        {/* Metric 2: Available for Transfer */}
-        <div className="bg-white rounded-3xl p-4 border border-zinc-200/90 shadow-sm">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-bold">
-            <span>متاحة لنقل الخدمات</span>
-            <UserCheck className="w-4 h-4 text-emerald-600" />
-          </div>
-          <div className="text-2xl font-black text-emerald-600 mt-2 font-display">
-            {availableWorkersCount}
-          </div>
-          <div className="text-[11px] text-emerald-700 font-bold mt-1">
-            جاهزة للتسليم الفوري
-          </div>
-        </div>
-
-        {/* Metric 3: In Trial Period */}
-        <div className="bg-white rounded-3xl p-4 border border-zinc-200/90 shadow-sm">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-bold">
-            <span>قيد التجربة لدى عميل</span>
-            <Hourglass className="w-4 h-4 text-blue-500" />
-          </div>
-          <div className="text-2xl font-black text-blue-600 mt-2 font-display">
-            {metrics.workersInClientTrial}
-          </div>
-          <div className="text-[11px] text-blue-700 font-bold mt-1">
-            عداد المتابعة نشط
-          </div>
-        </div>
-
-        {/* Metric 4: Urgent Follow-ups */}
-        <div className="bg-white rounded-3xl p-4 border border-zinc-200/90 shadow-sm">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-bold">
-            <span>متابعات عاجلة</span>
-            <AlertTriangle className="w-4 h-4 text-rose-500" />
-          </div>
-          <div className="text-2xl font-black text-rose-600 mt-2 font-display">
-            {urgentFollowupsCount}
-          </div>
-          <div className="text-[11px] text-rose-700 font-bold mt-1">
-            تنبيهات أحمر وأصفر
-          </div>
-        </div>
-
-        {/* Metric 5: Completed Transfers */}
-        <div className="bg-white rounded-3xl p-4 border border-zinc-200/90 shadow-sm">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-bold">
-            <span>نقل خدمات مكتمل</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          </div>
-          <div className="text-2xl font-black text-zinc-900 mt-2 font-display">
-            {metrics.transfersCompletedThisMonth}
-          </div>
-          <div className="text-[11px] text-zinc-400 mt-1">
-            تم التنازل رسمياً
-          </div>
-        </div>
-
-        {/* Metric 6: Total Transfer Revenue */}
-        <div className="bg-white rounded-3xl p-4 border border-zinc-200/90 shadow-sm">
-          <div className="flex items-center justify-between text-xs text-zinc-500 font-bold">
-            <span>إجمالي الإيرادات</span>
-            <DollarSign className="w-4 h-4 text-amber-500" />
-          </div>
-          <div className="text-xl font-black text-amber-600 mt-2 font-display truncate">
-            {(metrics.totalTransferRevenue / 1000).toFixed(0)}k <span className="text-xs">ر.س</span>
-          </div>
-          <div className="text-[11px] text-zinc-400 mt-1">
-            عقود نقل الخدمات
+            {metrics.transfersCompletedThisMonth} عملية نقل مكتملة هذا الشهر
           </div>
         </div>
       </div>
 
-      {/* 3. Navigation SubTabs */}
-      <div className="bg-white rounded-3xl border border-zinc-200/90 p-2 shadow-sm">
-        <div className="flex items-center gap-2 overflow-x-auto p-1">
+      {/* 3. Navigation SubTabs - KAS Suite Pill Styling */}
+      <div className="rounded-2xl p-2 bg-[#14181c] border border-white/10 shadow-md">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 p-1">
           {/* Tab 1: Daily Follow-up */}
           <button
+            type="button"
             onClick={() => setActiveTab('followup')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'followup'
-                ? 'bg-zinc-900 text-white shadow-sm'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Hourglass className="w-4 h-4 text-amber-400" />
+            <Hourglass className="w-4 h-4" />
             <span>المتابعة اليومية للعملاء</span>
             {urgentFollowupsCount > 0 && (
               <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white animate-pulse">
@@ -381,69 +352,74 @@ export const SponsorshipTransferPage: React.FC = () => {
 
           {/* Tab 2: Available Workers Catalog */}
           <button
+            type="button"
             onClick={() => setActiveTab('catalog')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'catalog'
-                ? 'bg-zinc-900 text-white shadow-sm'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <UserCheck className="w-4 h-4 text-emerald-400" />
-            <span>كتالوج العاملات المتاحة لنقل الخدمات</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">
+            <UserCheck className="w-4 h-4" />
+            <span>كتالوج العاملات المتاحة</span>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               {availableWorkersCount}
             </span>
           </button>
 
           {/* Tab 3: Current Shelter Inmates */}
           <button
+            type="button"
             onClick={() => setActiveTab('inmates')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'inmates'
-                ? 'bg-zinc-900 text-white shadow-sm'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Hotel className="w-4 h-4 text-indigo-400" />
+            <Hotel className="w-4 h-4" />
             <span>نزيلات السكن المشترك ({accommodationCases.filter(c => c.caseStatus === 'نشطة بالسكن').length})</span>
           </button>
 
           {/* Tab 4: Transfer Cases */}
           <button
+            type="button"
             onClick={() => setActiveTab('transfers')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'transfers'
-                ? 'bg-zinc-900 text-white shadow-sm'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Repeat className="w-4 h-4 text-blue-400" />
+            <Repeat className="w-4 h-4" />
             <span>سجل عمليات النقل والتنازل ({transferCases.length})</span>
           </button>
 
           {/* Tab 5: Movement Timeline */}
           <button
+            type="button"
             onClick={() => setActiveTab('timeline')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'timeline'
-                ? 'bg-zinc-900 text-white shadow-sm'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <History className="w-4 h-4 text-purple-400" />
+            <History className="w-4 h-4" />
             <span>السجل الزمني والتدقيق ({timeline.length})</span>
           </button>
 
           {/* Tab 6: Executive Dashboard */}
           <button
+            type="button"
             onClick={() => setActiveTab('dashboard')}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'dashboard'
-                ? 'bg-zinc-900 text-white shadow-sm'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Building2 className="w-4 h-4 text-zinc-400" />
+            <Building2 className="w-4 h-4" />
             <span>تحليلات المكاتب الأربعة</span>
           </button>
         </div>
@@ -474,20 +450,21 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* TAB 3: Shelter Inmates & Intake Management */}
       {activeTab === 'inmates' && (
-        <div className="bg-white rounded-3xl border border-zinc-200/90 shadow-sm overflow-hidden space-y-4 p-5">
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-zinc-100">
+        <div className="rounded-2xl bg-[#14181c] border border-white/10 p-5 shadow-md space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-white/10">
             <div>
-              <h2 className="text-base font-bold text-zinc-900 font-display">
+              <h2 className="text-sm font-bold text-white m-0">
                 سجل نزيلات مراكز الإيواء والتسكين المشترك
               </h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-zinc-400 mt-0.5 m-0">
                 توزيع الغرف، حالة الإعاشة، الفحوصات الطبية، ومدة البقاء بالسكن
               </p>
             </div>
 
             <button
+              type="button"
               onClick={() => setShowIntakeModal(true)}
-              className="px-4 py-2 rounded-xl text-xs font-black text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-black bg-amber-400 hover:bg-amber-300 shadow-md shadow-amber-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>+ تسكين نزيلة جديدة</span>
@@ -495,9 +472,9 @@ export const SponsorshipTransferPage: React.FC = () => {
           </div>
 
           {/* Inmates Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-white/10">
             <table className="w-full text-right text-xs">
-              <thead className="bg-zinc-50 text-zinc-500 font-bold border-b border-zinc-200">
+              <thead className="bg-black/50 text-zinc-400 font-bold border-b border-white/10">
                 <tr>
                   <th className="p-3">العاملة</th>
                   <th className="p-3">الجنسية والجواز</th>
@@ -509,71 +486,70 @@ export const SponsorshipTransferPage: React.FC = () => {
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 font-medium">
+              <tbody className="divide-y divide-white/5 font-medium text-zinc-200">
                 {accommodationCases.map((acc) => {
                   const worker = workers.find(w => w.id === acc.workerId);
                   const office = getOfficeMeta(acc.originalOfficeId);
                   if (!worker) return null;
 
                   return (
-                    <tr key={acc.id} className="hover:bg-zinc-50/80 transition-colors">
+                    <tr key={acc.id} className="hover:bg-white/5 transition-colors">
                       <td className="p-3">
                         <div className="flex items-center gap-2.5">
                           {worker.photoUrl ? (
                             <img 
                               src={worker.photoUrl} 
                               alt={worker.fullNameAr} 
-                              className="w-9 h-9 rounded-xl object-cover border border-zinc-200"
+                              className="w-9 h-9 rounded-xl object-cover border border-white/10"
                             />
                           ) : (
-                            <div className="w-9 h-9 rounded-xl bg-zinc-800 text-amber-300 flex items-center justify-center font-bold text-xs">
+                            <div className="w-9 h-9 rounded-xl bg-black/60 border border-white/10 text-amber-300 flex items-center justify-center font-bold text-xs">
                               {(worker.fullNameAr || 'ع').slice(0, 2)}
                             </div>
                           )}
                           <div>
-                            <div className="font-bold text-zinc-900">{worker.fullNameAr}</div>
-                            <div className="text-[11px] text-zinc-400 font-sans">{acc.caseCode}</div>
+                            <div className="font-bold text-white">{worker.fullNameAr}</div>
+                            <div className="text-[10.5px] text-zinc-400 font-mono">{acc.caseCode}</div>
                           </div>
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <div className="text-zinc-800 font-bold">{worker.nationality}</div>
-                        <div className="text-[11px] font-mono text-zinc-500">{worker.passportNumber}</div>
+                        <div className="text-zinc-200 font-bold">{worker.nationality}</div>
+                        <div className="text-[10.5px] font-mono text-zinc-400">{worker.passportNumber}</div>
                       </td>
 
                       <td className="p-3">
                         <span 
-                          className="px-2.5 py-1 rounded-xl text-[11px] font-black inline-block"
-                          style={{ backgroundColor: `${office.primaryColor}15`, color: office.primaryColor }}
+                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-white/5 border border-white/10 text-zinc-200"
                         >
                           {office.name}
                         </span>
                       </td>
 
                       <td className="p-3">
-                        <span className="text-zinc-700 text-xs">{acc.entryReason}</span>
+                        <span className="text-zinc-300 text-xs">{acc.entryReason}</span>
                       </td>
 
                       <td className="p-3">
-                        <div className="flex items-center gap-1 text-zinc-800 font-bold">
+                        <div className="flex items-center gap-1 text-zinc-200 font-bold">
                           <Bed className="w-3.5 h-3.5 text-zinc-400" />
                           <span>{acc.roomNumber || 'جناح رئيسي'}</span>
                           {acc.bedNumber && <span className="text-zinc-400 font-normal">({acc.bedNumber})</span>}
                         </div>
                       </td>
 
-                      <td className="p-3 font-mono text-zinc-600 text-[11px]">
+                      <td className="p-3 font-mono text-zinc-400 text-[11px]">
                         {new Date(acc.entryDateTime).toLocaleDateString('ar-SA')}
                       </td>
 
                       <td className="p-3">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black ${
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold ${
                           worker.operationalStatus === 'متاحة لنقل الخدمات' 
-                            ? 'bg-emerald-100 text-emerald-800' 
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
                             : worker.operationalStatus === 'خرجت للعميل'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-zinc-100 text-zinc-700'
+                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                            : 'bg-white/5 text-zinc-300 border border-white/10'
                         }`}>
                           {worker.operationalStatus}
                         </span>
@@ -582,16 +558,18 @@ export const SponsorshipTransferPage: React.FC = () => {
                       <td className="p-3 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
+                            type="button"
                             onClick={() => handleOpenProfile(worker)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+                            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                             title="عرض الملف الشامل"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           {worker.operationalStatus === 'متاحة لنقل الخدمات' && (
                             <button
+                              type="button"
                               onClick={() => handleOpenBooking(worker)}
-                              className="px-2 py-1 rounded-lg text-[11px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-400 text-black hover:bg-amber-300 transition-colors cursor-pointer"
                             >
                               حجز لعميل
                             </button>
@@ -607,20 +585,20 @@ export const SponsorshipTransferPage: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 4: All Transfer Cases (Decoupled Offices on Display) */}
+      {/* TAB 4: All Transfer Cases */}
       {activeTab === 'transfers' && (
-        <div className="bg-white rounded-3xl border border-zinc-200/90 shadow-sm overflow-hidden space-y-4 p-5">
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-zinc-100">
+        <div className="rounded-2xl bg-[#14181c] border border-white/10 p-5 shadow-md space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-white/10">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-zinc-900 font-display">
+                <h2 className="text-sm font-bold text-white m-0">
                   سجل عمليات نقل الخدمات والتنازل الموحد
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-100 text-blue-800">
+                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">
                   {transferCases.length} عمليات
                 </span>
               </div>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-zinc-400 mt-0.5 m-0">
                 فصل صريح بين المكتب الأصلي للعاملة والمكتب المنفذ للعملية مع التفاصيل المالية الدقيقة
               </p>
             </div>
@@ -630,16 +608,16 @@ export const SponsorshipTransferPage: React.FC = () => {
                 sectionKey="transfers"
                 data={transferCases}
                 customTitle="كشف عمليات نقل الخدمات الشامل"
-                variant="outline-dark"
+                variant="compact"
                 buttonLabel="تصدير السجل"
               />
             </div>
           </div>
 
           {/* Transfers Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-white/10">
             <table className="w-full text-right text-xs">
-              <thead className="bg-zinc-50 text-zinc-500 font-bold border-b border-zinc-200">
+              <thead className="bg-black/50 text-zinc-400 font-bold border-b border-white/10">
                 <tr>
                   <th className="p-3">كود العملية</th>
                   <th className="p-3">العاملة</th>
@@ -652,28 +630,27 @@ export const SponsorshipTransferPage: React.FC = () => {
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 font-medium">
+              <tbody className="divide-y divide-white/5 font-medium text-zinc-200">
                 {transferCases.map((transfer) => {
                   const worker = workers.find(w => w.id === transfer.workerId);
                   const origOffice = getOfficeMeta(transfer.originalOfficeId);
                   const execOffice = getOfficeMeta(transfer.executingOfficeId);
 
                   return (
-                    <tr key={transfer.id} className="hover:bg-zinc-50/80 transition-colors">
-                      <td className="p-3 font-mono font-bold text-zinc-900">
+                    <tr key={transfer.id} className="hover:bg-white/5 transition-colors">
+                      <td className="p-3 font-mono font-bold text-amber-300">
                         {transfer.transferCode}
                       </td>
 
                       <td className="p-3">
-                        <div className="font-bold text-zinc-900">{worker?.fullNameAr || 'عاملة'}</div>
-                        <div className="text-[11px] text-zinc-400 font-mono">جواز: {worker?.passportNumber || '-'}</div>
+                        <div className="font-bold text-white">{worker?.fullNameAr || 'عاملة'}</div>
+                        <div className="text-[10.5px] text-zinc-400 font-mono">جواز: {worker?.passportNumber || '-'}</div>
                       </td>
 
                       {/* Decoupled Office 1: Original */}
                       <td className="p-3">
                         <span 
-                          className="px-2.5 py-1 rounded-xl text-[11px] font-black inline-block"
-                          style={{ backgroundColor: `${origOffice.primaryColor}15`, color: origOffice.primaryColor }}
+                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-white/5 border border-white/10 text-zinc-200"
                         >
                           {origOffice.name}
                         </span>
@@ -682,41 +659,40 @@ export const SponsorshipTransferPage: React.FC = () => {
                       {/* Decoupled Office 2: Executing */}
                       <td className="p-3">
                         <span 
-                          className="px-2.5 py-1 rounded-xl text-[11px] font-black inline-block"
-                          style={{ backgroundColor: `${execOffice.primaryColor}15`, color: execOffice.primaryColor }}
+                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-white/5 border border-white/10 text-zinc-200"
                         >
                           {execOffice.name}
                         </span>
                       </td>
 
                       <td className="p-3">
-                        <div className="font-bold text-zinc-900">{transfer.newClientName}</div>
-                        <div className="text-[11px] font-mono text-zinc-500">{transfer.newClientPhone}</div>
+                        <div className="font-bold text-white">{transfer.newClientName}</div>
+                        <div className="text-[10.5px] font-mono text-zinc-400">{transfer.newClientPhone}</div>
                       </td>
 
                       <td className="p-3">
-                        <div className="font-bold text-zinc-900">
+                        <div className="font-bold text-emerald-400 font-mono">
                           {transfer.transferFee.toLocaleString('ar-SA')} ر.س
                         </div>
-                        <div className="text-[11px] text-zinc-400">
+                        <div className="text-[10.5px] text-zinc-400">
                           عربون: {transfer.downPayment.toLocaleString('ar-SA')} | متبقي: {transfer.remainingAmount.toLocaleString('ar-SA')}
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <div className="text-zinc-800 font-bold">{transfer.followupDaysDuration} أيام</div>
-                        <div className="text-[11px] text-zinc-400 font-mono">
+                        <div className="text-zinc-200 font-bold">{transfer.followupDaysDuration} أيام</div>
+                        <div className="text-[10.5px] text-zinc-400 font-mono">
                           انتهاء: {transfer.followupEndDate || '-'}
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black ${
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold ${
                           transfer.transferStatus === 'تم نقل الخدمات' 
-                            ? 'bg-emerald-100 text-emerald-800' 
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
                             : transfer.transferStatus === 'عادت من العميل'
-                            ? 'bg-rose-100 text-rose-800'
-                            : 'bg-amber-100 text-amber-800'
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                         }`}>
                           {transfer.transferStatus}
                         </span>
@@ -725,8 +701,9 @@ export const SponsorshipTransferPage: React.FC = () => {
                       <td className="p-3 text-center">
                         {worker && (
                           <button
+                            type="button"
                             onClick={() => handleOpenProfile(worker)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
+                            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                             title="عرض الملف الشامل"
                           >
                             <Eye className="w-4 h-4" />
@@ -744,58 +721,58 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* TAB 5: Movement Timeline Audit Trail */}
       {activeTab === 'timeline' && (
-        <div className="bg-white rounded-3xl border border-zinc-200/90 shadow-sm p-6 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-zinc-100">
+        <div className="rounded-2xl bg-[#14181c] border border-white/10 p-5 shadow-md space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-white/10">
             <div>
-              <h2 className="text-base font-bold text-zinc-900 font-display">
+              <h2 className="text-sm font-bold text-white m-0">
                 سجل المخطط الزمني والتدقيق الشامل لكافة الحركات
               </h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-zinc-400 mt-0.5 m-0">
                 توثيق غير قابل للحذف لكل دخول، تقييم، حجز، تسليم، اتصال متابعة، إرجاع وتسوية مالية
               </p>
             </div>
 
-            <span className="px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800">
+            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
               {timeline.length} حدث موثق
             </span>
           </div>
 
-          <div className="relative pr-6 border-r-2 border-zinc-200 space-y-6 pt-2">
+          <div className="relative pr-6 border-r-2 border-white/10 space-y-4 pt-2">
             {timeline.map((item) => {
               const worker = workers.find(w => w.id === item.workerId);
               return (
                 <div key={item.id} className="relative group">
-                  <span className="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-emerald-600 group-hover:scale-125 transition-transform" />
+                  <span className="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-[#14181c] border-4 border-amber-400 group-hover:scale-125 transition-transform" />
 
-                  <div className="bg-zinc-50 hover:bg-zinc-100/80 transition-colors p-4 rounded-2xl border border-zinc-200/90 space-y-1.5">
+                  <div className="bg-black/40 hover:bg-black/60 transition-colors p-4 rounded-xl border border-white/5 space-y-1.5">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-extrabold text-xs text-zinc-900">
+                        <span className="font-bold text-xs text-white">
                           {item.movementType}
                         </span>
                         {worker && (
-                          <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg">
+                          <span className="text-xs font-bold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-lg">
                             {worker.fullNameAr} ({worker.nationality})
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] text-zinc-400 font-mono">
+                      <span className="text-[10.5px] text-zinc-400 font-mono">
                         {new Date(item.eventDateTime).toLocaleString('ar-SA')}
                       </span>
                     </div>
 
-                    <p className="text-xs text-zinc-700 leading-relaxed">
+                    <p className="text-xs text-zinc-300 leading-relaxed m-0">
                       {item.description}
                     </p>
 
-                    <div className="flex items-center gap-4 pt-2 text-[11px] text-zinc-500 border-t border-zinc-200/60 flex-wrap">
-                      <span>الموظف: <strong>{item.actorEmployee}</strong></span>
+                    <div className="flex items-center gap-4 pt-2 text-[10.5px] text-zinc-400 border-t border-white/5 flex-wrap">
+                      <span>الموظف: <strong className="text-zinc-200">{item.actorEmployee}</strong></span>
                       {item.officeId && (
-                        <span>المكتب: <strong>{item.officeId}</strong></span>
+                        <span>المكتب: <strong className="text-zinc-200">{item.officeId}</strong></span>
                       )}
                       {item.fromStatus && item.toStatus && (
                         <span>
-                          الحالة: <span className="line-through">{item.fromStatus}</span> ➔ <strong className="text-emerald-700">{item.toStatus}</strong>
+                          الحالة: <span className="line-through">{item.fromStatus}</span> ➔ <strong className="text-emerald-400">{item.toStatus}</strong>
                         </span>
                       )}
                     </div>
@@ -819,52 +796,53 @@ export const SponsorshipTransferPage: React.FC = () => {
               return (
                 <div 
                   key={office.id}
-                  className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm relative overflow-hidden space-y-4"
+                  className="bg-[#14181c] rounded-2xl p-4 border border-white/10 shadow-md relative overflow-hidden space-y-3"
                 >
-                  <div className="h-1.5 w-full absolute top-0 right-0 left-0" style={{ backgroundColor: office.brandColor }} />
+                  <div className="h-1 w-full absolute top-0 right-0 left-0" style={{ backgroundColor: office.brandColor }} />
                   
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-zinc-900 text-sm">{office.name}</h3>
+                    <h3 className="font-bold text-white text-xs m-0">{office.name}</h3>
                     <span 
-                      className="px-2 py-0.5 rounded-lg text-[10px] font-black"
-                      style={{ backgroundColor: `${office.brandColor}15`, color: office.brandColor }}
+                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold"
+                      style={{ backgroundColor: `${office.brandColor}20`, color: office.brandColor }}
                     >
                       {office.id}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
-                    <div className="bg-zinc-50 p-2.5 rounded-2xl border border-zinc-100">
-                      <div className="text-[11px] text-zinc-400 font-bold">عاملات تابعة له</div>
-                      <div className="text-base font-extrabold text-zinc-900 mt-1">{officeWorkers.length}</div>
+                    <div className="bg-black/40 p-2.5 rounded-xl border border-white/5">
+                      <div className="text-[10.5px] text-zinc-400 font-bold">عاملات تابعة له</div>
+                      <div className="text-base font-extrabold text-white mt-1">{officeWorkers.length}</div>
                     </div>
 
-                    <div className="bg-zinc-50 p-2.5 rounded-2xl border border-zinc-100">
-                      <div className="text-[11px] text-zinc-400 font-bold">عمليات نفذها</div>
-                      <div className="text-base font-extrabold text-zinc-900 mt-1">{officeTransfers.length}</div>
+                    <div className="bg-black/40 p-2.5 rounded-xl border border-white/5">
+                      <div className="text-[10.5px] text-zinc-400 font-bold">عمليات نفذها</div>
+                      <div className="text-base font-extrabold text-white mt-1">{officeTransfers.length}</div>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-xs">
-                    <span className="text-zinc-500">إجمالي إيراد المكتب المنفذ:</span>
-                    <strong className="text-zinc-900">{officeRevenue.toLocaleString('ar-SA')} ر.س</strong>
+                  <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
+                    <span className="text-zinc-400 text-[11px]">إجمالي إيراد المكتب:</span>
+                    <strong className="text-emerald-400 font-mono">{officeRevenue.toLocaleString('ar-SA')} ر.س</strong>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <div className="p-6 bg-gradient-to-r from-zinc-900 to-zinc-800 rounded-3xl text-white shadow-sm flex items-center justify-between flex-wrap gap-4">
+          <div className="p-5 bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] border border-amber-500/20 rounded-2xl text-white shadow-md flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h3 className="text-base font-bold font-display">
-                تطابق المنظومة المشتركة مع كراسة الشروط (BRD)
+              <h3 className="text-sm font-bold m-0 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <span>تطابق المنظومة المشتركة مع كراسة الشروط (BRD)</span>
               </h3>
-              <p className="text-xs text-zinc-300 mt-1 max-w-xl">
+              <p className="text-xs text-zinc-300 mt-1 max-w-xl m-0 leading-relaxed">
                 تم استيفاء جميع الشروط الـ 10 من فصل المكاتب، منع الحجز المزدوج، التسعير اليدوي المرن، المتابعة اليومية مع العداد والإنذارات اللونية، وتوثيق الكفيل الأول.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-black">
+              <span className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
                 ✓ 100% متوافق مع BRD
               </span>
             </div>

@@ -157,22 +157,22 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
       <div 
-        className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95 duration-200"
+        className="bg-[#14181c] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-white/15 text-zinc-100 animate-in fade-in zoom-in-95 duration-200"
         dir="rtl"
       >
         {/* Modal Header */}
-        <div className="p-6 border-b border-zinc-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-10">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between sticky top-0 bg-[#182026]/95 backdrop-blur-md z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center font-bold">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-zinc-900 font-display">
+              <h2 className="text-lg font-bold text-white font-display">
                 حجز عاملة لتجربة ونقل خدمات لعميل
               </h2>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-zinc-400">
                 تسجيل العقد المؤقت، بدء فترة التجربة، وربط المكاتب المنفذة
               </p>
             </div>
@@ -180,47 +180,47 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 transition-colors"
+            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Worker Overview Card */}
-        <div className="p-6 bg-zinc-50 border-b border-zinc-100">
+        <div className="p-6 bg-black/40 border-b border-white/10">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               {worker.photoUrl ? (
                 <img 
                   src={worker.photoUrl} 
                   alt={worker.fullNameAr} 
-                  className="w-12 h-12 rounded-xl object-cover border border-zinc-200"
+                  className="w-12 h-12 rounded-xl object-cover border border-white/15"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-zinc-800 text-amber-300 flex items-center justify-center font-bold text-sm">
+                <div className="w-12 h-12 rounded-xl bg-zinc-800 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-sm">
                   {(worker.fullNameAr || 'ع').slice(0, 2)}
                 </div>
               )}
               <div>
-                <div className="font-extrabold text-zinc-900 text-base">{worker.fullNameAr}</div>
-                <div className="text-xs text-zinc-500 flex items-center gap-2 mt-0.5">
+                <div className="font-extrabold text-white text-base">{worker.fullNameAr}</div>
+                <div className="text-xs text-zinc-400 flex items-center gap-2 mt-0.5">
                   <span>{worker.nationality}</span>
                   <span>•</span>
-                  <span>جواز: {worker.passportNumber}</span>
+                  <span>جواز: <span className="font-mono text-zinc-300">{worker.passportNumber}</span></span>
                   <span>•</span>
-                  <span>الراتب: {worker.requestedSalary} ر.س</span>
+                  <span>الراتب: <span className="font-mono text-amber-400 font-bold">{worker.requestedSalary} ر.س</span></span>
                 </div>
               </div>
             </div>
 
             <div className="text-left">
-              <div className="text-[11px] text-zinc-500 font-medium">المكتب الأصلي للعاملة:</div>
+              <div className="text-[11px] text-zinc-400 font-medium">المكتب الأصلي للعاملة:</div>
               <div 
                 className="px-3 py-1 rounded-xl text-xs font-black inline-block mt-0.5"
                 style={{ 
-                  backgroundColor: `${originalOffice?.brandColor}15`, 
-                  color: originalOffice?.brandColor,
-                  border: `1px solid ${originalOffice?.brandColor}30`
+                  backgroundColor: `${originalOffice?.brandColor || '#f59e0b'}20`, 
+                  color: originalOffice?.brandColor || '#f59e0b',
+                  border: `1px solid ${originalOffice?.brandColor || '#f59e0b'}40`
                 }}
               >
                 {originalOffice?.name || worker.originalOfficeId}
@@ -232,33 +232,33 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {errorMsg && (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 font-medium">
-              <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+            <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2 font-medium">
+              <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {/* Section 1: Office Decoupling (Crucial Business Requirement) */}
           <div className="space-y-2">
-            <label className="text-xs font-black text-zinc-800 flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-indigo-600" />
+            <label className="text-xs font-black text-zinc-200 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-amber-400" />
               <span>المكتب المنفذ لعملية النقل (إصدار العقد والفوترة):</span>
             </label>
-            <div className="p-3.5 bg-indigo-50/50 rounded-2xl border border-indigo-100 flex items-center gap-3">
-              <ArrowRightLeft className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+            <div className="p-3.5 bg-black/40 rounded-2xl border border-white/10 flex items-center gap-3">
+              <ArrowRightLeft className="w-5 h-5 text-amber-400 flex-shrink-0" />
               <div className="flex-1">
                 <select
                   value={executingOfficeId}
                   onChange={(e) => setExecutingOfficeId(e.target.value as GroupOfficeId)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-white border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-zinc-800"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 focus:outline-none focus:border-amber-400 text-white"
                 >
                   {GROUP_COMPANIES.map(comp => (
-                    <option key={comp.id} value={comp.id}>
+                    <option key={comp.id} value={comp.id} className="bg-[#14181c] text-white">
                       {comp.name} ({comp.crNumber ? `سجل: ${comp.crNumber}` : comp.id})
                     </option>
                   ))}
                 </select>
-                <p className="text-[11px] text-indigo-900/80 mt-1">
+                <p className="text-[11px] text-zinc-400 mt-1">
                   * قد تتبع العاملة لمكتب ({originalOffice?.name}) لكن التنفيذ والفوترة تتم عبر ({executingOffice?.name}) وفق منظومة الإيواء المشتركة.
                 </p>
               </div>
@@ -267,31 +267,31 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
 
           {/* Section 2: New Client Details */}
           <div className="space-y-3">
-            <h3 className="text-xs font-black text-zinc-800 flex items-center gap-2 border-b border-zinc-100 pb-2">
-              <User className="w-4 h-4 text-emerald-600" />
+            <h3 className="text-xs font-black text-white flex items-center gap-2 border-b border-white/10 pb-2">
+              <User className="w-4 h-4 text-emerald-400" />
               <span>بيانات العميل الجديد (الكفيل المرتقب):</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">اسم العميل الثلاثي / الرباعي *</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">اسم العميل الثلاثي / الرباعي *</label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-zinc-400 absolute right-3 top-2.5" />
+                  <User className="w-4 h-4 text-zinc-500 absolute right-3 top-2.5" />
                   <input
                     type="text"
                     required
                     value={newClientName}
                     onChange={(e) => setNewClientName(e.target.value)}
                     placeholder="مثال: فهد بن عبد العزيز السبيعي"
-                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">رقم الهوية الوطنية / الإقامة (10 أرقام) *</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">رقم الهوية الوطنية / الإقامة (10 أرقام) *</label>
                 <div className="relative">
-                  <IdCard className="w-4 h-4 text-zinc-400 absolute right-3 top-2.5" />
+                  <IdCard className="w-4 h-4 text-zinc-500 absolute right-3 top-2.5" />
                   <input
                     type="text"
                     required
@@ -299,37 +299,37 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
                     value={newClientNationalId}
                     onChange={(e) => setNewClientNationalId(e.target.value.replace(/\D/g, ''))}
                     placeholder="10XXXXXXXX"
-                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
+                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">رقم الجوال النشط (واتساب) *</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">رقم الجوال النشط (واتساب) *</label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-zinc-400 absolute right-3 top-2.5" />
+                  <Phone className="w-4 h-4 text-zinc-500 absolute right-3 top-2.5" />
                   <input
                     type="tel"
                     required
                     value={newClientPhone}
                     onChange={(e) => setNewClientPhone(e.target.value)}
                     placeholder="05XXXXXXXX"
-                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-left"
+                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 font-mono text-left"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">المدينة / الحي *</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">المدينة / الحي *</label>
                 <div className="relative">
-                  <MapPin className="w-4 h-4 text-zinc-400 absolute right-3 top-2.5" />
+                  <MapPin className="w-4 h-4 text-zinc-500 absolute right-3 top-2.5" />
                   <input
                     type="text"
                     required
                     value={newClientCity}
                     onChange={(e) => setNewClientCity(e.target.value)}
                     placeholder="الرياض - حي النرجس"
-                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
@@ -337,20 +337,20 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
           </div>
 
           {/* Section 3: Dynamic Manual Pricing (Crucial BRD Requirement) */}
-          <div className="space-y-3 bg-amber-50/50 p-4 rounded-3xl border border-amber-200/80">
+          <div className="space-y-3 bg-amber-500/10 p-4 rounded-2xl border border-amber-500/25">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-black text-amber-900 flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-amber-600" />
+              <h3 className="text-xs font-black text-amber-300 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-amber-400" />
                 <span>التسعير اليدوي المرن والمدفوعات (وفق الاتفاق):</span>
               </h3>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 تسعير حر غير مقيد
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">
                   إجمالي تكلفة نقل الخدمات (ر.س) *
                 </label>
                 <input
@@ -359,12 +359,12 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
                   required
                   value={transferFee}
                   onChange={(e) => setTransferFee(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-white border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/60 border border-amber-400/40 text-amber-300 focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">
                   العربون / الدفعة الأولى المستلمة (ر.س) *
                 </label>
                 <input
@@ -373,18 +373,18 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
                   required
                   value={downPayment}
                   onChange={(e) => setDownPayment(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-white border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/60 border border-amber-400/40 text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">
                   المبلغ المتبقي بعد التجربة (ر.س)
                 </label>
-                <div className="px-3 py-2 rounded-xl text-xs font-black bg-zinc-100 border border-zinc-200 text-zinc-800">
+                <div className="px-3 py-2 rounded-xl text-xs font-black bg-black/40 border border-white/10 text-white">
                   {remainingAmount.toLocaleString('ar-SA')} ر.س
                   <span className={`mr-2 text-[10px] px-2 py-0.5 rounded-full ${
-                    paymentStatus === 'مسدد بالكامل' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                    paymentStatus === 'مسدد بالكامل' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                   }`}>
                     {paymentStatus}
                   </span>
@@ -395,89 +395,89 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
 
           {/* Section 4: Trial Schedule & Delivery */}
           <div className="space-y-3">
-            <h3 className="text-xs font-black text-zinc-800 flex items-center gap-2 border-b border-zinc-100 pb-2">
-              <Clock className="w-4 h-4 text-blue-600" />
+            <h3 className="text-xs font-black text-white flex items-center gap-2 border-b border-white/10 pb-2">
+              <Clock className="w-4 h-4 text-cyan-400" />
               <span>فترة التجربة وموعد التسليم:</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">مدة التجربة النظامية (أيام) *</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">مدة التجربة النظامية (أيام) *</label>
                 <select
                   value={followupDaysDuration}
                   onChange={(e) => setFollowupDaysDuration(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
                 >
-                  <option value={3}>3 أيام تجربة سريعة</option>
-                  <option value={5}>5 أيام (المدة القياسية)</option>
-                  <option value={7}>7 أيام (أسبوع كامل)</option>
-                  <option value={10}>10 أيام</option>
-                  <option value={15}>15 يوماً (استثنائي)</option>
+                  <option value={3} className="bg-[#14181c]">3 أيام تجربة سريعة</option>
+                  <option value={5} className="bg-[#14181c]">5 أيام (المدة القياسية)</option>
+                  <option value={7} className="bg-[#14181c]">7 أيام (أسبوع كامل)</option>
+                  <option value={10} className="bg-[#14181c]">10 أيام</option>
+                  <option value={15} className="bg-[#14181c]">15 يوماً (استثنائي)</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">تاريخ ووقت تسليم العاملة *</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">تاريخ ووقت تسليم العاملة *</label>
                 <input
                   type="datetime-local"
                   required
                   value={deliveryDateTime}
                   onChange={(e) => setDeliveryDateTime(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-medium bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-medium bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-700 block mb-1">طريقة التسليم للعميل</label>
+                <label className="text-[11px] font-bold text-zinc-300 block mb-1">طريقة التسليم للعميل</label>
                 <select
                   value={deliveryMode}
                   onChange={(e) => setDeliveryMode(e.target.value as any)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-medium bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-medium bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
                 >
-                  <option value="استلام من السكن">استلام من مقر الإيواء</option>
-                  <option value="توصيل لمنزل العميل">توصيل لمنزل العميل عبر المناديب</option>
+                  <option value="استلام من السكن" className="bg-[#14181c]">استلام من مقر الإيواء</option>
+                  <option value="توصيل لمنزل العميل" className="bg-[#14181c]">توصيل لمنزل العميل عبر المناديب</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="text-[11px] font-bold text-zinc-700 block mb-1">الموظف المسؤول عن المتابعة</label>
+              <label className="text-[11px] font-bold text-zinc-300 block mb-1">الموظف المسؤول عن المتابعة</label>
               <input
                 type="text"
                 value={responsibleEmployee}
                 onChange={(e) => setResponsibleEmployee(e.target.value)}
                 placeholder="اسم الموظف أو المشرف"
-                className="w-full px-3 py-2 rounded-xl text-xs bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
               />
             </div>
 
             <div>
-              <label className="text-[11px] font-bold text-zinc-700 block mb-1">شروط خاصة أو ملاحظات اتفاق</label>
+              <label className="text-[11px] font-bold text-zinc-300 block mb-1">شروط خاصة أو ملاحظات اتفاق</label>
               <textarea
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="أي اشتراطات خاصة بالعميل أو التجربة، تفاصيل السداد، إلخ..."
-                className="w-full px-3 py-2 rounded-xl text-xs bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
               />
             </div>
           </div>
 
           {/* Legal / Regulatory Safeguard Banner */}
-          <div className="p-3.5 rounded-2xl bg-zinc-100 text-zinc-600 text-[11px] flex items-center gap-2 border border-zinc-200">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+          <div className="p-3.5 rounded-2xl bg-black/40 text-zinc-300 text-[11px] flex items-center gap-2 border border-white/10">
+            <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <span>
               عند الحفظ، سيتم حجز ملف العاملة فورا لمنع أي تعارض حجوزات، وسيتم إنشاء سجل متابعة يومي يبدأ احتساب الأيام حتى موعد انتهاء التجربة مع التنبيهات اللونية التلقائية.
             </span>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-100 transition-colors"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               إلغاء
             </button>
@@ -485,11 +485,11 @@ export const TransferBookingModal: React.FC<TransferBookingModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl text-xs font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition-all flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl text-xs font-black text-black bg-amber-400 hover:bg-amber-300 shadow-lg shadow-amber-400/20 transition-all flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                   <span>جاري تسجيل الحجز...</span>
                 </>
               ) : (
