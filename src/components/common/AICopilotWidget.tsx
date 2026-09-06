@@ -6,7 +6,8 @@ import {
   ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
   Minimize2
 } from 'lucide-react';
-import { playPersonaSwitchGreeting, speakDynamicSpeech, stopAllAudio } from '../../services/audioVoiceService';
+import { playPersonaSwitchGreeting, playPersonaChime, speakDynamicSpeech, stopAllAudio } from '../../services/audioVoiceService';
+import { generateLocalAiResponse, checkLocalAiAvailable } from '../../services/localAiService';
 
 interface ChatMessage {
   id: string;
@@ -46,8 +47,19 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   });
   const [isListening, setIsListening] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
+  const [isLocalAiOnline, setIsLocalAiOnline] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const wakeRecognitionRef = useRef<any>(null);
+
+  // Monitor local AI daemon availability
+  useEffect(() => {
+    checkLocalAiAvailable().then(avail => setIsLocalAiOnline(avail));
+    const interval = setInterval(() => {
+      checkLocalAiAvailable().then(avail => setIsLocalAiOnline(avail));
+    }, 12000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Pre-load browser voices on component mount
   useEffect(() => {
@@ -259,7 +271,12 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const speakText = (text: string, overridePersona?: AssistantPersona, force = false) => {
     if (!voiceEnabled && !force) return;
     const currentPers = overridePersona || persona;
-    speakDynamicSpeech(text, currentPers);
+    playPersonaChime(currentPers);
+    speakDynamicSpeech(text, currentPers, {
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
   };
 
   const toggleVoice = () => {
@@ -395,7 +412,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     ];
   };
 
-  const handleSendMessage = (queryText?: string) => {
+  const handleSendMessage = async (queryText?: string) => {
     const textToSend = queryText || inputQuery;
     if (!textToSend.trim()) return;
 
@@ -410,89 +427,36 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     setInputQuery('');
     setIsTyping(true);
 
-    // Faris / Noura AI Contextual Reasoning Engine
-    setTimeout(() => {
-      let aiResponse = '';
-      let actionBtn: { label: string; actionKey: string } | undefined = undefined;
-
-      const lower = textToSend.toLowerCase();
-
-      if (lower.includes('كاس') || lower.includes('اعتماد') || lower.includes('منافس') || lower.includes('boq') || lower.includes('كميات')) {
-        aiResponse = `أهلاً بك! بالنسبة لشركة كاس للمنافسات والتشغيل:
-• المنظومة مرتبطة مباشرة بسحابة منصة اعتماد الحكومية.
-• يوجد حالياً 2,651+ منافسة مرصودة، منها 18 منافسة تحت دراسة الجدوى وتجهيز عروض الأسعار.
-• محرر جداول الكميات الذكي (Live Excel BOQ) يدعم الحسابات الآلية والتفقيط المعتمد بالريال السعودي.
-• الفوترة الإلكترونية مشفرة وممتثلة بنسبة 100% مع ZATCA المرحلة الثانية.`;
-        actionBtn = { label: 'فتح جناح كاس للمنافسات (KAS Suite)', actionKey: 'kas-suite' };
-      } else if (lower.includes('مالي') || lower.includes('سيولة') || lower.includes('أرباح') || lower.includes('دخل') || lower.includes('محاسب') || lower.includes('smacc')) {
-        aiResponse = `بناءً على القيود المحاسبية لنظام SMACC لـ (${activeCompany.name}):
-• إجمالي الإيرادات المحققة: 525,471.20 ر.س (نمو +14.8%)
-• إجمالي المصروفات التشغيلية: 220,500.00 ر.س
-• صافي الربح التشغيلي: 304,971.20 ر.س (هامش ربح قياسي 58%)
-• رصيد أمانات مساند المعلقة (فترة التجربة 90 يوماً): 184,500.00 ر.س.`;
-        actionBtn = { label: 'فتح الإدارة المالية و SMACC', actionKey: 'finance-home' };
-      } else if (lower.includes('مساند') || lower.includes('استقدام') || lower.includes('تأشير') || lower.includes('سفار') || lower.includes('صفا')) {
-        aiResponse = `حالة خط أنابيب استقدام الأفراد عبر مساند لشركة الصفا الماسي:
-• يوجد حالياً 113 عقداً سارياً في مراحل المعالجة المختلفة.
-• 4 عقود تجاوزت 45 يوماً في مرحلة السفارة (الفلبين وكينيا)، وتم إرسال تنبيهات تلقائية لمكاتب التوظيف.
-• 12 تأشيرة جاهزة وموثقة لإصدار التفويض الإلكتروني عبر إنجاز.
-• بوالص التأمين الشاملة مفعلة بنسبة امتثال 100%.`;
-        actionBtn = { label: 'فتح خط أنابيب مساند (ATS Pipeline)', actionKey: 'ats-pipeline' };
-      } else if (lower.includes('تأجير') || lower.includes('ياقوت') || lower.includes('تشغيل') || lower.includes('باقات')) {
-        aiResponse = `حالة عقود التأجير والتشغيل المرن لشركة الياقوت الشرقية:
-• إجمالي عقود الإيجار النشطة: 890+ عقد تشغيلي لقطاعي الأفراد والأعمال.
-• الكوادر المهنية الجاهزة للتسليم الفوري: 45 كوادر متخصصة.
-• نسبة سداد الفواتير الشهرية: 94.2% مع فوترة آلية مشفرة.`;
-        actionBtn = { label: 'فتح عقود التأجير والتشغيل', actionKey: 'rent-contracts' };
-      } else if (lower.includes('توظيف') || lower.includes('سير') || lower.includes('ats') || lower.includes('تالنت') || lower.includes('cv')) {
-        aiResponse = `منظومة التوظيف الذكي و ATS لشركة توب تالنت الدولية:
-• بنك السير الذاتية يضم 3,250+ سيرة ذاتية مفهرسة ذكياً مع ميزة الاستيراد بالدفعة.
-• التكامل نشط مع مكاتب التوظيف في 14 دولة معتمدة.
-• نظام الفرز الآلي يقلل زمن الاختيار بنسبة 68%.`;
-        actionBtn = { label: 'فتح بنك السير الذاتية الذكي', actionKey: 'cv-bank' };
-      } else if (lower.includes('إيواء') || lower.includes('سكن') || lower.includes('تغذية') || lower.includes('تسكين') || lower.includes('hrsd')) {
-        aiResponse = `حالة مراكز الإيواء والتسكين المعتمدة من وزارة الموارد البشرية HRSD:
-• الطاقة الاستيعابية الكلية: 120 سريراً موزعة على 4 أجنحة ضيافة.
-• نسبة الإشغال الحالية: 42% (28 سريراً متاحاً لاستقبال حالات جديدة).
-• الرعاية الغذائية والصحية: فحوصات يومية منتظمة وتوثيق كامل لمحاضر الاستلام.`;
-        actionBtn = { label: 'فتح بوابة مراكز الإيواء والرعاية', actionKey: 'shelter' };
-      } else if (lower.includes('توطين') || lower.includes('رواتب') || lower.includes('wps') || lower.includes('أجور') || lower.includes('قوى')) {
-        aiResponse = `مؤشرات الموارد البشرية والامتثال لـ (${activeCompany.name}):
-• نسبة التوطين المعتمدة: 78% (النطاق البلاتيني 🟢 وفق تصنيف قوى).
-• مسير رواتب الشهر الحالي: 39,700.00 ر.س لعدد 4 موظفين.
-• ملف حماية الأجور (WPS) جاهز ومدقق ومطابق بنسبة 100%.`;
-        actionBtn = { label: 'فتح الموارد البشرية والرواتب', actionKey: 'hr' };
-      } else if (lower.includes('zatca') || lower.includes('فاتورة') || lower.includes('ضريب') || lower.includes('زكاة') || lower.includes('qr')) {
-        aiResponse = `حالة تكامل الفوترة الإلكترونية ZATCA (المرحلة الثانية - الربط والتكامل):
-• التشفير المعتمد: معيار ECDSA مع خوارزمية SHA-256 وأختام التشفير الرقمية.
-• الفواتير المصدرة: يتم ختمها بـ QR مشفر فورياً وإرسال كود XML للهيئة.
-• نسبة الامتثال الضريبي لشركات المجموعة: 100%.`;
-        actionBtn = { label: 'فتح بوابة الفوترة المشفرة ZATCA', actionKey: 'zatca-hub' };
-      } else {
-        aiResponse = persona === 'noura'
-          ? `أهلاً بكِ عزيزتي! تم استلام استفساركِ: "${textToSend}".
-أنا "نُورة" مرشدتكِ الذكية، ومهمتي مرافقتكِ وتوجيهكِ في إدارة الأقسام النسائية ومراكز الإيواء والتسكين وكافة قطاعات المجموعة بأعلى موثوقية وخصوصية.
-اختاري القسم أو الخدمة التي تودين الوصول إليها وسأرشدكِ فوراً.`
-          : `أهلاً بك! تم استلام طلبك: "${textToSend}".
-أنا "فارس" مرشدك الذكي، ومهمتي توجيهك ومساعدتك في إدارة كافة قطاعات المجموعة (الصفا الماسي للاستقدام، الياقوت للتشغيل والتأجير، توب تالنت للـ ATS، كاس للمنافسات واعتماد، ومراكز الإيواء).
-اختر القسم الذي تود الانتقال إليه وسأقوم بنقلك فوراً.`;
-        actionBtn = { label: persona === 'noura' ? 'فتح بوابة مراكز الإيواء والرعاية' : 'فتح مركز القيادة والتحكم الموحد', actionKey: persona === 'noura' ? 'shelter' : 'group-command' };
-      }
+    try {
+      // Execute company-scoped inference on local model (faris-erp / noura-erp)
+      const aiRes = await generateLocalAiResponse({
+        prompt: textToSend,
+        persona,
+        company: {
+          id: activeCompany.id,
+          name: activeCompany.name,
+          code: (activeCompany as any).code,
+        },
+        conversationHistory: messages.map(m => ({ sender: m.sender, text: m.text })),
+      });
 
       const newAiMsg: ChatMessage = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
-        text: aiResponse,
+        text: aiRes.text,
         timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
-        actionButton: actionBtn,
+        actionButton: aiRes.actionButton,
       };
 
       setMessages(prev => [...prev, newAiMsg]);
       setIsTyping(false);
 
-      // Speak response if voice is active
-      speakText(aiResponse);
-    }, 700);
+      // Speak response out loud automatically using persona's voice!
+      speakText(aiRes.text, persona);
+    } catch (err) {
+      console.error('[AI Copilot] Inference error:', err);
+      setIsTyping(false);
+    }
   };
 
   return (
@@ -762,10 +726,51 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     {persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}
                   </h4>
                   <span className="live-pulse-dot" />
+                  {isSpeaking && (
+                    <span style={{
+                      fontSize: '10px',
+                      color: '#b45309',
+                      background: '#fef3c7',
+                      padding: '1px 6px',
+                      borderRadius: '9999px',
+                      fontWeight: 800,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                      border: '1px solid #fde68a'
+                    }}>
+                      <Volume2 className="w-3 h-3 animate-pulse" /> يتحدث الآن...
+                    </span>
+                  )}
                 </div>
-                <span style={{ fontSize: '10.5px', color: '#71717a', display: 'block', marginTop: '1px' }}>
-                  {persona === 'noura' ? 'الأقسام النسائية ومراكز الإيواء • توجيه معتمد' : `${activeCompany.name} • دعم مباشر وتوجيه فوري`}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px', flexWrap: 'wrap' }}>
+                  <span style={{
+                    fontSize: '9.5px',
+                    fontWeight: 700,
+                    color: isLocalAiOnline ? '#065f46' : '#71717a',
+                    background: isLocalAiOnline ? '#ecfdf5' : '#f4f4f5',
+                    padding: '1px 6px',
+                    borderRadius: '4px',
+                    border: `1px solid ${isLocalAiOnline ? '#a7f3d0' : '#e4e4e7'}`,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: isLocalAiOnline ? '#10b981' : '#9ca3af' }} />
+                    {persona === 'noura' ? 'noura-erp' : 'faris-erp'} (محلي On-Device)
+                  </span>
+                  <span style={{
+                    fontSize: '9.5px',
+                    fontWeight: 700,
+                    color: '#1e3a8a',
+                    background: '#eff6ff',
+                    padding: '1px 6px',
+                    borderRadius: '4px',
+                    border: '1px solid #bfdbfe'
+                  }}>
+                    🔒 عزل بيانات: {activeCompany.name}
+                  </span>
+                </div>
               </div>
             </div>
 

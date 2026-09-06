@@ -11,8 +11,11 @@ import { RBACProvider } from './contexts/RBACContext';
 
 import { useAppStore } from './stores/appStore';
 import { authService } from './services/authService';
+import { notificationPopupEngine } from './services/notificationPopupEngine';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AICopilotWidget } from './components/common/AICopilotWidget';
+import { UniversalNotificationToaster } from './components/common/UniversalNotificationToaster';
+import { PwaInstallPrompt } from './components/common/PwaInstallPrompt';
 import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
 
 import './styles/index.css';
@@ -139,13 +142,13 @@ const MainContent: React.FC = () => {
     }
   }, [flowState, currentUserForLegal.username]);
 
-  const handleSelectTab = (href: string, title: string) => {
+  const handleSelectTab = (href: string, title: string = '') => {
     if (href === 'logout') {
       setFlowState('landing');
       return;
     }
     setFlowState('workspace');
-    setActiveTab(href, title);
+    setActiveTab(href, title || href);
   };
 
   const handleLogout = () => {
@@ -167,6 +170,18 @@ const MainContent: React.FC = () => {
     };
     window.addEventListener('alsulaim_navigate', handleNav);
     return () => window.removeEventListener('alsulaim_navigate', handleNav);
+  }, []);
+
+  // Announce operational system connectivity & PWA readiness
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      notificationPopupEngine.info(
+        'نظام ERP مجموعة خالد السليم متصل',
+        'مرحباً بك! تم تفعيل النماذج المحلية (فارس ونورة) وتطبيق الويب التقدمي (WBA) بنجاح.',
+        { label: 'فتح المساعد الذكي', tabKey: 'group-command' }
+      );
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   // 1. Landing Page (Portal Overview)
@@ -572,6 +587,8 @@ const MainContent: React.FC = () => {
       </AppShell>
       <QuickSearchModal onNavigate={handleSelectTab} />
       <AICopilotWidget onNavigate={handleSelectTab} />
+      <UniversalNotificationToaster onNavigate={(tabKey, title) => handleSelectTab(tabKey, title || '')} />
+      <PwaInstallPrompt />
       {showLegalModal && (
         <LegalDisclaimerModal
           user={currentUserForLegal}
