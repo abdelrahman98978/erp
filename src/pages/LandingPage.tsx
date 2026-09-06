@@ -402,82 +402,112 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       </section>
 
       {/* 4. Companies Grid: Luxury White Editorial Cards */}
+      {/* 4. Companies Grid: Luxury White Editorial Cards */}
       <section id="companies" className="max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-24">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-2 text-right">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 gap-4 text-right">
           <div>
-            <span className="eyebrow-cap text-champagne-dark text-xs tracking-widest font-bold">COMPANIES & ENTITIES</span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-950 mt-1 font-display">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-champagne-pale border border-champagne/40 text-champagne-dark text-[11px] font-extrabold mb-2.5">
+              <span>COMPANIES & WORKSPACES</span>
+              <span>•</span>
+              <span>قطاعات الأعمال المستقلة</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-950 font-display">
               الشركات التابعة ومساحات العمل المستقلة
             </h2>
           </div>
-          <span className="text-xs sm:text-sm text-zinc-500">
-            اختر الشركة للانتقال المباشر إلى بيئة العمل والأنظمة المتخصصة بها
-          </span>
+          <p className="text-xs sm:text-sm text-zinc-500 max-w-md">
+            أنظمة تشغيل سحابية منفصلة كلياً لكل شركة مع بيئة عمل مخصصة وتكامل إداري موحد
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 sm:gap-6">
           {companies.map((comp) => (
             <div
               key={comp.code}
               onClick={() => handleSelect(comp.id)}
-              className="card-feature-cinematic bg-white border border-zinc-200/90 rounded-3xl overflow-hidden cursor-pointer flex flex-col justify-between hover:border-champagne hover:shadow-xl transition-all group relative"
+              className="luxury-white-card group flex flex-col justify-between overflow-hidden cursor-pointer"
               style={{
-                boxShadow: '0 8px 24px -6px rgba(0, 0, 0, 0.06)'
+                backgroundColor: '#ffffff',
+                color: '#091725'
               }}
             >
-              {/* Color Stripe Top */}
-              <div 
-                style={{ position: 'absolute', top: 0, right: 0, left: 0, height: '4px', background: comp.themeColor }} 
-              />
+              <div>
+                {/* Top Image Frame with Overlay & Badges */}
+                <div className="h-44 relative overflow-hidden bg-zinc-100 rounded-t-[1.4rem]">
+                  <img
+                    src={comp.image}
+                    alt={comp.nameAr}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-white/15 to-transparent" />
+                  
+                  {/* Top Bar inside Image: Code & Sector Badge */}
+                  <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
+                    <span className="text-[10px] bg-white/95 backdrop-blur-xs border border-zinc-200/90 px-2 py-0.5 rounded-md text-zinc-900 font-mono font-extrabold shadow-xs">
+                      {comp.code.split(' ')[0]} {comp.code.split(' ')[1]}
+                    </span>
+                    <span 
+                      className="text-[9.5px] font-extrabold px-2 py-0.5 rounded-md text-white shadow-xs"
+                      style={{ backgroundColor: comp.themeColor }}
+                    >
+                      {comp.badge}
+                    </span>
+                  </div>
 
-              {/* Image Frame Top */}
-              <div className="h-44 sm:h-48 relative overflow-hidden bg-zinc-100">
-                <img
-                  src={comp.image}
-                  alt={comp.nameAr}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
-                <div className="absolute top-3 right-3">
-                  <span className="text-[10px] bg-white/90 backdrop-blur-xs border border-zinc-200/80 px-2.5 py-0.5 rounded-full text-zinc-900 font-mono font-bold shadow-2xs">
-                    {comp.code}
-                  </span>
+                  {/* Top Accent Line */}
+                  <div 
+                    className="absolute bottom-0 inset-x-0 h-1"
+                    style={{ backgroundColor: comp.themeColor }}
+                  />
                 </div>
-              </div>
 
-              {/* Card Content Bottom */}
-              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-3.5 text-right">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <CompanyLogo companyId={comp.id} size={40} />
+                {/* Card Content */}
+                <div className="p-5 text-right space-y-3.5">
+                  {/* Company Logo + Arabic Title */}
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 p-1 bg-white rounded-xl border border-zinc-200/80 shadow-xs group-hover:border-amber-400/60 transition-colors">
+                      <CompanyLogo companyId={comp.id} size={38} />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base sm:text-lg font-bold text-zinc-950 leading-snug font-display truncate">
+                      <h3 className="text-sm sm:text-base font-bold text-zinc-950 leading-snug font-display">
                         {comp.nameAr}
                       </h3>
-                      <span className="text-[10.5px] text-zinc-400 block truncate">{comp.nameEn}</span>
+                      <span className="text-[10px] text-zinc-500 font-medium block truncate mt-0.5">
+                        {comp.nameEn}
+                      </span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-zinc-600 leading-relaxed line-clamp-3">
+                  {/* Description */}
+                  <p className="text-xs text-zinc-600 leading-relaxed line-clamp-3 min-h-[48px]">
                     {comp.desc}
                   </p>
-                </div>
 
-                <div className="pt-3 border-t border-zinc-100 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
+                  {/* Active Metric Badge */}
+                  <div>
                     <span 
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                      style={{ background: `${comp.themeColor}15`, color: comp.themeColor }}
+                      className="text-[11px] font-extrabold px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5"
+                      style={{ background: `${comp.themeColor}14`, color: comp.themeColor }}
                     >
-                      {comp.stats}
-                    </span>
-                    <span className="text-xs text-zinc-800 inline-flex items-center gap-1 group-hover:text-champagne-dark transition-colors font-bold">
-                      <span>دخول المنظومة</span>
-                      <ArrowLeft className="w-3 h-3" />
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: comp.themeColor }} />
+                      <span>{comp.stats}</span>
                     </span>
                   </div>
-                  <span className="text-[9.5px] text-zinc-400 truncate block">{comp.license}</span>
+                </div>
+              </div>
+
+              {/* Bottom Action Button & License */}
+              <div className="p-5 pt-0 text-right space-y-2.5">
+                <div className="w-full py-2.5 px-3.5 rounded-xl bg-zinc-50 group-hover:bg-zinc-950 text-zinc-800 group-hover:text-white border border-zinc-200/90 group-hover:border-zinc-950 transition-all duration-200 font-bold text-xs flex items-center justify-between shadow-2xs">
+                  <span className="text-[11.5px]">دخول بيئة العمل</span>
+                  <div className="w-6 h-6 rounded-full bg-white group-hover:bg-zinc-800 text-zinc-700 group-hover:text-amber-400 flex items-center justify-center transition-all shadow-2xs">
+                    <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                  </div>
+                </div>
+
+                <div className="text-[9.5px] text-zinc-400 font-mono truncate pt-1 border-t border-zinc-100 flex items-center justify-between">
+                  <span>{comp.license}</span>
                 </div>
               </div>
             </div>
@@ -499,40 +529,142 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
-            <div className="card-feature-cinematic bg-white border border-zinc-200 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm hover:shadow-md transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-champagne-pale border border-champagne/30 text-champagne-dark flex items-center justify-center">
-                <Network className="w-6 h-6" />
+            {/* Card 1: Government Compliance & Integration */}
+            <div 
+              className="white-feature-card group"
+              style={{ backgroundColor: '#ffffff', color: '#091725' }}
+            >
+              {/* Top Accent Line */}
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400 opacity-80" />
+
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
+                <Network className="w-7 h-7" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-zinc-950">
+
+              <h3 className="text-xl font-bold text-zinc-950 font-display mb-2.5">
                 الربط والامتثال الحكومي الشامل
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
                 تكامل مباشر مع منصة مساند، الفوترة الإلكترونية للمرحلة الثانية من هيئة الزكاة والضريبة والجمارك (ZATCA)، منصة مقيم، التأمينات الاجتماعية، وسحابة اعتماد.
               </p>
+
+              {/* Verified Feature Checklist */}
+              <div className="space-y-2 pt-4 border-t border-zinc-100 text-xs text-zinc-700">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="font-semibold">ربط وتوثيق فوري مع مساند (RC01 - RC03)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="font-semibold">فوترة مشفرة ZATCA متوافقة كلياً مع المرحلة الثانية</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="font-semibold">تكامل آلي مع التأمينات ومقيم وسحابة اعتماد</span>
+                </div>
+              </div>
+
+              {/* Live Status Tag */}
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+                <span className="font-bold text-emerald-700 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>ربط نشط وممتثل 100%</span>
+                </span>
+                <span className="font-mono text-[10px] text-zinc-400">API Gateway v2.4</span>
+              </div>
             </div>
 
-            <div className="card-feature-cinematic bg-white border border-zinc-200 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm hover:shadow-md transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-champagne-pale border border-champagne/30 text-champagne-dark flex items-center justify-center">
-                <TrendingUp className="w-6 h-6" />
+            {/* Card 2: SMACC & Advanced Accounting */}
+            <div 
+              className="white-feature-card group"
+              style={{ backgroundColor: '#ffffff', color: '#091725' }}
+            >
+              {/* Top Accent Line */}
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-500 to-indigo-500 opacity-80" />
+
+              <div className="w-14 h-14 rounded-2xl bg-sky-50 border border-sky-200/80 text-sky-700 flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
+                <TrendingUp className="w-7 h-7" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-zinc-950">
+
+              <h3 className="text-xl font-bold text-zinc-950 font-display mb-2.5">
                 المحاسبة المتقدمة و SMACC
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
                 شجرة حسابات مالية متعددة المستويات مع مراكز تكلفة مستقلة لكل شركة، موازين مراجعة، فواتير إلكترونية QR، وتقارير تفاعلية لحظية للإيرادات والأرباح.
               </p>
+
+              {/* Verified Feature Checklist */}
+              <div className="space-y-2 pt-4 border-t border-zinc-100 text-xs text-zinc-700">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0" />
+                  <span className="font-semibold">شجرة حسابات مالية متعددة المستويات ومراكز التكلفة</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0" />
+                  <span className="font-semibold">موازين مراجعة وتقارير تفاعلية لحظية للإيرادات</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0" />
+                  <span className="font-semibold">أرشفة رقمية للقيود وتفقيط مالي آلي بالريال السعودي</span>
+                </div>
+              </div>
+
+              {/* Live Status Tag */}
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+                <span className="font-bold text-sky-700 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                  <span>تزامن مالي فوري</span>
+                </span>
+                <span className="font-mono text-[10px] text-zinc-400">SMACC Enterprise</span>
+              </div>
             </div>
 
-            <div className="card-feature-cinematic bg-white border border-zinc-200 rounded-3xl p-6 sm:p-8 space-y-4 shadow-sm hover:shadow-md transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-champagne-pale border border-champagne/30 text-champagne-dark flex items-center justify-center">
-                <Bot className="w-6 h-6" />
+            {/* Card 3: AI Copilot & Saudi Digital Guide */}
+            <div 
+              className="white-feature-card group"
+              style={{ backgroundColor: '#ffffff', color: '#091725' }}
+            >
+              {/* Top Accent Line */}
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 to-yellow-400 opacity-80" />
+
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-700 flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
+                <Bot className="w-7 h-7" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-zinc-950">
+
+              <h3 className="text-xl font-bold text-zinc-950 font-display mb-2.5">
                 المرشد ومساعد الذكاء الاصطناعي
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
                 مساعد آلي ذكي (AI Copilot) ومرشد رقمي سعودي مدمج لتحليل البيانات، إنشاء العقود الفورية، تدقيق السجلات، وتقديم التوصيات التشغيلية لقيادة المجموعة.
               </p>
+
+              {/* Verified Feature Checklist */}
+              <div className="space-y-2 pt-4 border-t border-zinc-100 text-xs text-zinc-700">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span className="font-semibold">مرشد رقمي سعودي 3D مدمج للإرشاد والدعم 24/7</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span className="font-semibold">تحليل استباقي للبيانات واستخراج القرارات والتنبيهات</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span className="font-semibold">صياغة وتدقيق العقود والخطابات الرسمية بضغطة زر</span>
+                </div>
+              </div>
+
+              {/* Live Status Tag */}
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+                <span className="font-bold text-amber-700 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span>دعم وتشغيل ذكي 24/7</span>
+                </span>
+                <span className="font-mono text-[10px] text-zinc-400">AI Assistant v3.0</span>
+              </div>
             </div>
           </div>
         </div>
