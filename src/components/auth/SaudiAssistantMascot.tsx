@@ -65,7 +65,7 @@ const getPortalGreeting = (portalId: string, nameAr: string): { title: string; d
     default:
       return {
         title: `أهلاً بك في ${nameAr}!`,
-        desc: 'أنا مرشدك الرقمي الذكي لمجموعة خالد السليم ERP. أدخل بياناتك أو استخدم الدخول الفوري السريع للمتابعة.',
+        desc: 'أنا "فارس"، مرشدك الرقمي الذكي لمجموعة خالد السليم ERP. أدخل بياناتك أو استعن بي لتوجيهك المباشر.',
         badge: 'المرشد الرقمي المعتمد'
       };
   }
@@ -77,15 +77,26 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
 }) => {
   const greeting = getPortalGreeting(selectedPortal.id, selectedPortal.nameAr);
 
+  const handleOpenChat = () => {
+    window.dispatchEvent(
+      new CustomEvent('open-faris-assistant', {
+        detail: {
+          query: `مرحباً فارس، أحتاج مساعدة في الدخول إلى ${selectedPortal.nameAr}`
+        }
+      })
+    );
+  };
+
   return (
     <div className="relative flex flex-col items-center justify-end select-none pointer-events-auto">
       {/* Speech Bubble / Dynamic Greeting Card */}
       <div 
         key={selectedPortal.id}
-        className="speech-bubble-anim relative z-30 max-w-[320px] mb-2 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right"
+        className="speech-bubble-anim relative z-30 max-w-[320px] mb-2 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-colors"
         style={{
           boxShadow: '0 16px 32px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04)'
         }}
+        onClick={handleOpenChat}
       >
         {/* Pointer Triangle */}
         <div 
@@ -100,8 +111,8 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
         <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-zinc-100">
           <div className="flex items-center gap-1.5">
             <span className="live-pulse-dot" />
-            <span className="text-[11px] font-extrabold text-zinc-800 flex items-center gap-1">
-              <span>المرشد الرقمي الذكي</span>
+            <span className="text-[11px] font-extrabold text-zinc-900 flex items-center gap-1">
+              <span>فارس • المرشد الرقمي</span>
             </span>
           </div>
 
@@ -122,14 +133,27 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
         <p className="text-[11px] text-zinc-600 leading-relaxed m-0">
           {greeting.desc}
         </p>
+
+        {/* Interactive Chat Prompt Button */}
+        <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[10.5px]">
+          <span className="font-bold text-amber-700 flex items-center gap-1">
+            <span>تحدث مع فارس</span>
+            <span>←</span>
+          </span>
+          <span className="text-zinc-400">انقر للبدء</span>
+        </div>
       </div>
 
       {/* 3D Mascot Character with Smooth Float and Ground Shadow */}
-      <div className="relative z-20 flex flex-col items-center">
-        <div className="mascot-float relative">
+      <div 
+        className="relative z-20 flex flex-col items-center cursor-pointer group"
+        onClick={handleOpenChat}
+        title="انقر للتحدث مع فارس"
+      >
+        <div className="mascot-float relative transition-transform group-hover:scale-105">
           <img
             src="/mascot.png"
-            alt="المرشد الرقمي الذكي لمجموعة خالد السليم"
+            alt="فارس - المرشد الرقمي الذكي لمجموعة خالد السليم"
             className="w-auto h-[360px] sm:h-[400px] lg:h-[430px] object-contain drop-shadow-xl"
             loading="eager"
             decoding="async"

@@ -6,7 +6,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { 
   ArrowLeft, Network, TrendingUp, Bot, ShieldCheck, 
   Menu, X, Building2, ChevronDown, Sparkles, LogIn, CheckCircle2,
-  Lock, Globe, Hotel, Briefcase, Users
+  Lock, Globe, Hotel, Briefcase, Users, MessageSquare
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -314,12 +314,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               }}
             />
 
-            {/* Speech Bubble / Welcoming Card */}
+            {/* Speech Bubble / Welcoming Card - Clickable to open Faris Chat */}
             <div 
-              className="speech-bubble-anim relative z-30 max-w-[320px] mb-2 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right"
+              className="speech-bubble-anim relative z-30 max-w-[320px] mb-2 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-all group"
               style={{
                 boxShadow: '0 16px 36px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04)'
               }}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open-faris-assistant', {
+                  detail: { query: 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم' }
+                }));
+              }}
+              title="انقر لبدء محادثة مباشرة مع فارس"
             >
               {/* Pointer Triangle */}
               <div 
@@ -329,10 +335,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-zinc-100">
                 <div className="flex items-center gap-1.5">
                   <span className="live-pulse-dot" />
-                  <span className="text-[11px] font-extrabold text-zinc-900">المرشد الرقمي الذكي للمجموعة</span>
+                  <span className="text-[11px] font-extrabold text-zinc-900">فارس • المرشد الرقمي الذكي</span>
                 </div>
                 <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-champagne-pale text-champagne-dark border border-champagne/30">
-                  دعم مباشر 24/7
+                  مساعد تفاعلي 24/7
                 </span>
               </div>
 
@@ -340,16 +346,33 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 أهلاً بكم في مجموعة خالد السليم!
               </h4>
               <p className="text-[11px] text-zinc-600 leading-relaxed m-0">
-                يسعدني استقبالكم وإرشادكم للدخول المباشر إلى حساباتكم أو استعراض مساحات العمل والخدمات الذكية لكافة شركات المجموعة.
+                أنا <strong className="text-zinc-950">فارس</strong>، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.
               </p>
+
+              <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+                <span className="font-bold text-amber-700 group-hover:text-amber-600 flex items-center gap-1 transition-colors">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>تحدث مع فارس الآن</span>
+                  <span>←</span>
+                </span>
+                <span className="text-[10px] text-zinc-400">انقر للبدء</span>
+              </div>
             </div>
 
             {/* 3D Mascot Character with Float Animation & Ground Shadow */}
-            <div className="relative z-20 flex flex-col items-center">
-              <div className="mascot-float">
+            <div 
+              className="relative z-20 flex flex-col items-center cursor-pointer group"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('open-faris-assistant', {
+                  detail: { query: 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟' }
+                }));
+              }}
+              title="انقر للتحدث مع فارس"
+            >
+              <div className="mascot-float transition-transform group-hover:scale-105">
                 <img
                   src="/mascot.png"
-                  alt="المرشد الرقمي الذكي لمجموعة خالد السليم"
+                  alt="فارس - المرشد الرقمي الذكي لمجموعة خالد السليم"
                   className="w-auto h-[380px] sm:h-[440px] lg:h-[470px] object-contain drop-shadow-2xl"
                   loading="eager"
                 />
