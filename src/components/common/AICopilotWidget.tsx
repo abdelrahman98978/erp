@@ -4,7 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { 
   X, Send, Mic, MicOff, Volume2, VolumeX, Sparkles, 
   ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
-  Minimize2
+  Minimize2, ShieldCheck, ShieldAlert, AlertTriangle
 } from 'lucide-react';
 import { 
   playPersonaSwitchGreeting, 
@@ -18,6 +18,7 @@ import {
   subscribeAudioState
 } from '../../services/audioVoiceService';
 import { generateLocalAiResponse, checkLocalAiAvailable } from '../../services/localAiService';
+import { executeToolCall, logToolCancellation, type ToolCallParsed } from '../../services/aiToolExecutor';
 
 interface ChatMessage {
   id: string;
@@ -59,6 +60,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const [showTooltip, setShowTooltip] = useState(true);
   const [isLocalAiOnline, setIsLocalAiOnline] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [pendingToolCall, setPendingToolCall] = useState<ToolCallParsed | null>(null);
+  const [isExecutingTool, setIsExecutingTool] = useState(false);
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const wakeRecognitionRef = useRef<any>(null);
   const lastWakeTriggerRef = useRef<number>(0);
@@ -450,6 +453,60 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     ];
   };
 
+  // Handle confirming a tool call (Gate 2: User Approval)
+  const handleConfirmToolCall = async () => {
+    if (!pendingToolCall) return;
+    setIsExecutingTool(true);
+
+    try {
+      const result = await executeToolCall(
+        pendingToolCall,
+        activeCompany.id,
+        'current_user',
+        onNavigate
+      );
+
+      const resultMsg: ChatMessage = {
+        id: `tool-result-${Date.now()}`,
+        sender: 'ai',
+        text: result.message,
+        timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+      };
+
+      setMessages(prev => [...prev, resultMsg]);
+      speakText(result.message, persona);
+    } catch (err) {
+      console.error('[AI Tool Executor] Error:', err);
+      const errorMsg: ChatMessage = {
+        id: `tool-error-${Date.now()}`,
+        sender: 'ai',
+        text: '⚠️ حدث خطأ أثناء تنفيذ العملية. يرجى المحاولة مرة أخرى.',
+        timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setPendingToolCall(null);
+      setIsExecutingTool(false);
+    }
+  };
+
+  // Handle cancelling a tool call
+  const handleCancelToolCall = () => {
+    if (pendingToolCall) {
+      logToolCancellation(pendingToolCall, activeCompany.id, 'current_user');
+      const cancelMsg: ChatMessage = {
+        id: `tool-cancel-${Date.now()}`,
+        sender: 'ai',
+        text: persona === 'noura'
+          ? 'تم إلغاء العملية كما طلبتِ. هل تريدين شيئاً آخر؟'
+          : 'تم إلغاء العملية. هل تريد شيئاً آخر؟',
+        timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages(prev => [...prev, cancelMsg]);
+    }
+    setPendingToolCall(null);
+  };
+
   const handleSendMessage = async (queryText?: string) => {
     const textToSend = queryText || inputQuery;
     if (!textToSend.trim()) return;
@@ -488,6 +545,11 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
       setMessages(prev => [...prev, newAiMsg]);
       setIsTyping(false);
+
+      // Phase 1: If the model triggered a tool call, show confirmation modal
+      if (aiRes.toolCall) {
+        setPendingToolCall(aiRes.toolCall);
+      }
 
       // Speak response out loud automatically using persona's voice!
       speakText(aiRes.text, persona);
@@ -1072,6 +1134,120 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
               <Send className="w-4 h-4 rotate-180" />
             </button>
           </form>
+        </div>
+      )}
+
+      {/* ═══ TOOL CALL CONFIRMATION MODAL (Gate 2) ═══ */}
+      {pendingToolCall && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 10001,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.55)',
+            backdropFilter: 'blur(6px)',
+            direction: 'rtl',
+          }}
+          onClick={handleCancelToolCall}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="speech-bubble-anim"
+            style={{
+              width: '420px',
+              maxWidth: 'calc(100vw - 32px)',
+              backgroundColor: '#ffffff',
+              borderRadius: '24px',
+              boxShadow: '0 24px 60px -12px rgba(9, 23, 37, 0.35), 0 0 0 1px rgba(207, 166, 74, 0.5)',
+              border: '1.5px solid rgba(207, 166, 74, 0.5)',
+              overflow: 'hidden',
+              fontFamily: 'var(--font-family-ui)',
+            }}
+          >
+            {/* Header */}
+            <div
+              className="px-5 py-4 flex items-center gap-3"
+              style={{
+                background: pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical'
+                  ? 'linear-gradient(135deg, #FEF3C7, #FBBF24 40%, #F59E0B)'
+                  : 'linear-gradient(135deg, #ECFDF5, #6EE7B7 40%, #10B981)',
+                borderBottom: '1px solid rgba(0,0,0,0.08)',
+              }}
+            >
+              <div className="w-10 h-10 rounded-2xl bg-white/90 flex items-center justify-center shadow-sm">
+                {pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical'
+                  ? <ShieldAlert className="w-5 h-5 text-amber-700" />
+                  : <ShieldCheck className="w-5 h-5 text-emerald-700" />
+                }
+              </div>
+              <div>
+                <h3 className="m-0 text-sm font-black text-zinc-900">
+                  تأكيد تنفيذ الأمر
+                </h3>
+                <p className="m-0 text-xs text-zinc-700 font-medium">
+                  {pendingToolCall.tool.nameAr}
+                </p>
+              </div>
+            </div>
+
+            {/* Confirmation Summary */}
+            <div className="px-5 py-4">
+              <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs leading-relaxed text-zinc-800 whitespace-pre-wrap">
+                {pendingToolCall.confirmationSummary}
+              </div>
+
+              {/* Risk Warning for high/critical */}
+              {(pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical') && (
+                <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-300 flex items-start gap-2.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <p className="m-0 text-xs text-amber-900 font-bold leading-relaxed">
+                    تنبيه: هذا الإجراء يُعدّل بيانات حساسة. تأكد من صحة التفاصيل قبل المتابعة.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="px-5 pb-5 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleConfirmToolCall}
+                disabled={isExecutingTool}
+                className="flex-1 px-4 py-2.5 rounded-xl font-extrabold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #091725, #1c3c60)',
+                  color: '#FBBF24',
+                  border: '1px solid rgba(207, 166, 74, 0.4)',
+                  boxShadow: '0 4px 12px rgba(9, 23, 37, 0.25)',
+                  opacity: isExecutingTool ? 0.7 : 1,
+                }}
+              >
+                {isExecutingTool ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>جاري التنفيذ...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>تأكيد وتنفيذ</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCancelToolCall}
+                disabled={isExecutingTool}
+                className="px-4 py-2.5 rounded-xl font-bold text-sm bg-zinc-100 text-zinc-700 border border-zinc-200 hover:bg-zinc-200 transition-all cursor-pointer"
+              >
+                إلغاء
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

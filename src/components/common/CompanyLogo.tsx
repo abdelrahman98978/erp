@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CompanyId } from '../../types';
 
 interface CompanyLogoProps {
@@ -8,12 +8,54 @@ interface CompanyLogoProps {
   style?: React.CSSProperties;
 }
 
+const LOGO_PATHS: Record<string, string> = {
+  SAF: '/logos/saf.png',
+  saf: '/logos/saf.png',
+  masi: '/logos/saf.png',
+  YAQ: '/logos/yaqoot.png',
+  yaq: '/logos/yaqoot.png',
+  yaqoot: '/logos/yaqoot.png',
+  TOP: '/logos/topaz.png',
+  top: '/logos/topaz.png',
+  topaz: '/logos/topaz.png',
+  DAR: '/logos/ruwad.png',
+  dar: '/logos/ruwad.png',
+  ruwad: '/logos/ruwad.png',
+  shelter: '/logos/ruwad.png',
+  SHELTER: '/logos/ruwad.png',
+  KAS: '/logo.png',
+  kas: '/logo.png',
+};
+
 export const CompanyLogo: React.FC<CompanyLogoProps> = ({
   companyId,
   size = 48,
+  className = '',
   style = {},
 }) => {
-  // 1. Al-Safa Al-Masi / Al-Sfeer Al-Masi (Gold & Diamond Logo)
+  const [imgError, setImgError] = useState(false);
+  const normalizedKey = (companyId || '').toString().trim();
+  const logoPath = LOGO_PATHS[normalizedKey] || LOGO_PATHS[normalizedKey.toUpperCase()] || LOGO_PATHS[normalizedKey.toLowerCase()];
+
+  // If high-res official logo image exists and hasn't errored, display it in a luxury badge
+  if (logoPath && !imgError && companyId !== 'kas' && companyId !== 'KAS') {
+    return (
+      <div
+        className={`inline-flex items-center justify-center overflow-hidden bg-white/95 rounded-xl p-1 shadow-sm border border-slate-200/60 transition-transform duration-200 hover:scale-105 ${className}`}
+        style={{ width: size, height: size, minWidth: size, minHeight: size, ...style }}
+      >
+        <img
+          src={logoPath}
+          alt={String(companyId)}
+          className="w-full h-full object-contain"
+          onError={() => setImgError(true)}
+          loading="eager"
+        />
+      </div>
+    );
+  }
+
+  // 1. Al-Safeer Al-Masi (Diamond Logo Fallback)
   if (companyId === 'masi' || companyId === 'SAF') {
     return (
       <svg
@@ -25,7 +67,6 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
         style={{ borderRadius: '12px', ...style }}
       >
         <rect width="200" height="200" rx="28" fill="#F0FDF4" stroke="#BBF7D0" strokeWidth="4" />
-        {/* Diamond Polygons */}
         <polygon points="100,160 40,80 75,40 100,40" fill="#0284C7" />
         <polygon points="100,160 160,80 125,40 100,40" fill="#38BDF8" />
         <polygon points="100,160 75,40 100,40" fill="#0369A1" />
@@ -36,7 +77,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
     );
   }
 
-  // 2. Yaqoot Eastern / Yaqoot Najd (Crimson & Ruby Starburst Logo)
+  // 2. Yaqout Najd (Crimson & Ruby Starburst Logo Fallback)
   if (companyId === 'yaqoot' || companyId === 'YAQ') {
     return (
       <svg
@@ -49,7 +90,6 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
       >
         <rect width="200" height="200" rx="28" fill="#FFF1F2" stroke="#FECDD3" strokeWidth="4" />
         <g transform="translate(100, 100)">
-          {/* Starburst Ruby Crystal Points */}
           {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
             <g key={i} transform={`rotate(${angle})`}>
               <polygon points="0,0 -12,-65 0,-85 12,-65" fill={i % 2 === 0 ? '#E11D48' : '#F43F5E'} />
@@ -63,7 +103,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
     );
   }
 
-  // 3. Top Talent / Topaz Recruitment (Purple & Violet Faceted Gem Logo)
+  // 3. Topaz Recruitment (Gem Logo Fallback)
   if (companyId === 'topaz' || companyId === 'TOP') {
     return (
       <svg
@@ -75,10 +115,8 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
         style={{ borderRadius: '12px', ...style }}
       >
         <rect width="200" height="200" rx="28" fill="#FAF5FF" stroke="#E9D5FF" strokeWidth="4" />
-        {/* Octagonal Gem Pattern */}
         <g transform="translate(100, 100)">
           <circle cx="0" cy="0" r="60" fill="url(#topazGrad)" />
-          {/* Facet Lines */}
           {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle, i) => (
             <line
               key={i}
@@ -104,8 +142,8 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
     );
   }
 
-  // 4. Dar Al-Ruwad (Blue Globe + Stylized 'R' Logo)
-  if (companyId === 'ruwad' || companyId === 'DAR') {
+  // 4. Dar Al-Ruwad (Blue Globe + Stylized 'R' Fallback)
+  if (companyId === 'ruwad' || companyId === 'DAR' || (companyId as string) === 'shelter') {
     return (
       <svg
         width={size}
@@ -116,13 +154,11 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
         style={{ borderRadius: '12px', ...style }}
       >
         <rect width="200" height="200" rx="28" fill="#EFF6FF" stroke="#BFDBFE" strokeWidth="4" />
-        {/* Globe Grid */}
         <circle cx="100" cy="100" r="70" fill="#FFFFFF" stroke="#1E3A8A" strokeWidth="5" />
         <ellipse cx="100" cy="100" rx="70" ry="30" fill="none" stroke="#0284C7" strokeWidth="3" />
         <ellipse cx="100" cy="100" rx="30" ry="70" fill="none" stroke="#0284C7" strokeWidth="3" />
         <line x1="30" y1="100" x2="170" y2="100" stroke="#1E3A8A" strokeWidth="4" />
         <line x1="100" y1="30" x2="100" y2="170" stroke="#1E3A8A" strokeWidth="4" />
-        {/* Stylized 'R' */}
         <path
           d="M 70,140 C 60,110 65,70 95,70 C 125,70 135,90 120,110 C 110,120 90,115 85,115 L 125,140"
           fill="none"

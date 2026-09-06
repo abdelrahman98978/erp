@@ -3,7 +3,12 @@
  * On-Device Local AI Service for Faris & Noura personas.
  * Communicates directly with local Ollama runtime (127.0.0.1:11434).
  * Enforces 100% Data Sovereignty, Zero-Cloud Leaks, and Strict Multi-Tenant Company Isolation.
+ *
+ * Phase 1: Function Calling — AI can now trigger actions via registered tools.
  */
+
+import { buildToolDescriptionsForLLM } from './aiToolRegistry';
+import { parseToolCallFromResponse, validateToolCall, type ToolCallParsed } from './aiToolExecutor';
 
 export type AssistantPersona = 'faris' | 'noura';
 
@@ -29,6 +34,8 @@ export interface LocalAiResponse {
     label: string;
     actionKey: string;
   };
+  /** If the model triggered a function call, it will be parsed here for user confirmation */
+  toolCall?: ToolCallParsed | null;
 }
 
 const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
@@ -123,12 +130,31 @@ function determineActionButton(query: string, compId: string, persona: Assistant
 }
 
 /**
- * Generate a company-isolated, on-device AI response using the local Ollama model (noura-erp or faris-erp).
+ * Resolve the optimal specialized local model based on active company and persona.
+ */
+export function resolveTargetModel(company: CompanyScopeContext, persona: AssistantPersona): string {
+  if (persona === 'noura') return 'noura-erp';
+  const c = company.id.toUpperCase();
+  if (c === 'KAS') return 'kas-erp';
+  if (c === 'SAF' || c === 'MASI') return 'saf-erp';
+  if (c === 'YAQ' || c === 'YAQOOT') return 'yaq-erp';
+  if (c === 'TOP' || c === 'TOPAZ') return 'top-erp';
+  if (c === 'SHELTER') return 'shelter-erp';
+  return 'faris-erp';
+}
+
+/**
+ * Generate a company-isolated, on-device AI response using the local Ollama model.
+ * Now supports Function Calling: the model can trigger tools via structured JSON output.
  */
 export async function generateLocalAiResponse(options: LocalAiGenerateOptions): Promise<LocalAiResponse> {
   const { prompt, persona, company, conversationHistory = [], signal } = options;
-  const targetModel = persona === 'noura' ? 'noura-erp' : 'faris-erp';
+  const targetModel = resolveTargetModel(company, persona);
   const isolationContext = buildCompanyIsolationContext(company, persona);
+
+  // Build tool descriptions for LLM injection
+  const toolContext = buildToolDescriptionsForLLM(company.id);
+  const fullSystemPrompt = isolationContext + toolContext;
 
   try {
     const isOnline = await checkLocalAiAvailable();
@@ -138,7 +164,7 @@ export async function generateLocalAiResponse(options: LocalAiGenerateOptions): 
 
     // Build chat messages for the local model
     const messages = [
-      { role: 'system', content: isolationContext },
+      { role: 'system', content: fullSystemPrompt },
       ...conversationHistory.slice(-4).map(msg => ({
         role: msg.sender === 'ai' ? 'assistant' : 'user',
         content: msg.text,
@@ -174,11 +200,36 @@ export async function generateLocalAiResponse(options: LocalAiGenerateOptions): 
       throw new Error('Empty response from local AI');
     }
 
+    // Phase 1: Check if the model triggered a tool call
+    let toolCall: ToolCallParsed | null = null;
+    let displayText = rawText;
+
+    const toolCallRequest = parseToolCallFromResponse(rawText);
+    if (toolCallRequest) {
+      // Validate the tool call against company scope and permissions
+      const validated = validateToolCall(toolCallRequest, company.id, 'current_user');
+      if (validated) {
+        toolCall = validated;
+        // Clean the raw response: remove JSON block, keep natural text
+        displayText = rawText
+          .replace(/\{[\s\S]*?"tool_call"[\s\S]*?\}[\s\S]*?\}/g, '')
+          .trim();
+
+        // If the model only returned JSON without text, generate a contextual confirmation message
+        if (!displayText) {
+          displayText = persona === 'noura'
+            ? `حسناً، سأقوم بتنفيذ "${validated.tool.nameAr}" الآن. هل تؤكدين العملية؟`
+            : `تم فهم طلبك. سأقوم بتنفيذ "${validated.tool.nameAr}" الآن. هل تؤكد العملية؟`;
+        }
+      }
+    }
+
     return {
-      text: rawText,
+      text: displayText,
       modelUsed: targetModel,
       isLocal: true,
-      actionButton: determineActionButton(prompt, company.id, persona),
+      actionButton: toolCall ? undefined : determineActionButton(prompt, company.id, persona),
+      toolCall,
     };
   } catch (err) {
     console.warn('[Local AI Fallback] Using contextual offline engine:', err);

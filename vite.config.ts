@@ -65,9 +65,20 @@ const ttsPlugin = () => ({
 export default defineConfig({
   base: '/',
   plugins: [react(), ttsPlugin()],
+  resolve: {
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime']
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react/jsx-runtime', '@tanstack/react-query']
+  },
   server: {
     port: 3000,
-    host: true
+    host: true,
+    watch: {
+      usePolling: true,
+      interval: 1000,
+      ignored: ['**/node_modules/**', '**/.git/**', '**/public/**', '**/dist/**']
+    }
   },
   build: {
     copyPublicDir: false,
