@@ -1,10 +1,70 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const ttsPlugin = () => ({
+  name: 'tts-api',
+  configureServer(server: any) {
+    server.middlewares.use(async (req: any, res: any, next: any) => {
+      if (req.url && req.url.startsWith('/api/tts')) {
+        try {
+          const parsedUrl = new URL(req.url, 'http://localhost:3000');
+          const rawText = parsedUrl.searchParams.get('text') || '';
+          const persona = parsedUrl.searchParams.get('persona') || 'noura';
+
+          const text = rawText
+            .replace(/[*_#`~]/g, '')
+            .replace(/•/g, '')
+            .replace(/\(.*?\)/g, '')
+            .replace(/\[.*?\]/g, '')
+            .replace(/[\n\r]+/g, ' ')
+            .replace(/\+/g, ' زائد ')
+            .trim();
+
+          if (!text) {
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'Text parameter is required' }));
+            return;
+          }
+
+          const { MsEdgeTTS, OUTPUT_FORMAT } = await import('msedge-tts');
+          const voice = persona === 'faris' ? 'ar-SA-HamedNeural' : 'ar-SA-ZariyahNeural';
+          const tts = new MsEdgeTTS();
+          await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+          const { audioStream } = tts.toStream(text);
+
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'audio/mpeg');
+          res.setHeader('Cache-Control', 'public, max-age=3600');
+          audioStream.pipe(res);
+
+          audioStream.on('error', (err: any) => {
+            console.warn('[TTS Dev Plugin] Stream error:', err);
+            if (!res.headersSent) {
+              res.statusCode = 500;
+              res.end('TTS Stream Error');
+            }
+          });
+          return;
+        } catch (err: any) {
+          console.warn('[TTS Dev Plugin] Execution error:', err);
+          if (!res.headersSent) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: err.message || 'TTS generation failed' }));
+          }
+          return;
+        }
+      }
+      next();
+    });
+  }
+});
+
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
-  plugins: [react()],
+  plugins: [react(), ttsPlugin()],
   server: {
     port: 3000,
     host: true

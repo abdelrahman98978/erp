@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2 } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { SystemPortalOption } from '../../pages/LoginPage';
-import { playPersonaSwitchGreeting, stopAllAudio } from '../../services/audioVoiceService';
+import { playPersonaSwitchGreeting, stopAllAudio, subscribeAudioState } from '../../services/audioVoiceService';
 
 interface SaudiAssistantMascotProps {
   selectedPortal: SystemPortalOption;
@@ -123,6 +123,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
     if (isShelter) return 'noura';
     return (localStorage.getItem('assistant_persona') as 'faris' | 'noura') || 'faris';
   });
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
   // Automatically switch to Noura when shelter portal is selected
   useEffect(() => {
@@ -131,7 +132,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
     }
   }, [selectedPortal.id, isShelter]);
 
-  // Sync with global persona changes
+  // Sync with global persona changes and audio speaking state
   useEffect(() => {
     const handlePersonaChange = (event: any) => {
       if (event.detail?.persona && (event.detail.persona === 'faris' || event.detail.persona === 'noura')) {
@@ -139,8 +140,13 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
       }
     };
     window.addEventListener('assistant-persona-changed', handlePersonaChange);
+    const unsubAudio = subscribeAudioState((speaking) => {
+      setIsAudioPlaying(speaking);
+    });
     return () => {
       window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+      unsubAudio();
+      stopAllAudio();
     };
   }, []);
 
@@ -260,13 +266,21 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              playPersonaSwitchGreeting(persona);
+              if (isAudioPlaying) {
+                stopAllAudio();
+              } else {
+                playPersonaSwitchGreeting(persona);
+              }
             }}
-            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-zinc-100 hover:bg-amber-50 text-zinc-700 hover:text-amber-800 border border-zinc-200 transition-colors"
-            title={`استمع لصوت ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
+            className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9.5px] font-bold border transition-all cursor-pointer ${
+              isAudioPlaying
+                ? 'bg-amber-100 text-amber-900 border-amber-300 animate-pulse'
+                : 'bg-zinc-100 hover:bg-amber-50 text-zinc-700 hover:text-amber-800 border-zinc-200'
+            }`}
+            title={isAudioPlaying ? 'إيقاف الصوت' : `استمع لصوت ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
           >
-            <Volume2 className="w-3 h-3 text-amber-600" />
-            <span>استمع</span>
+            {isAudioPlaying ? <VolumeX className="w-3 h-3 text-amber-700" /> : <Volume2 className="w-3 h-3 text-amber-600" />}
+            <span>{isAudioPlaying ? 'إيقاف' : 'استمع'}</span>
           </button>
         </div>
       </div>

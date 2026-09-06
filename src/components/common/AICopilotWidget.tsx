@@ -6,7 +6,17 @@ import {
   ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
   Minimize2
 } from 'lucide-react';
-import { playPersonaSwitchGreeting, playPersonaChime, speakDynamicSpeech, stopAllAudio } from '../../services/audioVoiceService';
+import { 
+  playPersonaSwitchGreeting, 
+  playPersonaChime, 
+  playPersonaWakeGreeting,
+  playWakeEnabledGreeting,
+  speakDynamicSpeech, 
+  stopAllAudio,
+  isAudioSpeaking,
+  getLastSpeechTimestamp,
+  subscribeAudioState
+} from '../../services/audioVoiceService';
 import { generateLocalAiResponse, checkLocalAiAvailable } from '../../services/localAiService';
 
 interface ChatMessage {
@@ -51,6 +61,14 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const [isSpeaking, setIsSpeaking] = useState(false);
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const wakeRecognitionRef = useRef<any>(null);
+  const lastWakeTriggerRef = useRef<number>(0);
+
+  // Sync isSpeaking with centralized audio engine
+  useEffect(() => {
+    return subscribeAudioState((speaking) => {
+      setIsSpeaking(speaking);
+    });
+  }, []);
 
   // Monitor local AI daemon availability
   useEffect(() => {
@@ -179,6 +197,16 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         rec.interimResults = true;
 
         rec.onresult = (event: any) => {
+          // 1. HARD ECHO GUARD: Discard microphone results if the computer is currently speaking or just finished within 2500ms
+          if (isSpeaking || isAudioSpeaking() || Date.now() - getLastSpeechTimestamp() < 2500) {
+            return;
+          }
+
+          // 2. Cooldown check: at least 3.5 seconds between wake triggers
+          if (Date.now() - lastWakeTriggerRef.current < 3500) {
+            return;
+          }
+
           const lastRes = event.results[event.results.length - 1];
           const text = (lastRes[0]?.transcript || '').trim().toLowerCase();
 
@@ -187,6 +215,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           const calledGeneral = text.includes('يا مرشد') || text.includes('يا مساعد');
 
           if (calledFaris || calledNoura || calledGeneral) {
+            lastWakeTriggerRef.current = Date.now();
             const targetPersona = calledNoura ? 'noura' : calledFaris ? 'faris' : persona;
             if (targetPersona !== persona) {
               setPersona(targetPersona);
@@ -197,10 +226,11 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             localStorage.setItem('assistant_mascot_docked', 'false');
             setIsOpen(true);
 
-            const wakeGreeting = targetPersona === 'noura'
-              ? 'لبيكِ يا عزيزتي! أنا نُورة معكِ، تفضلي بسؤالكِ.'
-              : 'لبيك! أنا فارس معك، تفضل بسؤالك.';
-            speakText(wakeGreeting, targetPersona, true);
+            // Play pre-recorded native Saudi female/male wake response (Chime -> Voice sequenced)
+            playPersonaWakeGreeting(targetPersona, {
+              onStart: () => setIsSpeaking(true),
+              onEnd: () => setIsSpeaking(false),
+            });
           }
         };
 
@@ -263,19 +293,24 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       },
     ]);
 
-    // Force speech playback so the user immediately hears the new persona's voice!
-    playPersonaSwitchGreeting(newPersona);
+    // Force sequenced chime-then-voice playback with authentic voice
+    playPersonaSwitchGreeting(newPersona, {
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+    });
   };
 
   // Voice Speech Synthesis Engine
   const speakText = (text: string, overridePersona?: AssistantPersona, force = false) => {
     if (!voiceEnabled && !force) return;
     const currentPers = overridePersona || persona;
-    playPersonaChime(currentPers);
-    speakDynamicSpeech(text, currentPers, {
-      onStart: () => setIsSpeaking(true),
-      onEnd: () => setIsSpeaking(false),
-      onError: () => setIsSpeaking(false),
+    // Play chime first, then dynamic neural speech!
+    playPersonaChime(currentPers).then(() => {
+      speakDynamicSpeech(text, currentPers, {
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
     });
   };
 
@@ -286,7 +321,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     if (!next) {
       stopAllAudio();
     } else {
-      playPersonaSwitchGreeting(persona);
+      playPersonaSwitchGreeting(persona, {
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+      });
     }
   };
 
@@ -301,10 +339,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     setWakeWordEnabled(next);
     localStorage.setItem('assistant_wake_word_enabled', String(next));
     if (next) {
-      const intro = persona === 'noura'
-        ? 'تم تفعيل الاستماع للمناداة. يمكنكِ مناداتي في أي وقت بقولكِ: يا نُورة.'
-        : 'تم تفعيل الاستماع للمناداة. يمكنك مناداتي في أي وقت بقولك: يا فارس.';
-      speakText(intro, persona, true);
+      playWakeEnabledGreeting(persona, {
+        onStart: () => setIsSpeaking(true),
+        onEnd: () => setIsSpeaking(false),
+      });
     }
   };
 

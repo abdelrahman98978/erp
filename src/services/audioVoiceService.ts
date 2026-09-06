@@ -1,108 +1,103 @@
 /**
  * audioVoiceService.ts
- * Comprehensive audio and voice synthesis engine for Faris and Noura personas.
+ * Comprehensive high-fidelity audio, chime, and voice synthesis engine for Faris and Noura personas.
  * Features:
- * 1. High-fidelity pre-recorded native Arabic audio for greetings & transitions.
- * 2. Harmonic crystalline/warm chimes via Web Audio API.
- * 3. Robust Web Speech API fallback with Chromium keep-alive heartbeat & GC prevention.
+ * 1. Mutual Exclusion Audio Coordinator (Strict Single-Channel Audio: No overlapping or audio collisions).
+ * 2. Pre-recorded High-Fidelity Saudi Audio Assets for instant response.
+ * 3. Real-Time Streaming Neural TTS via /api/tts (Zariyah for Noura, Hamed for Faris).
+ * 4. Harmonic crystalline & executive chimes via Web Audio API, cleanly sequenced BEFORE speech.
+ * 5. Global Speech State & Echo Protection Tracker (prevents microphone feedback loops).
+ * 6. Resilient Web Speech API fallback.
  */
 
 export type AssistantPersona = 'faris' | 'noura';
 
-// Audio assets map
+// Audio assets map for instant, zero-latency playback
 const AUDIO_ASSETS: Record<string, string> = {
   'noura_intro': '/audio/noura_landing_intro.mp3',
   'faris_intro': '/audio/faris_landing_intro.mp3',
   'noura_switch': '/audio/noura_switch.mp3',
   'faris_switch': '/audio/faris_switch.mp3',
   'noura_shelter': '/audio/noura_shelter_intro.mp3',
+  'noura_wake': '/audio/noura_wake.mp3',
+  'faris_wake': '/audio/faris_wake.mp3',
+  'noura_wake_enabled': '/audio/noura_wake_enabled.mp3',
+  'faris_wake_enabled': '/audio/faris_wake_enabled.mp3',
 };
 
-// Global audio state
+// Global audio state & locks
 let currentHtmlAudio: HTMLAudioElement | null = null;
+let activeAudioContext: AudioContext | null = null;
 let speechKeepAliveTimer: any = null;
+let pendingChimeTimeout: any = null;
+let isGlobalSpeaking = false;
+let lastSpeechEndTime = 0;
+const stateListeners = new Set<(speaking: boolean) => void>();
 
-/**
- * Play a signature harmonic chime using the Web Audio API.
- * - Noura: Elegant crystalline bell chord (E5 + A5)
- * - Faris: Warm executive resonant chord (C4 + G4)
- */
-export function playPersonaChime(persona: AssistantPersona) {
-  try {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-
-    const ctx = new AudioCtx();
-    if (ctx.state === 'suspended') {
-      ctx.resume().catch(() => {});
-    }
-
-    const now = ctx.currentTime;
-    const gain = ctx.createGain();
-    gain.connect(ctx.destination);
-
-    if (persona === 'noura') {
-      // Shimmering feminine bell chime
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      osc1.type = 'sine';
-      osc2.type = 'triangle';
-
-      osc1.frequency.setValueAtTime(659.25, now); // E5
-      osc2.frequency.setValueAtTime(880.0, now);  // A5
-
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.exponentialRampToValueAtTime(0.2, now + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
-
-      osc1.start(now);
-      osc2.start(now);
-      osc1.stop(now + 0.46);
-      osc2.stop(now + 0.46);
-    } else {
-      // Warm executive two-tone chime
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      osc1.type = 'sine';
-      osc2.type = 'sine';
-
-      osc1.frequency.setValueAtTime(261.63, now); // C4
-      osc2.frequency.setValueAtTime(392.00, now); // G4
-
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.exponentialRampToValueAtTime(0.18, now + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
-
-      osc1.start(now);
-      osc2.start(now);
-      osc1.stop(now + 0.46);
-      osc2.stop(now + 0.46);
-    }
-
-    setTimeout(() => {
-      ctx.close().catch(() => {});
-    }, 600);
-  } catch (err) {
-    console.debug('Web Audio chime could not play:', err);
+function notifyStateChange(speaking: boolean) {
+  isGlobalSpeaking = speaking;
+  if (!speaking) {
+    lastSpeechEndTime = Date.now();
   }
+  stateListeners.forEach(cb => {
+    try {
+      cb(speaking);
+    } catch (_) {}
+  });
+  window.dispatchEvent(new CustomEvent('assistant-speech-state', { detail: { speaking } }));
 }
 
 /**
- * Stop any active audio playback (HTML5 Audio and Web Speech)
+ * Check if the assistant audio system is currently playing or speaking.
+ */
+export function isAudioSpeaking(): boolean {
+  if (isGlobalSpeaking) return true;
+  if (currentHtmlAudio && !currentHtmlAudio.paused && !currentHtmlAudio.ended) return true;
+  if ('speechSynthesis' in window && window.speechSynthesis.speaking) return true;
+  return false;
+}
+
+/**
+ * Get the timestamp when the assistant last finished speaking.
+ * Useful to enforce microphone suppression / echo decay guard.
+ */
+export function getLastSpeechTimestamp(): number {
+  return lastSpeechEndTime;
+}
+
+/**
+ * Subscribe to speech state changes (speaking / stopped)
+ */
+export function subscribeAudioState(callback: (speaking: boolean) => void): () => void {
+  stateListeners.add(callback);
+  return () => {
+    stateListeners.delete(callback);
+  };
+}
+
+/**
+ * Force stop all audio immediately (HTML5 Audio, Web Audio, Web Speech Synthesis)
  */
 export function stopAllAudio() {
+  if (pendingChimeTimeout) {
+    clearTimeout(pendingChimeTimeout);
+    pendingChimeTimeout = null;
+  }
+
   if (currentHtmlAudio) {
     try {
       currentHtmlAudio.pause();
       currentHtmlAudio.currentTime = 0;
+      currentHtmlAudio.src = '';
     } catch {}
     currentHtmlAudio = null;
+  }
+
+  if (activeAudioContext) {
+    try {
+      activeAudioContext.close().catch(() => {});
+    } catch {}
+    activeAudioContext = null;
   }
 
   if (speechKeepAliveTimer) {
@@ -115,10 +110,110 @@ export function stopAllAudio() {
       window.speechSynthesis.cancel();
     } catch {}
   }
+
+  if (isGlobalSpeaking) {
+    notifyStateChange(false);
+  }
 }
 
 /**
- * Play pre-recorded high fidelity MP3 audio for Faris or Noura
+ * Play a signature harmonic chime using the Web Audio API.
+ * - Noura: Elegant shimmering bell chord (E5 + A5)
+ * - Faris: Warm executive resonant chord (C4 + G4)
+ * Returns a Promise that resolves after the chime's main transient (280ms),
+ * allowing speech to start cleanly without audio collision!
+ */
+export function playPersonaChime(persona: AssistantPersona): Promise<void> {
+  return new Promise((resolve) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) {
+        resolve();
+        return;
+      }
+
+      if (activeAudioContext) {
+        try {
+          activeAudioContext.close().catch(() => {});
+        } catch {}
+        activeAudioContext = null;
+      }
+
+      const ctx = new AudioCtx();
+      activeAudioContext = ctx;
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+      }
+
+      const now = ctx.currentTime;
+      const gain = ctx.createGain();
+      gain.connect(ctx.destination);
+
+      if (persona === 'noura') {
+        // Shimmering feminine crystalline bell
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+
+        osc1.frequency.setValueAtTime(659.25, now); // E5
+        osc2.frequency.setValueAtTime(880.0, now);  // A5
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.36);
+        osc2.stop(now + 0.36);
+      } else {
+        // Warm executive resonance
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+
+        osc1.frequency.setValueAtTime(261.63, now); // C4
+        osc2.frequency.setValueAtTime(392.00, now); // G4
+
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.36);
+        osc2.stop(now + 0.36);
+      }
+
+      setTimeout(() => {
+        try {
+          ctx.close().catch(() => {});
+        } catch {}
+        if (activeAudioContext === ctx) {
+          activeAudioContext = null;
+        }
+      }, 450);
+
+      // Resolve at 280ms so subsequent speech starts right as chime fades smoothly
+      setTimeout(resolve, 280);
+    } catch (err) {
+      console.debug('[Audio] Chime error:', err);
+      resolve();
+    }
+  });
+}
+
+/**
+ * Play a pre-recorded audio asset with guaranteed mutual exclusion.
  */
 export function playPreRecordedAudio(
   key: string,
@@ -132,6 +227,7 @@ export function playPreRecordedAudio(
   if (!url) return false;
 
   stopAllAudio();
+  notifyStateChange(true);
 
   try {
     const audio = new Audio(url);
@@ -143,12 +239,14 @@ export function playPreRecordedAudio(
 
     audio.onended = () => {
       currentHtmlAudio = null;
+      notifyStateChange(false);
       callbacks?.onEnd?.();
     };
 
     audio.onerror = (e) => {
-      console.warn('Audio asset error:', e);
+      console.warn('[Audio] Asset error:', e);
       currentHtmlAudio = null;
+      notifyStateChange(false);
       callbacks?.onError?.(e);
       callbacks?.onEnd?.();
     };
@@ -156,15 +254,17 @@ export function playPreRecordedAudio(
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
-        console.warn('Audio play() rejected:', err);
+        console.warn('[Audio] HTML5 play() rejected:', err);
         currentHtmlAudio = null;
+        notifyStateChange(false);
         callbacks?.onError?.(err);
         callbacks?.onEnd?.();
       });
     }
     return true;
   } catch (e) {
-    console.warn('HTML Audio instantiation error:', e);
+    console.warn('[Audio] Instantiation error:', e);
+    notifyStateChange(false);
     callbacks?.onError?.(e);
     callbacks?.onEnd?.();
     return false;
@@ -172,9 +272,25 @@ export function playPreRecordedAudio(
 }
 
 /**
- * Synthesize speech dynamically using Web Speech API with Chromium SAPI fixes.
+ * Clean and prepare text for speech synthesis
  */
-export function speakDynamicSpeech(
+function cleanSpeechText(text: string): string {
+  return text
+    .replace(/[*_#`~]/g, '')
+    .replace(/•/g, '')
+    .replace(/\(.*?\)/g, '')
+    .replace(/\[.*?\]/g, '')
+    .replace(/[\n\r]+/g, ' ')
+    .replace(/\+/g, ' زائد ')
+    .trim();
+}
+
+/**
+ * Dynamic speech synthesis engine:
+ * 1. Tries /api/tts endpoint first for ultra-realistic authentic Saudi voices (Zariyah / Hamed).
+ * 2. Falls back to Web Speech API if endpoint is unavailable or errors out.
+ */
+export async function speakDynamicSpeech(
   text: string,
   persona: AssistantPersona,
   callbacks?: {
@@ -183,24 +299,69 @@ export function speakDynamicSpeech(
     onError?: (err: any) => void;
   }
 ) {
-  if (!('speechSynthesis' in window)) {
+  const clean = cleanSpeechText(text);
+  if (!clean) {
     callbacks?.onEnd?.();
     return;
   }
 
   stopAllAudio();
+  notifyStateChange(true);
 
-  // Strip markdown, asterisks, bullet points, brackets
-  const cleanText = text
-    .replace(/[*_#`~]/g, '')
-    .replace(/•/g, '')
-    .replace(/\(.*?\)/g, '')
-    .replace(/\[.*?\]/g, '')
-    .replace(/[\n\r]+/g, ' ')
-    .replace(/\+/g, ' زائد ')
-    .trim();
+  // Attempt 1: High-fidelity Server-side Neural TTS stream (/api/tts)
+  try {
+    const ttsUrl = `/api/tts?text=${encodeURIComponent(clean)}&persona=${persona}`;
+    const res = await fetch(ttsUrl);
 
-  if (!cleanText) {
+    if (res.ok && res.headers.get('content-type')?.includes('audio')) {
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const audio = new Audio(objectUrl);
+      currentHtmlAudio = audio;
+
+      audio.onplay = () => {
+        callbacks?.onStart?.();
+      };
+
+      audio.onended = () => {
+        URL.revokeObjectURL(objectUrl);
+        currentHtmlAudio = null;
+        notifyStateChange(false);
+        callbacks?.onEnd?.();
+      };
+
+      audio.onerror = (e) => {
+        console.warn('[Audio] Neural TTS playback failed, falling back to Web Speech:', e);
+        URL.revokeObjectURL(objectUrl);
+        currentHtmlAudio = null;
+        speakViaWebSpeechApi(clean, persona, callbacks);
+      };
+
+      await audio.play();
+      return;
+    }
+  } catch (err) {
+    console.debug('[Audio] Neural TTS stream unavailable, falling back to browser voice:', err);
+  }
+
+  // Attempt 2: Fallback to Web Speech API
+  speakViaWebSpeechApi(clean, persona, callbacks);
+}
+
+/**
+ * Web Speech API speech synthesis fallback with pitch/rate balancing and SAPI keep-alive
+ */
+function speakViaWebSpeechApi(
+  cleanText: string,
+  persona: AssistantPersona,
+  callbacks?: {
+    onStart?: () => void;
+    onEnd?: () => void;
+    onError?: (err: any) => void;
+  }
+) {
+  if (!('speechSynthesis' in window)) {
+    notifyStateChange(false);
     callbacks?.onEnd?.();
     return;
   }
@@ -219,7 +380,6 @@ export function speakDynamicSpeech(
     );
 
     if (persona === 'noura') {
-      // Look for real female voices
       const femaleVoice = arabicVoices.find(v => {
         const n = (v.name || '').toLowerCase();
         return (
@@ -238,8 +398,8 @@ export function speakDynamicSpeech(
       if (femaleVoice) {
         utterance.voice = femaleVoice;
       }
-      // Keep pitch in stable range to prevent Windows SAPI freeze
-      utterance.pitch = femaleVoice && femaleVoice.name.toLowerCase().includes('naayf') ? 1.12 : 1.05;
+      // If only Naayf exists, elevate pitch slightly with smooth rate
+      utterance.pitch = femaleVoice && femaleVoice.name.toLowerCase().includes('naayf') ? 1.22 : 1.08;
       utterance.rate = 1.02;
     } else {
       const maleVoice = arabicVoices.find(v => {
@@ -256,7 +416,7 @@ export function speakDynamicSpeech(
       if (maleVoice) {
         utterance.voice = maleVoice;
       }
-      utterance.pitch = 0.96;
+      utterance.pitch = 0.95;
       utterance.rate = 0.98;
     }
 
@@ -268,6 +428,7 @@ export function speakDynamicSpeech(
         clearInterval(speechKeepAliveTimer);
         speechKeepAliveTimer = null;
       }
+      notifyStateChange(false);
       callbacks?.onEnd?.();
     };
 
@@ -280,15 +441,13 @@ export function speakDynamicSpeech(
     };
 
     utterance.onerror = (e) => {
-      console.warn('SpeechSynthesis error:', e);
+      console.warn('[Audio] SpeechSynthesis error:', e);
       cleanup();
       callbacks?.onError?.(e);
     };
 
-    // Keep global reference on window to prevent Chromium V8 garbage collection mid-speech
     (window as any).__activeSpeechUtterance = utterance;
 
-    // Small delay for browser audio subsystem after cancel()
     setTimeout(() => {
       try {
         if (window.speechSynthesis.paused) {
@@ -296,7 +455,6 @@ export function speakDynamicSpeech(
         }
         window.speechSynthesis.speak(utterance);
 
-        // Chromium SAPI heartbeat keep-alive to avoid speech freezing on Windows
         speechKeepAliveTimer = setInterval(() => {
           if (!window.speechSynthesis.speaking) {
             clearInterval(speechKeepAliveTimer);
@@ -307,19 +465,20 @@ export function speakDynamicSpeech(
           }
         }, 500);
       } catch (err) {
-        console.warn('SpeechSynthesis speak call error:', err);
+        console.warn('[Audio] SpeechSynthesis speak call error:', err);
         cleanup();
       }
-    }, 50);
-
+    }, 40);
   } catch (err) {
-    console.warn('Speech synthesis setup failed:', err);
+    console.warn('[Audio] Speech setup failed:', err);
+    notifyStateChange(false);
     callbacks?.onEnd?.();
   }
 }
 
 /**
- * High level function to play Persona Introduction (Landing Page / Hero)
+ * Play Persona Introduction (Landing Page / Hero)
+ * Sequenced: Chime (280ms) -> Voice MP3
  */
 export function playPersonaIntroGreeting(
   persona: AssistantPersona,
@@ -328,30 +487,32 @@ export function playPersonaIntroGreeting(
     onEnd?: () => void;
   }
 ) {
-  playPersonaChime(persona);
-  const audioKey = `${persona}_intro`;
-  const played = playPreRecordedAudio(audioKey, {
-    onStart: callbacks?.onStart,
-    onEnd: callbacks?.onEnd,
-    onError: () => {
-      // Fallback to dynamic speech synthesis if audio file fails
+  stopAllAudio();
+  playPersonaChime(persona).then(() => {
+    const audioKey = `${persona}_intro`;
+    const played = playPreRecordedAudio(audioKey, {
+      onStart: callbacks?.onStart,
+      onEnd: callbacks?.onEnd,
+      onError: () => {
+        const fallbackText = persona === 'noura'
+          ? 'أهلاً بكم في مجموعة خالد السليم! أنا نُورة، مرشدتكم الرقمية الذكية.'
+          : 'أهلاً بكم في مجموعة خالد السليم! أنا فارس، مرشدكم الرقمي الذكي.';
+        speakDynamicSpeech(fallbackText, persona, callbacks);
+      }
+    });
+
+    if (!played) {
       const fallbackText = persona === 'noura'
-        ? 'أهلاً بكم في مجموعة خالد السليم! أنا نُورة، مرشدتكم الرقمية الذكية. يسعدني مرافقتكم وتوجيهكم للأقسام النسائية ومراكز الإيواء والتسكين وكافة أنظمة شركات المجموعة.'
-        : 'أهلاً بكم في مجموعة خالد السليم! أنا فارس، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.';
+        ? 'أهلاً بكم في مجموعة خالد السليم! أنا نُورة، مرشدتكم الرقمية الذكية.'
+        : 'أهلاً بكم في مجموعة خالد السليم! أنا فارس، مرشدكم الرقمي الذكي.';
       speakDynamicSpeech(fallbackText, persona, callbacks);
     }
   });
-
-  if (!played) {
-    const fallbackText = persona === 'noura'
-      ? 'أهلاً بكم في مجموعة خالد السليم! أنا نُورة، مرشدتكم الرقمية الذكية.'
-      : 'أهلاً بكم في مجموعة خالد السليم! أنا فارس، مرشدكم الرقمي الذكي.';
-    speakDynamicSpeech(fallbackText, persona, callbacks);
-  }
 }
 
 /**
- * High level function to play Persona Switch greeting
+ * Play Persona Switch greeting
+ * Sequenced: Chime (280ms) -> Voice MP3
  */
 export function playPersonaSwitchGreeting(
   persona: AssistantPersona,
@@ -360,23 +521,93 @@ export function playPersonaSwitchGreeting(
     onEnd?: () => void;
   }
 ) {
-  playPersonaChime(persona);
-  const audioKey = `${persona}_switch`;
-  const played = playPreRecordedAudio(audioKey, {
-    onStart: callbacks?.onStart,
-    onEnd: callbacks?.onEnd,
-    onError: () => {
+  stopAllAudio();
+  playPersonaChime(persona).then(() => {
+    const audioKey = `${persona}_switch`;
+    const played = playPreRecordedAudio(audioKey, {
+      onStart: callbacks?.onStart,
+      onEnd: callbacks?.onEnd,
+      onError: () => {
+        const fallbackText = persona === 'noura'
+          ? 'مرحباً بكِ، أنا نُورة معكِ الآن، يسعدني خدمتكِ وتوجيهكِ في المنظومة.'
+          : 'أهلاً بك، أنا فارس جاهز لمساعدتك في كل ما تحتاج.';
+        speakDynamicSpeech(fallbackText, persona, callbacks);
+      }
+    });
+
+    if (!played) {
       const fallbackText = persona === 'noura'
-        ? 'مرحباً بكِ، أنا نُورة معكِ الآن، يسعدني خدمتكِ وتوجيهكِ في المنظومة.'
-        : 'أهلاً بك، أنا فارس جاهز لمساعدتك في كل ما تحتاج.';
+        ? 'مرحباً بكِ، أنا نُورة معكِ الآن.'
+        : 'أهلاً بك، أنا فارس جاهز لمساعدتك.';
       speakDynamicSpeech(fallbackText, persona, callbacks);
     }
   });
+}
 
-  if (!played) {
-    const fallbackText = persona === 'noura'
-      ? 'مرحباً بكِ، أنا نُورة معكِ الآن.'
-      : 'أهلاً بك، أنا فارس جاهز لمساعدتك.';
-    speakDynamicSpeech(fallbackText, persona, callbacks);
+/**
+ * Play Wake Word Response greeting ("لبيك...")
+ * Sequenced: Chime (280ms) -> Voice MP3
+ */
+export function playPersonaWakeGreeting(
+  persona: AssistantPersona,
+  callbacks?: {
+    onStart?: () => void;
+    onEnd?: () => void;
   }
+) {
+  stopAllAudio();
+  playPersonaChime(persona).then(() => {
+    const audioKey = `${persona}_wake`;
+    const played = playPreRecordedAudio(audioKey, {
+      onStart: callbacks?.onStart,
+      onEnd: callbacks?.onEnd,
+      onError: () => {
+        const fallbackText = persona === 'noura'
+          ? 'لبيكِ يا عزيزتي! أنا نُورة معكِ، تفضلي بسؤالكِ.'
+          : 'لبيك! أنا فارس معك، تفضل بسؤالك.';
+        speakDynamicSpeech(fallbackText, persona, callbacks);
+      }
+    });
+
+    if (!played) {
+      const fallbackText = persona === 'noura'
+        ? 'لبيكِ يا عزيزتي! أنا نُورة معكِ، تفضلي بسؤالكِ.'
+        : 'لبيك! أنا فارس معك، تفضل بسؤالك.';
+      speakDynamicSpeech(fallbackText, persona, callbacks);
+    }
+  });
+}
+
+/**
+ * Play Wake Word Activated confirmation ("تم تفعيل الاستماع للمناداة...")
+ * Sequenced: Chime (280ms) -> Voice MP3
+ */
+export function playWakeEnabledGreeting(
+  persona: AssistantPersona,
+  callbacks?: {
+    onStart?: () => void;
+    onEnd?: () => void;
+  }
+) {
+  stopAllAudio();
+  playPersonaChime(persona).then(() => {
+    const audioKey = `${persona}_wake_enabled`;
+    const played = playPreRecordedAudio(audioKey, {
+      onStart: callbacks?.onStart,
+      onEnd: callbacks?.onEnd,
+      onError: () => {
+        const fallbackText = persona === 'noura'
+          ? 'تم تفعيل الاستماع للمناداة. يمكنكِ مناداتي في أي وقت بقولكِ: يا نُورة.'
+          : 'تم تفعيل الاستماع للمناداة. يمكنك مناداتي في أي وقت بقولك: يا فارس.';
+        speakDynamicSpeech(fallbackText, persona, callbacks);
+      }
+    });
+
+    if (!played) {
+      const fallbackText = persona === 'noura'
+        ? 'تم تفعيل الاستماع للمناداة. يمكنكِ مناداتي في أي وقت بقولكِ: يا نُورة.'
+        : 'تم تفعيل الاستماع للمناداة. يمكنك مناداتي في أي وقت بقولك: يا فارس.';
+      speakDynamicSpeech(fallbackText, persona, callbacks);
+    }
+  });
 }

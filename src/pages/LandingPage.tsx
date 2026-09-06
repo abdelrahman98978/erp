@@ -8,7 +8,7 @@ import {
   Menu, X, Building2, ChevronDown, Sparkles, LogIn, CheckCircle2,
   Lock, Globe, Hotel, Briefcase, Users, MessageSquare, Volume2, VolumeX
 } from 'lucide-react';
-import { playPersonaIntroGreeting, stopAllAudio } from '../services/audioVoiceService';
+import { playPersonaIntroGreeting, stopAllAudio, subscribeAudioState } from '../services/audioVoiceService';
 
 interface LandingPageProps {
   onSelectCompany: (companyId: string) => void;
@@ -30,8 +30,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       }
     };
     window.addEventListener('assistant-persona-changed', handlePersonaChange);
+    const unsubAudio = subscribeAudioState((speaking) => {
+      setIsPlayingVoice(speaking);
+    });
     return () => {
       window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+      unsubAudio();
       stopAllAudio();
     };
   }, []);
