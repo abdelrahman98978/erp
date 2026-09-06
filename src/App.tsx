@@ -346,8 +346,6 @@ const MainContent: React.FC = () => {
       case 'shelter-places':
       case 'room-management':
       case 'food-catering':
-        return <ShelterPage />;
-
       case 'shelter-suite':
       case 'shelter-portal':
       case 'shelter-housing-suite':
