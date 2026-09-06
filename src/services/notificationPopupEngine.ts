@@ -227,3 +227,11 @@ class NotificationPopupEngine {
 }
 
 export const notificationPopupEngine = new NotificationPopupEngine();
+
+export function triggerNotification(params: { title: string; body?: string; message?: string; type?: any }) {
+  notificationPopupEngine.show({
+    title: params.title,
+    message: params.body || params.message || '',
+    type: 'shelter',
+  });
+}

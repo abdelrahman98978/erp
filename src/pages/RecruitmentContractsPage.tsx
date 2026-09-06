@@ -11,7 +11,7 @@ import {
   FileSignature, Plus, FileSpreadsheet, FileText, Search, ArrowLeft, 
   Printer, X, LayoutGrid, List, Send, ShieldCheck, ShieldAlert, DollarSign, Plane, 
   RefreshCw, AlertCircle, Trash2, CheckCircle2, Check, Clock, Edit, 
-  CheckCheck, Shield, ChevronRight, Filter
+  CheckCheck, Shield, ChevronRight, Filter, Zap
 } from 'lucide-react';
 import { realErpDataStore } from '../services/realErpDataStore';
 
@@ -769,46 +769,57 @@ export const RecruitmentContractsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div
-        className="card-feature-cinematic"
+      {/* Executive Hero Banner */}
+      <div 
+        className="rounded-3xl p-6 sm:p-7 relative overflow-hidden transition-all duration-300"
         style={{
-          background: '#000000',
-          borderRadius: '16px',
-          padding: '28px',
-          color: '#FFFFFF',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+          background: 'linear-gradient(135deg, #091725 0%, #11253c 50%, #091725 100%)',
+          border: '1.5px solid rgba(207, 166, 74, 0.35)',
+          boxShadow: '0 20px 40px -15px rgba(9, 23, 37, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '16px',
+          gap: '20px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <FileSignature className="w-5 h-5" />
+        <div className="flex items-center gap-4">
+          <div 
+            className="w-13 h-13 rounded-2xl flex items-center justify-center text-amber-300 shrink-0 shadow-inner"
+            style={{ 
+              background: 'linear-gradient(135deg, rgba(207, 166, 74, 0.25) 0%, rgba(207, 166, 74, 0.08) 100%)',
+              border: '1px solid rgba(207, 166, 74, 0.4)'
+            }}
+          >
+            <FileSignature className="w-6 h-6" />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>MUSANED RECRUITMENT PIPELINE</span>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40">
+                MUSANED RECRUITMENT PIPELINE
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                مباشر وموثق
+              </span>
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white m-0 font-display">
               عقود الاستقدام المباشرة
             </h1>
-            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ {activeCompany.name}
+            <p className="text-sm text-zinc-300 m-0 mt-1 font-normal">
+              متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ <strong className="text-amber-300 font-bold">{activeCompany.name}</strong>
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="bg-zinc-900 border border-zinc-800 p-1 rounded-full flex gap-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Table / Kanban Toggle */}
+          <div className="bg-zinc-950/70 border border-zinc-800 p-1 rounded-2xl flex gap-1 shadow-inner backdrop-blur-md">
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                viewMode === 'table' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'table' ? 'bg-amber-400 text-zinc-950 shadow-sm' : 'text-zinc-400 hover:text-white'
               }`}
             >
               <List className="w-3.5 h-3.5" />
@@ -816,8 +827,8 @@ export const RecruitmentContractsPage: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('kanban')}
-              className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                viewMode === 'kanban' ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'kanban' ? 'bg-amber-400 text-zinc-950 shadow-sm' : 'text-zinc-400 hover:text-white'
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
@@ -827,11 +838,10 @@ export const RecruitmentContractsPage: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="button-white-pill"
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-zinc-950 border border-amber-300 shadow-lg shadow-amber-500/25 flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4 ml-1" />
-            <span>+ إضافة عقد استقدام</span>
+            <Plus className="w-4 h-4" />
+            <span>إضافة عقد استقدام</span>
           </button>
 
           <ExportDropdown
@@ -844,45 +854,89 @@ export const RecruitmentContractsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4 Signature KPI Cards Row matching exact design screenshot */}
-      <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        {/* Card 1: White Card */}
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي عقود الاستقدام</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {contracts.length || 115} عقد
+      {/* 4 Harmonious Executive Luxury KPI Cards Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        {/* Card 1: Total Contracts */}
+        <div 
+          className="p-5 sm:p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs sm:text-sm font-bold text-zinc-500">إجمالي عقود الاستقدام</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60 group-hover:scale-110 transition-transform">
+              <FileSignature className="w-4 h-4" />
+            </div>
           </div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>موثقة عبر منصة مساند</span>
+          <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
+            {contracts.length || 115} <span className="text-lg font-bold text-zinc-400">عقد</span>
+          </div>
+          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>موثقة عبر منصة مساند</span>
+          </div>
         </div>
 
-        {/* Card 2: Pistachio Band Card */}
-        <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>العقود السارية والتنفيذ</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {contracts.filter(c => c.stage !== 'مكتمل' && c.stage !== 'مرتجع').length || 27} عقد
+        {/* Card 2: Active Contracts */}
+        <div 
+          className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-amber-50/40 via-white to-white border border-amber-200/80 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs sm:text-sm font-bold text-zinc-700">العقود السارية والتنفيذ</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300/80 group-hover:scale-110 transition-transform">
+              <RefreshCw className="w-4 h-4" />
+            </div>
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تفييز وحجوزات طيران</span>
+          <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
+            {contracts.filter(c => c.stage !== 'مكتمل' && c.stage !== 'مرتجع').length || 27} <span className="text-lg font-bold text-zinc-400">عقد</span>
+          </div>
+          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100/80 text-amber-900 border border-amber-300/60">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            <span>تفييز وحجوزات طيران</span>
+          </div>
         </div>
 
-        {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي القيمة المالية للعقود</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
-            {((contracts.reduce((sum, c) => sum + (c.total_amount || c.amount || 0), 0) || 1610000) / 1000000).toFixed(2)}M ر.س
+        {/* Card 3: Total Financial Value (Royal Navy & Champagne Gold) */}
+        <div 
+          className="p-5 sm:p-6 rounded-3xl relative overflow-hidden shadow-lg transition-all duration-300 group"
+          style={{
+            background: 'linear-gradient(135deg, #091725 0%, #132a44 100%)',
+            border: '1.5px solid rgba(207, 166, 74, 0.45)',
+            boxShadow: '0 12px 28px -8px rgba(9, 23, 37, 0.35)',
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs sm:text-sm font-bold text-zinc-300">إجمالي القيمة المالية للعقود</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center border border-amber-400/30 group-hover:scale-110 transition-transform">
+              <Zap className="w-4 h-4 fill-current" />
+            </div>
           </div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>سداد آمن وحسابات وسيطة</span>
+          <div className="text-3xl sm:text-4xl font-extrabold text-amber-300 mt-2.5 tracking-tight font-display">
+            {((contracts.reduce((sum, c) => sum + (c.total_amount || c.amount || 0), 0) || 1610000) / 1000000).toFixed(2)}M <span className="text-base font-bold text-amber-200/80">ر.س</span>
+          </div>
+          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-200 border border-amber-400/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>سداد آمن وحسابات وسيطة</span>
+          </div>
         </div>
 
-        {/* Card 4: White Card */}
-        <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>نسبة الامتثال والوصول في الموعد</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+        {/* Card 4: Compliance & Arrival Rate */}
+        <div 
+          className="p-5 sm:p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs sm:text-sm font-bold text-zinc-500">نسبة الامتثال والوصول</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200/60 group-hover:scale-110 transition-transform">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
             98.5%
           </div>
-          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-[98.5%] h-full bg-emerald-500 rounded-full" />
+          <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2.5">
+            <div className="w-[98.5%] h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" />
           </div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تحت مظلة التأمين والضمان 90 يوم</span>
+          <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">
+            <span>ضمان 90 يوماً وتأمين شامل</span>
+          </div>
         </div>
       </div>
 

@@ -26,6 +26,41 @@
     <!-- FontAwesome Pro CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script>
+      window.__consoleLogs = window.__consoleLogs || [];
+      var _origErr = console.error;
+      var _origWarn = console.warn;
+      console.error = function() {
+        var items = [];
+        for (var i = 0; i < arguments.length; i++) {
+          try {
+            items.push(typeof arguments[i] === 'object' ? JSON.stringify(arguments[i]) : String(arguments[i]));
+          } catch(e) {
+            items.push(String(arguments[i]));
+          }
+        }
+        window.__consoleLogs.push({ type: 'error', text: items.join(' ') });
+        _origErr.apply(console, arguments);
+      };
+      console.warn = function() {
+        var items = [];
+        for (var i = 0; i < arguments.length; i++) {
+          try {
+            items.push(typeof arguments[i] === 'object' ? JSON.stringify(arguments[i]) : String(arguments[i]));
+          } catch(e) {
+            items.push(String(arguments[i]));
+          }
+        }
+        window.__consoleLogs.push({ type: 'warn', text: items.join(' ') });
+        _origWarn.apply(console, arguments);
+      };
+      window.addEventListener('error', function(e) {
+        window.__consoleLogs.push({ type: 'window.error', text: (e.message || '') + ' ' + (e.filename || '') + ':' + (e.lineno || '') });
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        window.__consoleLogs.push({ type: 'unhandledrejection', text: String(e.reason) });
+      });
+    </script>
+    <script>
       // Automatic recovery for stale deployments & chunk loading errors
       window.addEventListener('error', function(e) {
         var target = e.target || e.srcElement;
