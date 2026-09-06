@@ -4,7 +4,7 @@
  * Handles offline caching, cache-first for assets, and system push notifications.
  */
 
-const CACHE_NAME = 'khalid-erp-pwa-v1';
+const CACHE_NAME = 'khalid-erp-pwa-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -38,34 +38,69 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event: Network-first with Cache fallback for HTML, Cache-first for static assets
+// Fetch Event: Network-first for HTML/scripts to prevent preload mismatch, cache fallback for offline
 self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
 
-  // Exclude API requests and chrome extensions
-  if (url.pathname.startsWith('/api') || url.protocol.startsWith('chrome-extension')) {
+  // Exclude API requests, chrome extensions, and cross-origin requests
+  if (
+    url.pathname.startsWith('/api') || 
+    url.protocol.startsWith('chrome-extension') || 
+    url.origin !== self.location.origin ||
+    event.request.headers.get('Purpose') === 'prefetch' ||
+    event.request.headers.get('Sec-Purpose') === 'prefetch'
+  ) {
     return;
   }
 
-  // Static assets (images, fonts, scripts): Stale-while-revalidate
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
+  // Avoid cross-world service worker resource mismatch on Vite modulepreloads & scripts
+  if (event.request.destination === 'script') {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return networkResponse;
       }).catch(() => {
-        return cachedResponse;
-      });
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
 
-      return cachedResponse || fetchPromise;
+  // Navigation requests (HTML document): Network-first with cache fallback
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return networkResponse;
+      }).catch(() => {
+        return caches.match('/index.html') || caches.match('/');
+      })
+    );
+    return;
+  }
+
+  // Static assets (images, icons, media): Cache-first with network fallback
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return networkResponse;
+      });
     })
   );
 });

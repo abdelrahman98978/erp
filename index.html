@@ -60,23 +60,7 @@
         window.__consoleLogs.push({ type: 'unhandledrejection', text: String(e.reason) });
       });
     </script>
-    <script>
-      // Automatic recovery for stale deployments & chunk loading errors
-      window.addEventListener('error', function(e) {
-        var target = e.target || e.srcElement;
-        if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
-          var reloadKey = 'erp_stale_asset_reload_timestamp';
-          var lastReload = sessionStorage.getItem(reloadKey);
-          var now = Date.now();
-          if (!lastReload || (now - parseInt(lastReload, 10)) > 8000) {
-            sessionStorage.setItem(reloadKey, now.toString());
-            var url = new URL(window.location.href);
-            url.searchParams.set('_v', now.toString());
-            window.location.replace(url.toString());
-          }
-        }
-      }, true);
-    </script>
+
     <!-- Three.js 3D Library CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>

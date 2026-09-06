@@ -42,8 +42,24 @@ const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
 
 /**
  * Check if the local Ollama daemon is reachable on device.
+ * Only attempts connection when running on localhost / local IP to avoid CORS & Private Network Access errors in production.
  */
 export async function checkLocalAiAvailable(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+
+  const hostname = window.location.hostname;
+  const isLocalHost = 
+    hostname === 'localhost' || 
+    hostname === '127.0.0.1' || 
+    hostname === '[::1]' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.');
+
+  // In public cloud deployments (e.g. *.vercel.app), browsers strictly block loopback HTTP requests.
+  if (!isLocalHost) {
+    return false;
+  }
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 1200);

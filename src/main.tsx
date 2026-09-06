@@ -22,6 +22,11 @@ if (typeof window !== 'undefined' && !(window as any).__erp_console_wrapped) {
     'Download the React DevTools',
     'dummy-supabase',
     'Supabase fetch notice',
+    'cross-world service worker',
+    'preloaded using link preload',
+    'localhost:8081',
+    'loopback address space',
+    'content script loaded',
   ];
 
   console.warn = (...args: any[]) => {
