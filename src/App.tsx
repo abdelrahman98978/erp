@@ -184,46 +184,7 @@ const MainContent: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // 1. Landing Page (Portal Overview)
-  if (flowState === 'landing') {
-    return (
-      <Suspense fallback={<PageFallback />}>
-        <LandingPage onSelectCompany={(companyId: string) => {
-          if (companyId && companyId !== 'login') {
-            localStorage.setItem('ALSULAIM_TARGET_SYSTEM', companyId.toLowerCase());
-          }
-          setFlowState('login');
-        }} />
-      </Suspense>
-    );
-  }
-
-  // 2. Login Page with Dedicated Isolated System Portals
-  if (flowState === 'login') {
-    return (
-      <Suspense fallback={<PageFallback />}>
-        <LoginPage onLoginSuccess={(targetTab?: string, targetTitle?: string) => {
-          if (targetTab) {
-            setActiveTab(targetTab, targetTitle || targetTab);
-            setFlowState('workspace');
-          } else {
-            setFlowState('launcher');
-          }
-        }} />
-      </Suspense>
-    );
-  }
-
-  // 3. App Launcher Explorer Portal
-  if (flowState === 'launcher') {
-    return (
-      <Suspense fallback={<PageFallback />}>
-        <AppLauncherPage onSelectApp={handleSelectTab} />
-      </Suspense>
-    );
-  }
-
-  // 4. ERP Workspace Router
+  // Router Page Content Resolver
   const renderPage = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -572,18 +533,54 @@ const MainContent: React.FC = () => {
 
   return (
     <>
-      <AppShell
-        activeTab={activeTab}
-        activeTabTitle={activeTabTitle}
-        onSelectTab={handleSelectTab}
-        onOpenAppLauncher={() => setFlowState('launcher')}
-        onLogout={handleLogout}
-      >
+      {flowState === 'landing' && (
         <Suspense fallback={<PageFallback />}>
-          {renderPage()}
+          <LandingPage onSelectCompany={(companyId: string) => {
+            if (companyId && companyId !== 'login') {
+              localStorage.setItem('ALSULAIM_TARGET_SYSTEM', companyId.toLowerCase());
+            }
+            setFlowState('login');
+          }} />
         </Suspense>
-      </AppShell>
-      <QuickSearchModal onNavigate={handleSelectTab} />
+      )}
+
+      {flowState === 'login' && (
+        <Suspense fallback={<PageFallback />}>
+          <LoginPage onLoginSuccess={(targetTab?: string, targetTitle?: string) => {
+            if (targetTab) {
+              setActiveTab(targetTab, targetTitle || targetTab);
+              setFlowState('workspace');
+            } else {
+              setFlowState('launcher');
+            }
+          }} />
+        </Suspense>
+      )}
+
+      {flowState === 'launcher' && (
+        <Suspense fallback={<PageFallback />}>
+          <AppLauncherPage onSelectApp={handleSelectTab} />
+        </Suspense>
+      )}
+
+      {flowState === 'workspace' && (
+        <>
+          <AppShell
+            activeTab={activeTab}
+            activeTabTitle={activeTabTitle}
+            onSelectTab={handleSelectTab}
+            onOpenAppLauncher={() => setFlowState('launcher')}
+            onLogout={handleLogout}
+          >
+            <Suspense fallback={<PageFallback />}>
+              {renderPage()}
+            </Suspense>
+          </AppShell>
+          <QuickSearchModal onNavigate={handleSelectTab} />
+        </>
+      )}
+
+      {/* Global AI Copilot Widget (Faris & Noura) — Always Mounted for Universal Voice Wake & Mascot Summoning */}
       <AICopilotWidget onNavigate={handleSelectTab} />
       <UniversalNotificationToaster onNavigate={(tabKey, title) => handleSelectTab(tabKey, title || '')} />
       <PwaInstallPrompt />

@@ -33,6 +33,67 @@ interface ChatMessage {
 
 export type AssistantPersona = 'faris' | 'noura';
 
+/**
+ * Resilient Arabic text normalizer for voice wake-word matching:
+ * Strips tashkeel/diacritics, tatweel, standardizes alif variants (أ/إ/آ -> ا),
+ * teh marbuta / heh (ة/ه), and alef maksura (ى -> ي).
+ */
+export function normalizeArabicWakeText(str: string): string {
+  return str
+    .replace(/[\u064B-\u065F\u0670]/g, '') // remove diacritics
+    .replace(/[\u0640]/g, '') // remove tatweel
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .trim()
+    .toLowerCase();
+}
+
+export interface WakeDetection {
+  detected: boolean;
+  persona: AssistantPersona;
+  directQuery: string;
+}
+
+export function detectWakeCall(rawText: string, defaultPersona: AssistantPersona): WakeDetection {
+  const norm = normalizeArabicWakeText(rawText);
+  if (!norm) return { detected: false, persona: defaultPersona, directQuery: '' };
+
+  // Noura summon patterns:
+  // "نوره", "نورة", "نورا", "يا نوره", "يا نورة", "يا نورا", "ام خالد", "يا ام خالد"
+  const nouraRegex = /(?:^|\s|يا\s*|يا)(نور[هها]|ام\s*خالد)(?:$|\s|[،,\.?!])/i;
+
+  // Faris summon patterns:
+  // "فارس", "يا فارس", "يافارس", "فارسنا", "ابو فهد", "يا ابو فهد"
+  const farisRegex = /(?:^|\s|يا\s*|يا)(فارس(?:نا)?|ابو\s*فهد)(?:$|\s|[،,\.?!])/i;
+
+  // General assistant call:
+  // "يا مرشد", "يا مرشده", "يا مساعد", "يا مساعدنا", "يا ذكاء", "يا كوبايلوت"
+  const generalRegex = /(?:^|\s|يا\s*|يا)(مرشد[هه]?|مساعد(?:نا)?|ذكاء|كوبايلوت)(?:$|\s|[،,\.?!])/i;
+
+  const matchNoura = nouraRegex.test(norm);
+  const matchFaris = farisRegex.test(norm);
+  const matchGeneral = generalRegex.test(norm);
+
+  if (!matchNoura && !matchFaris && !matchGeneral) {
+    return { detected: false, persona: defaultPersona, directQuery: '' };
+  }
+
+  const targetPersona: AssistantPersona = matchNoura ? 'noura' : matchFaris ? 'faris' : defaultPersona;
+
+  // Extract direct query if user spoke a command after calling the name:
+  // e.g. "يا فارس اعطني تقرير العقود" -> "اعطني تقرير العقود"
+  const cleaned = rawText
+    .replace(/^(?:مرحبا|اهلا|أهلاً|أهلا|الو|ألو|هلا|يا|يا\s*)*(?:فارس(?:نا)?|نور[ةه]|نورا|مرشد[ةه]?|مساعد(?:نا)?|ابو\s*فهد|ام\s*خالد)[\s،,:\-]*/i, '')
+    .trim();
+
+  return {
+    detected: true,
+    persona: targetPersona,
+    directQuery: cleaned.length >= 3 ? cleaned : '',
+  };
+}
+
 interface AICopilotWidgetProps {
   onNavigate?: (tab: string, title: string) => void;
 }
@@ -54,7 +115,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     return localStorage.getItem('assistant_mascot_docked') === 'true';
   });
   const [wakeWordEnabled, setWakeWordEnabled] = useState<boolean>(() => {
-    return localStorage.getItem('assistant_wake_word_enabled') === 'true';
+    return localStorage.getItem('assistant_wake_word_enabled') !== 'false';
   });
   const [isListening, setIsListening] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
@@ -65,6 +126,19 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const wakeRecognitionRef = useRef<any>(null);
   const lastWakeTriggerRef = useRef<number>(0);
+  const isListeningRef = useRef(false);
+  const isSpeakingRef = useRef(false);
+  const isPausedWakeRef = useRef(false);
+  const isCancelledRef = useRef(false);
+  const handleSendMessageRef = useRef<(query?: string) => Promise<void>>(async () => {});
+
+  useEffect(() => {
+    isListeningRef.current = isListening;
+  }, [isListening]);
+
+  useEffect(() => {
+    isSpeakingRef.current = isSpeaking;
+  }, [isSpeaking]);
 
   // Sync isSpeaking with centralized audio engine
   useEffect(() => {
@@ -175,6 +249,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   // Voice Wake-Word Detection ("يا فارس" / "يا نُورة")
   useEffect(() => {
+    isCancelledRef.current = false;
+
     if (!wakeWordEnabled) {
       if (wakeRecognitionRef.current) {
         try {
@@ -188,11 +264,27 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRec) return;
 
-    let rec: any;
-    let isCancelled = false;
+    let rec: any = null;
+
+    const safeRestartWake = () => {
+      if (isCancelledRef.current || !wakeWordEnabled || isPausedWakeRef.current || isListeningRef.current) {
+        return;
+      }
+      if (isSpeakingRef.current || isAudioSpeaking() || Date.now() - getLastSpeechTimestamp() < 2200) {
+        setTimeout(safeRestartWake, 1200);
+        return;
+      }
+      try {
+        if (wakeRecognitionRef.current) {
+          wakeRecognitionRef.current.start();
+        } else {
+          startWake();
+        }
+      } catch (_) {}
+    };
 
     const startWake = () => {
-      if (isCancelled) return;
+      if (isCancelledRef.current || isPausedWakeRef.current || isListeningRef.current) return;
       try {
         rec = new SpeechRec();
         rec.lang = 'ar-SA';
@@ -201,7 +293,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
         rec.onresult = (event: any) => {
           // 1. HARD ECHO GUARD: Discard microphone results if the computer is currently speaking or just finished within 2500ms
-          if (isSpeaking || isAudioSpeaking() || Date.now() - getLastSpeechTimestamp() < 2500) {
+          if (isSpeakingRef.current || isAudioSpeaking() || Date.now() - getLastSpeechTimestamp() < 2500) {
             return;
           }
 
@@ -210,49 +302,72 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             return;
           }
 
-          const lastRes = event.results[event.results.length - 1];
-          const text = (lastRes[0]?.transcript || '').trim().toLowerCase();
-
-          const calledFaris = text.includes('فارس') || text.includes('يا فارس');
-          const calledNoura = text.includes('نورة') || text.includes('نوره') || text.includes('يا نورة') || text.includes('يا نوره');
-          const calledGeneral = text.includes('يا مرشد') || text.includes('يا مساعد');
-
-          if (calledFaris || calledNoura || calledGeneral) {
-            lastWakeTriggerRef.current = Date.now();
-            const targetPersona = calledNoura ? 'noura' : calledFaris ? 'faris' : persona;
-            if (targetPersona !== persona) {
-              setPersona(targetPersona);
-              localStorage.setItem('assistant_persona', targetPersona);
-              window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: targetPersona } }));
+          // 3. Accumulate recent transcript segments
+          let rawTranscript = '';
+          for (let i = Math.max(0, event.results.length - 3); i < event.results.length; i++) {
+            const item = event.results[i];
+            if (item && item[0]?.transcript) {
+              rawTranscript += ' ' + item[0].transcript;
             }
+          }
+          rawTranscript = rawTranscript.trim();
+          if (!rawTranscript) return;
+
+          const detection = detectWakeCall(rawTranscript, persona);
+          if (detection.detected) {
+            lastWakeTriggerRef.current = Date.now();
+            isPausedWakeRef.current = true;
+            try {
+              rec.stop();
+            } catch (_) {}
+
+            if (detection.persona !== persona) {
+              setPersona(detection.persona);
+              localStorage.setItem('assistant_persona', detection.persona);
+              window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: detection.persona } }));
+            }
+
             setIsDocked(false);
             localStorage.setItem('assistant_mascot_docked', 'false');
             setIsOpen(true);
 
             // Play pre-recorded native Saudi female/male wake response (Chime -> Voice sequenced)
-            playPersonaWakeGreeting(targetPersona, {
+            playPersonaWakeGreeting(detection.persona, {
               onStart: () => setIsSpeaking(true),
-              onEnd: () => setIsSpeaking(false),
+              onEnd: () => {
+                setIsSpeaking(false);
+                if (detection.directQuery) {
+                  // User already spoke their request with the wake call!
+                  handleSendMessageRef.current(detection.directQuery);
+                  setTimeout(() => {
+                    isPausedWakeRef.current = false;
+                    safeRestartWake();
+                  }, 3000);
+                } else {
+                  // User just called their name -> Automatically start listening hands-free!
+                  startDictation(true);
+                }
+              },
             });
           }
         };
 
         rec.onerror = (err: any) => {
           if (err.error === 'not-allowed') {
+            console.warn('[Wake Word] Microphone permission denied');
             setWakeWordEnabled(false);
             localStorage.setItem('assistant_wake_word_enabled', 'false');
+          } else {
+            // Transient error (no-speech, aborted, audio-capture): auto retry after cooldown
+            if (!isCancelledRef.current && wakeWordEnabled && !isPausedWakeRef.current) {
+              setTimeout(safeRestartWake, 2000);
+            }
           }
         };
 
         rec.onend = () => {
-          if (!isCancelled && wakeWordEnabled) {
-            setTimeout(() => {
-              if (!isCancelled && wakeWordEnabled) {
-                try {
-                  rec.start();
-                } catch (_) {}
-              }
-            }, 1000);
+          if (!isCancelledRef.current && wakeWordEnabled && !isPausedWakeRef.current && !isListeningRef.current) {
+            setTimeout(safeRestartWake, 1000);
           }
         };
 
@@ -266,11 +381,12 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     startWake();
 
     return () => {
-      isCancelled = true;
+      isCancelledRef.current = true;
       if (wakeRecognitionRef.current) {
         try {
           wakeRecognitionRef.current.stop();
         } catch (_) {}
+        wakeRecognitionRef.current = null;
       }
     };
   }, [wakeWordEnabled, persona]);
@@ -346,45 +462,89 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         onStart: () => setIsSpeaking(true),
         onEnd: () => setIsSpeaking(false),
       });
+    } else {
+      if (wakeRecognitionRef.current) {
+        try {
+          wakeRecognitionRef.current.stop();
+        } catch (_) {}
+        wakeRecognitionRef.current = null;
+      }
     }
   };
 
-  // Speech Recognition (Voice Input)
-  const toggleListening = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('خاصية الإملاء الصوتي غير مدعومة في متصفحك الحالي، يرجى استخدام متصفح Chrome أو Edge الحديث.');
+  // Seamless Voice Dictation Engine
+  const startDictation = (autoSend = false) => {
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRec) {
+      if (!autoSend) {
+        alert('خاصية الإملاء الصوتي غير مدعومة في متصفحك الحالي، يرجى استخدام متصفح Chrome أو Edge الحديث.');
+      }
       return;
     }
 
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
+    // Stop wake recognition to prevent audio-capture collision in Chromium
+    isPausedWakeRef.current = true;
+    if (wakeRecognitionRef.current) {
+      try {
+        wakeRecognitionRef.current.stop();
+      } catch (_) {}
+    }
+
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (_) {}
     }
 
     try {
-      const recognition = new SpeechRecognition();
+      const recognition = new SpeechRec();
       recognition.lang = 'ar-SA';
       recognition.continuous = false;
       recognition.interimResults = false;
 
       recognition.onstart = () => {
         setIsListening(true);
+        isListeningRef.current = true;
       };
 
       recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputQuery(transcript);
+        const transcript = (event.results[0]?.[0]?.transcript || '').trim();
         setIsListening(false);
+        isListeningRef.current = false;
+        if (transcript) {
+          if (autoSend) {
+            handleSendMessageRef.current(transcript);
+          } else {
+            setInputQuery(transcript);
+          }
+        }
       };
 
-      recognition.onerror = () => {
+      recognition.onerror = (err: any) => {
+        console.warn('[Voice Dictation] error:', err);
         setIsListening(false);
+        isListeningRef.current = false;
+        setTimeout(() => {
+          isPausedWakeRef.current = false;
+          if (wakeRecognitionRef.current && wakeWordEnabled) {
+            try {
+              wakeRecognitionRef.current.start();
+            } catch (_) {}
+          }
+        }, 1500);
       };
 
       recognition.onend = () => {
         setIsListening(false);
+        isListeningRef.current = false;
+        setTimeout(() => {
+          isPausedWakeRef.current = false;
+          if (wakeRecognitionRef.current && wakeWordEnabled) {
+            try {
+              wakeRecognitionRef.current.start();
+            } catch (_) {}
+          }
+        }, 1500);
       };
 
       recognitionRef.current = recognition;
@@ -392,7 +552,27 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     } catch (e) {
       console.error('Speech recognition error:', e);
       setIsListening(false);
+      isListeningRef.current = false;
+      isPausedWakeRef.current = false;
     }
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      isListeningRef.current = false;
+      setTimeout(() => {
+        isPausedWakeRef.current = false;
+        if (wakeRecognitionRef.current && wakeWordEnabled) {
+          try {
+            wakeRecognitionRef.current.start();
+          } catch (_) {}
+        }
+      }, 1000);
+      return;
+    }
+    startDictation(false);
   };
 
   // Dynamic Contextual Quick Prompts based on activeCompany & persona
@@ -558,6 +738,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       setIsTyping(false);
     }
   };
+
+  handleSendMessageRef.current = handleSendMessage;
 
   return (
     <>
