@@ -284,6 +284,7 @@ interface LoginPageProps {
   onLoginSuccess: (targetTab?: string, targetTitle?: string, targetCompanyId?: CompanyId) => void;
 }
 
+// Unified Enterprise Login Page with Multi-Portal & Saudi Assistants
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const { currentLanguage, setLanguage, t } = useLanguage();
   const { signIn, loading: authLoading, error: authError } = useAuthContext();
