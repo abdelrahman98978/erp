@@ -8,9 +8,10 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import './styles/index.css';
 
 // Global Safe Console Filter for Clean Console Output
-if (typeof window !== 'undefined') {
-  const originalWarn = console.warn;
-  const originalError = console.error;
+if (typeof window !== 'undefined' && !(window as any).__erp_console_wrapped) {
+  (window as any).__erp_console_wrapped = true;
+  const originalWarn = console.warn.bind(console);
+  const originalError = console.error.bind(console);
 
   const IGNORED_MESSAGES = [
     'ResizeObserver loop',
@@ -28,7 +29,7 @@ if (typeof window !== 'undefined') {
     if (IGNORED_MESSAGES.some(msg => firstArg.includes(msg))) {
       return;
     }
-    originalWarn.apply(console, args);
+    originalWarn(...args);
   };
 
   console.error = (...args: any[]) => {
@@ -36,7 +37,7 @@ if (typeof window !== 'undefined') {
     if (IGNORED_MESSAGES.some(msg => firstArg.includes(msg))) {
       return;
     }
-    originalError.apply(console, args);
+    originalError(...args);
   };
 
   window.addEventListener('unhandledrejection', (event) => {
