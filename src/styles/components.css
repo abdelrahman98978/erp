@@ -937,3 +937,47 @@
 .link-cool-3 { color: var(--color-link-cool-3); }
 .link-mint { color: var(--color-link-mint); }
 
+/* 8. 3D SAUDI MASCOT DIGITAL ASSISTANT ANIMATIONS */
+@keyframes floatMascot {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shadowPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.28;
+  }
+  50% {
+    transform: scale(0.88);
+    opacity: 0.16;
+  }
+}
+
+@keyframes speechBubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mascot-float {
+  animation: floatMascot 4.5s ease-in-out infinite;
+}
+
+.mascot-shadow {
+  animation: shadowPulse 4.5s ease-in-out infinite;
+}
+
+.speech-bubble-anim {
+  animation: speechBubbleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

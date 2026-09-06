@@ -33,6 +33,7 @@ import {
   User
 } from 'lucide-react';
 import { performRealBiometricAuth, checkWebAuthnSupport, BiometricAuthResult } from '../services/webAuthnBiometricService';
+import { SaudiAssistantMascot } from '../components/auth/SaudiAssistantMascot';
 
 export interface SystemPortalOption {
   id: string;
@@ -677,7 +678,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {/* ========================================================================= */}
       {/* 1. TOP DEDICATED SYSTEM PORTAL SELECTOR RIBBON */}
       {/* ========================================================================= */}
-      <div className="w-full max-w-5xl mb-4">
+      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mb-4">
         {/* Category Tabs */}
         <div className="flex items-center justify-between gap-2 mb-2.5 flex-wrap">
           <div className="flex items-center gap-2">
@@ -770,22 +771,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {/* 2. MAIN LOGIN CARD CONTAINER */}
       {/* ========================================================================= */}
       <div 
-        className="w-full max-w-5xl rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden flex flex-col lg:flex-row"
+        className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden flex flex-col lg:flex-row"
         style={{
           flexDirection: isRtl ? 'row-reverse' : 'row',
         }}
       >
 
-        {/* Right Side: Visual Hero Card Styled per Selected Portal */}
+        {/* Right Side: Visual Hero Section with 3D Saudi Assistant & Entity Card */}
         <div 
-          className="hidden lg:flex flex-1 relative bg-white overflow-hidden items-center justify-center border-inline-end border-zinc-200 min-h-[600px]"
+          className="hidden lg:flex flex-1 relative bg-white overflow-hidden items-center justify-center p-6 lg:p-8 border-inline-end border-zinc-200 min-h-[640px]"
         >
           {/* Subtle Light Gradient Overlay */}
           <div style={{
             position: 'absolute',
             inset: 0,
             background: 'linear-gradient(to top right, #fbfbf5, #ffffff, #f1f5f9)',
-            opacity: 0.7
+            opacity: 0.75
           }}></div>
 
           {/* Three.js 3D Animation Background */}
@@ -798,104 +799,112 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               width: '100%',
               height: '100%',
               mixBlendMode: 'multiply',
-              opacity: 0.5,
+              opacity: 0.4,
               pointerEvents: 'none',
               zIndex: 5
             }}
           ></div>
 
-          {/* Dedicated Entity Card */}
-          <div
-            ref={visualCardRef}
-            style={{
-              position: 'relative',
-              zIndex: 20,
-              maxWidth: '420px',
-              width: '90%',
-              padding: '32px 28px',
-              borderRadius: '24px',
-              background: 'rgba(255, 255, 255, 0.94)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(228, 228, 231, 0.8)',
-              boxShadow: '0 20px 40px -15px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)',
-              textAlign: 'center',
-              transition: 'transform 0.2s ease-out'
-            }}
-          >
-            <div className="flex justify-center mb-3">
-              <div 
-                style={{
-                  width: '68px',
-                  height: '68px',
-                  borderRadius: '20px',
-                  background: selectedPortal.gradient || selectedPortal.themeColor,
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 'bold',
-                  boxShadow: `0 10px 25px -5px ${selectedPortal.themeColor}55`
-                }}
-              >
-                {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
-                 selectedPortal.id === 'client' ? <UserCheck className="w-8 h-8" /> :
-                 selectedPortal.id === 'agent' ? <Globe className="w-8 h-8" /> :
-                 selectedPortal.id === 'shelter' ? <Hotel className="w-8 h-8" /> :
-                 selectedPortal.id === 'ecommerce' ? <Store className="w-8 h-8" /> :
-                 selectedPortal.id === 'kas' ? <Briefcase className="w-8 h-8" /> :
-                 <Building2 className="w-8 h-8" />}
-              </div>
+          {/* Integrated Hero Duo: 3D Saudi Assistant Mascot & Dedicated Entity Card */}
+          <div className="relative z-20 w-full flex flex-col xl:flex-row items-center justify-center gap-6 xl:gap-8 max-w-2xl xl:max-w-none">
+            {/* 3D Saudi Digital Assistant Mascot */}
+            <div className="shrink-0 flex items-center justify-center">
+              <SaudiAssistantMascot selectedPortal={selectedPortal} isRtl={isRtl} />
             </div>
 
-            <div className="mb-2">
-              <span className="pill-tag-shade text-xs font-bold" style={{ background: '#f4f4f5', color: '#18181b' }}>
-                {selectedPortal.tagBadge}
-              </span>
-            </div>
-
-            <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '22px', fontWeight: '600', color: '#000000', margin: '0 0 6px 0' }}>
-              {selectedPortal.nameAr}
-            </h2>
-            <div style={{ width: '40px', height: '3px', background: selectedPortal.themeColor, margin: '0 auto 12px auto', borderRadius: '9999px' }}></div>
-            
-            <p style={{ fontSize: '12.5px', color: '#52525b', lineHeight: '1.6', margin: 0 }}>
-              {selectedPortal.description}
-            </p>
-
-            <div className="mt-3 p-2 bg-zinc-50 border border-zinc-200/80 rounded-xl text-[11px] font-bold text-zinc-700">
-              {selectedPortal.license}
-            </div>
-
-            {/* Metrics */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '8px',
-              marginTop: '20px',
-              paddingTop: '16px',
-              borderTop: '1px solid #e4e4e7'
-            }}>
-              {selectedPortal.kpis.map((kpi, idx) => (
-                <div key={idx}>
-                  <span className="font-bold text-xs text-black block">{kpi.value}</span>
-                  <span style={{ fontSize: '11px', color: '#71717a' }}>{kpi.label}</span>
+            {/* Dedicated Entity Card */}
+            <div
+              ref={visualCardRef}
+              style={{
+                position: 'relative',
+                zIndex: 20,
+                maxWidth: '360px',
+                width: '100%',
+                padding: '28px 22px',
+                borderRadius: '24px',
+                background: 'rgba(255, 255, 255, 0.94)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(228, 228, 231, 0.8)',
+                boxShadow: '0 20px 40px -15px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)',
+                textAlign: 'center',
+                transition: 'transform 0.2s ease-out'
+              }}
+            >
+              <div className="flex justify-center mb-3">
+                <div 
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '18px',
+                    background: selectedPortal.gradient || selectedPortal.themeColor,
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    boxShadow: `0 10px 25px -5px ${selectedPortal.themeColor}55`
+                  }}
+                >
+                  {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
+                   selectedPortal.id === 'client' ? <UserCheck className="w-8 h-8" /> :
+                   selectedPortal.id === 'agent' ? <Globe className="w-8 h-8" /> :
+                   selectedPortal.id === 'shelter' ? <Hotel className="w-8 h-8" /> :
+                   selectedPortal.id === 'ecommerce' ? <Store className="w-8 h-8" /> :
+                   selectedPortal.id === 'kas' ? <Briefcase className="w-8 h-8" /> :
+                   <Building2 className="w-8 h-8" />}
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Compliance and Vision Badges */}
-            <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-center gap-3 text-[10px] text-zinc-400 font-medium">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                <span>ZATCA Phase 2</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-sky-600" />
-                <span>مساند HRSD</span>
-              </span>
-              <span>•</span>
-              <span>رؤية 2030</span>
+              <div className="mb-2">
+                <span className="pill-tag-shade text-xs font-bold" style={{ background: '#f4f4f5', color: '#18181b' }}>
+                  {selectedPortal.tagBadge}
+                </span>
+              </div>
+
+              <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '20px', fontWeight: '600', color: '#000000', margin: '0 0 6px 0' }}>
+                {selectedPortal.nameAr}
+              </h2>
+              <div style={{ width: '40px', height: '3px', background: selectedPortal.themeColor, margin: '0 auto 10px auto', borderRadius: '9999px' }}></div>
+              
+              <p style={{ fontSize: '12px', color: '#52525b', lineHeight: '1.6', margin: 0 }}>
+                {selectedPortal.description}
+              </p>
+
+              <div className="mt-2.5 p-2 bg-zinc-50 border border-zinc-200/80 rounded-xl text-[11px] font-bold text-zinc-700">
+                {selectedPortal.license}
+              </div>
+
+              {/* Metrics */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+                marginTop: '16px',
+                paddingTop: '14px',
+                borderTop: '1px solid #e4e4e7'
+              }}>
+                {selectedPortal.kpis.map((kpi, idx) => (
+                  <div key={idx}>
+                    <span className="font-bold text-xs text-black block">{kpi.value}</span>
+                    <span style={{ fontSize: '10.5px', color: '#71717a' }}>{kpi.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Compliance and Vision Badges */}
+              <div className="mt-3.5 pt-2.5 border-t border-zinc-100 flex items-center justify-center gap-3 text-[10px] text-zinc-400 font-medium">
+                <span className="flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  <span>ZATCA Phase 2</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-sky-600" />
+                  <span>مساند HRSD</span>
+                </span>
+                <span>•</span>
+                <span>رؤية 2030</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1009,6 +1018,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             {!is2FAStep ? (
               /* Step 1: Standard Username & Password Form */
               <div>
+                {/* Mobile Saudi Assistant Welcome Pill */}
+                <div className="lg:hidden mb-3.5 p-2 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 overflow-hidden shrink-0 flex items-center justify-center">
+                    <img src="/mascot.png" alt="المرشد الذكي" className="w-full h-full object-cover object-top" />
+                  </div>
+                  <div className="flex-1 min-w-0 text-start">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <span className="live-pulse-dot" />
+                      <span className="text-[11px] font-bold text-zinc-800">المرشد الرقمي الذكي</span>
+                    </div>
+                    <p className="text-[10.5px] text-zinc-500 truncate m-0">
+                      مرحباً بك! أدخل بياناتك للدخول الآمن إلى {selectedPortal.nameAr}
+                    </p>
+                  </div>
+                </div>
+
                 <div style={{ marginBottom: '20px' }}>
                   <div className="flex items-center gap-2 mb-1">
                     <span 
