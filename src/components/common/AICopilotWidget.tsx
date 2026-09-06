@@ -6,6 +6,7 @@ import {
   ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
   Minimize2
 } from 'lucide-react';
+import { playPersonaSwitchGreeting, speakDynamicSpeech, stopAllAudio } from '../../services/audioVoiceService';
 
 interface ChatMessage {
   id: string;
@@ -251,115 +252,24 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     ]);
 
     // Force speech playback so the user immediately hears the new persona's voice!
-    speakText(newGreeting, newPersona, true);
+    playPersonaSwitchGreeting(newPersona);
   };
 
   // Voice Speech Synthesis Engine
   const speakText = (text: string, overridePersona?: AssistantPersona, force = false) => {
-    if ((!voiceEnabled && !force) || !('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      }
-
-      const currentPers = overridePersona || persona;
-      // Strip markdown, bullet points, brackets, and extra spaces
-      const cleanText = text
-        .replace(/[*_#`~]/g, '')
-        .replace(/•/g, '')
-        .replace(/\(.*?\)/g, '')
-        .replace(/\[.*?\]/g, '')
-        .replace(/[\n\r]+/g, ' ')
-        .replace(/\+/g, ' زائد ')
-        .trim();
-
-      if (!cleanText) return;
-
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = 'ar-SA';
-
-      // Select system Arabic voices
-      const voices = window.speechSynthesis.getVoices();
-      const arabicVoices = voices.filter(v => 
-        v.lang && (v.lang.toLowerCase().startsWith('ar') || v.lang.toLowerCase().includes('arabic'))
-      );
-
-      if (currentPers === 'noura') {
-        // High feminine pitch and gentle pace
-        utterance.pitch = 1.35;
-        utterance.rate = 0.95;
-
-        // Expanded list of Arabic female voices
-        const femaleVoice = arabicVoices.find(v => {
-          const n = (v.name || '').toLowerCase();
-          return (
-            n.includes('female') || n.includes('woman') || 
-            n.includes('salma') || n.includes('zariyah') || 
-            n.includes('laila') || n.includes('layla') || 
-            n.includes('fatima') || n.includes('zeina') || 
-            n.includes('hoda') || n.includes('mariam') || 
-            n.includes('maryam') || n.includes('sana') || 
-            n.includes('nour') || n.includes('noura') || 
-            n.includes('hala') || n.includes('rana') || 
-            n.includes('amira') || n.includes('yasmin')
-          );
-        }) || (arabicVoices.length > 1 ? arabicVoices[1] : arabicVoices[0]);
-
-        if (femaleVoice) {
-          utterance.voice = femaleVoice;
-        }
-      } else {
-        utterance.pitch = 1.0;
-        utterance.rate = 1.0;
-        const maleVoice = arabicVoices.find(v => {
-          const n = (v.name || '').toLowerCase();
-          return (
-            n.includes('male') || n.includes('man') || 
-            n.includes('maged') || n.includes('naayf') || 
-            n.includes('hamed') || n.includes('tarik') || 
-            n.includes('tariq') || n.includes('shakir') || 
-            n.includes('ahmed') || n.includes('omar')
-          );
-        }) || arabicVoices[0];
-
-        if (maleVoice) {
-          utterance.voice = maleVoice;
-        }
-      }
-
-      // Prevent garbage collection in Chromium
-      activeUtteranceRef.current = utterance;
-      (window as any).__activeUtterance = utterance;
-
-      // Small async delay after cancel() for audio driver safety
-      setTimeout(() => {
-        try {
-          if (window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
-          }
-          window.speechSynthesis.speak(utterance);
-        } catch (err) {
-          console.warn('Speech synthesis speak error:', err);
-        }
-      }, 40);
-
-    } catch (e) {
-      console.warn('Speech synthesis error:', e);
-    }
+    if (!voiceEnabled && !force) return;
+    const currentPers = overridePersona || persona;
+    speakDynamicSpeech(text, currentPers);
   };
 
   const toggleVoice = () => {
     const next = !voiceEnabled;
     setVoiceEnabled(next);
     localStorage.setItem('faris_voice_enabled', String(next));
-    if (!next && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    } else if (next) {
-      const intro = persona === 'noura'
-        ? 'تم تفعيل الصوت. مرحباً بكِ، أنا نُورة معكِ الآن.'
-        : 'تم تفعيل الصوت. أهلاً بك، أنا فارس جاهز لمساعدتك.';
-      speakText(intro, persona, true);
+    if (!next) {
+      stopAllAudio();
+    } else {
+      playPersonaSwitchGreeting(persona);
     }
   };
 

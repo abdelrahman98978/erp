@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Volume2 } from 'lucide-react';
 import { SystemPortalOption } from '../../pages/LoginPage';
+import { playPersonaSwitchGreeting, stopAllAudio } from '../../services/audioVoiceService';
 
 interface SaudiAssistantMascotProps {
   selectedPortal: SystemPortalOption;
@@ -146,6 +148,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
     setPersona(newPersona);
     localStorage.setItem('assistant_persona', newPersona);
     window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: newPersona } }));
+    playPersonaSwitchGreeting(newPersona);
   };
 
   const greeting = getPortalGreeting(selectedPortal.id, selectedPortal.nameAr, persona);
@@ -253,7 +256,18 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
             <span>{persona === 'noura' ? 'تحدثي مع نُورة' : 'تحدث مع فارس'}</span>
             <span>←</span>
           </span>
-          <span className="text-zinc-400 shrink-0 whitespace-nowrap">انقر للبدء</span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              playPersonaSwitchGreeting(persona);
+            }}
+            className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-zinc-100 hover:bg-amber-50 text-zinc-700 hover:text-amber-800 border border-zinc-200 transition-colors"
+            title={`استمع لصوت ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
+          >
+            <Volume2 className="w-3 h-3 text-amber-600" />
+            <span>استمع</span>
+          </button>
         </div>
       </div>
 
