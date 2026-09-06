@@ -958,15 +958,15 @@ export const RentContractsPage: React.FC = () => {
                       <div className="p-3 bg-zinc-100 rounded-2xl mb-4 space-y-1.5 text-xs">
                         <div className="flex justify-between">
                           <span className="text-zinc-500">السعر قبل الضريبة:</span>
-                          <strong className="font-mono text-black">{pkg.price_before_tax.toLocaleString()} ر.س</strong>
+                          <strong className="font-mono text-black">{(pkg.price_before_tax ?? 0).toLocaleString()} ر.س</strong>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-zinc-500">ضريبة القيمة المضافة (15%):</span>
-                          <span className="font-mono text-zinc-600">{pkg.tax.toLocaleString()} ر.س</span>
+                          <span className="font-mono text-zinc-600">{(pkg.tax ?? ((pkg.price_before_tax || 0) * 0.15)).toLocaleString()} ر.س</span>
                         </div>
                         <div className="flex justify-between pt-1 border-t border-zinc-200">
                           <span className="font-bold text-black">الإجمالي شامل الضريبة:</span>
-                          <strong className="font-mono font-bold text-emerald-700 text-sm">{pkg.total_price.toLocaleString()} ر.س</strong>
+                          <strong className="font-mono font-bold text-emerald-700 text-sm">{(pkg.total_price ?? ((pkg.price_before_tax || 0) * 1.15)).toLocaleString()} ر.س</strong>
                         </div>
                       </div>
                     </div>
@@ -1410,7 +1410,7 @@ export const RentContractsPage: React.FC = () => {
                       <tr>
                         <td className="p-2.5 font-sans font-medium text-black">{selectedContractForPrint.package_name || 'باقة التأجير الشهري'} ({selectedContractForPrint.duration_months} شهر)</td>
                         <td className="p-2.5 text-center">{(selectedContractForPrint.monthly_cost ?? 2500).toLocaleString()} ر.س / شهر</td>
-                        <td className="p-2.5 text-center">{((selectedContractForPrint.tax_amount || (selectedContractForPrint.total_amount * 0.15 / 1.15)) ?? 375).toLocaleString()} ر.س</td>
+                        <td className="p-2.5 text-center">{(selectedContractForPrint.tax_amount ?? (selectedContractForPrint.total_amount ? Math.round(selectedContractForPrint.total_amount * 0.15 / 1.15) : 375)).toLocaleString()} ر.س</td>
                         <td className="p-2.5 text-left font-bold text-emerald-700">{(selectedContractForPrint.total_amount ?? 2875).toLocaleString()} ر.س</td>
                       </tr>
                     </tbody>

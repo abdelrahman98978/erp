@@ -1015,3 +1015,34 @@
   animation: speechBubbleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes dockSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dock-pill-slide-in {
+  animation: dockSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes mascotPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mascot-pop-in {
+  animation: mascotPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+

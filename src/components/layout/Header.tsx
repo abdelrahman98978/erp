@@ -11,7 +11,7 @@ import {
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
   MessageSquare, ShieldCheck, Settings, LogOut, Check, X,
   Globe, Languages as LanguagesIcon, Building2, ArrowLeftRight,
-  Database
+  Database, Sparkles
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -44,6 +44,19 @@ export const Header: React.FC<HeaderProps> = ({
   const [showDataHubModal, setShowDataHubModal] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [langSearch, setLangSearch] = useState<string>('');
+  const [assistantPersona, setAssistantPersona] = useState<'faris' | 'noura'>(() => {
+    return (localStorage.getItem('assistant_persona') as 'faris' | 'noura') || 'faris';
+  });
+
+  useEffect(() => {
+    const handlePersonaChange = (e: any) => {
+      if (e.detail?.persona && (e.detail.persona === 'faris' || e.detail.persona === 'noura')) {
+        setAssistantPersona(e.detail.persona);
+      }
+    };
+    window.addEventListener('assistant-persona-changed', handlePersonaChange);
+    return () => window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+  }, []);
 
   useEffect(() => {
     const updateClock = () => {
@@ -246,8 +259,31 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
 
-        {/* Left Section: 25 Languages Switcher, Search, Notifications, User */}
+        {/* Left Section: AI Assistant Summoner, 25 Languages Switcher, Search, Notifications, User */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* AI Assistant Summon Pill Button */}
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent('open-faris-assistant', {
+                  detail: { persona: assistantPersona },
+                })
+              );
+            }}
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 rounded-full text-xs font-bold transition-all shadow-2xs hover:shadow-xs shrink-0 cursor-pointer"
+            title={`استدعاء ${assistantPersona === 'noura' ? 'نُورة' : 'فارس'} — أو اضغط Ctrl + Space`}
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span className="text-[11px] sm:text-xs whitespace-nowrap">
+              {assistantPersona === 'noura' ? 'نُورة' : 'فارس'}
+            </span>
+            <kbd className="hidden xl:inline-block text-[9px] bg-white text-zinc-500 px-1 py-0.2 rounded border border-amber-200/80 font-mono">
+              Ctrl+Space
+            </kbd>
+          </button>
+
           {/* 25 Languages Selector Dropdown */}
           <div className="relative">
             <button

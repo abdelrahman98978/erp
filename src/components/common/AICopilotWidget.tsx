@@ -3,7 +3,8 @@ import { useCompany } from '../../contexts/CompanyContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { 
   X, Send, Mic, MicOff, Volume2, VolumeX, Sparkles, 
-  ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap
+  ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
+  Minimize2
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -33,10 +34,34 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     return (localStorage.getItem('assistant_persona') as AssistantPersona) || 'faris';
   });
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(() => {
-    return localStorage.getItem('faris_voice_enabled') === 'true';
+    const saved = localStorage.getItem('faris_voice_enabled');
+    return saved !== 'false'; // Default to true so voice works out of the box
+  });
+  const [isDocked, setIsDocked] = useState<boolean>(() => {
+    return localStorage.getItem('assistant_mascot_docked') === 'true';
+  });
+  const [wakeWordEnabled, setWakeWordEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('assistant_wake_word_enabled') === 'true';
   });
   const [isListening, setIsListening] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
+  const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const wakeRecognitionRef = useRef<any>(null);
+
+  // Pre-load browser voices on component mount
+  useEffect(() => {
+    if (!('speechSynthesis' in window)) return;
+    const loadVoices = () => {
+      window.speechSynthesis.getVoices();
+    };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
 
   const getInitialWelcome = (p: AssistantPersona, compName: string) => {
     if (p === 'noura') {
@@ -66,9 +91,11 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     }
   }, [messages, isOpen]);
 
-  // Listen to external triggers (e.g. from LandingPage or LoginPage)
+  // Listen to external triggers (e.g. from LandingPage or LoginPage or Header)
   useEffect(() => {
     const handleOpenAssistant = (event: any) => {
+      setIsDocked(false);
+      localStorage.setItem('assistant_mascot_docked', 'false');
       setIsOpen(true);
       if (event.detail?.persona && (event.detail.persona === 'faris' || event.detail.persona === 'noura')) {
         setPersona(event.detail.persona);
@@ -93,6 +120,115 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     };
   }, [activeCompany]);
 
+  // Global Hotkeys: Ctrl+Space to summon/toggle, Escape to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.code === 'Space' || e.key === ' ')) {
+        e.preventDefault();
+        setIsDocked(false);
+        localStorage.setItem('assistant_mascot_docked', 'false');
+        setIsOpen(prev => !prev);
+      } else if (e.key === 'Escape') {
+        if (isOpen) {
+          setIsOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  // Voice Wake-Word Detection ("يا فارس" / "يا نُورة")
+  useEffect(() => {
+    if (!wakeWordEnabled) {
+      if (wakeRecognitionRef.current) {
+        try {
+          wakeRecognitionRef.current.stop();
+        } catch (_) {}
+        wakeRecognitionRef.current = null;
+      }
+      return;
+    }
+
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRec) return;
+
+    let rec: any;
+    let isCancelled = false;
+
+    const startWake = () => {
+      if (isCancelled) return;
+      try {
+        rec = new SpeechRec();
+        rec.lang = 'ar-SA';
+        rec.continuous = true;
+        rec.interimResults = true;
+
+        rec.onresult = (event: any) => {
+          const lastRes = event.results[event.results.length - 1];
+          const text = (lastRes[0]?.transcript || '').trim().toLowerCase();
+
+          const calledFaris = text.includes('فارس') || text.includes('يا فارس');
+          const calledNoura = text.includes('نورة') || text.includes('نوره') || text.includes('يا نورة') || text.includes('يا نوره');
+          const calledGeneral = text.includes('يا مرشد') || text.includes('يا مساعد');
+
+          if (calledFaris || calledNoura || calledGeneral) {
+            const targetPersona = calledNoura ? 'noura' : calledFaris ? 'faris' : persona;
+            if (targetPersona !== persona) {
+              setPersona(targetPersona);
+              localStorage.setItem('assistant_persona', targetPersona);
+              window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: targetPersona } }));
+            }
+            setIsDocked(false);
+            localStorage.setItem('assistant_mascot_docked', 'false');
+            setIsOpen(true);
+
+            const wakeGreeting = targetPersona === 'noura'
+              ? 'لبيكِ يا عزيزتي! أنا نُورة معكِ، تفضلي بسؤالكِ.'
+              : 'لبيك! أنا فارس معك، تفضل بسؤالك.';
+            speakText(wakeGreeting, targetPersona, true);
+          }
+        };
+
+        rec.onerror = (err: any) => {
+          if (err.error === 'not-allowed') {
+            setWakeWordEnabled(false);
+            localStorage.setItem('assistant_wake_word_enabled', 'false');
+          }
+        };
+
+        rec.onend = () => {
+          if (!isCancelled && wakeWordEnabled) {
+            setTimeout(() => {
+              if (!isCancelled && wakeWordEnabled) {
+                try {
+                  rec.start();
+                } catch (_) {}
+              }
+            }, 1000);
+          }
+        };
+
+        wakeRecognitionRef.current = rec;
+        rec.start();
+      } catch (e) {
+        console.warn('Wake word init error:', e);
+      }
+    };
+
+    startWake();
+
+    return () => {
+      isCancelled = true;
+      if (wakeRecognitionRef.current) {
+        try {
+          wakeRecognitionRef.current.stop();
+        } catch (_) {}
+      }
+    };
+  }, [wakeWordEnabled, persona]);
+
   // Switch persona manually
   const switchPersona = (newPersona: AssistantPersona) => {
     if (newPersona === persona) return;
@@ -114,40 +250,61 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       },
     ]);
 
-    if (voiceEnabled) {
-      speakText(newGreeting, newPersona);
-    }
+    // Force speech playback so the user immediately hears the new persona's voice!
+    speakText(newGreeting, newPersona, true);
   };
 
-  // Voice Speech Synthesis
-  const speakText = (text: string, overridePersona?: AssistantPersona) => {
-    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+  // Voice Speech Synthesis Engine
+  const speakText = (text: string, overridePersona?: AssistantPersona, force = false) => {
+    if ((!voiceEnabled && !force) || !('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
       const currentPers = overridePersona || persona;
-      // Strip bullet points and technical brackets for natural speech
+      // Strip markdown, bullet points, brackets, and extra spaces
       const cleanText = text
+        .replace(/[*_#`~]/g, '')
         .replace(/•/g, '')
         .replace(/\(.*?\)/g, '')
         .replace(/\[.*?\]/g, '')
-        .replace(/\+/g, ' زائد ');
-      
+        .replace(/[\n\r]+/g, ' ')
+        .replace(/\+/g, ' زائد ')
+        .trim();
+
+      if (!cleanText) return;
+
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'ar-SA';
 
       // Select system Arabic voices
       const voices = window.speechSynthesis.getVoices();
-      const arabicVoices = voices.filter(v => v.lang && v.lang.toLowerCase().includes('ar'));
+      const arabicVoices = voices.filter(v => 
+        v.lang && (v.lang.toLowerCase().startsWith('ar') || v.lang.toLowerCase().includes('arabic'))
+      );
 
       if (currentPers === 'noura') {
-        utterance.pitch = 1.25;
-        utterance.rate = 0.98;
+        // High feminine pitch and gentle pace
+        utterance.pitch = 1.35;
+        utterance.rate = 0.95;
+
+        // Expanded list of Arabic female voices
         const femaleVoice = arabicVoices.find(v => {
-          const n = v.name.toLowerCase();
-          return n.includes('female') || n.includes('salma') || n.includes('zariyah') || 
-                 n.includes('laila') || n.includes('fatima') || n.includes('zeina') || 
-                 n.includes('hoda') || n.includes('mariam') || n.includes('sana') || n.includes('nour');
-        }) || arabicVoices[1] || arabicVoices[0];
+          const n = (v.name || '').toLowerCase();
+          return (
+            n.includes('female') || n.includes('woman') || 
+            n.includes('salma') || n.includes('zariyah') || 
+            n.includes('laila') || n.includes('layla') || 
+            n.includes('fatima') || n.includes('zeina') || 
+            n.includes('hoda') || n.includes('mariam') || 
+            n.includes('maryam') || n.includes('sana') || 
+            n.includes('nour') || n.includes('noura') || 
+            n.includes('hala') || n.includes('rana') || 
+            n.includes('amira') || n.includes('yasmin')
+          );
+        }) || (arabicVoices.length > 1 ? arabicVoices[1] : arabicVoices[0]);
 
         if (femaleVoice) {
           utterance.voice = femaleVoice;
@@ -156,9 +313,14 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         utterance.pitch = 1.0;
         utterance.rate = 1.0;
         const maleVoice = arabicVoices.find(v => {
-          const n = v.name.toLowerCase();
-          return n.includes('male') || n.includes('maged') || n.includes('naayf') || 
-                 n.includes('hamed') || n.includes('tarik') || n.includes('shakir');
+          const n = (v.name || '').toLowerCase();
+          return (
+            n.includes('male') || n.includes('man') || 
+            n.includes('maged') || n.includes('naayf') || 
+            n.includes('hamed') || n.includes('tarik') || 
+            n.includes('tariq') || n.includes('shakir') || 
+            n.includes('ahmed') || n.includes('omar')
+          );
         }) || arabicVoices[0];
 
         if (maleVoice) {
@@ -166,7 +328,22 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         }
       }
 
-      window.speechSynthesis.speak(utterance);
+      // Prevent garbage collection in Chromium
+      activeUtteranceRef.current = utterance;
+      (window as any).__activeUtterance = utterance;
+
+      // Small async delay after cancel() for audio driver safety
+      setTimeout(() => {
+        try {
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {
+          console.warn('Speech synthesis speak error:', err);
+        }
+      }, 40);
+
     } catch (e) {
       console.warn('Speech synthesis error:', e);
     }
@@ -178,6 +355,29 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     localStorage.setItem('faris_voice_enabled', String(next));
     if (!next && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
+    } else if (next) {
+      const intro = persona === 'noura'
+        ? 'تم تفعيل الصوت. مرحباً بكِ، أنا نُورة معكِ الآن.'
+        : 'تم تفعيل الصوت. أهلاً بك، أنا فارس جاهز لمساعدتك.';
+      speakText(intro, persona, true);
+    }
+  };
+
+  // Voice Wake-Word Listener Toggle (المناداة: يا فارس / يا نُورة)
+  const toggleWakeWord = () => {
+    const next = !wakeWordEnabled;
+    const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (next && !SpeechRec) {
+      alert('خاصية المناداة الصوتية الذكية تتطلب متصفحاً يدعم الميكروفون مثل Google Chrome أو Microsoft Edge.');
+      return;
+    }
+    setWakeWordEnabled(next);
+    localStorage.setItem('assistant_wake_word_enabled', String(next));
+    if (next) {
+      const intro = persona === 'noura'
+        ? 'تم تفعيل الاستماع للمناداة. يمكنكِ مناداتي في أي وقت بقولكِ: يا نُورة.'
+        : 'تم تفعيل الاستماع للمناداة. يمكنك مناداتي في أي وقت بقولك: يا فارس.';
+      speakText(intro, persona, true);
     }
   };
 
@@ -387,135 +587,213 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   return (
     <>
-      {/* 1. Floating Faris Trigger Button (With 3D Avatar & Live Status) */}
-      <div 
-        style={{
-          position: 'fixed',
-          bottom: '24px',
-          left: '24px',
-          zIndex: 9999,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-        }}
-      >
-        {/* Floating Greeting Tooltip */}
-        {!isOpen && showTooltip && (
-          <div
-            onClick={() => setIsOpen(true)}
-            className="speech-bubble-anim"
-            style={{
-              marginBottom: '10px',
-              padding: '8px 14px',
-              background: '#ffffff',
-              border: '1px solid #e4e4e7',
-              borderRadius: '16px',
-              boxShadow: '0 10px 25px -4px rgba(0, 0, 0, 0.12)',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#091725',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              direction: 'rtl',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <span className="live-pulse-dot" />
-            <span>{persona === 'noura' ? 'نُورة جاهزة لمساعدتكِ!' : 'فارس جاهز لمساعدتك!'}</span>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowTooltip(false);
-              }}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#a1a1aa',
-                cursor: 'pointer',
-                padding: '0 2px',
-                fontSize: '12px'
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
-        {/* The 3D Mascot Circular Trigger Button */}
-        <button
-          type="button"
-          onClick={() => {
-            setIsOpen(!isOpen);
-            setShowTooltip(false);
-          }}
-          aria-label={persona === 'noura' ? 'تحدث مع نُورة' : 'تحدث مع فارس'}
+      {/* 1. Docked Edge Pill Tab (When minimized/docked) */}
+      {isDocked && !isOpen && (
+        <div
+          className="dock-pill-slide-in"
           style={{
-            position: 'relative',
-            width: '64px',
-            height: '64px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #ffffff 0%, #fbfbf5 100%)',
-            border: '2.5px solid #CFA64A',
-            boxShadow: '0 12px 30px -4px rgba(207, 166, 74, 0.35), 0 4px 12px rgba(0,0,0,0.1)',
-            cursor: 'pointer',
-            padding: 0,
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-            transform: isOpen ? 'scale(0.95)' : 'scale(1)',
+            position: 'fixed',
+            bottom: '24px',
+            left: '24px',
+            zIndex: 9999,
+            direction: 'rtl',
           }}
         >
-          {isOpen ? (
-            <div 
-              style={{
-                width: '100%',
-                height: '100%',
-                background: '#091725',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#ffffff'
-              }}
-            >
-              <X className="w-6 h-6 text-amber-400" />
-            </div>
-          ) : (
-            <div className="relative w-full h-full flex items-center justify-center pt-1 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => {
+              setIsDocked(false);
+              localStorage.setItem('assistant_mascot_docked', 'false');
+            }}
+            className="group flex items-center gap-2.5 px-3.5 py-2 bg-white/95 backdrop-blur-md border border-amber-300/80 rounded-full shadow-lg hover:shadow-xl hover:bg-amber-50/90 transition-all duration-300 cursor-pointer"
+            title={`إظهار ${persona === 'noura' ? 'نُورة' : 'فارس'} — اختصار: Ctrl + Space`}
+          >
+            <div className="relative w-8 h-8 flex-shrink-0">
               <img
                 src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
-                alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية' : 'فارس - المساعد الرقمي الذكي'}
-                className="w-14 h-14 object-contain object-top drop-shadow-md transition-transform hover:scale-110"
+                alt={persona === 'noura' ? 'نُورة' : 'فارس'}
+                className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform"
               />
-              {/* Online Green Indicator Dot */}
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+            </div>
+
+            <div className="flex flex-col text-right">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black text-zinc-900">
+                  {persona === 'noura' ? 'نُورة' : 'فارس'}
+                </span>
+                <span className="text-[9.5px] text-emerald-700 font-bold bg-emerald-50 px-1 rounded border border-emerald-200">
+                  جاهز للمناداة
+                </span>
+              </div>
+              <span className="text-[10px] text-zinc-500">
+                انقر للإظهار • <span className="font-mono text-amber-700 font-bold">Ctrl+Space</span>
+              </span>
+            </div>
+
+            <div className="mr-1 text-amber-600 group-hover:translate-x-[-2px] transition-transform">
+              <Bot className="w-4 h-4" />
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* 2. Frameless 3D Mascot Character (Without circular frame, standing directly) */}
+      {!isDocked && !isOpen && (
+        <div
+          className="mascot-pop-in group"
+          style={{
+            position: 'fixed',
+            bottom: '16px',
+            left: '24px',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            direction: 'rtl',
+          }}
+        >
+          {/* Floating Greeting Bubble with Persona Switcher & Dismiss/Dock Button */}
+          {showTooltip && (
+            <div
+              className="speech-bubble-anim relative mb-2 max-w-[270px] bg-white/95 backdrop-blur-md border border-amber-300/80 rounded-2xl p-2.5 shadow-xl select-none"
+            >
+              {/* Top Control Bar: Persona Switcher & Minimize to Dock */}
+              <div className="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-zinc-100 text-[10.5px]">
+                <div className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      switchPersona('faris');
+                    }}
+                    className={`px-2 py-0.5 rounded-full font-bold transition-all ${
+                      persona === 'faris' ? 'bg-white text-zinc-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-800'
+                    }`}
+                  >
+                    👨 فارس
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      switchPersona('noura');
+                    }}
+                    className={`px-2 py-0.5 rounded-full font-bold transition-all ${
+                      persona === 'noura' ? 'bg-amber-100 text-amber-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-800'
+                    }`}
+                  >
+                    👩 نُورة
+                  </button>
+                </div>
+
+                {/* Quick Dismiss / Minimize to Dock */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDocked(true);
+                    localStorage.setItem('assistant_mascot_docked', 'true');
+                  }}
+                  className="text-zinc-400 hover:text-rose-600 p-1 rounded-full hover:bg-zinc-100 transition-colors"
+                  title="تصغير إلى الشريط الجانبي (إخفاء)"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Bubble Message / Click Prompt */}
+              <div 
+                onClick={() => {
+                  setIsOpen(true);
+                  setShowTooltip(false);
+                }}
+                className="cursor-pointer hover:text-amber-800 transition-colors"
+              >
+                <p className="text-xs font-bold text-zinc-900 leading-snug m-0">
+                  {persona === 'noura' ? 'أهلاً بكِ! أنا نُورة، مرشدتكِ الرقمية' : 'أهلاً بك! أنا فارس، مرشدك الرقمي'}
+                </p>
+                <p className="text-[11px] text-zinc-500 mt-1 mb-0 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-amber-600 inline shrink-0" />
+                  <span>انقر للبدء أو نادني: </span>
+                  <strong className="text-amber-700 font-black whitespace-nowrap">
+                    {persona === 'noura' ? '"يا نُورة"' : '"يا فارس"'}
+                  </strong>
+                </p>
+              </div>
+
+              {/* Bubble Pointer Arrow pointing down to character */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  bottom: '-6px',
+                  left: '36px',
+                  width: '12px',
+                  height: '12px',
+                  backgroundColor: '#ffffff',
+                  borderRight: '1px solid rgba(252, 211, 77, 0.8)',
+                  borderBottom: '1px solid rgba(252, 211, 77, 0.8)',
+                  transform: 'rotate(45deg)',
+                }}
+              />
+            </div>
+          )}
+
+          {/* The Frameless 3D Mascot Character (No circular frame, standing directly) */}
+          <div
+            onClick={() => {
+              setIsOpen(true);
+              setShowTooltip(false);
+            }}
+            className="relative cursor-pointer select-none flex flex-col items-center"
+            title={persona === 'noura' ? 'انقري للتحدث مع نُورة' : 'انقر للتحدث مع فارس'}
+          >
+            {/* Floating Mascot Image with soft ambient lighting */}
+            <div className="mascot-float relative transition-all duration-300 group-hover:scale-105">
+              <img
+                src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+                alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية' : 'فارس - المرشد الرقمي الذكي'}
+                className="w-auto h-32 sm:h-36 object-contain pointer-events-auto"
+                style={{
+                  filter: 'drop-shadow(0 12px 18px rgba(0,0,0,0.18)) drop-shadow(0 0 12px rgba(207, 166, 74, 0.22))',
+                }}
+                loading="eager"
+              />
+
+              {/* Floating status dot on character */}
               <span 
                 style={{
                   position: 'absolute',
-                  bottom: '3px',
-                  right: '6px',
+                  bottom: '14px',
+                  right: '12px',
                   width: '12px',
                   height: '12px',
                   borderRadius: '50%',
                   backgroundColor: '#10B981',
                   border: '2px solid #ffffff',
-                  boxShadow: '0 0 6px #10B981',
+                  boxShadow: '0 0 8px #10B981',
                 }}
+                title="متصل بالخدمة"
               />
             </div>
-          )}
-        </button>
-      </div>
+
+            {/* Realistic Soft Radial Ground Shadow Under Character Feet */}
+            <div 
+              className="mascot-shadow w-24 h-3.5 rounded-full pointer-events-none -mt-1"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.38) 0%, rgba(15, 23, 42, 0.1) 55%, transparent 75%)',
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* 2. Executive White Chat Drawer / Window */}
       {isOpen && (
         <div
           style={{
             position: 'fixed',
-            bottom: '96px',
+            bottom: '24px',
             left: '24px',
             width: '430px',
             maxWidth: 'calc(100vw - 32px)',
@@ -636,6 +914,27 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
               <button
                 type="button"
+                onClick={toggleWakeWord}
+                title={wakeWordEnabled ? 'إيقاف الاستماع للمناداة الصوتية (يا فارس / يا نُورة)' : 'تفعيل الاستماع للمناداة الصوتية: يمكنك مناداة "يا فارس" أو "يا نُورة" بأي وقت'}
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '8px',
+                  background: wakeWordEnabled ? '#ecfdf5' : 'transparent',
+                  border: wakeWordEnabled ? '1px solid #10b981' : 'none',
+                  color: wakeWordEnabled ? '#047857' : '#71717a',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {wakeWordEnabled ? <Mic className="w-4 h-4 text-emerald-600 animate-pulse" /> : <MicOff className="w-4 h-4" />}
+              </button>
+
+              <button
+                type="button"
                 onClick={toggleVoice}
                 title={voiceEnabled ? 'تعطيل القراءة الصوتية' : 'تفعيل القراءة الصوتية بالذكاء الاصطناعي'}
                 style={{
@@ -652,6 +951,31 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 }}
               >
                 {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsDocked(true);
+                  localStorage.setItem('assistant_mascot_docked', 'true');
+                }}
+                title="تصغير إلى الشريط الجانبي (إخفاء مؤقت)"
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '8px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#71717a',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <Minimize2 className="w-4 h-4" />
               </button>
 
               <button
@@ -841,8 +1165,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     {msg.sender === 'ai' && (
                       <button
                         type="button"
-                        onClick={() => speakText(msg.text)}
-                        title="استمع للإجابة بالصوت"
+                        onClick={() => speakText(msg.text, persona, true)}
+                        title={persona === 'noura' ? 'استمع لصوت نُورة' : 'استمع لصوت فارس'}
                         style={{
                           background: 'transparent',
                           border: 'none',

@@ -6,7 +6,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { 
   ArrowLeft, Network, TrendingUp, Bot, ShieldCheck, 
   Menu, X, Building2, ChevronDown, Sparkles, LogIn, CheckCircle2,
-  Lock, Globe, Hotel, Briefcase, Users, MessageSquare
+  Lock, Globe, Hotel, Briefcase, Users, MessageSquare, Volume2, VolumeX
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -20,6 +20,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
   const [persona, setPersona] = useState<'faris' | 'noura'>(() => {
     return (localStorage.getItem('assistant_persona') as 'faris' | 'noura') || 'faris';
   });
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+
+  // Pre-fetch voices
+  useEffect(() => {
+    if (!('speechSynthesis' in window)) return;
+    const loadVoices = () => {
+      window.speechSynthesis.getVoices();
+    };
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handlePersonaChange = (event: any) => {
@@ -33,10 +49,94 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
     };
   }, []);
 
+  const speakLandingPersona = (p: 'faris' | 'noura') => {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      if (isPlayingVoice) {
+        setIsPlayingVoice(false);
+        return;
+      }
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
+      const greetingText = p === 'noura'
+        ? 'أهلاً بكم في مجموعة خالد السليم! أنا نُورة، مرشدتكم الرقمية الذكية. يسعدني مرافقتكم وتوجيهكم للأقسام النسائية ومراكز الإيواء والتسكين وكافة أنظمة شركات المجموعة.'
+        : 'أهلاً بكم في مجموعة خالد السليم! أنا فارس، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.';
+
+      const utterance = new SpeechSynthesisUtterance(greetingText);
+      utterance.lang = 'ar-SA';
+
+      const voices = window.speechSynthesis.getVoices();
+      const arabicVoices = voices.filter(v => 
+        v.lang && (v.lang.toLowerCase().startsWith('ar') || v.lang.toLowerCase().includes('arabic'))
+      );
+
+      if (p === 'noura') {
+        utterance.pitch = 1.35;
+        utterance.rate = 0.95;
+        const femaleVoice = arabicVoices.find(v => {
+          const n = (v.name || '').toLowerCase();
+          return (
+            n.includes('female') || n.includes('woman') || 
+            n.includes('salma') || n.includes('zariyah') || 
+            n.includes('laila') || n.includes('layla') || 
+            n.includes('fatima') || n.includes('zeina') || 
+            n.includes('hoda') || n.includes('mariam') || 
+            n.includes('maryam') || n.includes('sana') || 
+            n.includes('nour') || n.includes('noura') || 
+            n.includes('hala') || n.includes('rana') || 
+            n.includes('amira') || n.includes('yasmin')
+          );
+        }) || (arabicVoices.length > 1 ? arabicVoices[1] : arabicVoices[0]);
+
+        if (femaleVoice) utterance.voice = femaleVoice;
+      } else {
+        utterance.pitch = 1.0;
+        utterance.rate = 1.0;
+        const maleVoice = arabicVoices.find(v => {
+          const n = (v.name || '').toLowerCase();
+          return (
+            n.includes('male') || n.includes('man') || 
+            n.includes('maged') || n.includes('naayf') || 
+            n.includes('hamed') || n.includes('tarik') || 
+            n.includes('tariq') || n.includes('shakir') || 
+            n.includes('ahmed') || n.includes('omar')
+          );
+        }) || arabicVoices[0];
+
+        if (maleVoice) utterance.voice = maleVoice;
+      }
+
+      utterance.onstart = () => setIsPlayingVoice(true);
+      utterance.onend = () => setIsPlayingVoice(false);
+      utterance.onerror = () => setIsPlayingVoice(false);
+
+      (window as any).__landingUtterance = utterance;
+
+      setTimeout(() => {
+        try {
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+          window.speechSynthesis.speak(utterance);
+        } catch (e) {
+          console.warn('speakLandingPersona error:', e);
+          setIsPlayingVoice(false);
+        }
+      }, 40);
+    } catch (err) {
+      console.warn('Speech synthesis error on landing:', err);
+      setIsPlayingVoice(false);
+    }
+  };
+
   const switchPersona = (newPersona: 'faris' | 'noura') => {
     setPersona(newPersona);
     localStorage.setItem('assistant_persona', newPersona);
     window.dispatchEvent(new CustomEvent('assistant-persona-changed', { detail: { persona: newPersona } }));
+    speakLandingPersona(newPersona);
   };
 
   const handleSelect = (id: CompanyId | string) => {
@@ -413,13 +513,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 )}
               </p>
 
-              <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+              <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between gap-2 text-[11px]">
                 <span className="font-bold text-amber-700 group-hover:text-amber-600 flex items-center gap-1.5 transition-colors whitespace-nowrap">
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>{persona === 'noura' ? 'تحدث مع نُورة الآن' : 'تحدث مع فارس الآن'}</span>
                   <span>←</span>
                 </span>
-                <span className="text-[10px] text-zinc-400 shrink-0 whitespace-nowrap">انقر للبدء</span>
+
+                {/* Direct audio button on Landing Page */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    speakLandingPersona(persona);
+                  }}
+                  title={isPlayingVoice ? 'إيقاف الصوت' : `استمع لصوت ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer shrink-0 ${
+                    isPlayingVoice
+                      ? 'bg-amber-500 text-white border-amber-600 shadow-sm animate-pulse'
+                      : 'bg-zinc-100 hover:bg-amber-50 text-zinc-700 hover:text-amber-900 border-zinc-200'
+                  }`}
+                >
+                  {isPlayingVoice ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3 text-amber-600" />}
+                  <span>{isPlayingVoice ? 'إيقاف' : (persona === 'noura' ? 'استمع لنُورة' : 'استمع لفارس')}</span>
+                </button>
               </div>
             </div>
 
