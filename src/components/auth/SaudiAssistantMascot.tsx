@@ -192,16 +192,19 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             {/* Persona Switcher Pill */}
             <div 
-              className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200"
+              className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200 shrink-0"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
-                onClick={() => switchPersona('faris')}
-                className={`px-1.5 py-0.5 rounded-full text-[9px] font-extrabold transition-all ${
+                onClick={(e) => {
+                  e.stopPropagation();
+                  switchPersona('faris');
+                }}
+                className={`px-2 py-0.5 rounded-full text-[9.5px] font-extrabold transition-all cursor-pointer ${
                   persona === 'faris'
                     ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
                     : 'text-zinc-500 hover:text-zinc-800'
@@ -211,8 +214,11 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
               </button>
               <button
                 type="button"
-                onClick={() => switchPersona('noura')}
-                className={`px-1.5 py-0.5 rounded-full text-[9px] font-extrabold transition-all ${
+                onClick={(e) => {
+                  e.stopPropagation();
+                  switchPersona('noura');
+                }}
+                className={`px-2 py-0.5 rounded-full text-[9.5px] font-extrabold transition-all cursor-pointer ${
                   persona === 'noura'
                     ? 'bg-white text-amber-700 shadow-xs border border-champagne/40'
                     : 'text-zinc-500 hover:text-zinc-800'
@@ -223,7 +229,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
             </div>
 
             <span 
-              className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white shrink-0"
+              className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white shrink-0 whitespace-nowrap"
               style={{ background: selectedPortal.themeColor }}
             >
               {greeting.badge}
@@ -243,11 +249,11 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
 
         {/* Interactive Chat Prompt Button */}
         <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[10.5px]">
-          <span className="font-bold text-amber-700 flex items-center gap-1">
+          <span className="font-bold text-amber-700 flex items-center gap-1 whitespace-nowrap">
             <span>{persona === 'noura' ? 'تحدثي مع نُورة' : 'تحدث مع فارس'}</span>
             <span>←</span>
           </span>
-          <span className="text-zinc-400">انقر للبدء</span>
+          <span className="text-zinc-400 shrink-0 whitespace-nowrap">انقر للبدء</span>
         </div>
       </div>
 

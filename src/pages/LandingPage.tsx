@@ -359,22 +359,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               />
 
               <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-zinc-100">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <span className="live-pulse-dot" />
-                  <span className="text-[11px] font-extrabold text-zinc-900">
+                  <span className="text-[11.5px] font-extrabold text-zinc-900 whitespace-nowrap">
                     {persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}
                   </span>
                 </div>
 
                 {/* Persona Switcher Pill [ 👨 فارس | 👩 نُورة ] */}
                 <div 
-                  className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200"
+                  className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200 shrink-0"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
                     type="button"
-                    onClick={() => switchPersona('faris')}
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition-all ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      switchPersona('faris');
+                    }}
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold transition-all cursor-pointer ${
                       persona === 'faris'
                         ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
                         : 'text-zinc-500 hover:text-zinc-800'
@@ -384,8 +387,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   </button>
                   <button
                     type="button"
-                    onClick={() => switchPersona('noura')}
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition-all ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      switchPersona('noura');
+                    }}
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold transition-all cursor-pointer ${
                       persona === 'noura'
                         ? 'bg-white text-amber-700 shadow-xs border border-champagne/40'
                         : 'text-zinc-500 hover:text-zinc-800'
@@ -401,19 +407,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               </h4>
               <p className="text-[11px] text-zinc-600 leading-relaxed m-0">
                 {persona === 'noura' ? (
-                  <>أنا <strong className="text-zinc-950">نُورة</strong>، مرشدتكم الرقمية الذكية. يسعدني مرافقتكم وإرشادكم لخدمات الأقسام النسائية ومراكز الإيواء والتسكين ومنظومة المجموعة بالكامل.</>
+                  <>أنا <strong className="text-zinc-950">نُورة</strong>، مرشدتكم الرقمية الذكية. يسعدني مرافقتكم وتوجيهكم للأقسام النسائية ومراكز الإيواء والتسكين وكافة أنظمة شركات المجموعة.</>
                 ) : (
                   <>أنا <strong className="text-zinc-950">فارس</strong>، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.</>
                 )}
               </p>
 
               <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px]">
-                <span className="font-bold text-amber-700 group-hover:text-amber-600 flex items-center gap-1 transition-colors">
+                <span className="font-bold text-amber-700 group-hover:text-amber-600 flex items-center gap-1.5 transition-colors whitespace-nowrap">
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>{persona === 'noura' ? 'تحدث مع نُورة الآن' : 'تحدث مع فارس الآن'}</span>
                   <span>←</span>
                 </span>
-                <span className="text-[10px] text-zinc-400">انقر للبدء</span>
+                <span className="text-[10px] text-zinc-400 shrink-0 whitespace-nowrap">انقر للبدء</span>
               </div>
             </div>
 
