@@ -244,21 +244,26 @@ export function playPreRecordedAudio(
     };
 
     audio.onerror = (e) => {
+      if (currentHtmlAudio !== audio) return;
       console.warn('[Audio] Asset error:', e);
       currentHtmlAudio = null;
       notifyStateChange(false);
       callbacks?.onError?.(e);
-      callbacks?.onEnd?.();
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
+        if (err?.name === 'AbortError') {
+          // Playback was intentionally stopped or replaced by another track
+          return;
+        }
         console.warn('[Audio] HTML5 play() rejected:', err);
-        currentHtmlAudio = null;
+        if (currentHtmlAudio === audio) {
+          currentHtmlAudio = null;
+        }
         notifyStateChange(false);
         callbacks?.onError?.(err);
-        callbacks?.onEnd?.();
       });
     }
     return true;
