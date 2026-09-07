@@ -6,6 +6,8 @@ import { useIamSession } from '../../contexts/IamSessionContext';
 import { useAppStore } from '../../stores/appStore';
 import { NotificationDropdown } from '../common/NotificationDropdown';
 import { ProductionDataHubModal } from '../database/ProductionDataHubModal';
+import { DailyMoodCheckInModal } from '../monitoring/DailyMoodCheckInModal';
+import { employeeMonitoringService, MOOD_META, MoodType } from '../../services/employeeMonitoringService';
 import { 
   Menu, Grid, Search, Bell, Maximize, Minimize, MapPin, 
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
@@ -47,6 +49,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [assistantPersona, setAssistantPersona] = useState<'faris' | 'noura'>(() => {
     return (localStorage.getItem('assistant_persona') as 'faris' | 'noura') || 'faris';
   });
+  const [showMoodModal, setShowMoodModal] = useState<boolean>(false);
+  const [userMoodEmoji, setUserMoodEmoji] = useState<string>('😊');
 
   useEffect(() => {
     const handlePersonaChange = (e: any) => {
@@ -57,6 +61,23 @@ export const Header: React.FC<HeaderProps> = ({
     window.addEventListener('assistant-persona-changed', handlePersonaChange);
     return () => window.removeEventListener('assistant-persona-changed', handlePersonaChange);
   }, []);
+
+  useEffect(() => {
+    const userId = iamUser?.id || 'USR-ADMIN-01';
+    employeeMonitoringService.getTodayUserMood(userId).then(rec => {
+      if (rec && MOOD_META[rec.mood]) {
+        setUserMoodEmoji(MOOD_META[rec.mood].emoji);
+      }
+    });
+
+    const handleMoodUpdate = (e: any) => {
+      if (e.detail?.mood && MOOD_META[e.detail.mood as MoodType]) {
+        setUserMoodEmoji(MOOD_META[e.detail.mood as MoodType].emoji);
+      }
+    };
+    window.addEventListener('employee-mood-updated', handleMoodUpdate);
+    return () => window.removeEventListener('employee-mood-updated', handleMoodUpdate);
+  }, [iamUser]);
 
   useEffect(() => {
     const updateClock = () => {
@@ -377,6 +398,17 @@ export const Header: React.FC<HeaderProps> = ({
             {isFullscreen ? <Minimize className="w-4 h-4 text-zinc-700" /> : <Maximize className="w-4 h-4 text-zinc-700" />}
           </button>
 
+          {/* Daily Mood Pulse Check-In Trigger */}
+          <button
+            type="button"
+            onClick={() => setShowMoodModal(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:bg-emerald-50/60 hover:border-emerald-400 transition-all shadow-sm text-xs font-semibold"
+            title="تسجيل وتحديث حالتي المزاجية ونبض اليوم"
+          >
+            <span className="text-base leading-none">{userMoodEmoji}</span>
+            <span className="hidden md:inline text-[11px] text-zinc-600">نبض اليوم</span>
+          </button>
+
           {/* Notifications Bell */}
           <div className="relative">
             <button
@@ -487,6 +519,18 @@ export const Header: React.FC<HeaderProps> = ({
       <ProductionDataHubModal
         isOpen={showDataHubModal}
         onClose={() => setShowDataHubModal(false)}
+      />
+
+      {/* Daily Employee Mood & Pulse Check-In Modal */}
+      <DailyMoodCheckInModal
+        isOpen={showMoodModal}
+        onClose={() => setShowMoodModal(false)}
+        currentUser={{
+          id: iamUser?.id || 'USR-ADMIN-01',
+          full_name: iamUser?.fullName || 'مشرف الإدارة المركزية (خالد السليم)',
+          role: iamUser?.accountType || 'المدير العام',
+          branch: selectedBranch || 'المقر الرئيسي'
+        }}
       />
     </>
   );

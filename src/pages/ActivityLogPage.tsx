@@ -6,7 +6,7 @@ import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
   ShieldAlert, ShieldCheck, FileSpreadsheet, FileText, Search, 
-  Clock, Laptop, User, Check, RefreshCw, Trash2
+  Clock, Laptop, User, Check, RefreshCw, Trash2, Activity
 } from 'lucide-react';
 
 export interface ActivityItem {
@@ -181,6 +181,19 @@ export const ActivityLogPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              className="button-outline-on-dark"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('alsulaim_navigate', { 
+                  detail: { tab: 'employee-monitoring', title: 'مراقبة الأداء والنشاط والمشاعر' } 
+                }));
+              }}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(16, 185, 129, 0.4)', color: '#6ee7b7' }}
+              title="الانتقال إلى منظومة مراقبة الموظفين ونبض المشاعر"
+            >
+              <Activity className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <span>رادار المراقبة ونبض المشاعر</span>
+            </button>
             <button
               className="button-outline-on-dark"
               onClick={() => loadActivities()}

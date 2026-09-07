@@ -275,6 +275,19 @@ export const authService = {
   },
 
   /**
+   * Get current logged-in user profile from localStorage
+   */
+  getCurrentUser(): UserProfile | null {
+    try {
+      const raw = localStorage.getItem('ALSULAIM_AUTH_USER');
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      // ignore
+    }
+    return null;
+  },
+
+  /**
    * Check if user has customer service role
    */
   isCustomerService(user: UserProfile | null): boolean {

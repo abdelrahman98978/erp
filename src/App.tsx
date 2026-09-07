@@ -17,6 +17,7 @@ import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { UniversalNotificationToaster } from './components/common/UniversalNotificationToaster';
 import { PwaInstallPrompt } from './components/common/PwaInstallPrompt';
 import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
+import { employeeMonitoringService } from './services/employeeMonitoringService';
 
 import './styles/index.css';
 import './styles/layout.css';
@@ -109,6 +110,7 @@ const KasSuitePortalPage = lazyWithRetry(() => import('./pages/KasSuitePortalPag
 const IdentityAccessManagementPage = lazyWithRetry(() => import('./pages/IdentityAccessManagementPage').then(m => ({ default: m.IdentityAccessManagementPage })));
 const ClientPortalPage = lazyWithRetry(() => import('./pages/ClientPortalPage').then(m => ({ default: m.ClientPortalPage })));
 const ForeignAgencyPortalPage = lazyWithRetry(() => import('./pages/ForeignAgencyPortalPage').then(m => ({ default: m.ForeignAgencyPortalPage })));
+const EmployeeMonitoringPage = lazyWithRetry(() => import('./pages/EmployeeMonitoringPage').then(m => ({ default: m.EmployeeMonitoringPage })));
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
@@ -183,6 +185,25 @@ const MainContent: React.FC = () => {
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Initialize Global Clickstream, Rage Click & Activity Telemetry
+  useEffect(() => {
+    const cleanup = employeeMonitoringService.initGlobalTelemetry(() => {
+      const user = authService.getCurrentUser();
+      return user ? {
+        id: user.id,
+        name: user.full_name,
+        role: user.role,
+        branch: user.branch
+      } : {
+        id: 'USR-ADMIN-01',
+        name: currentUserForLegal.name,
+        role: currentUserForLegal.role,
+        branch: currentUserForLegal.branch
+      };
+    });
+    return cleanup;
+  }, [currentUserForLegal]);
 
   // Router Page Content Resolver
   const renderPage = () => {
@@ -480,6 +501,13 @@ const MainContent: React.FC = () => {
       case 'attendances':
       case 'daily-work-reports':
         return <AttendancesPage />;
+
+      case 'employee-monitoring':
+      case 'monitoring':
+      case 'mood-pulse':
+      case 'telemetry':
+      case 'employee-pulse':
+        return <EmployeeMonitoringPage />;
 
       case 'activity-logs':
       case 'activity-log':

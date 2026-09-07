@@ -58,6 +58,7 @@ const MODULE_PERMISSIONS_MAP: Record<string, string> = {
   'hr-recruitment-section': 'hr.view',
   'hr': 'hr.view',
   'attendances': 'hr.view',
+  'employee-monitoring': 'hr.view',
   'finance-section': 'finance.view',
   'finance': 'finance.view',
   'zatca': 'finance.view',

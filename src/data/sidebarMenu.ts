@@ -193,6 +193,7 @@ export const SIDEBAR_MENU: NavItem[] = [
       { id: 'payrolls', title: 'مسير الرواتب وحماية الأجور (WPS)', icon: 'CreditCard', href: 'payrolls' },
       { id: 'wps-generator', title: 'توليد ملفات نظام حماية الأجور', icon: 'FileSpreadsheet', href: 'wps-generator' },
       { id: 'attendances', title: 'الحضور والانصراف والبصمة الذكية', icon: 'Clock', href: 'attendances' },
+      { id: 'employee-monitoring', title: 'مراقبة الأداء والنشاط والمشاعر (Pulse)', icon: 'Activity', href: 'employee-monitoring', badge: 'جديد', badgeType: 'success' },
       { id: 'leave-requests', title: 'إدارة طلبات الإجازات', icon: 'CalendarDays', href: 'leave-requests' },
       { id: 'employee-advances', title: 'طلبات السلف والقروض', icon: 'Coins', href: 'employee-advances' },
       { id: 'custodies', title: 'عهد وأصول الموظفين', icon: 'Vault', href: 'custodies' },
