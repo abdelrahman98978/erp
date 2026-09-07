@@ -68,9 +68,21 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // Clean legacy caches from previous deployments to prevent stale bundle mismatch
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(key) {
+            if (key === 'khalid-erp-pwa-v1') {
+              caches.delete(key);
+            }
+          });
+        });
+      }
+
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('/sw.js').then(function(reg) {
+            reg.update();
             console.log('[PWA] ServiceWorker registered successfully:', reg.scope);
           }).catch(function(err) {
             console.warn('[PWA] ServiceWorker registration error:', err);
