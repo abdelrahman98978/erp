@@ -1532,7 +1532,7 @@ export function generateExecutiveReportHtml(
       <!-- Screen Toolbar -->
       <div class="toolbar no-print">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 18px;">🏛️</span>
+          <span style="font-size: 18px;"></span>
           <div>
             <div style="font-weight: 800; font-size: 13px;">المعاينة التنفيذية للتقرير المعتمد (Executive Print & PDF)</div>
             <div style="font-size: 10.5px; color: #94A3B8;">التقرير مهيأ بدقة عالية لطباعة A4 والحفظ كملف PDF رسمي</div>
@@ -1540,7 +1540,7 @@ export function generateExecutiveReportHtml(
         </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn btn-primary" onclick="window.print()">
-            🖨️ طباعة فورية (A4)
+            طباعة فورية (A4)
           </button>
           <button class="btn btn-secondary" onclick="window.close()">
             إغلاق المعاينة
@@ -1731,8 +1731,8 @@ export function exportToExcel(sectionKey: string, data: any[], customTitle?: str
 
   // 3. Assemble full worksheet array of arrays (AOA)
   const wsData: any[][] = [
-    [`🏢 ${company.nameAr} — ${company.nameEn}`],
-    [`📋 ${title}`],
+    [`${company.nameAr} — ${company.nameEn}`],
+    [`${title}`],
     [`سجل تجاري: ${company.crNumber} | الرقم الضريبي: ${company.taxNumber} | تاريخ التصدير: ${dateAr} (${timeStr}) | إجمالي السجلات: ${data.length}`],
     [], // Blank separator
     config.headers,

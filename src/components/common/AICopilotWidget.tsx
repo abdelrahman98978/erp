@@ -4,7 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { 
   X, Send, Mic, MicOff, Volume2, VolumeX, Sparkles, 
   ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
-  Minimize2, ShieldCheck, ShieldAlert, AlertTriangle
+  Minimize2, ShieldCheck, ShieldAlert, AlertTriangle, Radio, HelpCircle
 } from 'lucide-react';
 import { 
   playPersonaSwitchGreeting, 
@@ -18,12 +18,15 @@ import {
   subscribeAudioState
 } from '../../services/audioVoiceService';
 import { generateLocalAiResponse, checkLocalAiAvailable } from '../../services/localAiService';
-import { executeToolCall, logToolCancellation, type ToolCallParsed } from '../../services/aiToolExecutor';
+import { executeToolCall, logToolCancellation, buildConfirmationSummary, type ToolCallParsed } from '../../services/aiToolExecutor';
+import { getToolById } from '../../services/aiToolRegistry';
+import { dispatchVoiceCommand, VOICE_COMMANDS_GUIDE } from '../../services/voiceCommandService';
 
 interface ChatMessage {
   id: string;
   sender: 'ai' | 'user';
   text: string;
+  spokenSummary?: string;
   timestamp: string;
   actionButton?: {
     label: string;
@@ -118,6 +121,9 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     return localStorage.getItem('assistant_wake_word_enabled') !== 'false';
   });
   const [isListening, setIsListening] = useState(false);
+  const [interimSpeech, setInterimSpeech] = useState('');
+  const [showVoiceGuide, setShowVoiceGuide] = useState(false);
+  const interimSpeechRef = useRef('');
   const [showTooltip, setShowTooltip] = useState(true);
   const [isLocalAiOnline, setIsLocalAiOnline] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -130,7 +136,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const isSpeakingRef = useRef(false);
   const isPausedWakeRef = useRef(false);
   const isCancelledRef = useRef(false);
-  const handleSendMessageRef = useRef<(query?: string) => Promise<void>>(async () => {});
+  const handleSendMessageRef = useRef<(query?: string, isVoice?: boolean) => Promise<void>>(async () => {});
 
   useEffect(() => {
     isListeningRef.current = isListening;
@@ -512,23 +518,30 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       const recognition = new SpeechRec();
       recognition.lang = 'ar-SA';
       recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.interimResults = true;
+      let finalTranscript = '';
 
       recognition.onstart = () => {
         setIsListening(true);
         isListeningRef.current = true;
+        setInterimSpeech('');
+        interimSpeechRef.current = '';
       };
 
       recognition.onresult = (event: any) => {
-        const transcript = (event.results[0]?.[0]?.transcript || '').trim();
-        setIsListening(false);
-        isListeningRef.current = false;
-        if (transcript) {
-          if (autoSend) {
-            handleSendMessageRef.current(transcript);
+        let currentInterim = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
           } else {
-            setInputQuery(transcript);
+            currentInterim += event.results[i][0].transcript;
           }
+        }
+        const activeText = (finalTranscript || currentInterim).trim();
+        setInterimSpeech(activeText);
+        interimSpeechRef.current = activeText;
+        if (activeText && !autoSend) {
+          setInputQuery(activeText);
         }
       };
 
@@ -536,6 +549,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         console.warn('[Voice Dictation] error:', err);
         setIsListening(false);
         isListeningRef.current = false;
+        setInterimSpeech('');
+        interimSpeechRef.current = '';
         setTimeout(() => {
           isPausedWakeRef.current = false;
           if (wakeRecognitionRef.current && wakeWordEnabled) {
@@ -549,6 +564,16 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       recognition.onend = () => {
         setIsListening(false);
         isListeningRef.current = false;
+        const textToProcess = (finalTranscript || interimSpeechRef.current).trim();
+        setInterimSpeech('');
+        interimSpeechRef.current = '';
+        if (textToProcess) {
+          if (autoSend) {
+            handleSendMessageRef.current(textToProcess, true);
+          } else {
+            setInputQuery(textToProcess);
+          }
+        }
         setTimeout(() => {
           isPausedWakeRef.current = false;
           if (wakeRecognitionRef.current && wakeWordEnabled) {
@@ -566,6 +591,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       setIsListening(false);
       isListeningRef.current = false;
       isPausedWakeRef.current = false;
+      setInterimSpeech('');
+      interimSpeechRef.current = '';
     }
   };
 
@@ -591,10 +618,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   const getContextualPrompts = () => {
     if (persona === 'noura') {
       return [
-        { label: '🏢 مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية وحالة النزيلات في مراكز الإيواء؟' },
-        { label: '👩‍💼 كوادر الصفا والياقوت النسائية', query: 'أريد معرفة جاهزية الكوادر النسائية وعقود التشغيل المرن' },
-        { label: '🩺 الرعاية الصحية والغذائية', query: 'ما هي مؤشرات الرعاية الصحية والغذائية للنزيلات في المراكز؟' },
-        { label: '🛡️ حماية الخصوصية و HRSD', query: 'استعرض إجراءات حماية الخصوصية والامتثال لوزارة الموارد البشرية' },
+        { label: 'مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية وحالة النزيلات في مراكز الإيواء؟' },
+        { label: 'كوادر الصفا والياقوت النسائية', query: 'أريد معرفة جاهزية الكوادر النسائية وعقود التشغيل المرن' },
+        { label: 'الرعاية الصحية والغذائية', query: 'ما هي مؤشرات الرعاية الصحية والغذائية للنزيلات في المراكز؟' },
+        { label: 'حماية الخصوصية و HRSD', query: 'استعرض إجراءات حماية الخصوصية والامتثال لوزارة الموارد البشرية' },
       ];
     }
 
@@ -602,46 +629,46 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
     if (companyId === 'KAS' || companyId === 'kas') {
       return [
-        { label: '📄 منصة اعتماد والمنافسات', query: 'ما هي أحدث منافسات منصة اعتماد المتاحة للمشاركة؟' },
-        { label: '📊 محرر جداول الكميات BOQ', query: 'أريد مراجعة بنود وتسعير جدول كميات المنافسة الحالية' },
-        { label: '🧾 الفوترة المشفرة ZATCA', query: 'ما هي حالة الامتثال للفوترة الإلكترونية المشفرة للمرحلة الثانية؟' },
-        { label: '🤝 سجل الموردين والمقاولين', query: 'استعرض سجل الموردين المعتمدين لشركة كاس' },
+        { label: 'منصة اعتماد والمنافسات', query: 'ما هي أحدث منافسات منصة اعتماد المتاحة للمشاركة؟' },
+        { label: 'محرر جداول الكميات BOQ', query: 'أريد مراجعة بنود وتسعير جدول كميات المنافسة الحالية' },
+        { label: 'الفوترة المشفرة ZATCA', query: 'ما هي حالة الامتثال للفوترة الإلكترونية المشفرة للمرحلة الثانية؟' },
+        { label: 'سجل الموردين والمقاولين', query: 'استعرض سجل الموردين المعتمدين لشركة كاس' },
       ];
     }
 
     if (companyId === 'SAF' || companyId === 'masi') {
       return [
-        { label: '⏳ عقود مساند المتأخرة', query: 'ما هي العقود المتأخرة في مرحلة التأشيرة أو السفارة؟' },
-        { label: '✈️ تتبع وصول العمالة', query: 'ما هي الرحلات المجدولة لوصول العمالة المنزلية هذا الأسبوع؟' },
-        { label: '🛡️ بوالص التأمين الشاملة', query: 'ما هي حالة توثيق بوالص التأمين على عقود الاستقدام؟' },
-        { label: '📑 تفويض إنجاز الفوري', query: 'كيف أقوم بإصدار تفويض إلكتروني فوري عبر إنجاز؟' },
+        { label: 'عقود مساند المتأخرة', query: 'ما هي العقود المتأخرة في مرحلة التأشيرة أو السفارة؟' },
+        { label: 'تتبع وصول العمالة', query: 'ما هي الرحلات المجدولة لوصول العمالة المنزلية هذا الأسبوع؟' },
+        { label: 'بوالص التأمين الشاملة', query: 'ما هي حالة توثيق بوالص التأمين على عقود الاستقدام؟' },
+        { label: 'تفويض إنجاز الفوري', query: 'كيف أقوم بإصدار تفويض إلكتروني فوري عبر إنجاز؟' },
       ];
     }
 
     if (companyId === 'YAQ' || companyId === 'yaqoot') {
       return [
-        { label: '📋 عقود التأجير والتشغيل', query: 'أعطني إحصائية عقود التأجير الشهرية والسنوية السارية' },
-        { label: '👥 جاهزية الكوادر والتشغيل', query: 'ما هو عدد الكوادر المهنية الجاهزة للتسليم للعملاء؟' },
-        { label: '💰 سندات القبض والتحصيل', query: 'ما هي مبالغ التحصيل المستحقة هذا الشهر للياقوت؟' },
-        { label: '🏢 باقات قطاع الأعمال', query: 'ما هي العروض والخصومات المتاحة للشركات والمصانع؟' },
+        { label: 'عقود التأجير والتشغيل', query: 'أعطني إحصائية عقود التأجير الشهرية والسنوية السارية' },
+        { label: 'جاهزية الكوادر والتشغيل', query: 'ما هو عدد الكوادر المهنية الجاهزة للتسليم للعملاء؟' },
+        { label: 'سندات القبض والتحصيل', query: 'ما هي مبالغ التحصيل المستحقة هذا الشهر للياقوت؟' },
+        { label: 'باقات قطاع الأعمال', query: 'ما هي العروض والخصومات المتاحة للشركات والمصانع؟' },
       ];
     }
 
     if (companyId === 'TOP' || companyId === 'topaz') {
       return [
-        { label: '📂 فرز السير الذاتية ATS', query: 'ما هي السير الذاتية المطابقة لمعايير التوظيف الذكي؟' },
-        { label: '🌐 وكالات التوظيف في 14 دولة', query: 'ما هي حالة الربط مع الوكالات الخارجية في الفلبين وإندونيسيا؟' },
-        { label: '⏱️ متوسط زمن التوظيف', query: 'ما هو مؤشر سرعة فرز وتوظيف الكفاءات في توب تالنت؟' },
+        { label: 'فرز السير الذاتية ATS', query: 'ما هي السير الذاتية المطابقة لمعايير التوظيف الذكي؟' },
+        { label: 'وكالات التوظيف الخارجية', query: 'ما هي حالة الربط مع الوكالات الخارجية في الفلبين وإندونيسيا؟' },
+        { label: 'متوسط زمن التوظيف', query: 'ما هو مؤشر سرعة فرز وتوظيف الكفاءات في توب تالنت؟' },
       ];
     }
 
     // Default / All / Super Admin
     return [
-      { label: '📊 ملخص الأداء المالي والسيولة', query: 'أعطني ملخص السيولة والأرباح المجمعة لشركات المجموعة' },
-      { label: '⏳ عقود مساند وسير العمل', query: 'ما هي عقود مساند النشطة وحالة الربط مع الوزارة؟' },
-      { label: '🇸🇦 نسبة التوطين وحماية الأجور', query: 'ما هي نسبة التوطين المعتمدة وحالة ملف WPS؟' },
-      { label: '🏨 نسبة إشغال مراكز الإيواء', query: 'ما هي الطاقة الاستيعابية الشاغرة لأسرة مراكز الإيواء؟' },
-      { label: '🏢 بوابة منافسات كاس', query: 'كيف أنتقل إلى البوابة المستقلة لشركة كاس؟' },
+      { label: 'ملخص الأداء المالي والسيولة', query: 'أعطني ملخص السيولة والأرباح المجمعة لشركات المجموعة' },
+      { label: 'عقود مساند وسير العمل', query: 'ما هي عقود مساند النشطة وحالة الربط مع الوزارة؟' },
+      { label: 'نسبة التوطين وحماية الأجور', query: 'ما هي نسبة التوطين المعتمدة وحالة ملف WPS؟' },
+      { label: 'نسبة إشغال مراكز الإيواء', query: 'ما هي الطاقة الاستيعابية الشاغرة لأسرة مراكز الإيواء؟' },
+      { label: 'بوابة منافسات كاس', query: 'كيف أنتقل إلى البوابة المستقلة لشركة كاس؟' },
     ];
   };
 
@@ -662,17 +689,18 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         id: `tool-result-${Date.now()}`,
         sender: 'ai',
         text: result.message,
+        spokenSummary: result.spokenSummary,
         timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
       };
 
       setMessages(prev => [...prev, resultMsg]);
-      speakText(result.message, persona);
+      speakText(result.spokenSummary || result.message, persona, true);
     } catch (err) {
       console.error('[AI Tool Executor] Error:', err);
       const errorMsg: ChatMessage = {
         id: `tool-error-${Date.now()}`,
         sender: 'ai',
-        text: '⚠️ حدث خطأ أثناء تنفيذ العملية. يرجى المحاولة مرة أخرى.',
+        text: 'حدث خطأ أثناء تنفيذ العملية. يرجى المحاولة مرة أخرى.',
         timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -699,9 +727,14 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     setPendingToolCall(null);
   };
 
-  const handleSendMessage = async (queryText?: string) => {
+  const handleSendMessage = async (queryText?: string, isVoiceInput = false) => {
     const textToSend = queryText || inputQuery;
     if (!textToSend.trim()) return;
+
+    if (isVoiceInput && !voiceEnabled) {
+      setVoiceEnabled(true);
+      localStorage.setItem('faris_voice_enabled', 'true');
+    }
 
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
@@ -713,6 +746,90 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     setMessages(prev => [...prev, userMsg]);
     setInputQuery('');
     setIsTyping(true);
+
+    // 0. Check for Instant Direct Voice Command (Navigation, Persona switch, Audio toggle, Direct tools)
+    try {
+      const voiceResult = await dispatchVoiceCommand(textToSend, persona, {
+        onNavigate: (pageKey, pageTitle) => {
+          if (onNavigate) {
+            onNavigate(pageKey, pageTitle);
+          } else {
+            window.dispatchEvent(new CustomEvent('navigate-to-page', { detail: { pageKey, pageTitle } }));
+          }
+        },
+        onSwitchPersona: (newP) => switchPersona(newP),
+        onToggleVoice: (enable) => {
+          setVoiceEnabled(enable);
+          localStorage.setItem('faris_voice_enabled', String(enable));
+          if (!enable) stopAllAudio();
+        },
+        onCloseWidget: () => setIsOpen(false),
+        onClearChat: () => {
+          setMessages([{
+            id: `welcome-new-${Date.now()}`,
+            sender: 'ai',
+            text: getInitialWelcome(persona, activeCompany.name),
+            timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+          }]);
+        },
+        onExecuteTool: async (toolId, params) => {
+          const toolDef = getToolById(toolId);
+          if (toolDef) {
+            if (!toolDef.isMutating) {
+              try {
+                const res = await executeToolCall(
+                  { tool: toolDef, params, confirmationSummary: '' },
+                  activeCompany.id,
+                  'current_user',
+                  onNavigate
+                );
+                setMessages(prev => [
+                  ...prev,
+                  {
+                    id: `voice-tool-${Date.now()}`,
+                    sender: 'ai',
+                    text: res.message,
+                    spokenSummary: res.spokenSummary,
+                    timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+                  },
+                ]);
+                speakText(res.spokenSummary || res.message, persona, true);
+              } catch (execErr) {
+                console.error('[Voice Tool Auto-Execute] Error:', execErr);
+              }
+            } else {
+              const summary = buildConfirmationSummary(toolDef, params);
+              setPendingToolCall({
+                tool: toolDef,
+                params,
+                confirmationSummary: summary,
+              });
+            }
+          }
+        },
+      });
+
+      if (voiceResult.isCommand) {
+        if (voiceResult.displayText) {
+          setMessages(prev => [
+            ...prev,
+            {
+              id: `cmd-${Date.now()}`,
+              sender: 'ai',
+              text: voiceResult.displayText!,
+              timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        }
+        setIsTyping(false);
+        if (voiceResult.spokenResponse && voiceResult.commandType !== 'direct_tool') {
+          speakText(voiceResult.spokenResponse, persona, true);
+        }
+        return;
+      }
+    } catch (cmdErr) {
+      console.warn('[Voice Command Dispatcher] Fallback to AI:', cmdErr);
+    }
 
     try {
       // Execute company-scoped inference on local model (faris-erp / noura-erp)
@@ -738,13 +855,40 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       setMessages(prev => [...prev, newAiMsg]);
       setIsTyping(false);
 
-      // Phase 1: If the model triggered a tool call, show confirmation modal
+      // Phase 1: If the model triggered a tool call
       if (aiRes.toolCall) {
-        setPendingToolCall(aiRes.toolCall);
+        if (!aiRes.toolCall.tool.isMutating) {
+          // Read-only queries execute seamlessly and vocalize through the AI voice model!
+          try {
+            const autoRes = await executeToolCall(
+              aiRes.toolCall,
+              activeCompany.id,
+              'current_user',
+              onNavigate
+            );
+
+            const toolMsg: ChatMessage = {
+              id: `ai-tool-auto-${Date.now()}`,
+              sender: 'ai',
+              text: autoRes.message,
+              spokenSummary: autoRes.spokenSummary,
+              timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+            };
+
+            setMessages(prev => [...prev, toolMsg]);
+            speakText(autoRes.spokenSummary || autoRes.message, persona, true);
+            return;
+          } catch (autoErr) {
+            console.error('[AI Tool Auto-Execute] Error:', autoErr);
+          }
+        } else {
+          // Mutating operations (create invoice, approve funds, etc.) trigger Gate 2 approval modal
+          setPendingToolCall(aiRes.toolCall);
+        }
       }
 
       // Speak response out loud automatically using persona's voice!
-      speakText(aiRes.text, persona);
+      speakText(aiRes.text, persona, isVoiceInput);
     } catch (err) {
       console.error('[AI Copilot] Inference error:', err);
       setIsTyping(false);
@@ -839,7 +983,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                       persona === 'faris' ? 'bg-white text-zinc-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-800'
                     }`}
                   >
-                    👨 فارس
+                    فارس
                   </button>
                   <button
                     type="button"
@@ -851,7 +995,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                       persona === 'noura' ? 'bg-amber-100 text-amber-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-800'
                     }`}
                   >
-                    👩 نُورة
+                    نُورة
                   </button>
                 </div>
 
@@ -1036,6 +1180,20 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                 </button>
 
+                {/* Voice Commands Guide Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowVoiceGuide(prev => !prev)}
+                  title={showVoiceGuide ? 'إخفاء دليل الأوامر الصوتية' : 'عرض دليل الأوامر الصوتية الذكية'}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                    showVoiceGuide
+                      ? 'bg-amber-400 text-zinc-950 font-bold shadow-xs'
+                      : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100'
+                  }`}
+                >
+                  <Radio className="w-4 h-4" />
+                </button>
+
                 {/* Wake Word Mic */}
                 <button
                   type="button"
@@ -1089,7 +1247,6 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                       : 'text-zinc-500 hover:text-zinc-800'
                   }`}
                 >
-                  <span>👨</span>
                   <span>فارس</span>
                 </button>
                 <button
@@ -1101,7 +1258,6 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                       : 'text-zinc-500 hover:text-zinc-800'
                   }`}
                 >
-                  <span>👩</span>
                   <span>نُورة</span>
                 </button>
               </div>
@@ -1111,8 +1267,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50/90 text-amber-900 border border-amber-300/70 truncate max-w-[220px]"
                 title={`عزل بيانات سيادي مشفر: ${activeCompany.name}`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <span className="truncate">🔒 {activeCompany.name}</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span className="truncate">{activeCompany.name}</span>
               </div>
             </div>
 
@@ -1164,6 +1320,54 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
               </button>
             ))}
           </div>
+
+          {/* Voice Commands Guide Panel (When toggled) */}
+          {showVoiceGuide && (
+            <div className="p-3.5 bg-amber-50/95 border-b border-amber-200 text-zinc-900 shrink-0 text-xs shadow-inner">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5 font-black text-amber-950">
+                  <Radio className="w-4 h-4 text-amber-600 animate-pulse" />
+                  <span>دليل الأوامر الصوتية الذكية (تحدث مباشرة بالمايكروفون)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowVoiceGuide(false)}
+                  className="text-zinc-400 hover:text-zinc-700 p-1 rounded-md hover:bg-amber-100"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="space-y-2 max-h-48 overflow-y-auto thin-scrollbar pr-1">
+                {VOICE_COMMANDS_GUIDE.map((cat, idx) => (
+                  <div key={idx} className="bg-white p-2.5 rounded-xl border border-amber-200/80 shadow-2xs">
+                    <div className="flex items-center justify-between font-bold text-zinc-900 mb-1 text-[11px]">
+                      <span>{cat.category}</span>
+                      {cat.badge && (
+                        <span className="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-black">
+                          {cat.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {cat.phrases.map((phrase, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => {
+                            setShowVoiceGuide(false);
+                            handleSendMessage(phrase);
+                          }}
+                          className="text-[11px] bg-zinc-50 hover:bg-amber-100 hover:text-amber-950 border border-zinc-200/80 px-2 py-0.5 rounded-lg text-zinc-700 transition-all text-right"
+                        >
+                          "{phrase}"
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Chat Messages Section */}
           <div
@@ -1249,7 +1453,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     {msg.sender === 'ai' && (
                       <button
                         type="button"
-                        onClick={() => speakText(msg.text, persona, true)}
+                        onClick={() => speakText(msg.spokenSummary || msg.text, persona, true)}
                         title={persona === 'noura' ? 'استمع لصوت نُورة الطبيعي' : 'استمع لصوت فارس الطبيعي'}
                         className="flex items-center gap-1.5 px-2 py-0.5 rounded-full font-bold bg-amber-50 text-amber-900 border border-amber-200/80 hover:bg-amber-100 hover:border-amber-300 transition-all cursor-pointer"
                       >
@@ -1281,6 +1485,25 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             }}
             className="p-3 sm:p-3.5 bg-white border-t border-zinc-200/80 flex items-center gap-2 shrink-0"
           >
+            {/* Live Interim Speech Indicator */}
+            {isListening && (
+              <div className="px-4 py-2 bg-gradient-to-r from-rose-50 via-amber-50 to-rose-50 border-t border-rose-200/80 flex items-center justify-between text-xs text-rose-700 animate-pulse shrink-0">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping shrink-0"></span>
+                  <span className="font-bold truncate">
+                    {interimSpeech ? `"${interimSpeech}"` : 'تفضل بالتحدث الآن عبر المايكروفون...'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={toggleListening}
+                  className="text-[11px] bg-rose-200/80 hover:bg-rose-300 text-rose-900 px-2.5 py-0.5 rounded-md font-bold shrink-0 mr-2"
+                >
+                  إيقاف
+                </button>
+              </div>
+            )}
+
             {/* Voice Dictation Button */}
             <button
               type="button"

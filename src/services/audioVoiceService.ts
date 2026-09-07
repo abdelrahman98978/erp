@@ -281,12 +281,19 @@ export function playPreRecordedAudio(
  */
 function cleanSpeechText(text: string): string {
   return text
+    .replace(/\{[\s\S]*?"tool_call"[\s\S]*?\}[\s\S]*?\}/g, '')
+    .replace(/\{[\s\S]*?\}/g, '')
+    .replace(/```[\s\S]*?```/g, '')
     .replace(/[*_#`~]/g, '')
     .replace(/•/g, '')
+    .replace(/\|/g, ' ')
     .replace(/\(.*?\)/g, '')
     .replace(/\[.*?\]/g, '')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F100}-\u{1F1FF}\u{1F200}-\u{1F2FF}]/gu, '')
     .replace(/[\n\r]+/g, ' ')
     .replace(/\+/g, ' زائد ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -315,8 +322,13 @@ export async function speakDynamicSpeech(
 
   // Attempt 1: High-fidelity Server-side Neural TTS stream (/api/tts)
   try {
-    const ttsUrl = `/api/tts?text=${encodeURIComponent(clean)}&persona=${persona}`;
-    const res = await fetch(ttsUrl);
+    const res = clean.length > 120
+      ? await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: clean, persona }),
+        })
+      : await fetch(`/api/tts?text=${encodeURIComponent(clean)}&persona=${persona}`);
 
     if (res.ok && res.headers.get('content-type')?.includes('audio')) {
       const blob = await res.blob();

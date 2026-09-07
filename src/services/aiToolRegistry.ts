@@ -219,6 +219,86 @@ export const AI_TOOL_REGISTRY: AiToolDefinition[] = [
       { name: 'days_ahead', type: 'number', description: 'عدد الأيام المتبقية (مثال: 30 يوماً)', required: true },
     ],
   },
+  // ═══════════════════════════════════════════════════════════
+  //  FARIS & NOURA EXPANDED OPERATIONAL TOOLS
+  // ═══════════════════════════════════════════════════════════
+  {
+    id: 'get_employee_monitoring_summary',
+    nameAr: 'استعراض تقرير أداء وسرعة الموظفين',
+    descriptionAr: 'عرض ملخص مؤشرات أداء وسرعة إنجاز الموظفين (Velocity)، ساعات العمل الفعلي، ونسب الخمول ونبض الفريق.',
+    companyScope: [],
+    requiredPermission: 'hr.monitoring.read',
+    riskLevel: 'low',
+    category: 'hr',
+    isMutating: false,
+    parameters: [
+      { name: 'period', type: 'string', description: 'الفترة المستهدفة', required: false, enumValues: ['today', 'this_week', 'this_month'] },
+      { name: 'department', type: 'string', description: 'القسم أو الفرع (اختياري)', required: false },
+    ],
+  },
+  {
+    id: 'get_zatca_compliance_report',
+    nameAr: 'تقرير امتثال الفوترة الإلكترونية ZATCA',
+    descriptionAr: 'فحص جاهزية الفواتير المشفرة وشهادات الأمان والتكامل مع منصة فاتورة (ZATCA Phase 2).',
+    companyScope: [],
+    requiredPermission: 'finance.zatca.read',
+    riskLevel: 'low',
+    category: 'finance',
+    isMutating: false,
+    parameters: [],
+  },
+  {
+    id: 'search_etmad_tenders',
+    nameAr: 'البحث في منافسات منصة اعتماد',
+    descriptionAr: 'البحث في قاعدة بيانات منافسات منصة اعتماد المرصودة لكاس (2,651+ منافسة).',
+    companyScope: ['KAS'],
+    requiredPermission: 'kas.tender.read',
+    riskLevel: 'low',
+    category: 'operations',
+    isMutating: false,
+    parameters: [
+      { name: 'query', type: 'string', description: 'كلمة البحث في عنوان أو تفاصيل المنافسة', required: true },
+      { name: 'category', type: 'string', description: 'تصنيف المنافسة', required: false },
+    ],
+  },
+  {
+    id: 'get_shelter_daily_status',
+    nameAr: 'تقرير الإيواء والرعاية الميداني اليومي',
+    descriptionAr: 'استعراض تقرير الإيواء الشامل لليوم: نسبة إشغال الأسرة، عدد الوجبات المقدمة، الحالات الطبية، والمشرفات المناوبات.',
+    companyScope: ['SHELTER'],
+    requiredPermission: 'shelter.status.read',
+    riskLevel: 'low',
+    category: 'shelter',
+    isMutating: false,
+    parameters: [],
+  },
+  {
+    id: 'calculate_sponsorship_transfer',
+    nameAr: 'حساب تسوية نقل الخدمات وفترة التجربة',
+    descriptionAr: 'حساب المبلغ المسترد للكفيل السابق حسب مدة العقد المستهلكة ورسوم التنازل وفترة التجربة المقررة (7-15 يوماً).',
+    companyScope: [],
+    requiredPermission: 'shelter.transfer.calculate',
+    riskLevel: 'low',
+    category: 'shelter',
+    isMutating: false,
+    parameters: [
+      { name: 'total_cost', type: 'number', description: 'التكلفة الإجمالية الأصلية للاستقدام بالريال', required: true },
+      { name: 'months_worked', type: 'number', description: 'عدد الأشهر المنقضية من العقد', required: true },
+    ],
+  },
+  {
+    id: 'check_inmate_medical_status',
+    nameAr: 'فحص التقرير الطبي وجناح العزل',
+    descriptionAr: 'الاستعلام عن حالات الفحص الطبي للنزيلات، العلامات الحيوية، والحالات الموجودة في جناح العزل المؤقت.',
+    companyScope: ['SHELTER'],
+    requiredPermission: 'shelter.medical.read',
+    riskLevel: 'low',
+    category: 'shelter',
+    isMutating: false,
+    parameters: [
+      { name: 'inmate_name', type: 'string', description: 'اسم النزيلة (اختياري)', required: false },
+    ],
+  },
 ];
 
 /**

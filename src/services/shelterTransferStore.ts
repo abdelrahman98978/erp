@@ -805,7 +805,7 @@ class ShelterTransferStore {
           id: alertId,
           type: 'trial_overdue',
           urgency: 'danger',
-          title: isToday ? '🔴 اليوم موعد الحسم النهائي لفترة التجربة' : `🚨 متأخرة بـ ${daysOver} يوم عن فترة التجربة`,
+          title: isToday ? 'اليوم موعد الحسم النهائي لفترة التجربة' : `متأخرة بـ ${daysOver} يوم عن فترة التجربة`,
           description: `انتهت فترة التجربة المقررة (${t.followupDaysDuration} أيام) للعاملة ${workerName} لدى العميل ${t.newClientName}.`,
           workerId: t.workerId,
           workerName,
@@ -831,7 +831,7 @@ class ShelterTransferStore {
           id: alertId,
           type: 'trial_ending_24h',
           urgency: 'urgent',
-          title: '🟠 متبقي 24 ساعة على انتهاء التجربة (T - 24h)',
+          title: 'متبقي 24 ساعة على انتهاء التجربة (T - 24h)',
           description: `غداً هو الموعد النهائي لانتهاء تجربة العاملة ${workerName} لدى العميل ${t.newClientName}.`,
           workerId: t.workerId,
           workerName,
@@ -857,7 +857,7 @@ class ShelterTransferStore {
           id: alertId,
           type: 'trial_ending_48h',
           urgency: 'warning',
-          title: '🟡 متبقي 48 ساعة على انتهاء التجربة (T - 48h)',
+          title: 'متبقي 48 ساعة على انتهاء التجربة (T - 48h)',
           description: `متبقي يومان على انقضاء تجربة العاملة ${workerName} لدى العميل ${t.newClientName}.`,
           workerId: t.workerId,
           workerName,
@@ -892,7 +892,7 @@ class ShelterTransferStore {
         id: alertId,
         type: 'downpayment_pending',
         urgency: 'warning',
-        title: `💳 حجز معلق بدون عربون: ${pb.transferCode}`,
+        title: `حجز معلق بدون عربون: ${pb.transferCode}`,
         description: `تم حجز العاملة ${workerName} للعميل ${pb.newClientName} ولم يتم إثبات سداد العربون أو توقيع الاتفاقية.`,
         workerId: pb.workerId,
         workerName,
@@ -923,7 +923,7 @@ class ShelterTransferStore {
         id: alertId,
         type: 'musaned_approval_pending',
         urgency: 'info',
-        title: `🏛️ بانتظار اعتماد مساند: ${wg.transferCode}`,
+        title: `بانتظار اعتماد مساند: ${wg.transferCode}`,
         description: `تمت موافقة العميل ${wg.newClientName} على نقل خدمات العاملة ${workerName} والطلب بانتظار اعتماد الوزارة وسداد الرسوم.`,
         workerId: wg.workerId,
         workerName,
@@ -954,7 +954,7 @@ class ShelterTransferStore {
             id: alertId,
             type: 'shelter_stay_extended',
             urgency: 'warning',
-            title: `🏢 إشغال سكن مطول (${daysInShelter} يوماً)`,
+            title: `إشغال سكن مطول (${daysInShelter} يوماً)`,
             description: `النزيلة ${w.fullNameAr} (${w.workerCode}) مقيمة بالسكن منذ ${daysInShelter} يوماً دون إتاحتها أو حجزها.`,
             workerId: w.id,
             workerName: w.fullNameAr,
@@ -985,7 +985,7 @@ class ShelterTransferStore {
             id: alertId,
             type: 'first_sponsor_warranty_expiring',
             urgency: 'warning',
-            title: `🛡️ اقتراب انتهاء مهلة الضمان (متبقي ${daysLeftIn90} يوماً)`,
+            title: `اقتراب انتهاء مهلة الضمان (متبقي ${daysLeftIn90} يوماً)`,
             description: `الكفيل السابق ${fs.sponsorName} لعقد العاملة ${worker?.fullNameAr || ''} يقترب ضمان الـ 90 يوماً من الانتهاء.`,
             workerId: fs.workerId,
             workerName: worker?.fullNameAr || '',
@@ -1088,7 +1088,7 @@ class ShelterTransferStore {
     this.saveAll();
 
     triggerNotification({
-      title: '🏢 تسجيل دخول عاملة جديدة بالسكن',
+      title: 'تسجيل دخول عاملة جديدة بالسكن',
       body: `تم تسجيل العاملة ${newWorker.fullNameAr} (${newWorker.workerCode}) بنجاح بالسكن المشترك.`,
       type: 'system',
     });
@@ -1170,7 +1170,7 @@ class ShelterTransferStore {
     this.saveAll();
 
     triggerNotification({
-      title: '🔒 حجز عاملة لنقل الخدمات',
+      title: 'حجز عاملة لنقل الخدمات',
       body: `تم حجز العاملة ${worker.fullNameAr} للعميل ${params.clientName} بسعر ${params.transferFee} ر.س.`,
       type: 'sponsorship',
     });
@@ -1233,7 +1233,7 @@ class ShelterTransferStore {
     this.saveAll();
 
     triggerNotification({
-      title: '🚚 تسليم عاملة وبدء عداد التجربة',
+      title: 'تسليم عاملة وبدء عداد التجربة',
       body: `خرجت العاملة ${worker.fullNameAr} للعميل ${transfer.newClientName}. مدة التجربة: ${duration} أيام.`,
       type: 'sponsorship',
     });
@@ -1326,7 +1326,7 @@ class ShelterTransferStore {
       });
 
       triggerNotification({
-        title: '🎉 إتمام نقل خدمات العاملة بنجاح',
+        title: 'إتمام نقل خدمات العاملة بنجاح',
         body: `تم نقل خدمات ${worker.fullNameAr} للعميل ${transfer.newClientName} نهائياً.`,
         type: 'sponsorship',
       });
@@ -1432,7 +1432,7 @@ class ShelterTransferStore {
     this.saveAll();
 
     triggerNotification({
-      title: '🏠 إرجاع عاملة للسكن المشترك',
+      title: 'إرجاع عاملة للسكن المشترك',
       body: `عادت العاملة ${worker.fullNameAr} من تجربة العميل ${transfer.newClientName}. عدد مرات الخروج: ${worker.clientTrialsCount}.`,
       type: 'warning',
     });

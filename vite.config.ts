@@ -7,17 +7,39 @@ const ttsPlugin = () => ({
     server.middlewares.use(async (req: any, res: any, next: any) => {
       if (req.url && req.url.startsWith('/api/tts')) {
         try {
-          const parsedUrl = new URL(req.url, 'http://localhost:3000');
-          const rawText = parsedUrl.searchParams.get('text') || '';
-          const persona = parsedUrl.searchParams.get('persona') || 'noura';
+          let rawText = '';
+          let persona = 'noura';
+
+          if (req.method === 'POST') {
+            const body = await new Promise<string>((resolve) => {
+              let data = '';
+              req.on('data', (chunk: any) => { data += chunk; });
+              req.on('end', () => resolve(data));
+            });
+            try {
+              const json = JSON.parse(body);
+              rawText = json.text || '';
+              persona = json.persona || 'noura';
+            } catch (_) {}
+          } else {
+            const parsedUrl = new URL(req.url, 'http://localhost:3000');
+            rawText = parsedUrl.searchParams.get('text') || '';
+            persona = parsedUrl.searchParams.get('persona') || 'noura';
+          }
 
           const text = rawText
+            .replace(/\{[\s\S]*?\}/g, '')
+            .replace(/```[\s\S]*?```/g, '')
             .replace(/[*_#`~]/g, '')
             .replace(/•/g, '')
+            .replace(/\|/g, ' ')
             .replace(/\(.*?\)/g, '')
             .replace(/\[.*?\]/g, '')
+            .replace(/https?:\/\/\S+/g, '')
+            .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F100}-\u{1F1FF}\u{1F200}-\u{1F2FF}]/gu, '')
             .replace(/[\n\r]+/g, ' ')
             .replace(/\+/g, ' زائد ')
+            .replace(/\s+/g, ' ')
             .trim();
 
           if (!text) {

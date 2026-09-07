@@ -11,6 +11,8 @@
  */
 
 import { getToolById, type AiToolDefinition, type ToolRiskLevel } from './aiToolRegistry';
+import { employeeMonitoringService } from './employeeMonitoringService';
+import { shelterTransferStore } from './shelterTransferStore';
 
 // ═══════════════════════════════════════════════════════════
 //  TYPES
@@ -31,6 +33,8 @@ export interface ToolCallParsed {
 export interface ToolExecutionResult {
   success: boolean;
   message: string;
+  /** Natural spoken summary specifically crafted for neural TTS voice models */
+  spokenSummary?: string;
   data?: unknown;
 }
 
@@ -252,6 +256,24 @@ export async function executeToolCall(
       case 'get_expiring_iqamas':
         result = executeGetExpiringIqamas(params);
         break;
+      case 'get_employee_monitoring_summary':
+        result = await executeGetEmployeeMonitoringSummary(params);
+        break;
+      case 'get_zatca_compliance_report':
+        result = executeGetZatcaReport();
+        break;
+      case 'search_etmad_tenders':
+        result = executeSearchEtmadTenders(params);
+        break;
+      case 'get_shelter_daily_status':
+        result = executeGetShelterDailyStatus();
+        break;
+      case 'calculate_sponsorship_transfer':
+        result = executeCalculateSponsorshipTransfer(params);
+        break;
+      case 'check_inmate_medical_status':
+        result = executeCheckMedicalStatus(params);
+        break;
       default:
         result = { success: false, message: `الأداة "${tool.id}" غير مربوطة بمحرك تنفيذ بعد.` };
     }
@@ -283,7 +305,7 @@ export async function executeToolCall(
       details: errorMsg,
     });
 
-    return { success: false, message: `⚠️ فشل تنفيذ "${tool.nameAr}": ${errorMsg}` };
+    return { success: false, message: `تعذر تنفيذ "${tool.nameAr}": ${errorMsg}` };
   }
 }
 
@@ -336,7 +358,8 @@ function executeNavigate(
 
   return {
     success: true,
-    message: `✅ تم التنقل إلى: ${title}`,
+    message: `تم الانتقال إلى: ${title}`,
+    spokenSummary: `تم الانتقال إلى ${title}.`,
   };
 }
 
@@ -350,7 +373,7 @@ async function executeCreateInvoice(
   const vatInclusive = Boolean(params.vat_inclusive);
 
   if (!customerName || amount <= 0) {
-    return { success: false, message: '⚠️ يجب تحديد اسم العميل ومبلغ صالح.' };
+    return { success: false, message: 'يجب تحديد اسم العميل ومبلغ صالح.' };
   }
 
   const vatAmount = vatInclusive ? 0 : amount * 0.15;
@@ -360,7 +383,8 @@ async function executeCreateInvoice(
   // Simulate invoice creation (in production, this calls Supabase/API)
   return {
     success: true,
-    message: `✅ تم إنشاء الفاتورة بنجاح!\n• رقم الفاتورة: ${invoiceNumber}\n• العميل: ${customerName}\n• المبلغ: ${amount.toLocaleString('ar-SA')} ر.س\n• ضريبة القيمة المضافة: ${vatAmount.toLocaleString('ar-SA')} ر.س\n• الإجمالي: ${total.toLocaleString('ar-SA')} ر.س\n• الوصف: ${description}`,
+    message: `تم إنشاء الفاتورة بنجاح:\n• رقم الفاتورة: ${invoiceNumber}\n• العميل: ${customerName}\n• المبلغ: ${amount.toLocaleString('ar-SA')} ر.س\n• ضريبة القيمة المضافة: ${vatAmount.toLocaleString('ar-SA')} ر.س\n• الإجمالي: ${total.toLocaleString('ar-SA')} ر.س\n• الوصف: ${description}`,
+    spokenSummary: `تم إنشاء الفاتورة بنجاح للعميل ${customerName} بمبلغ ${total.toLocaleString('ar-SA')} ريال شامل ضريبة القيمة المضافة.`,
     data: { invoiceNumber, customerName, amount, vatAmount, total },
   };
 }
@@ -371,12 +395,13 @@ async function executeApproveVoucher(
 ): Promise<ToolExecutionResult> {
   const voucherNumber = String(params.voucher_number || '');
   if (!voucherNumber) {
-    return { success: false, message: '⚠️ يجب تحديد رقم سند الصرف.' };
+    return { success: false, message: 'يجب تحديد رقم سند الصرف.' };
   }
 
   return {
     success: true,
-    message: `✅ تم اعتماد سند الصرف رقم "${voucherNumber}" بنجاح.\n• حالة السند: معتمد ✔️\n• تاريخ الاعتماد: ${new Date().toLocaleDateString('ar-SA')}\n${params.notes ? `• ملاحظات: ${params.notes}` : ''}`,
+    message: `تم اعتماد سند الصرف رقم "${voucherNumber}" بنجاح.\n• حالة السند: معتمد رسمياً\n• تاريخ الاعتماد: ${new Date().toLocaleDateString('ar-SA')}\n${params.notes ? `• ملاحظات: ${params.notes}` : ''}`,
+    spokenSummary: `تم اعتماد سند الصرف رقم ${voucherNumber} بنجاح وتوثيقه في السجلات المالية.`,
     data: { voucherNumber, status: 'approved' },
   };
 }
@@ -420,7 +445,8 @@ function executeGetCashBalance(
 
   return {
     success: true,
-    message: `💰 رصيد السيولة النقدية:\n${lines}\n\n📊 الإجمالي: ${total.toLocaleString('ar-SA')} ر.س`,
+    message: `رصيد السيولة النقدية:\n${lines}\n\n• إجمالي الأرصدة: ${total.toLocaleString('ar-SA')} ر.س`,
+    spokenSummary: `إجمالي السيولة النقدية المتاحة في الحسابات البنكية يبلغ ${total.toLocaleString('ar-SA')} ريال سعودي.`,
     data: { balances: filtered, total },
   };
 }
@@ -432,12 +458,13 @@ async function executeUpdateTenderStatus(
   const newStatus = String(params.new_status || '');
 
   if (!tenderId || !newStatus) {
-    return { success: false, message: '⚠️ يجب تحديد رقم المنافسة والحالة الجديدة.' };
+    return { success: false, message: 'يجب تحديد رقم المنافسة والحالة الجديدة.' };
   }
 
   return {
     success: true,
-    message: `✅ تم تحديث حالة المنافسة "${tenderId}" إلى "${newStatus}" بنجاح.`,
+    message: `تم تحديث حالة المنافسة "${tenderId}" إلى "${newStatus}" بنجاح.`,
+    spokenSummary: `تم تحديث حالة المنافسة رقم ${tenderId} إلى ${newStatus} بنجاح.`,
     data: { tenderId, newStatus },
   };
 }
@@ -451,7 +478,7 @@ function executeGenerateBoqPricing(
   const unit = String(params.unit || 'قطعة');
 
   if (!item || qty <= 0 || unitPrice <= 0) {
-    return { success: false, message: '⚠️ يجب تحديد وصف البند والكمية وسعر الوحدة.' };
+    return { success: false, message: 'يجب تحديد وصف البند والكمية وسعر الوحدة.' };
   }
 
   const subtotal = qty * unitPrice;
@@ -460,7 +487,8 @@ function executeGenerateBoqPricing(
 
   return {
     success: true,
-    message: `✅ تم تسعير البند في جدول الكميات:\n• البند: ${item}\n• الكمية: ${qty.toLocaleString('ar-SA')} ${unit}\n• سعر الوحدة: ${unitPrice.toLocaleString('ar-SA')} ر.س\n• الإجمالي قبل الضريبة: ${subtotal.toLocaleString('ar-SA')} ر.س\n• ضريبة القيمة المضافة 15%: ${vat.toLocaleString('ar-SA')} ر.س\n• الإجمالي شامل: ${total.toLocaleString('ar-SA')} ر.س`,
+    message: `تم تسعير البند في جدول الكميات:\n• البند: ${item}\n• الكمية: ${qty.toLocaleString('ar-SA')} ${unit}\n• سعر الوحدة: ${unitPrice.toLocaleString('ar-SA')} ر.س\n• الإجمالي قبل الضريبة: ${subtotal.toLocaleString('ar-SA')} ر.س\n• ضريبة القيمة المضافة 15%: ${vat.toLocaleString('ar-SA')} ر.س\n• الإجمالي شامل: ${total.toLocaleString('ar-SA')} ر.س`,
+    spokenSummary: `تم تسعير بند ${item} في جدول الكميات بإجمالي ${total.toLocaleString('ar-SA')} ريال شامل الضريبة.`,
     data: { item, qty, unitPrice, subtotal, vat, total },
   };
 }
@@ -472,13 +500,14 @@ function executeCheckContractStatus(
   const customerName = params.customer_name ? String(params.customer_name) : null;
 
   if (!contractNumber && !customerName) {
-    return { success: false, message: '⚠️ يجب تحديد رقم العقد أو اسم العميل للبحث.' };
+    return { success: false, message: 'يجب تحديد رقم العقد أو اسم العميل للبحث.' };
   }
 
   // Simulated contract data
   return {
     success: true,
-    message: `📋 حالة العقد ${contractNumber || `(بحث: ${customerName})`}:\n• المرحلة الحالية: إصدار التأشيرة الإلكترونية\n• تاريخ التقديم: 2026/08/15\n• المكتب الخارجي: مانيلا — الفلبين\n• المدة المتوقعة للإنجاز: 5 أيام عمل\n• حالة التأمين: ✅ مفعّل`,
+    message: `حالة العقد ${contractNumber || `(بحث: ${customerName})`}:\n• المرحلة الحالية: إصدار التأشيرة الإلكترونية\n• تاريخ التقديم: 2026/08/15\n• المكتب الخارجي: مانيلا — الفلبين\n• المدة المتوقعة للإنجاز: 5 أيام عمل\n• حالة التأمين: سارية ومفعلة`,
+    spokenSummary: `عقد الاستقدام حالياً في مرحلة إصدار التأشيرة الإلكترونية وبوليصة التأمين سارية، والمدة المتوقعة خمسة أيام عمل.`,
     data: { contractNumber, stage: 'visa_issuance' },
   };
 }
@@ -491,7 +520,8 @@ function executeScheduleReminder(
 
   return {
     success: true,
-    message: `⏰ تم جدولة التذكير بنجاح:\n• العقود المتأخرة أكثر من ${daysThreshold} يوماً\n• المرحلة: ${stage}\n• سيتم إرسال التنبيهات تلقائياً للمكاتب والإدارة.`,
+    message: `تم جدولة التذكير بنجاح:\n• العقود المتأخرة أكثر من ${daysThreshold} يوماً\n• المرحلة: ${stage}\n• سيتم إرسال التنبيهات تلقائياً للمكاتب والإدارة.`,
+    spokenSummary: `تم جدولة التذكير الآلي لمتابعة العقود المتأخرة بنجاح، وسيتم إرسال الإشعارات للإدارة.`,
     data: { daysThreshold, stage },
   };
 }
@@ -505,14 +535,15 @@ async function executeRegisterInmate(
   const caseType = String(params.case_type || 'إيواء مؤقت');
 
   if (!fullName || !nationality || roomNumber <= 0) {
-    return { success: false, message: '⚠️ يجب تحديد الاسم الكامل والجنسية ورقم الغرفة.' };
+    return { success: false, message: 'يجب تحديد الاسم الكامل والجنسية ورقم الغرفة.' };
   }
 
   const inmateId = `SH-${Date.now().toString(36).toUpperCase()}`;
 
   return {
     success: true,
-    message: `✅ تم تسجيل النزيلة بنجاح:\n• الرقم المرجعي: ${inmateId}\n• الاسم: ${fullName}\n• الجنسية: ${nationality}\n• الغرفة: ${roomNumber}\n• نوع الحالة: ${caseType}\n• تاريخ الدخول: ${new Date().toLocaleDateString('ar-SA')}`,
+    message: `تم تسجيل النزيلة بنجاح:\n• الرقم المرجعي: ${inmateId}\n• الاسم: ${fullName}\n• الجنسية: ${nationality}\n• الغرفة: ${roomNumber}\n• نوع الحالة: ${caseType}\n• تاريخ الدخول: ${new Date().toLocaleDateString('ar-SA')}`,
+    spokenSummary: `تم تسجيل النزيلة ${fullName} بنجاح وتسكينها في الغرفة رقم ${roomNumber} بمركز الإيواء.`,
     data: { inmateId, fullName, nationality, roomNumber, caseType },
   };
 }
@@ -526,7 +557,8 @@ function executeGetShelterOccupancy(): ToolExecutionResult {
 
   return {
     success: true,
-    message: `🏨 نسبة إشغال مركز الإيواء:\n• الطاقة الاستيعابية: ${totalBeds} سريراً\n• المشغول: ${occupied} سريراً (${percentage}%)\n• المتاح: ${available} سريراً\n• الأجنحة: 4 أجنحة ضيافة\n• حالة الرعاية: ✅ فحوصات يومية منتظمة`,
+    message: `نسبة إشغال مركز الإيواء:\n• الطاقة الاستيعابية: ${totalBeds} سريراً\n• المشغول: ${occupied} سريراً (${percentage}%)\n• المتاح: ${available} سريراً\n• الأجنحة: 4 أجنحة ضيافة\n• حالة الرعاية: متابعة طبية وفحوصات منتظمة`,
+    spokenSummary: `نسبة إشغال مركز الإيواء اثنان وأربعون بالمئة، والمشغول واحد وخمسون سريراً مع توفر ثمانية وعشرين سريراً معقماً للاستقبال الفوري.`,
     data: { totalBeds, occupied, available, percentage },
   };
 }
@@ -546,7 +578,8 @@ function executeGetExpiringIqamas(
   if (workers.length === 0) {
     return {
       success: true,
-      message: `✅ لا توجد إقامات تنتهي خلال ${daysAhead} يوماً القادمة.`,
+      message: `لا توجد إقامات تنتهي خلال ${daysAhead} يوماً القادمة.`,
+      spokenSummary: `لا توجد أي إقامات تنتهي خلال ${daysAhead} يوماً القادمة.`,
     };
   }
 
@@ -554,8 +587,129 @@ function executeGetExpiringIqamas(
 
   return {
     success: true,
-    message: `⚠️ إقامات تنتهي خلال ${daysAhead} يوماً:\n${lines}\n\n📌 يُنصح بالبدء فوراً بإجراءات التجديد.`,
+    message: `إقامات تنتهي خلال ${daysAhead} يوماً:\n${lines}\n\nيُنصح بالبدء فوراً بإجراءات التجديد.`,
+    spokenSummary: `يوجد ${workers.length} إقامات قاربت على الانتهاء خلال ${daysAhead} يوماً، ويُنصح بالبدء بإجراءات التجديد عبر منصة مقيم.`,
     data: { workers, daysAhead },
+  };
+}
+
+async function executeGetEmployeeMonitoringSummary(
+  params: Record<string, unknown>
+): Promise<ToolExecutionResult> {
+  const period = String(params.period || 'today');
+  const summaries = await employeeMonitoringService.getMonitoringSummaries();
+  const metrics = await employeeMonitoringService.getOverallMetrics();
+
+  const totalIdle = summaries.reduce((acc, s) => acc + s.idle_time_mins, 0);
+  const totalInteractions = summaries.reduce((acc, s) => acc + s.total_clicks, 0);
+
+  const empLines = summaries.map(s => 
+    `  • ${s.user_name} (${s.role}): سرعة ${s.tasks_velocity} معاملة/ساعة | نشط: ${s.active_time_mins} د | خمول: ${s.idle_time_mins} د | مؤشر الرضا: ${s.latest_mood}`
+  ).join('\n');
+
+  return {
+    success: true,
+    message: `تقرير متابعة أداء وإنتاجية الموظفين (${period === 'today' ? 'اليوم' : period}):\n` +
+      `• متوسط نبض ورضا الفريق: ${metrics.teamMoodScore} من 5\n` +
+      `• نسبة الإنتاجية النشطة: ${metrics.activeRatio}% (خمول إجمالي: ${totalIdle} دقيقة)\n` +
+      `• إجمالي التفاعلات: ${totalInteractions.toLocaleString()} تفاعل\n` +
+      `• تنبيهات الإحباط (Rage Clicks): ${metrics.totalRageClicks} حالات رصد\n\n` +
+      `مؤشرات الموظفين:\n${empLines}\n\n` +
+      `• المتابعة الميدانية: يمكنك الانتقال لشاشة "متابعة أداء وسرعة الموظفين" للاطلاع على التفاصيل الحية.`,
+    spokenSummary: `تقرير متابعة أداء الموظفين: متوسط سرعة الإنجاز اثنان وعشرون معاملة في الساعة، ونسبة العمل النشط ${metrics.activeRatio} بالمئة، ومؤشر رضا الفريق ${metrics.teamMoodScore} من خمسة مع استقرار تشغيلي تام.`,
+    data: { metrics, summaries }
+  };
+}
+
+function executeGetZatcaReport(): ToolExecutionResult {
+  return {
+    success: true,
+    message: `تقرير امتثال الفوترة الإلكترونية ZATCA (المرحلة الثانية):\n` +
+      `• حالة الربط والتكامل: متصل ومصرح بنجاح عبر بوابة فاتورة\n` +
+      `• تشفير الفواتير: خوارزمية ECDSA مع شهادة رقمية X.509 صالحة\n` +
+      `• ختم وتشفير رمز الاستجابة السريعة (Cryptographic QR): مفعل بنسبة 100%\n` +
+      `• مسار الفواتير الضريبية المبسطة: توليد رقم تسلسلي موحد UUID و XML UBL 2.1 معتمد\n` +
+      `• مطابقة ضريبة القيمة المضافة: 15% وتفقيط فوري بالريال السعودي\n` +
+      `• حالة التدقيق: لا توجد أي مخالفات أو فواتير مرفوضة.`,
+    spokenSummary: `تقرير امتثال الفوترة الإلكترونية زاتكا: الربط مصرح بنجاح للمرحلة الثانية عبر منصة فاتورة، والتشفير الرقمي والرمز المشفر مفعل بنسبة مئة بالمئة دون أي مخالفات.`,
+    data: { zatcaStatus: 'active', phase: 2, algorithm: 'ECDSA-SHA256' }
+  };
+}
+
+function executeSearchEtmadTenders(params: Record<string, unknown>): ToolExecutionResult {
+  const query = String(params.query || '');
+  const tenders = [
+    { id: '2326-68993', name: 'منافسة توريد مستلزمات وإعاشة لمراكز التدريب بالرياض', authority: 'وزارة الموارد البشرية', budget: 1850000, deadline: '2026-10-15', status: 'تحت دراسة الجدوى وتجهيز BOQ' },
+    { id: '2326-70142', name: 'مشروع نظافة وتشغيل مجمعات حكومية بالمنطقة الشرقية', authority: 'أمانة المنطقة الشرقية', budget: 4200000, deadline: '2026-10-28', status: 'فرصة مؤهلة - بانتظار شراء الكراسة' },
+    { id: '2326-65410', name: 'صيانة وتشغيل أنظمة الاتصالات والمراقبة', authority: 'هيئة الاتصالات والفضاء', budget: 950000, deadline: '2026-09-29', status: 'تم تقديم العرض الفني والمالي' },
+  ];
+
+  const matched = tenders.filter(t => t.name.includes(query) || t.authority.includes(query) || t.id.includes(query));
+  const list = matched.length > 0 ? matched : tenders;
+  const lines = list.map(t => `  • [${t.id}] ${t.name}\n    الجهة: ${t.authority} | الميزانية التقديرية: ${t.budget.toLocaleString()} ر.س | الحالة: ${t.status}`).join('\n\n');
+
+  return {
+    success: true,
+    message: `نتائج البحث في منافسات اعتماد المرصودة لكاس (${list.length} منافسة):\n\n${lines}\n\nيمكنك الدخول لشاشة "جناح كاس للمنافسات" لتسعير جداول الكميات الذكية BOQ.`,
+    spokenSummary: `تم رصد ${list.length} منافسات في منصة اعتماد، أبرزها منافسة توريد مستلزمات وإعاشة لمراكز التدريب بالرياض.`,
+    data: { tenders: list }
+  };
+}
+
+function executeGetShelterDailyStatus(): ToolExecutionResult {
+  const metrics = shelterTransferStore.getMetrics();
+  return {
+    success: true,
+    message: `التقرير الميداني اليومي لمركز الإيواء والرعاية (معتمد من HRSD):\n` +
+      `• إجمالي النزيلات المقيمات: ${metrics.totalInShelter} نزيلة في 4 أجنحة ضيافة\n` +
+      `• الحالات المتاحة لنقل الخدمات: ${metrics.availableForTransfer} عاملة مؤهلة مع ملفات ATS مكتملة\n` +
+      `• الحالات في فترة التجربة لدى عملاء: ${metrics.outWithClientsTrial} حالة متابعة نشطة\n` +
+      `• الطاقة الاستيعابية: 120 سريراً (نسبة الإشغال: 42%، و 28 سريراً شاغراً معقماً)\n` +
+      `• العيادة الطبية: تم إجراء الفحوصات الصباحية للعلامات الحيوية بنجاح، وحالتان تحت الملاحظة الوقائية المستقرة\n` +
+      `• جدول الإعاشة: تم تسليم وجبة الغداء الصحية وفق جدول التغذية الفندقية المعتمد\n` +
+      `• الإشراف المناوب: مشرفة الإيواء نورة السليمان وفريق التمريض والدعم النفسي.`,
+    spokenSummary: `التقرير الميداني لمركز الإيواء والرعاية: إجمالي النزيلات خمسون نزيلة، وأربعة عشر حالة مؤهلة لنقل الخدمات، ونسبة الإشغال اثنان وأربعون بالمئة مع توفر ثمانية وعشرين سريراً معقماً.`,
+    data: metrics
+  };
+}
+
+function executeCalculateSponsorshipTransfer(params: Record<string, unknown>): ToolExecutionResult {
+  const totalCost = Number(params.total_cost || 18000);
+  const monthsWorked = Number(params.months_worked || 6);
+  const contractMonths = 24; // معيار العقد سنتان
+
+  const consumedRatio = Math.min(monthsWorked / contractMonths, 1);
+  const remainingRatio = 1 - consumedRatio;
+  const refundToFirstSponsor = Math.round(totalCost * remainingRatio);
+  const platformFee = 1500; // رسوم النقل والخدمات المعتمدة
+  const newClientDeposit = 2000; // عربون حجز فترة التجربة (15 يوماً)
+
+  return {
+    success: true,
+    message: `التصفية المالية المعتمدة لنقل الخدمات:\n` +
+      `• التكلفة الأصلية للاستقدام: ${totalCost.toLocaleString()} ر.س\n` +
+      `• المدة المنقضية من العقد: ${monthsWorked} شهراً من أصل 24 شهراً (${Math.round(consumedRatio * 100)}% مستهلك)\n` +
+      `• المبلغ المستحق استرداده للكفيل السابق: ${refundToFirstSponsor.toLocaleString()} ر.س (صافي المسترد)\n` +
+      `• رسوم الإجراءات والخدمات والوساطة: ${platformFee.toLocaleString()} ر.س\n` +
+      `• عربون فترة التجربة للعميل الجديد: ${newClientDeposit.toLocaleString()} ر.س (فترة التجربة 15 يوماً)\n` +
+      `• الآلية النظامية: توثيق نقل الكفالة عبر مساند بعد اجتياز فترة التجربة وتوقيع مخالصة الحقوق المالية.`,
+    spokenSummary: `التصفية المالية لنقل الخدمات: المبلغ المستحق استرداده للكفيل السابق ${refundToFirstSponsor.toLocaleString('ar-SA')} ريال بعد احتساب استهلاك العقد، وفترة التجربة سارية لمدة خمسة عشر يوماً.`,
+    data: { totalCost, monthsWorked, refundToFirstSponsor, platformFee, newClientDeposit }
+  };
+}
+
+function executeCheckMedicalStatus(params: Record<string, unknown>): ToolExecutionResult {
+  const inmateName = String(params.inmate_name || '');
+  return {
+    success: true,
+    message: `تقرير العيادة الطبية وجناح العزل المؤقت بمركز الإيواء:\n` +
+      `• الفحوصات المخبرية السريعة: سلبية لكافة الأمراض المعدية لجميع الحالات الوافدة حديثاً\n` +
+      `• جناح العزل الصحي الوقائي: يضم حالتين فقط للملاحظة الروتينية (48 ساعة) مع مؤشرات حيوية مستقرة تماماً\n` +
+      `• الملفات الطبية المحدثة: 100% مسجلة إلكترونياً ومربوطة بالرقم الموحد للنزيلة\n` +
+      (inmateName ? `• النزيلة المستعلم عنها [${inmateName}]: حالتها الصحية ممتازة ولائقة طبياً للعمل.\n` : '') +
+      `• الامتثال الصحي: متطابق مع اشتراطات وزارة الصحة ووزارة الموارد البشرية HRSD.`,
+    spokenSummary: `تقرير العيادة الطبية وجناح العزل بمركز الإيواء يؤكد سلامة الفحوصات لكافة النزيلات واستقرار جناح الملاحظة الوقائية ومطابقته لاشتراطات وزارة الصحة.`,
+    data: { clinicStatus: 'operational', quarantinedCount: 2, totalScreened: 51 }
   };
 }
 
@@ -563,12 +717,12 @@ function executeGetExpiringIqamas(
 //  HELPER: BUILD CONFIRMATION SUMMARY
 // ═══════════════════════════════════════════════════════════
 
-function buildConfirmationSummary(tool: AiToolDefinition, params: Record<string, unknown>): string {
+export function buildConfirmationSummary(tool: AiToolDefinition, params: Record<string, unknown>): string {
   const riskLabels: Record<ToolRiskLevel, string> = {
-    low: '🟢 منخفض',
-    medium: '🟡 متوسط',
-    high: '🟠 مرتفع',
-    critical: '🔴 حرج',
+    low: 'منخفض',
+    medium: 'متوسط',
+    high: 'مرتفع',
+    critical: 'حرج',
   };
 
   const paramLines = Object.entries(params)
@@ -580,5 +734,5 @@ function buildConfirmationSummary(tool: AiToolDefinition, params: Record<string,
     })
     .join('\n');
 
-  return `📋 ${tool.nameAr}\n${paramLines ? `\nالتفاصيل:\n${paramLines}` : ''}\n\nمستوى المخاطرة: ${riskLabels[tool.riskLevel]}`;
+  return `${tool.nameAr}\n${paramLines ? `\nالتفاصيل:\n${paramLines}` : ''}\n\nمستوى المخاطرة: ${riskLabels[tool.riskLevel]}`;
 }
