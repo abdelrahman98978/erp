@@ -14,6 +14,7 @@ import {
   CheckCheck, Shield, ChevronRight, Filter, Zap
 } from 'lucide-react';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { musanedLifecycleEngine } from '../services/musanedLifecycleEngine';
 
 export interface RecruitmentContractItem {
   id: string;
@@ -2014,14 +2015,57 @@ export const RecruitmentContractsPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-600 font-bold mb-1">مبلغ الاسترداد التقديري (ر.س)</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-zinc-600 font-bold">مبلغ الاسترداد التقديري (ر.س)</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const matching = contracts.find(c => c.contract_number === returnForm.contract_number);
+                        const fee = matching ? Number(matching.amount || matching.total_amount || 14500) : 14500;
+                        const calc = musanedLifecycleEngine.calculateLegalRefund(
+                          {
+                            musanedContractNumber: returnForm.contract_number,
+                            visaNumber: 'VISA-MHRSD-99',
+                            workerPassport: 'PASS-1234',
+                            workerName: returnForm.maid_name || 'عاملة',
+                            clientNationalId: '1000000000',
+                            clientName: returnForm.client_name || 'عميل',
+                            companyId: activeCompanyId || 'KAS',
+                            recruitmentFee: fee,
+                            vatAmount: fee * 0.15,
+                            signedDate: new Date().toISOString(),
+                            maxSlaDays: 90,
+                            daysElapsed: 22,
+                          },
+                          'client',
+                          'طلب إلغاء من العميل'
+                        );
+                        setReturnForm({
+                          ...returnForm,
+                          refund_amount: String(calc.netRefundAmount),
+                          notes: `${calc.legalReasonAr} [استقطاع إداري: ${calc.adminFeeDeduction} ر.س | النسبة: ${calc.refundPercentage}%]`,
+                        });
+                      }}
+                      className="text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1 transition-all"
+                    >
+                      <Zap className="w-3 h-3 text-emerald-600" />
+                      حساب نظامي آلي (مساند)
+                    </button>
+                  </div>
                   <input
                     type="number"
                     value={returnForm.refund_amount}
                     onChange={(e) => setReturnForm({ ...returnForm, refund_amount: e.target.value })}
-                    className="text-input w-full"
+                    className="text-input w-full font-bold text-emerald-700"
                   />
                 </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>
+                  <strong>ضمان مساند المالي:</strong> يتم احتساب الاسترداد وفق الضوابط الوزارية (استقطاع إداري 5% خلال أول 30 يوماً، أو 20% بعد ذلك، واسترداد 100% في حال التأخير عن 90 يوماً أو رفض العمالة).
+                </span>
               </div>
 
               <div>

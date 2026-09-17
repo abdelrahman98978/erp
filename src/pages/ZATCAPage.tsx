@@ -5,6 +5,7 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useZatcaInvoices, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
+import { realZatcaEngine } from '../services/realZatcaEngine';
 import { useAppStore } from '../stores/appStore';
 import { QrCode, Plus, FileSpreadsheet, FileText, Search, Key, X, ShieldCheck, Download, Copy, Check } from 'lucide-react';
 
@@ -104,26 +105,50 @@ export const ZATCAPage: React.FC = () => {
 
     const sellerName = activeCompany.name;
     const taxNumber = activeCompany.taxNumber;
-    const timeIso = new Date().toISOString();
-    const invoiceHash = `sha256-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-    const qrPayload = generateZatcaQR(sellerName, taxNumber, timeIso, totalAmount, vatAmount, invoiceHash);
+    const today = new Date().toISOString().slice(0, 10);
+    const nowTime = new Date().toTimeString().slice(0, 8);
+
+    const zatcaProcessed = await realZatcaEngine.processInvoice({
+      invoiceNumber,
+      issueDate: today,
+      issueTime: nowTime,
+      sellerName,
+      sellerVatNumber: taxNumber,
+      sellerCrNumber: activeCompany.crNumber || '1010889900',
+      buyerName: clientName,
+      buyerVatNumber: clientVat || undefined,
+      subtotal,
+      vatRate: 15,
+      vatAmount,
+      grandTotal: totalAmount,
+      items: [
+        {
+          name: contractRef ? `خدمات استقدام/تشغيل (${contractRef})` : 'خدمات استقدام عمالة منزلية موثقة',
+          quantity: 1,
+          unitPrice: subtotal,
+          totalPrice: subtotal,
+          vatAmount,
+          totalWithVat: totalAmount,
+        }
+      ],
+    });
 
     const newInvoice = {
       company_id: companyCode,
       invoice_number: invoiceNumber,
       invoice_type: invoiceType,
-      issue_date: new Date().toISOString().slice(0, 10),
-      issue_time: new Date().toTimeString().slice(0, 8),
+      issue_date: today,
+      issue_time: nowTime,
       client_name: clientName,
       client_vat_number: clientVat || undefined,
       client_national_id: clientNationalId || undefined,
       subtotal,
       vat_amount: vatAmount,
       total_amount: totalAmount,
-      qr_code_payload: qrPayload,
-      cryptographic_stamp: `ZATCA-CSID-ECDSA-SHA256-${Date.now()}-CLEARED`,
-      zatca_status: invoiceType === 'STANDARD' ? 'CLEARED' : 'REPORTED',
-      xml_hash: invoiceHash,
+      qr_code_payload: zatcaProcessed.qrCodeBase64,
+      cryptographic_stamp: `CSID-ECDSA-P256-${zatcaProcessed.uuid.slice(0, 8)}-${zatcaProcessed.complianceStatus}`,
+      zatca_status: invoiceType === 'STANDARD' ? ('CLEARED' as const) : ('REPORTED' as const),
+      xml_hash: zatcaProcessed.invoiceHash,
       contract_ref: contractRef || `REC-${Date.now().toString().slice(-4)}`,
     };
 

@@ -286,3 +286,6 @@ export class RealZatcaEngine {
     };
   }
 }
+
+export const realZatcaEngine = RealZatcaEngine;
+
