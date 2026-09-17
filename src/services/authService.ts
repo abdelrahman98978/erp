@@ -18,6 +18,54 @@ export interface AuthState {
   error: string | null;
 }
 
+// ─── Brute-Force Protection ───────────────────────────────────
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 2 * 60 * 1000; // 2 minutes
+
+interface LoginAttemptRecord {
+  attempts: number;
+  lastAttempt: number;
+  lockedUntil: number | null;
+}
+
+const loginAttemptTracker = new Map<string, LoginAttemptRecord>();
+
+function checkBruteForce(email: string): { blocked: boolean; remainingSeconds?: number } {
+  const record = loginAttemptTracker.get(email);
+  if (!record) return { blocked: false };
+
+  if (record.lockedUntil && Date.now() < record.lockedUntil) {
+    const remainingSeconds = Math.ceil((record.lockedUntil - Date.now()) / 1000);
+    return { blocked: true, remainingSeconds };
+  }
+
+  // Reset if lockout expired
+  if (record.lockedUntil && Date.now() >= record.lockedUntil) {
+    loginAttemptTracker.delete(email);
+    return { blocked: false };
+  }
+
+  return { blocked: false };
+}
+
+function recordFailedAttempt(email: string): void {
+  const record = loginAttemptTracker.get(email) || { attempts: 0, lastAttempt: 0, lockedUntil: null };
+  record.attempts += 1;
+  record.lastAttempt = Date.now();
+
+  if (record.attempts >= MAX_LOGIN_ATTEMPTS) {
+    record.lockedUntil = Date.now() + LOCKOUT_DURATION_MS;
+    console.warn(`[SECURITY] Account locked due to ${MAX_LOGIN_ATTEMPTS} failed attempts: ${email}`);
+  }
+
+  loginAttemptTracker.set(email, record);
+  console.warn(`[SECURITY] Failed login attempt #${record.attempts} for: ${email}`);
+}
+
+function clearFailedAttempts(email: string): void {
+  loginAttemptTracker.delete(email);
+}
+
 export const KNOWN_OFFLINE_USERS: Record<string, { pass: string; profile: UserProfile }> = {
   'khalid@alsulaim.sa': {
     pass: 'Alsulaim@2026',
@@ -113,6 +161,12 @@ export const authService = {
 
     const email = this.resolveEmail(identifier);
 
+    // Brute-force protection: block if too many failed attempts
+    const bruteForceCheck = checkBruteForce(email);
+    if (bruteForceCheck.blocked) {
+      return { data: null, error: { message: `تم قفل الحساب مؤقتاً بسبب محاولات دخول متعددة فاشلة. يرجى المحاولة بعد ${bruteForceCheck.remainingSeconds} ثانية.` } };
+    }
+
     // 1. If real Supabase is connected, authenticate with real Supabase GoTrue Auth
     if (!isDummySupabase) {
       try {
@@ -147,10 +201,12 @@ export const authService = {
         // If Supabase returned credentials error, check KNOWN_OFFLINE_USERS fallback before rejecting
         if (authError) {
           const offlineMatch = KNOWN_OFFLINE_USERS[email];
-          if (offlineMatch && (offlineMatch.pass === password || password === 'Alsulaim@2026' || password === 'admin' || password === '123456')) {
+          if (offlineMatch && offlineMatch.pass === password) {
+            clearFailedAttempts(email);
             localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(offlineMatch.profile));
             return { data: offlineMatch.profile, error: null };
           }
+          recordFailedAttempt(email);
           const msg = authError.message?.toLowerCase() || '';
           if (msg.includes('invalid login credentials') || msg.includes('invalid') || msg.includes('credentials')) {
             return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' } };
@@ -161,13 +217,15 @@ export const authService = {
       }
     }
 
-    // 2. Offline master fallback check with strict password validation
+    // 2. Offline master fallback check with strict password validation (each account has its OWN password only)
     const offlineMatch = KNOWN_OFFLINE_USERS[email];
-    if (offlineMatch && (offlineMatch.pass === password || password === 'Alsulaim@2026' || password === 'admin' || password === '123456')) {
+    if (offlineMatch && offlineMatch.pass === password) {
+      clearFailedAttempts(email);
       localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(offlineMatch.profile));
       return { data: offlineMatch.profile, error: null };
     }
 
+    recordFailedAttempt(email);
     return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' } };
   },
 

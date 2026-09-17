@@ -123,35 +123,48 @@ const MainContent: React.FC = () => {
   const { flowState, setFlowState, activeTab, activeTabTitle, setActiveTab } = useAppStore();
 
   const [showLegalModal, setShowLegalModal] = useState(false);
-  const [currentUserForLegal] = useState({
-    name: 'مشرف admin (خالد السليم)',
-    username: 'admin',
-    department: 'التشغيل والاستقدام',
-    job_title: 'الرئيس التنفيذي / مدير النظام',
-    branch: 'الفرع الرئيسي',
-    national_id: '1012345678',
-    role: 'Administrator'
+
+  // Get the REAL logged-in user from auth storage (not hardcoded)
+  const getAuthenticatedUser = () => {
+    try {
+      const raw = localStorage.getItem('ALSULAIM_AUTH_USER');
+      if (raw) return JSON.parse(raw);
+    } catch { /* ignore */ }
+    return null;
+  };
+
+  const [currentUserForLegal] = useState(() => {
+    const user = getAuthenticatedUser();
+    return {
+      name: user?.full_name || '',
+      username: user?.username || '',
+      department: 'التشغيل والاستقدام',
+      job_title: user?.role || '',
+      branch: user?.branch || '',
+      national_id: '',
+      role: user?.role || ''
+    };
   });
 
+  // SECURITY GATE: Prevent accessing workspace/launcher without a real authenticated session
   useEffect(() => {
-    // Check if user acknowledged legal policy on first login
     if (flowState === 'workspace' || flowState === 'launcher') {
-      const key = `alsulaim_legal_acknowledged_${currentUserForLegal.username}`;
+      const user = getAuthenticatedUser();
+      if (!user || !user.id) {
+        console.warn('[SECURITY] Unauthorized access attempt to protected area. Redirecting to login.');
+        setFlowState('landing');
+        return;
+      }
+
+      // Check legal acknowledgment
+      const key = `alsulaim_legal_acknowledged_${user.username || user.email}`;
       const isSigned = localStorage.getItem(key);
       if (!isSigned) {
         setShowLegalModal(true);
       }
     }
-  }, [flowState, currentUserForLegal.username]);
+  }, [flowState, setFlowState]);
 
-  const handleSelectTab = (href: string, title: string = '') => {
-    if (href === 'logout') {
-      setFlowState('landing');
-      return;
-    }
-    setFlowState('workspace');
-    setActiveTab(href, title || href);
-  };
 
   const handleLogout = () => {
     try {
@@ -162,6 +175,22 @@ const MainContent: React.FC = () => {
       // ignore
     }
     setFlowState('landing');
+  };
+
+  // SECURITY: Also guard navigation events — require auth for workspace transitions
+  const handleSelectTab = (href: string, title: string = '') => {
+    if (href === 'logout') {
+      handleLogout();
+      return;
+    }
+    const user = getAuthenticatedUser();
+    if (!user || !user.id) {
+      console.warn('[SECURITY] Navigation blocked — no authenticated session.');
+      setFlowState('landing');
+      return;
+    }
+    setFlowState('workspace');
+    setActiveTab(href, title || href);
   };
 
   useEffect(() => {

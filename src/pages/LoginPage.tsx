@@ -48,8 +48,6 @@ export interface SystemPortalOption {
   themeColor: string;
   gradient: string;
   description: string;
-  defaultUser: string;
-  defaultPass: string;
   targetTab: string;
   targetTitle: string;
   kpis: { label: string; value: string }[];
@@ -69,8 +67,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#0284c7',
     gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
     description: 'بوابة إدارة عقود استقدام الأفراد، إصدار التأشيرات، توثيق مساند، وبوالص التأمين.',
-    defaultUser: 'saf.manager@alsulaim.sa',
-    defaultPass: 'SafRecruit@2026',
     targetTab: 'recruitment-contracts',
     targetTitle: 'عقود استقدام مساند - شركة الصفا الماسي',
     kpis: [
@@ -92,8 +88,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#e11d48',
     gradient: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
     description: 'بوابة عقود وباقات تأجير الكوادر المهنية والعمالة المنزلية وخدمات قطاع الأعمال.',
-    defaultUser: 'yaq.operations@alsulaim.sa',
-    defaultPass: 'YaqootRent@2026',
     targetTab: 'rent-contracts',
     targetTitle: 'عقود التأجير والتشغيل - شركة الياقوت',
     kpis: [
@@ -115,8 +109,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#7c3aed',
     gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
     description: 'منظومة التوظيف والفرز الذكي ATS، استيراد السير بالدفعة، وشبكة المكاتب الدولية.',
-    defaultUser: 'top.recruiter@alsulaim.sa',
-    defaultPass: 'TopTalent@2026',
     targetTab: 'ats-pipeline',
     targetTitle: 'منظومة ATS والفرز الوظيفي - توب تالنت',
     kpis: [
@@ -138,8 +130,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#d97706',
     gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
     description: 'بوابة مستقلة ومعزولة كلياً لإدارة منافسات اعتماد، جداول الكميات الذكية BOQ، الفوترة المشفرة ZATCA، وسجل الموردين.',
-    defaultUser: 'kas.supervisor@alsulaim.sa',
-    defaultPass: 'KasTrading@2026',
     targetTab: 'kas-suite',
     targetTitle: 'البوابة المستقلة لشركة كاس (KAS Suite)',
     kpis: [
@@ -161,8 +151,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#059669',
     gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
     description: 'بوابة عملاء الاستقدام والتأجير: تتبع مراحل القدوم، سداد الفواتير ZATCA، وبوالص التأمين.',
-    defaultUser: 'client@alsulaim.sa',
-    defaultPass: 'ClientPortal@2026',
     targetTab: 'client-portal',
     targetTitle: 'بوابة خدمة وتتبع عقود العملاء',
     kpis: [
@@ -184,8 +172,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#4f46e5',
     gradient: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
     description: 'بوابة المكاتب المعتمدة دولياً لرفع السير الذاتية بالدفعة ومطابقة الحسابات المالية.',
-    defaultUser: 'agent.manila@agency.ph',
-    defaultPass: 'AgencyPartner@2026',
     targetTab: 'foreign-agency-portal',
     targetTitle: 'بوابة الوكلاء والمكاتب الخارجية',
     kpis: [
@@ -207,8 +193,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#0891b2',
     gradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
     description: 'بوابة مدراء المبيعات والمتاجر: تزامن الطلبات، الباقات الرقمية، وبوابات الدفع الإلكتروني.',
-    defaultUser: 'store.manager@alsulaim.sa',
-    defaultPass: 'StoreOnline@2026',
     targetTab: 'smacc-modules',
     targetTitle: 'ربط وتزامن المتاجر الإلكترونية',
     kpis: [
@@ -230,8 +214,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#0d9488',
     gradient: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
     description: 'بوابة مشرفات ومشرفي الإيواء: إدارة الغرف والأسرة، التغذية، الفحص الطبي، والترحيل المستقل.',
-    defaultUser: 'shelter.supervisor@alsulaim.sa',
-    defaultPass: 'ShelterCare@2026',
     targetTab: 'shelter-suite',
     targetTitle: 'منظومة وبوابة مراكز الإيواء والتسكين المستقلة',
     kpis: [
@@ -253,8 +235,6 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     themeColor: '#000000',
     gradient: 'linear-gradient(135deg, #18181b 0%, #000000 100%)',
     description: 'مركز القيادة الموحد: حوكمة الشركات الـ 4، الصلاحيات IAM، المؤشرات المالية، وسجل النشاط.',
-    defaultUser: 'admin@alsulaim.sa',
-    defaultPass: 'Alsulaim@2026',
     targetTab: 'admin-dashboard',
     targetTitle: 'لوحة تحكم الإدارة والسيطرة المركزية',
     kpis: [
@@ -313,19 +293,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     }
   }, [selectedPortal]);
 
-  const [username, setUsername] = useState(selectedPortal.defaultUser);
-  const [password, setPassword] = useState(selectedPortal.defaultPass);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
-  // When selected portal changes, update credentials
+  // When selected portal changes, clear credentials (do NOT auto-fill)
   const handleSelectPortal = (portal: SystemPortalOption) => {
     setSelectedPortal(portal);
     setSelectedCategory(portal.category);
-    setUsername(portal.defaultUser);
-    setPassword(portal.defaultPass);
+    setUsername('');
+    setPassword('');
+    setLocalError(null);
     localStorage.setItem('ALSULAIM_TARGET_SYSTEM', portal.id);
   };
 
@@ -353,9 +334,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   }, []);
 
   const executeCompleteLogin = () => {
-    localStorage.setItem(`alsulaim_legal_acknowledged_${selectedPortal.defaultUser}`, 'true');
-    localStorage.setItem(`alsulaim_legal_acknowledged_admin`, 'true');
-    localStorage.setItem(`alsulaim_legal_acknowledged_khalid.admin`, 'true');
+    const currentUser = username.trim();
+    if (currentUser) {
+      localStorage.setItem(`alsulaim_legal_acknowledged_${currentUser}`, 'true');
+    }
     setActiveCompanyId(selectedPortal.companyId);
     setActiveTab(selectedPortal.targetTab, selectedPortal.targetTitle);
     onLoginSuccess(selectedPortal.targetTab, selectedPortal.targetTitle, selectedPortal.companyId);
@@ -386,7 +368,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
     // Call Real Hardware WebAuthn API
     const authResult: BiometricAuthResult = await performRealBiometricAuth(
-      username || selectedPortal.defaultUser,
+      username || '',
       selectedPortal.nameAr,
       type
     );
@@ -598,8 +580,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     e.preventDefault();
     setLocalError(null);
 
-    const effectiveUser = username.trim() || selectedPortal.defaultUser;
-    const effectivePass = password.trim() || selectedPortal.defaultPass;
+    const effectiveUser = username.trim();
+    const effectivePass = password.trim();
+
+    if (!effectiveUser || !effectivePass) {
+      setLocalError('يرجى إدخال اسم المستخدم وكلمة المرور');
+      return;
+    }
 
     const result = await signIn(effectiveUser, effectivePass);
     if (result.success) {
@@ -613,6 +600,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const handle2FASubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
+
+    // Validate OTP: must be 6 digits and all filled
+    const otpCode = otpValues.join('');
+    if (otpCode.length !== 6 || !/^\d{6}$/.test(otpCode)) {
+      setLocalError('يرجى إدخال رمز التحقق المكون من 6 أرقام');
+      return;
+    }
+
     executeCompleteLogin();
   };
 
@@ -1068,7 +1063,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         className="text-input"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
-                        placeholder={selectedPortal.defaultUser}
+                        placeholder="اسم المستخدم أو البريد الإلكتروني"
                         style={{
                           paddingInlineStart: '40px',
                           fontSize: '13px'
@@ -1148,37 +1143,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         <ArrowLeft className="w-4 h-4" />
                       </>
                     )}
-                  </button>
-
-                  {/* Direct One-Click Instant Access for Testing/Demo */}
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setLocalError(null);
-                      const res = await signIn(selectedPortal.defaultUser, selectedPortal.defaultPass);
-                      if (res.success) {
-                        executeCompleteLogin();
-                      } else {
-                        setLocalError(res.error || 'فشل الدخول للمنظومة');
-                      }
-                    }}
-                    className="button-outline-on-light"
-                    style={{
-                      width: '100%',
-                      height: '38px',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      borderRadius: '9999px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      background: '#f8fafc',
-                      border: '1px dashed #cbd5e1'
-                    }}
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-500" />
-                    <span>دخول فوري معتمد • {selectedPortal.nameAr}</span>
                   </button>
                 </form>
 
