@@ -255,6 +255,24 @@ export const authService = {
     return { error };
   },
 
+  async signInWithGoogle(): Promise<{ error: { message: string } | null }> {
+    if (!isSupabaseConfigured) {
+      return { error: notConfiguredError() };
+    }
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        },
+      });
+      if (error) return { error: { message: error.message } };
+      return { error: null };
+    } catch (e: any) {
+      return { error: { message: e?.message || 'فشل الاتصال بخدمة Google' } };
+    }
+  },
+
   async getSession() {
     if (!isSupabaseConfigured) return { session: null, error: null };
     try {

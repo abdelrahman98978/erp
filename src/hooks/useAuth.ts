@@ -15,6 +15,7 @@ export interface AuthContext {
    */
   isAuthenticated: boolean;
   signIn: (identifier: string, password: string) => Promise<{ success: boolean; error?: string; mfa?: MfaRequirement }>;
+  signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   verifyMfa: (code: string, factorId?: string) => Promise<{ success: boolean; error?: string }>;
   enrollMfa: () => Promise<{ data: TotpEnrollment | null; error: string | null }>;
   refreshMfa: () => Promise<MfaRequirement>;
@@ -95,6 +96,16 @@ export const useAuth = (): AuthContext => {
 
   const enrollMfa = useCallback(() => authService.enrollTotp(), []);
 
+  const signInWithGoogle = useCallback(async () => {
+    setError(null);
+    const { error: googleError } = await authService.signInWithGoogle();
+    if (googleError) {
+      setError(googleError.message);
+      return { success: false, error: googleError.message };
+    }
+    return { success: true };
+  }, []);
+
   const signOut = useCallback(async () => {
     await authService.signOut();
     setUser(null);
@@ -110,6 +121,7 @@ export const useAuth = (): AuthContext => {
     mfaRequirement,
     isAuthenticated: Boolean(session?.user) && mfaRequirement === 'none',
     signIn,
+    signInWithGoogle,
     verifyMfa,
     enrollMfa,
     refreshMfa,
