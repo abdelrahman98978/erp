@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, useRef, lazy, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AppShell } from './components/layout/AppShell';
 import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
@@ -11,7 +11,8 @@ import { RBACProvider } from './contexts/RBACContext';
 
 import { useAppStore } from './stores/appStore';
 import { authService } from './services/authService';
-import { notificationPopupEngine } from './services/notificationPopupEngine';
+import { legalService } from './services/legalService';
+import { useAuthContext } from './contexts/AuthContext';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { UniversalNotificationToaster } from './components/common/UniversalNotificationToaster';
@@ -121,70 +122,59 @@ const PageFallback: React.FC = () => (
 
 const MainContent: React.FC = () => {
   const { flowState, setFlowState, activeTab, activeTabTitle, setActiveTab } = useAppStore();
+  const { user, session, loading: authLoading, isAuthenticated, mfaRequirement, signOut } = useAuthContext();
 
   const [showLegalModal, setShowLegalModal] = useState(false);
 
-  // Get the REAL logged-in user from auth storage (not hardcoded)
-  const getAuthenticatedUser = () => {
-    try {
-      const raw = localStorage.getItem('ALSULAIM_AUTH_USER');
-      if (raw) return JSON.parse(raw);
-    } catch { /* ignore */ }
-    return null;
-  };
+  // Display-only profile for the legal modal / telemetry. Never used for access decisions.
+  const currentUserForLegal = useMemo(() => ({
+    name: user?.full_name || '',
+    username: user?.username || '',
+    department: 'التشغيل والاستقدام',
+    job_title: user?.role || '',
+    branch: user?.branch || '',
+    national_id: '',
+    role: user?.role || ''
+  }), [user]);
 
-  const [currentUserForLegal] = useState(() => {
-    const user = getAuthenticatedUser();
-    return {
-      name: user?.full_name || '',
-      username: user?.username || '',
-      department: 'التشغيل والاستقدام',
-      job_title: user?.role || '',
-      branch: user?.branch || '',
-      national_id: '',
-      role: user?.role || ''
-    };
-  });
+  const isProtectedFlow = flowState === 'workspace' || flowState === 'launcher';
 
-  // SECURITY GATE: Prevent accessing workspace/launcher without a real authenticated session
+  // SECURITY GATE: launcher/workspace require a real Supabase session with MFA satisfied.
   useEffect(() => {
-    if (flowState === 'workspace' || flowState === 'launcher') {
-      const user = getAuthenticatedUser();
-      if (!user || !user.id) {
-        console.warn('[SECURITY] Unauthorized access attempt to protected area. Redirecting to login.');
-        setFlowState('landing');
-        return;
-      }
-
-      // Check legal acknowledgment
-      const key = `alsulaim_legal_acknowledged_${user.username || user.email}`;
-      const isSigned = localStorage.getItem(key);
-      if (!isSigned) {
-        setShowLegalModal(true);
-      }
+    if (authLoading || !isProtectedFlow) return;
+    if (!isAuthenticated) {
+      // Password step done but MFA pending → back to login (it resumes at the code step).
+      setFlowState(session?.user && mfaRequirement !== 'none' ? 'login' : 'landing');
     }
-  }, [flowState, setFlowState]);
+  }, [authLoading, isProtectedFlow, isAuthenticated, session, mfaRequirement, setFlowState]);
 
+  // Legal acknowledgement is verified against the database (fail-closed).
+  useEffect(() => {
+    if (authLoading || !isProtectedFlow || !isAuthenticated) return;
+    let cancelled = false;
+    legalService.hasSigned().then(signed => {
+      if (!cancelled) setShowLegalModal(!signed);
+    });
+    return () => { cancelled = true; };
+  }, [authLoading, isProtectedFlow, isAuthenticated]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      localStorage.removeItem('ALSULAIM_AUTH_USER');
-      localStorage.removeItem('erp-supabase-auth');
-      authService.signOut();
+      await signOut();
     } catch (e) {
-      // ignore
+      console.warn('Sign-out failed:', e);
     }
+    setShowLegalModal(false);
     setFlowState('landing');
   };
 
   // SECURITY: Also guard navigation events — require auth for workspace transitions
   const handleSelectTab = (href: string, title: string = '') => {
     if (href === 'logout') {
-      handleLogout();
+      void handleLogout();
       return;
     }
-    const user = getAuthenticatedUser();
-    if (!user || !user.id) {
+    if (!isAuthenticatedRef.current) {
       console.warn('[SECURITY] Navigation blocked — no authenticated session.');
       setFlowState('landing');
       return;
@@ -192,6 +182,10 @@ const MainContent: React.FC = () => {
     setFlowState('workspace');
     setActiveTab(href, title || href);
   };
+
+  // Keep the latest auth flag available to long-lived event listeners.
+  const isAuthenticatedRef = useRef(isAuthenticated);
+  isAuthenticatedRef.current = isAuthenticated;
 
   useEffect(() => {
     const handleNav = (e: any) => {
@@ -201,38 +195,23 @@ const MainContent: React.FC = () => {
     };
     window.addEventListener('alsulaim_navigate', handleNav);
     return () => window.removeEventListener('alsulaim_navigate', handleNav);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Announce operational system connectivity & PWA readiness
+  // Initialize Global Clickstream, Rage Click & Activity Telemetry (authenticated users only)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      notificationPopupEngine.info(
-        'نظام ERP مجموعة خالد السليم متصل',
-        'مرحباً بك! تم تفعيل النماذج المحلية (فارس ونورة) وتطبيق الويب التقدمي (WBA) بنجاح.',
-        { label: 'فتح المساعد الذكي', tabKey: 'group-command' }
-      );
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Initialize Global Clickstream, Rage Click & Activity Telemetry
-  useEffect(() => {
+    if (!isAuthenticated) return;
     const cleanup = employeeMonitoringService.initGlobalTelemetry(() => {
-      const user = authService.getCurrentUser();
-      return user ? {
-        id: user.id,
-        name: user.full_name,
-        role: user.role,
-        branch: user.branch
-      } : {
-        id: 'USR-ADMIN-01',
-        name: currentUserForLegal.name,
-        role: currentUserForLegal.role,
-        branch: currentUserForLegal.branch
-      };
+      const current = authService.getCurrentUser();
+      return current ? {
+        id: current.id,
+        name: current.full_name,
+        role: current.role,
+        branch: current.branch
+      } : null as any;
     });
     return cleanup;
-  }, [currentUserForLegal]);
+  }, [isAuthenticated]);
 
   // Router Page Content Resolver
   const renderPage = () => {

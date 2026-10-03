@@ -5,7 +5,7 @@ import {
   Cpu, HardDrive, Download, Key, Activity, Layers
 } from 'lucide-react';
 import { realErpDataStore, getDataMode, setDataMode, ErpDataMode } from '../../services/realErpDataStore';
-import { supabase, isDummySupabase, getStandaloneSupabaseStatus } from '../../services/supabaseClient';
+import { supabase, isDummySupabase, isSupabaseConfigured, supabaseConfigError, getStandaloneSupabaseStatus } from '../../services/supabaseClient';
 import { useAppStore } from '../../stores/appStore';
 import { importAnyFileToTable } from '../../services/importEngine';
 
@@ -20,8 +20,10 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
   const [tableStats, setTableStats] = useState<Record<string, number>>({});
   const [isTestingConn, setIsTestingConn] = useState(false);
   const [connStatus, setConnStatus] = useState<{ connected: boolean; message: string; latency?: number }>({
-    connected: !isDummySupabase,
-    message: isDummySupabase ? 'قاعدة بيانات محلية سريعة (Persistent Store)' : 'متصل بسحابة Supabase',
+    connected: isSupabaseConfigured && !supabaseConfigError,
+    message: !isSupabaseConfigured 
+      ? (supabaseConfigError || 'بيانات الاتصال بـ Supabase غير مهيأة') 
+      : 'متصل بسحابة Supabase',
   });
 
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'tables' | 'import' | 'credentials'>('overview');
@@ -255,6 +257,16 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
           {activeSubTab === 'overview' && (
             <div className="space-y-6">
               {/* Connection Status Card */}
+              {supabaseConfigError && (
+                <div role="alert" className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-bold">تنبيه تكوين قاعدة البيانات:</div>
+                    <div className="mt-0.5">{supabaseConfigError}</div>
+                  </div>
+                </div>
+              )}
+
               <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${connStatus.connected ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-200 text-zinc-700'}`}>
@@ -459,49 +471,64 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
 
           {/* Tab 4: Supabase Live Credentials */}
           {activeSubTab === 'credentials' && (
-            <form onSubmit={handleSaveCredentials} className="space-y-4">
-              <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs text-zinc-600 leading-relaxed">
-                يمكنك هنا ربط المنظومة مباشرة بأي قاعدة بيانات Supabase سحابية خاصة بمجموعة خالد السليم.
-              </div>
+            <div className="space-y-4">
+              {!import.meta.env.DEV ? (
+                <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-200 text-center space-y-3">
+                  <Lock className="w-10 h-10 text-zinc-400 mx-auto" />
+                  <h4 className="text-sm font-bold text-black m-0">
+                    إدارة بيانات الربط مقفلة في بيئة الإنتاج
+                  </h4>
+                  <p className="text-xs text-zinc-500 max-w-md mx-auto leading-relaxed">
+                    لحماية المنظومة ومنع التلاعب بمفاتيح الوصول، يتم ضبط بيانات الربط السحابي حصرياً عبر متغيرات البيئة 
+                    (<code className="font-mono text-zinc-700">VITE_SUPABASE_URL</code> و <code className="font-mono text-zinc-700">VITE_SUPABASE_ANON_KEY</code>) أثناء مرحلة البناء والنشر.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSaveCredentials} className="space-y-4">
+                  <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs text-zinc-600 leading-relaxed">
+                    يمكنك هنا ربط المنظومة بقاعدة بيانات Supabase تجريبية أثناء التطوير المحلي (DEV).
+                  </div>
 
-              <div>
-                <label className="block text-xs font-bold text-black mb-1">
-                  رابط المشروع (Supabase Project URL):
-                </label>
-                <input
-                  type="text"
-                  placeholder="https://your-project.supabase.co"
-                  value={customUrl}
-                  onChange={(e) => setCustomUrl(e.target.value)}
-                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
-                  dir="ltr"
-                />
-              </div>
+                  <div>
+                    <label className="block text-xs font-bold text-black mb-1">
+                      رابط المشروع (Supabase Project URL):
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="https://your-project.supabase.co"
+                      value={customUrl}
+                      onChange={(e) => setCustomUrl(e.target.value)}
+                      className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
+                      dir="ltr"
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-xs font-bold text-black mb-1">
-                  المفتاح العام (Supabase Anon / Public Key):
-                </label>
-                <input
-                  type="password"
-                  placeholder="eyJhbGciOiJIUzI1NiIsIn..."
-                  value={customKey}
-                  onChange={(e) => setCustomKey(e.target.value)}
-                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
-                  dir="ltr"
-                />
-              </div>
+                  <div>
+                    <label className="block text-xs font-bold text-black mb-1">
+                      المفتاح العام (Supabase Anon / Public Key):
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="eyJhbGciOiJIUzI1NiIsIn..."
+                      value={customKey}
+                      onChange={(e) => setCustomKey(e.target.value)}
+                      className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
+                      dir="ltr"
+                    />
+                  </div>
 
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  className="button-black-pill w-full flex items-center justify-center gap-2"
-                >
-                  <Lock className="w-4 h-4 ml-1" />
-                  <span>حفظ بيانات الربط والاتصال بقاعدة البيانات</span>
-                </button>
-              </div>
-            </form>
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="button-black-pill w-full flex items-center justify-center gap-2"
+                    >
+                      <Lock className="w-4 h-4 ml-1" />
+                      <span>حفظ بيانات الربط والاتصال بقاعدة البيانات</span>
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
           )}
         </div>
 

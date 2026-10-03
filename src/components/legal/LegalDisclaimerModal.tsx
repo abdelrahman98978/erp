@@ -5,6 +5,7 @@ import {
   Building2, UserCheck, Calendar, Globe, Sparkles
 } from 'lucide-react';
 import { realErpDataStore } from '../../services/realErpDataStore';
+import { legalService } from '../../services/legalService';
 import { useAppStore } from '../../stores/appStore';
 
 export interface DepartmentLegalClause {
@@ -252,9 +253,11 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
   const [hasSignature, setHasSignature] = useState(false);
   const [useBiometricSign, setUseBiometricSign] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Digital Metadata
-  const [clientIp, setClientIp] = useState('192.168.1.10 (موثق عبر شبكة المنظومة)');
+  // Digital Metadata — the real client IP is captured server-side (DB trigger
+  // reads x-forwarded-for from the PostgREST request headers); never faked here.
+  const [clientIp] = useState('يُسجَّل تلقائياً من الخادم');
   const [currentDate] = useState(() => new Date().toISOString().slice(0, 16).replace('T', ' '));
 
   useEffect(() => {
@@ -319,39 +322,54 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
   const handleSubmitSignature = async () => {
     if (!allAgreed) return;
     setIsSubmitting(true);
+    setSubmitError(null);
 
     let signatureData = '';
+    let signatureMethod: 'drawn' | 'confirmation' = 'confirmation';
     if (canvasRef.current && hasSignature) {
       signatureData = canvasRef.current.toDataURL('image/png');
+      signatureMethod = 'drawn';
     } else if (useBiometricSign) {
-      signatureData = 'BIOMETRIC_TOUCH_ID_AUTHORIZED_' + Date.now();
+      signatureData = `CONFIRMATION:${user.username}:${new Date().toISOString()}`;
     }
 
-    const complianceHash = 'SA-COMPLIANCE-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
+    // Persist server-side FIRST. If this fails, the user is NOT let in.
+    let signed;
+    try {
+      signed = await legalService.sign({
+        department: policy.departmentName,
+        branch: user.branch,
+        jobTitle: user.job_title || user.role,
+        employeeName: user.name,
+        username: user.username,
+        signatureDataUrl: signatureData,
+        signatureMethod,
+      });
+    } catch (err: any) {
+      setSubmitError(err?.message || 'تعذّر توثيق الإقرار. حاول مرة أخرى.');
+      setIsSubmitting(false);
+      return;
+    }
 
+    const complianceHash = signed.complianceHash;
     const record: SignedUndertakingRecord = {
-      id: `SIGN-${Date.now()}`,
-      employee_id: user.username || 'emp-user',
-      employee_name: user.name || 'موظف النظام',
-      national_id: user.national_id || '1098765432',
-      username: user.username || 'admin',
+      id: signed.id,
+      employee_id: user.username || '',
+      employee_name: user.name || '',
+      national_id: user.national_id || '',
+      username: user.username || '',
       department: policy.departmentName,
-      branch: user.branch || 'الفرع الرئيسي',
-      job_title: user.job_title || user.role || 'موظف معتمد',
+      branch: user.branch || '',
+      job_title: user.job_title || user.role || '',
       signature_data_url: signatureData,
-      signed_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
-      signed_at_hijri: '1448/03/17 هـ',
+      signed_at: signed.signedAt.slice(0, 19).replace('T', ' '),
       ip_address: clientIp,
       user_agent: navigator.userAgent,
       compliance_hash: complianceHash,
       status: 'معتمد وموثق نظامياً'
     };
 
-    // Save to real store & local storage lock
-    await realErpDataStore.addRecord('legal_undertakings', record);
-    localStorage.setItem(`alsulaim_legal_acknowledged_${user.username}`, JSON.stringify(record));
-
-    // Audit log
+    // Audit log (best effort — the authoritative record is already stored above)
     await realErpDataStore.addRecord('activity_log', {
       id: `LOG-${Date.now()}`,
       user_name: user.name,
@@ -610,6 +628,12 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
         </div>
 
         {/* Footer Actions */}
+        {submitError && (
+          <div role="alert" className="px-5 py-3 bg-red-50 border-t border-red-200 text-red-700 text-xs flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            <span>{submitError}</span>
+          </div>
+        )}
         <div className="p-5 bg-zinc-50 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-3">
           <div className="text-[11px] text-zinc-500 flex items-center gap-1.5">
             <Lock className="w-3.5 h-3.5 text-emerald-600" />

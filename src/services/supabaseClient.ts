@@ -1,12 +1,19 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const DEFAULT_SUPABASE_URL = 'http://127.0.0.1:54421';
-const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+/**
+ * Supabase client — single connection point for the ERP.
+ *
+ * Security notes (P0.5):
+ *  - No hardcoded keys or URLs. Configuration comes from VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.
+ *  - No fake responses. When Supabase is not configured every request FAILS with a clear error,
+ *    so the UI can never report a save/login that did not actually happen.
+ *  - The localStorage override (CUSTOM_SUPABASE_URL / CUSTOM_SUPABASE_KEY) is honoured in development only.
+ */
 
 export const isLocalHost = (url: string): boolean =>
-  url.startsWith('http://127.') || 
-  url.startsWith('http://localhost') || 
-  url.startsWith('http://0.0.0.0') || 
+  url.startsWith('http://127.') ||
+  url.startsWith('http://localhost') ||
+  url.startsWith('http://0.0.0.0') ||
   url.includes('127.0.0.1') ||
   url.includes('localhost');
 
@@ -16,94 +23,83 @@ export const isRemoteEnvironment = (): boolean => {
   return h !== 'localhost' && h !== '127.0.0.1' && h !== '0.0.0.0';
 };
 
-const resolveSupabaseUrl = (): string => {
-  // 1. Check user-configured cloud database from Production Data Hub
-  if (typeof window !== 'undefined') {
-    const custom = localStorage.getItem('CUSTOM_SUPABASE_URL');
-    if (custom && custom.startsWith('http')) {
-      // If custom is a remote URL or running locally, use it
-      if (!isRemoteEnvironment() || !isLocalHost(custom)) {
-        return custom;
-      }
-    }
+const readDevOverride = (key: 'CUSTOM_SUPABASE_URL' | 'CUSTOM_SUPABASE_KEY'): string | null => {
+  if (!import.meta.env.DEV || typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
   }
-
-  // 2. Check environment variable (e.g. Vercel dashboard VITE_SUPABASE_URL)
-  const envUrl = import.meta.env.VITE_SUPABASE_URL;
-  if (envUrl && envUrl.startsWith('http')) {
-    // If running on a public remote host (e.g. Vercel) and URL is local loopback:
-    // Browser Private Network Access blocks it with CORS net::ERR_FAILED.
-    if (isRemoteEnvironment() && isLocalHost(envUrl)) {
-      return 'https://dummy-supabase.local';
-    }
-    return envUrl;
-  }
-
-  // 3. If on public remote domain without cloud Supabase configured, avoid loopback CORS failure
-  if (isRemoteEnvironment()) {
-    return 'https://dummy-supabase.local';
-  }
-
-  return DEFAULT_SUPABASE_URL;
 };
 
-const resolveSupabaseKey = (): string => {
-  if (typeof window !== 'undefined') {
-    const customKey = localStorage.getItem('CUSTOM_SUPABASE_KEY');
-    if (customKey) return customKey;
+interface ResolvedConfig {
+  url: string;
+  anonKey: string;
+  error: string | null;
+}
+
+const resolveConfig = (): ResolvedConfig => {
+  const overrideUrl = readDevOverride('CUSTOM_SUPABASE_URL');
+  const overrideKey = readDevOverride('CUSTOM_SUPABASE_KEY');
+
+  const url = (overrideUrl && overrideUrl.startsWith('http') ? overrideUrl : import.meta.env.VITE_SUPABASE_URL) || '';
+  const anonKey = overrideKey || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+  if (!url || !url.startsWith('http')) {
+    return { url, anonKey, error: 'متغير البيئة VITE_SUPABASE_URL غير مُعرّف. لا يمكن الاتصال بقاعدة البيانات.' };
   }
-  return import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
+  if (!anonKey) {
+    return { url, anonKey, error: 'متغير البيئة VITE_SUPABASE_ANON_KEY غير مُعرّف. لا يمكن الاتصال بقاعدة البيانات.' };
+  }
+  // A public deployment cannot reach a loopback database (browser Private Network Access blocks it).
+  if (isRemoteEnvironment() && isLocalHost(url)) {
+    return { url, anonKey, error: 'عنوان قاعدة البيانات يشير إلى جهاز محلي (localhost) بينما التطبيق منشور على خادم عام. يرجى ضبط VITE_SUPABASE_URL على مشروع Supabase السحابي.' };
+  }
+  return { url, anonKey, error: null };
 };
 
-const SUPABASE_URL: string = resolveSupabaseUrl();
-const SUPABASE_ANON_KEY: string = resolveSupabaseKey();
+const CONFIG = resolveConfig();
 
-export const STANDALONE_SUPABASE_URL = SUPABASE_URL;
-export const STANDALONE_SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+/** Human readable configuration error, or null when Supabase is correctly configured. */
+export const supabaseConfigError: string | null = CONFIG.error;
 
-export const isDummySupabase =
-  SUPABASE_URL.includes('dummy-supabase') ||
-  SUPABASE_URL.includes('dummy') ||
-  (isRemoteEnvironment() && isLocalHost(SUPABASE_URL));
+/** True when the client has a usable URL + key. */
+export const isSupabaseConfigured: boolean = CONFIG.error === null;
 
-const customFetch: typeof fetch = async (input, init) => {
-  const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : '');
-  const isLoopbackBlocked = isRemoteEnvironment() && isLocalHost(url);
+/**
+ * @deprecated Kept for backwards compatibility with existing read-only callers.
+ * Means "Supabase is NOT configured". Write paths must return an error in this case, never fake success.
+ */
+export const isDummySupabase: boolean = !isSupabaseConfigured;
 
-  if (isDummySupabase || isLoopbackBlocked || url.includes('dummy-supabase') || url.includes('dummy')) {
-    if (url.includes('/auth/v1/')) {
-      return new Response(JSON.stringify({
-        access_token: 'dummy-token',
-        token_type: 'bearer',
-        expires_in: 3600,
-        refresh_token: 'dummy-refresh-token',
-        user: null
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    return new Response(JSON.stringify([]), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'content-range': '0-0/0',
-      },
-    });
+export const STANDALONE_SUPABASE_URL = CONFIG.url;
+export const STANDALONE_SUPABASE_ANON_KEY = CONFIG.anonKey;
+
+export class SupabaseNotConfiguredError extends Error {
+  constructor() {
+    super(supabaseConfigError || 'Supabase is not configured');
+    this.name = 'SupabaseNotConfiguredError';
   }
-  return fetch(input, init);
+}
+
+// When unconfigured, every network call fails loudly instead of hitting an unreachable host
+// or returning fabricated data.
+const failingFetch: typeof fetch = async () => {
+  throw new SupabaseNotConfiguredError();
 };
 
-export const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+// createClient requires a syntactically valid URL even when we will never use it.
+const CLIENT_URL = isSupabaseConfigured ? CONFIG.url : 'https://not-configured.invalid';
+const CLIENT_KEY = isSupabaseConfigured ? CONFIG.anonKey : 'not-configured';
+
+export const supabase: SupabaseClient = createClient(CLIENT_URL, CLIENT_KEY, {
   auth: {
     persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
+    autoRefreshToken: isSupabaseConfigured,
+    detectSessionInUrl: isSupabaseConfigured,
     storageKey: 'erp-supabase-auth',
   },
-  global: {
-    fetch: customFetch,
-  },
+  global: isSupabaseConfigured ? undefined : { fetch: failingFetch },
 });
 
 export interface StandaloneSupabaseStatus {
@@ -111,32 +107,20 @@ export interface StandaloneSupabaseStatus {
   studioUrl: string;
   isLocal: boolean;
   connected: boolean;
+  error?: string | null;
 }
 
 export const getStandaloneSupabaseStatus = async (): Promise<StandaloneSupabaseStatus> => {
-  if (isDummySupabase) {
-    return {
-      url: SUPABASE_URL,
-      studioUrl: '',
-      isLocal: false,
-      connected: false,
-    };
+  const isLocal = isLocalHost(CONFIG.url);
+  const studioUrl = isLocal ? 'http://127.0.0.1:54423' : '';
+  if (!isSupabaseConfigured) {
+    return { url: CONFIG.url, studioUrl: '', isLocal: false, connected: false, error: supabaseConfigError };
   }
   try {
-    const { error } = await supabase.from('clients').select('id').limit(1);
-    return {
-      url: SUPABASE_URL,
-      studioUrl: isLocalHost(SUPABASE_URL) ? 'http://127.0.0.1:54423' : '',
-      isLocal: isLocalHost(SUPABASE_URL),
-      connected: !error,
-    };
-  } catch (err) {
-    return {
-      url: SUPABASE_URL,
-      studioUrl: isLocalHost(SUPABASE_URL) ? 'http://127.0.0.1:54423' : '',
-      isLocal: isLocalHost(SUPABASE_URL),
-      connected: false,
-    };
+    // Auth health endpoint does not depend on table privileges (anon has no table access after P0.6).
+    const res = await fetch(`${CONFIG.url}/auth/v1/health`, { headers: { apikey: CONFIG.anonKey } });
+    return { url: CONFIG.url, studioUrl, isLocal, connected: res.ok, error: res.ok ? null : `HTTP ${res.status}` };
+  } catch (err: any) {
+    return { url: CONFIG.url, studioUrl, isLocal, connected: false, error: err?.message || 'Network error' };
   }
 };
-

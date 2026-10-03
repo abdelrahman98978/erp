@@ -1,4 +1,6 @@
-import { supabase, isDummySupabase } from './supabaseClient';
+import { supabase, isSupabaseConfigured, supabaseConfigError } from './supabaseClient';
+
+const NOT_CONFIGURED = supabaseConfigError || 'قاعدة البيانات غير مُعدّة';
 
 /**
  * Central ERP Supabase Database Binding Service
@@ -27,8 +29,8 @@ export const getTableRecords = async (
   tableName: string,
   options: ListOptions = {}
 ): Promise<{ data: any[] | null; error: string | null; count: number | null }> => {
-  if (isDummySupabase) {
-    return { data: [], error: null, count: 0 };
+  if (!isSupabaseConfigured) {
+    return { data: [], error: NOT_CONFIGURED, count: 0 };
   }
 
   try {
@@ -79,8 +81,8 @@ export const insertTableRecord = async (
   tableName: string,
   recordData: Record<string, any>
 ): Promise<{ data: any | null; error: string | null }> => {
-  if (isDummySupabase) {
-    return { data: { id: recordData.id || `${tableName}-${Date.now()}`, ...recordData }, error: null };
+  if (!isSupabaseConfigured) {
+    return { data: null, error: NOT_CONFIGURED };
   }
   const { data, error } = await supabase
     .from(tableName)
@@ -101,8 +103,8 @@ export const updateTableRecord = async (
   id: string | number,
   recordData: Record<string, any>
 ): Promise<{ data: any | null; error: string | null }> => {
-  if (isDummySupabase) {
-    return { data: { id, ...recordData }, error: null };
+  if (!isSupabaseConfigured) {
+    return { data: null, error: NOT_CONFIGURED };
   }
   const { data, error } = await supabase
     .from(tableName)
@@ -123,8 +125,8 @@ export const deleteTableRecord = async (
   tableName: string,
   id: string | number
 ): Promise<{ success: boolean; error: string | null }> => {
-  if (isDummySupabase) {
-    return { success: true, error: null };
+  if (!isSupabaseConfigured) {
+    return { success: false, error: NOT_CONFIGURED };
   }
   const { error } = await supabase.from(tableName).delete().eq('id', id);
   if (error) {

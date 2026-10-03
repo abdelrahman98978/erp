@@ -5,6 +5,7 @@ import { useAuthContext } from '../contexts/AuthContext';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
 import { CompanyId } from '../types';
+import type { MfaRequirement, TotpEnrollment } from '../services/authService';
 import { 
   Loader2, 
   Building2, 
@@ -13,12 +14,10 @@ import {
   Store, 
   Globe, 
   Users, 
-  FileText, 
   CheckCircle2, 
   Lock, 
   ArrowLeft,
-  Layers,
-  Zap,
+  ArrowRight,
   Briefcase,
   UserCheck,
   Fingerprint,
@@ -26,11 +25,14 @@ import {
   Hotel,
   Eye,
   EyeOff,
-  Mail,
   AlertCircle,
   ChevronDown,
   Check,
-  User
+  User,
+  Copy,
+  Shield,
+  KeyRound,
+  CheckCircle
 } from 'lucide-react';
 import { performRealBiometricAuth, checkWebAuthnSupport, BiometricAuthResult } from '../services/webAuthnBiometricService';
 import { SaudiAssistantMascot } from '../components/auth/SaudiAssistantMascot';
@@ -64,7 +66,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'ترخيص مساند RC01 • س.ت 1010123456',
     tagBadge: 'عقود الاستقدام مساند',
     iconName: 'Building2',
-    themeColor: '#0284c7',
+    themeColor: '#0ea5e9',
     gradient: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
     description: 'بوابة إدارة عقود استقدام الأفراد، إصدار التأشيرات، توثيق مساند، وبوالص التأمين.',
     targetTab: 'recruitment-contracts',
@@ -85,7 +87,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'ترخيص مساند RC02 • س.ت 1010543210',
     tagBadge: 'التأجير والتشغيل المرن',
     iconName: 'Users',
-    themeColor: '#e11d48',
+    themeColor: '#f43f5e',
     gradient: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
     description: 'بوابة عقود وباقات تأجير الكوادر المهنية والعمالة المنزلية وخدمات قطاع الأعمال.',
     targetTab: 'rent-contracts',
@@ -106,7 +108,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'ترخيص مساند RC03 • س.ت 1010776543',
     tagBadge: 'التوظيف الذكي و ATS',
     iconName: 'Sparkles',
-    themeColor: '#7c3aed',
+    themeColor: '#8b5cf6',
     gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
     description: 'منظومة التوظيف والفرز الذكي ATS، استيراد السير بالدفعة، وشبكة المكاتب الدولية.',
     targetTab: 'ats-pipeline',
@@ -127,7 +129,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'سجل تجاري 1010789234 • ضريبي 310284759200003',
     tagBadge: 'بوابة مستقلة ومنفصلة',
     iconName: 'Briefcase',
-    themeColor: '#d97706',
+    themeColor: '#f59e0b',
     gradient: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
     description: 'بوابة مستقلة ومعزولة كلياً لإدارة منافسات اعتماد، جداول الكميات الذكية BOQ، الفوترة المشفرة ZATCA، وسجل الموردين.',
     targetTab: 'kas-suite',
@@ -148,7 +150,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'بوابة المستفيدين والمتابعة 24/7',
     tagBadge: 'الخدمة الذاتية للمستفيدين',
     iconName: 'UserCheck',
-    themeColor: '#059669',
+    themeColor: '#10b981',
     gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
     description: 'بوابة عملاء الاستقدام والتأجير: تتبع مراحل القدوم، سداد الفواتير ZATCA، وبوالص التأمين.',
     targetTab: 'client-portal',
@@ -169,7 +171,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'بوابة الوكالات والشركاء المعتمدين',
     tagBadge: 'بوابة الوكالات الخارجية',
     iconName: 'Globe',
-    themeColor: '#4f46e5',
+    themeColor: '#6366f1',
     gradient: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)',
     description: 'بوابة المكاتب المعتمدة دولياً لرفع السير الذاتية بالدفعة ومطابقة الحسابات المالية.',
     targetTab: 'foreign-agency-portal',
@@ -190,7 +192,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'سلة • زد • شوبيفاي • ووكومرس • ميسر',
     tagBadge: 'قنوات البيع الرقمية',
     iconName: 'Store',
-    themeColor: '#0891b2',
+    themeColor: '#06b6d4',
     gradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
     description: 'بوابة مدراء المبيعات والمتاجر: تزامن الطلبات، الباقات الرقمية، وبوابات الدفع الإلكتروني.',
     targetTab: 'smacc-modules',
@@ -211,7 +213,7 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'ترخيص مراكز الإيواء والضيافة HRSD-MOL',
     tagBadge: 'منظومة الإيواء المستقلة',
     iconName: 'Hotel',
-    themeColor: '#0d9488',
+    themeColor: '#14b8a6',
     gradient: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
     description: 'بوابة مشرفات ومشرفي الإيواء: إدارة الغرف والأسرة، التغذية، الفحص الطبي، والترحيل المستقل.',
     targetTab: 'shelter-suite',
@@ -232,8 +234,8 @@ export const SYSTEM_PORTALS: SystemPortalOption[] = [
     license: 'مجموعة خالد السليم القابضة الموحدة',
     tagBadge: 'التحكم الفائق والحوكمة',
     iconName: 'ShieldCheck',
-    themeColor: '#000000',
-    gradient: 'linear-gradient(135deg, #18181b 0%, #000000 100%)',
+    themeColor: '#10b981',
+    gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
     description: 'مركز القيادة الموحد: حوكمة الشركات الـ 4، الصلاحيات IAM، المؤشرات المالية، وسجل النشاط.',
     targetTab: 'admin-dashboard',
     targetTitle: 'لوحة تحكم الإدارة والسيطرة المركزية',
@@ -264,14 +266,22 @@ interface LoginPageProps {
   onLoginSuccess: (targetTab?: string, targetTitle?: string, targetCompanyId?: CompanyId) => void;
 }
 
-// Unified Enterprise Login Page with Multi-Portal & Saudi Assistants
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const { currentLanguage, setLanguage, t } = useLanguage();
-  const { signIn, loading: authLoading, error: authError } = useAuthContext();
+  const {
+    signIn,
+    verifyMfa,
+    enrollMfa,
+    signOut,
+    session,
+    isAuthenticated,
+    mfaRequirement,
+    error: authError,
+  } = useAuthContext();
+  const [submitting, setSubmitting] = useState(false);
   const { setActiveCompanyId } = useCompany();
   const { setActiveTab } = useAppStore();
 
-  // Determine initial portal based on saved preference or URL param
   const getInitialPortal = (): SystemPortalOption => {
     const urlParams = new URLSearchParams(window.location.search);
     const paramSystem = urlParams.get('system') || localStorage.getItem('ALSULAIM_TARGET_SYSTEM');
@@ -286,7 +296,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [selectedPortal, setSelectedPortal] = useState<SystemPortalOption>(initialPortal);
   const [selectedCategory, setSelectedCategory] = useState<SystemPortalOption['category']>(initialPortal.category);
 
-  // Ensure category is always strictly synchronized with selected portal
   useEffect(() => {
     if (selectedPortal && selectedPortal.category !== selectedCategory) {
       setSelectedCategory(selectedPortal.category);
@@ -299,8 +308,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [rememberMe, setRememberMe] = useState(true);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [copiedSecret, setCopiedSecret] = useState(false);
 
-  // When selected portal changes, clear credentials (do NOT auto-fill)
   const handleSelectPortal = (portal: SystemPortalOption) => {
     setSelectedPortal(portal);
     setSelectedCategory(portal.category);
@@ -313,14 +322,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   // 2FA Verification Step States
   const [is2FAStep, setIs2FAStep] = useState(false);
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
-  const [timerSeconds, setTimerSeconds] = useState(45);
-  const [isResending, setIsResending] = useState(false);
+  const [enrollment, setEnrollment] = useState<TotpEnrollment | null>(null);
+  const [enrollLoading, setEnrollLoading] = useState(false);
+  const mfaStepStartedRef = useRef(false);
   const otpInputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const visualCardRef = useRef<HTMLDivElement>(null);
 
-  // Biometric Authentication States (Touch ID / Face ID / WebAuthn)
+  // Biometric Authentication States (WebAuthn / FIDO2)
   const [biometricModal, setBiometricModal] = useState<'fingerprint' | 'face' | null>(null);
   const [biometricProgress, setBiometricProgress] = useState(0);
   const [biometricStatus, setBiometricStatus] = useState<'idle' | 'scanning' | 'success' | 'failed'>('idle');
@@ -334,16 +344,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   }, []);
 
   const executeCompleteLogin = () => {
-    const currentUser = username.trim();
-    if (currentUser) {
-      localStorage.setItem(`alsulaim_legal_acknowledged_${currentUser}`, 'true');
-    }
     setActiveCompanyId(selectedPortal.companyId);
     setActiveTab(selectedPortal.targetTab, selectedPortal.targetTitle);
     onLoginSuccess(selectedPortal.targetTab, selectedPortal.targetTitle, selectedPortal.companyId);
   };
 
   const handleTriggerBiometric = async (type: 'fingerprint' | 'face') => {
+    if (!isAuthenticated) {
+      setBiometricModal(type);
+      setBiometricProgress(100);
+      setBiometricStatus('failed');
+      setBiometricMessage('سجّل الدخول بكلمة المرور ورمز التحقق أولاً، ثم يمكنك استخدام البصمة لفتح الجلسة على هذا الجهاز.');
+      return;
+    }
     setBiometricModal(type);
     setBiometricStatus('scanning');
     setBiometricProgress(20);
@@ -366,7 +379,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
     }, 280);
 
-    // Call Real Hardware WebAuthn API
     const authResult: BiometricAuthResult = await performRealBiometricAuth(
       username || '',
       selectedPortal.nameAr,
@@ -398,30 +410,48 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       setBiometricStatus('failed');
       setBiometricMessage(authResult.errorMessage || 'تم إلغاء نافذة المصادقة البيومترية من جهازك.');
     } else {
-      // In development or if hardware is not attached, smoothly succeed via simulated secure enclave
       setBiometricProgress(100);
-      setBiometricStatus('success');
-      setBiometricMessage(`تم التحقق البيومتري بنجاح (المصادقة الآمنة)! جاري الدخول إلى ${selectedPortal.nameAr}...`);
-      localStorage.setItem('ALSULAIM_LAST_BIOMETRIC_AUTH', JSON.stringify({
-        type,
-        portal: selectedPortal.id,
-        isRealHardware: false,
-        timestamp: new Date().toISOString()
-      }));
-      await new Promise(r => setTimeout(r, 700));
-      setBiometricModal(null);
-      executeCompleteLogin();
+      setBiometricStatus('failed');
+      setBiometricMessage(authResult.errorMessage || 'تعذّر التحقق البيومتري على هذا الجهاز. استخدم كلمة المرور ورمز التحقق.');
     }
   };
 
-  useEffect(() => {
-    let timer: any;
-    if (is2FAStep && timerSeconds > 0) {
-      timer = setInterval(() => setTimerSeconds(prev => prev - 1), 1000);
+  const beginMfaStep = async (req: MfaRequirement) => {
+    if (mfaStepStartedRef.current) return;
+    mfaStepStartedRef.current = true;
+    setIs2FAStep(true);
+    setOtpValues(['', '', '', '', '', '']);
+    setEnrollment(null);
+    if (req === 'enroll') {
+      setEnrollLoading(true);
+      const { data, error } = await enrollMfa();
+      setEnrollLoading(false);
+      if (error || !data) {
+        setLocalError(error || 'تعذّر بدء تفعيل المصادقة الثنائية. تواصل مع مسؤول النظام.');
+        return;
+      }
+      setEnrollment(data);
     }
-    return () => clearInterval(timer);
-  }, [is2FAStep, timerSeconds]);
+    setTimeout(() => otpInputsRef.current[0]?.focus(), 50);
+  };
 
+  useEffect(() => {
+    if (session?.user && mfaRequirement !== 'none' && !is2FAStep) {
+      void beginMfaStep(mfaRequirement);
+    }
+  }, [session, mfaRequirement]);
+
+  const handleCancelMfa = async () => {
+    await signOut();
+    mfaStepStartedRef.current = false;
+    setIs2FAStep(false);
+    setEnrollment(null);
+    setOtpValues(['', '', '', '', '', '']);
+    setPassword('');
+    setLocalError(null);
+  };
+
+  // 3D Canvas Background Initialization
   useEffect(() => {
     let animId: number;
     let renderer: any;
@@ -432,7 +462,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       if (!container || !THREE) return false;
 
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
       let width = container.clientWidth || 500;
       let height = container.clientHeight || 750;
 
@@ -447,63 +476,60 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
       container.appendChild(renderer.domElement);
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
       scene.add(ambientLight);
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-      directionalLight.position.set(5, 5, 5);
+      const directionalLight = new THREE.DirectionalLight(0xd97706, 1.2);
+      directionalLight.position.set(6, 6, 6);
       scene.add(directionalLight);
 
-      const starColor = 0x0f6b6e;
-      const starGeometry = new THREE.IcosahedronGeometry(4, 0);
-
+      const colorInt = parseInt(selectedPortal.themeColor.replace('#', '0x')) || 0x10b981;
+      const starGeometry = new THREE.IcosahedronGeometry(4.2, 0);
       const positionAttribute = starGeometry.getAttribute('position');
       if (positionAttribute) {
         for (let i = 0; i < positionAttribute.count; i++) {
           const vertex = new THREE.Vector3();
           vertex.fromBufferAttribute(positionAttribute, i);
-          if (Math.random() > 0.5) {
-            vertex.multiplyScalar(1.5);
+          if (Math.random() > 0.45) {
+            vertex.multiplyScalar(1.4);
           }
           positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
         }
       }
 
       const wireframeMaterial = new THREE.MeshPhongMaterial({
-        color: starColor,
+        color: colorInt,
         wireframe: true,
         transparent: true,
-        opacity: 0.35,
+        opacity: 0.4,
         side: THREE.DoubleSide
       });
 
       const starMesh = new THREE.Mesh(starGeometry, wireframeMaterial);
       scene.add(starMesh);
 
-      const coreGeo = new THREE.SphereGeometry(1.5, 16, 16);
+      const coreGeo = new THREE.SphereGeometry(1.6, 16, 16);
       const coreMat = new THREE.MeshPhongMaterial({
-        color: starColor,
-        emissive: starColor,
-        emissiveIntensity: 0.5,
+        color: 0x059669,
+        emissive: colorInt,
+        emissiveIntensity: 0.6,
         transparent: true,
-        opacity: 0.6
+        opacity: 0.65
       });
       const core = new THREE.Mesh(coreGeo, coreMat);
       scene.add(core);
 
-      const particlesCount = 200;
+      const particlesCount = 220;
       const particlesGeometry = new THREE.BufferGeometry();
       const posArray = new Float32Array(particlesCount * 3);
-
       for (let i = 0; i < particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 15;
+        posArray[i] = (Math.random() - 0.5) * 16;
       }
-
       particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
       const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.06,
-        color: starColor,
+        size: 0.07,
+        color: colorInt,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.7,
         blending: THREE.AdditiveBlending
       });
       const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -520,17 +546,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         animId = requestAnimationFrame(animate);
         const time = clock.getElapsedTime();
 
-        starMesh.rotation.y += 0.005;
-        starMesh.rotation.x += 0.003;
-        core.rotation.y -= 0.002;
+        starMesh.rotation.y += 0.004;
+        starMesh.rotation.x += 0.0025;
+        core.rotation.y -= 0.003;
 
-        const pulse = 1 + Math.sin(time * 2) * 0.05;
+        const pulse = 1 + Math.sin(time * 2) * 0.04;
         starMesh.scale.set(pulse, pulse, pulse);
-        coreMat.emissiveIntensity = 0.4 + Math.sin(time * 3) * 0.2;
+        coreMat.emissiveIntensity = 0.5 + Math.sin(time * 2.5) * 0.25;
 
-        particleMesh.rotation.y += 0.001;
-        particleMesh.rotation.z += 0.0005;
-
+        particleMesh.rotation.y += 0.0008;
         renderer.render(scene, camera);
       }
       animate();
@@ -546,13 +570,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
       const handleMouseMove = (e: MouseEvent) => {
         if (prefersReduced) return;
-        const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
-        const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+        const moveX = (e.clientX - window.innerWidth / 2) * 0.012;
+        const moveY = (e.clientY - window.innerHeight / 2) * 0.012;
         if (visualCardRef.current) {
           visualCardRef.current.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
         }
         if (starMesh) {
-          starMesh.rotation.z = (e.clientX / window.innerWidth - 0.5) * 0.2;
+          starMesh.rotation.z = (e.clientX / window.innerWidth - 0.5) * 0.25;
         }
       };
 
@@ -588,27 +612,50 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       return;
     }
 
-    const result = await signIn(effectiveUser, effectivePass);
-    if (result.success) {
-      setIs2FAStep(true);
-      setTimerSeconds(45);
-    } else {
-      setLocalError(result.error || 'اسم المستخدم أو كلمة المرور غير صحيحة. يرجى التحقق من صحة البيانات.');
+    setSubmitting(true);
+    try {
+      const result = await signIn(effectiveUser, effectivePass);
+      if (!result.success) {
+        setLocalError(result.error || 'اسم المستخدم أو كلمة المرور غير صحيحة. يرجى التحقق من صحة البيانات.');
+        return;
+      }
+      setPassword('');
+      if (result.mfa && result.mfa !== 'none') {
+        await beginMfaStep(result.mfa);
+      } else {
+        executeCompleteLogin();
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handle2FASubmit = (e: React.FormEvent) => {
+  const handle2FASubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
-    // Validate OTP: must be 6 digits and all filled
     const otpCode = otpValues.join('');
     if (otpCode.length !== 6 || !/^\d{6}$/.test(otpCode)) {
       setLocalError('يرجى إدخال رمز التحقق المكون من 6 أرقام');
       return;
     }
 
-    executeCompleteLogin();
+    setSubmitting(true);
+    try {
+      const result = await verifyMfa(otpCode, enrollment?.factorId);
+      if (!result.success) {
+        setLocalError(result.error || 'رمز التحقق غير صحيح أو منتهي الصلاحية.');
+        setOtpValues(['', '', '', '', '', '']);
+        otpInputsRef.current[0]?.focus();
+        return;
+      }
+      setEnrollment(null);
+      mfaStepStartedRef.current = false;
+      setIs2FAStep(false);
+      executeCompleteLogin();
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleOtpChange = (index: number, val: string) => {
@@ -642,203 +689,187 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  const handleResendCode = () => {
-    setIsResending(true);
-    setTimeout(() => {
-      setIsResending(false);
-      setTimerSeconds(45);
-      setLocalError(null);
-    }, 1000);
+  const copySecretToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedSecret(true);
+    setTimeout(() => setCopiedSecret(false), 2000);
   };
 
   const isRtl = currentLanguage.dir === 'rtl';
   const displayedError = authError || localError;
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      width: '100%',
-      background: 'radial-gradient(ellipse at 50% 0%, #ffffff 0%, #f4f6f8 60%, #e6ebf0 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 'clamp(12px, 2.5vw, 24px)',
-      fontFamily: 'var(--font-family-ui)',
-      direction: currentLanguage.dir,
-      fontFeatureSettings: '"ss03" 1',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
+    <div 
+      className="min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-5 md:p-8 relative overflow-x-hidden selection:bg-emerald-500 selection:text-white"
+      style={{
+        background: 'radial-gradient(ellipse at 50% 10%, #0d1a29 0%, #080f18 45%, #03070d 100%)',
+        fontFamily: 'var(--font-family-ui)',
+        direction: currentLanguage.dir
+      }}
+    >
+      {/* Decorative Royal Ambient Glow Orbs */}
+      <div 
+        className="absolute top-[-15%] right-[-10%] w-[650px] h-[650px] rounded-full pointer-events-none opacity-25 blur-[120px]"
+        style={{ background: selectedPortal.themeColor }}
+      />
+      <div 
+        className="absolute bottom-[-15%] left-[-10%] w-[550px] h-[550px] rounded-full pointer-events-none opacity-20 blur-[130px] bg-emerald-600"
+      />
+
+      {/* Subtle Geometric Enterprise Grid */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)',
+          backgroundSize: '28px 28px'
+        }}
+      />
 
       {/* ========================================================================= */}
       {/* 1. TOP DEDICATED SYSTEM PORTAL SELECTOR RIBBON */}
       {/* ========================================================================= */}
-      <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mb-4">
-        {/* Category Tabs */}
-        <div className="flex items-center justify-between gap-2 mb-2.5 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-zinc-700 flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5 text-black" />
-              <span>اختر منظومة الدخول المستقلة:</span>
-            </span>
+      <div className="w-full max-w-6xl xl:max-w-7xl mb-4 sm:mb-6 z-20 relative">
+        <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 rounded-2xl p-2.5 sm:p-3.5 shadow-2xl">
+          {/* Header Row: Category Filter and Quick Status */}
+          <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                <Building2 className="w-3.5 h-3.5" />
+              </div>
+              <span className="text-xs font-bold text-slate-200">
+                منظومات الدخول المستقلة للمجموعة:
+              </span>
+            </div>
+
+            {/* Segmented Category Buttons */}
+            <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-800/70">
+              {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map((cat) => {
+                const count = SYSTEM_PORTALS.filter(p => p.category === cat).length;
+                const isCatActive = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      const firstInCat = SYSTEM_PORTALS.find(p => p.category === cat);
+                      if (firstInCat) handleSelectPortal(firstInCat);
+                    }}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                      isCatActive
+                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <span>{cat}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-semibold ${
+                      isCatActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="flex items-center gap-1 bg-zinc-200/80 p-1 rounded-2xl">
-            {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map((cat) => {
-              const count = SYSTEM_PORTALS.filter(p => p.category === cat).length;
+          {/* Portals Grid */}
+          <div className={`grid gap-2 ${
+            selectedCategory === 'شركات المجموعة'
+              ? 'grid-cols-1 sm:grid-cols-3'
+              : selectedCategory === 'البوابات الرقمية'
+              ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
+              : 'grid-cols-1 max-w-lg mx-auto'
+          }`}>
+            {SYSTEM_PORTALS.filter(p => p.category === selectedCategory).map((portal) => {
+              const isCurrent = selectedPortal.id === portal.id;
               return (
                 <button
-                  key={cat}
+                  key={portal.id}
                   type="button"
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    const firstInCat = SYSTEM_PORTALS.find(p => p.category === cat);
-                    if (firstInCat) handleSelectPortal(firstInCat);
-                  }}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 ${
-                    selectedCategory === cat
-                      ? 'bg-black text-white shadow-sm'
-                      : 'text-zinc-600 hover:text-black'
+                  dir={currentLanguage.dir}
+                  onClick={() => handleSelectPortal(portal)}
+                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-start transition-all cursor-pointer relative overflow-hidden group ${
+                    isCurrent
+                      ? 'bg-slate-800/90 border-emerald-500/80 shadow-md shadow-emerald-950/40 ring-1 ring-emerald-500/40'
+                      : 'bg-slate-900/40 border-slate-800/60 hover:border-slate-700 hover:bg-slate-800/40'
                   }`}
                 >
-                  <span>{cat}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
-                    selectedCategory === cat ? 'bg-white/20 text-white' : 'bg-zinc-300/80 text-zinc-700'
-                  }`}>
-                    {count}
-                  </span>
+                  {isCurrent && (
+                    <div 
+                      className="absolute top-0 right-0 left-0 h-[2.5px] transition-all"
+                      style={{ background: portal.themeColor }} 
+                    />
+                  )}
+                  <div 
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-transform group-hover:scale-105"
+                    style={{
+                      background: `${portal.themeColor}22`,
+                      color: portal.themeColor,
+                      border: `1px solid ${portal.themeColor}44`
+                    }}
+                  >
+                    {renderPortalIcon(portal.iconName, 'w-3.5 h-3.5')}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <span className="text-xs font-bold text-slate-100 truncate">{portal.nameAr}</span>
+                      {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                    </div>
+                    <span className="text-[10px] text-slate-400 truncate block">{portal.license}</span>
+                  </div>
                 </button>
               );
             })}
           </div>
         </div>
-
-        {/* Portals Pill Matrix */}
-        <div className={`grid gap-2.5 ${
-          selectedCategory === 'شركات المجموعة'
-            ? 'grid-cols-1 sm:grid-cols-3'
-            : selectedCategory === 'البوابات الرقمية'
-            ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
-            : 'grid-cols-1 max-w-xl mx-auto'
-        }`}>
-          {SYSTEM_PORTALS.filter(p => p.category === selectedCategory).map((portal) => {
-            const isCurrent = selectedPortal.id === portal.id;
-            return (
-              <button
-                key={portal.id}
-                type="button"
-                dir={currentLanguage.dir}
-                onClick={() => handleSelectPortal(portal)}
-                className={`flex items-start gap-2.5 p-3 rounded-2xl border text-start transition-all cursor-pointer relative overflow-hidden ${
-                  isCurrent
-                    ? 'bg-white border-black shadow-md ring-2 ring-black/10'
-                    : 'bg-white/85 border-zinc-200 hover:border-zinc-300 hover:bg-white hover:shadow-sm'
-                }`}
-              >
-                {isCurrent && (
-                  <div 
-                    style={{ position: 'absolute', top: 0, right: 0, left: 0, height: '3px', background: portal.themeColor }} 
-                  />
-                )}
-                <div 
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-                  style={{
-                    background: `${portal.themeColor}15`,
-                    color: portal.themeColor
-                  }}
-                >
-                  {renderPortalIcon(portal.iconName, 'w-4 h-4')}
-                </div>
-                <div className="flex-1 min-w-0 text-start">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <span className="text-xs font-bold text-black truncate">{portal.nameAr}</span>
-                    {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark shrink-0" />}
-                  </div>
-                  <span className="text-[10px] text-zinc-500 truncate block">{portal.license}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. MAIN LOGIN CARD CONTAINER */}
+      {/* 2. MAIN LOGIN CARD CONTAINER (Executive Split Layout) */}
       {/* ========================================================================= */}
       <div 
-        className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl rounded-3xl bg-white border border-zinc-200 shadow-xl overflow-hidden flex flex-col lg:flex-row"
+        className="w-full max-w-6xl xl:max-w-7xl rounded-3xl backdrop-blur-2xl bg-slate-900/80 border border-slate-800/90 shadow-2xl overflow-hidden flex flex-col lg:flex-row relative z-10"
         style={{
           flexDirection: isRtl ? 'row-reverse' : 'row',
         }}
       >
-
-        {/* Right Side: Visual Hero Section with 3D Saudi Assistant & Entity Card */}
+        {/* Right Side: Visual Hero & 3D Interactive Mascot Dossier */}
         <div 
-          className="hidden lg:flex flex-1 relative bg-white overflow-hidden items-center justify-center p-6 lg:p-8 border-inline-end border-zinc-200 min-h-[640px]"
+          className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center p-8 xl:p-10 border-inline-end border-slate-800/70 min-h-[660px]"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.4) 0%, rgba(8, 14, 24, 0.9) 100%)'
+          }}
         >
-          {/* Subtle Light Gradient Overlay */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to top right, #fbfbf5, #ffffff, #f1f5f9)',
-            opacity: 0.75
-          }}></div>
-
-          {/* Three.js 3D Animation Background */}
+          {/* Three.js Interactive Wireframe Canvas */}
           <div
             ref={containerRef}
             aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              mixBlendMode: 'multiply',
-              opacity: 0.4,
-              pointerEvents: 'none',
-              zIndex: 5
-            }}
-          ></div>
+            className="absolute inset-0 w-full h-full opacity-60 pointer-events-none z-0"
+          />
 
-          {/* Integrated Hero Duo: 3D Saudi Assistant Mascot & Dedicated Entity Card */}
-          <div className="relative z-20 w-full flex flex-col xl:flex-row items-center justify-center gap-6 xl:gap-8 max-w-2xl xl:max-w-none">
-            {/* 3D Saudi Digital Assistant Mascot */}
-            <div className="shrink-0 flex items-center justify-center">
+          {/* Hero Centerpiece: Mascot + Floating Glass Company Dossier */}
+          <div className="relative z-10 w-full flex flex-col xl:flex-row items-center justify-center gap-6 xl:gap-8">
+            {/* Mascot */}
+            <div className="shrink-0 drop-shadow-2xl">
               <SaudiAssistantMascot selectedPortal={selectedPortal} isRtl={isRtl} />
             </div>
 
-            {/* Dedicated Entity Card */}
+            {/* Executive Glass Dossier Card */}
             <div
               ref={visualCardRef}
+              className="max-w-[370px] w-full p-6 rounded-2xl backdrop-blur-xl bg-slate-950/75 border border-slate-700/60 shadow-2xl text-center relative overflow-hidden"
               style={{
-                position: 'relative',
-                zIndex: 20,
-                maxWidth: '360px',
-                width: '100%',
-                padding: '28px 22px',
-                borderRadius: '24px',
-                background: 'rgba(255, 255, 255, 0.94)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(228, 228, 231, 0.8)',
-                boxShadow: '0 20px 40px -15px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03)',
-                textAlign: 'center',
-                transition: 'transform 0.2s ease-out'
+                boxShadow: `0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 30px -10px ${selectedPortal.themeColor}33`
               }}
             >
+              {/* Portal Icon Stamp */}
               <div className="flex justify-center mb-3">
                 <div 
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform duration-300 hover:scale-105"
                   style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '18px',
                     background: selectedPortal.gradient || selectedPortal.themeColor,
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                    boxShadow: `0 10px 25px -5px ${selectedPortal.themeColor}55`
+                    boxShadow: `0 10px 25px -5px ${selectedPortal.themeColor}66`
                   }}
                 >
                   {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
@@ -851,110 +882,100 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 </div>
               </div>
 
+              {/* Tag Badge */}
               <div className="mb-2">
-                <span className="pill-tag-shade text-xs font-bold" style={{ background: '#f4f4f5', color: '#18181b' }}>
+                <span 
+                  className="px-3 py-1 rounded-full text-xs font-bold inline-block border"
+                  style={{
+                    background: `${selectedPortal.themeColor}18`,
+                    color: selectedPortal.themeColor,
+                    borderColor: `${selectedPortal.themeColor}40`
+                  }}
+                >
                   {selectedPortal.tagBadge}
                 </span>
               </div>
 
-              <h2 style={{ fontFamily: 'var(--font-family-display)', fontSize: '20px', fontWeight: '600', color: '#000000', margin: '0 0 6px 0' }}>
+              {/* Company Title */}
+              <h2 className="text-xl font-bold text-white mb-1.5" style={{ fontFamily: 'var(--font-family-display)' }}>
                 {selectedPortal.nameAr}
               </h2>
-              <div style={{ width: '40px', height: '3px', background: selectedPortal.themeColor, margin: '0 auto 10px auto', borderRadius: '9999px' }}></div>
-              
-              <p style={{ fontSize: '12px', color: '#52525b', lineHeight: '1.6', margin: 0 }}>
+              <div 
+                className="w-12 h-1 mx-auto mb-3 rounded-full" 
+                style={{ background: selectedPortal.themeColor }}
+              />
+
+              <p className="text-xs text-slate-300 leading-relaxed m-0">
                 {selectedPortal.description}
               </p>
 
-              <div className="mt-2.5 p-2 bg-zinc-50 border border-zinc-200/80 rounded-xl text-[11px] font-bold text-zinc-700">
+              <div className="mt-3 p-2 bg-slate-900/80 border border-slate-800 rounded-xl text-[11px] font-bold text-slate-300">
                 {selectedPortal.license}
               </div>
 
-              {/* Metrics */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '8px',
-                marginTop: '16px',
-                paddingTop: '14px',
-                borderTop: '1px solid #e4e4e7'
-              }}>
+              {/* Live Metric Counters */}
+              <div className="grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t border-slate-800/80">
                 {selectedPortal.kpis.map((kpi, idx) => (
-                  <div key={idx}>
-                    <span className="font-bold text-xs text-black block">{kpi.value}</span>
-                    <span style={{ fontSize: '10.5px', color: '#71717a' }}>{kpi.label}</span>
+                  <div key={idx} className="bg-slate-900/60 p-2 rounded-lg border border-slate-800/50">
+                    <span className="font-extrabold text-xs text-white block font-mono">{kpi.value}</span>
+                    <span className="text-[10px] text-slate-400 block mt-0.5">{kpi.label}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Compliance and Vision Badges */}
-              <div className="mt-3.5 pt-2.5 border-t border-zinc-100 flex items-center justify-center gap-3 text-[10px] text-zinc-400 font-medium">
-                <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+              {/* Compliance Trust Seal */}
+              <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-center gap-3 text-[10px] text-slate-400 font-medium">
+                <span className="flex items-center gap-1 text-emerald-400">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                   <span>ZATCA Phase 2</span>
                 </span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-sky-600" />
+                <span className="text-slate-600">•</span>
+                <span className="flex items-center gap-1 text-sky-400">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>مساند HRSD</span>
                 </span>
-                <span>•</span>
-                <span>رؤية 2030</span>
+                <span className="text-slate-600">•</span>
+                <span className="text-amber-400 font-bold">رؤية 2030</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Left Side: Login Form / 2FA Verification Section */}
-        <div 
-          className="w-full lg:w-[490px] p-6 sm:p-8 bg-white flex flex-col justify-between relative z-10 mx-auto"
-        >
-          {/* Top Brand & Language Switcher */}
+        {/* Left Side: Luxury Form & Authentication Panel */}
+        <div className="w-full lg:w-[500px] p-6 sm:p-9 bg-slate-950/90 flex flex-col justify-between relative z-10 mx-auto">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', position: 'relative' }}>
-              <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="Logo" style={{ height: '36px', width: 'auto' }} />
-                <span className="text-xs font-bold text-zinc-800">مجموعة خالد السليم ERP</span>
+            {/* Brand Header & Language Selector */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800/70">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 p-0.5 shadow-lg shadow-emerald-950/60">
+                  <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center overflow-hidden">
+                    <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
+                  </div>
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-white block">مجموعة خالد السليم ERP</span>
+                  <span className="text-[10px] text-emerald-400 font-mono">SECURE ENTERPRISE GATE</span>
+                </div>
               </div>
 
-              <div style={{ position: 'relative' }}>
+              {/* Language Dropdown */}
+              <div className="relative">
                 <button
                   type="button"
-                  className="button-outline-on-light"
                   onClick={() => setShowLangMenu(!showLangMenu)}
                   aria-expanded={showLangMenu}
                   aria-haspopup="true"
-                  style={{
-                    padding: '5px 12px',
-                    fontSize: '12px',
-                    minHeight: '32px',
-                    borderRadius: '9999px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
+                  className="px-3 py-1.5 text-xs rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:border-slate-700 hover:text-white flex items-center gap-1.5 transition-all"
                 >
                   <span>{currentLanguage.flag}</span>
-                  <span>{currentLanguage.nativeName}</span>
-                  <ChevronDown className="w-3 h-3 text-zinc-500" />
+                  <span className="font-semibold">{currentLanguage.nativeName}</span>
+                  <ChevronDown className="w-3 h-3 text-slate-400" />
                 </button>
 
                 {showLangMenu && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '38px',
-                    left: isRtl ? 0 : 'auto',
-                    right: !isRtl ? 0 : 'auto',
-                    background: '#FFFFFF',
-                    border: '1px solid #e4e4e7',
-                    borderRadius: '12px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                    width: '180px',
-                    maxHeight: '260px',
-                    overflowY: 'auto',
-                    zIndex: 100,
-                    padding: '6px'
-                  }}>
+                  <div 
+                    className="absolute top-10 left-0 right-auto bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 min-w-[160px] animate-in fade-in zoom-in-95 duration-150"
+                  >
                     {LANGUAGES.map((lang: Language) => (
                       <button
                         key={lang.code}
@@ -963,28 +984,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                           setLanguage(lang);
                           setShowLangMenu(false);
                         }}
-                        style={{
-                          width: '100%',
-                          border: 'none',
-                          padding: '8px 12px',
-                          borderRadius: '9999px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          cursor: 'pointer',
-                          background: currentLanguage.code === lang.code ? '#f4f4f5' : 'transparent',
-                          color: '#000000',
-                          fontWeight: currentLanguage.code === lang.code ? '600' : '400',
-                          fontSize: '13px'
-                        }}
+                        className={`w-full text-right px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                          currentLanguage.code === lang.code 
+                            ? 'bg-emerald-600 text-white font-bold' 
+                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                        }`}
                       >
-                        <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-2">
                           <span>{lang.flag}</span>
                           <span>{lang.nativeName}</span>
-                        </div>
-                        {currentLanguage.code === lang.code && (
-                          <Check className="w-3.5 h-3.5 text-black" />
-                        )}
+                        </span>
+                        {currentLanguage.code === lang.code && <Check className="w-3.5 h-3.5" />}
                       </button>
                     ))}
                   </div>
@@ -992,112 +1002,86 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               </div>
             </div>
 
+            {/* Error Notification Banner */}
             {displayedError && (
-              <div style={{
-                padding: '10px 14px',
-                borderRadius: '10px',
-                background: '#fef2f2',
-                border: '1px solid #fecaca',
-                color: '#991b1b',
-                fontSize: '12.5px',
-                fontWeight: '500',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                <span>{displayedError}</span>
+              <div className="p-3.5 rounded-xl bg-red-950/60 border border-red-800 text-red-200 text-xs font-medium mb-5 flex items-center gap-2.5 shadow-lg shadow-red-950/40">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <span className="flex-1">{displayedError}</span>
               </div>
             )}
 
             {!is2FAStep ? (
               /* Step 1: Standard Username & Password Form */
               <div>
-                {/* Mobile Saudi Assistant Welcome Pill */}
-                <div className="lg:hidden mb-3.5 p-2 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-zinc-100 border border-zinc-200 overflow-hidden shrink-0 flex items-center justify-center">
-                    <img src="/mascot.png" alt="المرشد الذكي" className="w-full h-full object-cover object-top" />
-                  </div>
-                  <div className="flex-1 min-w-0 text-start">
-                    <div className="flex items-center gap-1 mb-0.5">
-                      <span className="live-pulse-dot" />
-                      <span className="text-[11px] font-bold text-zinc-800">المرشد الرقمي الذكي</span>
-                    </div>
-                    <p className="text-[10.5px] text-zinc-500 truncate m-0">
-                      مرحباً بك! أدخل بياناتك للدخول الآمن إلى {selectedPortal.nameAr}
-                    </p>
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '20px' }}>
-                  <div className="flex items-center gap-2 mb-1">
+                {/* Active Portal Header */}
+                <div className="mb-5">
+                  <div className="flex items-center gap-2 mb-1.5">
                     <span 
-                      className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white" 
+                      className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider" 
                       style={{ background: selectedPortal.themeColor }}
                     >
                       {selectedPortal.license.split('•')[0].trim()}
                     </span>
-                    <span className="text-xs text-zinc-500 font-medium">بوابة مستقلة</span>
+                    <span className="text-[11px] text-slate-400 font-medium">بوابة دخول آمنة</span>
                   </div>
 
-                  <h1 className="heading-xl" style={{ fontSize: '22px', fontWeight: '600', color: '#000000', margin: '0 0 4px 0' }}>
+                  <h1 className="text-xl font-bold text-white m-0" style={{ fontFamily: 'var(--font-family-display)' }}>
                     تسجيل الدخول: {selectedPortal.nameAr}
                   </h1>
-                  <p style={{ fontSize: '13px', color: '#71717a', margin: 0 }}>
-                    أدخل بيانات الاعتماد المخصصة لهذه المنظومة للوصول إلى بيئة العمل المعزولة.
+                  <p className="text-xs text-slate-400 mt-1 m-0">
+                    أدخل بيانات الاعتماد المعتمدة للوصول إلى مساحة العمل التشغيلية المعزولة.
                   </p>
                 </div>
 
-                <form onSubmit={handleInitialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <form onSubmit={handleInitialSubmit} className="space-y-4">
                   {/* Username Input */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <label htmlFor="login-username" style={{ fontSize: '12.5px', fontWeight: '600', color: '#000000' }}>
-                      اسم المستخدم أو البريد الإلكتروني للمنظومة
+                  <div>
+                    <label 
+                      htmlFor="login-username" 
+                      className="block text-xs font-bold text-slate-300 mb-1.5"
+                    >
+                      اسم المستخدم أو البريد الإلكتروني المعتمد
                     </label>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <User className="w-4 h-4 text-zinc-400 absolute pointer-events-none" style={{ insetInlineStart: '14px' }} />
+                    <div className="relative flex items-center">
+                      <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-500">
+                        <User className="w-4 h-4" />
+                      </div>
                       <input
                         id="login-username"
                         type="text"
-                        className="text-input"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
-                        placeholder="اسم المستخدم أو البريد الإلكتروني"
-                        style={{
-                          paddingInlineStart: '40px',
-                          fontSize: '13px'
-                        }}
+                        placeholder="user.name أو username@alsulaim.sa"
+                        className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white rounded-xl py-2.5 pr-10 pl-3.5 text-xs transition-all outline-none"
                       />
                     </div>
                   </div>
 
                   {/* Password Input */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <label htmlFor="login-password" style={{ fontSize: '12.5px', fontWeight: '600', color: '#000000' }}>
+                  <div>
+                    <label 
+                      htmlFor="login-password" 
+                      className="block text-xs font-bold text-slate-300 mb-1.5"
+                    >
                       {t('password', 'كلمة المرور')}
                     </label>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                      <Lock className="w-4 h-4 text-zinc-400 absolute pointer-events-none" style={{ insetInlineStart: '14px' }} />
+                    <div className="relative flex items-center">
+                      <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-500">
+                        <Lock className="w-4 h-4" />
+                      </div>
                       <input
                         id="login-password"
                         type={showPassword ? 'text' : 'password'}
-                        className="text-input"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        style={{
-                          paddingInlineStart: '40px',
-                          paddingInlineEnd: '40px',
-                          fontSize: '13px'
-                        }}
+                        placeholder="••••••••••••"
+                        className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white rounded-xl py-2.5 pr-10 pl-10 text-xs transition-all outline-none font-mono"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
-                        aria-pressed={showPassword}
-                        style={{ position: 'absolute', insetInlineEnd: '14px', border: 'none', background: 'transparent', color: '#71717a', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                        className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 hover:text-slate-300"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -1105,17 +1089,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   </div>
 
                   {/* Remember & Forgot */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', color: '#52525b' }}>
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-300">
                       <input
                         type="checkbox"
                         checked={rememberMe}
                         onChange={e => setRememberMe(e.target.checked)}
-                        style={{ accentColor: '#000000', width: '15px', height: '15px' }}
+                        className="w-4 h-4 rounded bg-slate-900 border-slate-800 text-emerald-600 focus:ring-emerald-500/20 focus:ring-offset-0"
                       />
-                      <span>{t('rememberMe', 'تذكرني')}</span>
+                      <span>{t('rememberMe', 'تذكرني على هذا الجهاز')}</span>
                     </label>
-                    <a href="#forgot" onClick={e => e.preventDefault()} style={{ fontSize: '12px', color: '#000000', fontWeight: '600' }}>
+                    <a 
+                      href="#forgot" 
+                      onClick={e => e.preventDefault()} 
+                      className="text-emerald-400 hover:text-emerald-300 font-semibold"
+                    >
                       {t('forgotPassword', 'نسيت كلمة المرور؟')}
                     </a>
                   </div>
@@ -1123,19 +1111,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    disabled={authLoading}
-                    className="button-primary-pill"
-                    style={{
-                      width: '100%',
-                      marginTop: '4px',
-                      height: '44px',
-                      fontSize: '13.5px'
-                    }}
+                    disabled={submitting}
+                    className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 hover:shadow-emerald-900/80 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {authLoading ? (
+                    {submitting ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin text-white" />
-                        <span>{t('loggingIn', 'جاري التحقق من الهوية...')}</span>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>جاري التحقق من الهوية والصلاحيات...</span>
                       </>
                     ) : (
                       <>
@@ -1146,87 +1128,103 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   </button>
                 </form>
 
-                {/* Biometric Real Hardware WebAuthn Login Options */}
-                <div style={{ margin: '16px 0 12px 0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#000000', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Fingerprint className="w-3.5 h-3.5 text-champagne-dark" />
-                      <span>المصادقة البيومترية المعتمدة (WebAuthn / FIDO2)</span>
+                {/* Biometric FIDO2 / WebAuthn Hardware Chips */}
+                <div className="mt-5 pt-4 border-t border-slate-800/80">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                      <Fingerprint className="w-3.5 h-3.5 text-amber-400" />
+                      <span>المصادقة البيومترية المعتمدة (FIDO2 / WebAuthn)</span>
                     </span>
-                    <span className="pill-tag-mint text-[10px]" style={{ padding: '2px 8px' }}>
-                      {hasHardwareWebAuthn ? '● مستشعر الجهاز متصل' : '● بروتوكول مشفر جاهز'}
+                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 font-mono">
+                      {hasHardwareWebAuthn ? '● متصل بالأمان' : '● بروتوكول جاهز'}
                     </span>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <div className="grid grid-cols-2 gap-2.5">
                     <button
                       type="button"
                       onClick={() => handleTriggerBiometric('fingerprint')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        height: '42px',
-                        borderRadius: '12px',
-                        border: '1px solid rgba(207, 166, 74, 0.3)',
-                        background: 'linear-gradient(135deg, #FDFBF7 0%, #F5EDDC 100%)',
-                        color: '#A98232',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        transition: 'all 0.2s ease'
-                      }}
+                      className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 text-amber-300 hover:bg-slate-850 text-xs font-bold transition-all shadow-sm cursor-pointer"
                     >
-                      <Fingerprint className="w-4 h-4 text-champagne-dark" />
-                      <span>بصمة الإصبع (Touch ID)</span>
+                      <Fingerprint className="w-4 h-4 text-amber-400" />
+                      <span>بصمة الإصبع</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleTriggerBiometric('face')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        height: '42px',
-                        borderRadius: '12px',
-                        border: '1px solid #DDD6FE',
-                        background: 'linear-gradient(135deg, #F5F3FF 0%, #FAF5FF 100%)',
-                        color: '#5B21B6',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: '700',
-                        transition: 'all 0.2s ease'
-                      }}
+                      className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 text-purple-300 hover:bg-slate-850 text-xs font-bold transition-all shadow-sm cursor-pointer"
                     >
-                      <ScanFace className="w-4 h-4 text-purple-600" />
-                      <span>بصمة الوجه (Face ID)</span>
+                      <ScanFace className="w-4 h-4 text-purple-400" />
+                      <span>بصمة الوجه</span>
                     </button>
                   </div>
                 </div>
               </div>
             ) : (
-              /* Step 2: 2FA Verification Form */
-              <div>
-                <div style={{ marginBottom: '20px' }}>
-                  <span className="pill-tag-mint" style={{ display: 'inline-block', marginBottom: '8px', fontSize: '11px' }}>
-                    التحقق الثنائي 2FA للمنظومة
+              /* Step 2: 2FA TOTP Form */
+              <div className="animate-in fade-in zoom-in-95 duration-200">
+                <div className="mb-4">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 inline-block mb-1.5">
+                    المصادقة الثنائية الإلزامية 2FA
                   </span>
-                  <h1 id="otp-heading" className="heading-xl" style={{ fontSize: '20px', fontWeight: '600', color: '#000000', margin: '0 0 4px 0' }}>
-                    تأكيد رمز التحقق
+                  <h1 className="text-xl font-bold text-white m-0" style={{ fontFamily: 'var(--font-family-display)' }}>
+                    {enrollment || enrollLoading ? 'تفعيل المصادقة الثنائية للمرة الأولى' : 'تأكيد رمز التحقق (TOTP)'}
                   </h1>
-                  <p style={{ fontSize: '12.5px', color: '#71717a', margin: 0 }}>
-                    تم إرسال رمز المصادقة إلى الجوال والبريد المعتمد لمنظومة <strong>{selectedPortal.nameAr}</strong>.
+                  <p className="text-xs text-slate-400 mt-1 m-0 leading-relaxed">
+                    {enrollment || enrollLoading
+                      ? 'امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Microsoft Authenticator) وأدخل الرمز لتأمين حسابك.'
+                      : <>أدخل الرمز المتجدد من تطبيق المصادقة للدخول إلى <strong>{selectedPortal.nameAr}</strong>.</>}
                   </p>
                 </div>
 
-                <form onSubmit={handle2FASubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {enrollLoading && (
+                  <div className="flex flex-col items-center justify-center p-6 bg-slate-900/50 rounded-2xl border border-slate-800 mb-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mb-2" />
+                    <span className="text-xs text-slate-400 font-medium">جاري إنشاء وتجهيز مفتاح المصادقة الثنائية...</span>
+                  </div>
+                )}
+
+                {enrollment && (
+                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-3 mb-4">
+                    <div className="p-2 rounded-xl bg-white shadow-xl">
+                      <img
+                        src={enrollment.qrCode}
+                        alt="QR Code"
+                        width={160}
+                        height={160}
+                        className="block rounded-lg"
+                      />
+                    </div>
+                    <div className="text-center w-full">
+                      <span className="text-[11px] text-slate-400 block mb-1">أو أدخل المفتاح السري يدوياً:</span>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <code 
+                          dir="ltr"
+                          className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs select-all tracking-wider"
+                        >
+                          {enrollment.secret}
+                        </code>
+                        <button
+                          type="button"
+                          onClick={() => copySecretToClipboard(enrollment.secret)}
+                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                          title="نسخ المفتاح"
+                        >
+                          {copiedSecret ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                      {copiedSecret && <span className="text-[10px] text-emerald-400 mt-1 block">تم النسخ إلى الحافظة</span>}
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handle2FASubmit} className="space-y-4">
                   <div
                     role="group"
-                    aria-labelledby="otp-heading"
-                    style={{ display: 'flex', gap: '8px', justifyContent: 'center', direction: 'ltr' }}
+                    aria-label="أرقام المصادقة الثنائية"
+                    className="flex gap-2 justify-center"
+                    dir="ltr"
                     onPaste={handleOtpPaste}
                   >
                     {otpValues.map((val, idx) => (
@@ -1237,74 +1235,47 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         inputMode="numeric"
                         autoComplete="one-time-code"
                         maxLength={1}
-                        aria-label={`رقم المصادقة ${idx + 1}`}
+                        aria-label={`الرقم ${idx + 1}`}
                         value={val}
                         onChange={e => handleOtpChange(idx, e.target.value)}
                         onKeyDown={e => handleOtpKeyDown(idx, e)}
-                        style={{
-                          width: '46px',
-                          height: '52px',
-                          borderRadius: '12px',
-                          background: '#fbfbf5',
-                          border: val ? '2px solid #000000' : '1px solid #e4e4e7',
-                          textAlign: 'center',
-                          fontSize: '20px',
-                          fontWeight: 700,
-                          color: '#000000',
-                          outline: 'none',
-                        }}
+                        className={`w-11 h-14 rounded-xl text-center text-xl font-bold font-mono transition-all outline-none ${
+                          val 
+                            ? 'bg-slate-900 border-2 border-emerald-500 text-white shadow-lg shadow-emerald-950/60' 
+                            : 'bg-slate-950 border border-slate-800 text-slate-300 focus:border-slate-600'
+                        }`}
                       />
                     ))}
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                    <span style={{ fontSize: '12px', color: '#71717a' }} aria-live="polite">
-                      ينتهي الرمز خلال: <strong>00:{timerSeconds < 10 ? `0${timerSeconds}` : timerSeconds}</strong>
+                  <div className="flex items-center justify-between text-xs pt-1">
+                    <span className="text-slate-400 text-[11px]">
+                      يتجدد الرمز تلقائياً كل 30 ثانية في هاتفك
                     </span>
-
                     <button
                       type="button"
-                      disabled={timerSeconds > 0 || isResending}
-                      onClick={handleResendCode}
-                      style={{
-                        border: 'none',
-                        background: 'none',
-                        color: timerSeconds === 0 ? '#000000' : '#a1a1aa',
-                        fontWeight: 600,
-                        fontSize: '12px',
-                        cursor: timerSeconds === 0 ? 'pointer' : 'not-allowed'
-                      }}
+                      onClick={handleCancelMfa}
+                      disabled={submitting}
+                      className="text-slate-400 hover:text-white font-semibold underline cursor-pointer"
                     >
-                      {isResending ? 'جاري الإرسال...' : 'إعادة إرسال الرمز'}
+                      إلغاء والعودة
                     </button>
                   </div>
 
                   <button
                     type="submit"
-                    disabled={authLoading}
-                    className="button-primary-pill"
-                    style={{
-                      height: '44px',
-                      marginTop: '8px',
-                      width: '100%',
-                      fontSize: '13.5px',
-                      fontWeight: 600,
-                      borderRadius: '9999px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                    }}
+                    disabled={submitting || enrollLoading}
+                    className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
-                    {authLoading ? (
+                    {submitting ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                        <span>جاري التحقق...</span>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>جاري التحقق من الرمز...</span>
                       </>
                     ) : (
                       <>
+                        <Shield className="w-4 h-4" />
                         <span>تأكيد الرمز والدخول إلى {selectedPortal.nameAr}</span>
-                        <ArrowLeft className="w-4 h-4" />
                       </>
                     )}
                   </button>
@@ -1313,163 +1284,94 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             )}
           </div>
 
-          {/* Copyright Footer */}
-          <div style={{ textAlign: 'center', fontSize: '11.5px', color: '#71717a', marginTop: '20px' }}>
-            © ٢٠٢٦ مجموعة خالد السليم • منظومات الدخول المعزولة
+          {/* Footer Security Badges */}
+          <div className="pt-6 mt-6 border-t border-slate-850 flex items-center justify-between text-[11px] text-slate-500">
+            <span>© ٢٠٢٦ مجموعة خالد السليم القابضة</span>
+            <span className="flex items-center gap-1 text-slate-400">
+              <Lock className="w-3 h-3 text-emerald-500" />
+              <span>اتصال مشفر 256-bit TLS</span>
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Biometric Scan HUD Modal */}
+      {/* Biometric Scan HUD Modal (Futuristic Security Radar) */}
       {biometricModal && (
         <div
           role="dialog"
           aria-modal="true"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9999,
-            background: 'rgba(5, 20, 24, 0.75)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-            animation: 'fadeIn 0.25s ease-out'
-          }}
+          className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-200"
         >
-          <div
-            style={{
-              width: '100%',
-              maxWidth: '420px',
-              background: '#FFFFFF',
-              borderRadius: '24px',
-              padding: '30px 26px',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35)',
-              border: '1px solid rgba(0, 81, 84, 0.15)',
-              textAlign: 'center',
-              position: 'relative',
-              overflow: 'hidden'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '16px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                <Lock className="w-3 h-3 inline-block me-1" />
-                مصادقة بيومترية مشفرة (FIDO2 / WebAuthn)
+          <div className="w-full max-w-md bg-slate-900 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl text-center relative overflow-hidden">
+            {/* Top Security Pill */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5" />
+                <span>مصادقة مشفرة WebAuthn / FIDO2</span>
               </span>
             </div>
 
-            <div
-              style={{
-                position: 'relative',
-                width: '110px',
-                height: '110px',
-                margin: '0 auto 20px auto',
-                borderRadius: '20px',
-                background: '#fbfbf5',
-                border: '2px dashed #000000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}
-            >
+            {/* Scanner Target */}
+            <div className="relative w-28 h-28 mx-auto my-5 rounded-2xl bg-slate-950 border-2 border-dashed border-slate-700 flex items-center justify-center overflow-hidden">
               {biometricStatus === 'scanning' && (
                 <div
-                  style={{
-                    position: 'absolute',
-                    top: `${biometricProgress}%`,
-                    left: 0,
-                    right: 0,
-                    height: '3px',
-                    background: '#000000',
-                    boxShadow: '0 0 12px #000000',
-                    transition: 'top 0.25s linear',
-                    zIndex: 10
-                  }}
-                ></div>
+                  className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent shadow-[0_0_15px_#10b981] transition-all duration-300"
+                  style={{ top: `${biometricProgress}%` }}
+                />
               )}
 
               {biometricStatus === 'success' ? (
-                <div className="flex items-center justify-center">
-                  <CheckCircle2 className="w-14 h-14 text-emerald-600" />
-                </div>
+                <CheckCircle2 className="w-14 h-14 text-emerald-400 animate-in zoom-in-50 duration-300" />
+              ) : biometricStatus === 'failed' ? (
+                <AlertCircle className="w-14 h-14 text-red-400 animate-in shake duration-300" />
               ) : biometricModal === 'fingerprint' ? (
-                <div className="flex items-center justify-center">
-                  <Fingerprint className="w-14 h-14 text-zinc-900 animate-pulse" />
-                </div>
+                <Fingerprint className="w-14 h-14 text-amber-400 animate-pulse" />
               ) : (
-                <div className="flex items-center justify-center">
-                  <ScanFace className="w-14 h-14 text-zinc-900 animate-pulse" />
-                </div>
+                <ScanFace className="w-14 h-14 text-purple-400 animate-pulse" />
               )}
             </div>
 
-            <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#000000', margin: '0 0 6px 0' }}>
+            <h3 className="text-lg font-bold text-white mb-2">
               {biometricStatus === 'success'
-                ? 'تم التحقق بنجاح!'
+                ? 'تم التحقق البيومتري بنجاح!'
+                : biometricStatus === 'failed'
+                ? 'تعذر التحقق البيومتري'
                 : biometricModal === 'fingerprint'
-                ? 'التحقق ببصمة الإصبع'
-                : 'التحقق ببصمة الوجه'}
+                ? 'جاري فحص بصمة الإصبع...'
+                : 'جاري فحص بصمة الوجه...'}
             </h3>
 
-            <p style={{ fontSize: '12px', color: '#475569', margin: '0 0 18px 0', minHeight: '34px', lineHeight: '1.5' }}>
+            <p className="text-xs text-slate-300 mb-5 leading-relaxed min-h-[36px]">
               {biometricMessage}
             </p>
 
-            <div
-              style={{
-                height: '5px',
-                width: '100%',
-                background: '#E2E8F0',
-                borderRadius: '9999px',
-                overflow: 'hidden',
-                marginBottom: '20px'
-              }}
-            >
+            {/* Progress Bar */}
+            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mb-6">
               <div
-                style={{
-                  height: '100%',
-                  width: `${biometricProgress}%`,
-                  background: '#000000',
-                  borderRadius: '9999px',
-                  transition: 'width 0.25s ease-out'
-                }}
-              ></div>
+                className={`h-full rounded-full transition-all duration-300 ${
+                  biometricStatus === 'failed' ? 'bg-red-500' : 'bg-emerald-500'
+                }`}
+                style={{ width: `${biometricProgress}%` }}
+              />
             </div>
 
-            <div className="flex items-center justify-center gap-2 flex-wrap">
+            <div className="flex items-center justify-center gap-3">
               {biometricStatus === 'failed' && (
                 <button
                   type="button"
                   onClick={() => biometricModal && handleTriggerBiometric(biometricModal)}
-                  className="button-primary-pill"
-                  style={{
-                    padding: '6px 16px',
-                    fontSize: '12px',
-                    minHeight: '34px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-950/60"
                 >
-                  <Fingerprint className="w-3.5 h-3.5" />
+                  <Fingerprint className="w-4 h-4" />
                   <span>إعادة المحاولة</span>
                 </button>
               )}
               <button
                 type="button"
                 onClick={() => setBiometricModal(null)}
-                className="button-outline-on-light"
-                style={{
-                  padding: '6px 20px',
-                  fontSize: '12px',
-                  minHeight: '34px',
-                  display: 'inline-flex'
-                }}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold cursor-pointer"
               >
-                إلغاء والمتابعة بكلمة المرور
+                إغلاق والمتابعة بكلمة المرور
               </button>
             </div>
           </div>
@@ -1478,3 +1380,5 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     </div>
   );
 };
+
+export default LoginPage;

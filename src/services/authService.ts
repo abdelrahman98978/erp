@@ -1,4 +1,4 @@
-import { supabase, isDummySupabase } from './supabaseClient';
+import { supabase, isSupabaseConfigured, supabaseConfigError } from './supabaseClient';
 
 export interface UserProfile {
   id: string;
@@ -18,263 +18,253 @@ export interface AuthState {
   error: string | null;
 }
 
-// ─── Brute-Force Protection ───────────────────────────────────
+/**
+ * MFA state of the current session:
+ *  - 'none'   : session is fully authenticated (aal2, or MFA not required and no factor enrolled)
+ *  - 'verify' : user has a verified TOTP factor and must enter a code (session is aal1)
+ *  - 'enroll' : MFA is required but the user has not enrolled a TOTP factor yet
+ */
+export type MfaRequirement = 'none' | 'verify' | 'enroll';
+
+/** MFA is mandatory unless explicitly disabled with VITE_REQUIRE_MFA=false. */
+export const MFA_REQUIRED: boolean = import.meta.env.VITE_REQUIRE_MFA !== 'false';
+
+export interface TotpEnrollment {
+  factorId: string;
+  qrCode: string; // SVG data URI
+  secret: string;
+  uri: string;
+}
+
+// ─── Client-side throttle (UX only) ────────────────────────────
+// Real brute-force protection is enforced server-side by Supabase Auth rate limits
+// ([auth.rate_limit] in supabase/config.toml). This only slows down repeated attempts in the same tab.
 const MAX_LOGIN_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MS = 2 * 60 * 1000; // 2 minutes
+const LOCKOUT_DURATION_MS = 2 * 60 * 1000;
 
 interface LoginAttemptRecord {
   attempts: number;
-  lastAttempt: number;
   lockedUntil: number | null;
 }
 
 const loginAttemptTracker = new Map<string, LoginAttemptRecord>();
 
-function checkBruteForce(email: string): { blocked: boolean; remainingSeconds?: number } {
+function checkThrottle(email: string): { blocked: boolean; remainingSeconds?: number } {
   const record = loginAttemptTracker.get(email);
-  if (!record) return { blocked: false };
-
-  if (record.lockedUntil && Date.now() < record.lockedUntil) {
-    const remainingSeconds = Math.ceil((record.lockedUntil - Date.now()) / 1000);
-    return { blocked: true, remainingSeconds };
+  if (!record?.lockedUntil) return { blocked: false };
+  if (Date.now() < record.lockedUntil) {
+    return { blocked: true, remainingSeconds: Math.ceil((record.lockedUntil - Date.now()) / 1000) };
   }
-
-  // Reset if lockout expired
-  if (record.lockedUntil && Date.now() >= record.lockedUntil) {
-    loginAttemptTracker.delete(email);
-    return { blocked: false };
-  }
-
+  loginAttemptTracker.delete(email);
   return { blocked: false };
 }
 
 function recordFailedAttempt(email: string): void {
-  const record = loginAttemptTracker.get(email) || { attempts: 0, lastAttempt: 0, lockedUntil: null };
+  const record = loginAttemptTracker.get(email) || { attempts: 0, lockedUntil: null };
   record.attempts += 1;
-  record.lastAttempt = Date.now();
-
   if (record.attempts >= MAX_LOGIN_ATTEMPTS) {
     record.lockedUntil = Date.now() + LOCKOUT_DURATION_MS;
-    console.warn(`[SECURITY] Account locked due to ${MAX_LOGIN_ATTEMPTS} failed attempts: ${email}`);
   }
-
   loginAttemptTracker.set(email, record);
-  console.warn(`[SECURITY] Failed login attempt #${record.attempts} for: ${email}`);
 }
 
 function clearFailedAttempts(email: string): void {
   loginAttemptTracker.delete(email);
 }
 
-export const KNOWN_OFFLINE_USERS: Record<string, { pass: string; profile: UserProfile }> = {
-  'khalid@alsulaim.sa': {
-    pass: 'Alsulaim@2026',
-    profile: { id: 'USR-KHALID-01', username: 'khalid.admin', full_name: 'خالد السليم', email: 'khalid@alsulaim.sa', role: 'رئيس المجموعة', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'admin@alsulaim.sa': {
-    pass: 'Alsulaim@2026',
-    profile: { id: 'USR-ADMIN-01', username: 'super.admin', full_name: 'مشرف الإدارة المركزية', email: 'admin@alsulaim.sa', role: 'المدير العام', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'finance@alsulaim.sa': {
-    pass: 'Alsulaim@2026',
-    profile: { id: 'USR-FIN-01', username: 'finance.manager', full_name: 'أحمد المحاسب المالي', email: 'finance@alsulaim.sa', role: 'مدير الحسابات', branch: 'فرع الرياض الرئيسي', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'ops@alsulaim.sa': {
-    pass: 'Alsulaim@2026',
-    profile: { id: 'USR-OPS-01', username: 'operation.user', full_name: 'فهد العمليات والتشغيل', email: 'ops@alsulaim.sa', role: 'مشرف تشغيل', branch: 'فرع جدة', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'saf.manager@alsulaim.sa': {
-    pass: 'SafRecruit@2026',
-    profile: { id: 'USR-SAF-01', username: 'saf.manager', full_name: 'سليمان خالد (الصفا الماسي)', email: 'saf.manager@alsulaim.sa', role: 'مدير استقدام', branch: 'فرع الرياض', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'yaq.operations@alsulaim.sa': {
-    pass: 'YaqootRent@2026',
-    profile: { id: 'USR-YAQ-01', username: 'yaq.operations', full_name: 'عبدالرحمن العتيبي (الياقوت)', email: 'yaq.operations@alsulaim.sa', role: 'مدير تأجير', branch: 'فرع الدمام', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'top.hr@alsulaim.sa': {
-    pass: 'TopTalent@2026',
-    profile: { id: 'USR-TOP-01', username: 'top.hr', full_name: 'سارة خالد (توب تالنت)', email: 'top.hr@alsulaim.sa', role: 'مدير توظيف ATS', branch: 'فرع الخبر', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'top.recruiter@alsulaim.sa': {
-    pass: 'TopTalent@2026',
-    profile: { id: 'USR-TOP-02', username: 'top.recruiter', full_name: 'سارة خالد (توب تالنت ATS)', email: 'top.recruiter@alsulaim.sa', role: 'مدير توظيف ATS', branch: 'فرع الخبر', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'kas.tenders@alsulaim.sa': {
-    pass: 'KasEtmad@2026',
-    profile: { id: 'USR-KAS-01', username: 'kas.tenders', full_name: 'م. بندر الهويريني (كاس واعتماد)', email: 'kas.tenders@alsulaim.sa', role: 'مدير منافسات', branch: 'المقر الرئيسي', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'kas.supervisor@alsulaim.sa': {
-    pass: 'KasTrading@2026',
-    profile: { id: 'USR-KAS-02', username: 'kas.supervisor', full_name: 'م. بندر الهويريني (شركة كاس)', email: 'kas.supervisor@alsulaim.sa', role: 'KAS General Manager', branch: 'المقر الرئيسي — الرياض', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'shelter.supervisor@alsulaim.sa': {
-    pass: 'ShelterCare@2026',
-    profile: { id: 'USR-SHE-01', username: 'shelter.supervisor', full_name: 'نورة السليمان (مشرفة الإيواء والسكن)', email: 'shelter.supervisor@alsulaim.sa', role: 'Shelter Supervisor', branch: 'مركز إيواء الرياض الرئيسي', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'client@alsulaim.sa': {
-    pass: 'ClientPortal@2026',
-    profile: { id: 'USR-CLI-01', username: 'client.user', full_name: 'عبدالله محمد (بوابة المستفيدين)', email: 'client@alsulaim.sa', role: 'عميل مستفيد', branch: 'أونلاين', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'agent.manila@agency.ph': {
-    pass: 'AgencyPartner@2026',
-    profile: { id: 'USR-AGN-01', username: 'manila.agent', full_name: 'Manila International Agency', email: 'agent.manila@agency.ph', role: 'وكيل دولي معتمد', branch: 'الفلبين - مانيلا', status: 'نشط', created_at: '2026-08-01' }
-  },
-  'store.manager@alsulaim.sa': {
-    pass: 'StoreOnline@2026',
-    profile: { id: 'USR-STR-01', username: 'store.manager', full_name: 'عمر القنوات الرقمية (المتاجر)', email: 'store.manager@alsulaim.sa', role: 'مدير المتاجر الإلكترونية', branch: 'الرقمي', status: 'نشط', created_at: '2026-08-01' }
-  }
+/**
+ * Username aliases → login email. These are NOT secrets (no passwords),
+ * they only let staff type their short username instead of the full email.
+ */
+const USERNAME_EMAIL_ALIASES: Record<string, string> = {
+  'khalid.admin': 'khalid@alsulaim.sa',
+  'super.admin': 'admin@alsulaim.sa',
+  'finance.manager': 'finance@alsulaim.sa',
+  'operation.user': 'ops@alsulaim.sa',
 };
 
+const AUTH_USER_CACHE_KEY = 'ALSULAIM_AUTH_USER';
+
+const notConfiguredError = () => ({
+  message: supabaseConfigError || 'قاعدة البيانات غير مُعدّة. لا يمكن تسجيل الدخول.',
+});
+
+function cacheProfile(profile: UserProfile | null): void {
+  try {
+    if (profile) localStorage.setItem(AUTH_USER_CACHE_KEY, JSON.stringify(profile));
+    else localStorage.removeItem(AUTH_USER_CACHE_KEY);
+  } catch {
+    // storage unavailable (private mode) — cache is optional
+  }
+}
+
+function buildProfileFromAuthUser(authUser: any, identifier: string): UserProfile {
+  const appMeta = authUser?.app_metadata || {};
+  const userMeta = authUser?.user_metadata || {};
+  return {
+    id: authUser.id,
+    username: userMeta.username || identifier,
+    full_name: userMeta.full_name || authUser.email || 'مستخدم',
+    email: authUser.email || '',
+    // Role MUST come from app_metadata (only editable with the service role).
+    // user_metadata is writable by the user themself and must never grant privileges.
+    role: appMeta.role || 'مستخدم',
+    branch: appMeta.branch || userMeta.branch || '',
+    status: 'نشط',
+    created_at: authUser.created_at || new Date().toISOString(),
+  };
+}
+
 export const authService = {
-  /**
-   * Resolve username or email to standard system email
-   */
+  /** Resolve a username or email to the login email. */
   resolveEmail(identifier: string): string {
     const clean = identifier.trim().toLowerCase();
     if (clean.includes('@')) return clean;
-
-    const USERNAME_EMAIL_MAP: Record<string, string> = {
-      'khalid.admin': 'khalid@alsulaim.sa',
-      'khalid': 'khalid@alsulaim.sa',
-      'super.admin': 'admin@alsulaim.sa',
-      'admin': 'admin@alsulaim.sa',
-      'finance.manager': 'finance@alsulaim.sa',
-      'finance': 'finance@alsulaim.sa',
-      'operation.user': 'ops@alsulaim.sa',
-      'ops': 'ops@alsulaim.sa',
-      'saf.manager': 'saf.manager@alsulaim.sa',
-      'yaq.operations': 'yaq.operations@alsulaim.sa',
-      'top.hr': 'top.hr@alsulaim.sa',
-      'kas.tenders': 'kas.tenders@alsulaim.sa',
-    };
-
-    return USERNAME_EMAIL_MAP[clean] || `${clean}@alsulaim.sa`;
+    return USERNAME_EMAIL_ALIASES[clean] || `${clean}@alsulaim.sa`;
   },
 
   /**
-   * Sign in with real email/username and password against Supabase & PostgreSQL
+   * Sign in against Supabase Auth ONLY. There is no offline / hardcoded fallback.
+   * On success the session may still require MFA — check `mfa` in the result.
    */
-  async signIn(identifier: string, password: string) {
-    if (!identifier?.trim() || !password?.trim()) {
-      return { data: null, error: { message: 'يرجى إدخال اسم المستخدم وكلمة المرور' } };
+  async signIn(identifier: string, password: string): Promise<{
+    data: UserProfile | null;
+    error: { message: string } | null;
+    mfa: MfaRequirement;
+  }> {
+    if (!identifier?.trim() || !password) {
+      return { data: null, error: { message: 'يرجى إدخال اسم المستخدم وكلمة المرور' }, mfa: 'none' };
+    }
+    if (!isSupabaseConfigured) {
+      return { data: null, error: notConfiguredError(), mfa: 'none' };
     }
 
     const email = this.resolveEmail(identifier);
-
-    // Brute-force protection: block if too many failed attempts
-    const bruteForceCheck = checkBruteForce(email);
-    if (bruteForceCheck.blocked) {
-      return { data: null, error: { message: `تم قفل الحساب مؤقتاً بسبب محاولات دخول متعددة فاشلة. يرجى المحاولة بعد ${bruteForceCheck.remainingSeconds} ثانية.` } };
+    const throttle = checkThrottle(email);
+    if (throttle.blocked) {
+      return {
+        data: null,
+        error: { message: `تم إيقاف المحاولة مؤقتاً بسبب محاولات فاشلة متعددة. حاول بعد ${throttle.remainingSeconds} ثانية.` },
+        mfa: 'none',
+      };
     }
 
-    // 1. If real Supabase is connected, authenticate with real Supabase GoTrue Auth
-    if (!isDummySupabase) {
-      try {
-        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (!authError && authData?.user) {
-          const profile = await this.getUserProfile(authData.user.id);
-          if (profile.data) {
-            localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(profile.data));
-            return profile;
-          }
-
-          // Construct from auth metadata
-          const meta = authData.user.user_metadata || {};
-          const fallbackProfile: UserProfile = {
-            id: authData.user.id,
-            username: meta.username || identifier,
-            full_name: meta.full_name || 'مستخدم النظام المعتمد',
-            email: authData.user.email || email,
-            role: meta.role || 'مسؤول نظام',
-            branch: meta.branch || 'الفرع الرئيسي',
-            status: 'نشط',
-            created_at: authData.user.created_at || new Date().toISOString()
-          };
-          localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(fallbackProfile));
-          return { data: fallbackProfile, error: null };
+      if (authError || !authData?.user) {
+        recordFailedAttempt(email);
+        const msg = authError?.message?.toLowerCase() || '';
+        if (msg.includes('rate') || msg.includes('too many')) {
+          return { data: null, error: { message: 'محاولات كثيرة جداً. يرجى الانتظار قليلاً ثم المحاولة مجدداً.' }, mfa: 'none' };
         }
-
-        // If Supabase returned credentials error, check KNOWN_OFFLINE_USERS fallback before rejecting
-        if (authError) {
-          const offlineMatch = KNOWN_OFFLINE_USERS[email];
-          if (offlineMatch && offlineMatch.pass === password) {
-            clearFailedAttempts(email);
-            localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(offlineMatch.profile));
-            return { data: offlineMatch.profile, error: null };
-          }
-          recordFailedAttempt(email);
-          const msg = authError.message?.toLowerCase() || '';
-          if (msg.includes('invalid login credentials') || msg.includes('invalid') || msg.includes('credentials')) {
-            return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' } };
-          }
-        }
-      } catch (netErr: any) {
-        console.warn('Network error reaching Supabase Auth:', netErr);
+        return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' }, mfa: 'none' };
       }
-    }
 
-    // 2. Offline master fallback check with strict password validation (each account has its OWN password only)
-    const offlineMatch = KNOWN_OFFLINE_USERS[email];
-    if (offlineMatch && offlineMatch.pass === password) {
       clearFailedAttempts(email);
-      localStorage.setItem('ALSULAIM_AUTH_USER', JSON.stringify(offlineMatch.profile));
-      return { data: offlineMatch.profile, error: null };
+      const { data: dbProfile } = await this.getUserProfile(authData.user.id);
+      const profile: UserProfile = dbProfile
+        ? { ...buildProfileFromAuthUser(authData.user, identifier), ...dbProfile }
+        : buildProfileFromAuthUser(authData.user, identifier);
+
+      cacheProfile(profile);
+      const mfa = await this.getMfaRequirement();
+      return { data: profile, error: null, mfa };
+    } catch (netErr: any) {
+      return {
+        data: null,
+        error: { message: 'تعذّر الاتصال بخادم المصادقة. تحقق من الاتصال بالإنترنت.' },
+        mfa: 'none',
+      };
+    }
+  },
+
+  /** Determine what MFA step (if any) the current session still needs. */
+  async getMfaRequirement(): Promise<MfaRequirement> {
+    if (!isSupabaseConfigured) return 'none';
+    const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (error || !data) {
+      // Fail closed: if we cannot determine the level, require verification/enrollment.
+      return MFA_REQUIRED ? 'enroll' : 'none';
+    }
+    if (data.currentLevel === 'aal2') return 'none';
+    if (data.nextLevel === 'aal2') return 'verify';
+    return MFA_REQUIRED ? 'enroll' : 'none';
+  },
+
+  /** Start TOTP enrollment. Removes stale unverified TOTP factors first. */
+  async enrollTotp(): Promise<{ data: TotpEnrollment | null; error: string | null }> {
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    const stale = (factors?.all || []).filter(f => f.factor_type === 'totp' && f.status !== 'verified');
+    for (const f of stale) {
+      await supabase.auth.mfa.unenroll({ factorId: f.id });
     }
 
-    recordFailedAttempt(email);
-    return { data: null, error: { message: 'اسم المستخدم أو كلمة المرور غير صحيحة.' } };
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+      friendlyName: `ERP-${new Date().toISOString().slice(0, 10)}`,
+    });
+    if (error || !data) {
+      return {
+        data: null,
+        error: error?.message?.toLowerCase().includes('disabled')
+          ? 'التحقق الثنائي (TOTP) غير مُفعّل في إعدادات Supabase. يرجى من مدير النظام تفعيله.'
+          : error?.message || 'تعذّر بدء تسجيل التحقق الثنائي.',
+      };
+    }
+    return {
+      data: { factorId: data.id, qrCode: data.totp.qr_code, secret: data.totp.secret, uri: data.totp.uri },
+      error: null,
+    };
   },
 
   /**
-   * Get user profile from system_users table
+   * Verify a 6-digit TOTP code. If `factorId` is omitted, the user's first verified TOTP factor is used.
+   * On success the session is upgraded to aal2.
    */
-  async getUserProfile(userId: string) {
-    if (isDummySupabase) {
-      return { data: null, error: null };
+  async verifyTotp(code: string, factorId?: string): Promise<{ success: boolean; error: string | null }> {
+    if (!/^\d{6}$/.test(code)) {
+      return { success: false, error: 'يرجى إدخال رمز التحقق المكون من 6 أرقام' };
     }
-    const { data, error } = await supabase
-      .from('system_users')
-      .select('*')
-      .eq('id', userId)
-      .single();
-
+    let targetFactorId = factorId;
+    if (!targetFactorId) {
+      const { data: factors, error } = await supabase.auth.mfa.listFactors();
+      if (error) return { success: false, error: error.message };
+      targetFactorId = factors?.totp?.[0]?.id;
+      if (!targetFactorId) return { success: false, error: 'لا يوجد جهاز تحقق مسجّل لهذا الحساب.' };
+    }
+    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: targetFactorId, code });
     if (error) {
-      console.warn('User profile not found in system_users, using auth user:', error);
-      return { data: null, error };
+      return { success: false, error: 'رمز التحقق غير صحيح أو منتهي الصلاحية.' };
     }
-
-    return { data, error: null };
+    return { success: true, error: null };
   },
 
-  /**
-   * Sign out
-   */
+  /** Get user profile from system_users table. */
+  async getUserProfile(userId: string): Promise<{ data: UserProfile | null; error: any }> {
+    if (!isSupabaseConfigured) return { data: null, error: notConfiguredError() };
+    const { data, error } = await supabase.from('system_users').select('*').eq('id', userId).maybeSingle();
+    if (error) return { data: null, error };
+    return { data: (data as UserProfile) || null, error: null };
+  },
+
   async signOut() {
-    if (isDummySupabase) {
-      localStorage.removeItem('ALSULAIM_AUTH_USER');
-      return { error: null };
-    }
+    cacheProfile(null);
+    if (!isSupabaseConfigured) return { error: null };
     const { error } = await supabase.auth.signOut();
-    localStorage.removeItem('ALSULAIM_AUTH_USER');
     return { error };
   },
 
-  /**
-   * Get current session
-   */
   async getSession() {
-    if (isDummySupabase) {
-      return { session: null, error: null };
-    }
+    if (!isSupabaseConfigured) return { session: null, error: null };
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (session?.user) {
         const { data: profile } = await this.getUserProfile(session.user.id);
-        return { session: { ...session, user: { ...session.user, profile } }, error };
+        return {
+          session: { ...session, user: { ...session.user, profile: profile || buildProfileFromAuthUser(session.user, session.user.email || '') } },
+          error,
+        };
       }
       return { session: null, error: null };
     } catch {
@@ -282,76 +272,66 @@ export const authService = {
     }
   },
 
-  /**
-   * Subscribe to auth state changes
-   */
   onAuthStateChange(callback: (event: string, session: any) => void) {
-    if (isDummySupabase) {
+    if (!isSupabaseConfigured) {
       callback('INITIAL_SESSION', null);
       return { data: { subscription: { unsubscribe: () => {} } } };
     }
-    return supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const { data: profile } = await this.getUserProfile(session.user.id);
-        callback(event, { ...session, user: { ...session.user, profile } });
-      } else {
+    return supabase.auth.onAuthStateChange((event, session) => {
+      if (!session?.user) {
+        cacheProfile(null);
         callback(event, null);
+        return;
       }
+      // Do not await Supabase calls inside the auth callback (can deadlock the auth lock); defer instead.
+      const authUser = session.user;
+      setTimeout(async () => {
+        const { data: profile } = await this.getUserProfile(authUser.id);
+        const resolved = profile || buildProfileFromAuthUser(authUser, authUser.email || '');
+        cacheProfile(resolved);
+        callback(event, { ...session, user: { ...authUser, profile: resolved } });
+      }, 0);
     });
   },
 
-  /**
-   * Check if user has admin role
-   */
   isAdmin(user: UserProfile | null): boolean {
     if (!user) return false;
     return ['رئيس المجموعة', 'مدير نظام', 'مدير تنفيذي'].includes(user.role);
   },
 
-  /**
-   * Check if user has finance role
-   */
   isFinance(user: UserProfile | null): boolean {
     if (!user) return false;
     return ['مدير مالي', 'محاسب', 'رئيس المجموعة', 'مدير نظام'].includes(user.role);
   },
 
-  /**
-   * Check if user has HR role
-   */
   isHR(user: UserProfile | null): boolean {
     if (!user) return false;
     return ['أخصائي موارد بشرية', 'مدير موارد بشرية', 'رئيس المجموعة', 'مدير نظام'].includes(user.role);
   },
 
-  /**
-   * Check if user has operations role
-   */
   isOperations(user: UserProfile | null): boolean {
     if (!user) return false;
     return ['مشرف تشغيل', 'مدير تشغيل', 'رئيس المجموعة', 'مدير نظام'].includes(user.role);
   },
 
   /**
-   * Get current logged-in user profile from localStorage
+   * Cached display profile of the logged-in user.
+   * For DISPLAY ONLY — never use this to decide whether a user is authenticated or authorized.
    */
   getCurrentUser(): UserProfile | null {
     try {
-      const raw = localStorage.getItem('ALSULAIM_AUTH_USER');
+      const raw = localStorage.getItem(AUTH_USER_CACHE_KEY);
       if (raw) return JSON.parse(raw);
-    } catch (e) {
+    } catch {
       // ignore
     }
     return null;
   },
 
-  /**
-   * Check if user has customer service role
-   */
   isCustomerService(user: UserProfile | null): boolean {
     if (!user) return false;
     return ['أخصائي خدمة عملاء', 'مدير خدمة عملاء', 'رئيس المجموعة', 'مدير نظام'].includes(user.role);
-  }
+  },
 };
 
 export default authService;

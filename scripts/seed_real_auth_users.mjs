@@ -1,21 +1,47 @@
 /**
  * Seed Real Authentication Users into Supabase Auth & Public system_users
  * ERP Group Khalid Al-Sulaim
+ *
+ * Security:
+ * - Credentials must be provided via environment variables (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY).
+ * - Password comes from SEED_DEFAULT_PASSWORD or is generated randomly per user.
+ * - Roles are written to app_metadata (trusted / tamper-proof), NOT user_metadata.
  */
 
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'node:crypto';
 
-const SUPABASE_URL = 'http://127.0.0.1:54421';
-const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU';
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'http://127.0.0.1:54421';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || (
+  SUPABASE_URL.includes('127.0.0.1') || SUPABASE_URL.includes('localhost')
+    ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+    : ''
+);
+
+if (!SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('❌ Error: SUPABASE_SERVICE_ROLE_KEY environment variable is required.');
+  process.exit(1);
+}
 
 const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false }
 });
 
+function generateSecurePassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*';
+  let pwd = '';
+  const bytes = crypto.randomBytes(16);
+  for (let i = 0; i < 16; i++) {
+    pwd += chars[bytes[i] % chars.length];
+  }
+  return pwd + 'A1!';
+}
+
+const DEFAULT_PASSWORD = process.env.SEED_DEFAULT_PASSWORD;
+
 const USERS_TO_SEED = [
   {
     email: 'khalid@alsulaim.sa',
-    password: 'Alsulaim@2026',
     username: 'khalid.admin',
     fullName: 'خالد السليم',
     role: 'رئيس المجموعة',
@@ -24,7 +50,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'admin@alsulaim.sa',
-    password: 'Alsulaim@2026',
     username: 'super.admin',
     fullName: 'مشرف الإدارة المركزية (Super Admin)',
     role: 'المدير العام',
@@ -33,7 +58,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'finance@alsulaim.sa',
-    password: 'Alsulaim@2026',
     username: 'finance.manager',
     fullName: 'أحمد المحاسب المالي',
     role: 'مدير الحسابات',
@@ -42,7 +66,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'ops@alsulaim.sa',
-    password: 'Alsulaim@2026',
     username: 'operation.user',
     fullName: 'فهد مسؤول العمليات والتشغيل',
     role: 'مشرف تشغيل',
@@ -51,7 +74,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'saf.manager@alsulaim.sa',
-    password: 'SafRecruit@2026',
     username: 'saf.manager',
     fullName: 'سليمان خالد (مدير الصفا الماسي)',
     role: 'مدير استقدام',
@@ -60,7 +82,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'yaq.operations@alsulaim.sa',
-    password: 'YaqootRent@2026',
     username: 'yaq.operations',
     fullName: 'عبدالرحمن العتيبي (مدير تأجير الياقوت)',
     role: 'مدير تأجير وتشغيل',
@@ -69,7 +90,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'top.hr@alsulaim.sa',
-    password: 'TopTalent@2026',
     username: 'top.hr',
     fullName: 'سارة خالد (مسؤولة توظيف توب تالنت)',
     role: 'مدير توظيف ATS',
@@ -78,7 +98,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'kas.tenders@alsulaim.sa',
-    password: 'KasEtmad@2026',
     username: 'kas.tenders',
     fullName: 'م. بندر الهويريني (مدير منافسات كاس واعتماد)',
     role: 'مدير منافسات وتوريد',
@@ -87,7 +106,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'client@alsulaim.sa',
-    password: 'ClientPortal@2026',
     username: 'client.portal',
     fullName: 'بوابة العميل المعتمد (الخدمة الذاتية)',
     role: 'عميل مستفيد',
@@ -96,7 +114,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'agent.manila@agency.ph',
-    password: 'AgencyPartner@2026',
     username: 'agency.manila',
     fullName: 'وكالة مانيلا الدولية المعتمدة (Manila Global Agency)',
     role: 'شريك خارجي',
@@ -105,7 +122,6 @@ const USERS_TO_SEED = [
   },
   {
     email: 'store.manager@alsulaim.sa',
-    password: 'StoreOnline@2026',
     username: 'store.manager',
     fullName: 'مدير المتاجر الإلكترونية وقنوات البيع',
     role: 'مدير مبيعات إلكترونية',
@@ -129,39 +145,50 @@ async function seedAuthUsers() {
 
   for (const user of USERS_TO_SEED) {
     let authUserId = null;
+    const password = DEFAULT_PASSWORD || generateSecurePassword();
+
+    const appMetadata = {
+      role: user.role,
+      company_id: user.companyId,
+      branch: user.branch,
+      username: user.username
+    };
+
+    const userMetadata = {
+      full_name: user.fullName,
+      username: user.username
+    };
 
     if (existingEmails.has(user.email.toLowerCase())) {
-      console.log(`ℹ️ Auth user already exists: ${user.email} -> Updating password & metadata`);
+      console.log(`ℹ️ Auth user already exists: ${user.email} -> Updating metadata and app_metadata`);
       const existing = existingAuth.users.find(u => u.email.toLowerCase() === user.email.toLowerCase());
       authUserId = existing.id;
-      await supabaseAdmin.auth.admin.updateUserById(authUserId, {
-        password: user.password,
+      const updatePayload = {
         email_confirm: true,
-        user_metadata: {
-          full_name: user.fullName,
-          role: user.role,
-          username: user.username,
-          company_id: user.companyId
-        }
-      });
+        app_metadata: appMetadata,
+        user_metadata: userMetadata
+      };
+      if (DEFAULT_PASSWORD) {
+        updatePayload.password = DEFAULT_PASSWORD;
+      }
+      await supabaseAdmin.auth.admin.updateUserById(authUserId, updatePayload);
     } else {
       console.log(`➕ Creating new auth user: ${user.email}`);
       const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
         email: user.email,
-        password: user.password,
+        password: password,
         email_confirm: true,
-        user_metadata: {
-          full_name: user.fullName,
-          role: user.role,
-          username: user.username,
-          company_id: user.companyId
-        }
+        app_metadata: appMetadata,
+        user_metadata: userMetadata
       });
       if (createErr) {
         console.error(`❌ Error creating ${user.email}:`, createErr.message);
         continue;
       }
       authUserId = created.user.id;
+      if (!DEFAULT_PASSWORD) {
+        console.log(`🔑 Generated credentials for ${user.email}: username=${user.username} | password=${password}`);
+      }
     }
 
     // 2. Upsert into public.system_users table
