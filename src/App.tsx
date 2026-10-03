@@ -616,8 +616,10 @@ const MainContent: React.FC = () => {
         </>
       )}
 
-      {/* Global AI Copilot Widget (Faris & Noura) — Always Mounted for Universal Voice Wake & Mascot Summoning */}
-      <AICopilotWidget onNavigate={handleSelectTab} />
+      {/* Global AI Copilot Widget (Faris & Noura) — Mounted ONLY in authenticated workspace */}
+      {flowState === 'workspace' && (
+        <AICopilotWidget onNavigate={handleSelectTab} />
+      )}
       <UniversalNotificationToaster onNavigate={(tabKey, title) => handleSelectTab(tabKey, title || '')} />
       <PwaInstallPrompt />
       {showLegalModal && (

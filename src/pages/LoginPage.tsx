@@ -32,10 +32,14 @@ import {
   Copy,
   Shield,
   KeyRound,
-  CheckCircle
+  Layers,
+  ExternalLink,
+  Cpu,
+  Server,
+  FileCheck2,
+  X
 } from 'lucide-react';
 import { performRealBiometricAuth, checkWebAuthnSupport, BiometricAuthResult } from '../services/webAuthnBiometricService';
-import { SaudiAssistantMascot } from '../components/auth/SaudiAssistantMascot';
 
 export interface SystemPortalOption {
   id: string;
@@ -294,13 +298,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   const initialPortal = getInitialPortal();
   const [selectedPortal, setSelectedPortal] = useState<SystemPortalOption>(initialPortal);
-  const [selectedCategory, setSelectedCategory] = useState<SystemPortalOption['category']>(initialPortal.category);
-
-  useEffect(() => {
-    if (selectedPortal && selectedPortal.category !== selectedCategory) {
-      setSelectedCategory(selectedPortal.category);
-    }
-  }, [selectedPortal]);
+  const [showPortalSelectorModal, setShowPortalSelectorModal] = useState(false);
+  const [selectorModalCategory, setSelectorModalCategory] = useState<SystemPortalOption['category']>('شركات المجموعة');
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -312,10 +311,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   const handleSelectPortal = (portal: SystemPortalOption) => {
     setSelectedPortal(portal);
-    setSelectedCategory(portal.category);
+    setSelectorModalCategory(portal.category);
     setUsername('');
     setPassword('');
     setLocalError(null);
+    setShowPortalSelectorModal(false);
     localStorage.setItem('ALSULAIM_TARGET_SYSTEM', portal.id);
   };
 
@@ -328,7 +328,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const otpInputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const visualCardRef = useRef<HTMLDivElement>(null);
 
   // Biometric Authentication States (WebAuthn / FIDO2)
   const [biometricModal, setBiometricModal] = useState<'fingerprint' | 'face' | null>(null);
@@ -354,7 +353,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       setBiometricModal(type);
       setBiometricProgress(100);
       setBiometricStatus('failed');
-      setBiometricMessage('سجّل الدخول بكلمة المرور ورمز التحقق أولاً، ثم يمكنك استخدام البصمة لفتح الجلسة على هذا الجهاز.');
+      setBiometricMessage('يرجى تسجيل الدخول بكلمة المرور ورمز التحقق أولاً لتأكيد الصلاحيات وربط جهازك الآمن.');
       return;
     }
     setBiometricModal(type);
@@ -362,8 +361,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setBiometricProgress(20);
     setBiometricMessage(
       type === 'fingerprint'
-        ? `يرجى لمس مستشعر البصمة البيومترية المعتمد (Windows Hello / Touch ID)...`
-        : `يرجى توجيه الوجه أمام الكاميرا للمصادقة البيومترية المعتمدة (Face ID)...`
+        ? 'يرجى لمس مستشعر البصمة البيومترية المعتمد على جهازك (Windows Hello / Touch ID)...'
+        : 'يرجى توجيه الوجه أمام الكاميرا للمصادقة البيومترية المعتمدة (Face ID)...'
     );
 
     let currentP = 20;
@@ -412,7 +411,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     } else {
       setBiometricProgress(100);
       setBiometricStatus('failed');
-      setBiometricMessage(authResult.errorMessage || 'تعذّر التحقق البيومتري على هذا الجهاز. استخدم كلمة المرور ورمز التحقق.');
+      setBiometricMessage(authResult.errorMessage || 'تعذّر التحقق البيومتري على هذا الجهاز. استخدم كلمة المرور المؤسسية.');
     }
   };
 
@@ -427,7 +426,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       const { data, error } = await enrollMfa();
       setEnrollLoading(false);
       if (error || !data) {
-        setLocalError(error || 'تعذّر بدء تفعيل المصادقة الثنائية. تواصل مع مسؤول النظام.');
+        setLocalError(error || 'تعذّر بدء تفعيل المصادقة الثنائية. تواصل مع إدارة الأمن السيبراني.');
         return;
       }
       setEnrollment(data);
@@ -451,7 +450,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     setLocalError(null);
   };
 
-  // 3D Canvas Background Initialization
+  // Subtle 3D Geometric Sovereign Network Canvas
   useEffect(() => {
     let animId: number;
     let renderer: any;
@@ -462,11 +461,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       if (!container || !THREE) return false;
 
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let width = container.clientWidth || 500;
+      let width = container.clientWidth || 550;
       let height = container.clientHeight || 750;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -476,67 +475,57 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       }
       container.appendChild(renderer.domElement);
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
       scene.add(ambientLight);
-      const directionalLight = new THREE.DirectionalLight(0xd97706, 1.2);
-      directionalLight.position.set(6, 6, 6);
+      const directionalLight = new THREE.DirectionalLight(0x10b981, 1.2);
+      directionalLight.position.set(5, 5, 8);
       scene.add(directionalLight);
 
-      const colorInt = parseInt(selectedPortal.themeColor.replace('#', '0x')) || 0x10b981;
-      const starGeometry = new THREE.IcosahedronGeometry(4.2, 0);
-      const positionAttribute = starGeometry.getAttribute('position');
-      if (positionAttribute) {
-        for (let i = 0; i < positionAttribute.count; i++) {
-          const vertex = new THREE.Vector3();
-          vertex.fromBufferAttribute(positionAttribute, i);
-          if (Math.random() > 0.45) {
-            vertex.multiplyScalar(1.4);
-          }
-          positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
-        }
-      }
-
-      const wireframeMaterial = new THREE.MeshPhongMaterial({
-        color: colorInt,
+      // Geometric Icosahedron Network Globe
+      const globeGeo = new THREE.IcosahedronGeometry(4.5, 2);
+      const wireMat = new THREE.MeshPhongMaterial({
+        color: 0x059669,
         wireframe: true,
         transparent: true,
-        opacity: 0.4,
+        opacity: 0.22,
         side: THREE.DoubleSide
       });
+      const globeMesh = new THREE.Mesh(globeGeo, wireMat);
+      scene.add(globeMesh);
 
-      const starMesh = new THREE.Mesh(starGeometry, wireframeMaterial);
-      scene.add(starMesh);
-
-      const coreGeo = new THREE.SphereGeometry(1.6, 16, 16);
+      // Inner Core
+      const coreGeo = new THREE.IcosahedronGeometry(2.2, 1);
       const coreMat = new THREE.MeshPhongMaterial({
-        color: 0x059669,
-        emissive: colorInt,
-        emissiveIntensity: 0.6,
+        color: 0x0d9488,
+        emissive: 0x065f46,
+        emissiveIntensity: 0.45,
+        wireframe: true,
         transparent: true,
-        opacity: 0.65
+        opacity: 0.35
       });
-      const core = new THREE.Mesh(coreGeo, coreMat);
-      scene.add(core);
+      const innerCore = new THREE.Mesh(coreGeo, coreMat);
+      scene.add(innerCore);
 
-      const particlesCount = 220;
-      const particlesGeometry = new THREE.BufferGeometry();
-      const posArray = new Float32Array(particlesCount * 3);
-      for (let i = 0; i < particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 16;
+      // Interconnecting Particle Constellation
+      const pCount = 180;
+      const pGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(pCount * 3);
+      for (let i = 0; i < pCount * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 14;
       }
-      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.07,
-        color: colorInt,
+      pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const pMat = new THREE.PointsMaterial({
+        size: 0.08,
+        color: 0xd97706,
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.6,
         blending: THREE.AdditiveBlending
       });
-      const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-      scene.add(particleMesh);
+      const pointMesh = new THREE.Points(pGeo, pMat);
+      scene.add(pointMesh);
 
-      camera.position.z = 15;
-      let clock = new THREE.Clock();
+      camera.position.z = 13.5;
+      const clock = new THREE.Clock();
 
       function animate() {
         if (prefersReduced) {
@@ -544,17 +533,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           return;
         }
         animId = requestAnimationFrame(animate);
-        const time = clock.getElapsedTime();
+        const elapsed = clock.getElapsedTime();
 
-        starMesh.rotation.y += 0.004;
-        starMesh.rotation.x += 0.0025;
-        core.rotation.y -= 0.003;
+        globeMesh.rotation.y = elapsed * 0.04;
+        globeMesh.rotation.x = Math.sin(elapsed * 0.03) * 0.08;
+        innerCore.rotation.y = -elapsed * 0.06;
+        pointMesh.rotation.y = elapsed * 0.015;
 
-        const pulse = 1 + Math.sin(time * 2) * 0.04;
-        starMesh.scale.set(pulse, pulse, pulse);
-        coreMat.emissiveIntensity = 0.5 + Math.sin(time * 2.5) * 0.25;
-
-        particleMesh.rotation.y += 0.0008;
         renderer.render(scene, camera);
       }
       animate();
@@ -568,25 +553,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         renderer.setSize(width, height);
       };
 
-      const handleMouseMove = (e: MouseEvent) => {
-        if (prefersReduced) return;
-        const moveX = (e.clientX - window.innerWidth / 2) * 0.012;
-        const moveY = (e.clientY - window.innerHeight / 2) * 0.012;
-        if (visualCardRef.current) {
-          visualCardRef.current.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-        }
-        if (starMesh) {
-          starMesh.rotation.z = (e.clientX / window.innerWidth - 0.5) * 0.25;
-        }
-      };
-
       window.addEventListener('resize', handleResize);
-      document.addEventListener('mousemove', handleMouseMove);
 
       return () => {
         cancelAnimationFrame(animId);
         window.removeEventListener('resize', handleResize);
-        document.removeEventListener('mousemove', handleMouseMove);
         if (renderer && renderer.domElement && container.contains(renderer.domElement)) {
           container.removeChild(renderer.domElement);
           renderer.dispose();
@@ -594,11 +565,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       };
     };
 
-    let cleanup = initThree();
+    const cleanup = initThree();
     return () => {
       if (typeof cleanup === 'function') cleanup();
     };
-  }, [selectedPortal.id]);
+  }, []);
 
   const handleInitialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -608,7 +579,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
     const effectivePass = password.trim();
 
     if (!effectiveUser || !effectivePass) {
-      setLocalError('يرجى إدخال اسم المستخدم وكلمة المرور');
+      setLocalError('يرجى إدخال اسم المستخدم وكلمة المرور المؤسسية للمتابعة.');
       return;
     }
 
@@ -700,65 +671,635 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
   return (
     <div 
-      className="min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-5 md:p-8 relative overflow-x-hidden selection:bg-emerald-500 selection:text-white"
+      className="min-h-screen w-full flex flex-col justify-between relative overflow-x-hidden selection:bg-emerald-500 selection:text-white"
       style={{
-        background: 'radial-gradient(ellipse at 50% 10%, #0d1a29 0%, #080f18 45%, #03070d 100%)',
+        background: 'radial-gradient(ellipse at 50% 0%, #0c1524 0%, #070d17 50%, #03060a 100%)',
         fontFamily: 'var(--font-family-ui)',
         direction: currentLanguage.dir
       }}
     >
-      {/* Decorative Royal Ambient Glow Orbs */}
+      {/* Subtle Sovereign Ambient Glows */}
       <div 
-        className="absolute top-[-15%] right-[-10%] w-[650px] h-[650px] rounded-full pointer-events-none opacity-25 blur-[120px]"
-        style={{ background: selectedPortal.themeColor }}
+        className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none opacity-20 blur-[140px]"
+        style={{ background: '#059669' }}
       />
       <div 
-        className="absolute bottom-[-15%] left-[-10%] w-[550px] h-[550px] rounded-full pointer-events-none opacity-20 blur-[130px] bg-emerald-600"
+        className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none opacity-15 blur-[150px]"
+        style={{ background: '#0369a1' }}
       />
 
-      {/* Subtle Geometric Enterprise Grid */}
+      {/* Architectural Precision Grid Background */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-[0.035]"
         style={{
-          backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)',
-          backgroundSize: '28px 28px'
+          backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
         }}
       />
 
       {/* ========================================================================= */}
-      {/* 1. TOP DEDICATED SYSTEM PORTAL SELECTOR RIBBON */}
+      {/* TOP INSTITUTIONAL HEADER BAR */}
       {/* ========================================================================= */}
-      <div className="w-full max-w-6xl xl:max-w-7xl mb-4 sm:mb-6 z-20 relative">
-        <div className="backdrop-blur-xl bg-slate-900/60 border border-slate-800/80 rounded-2xl p-2.5 sm:p-3.5 shadow-2xl">
-          {/* Header Row: Category Filter and Quick Status */}
-          <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
-                <Building2 className="w-3.5 h-3.5" />
+      <header className="w-full z-20 border-b border-slate-800/80 bg-slate-950/60 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between">
+        {/* Brand Crest */}
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-emerald-400 p-[1.5px] shadow-lg shadow-emerald-950/50">
+            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="Crest" className="w-6 h-6 object-contain" />
+            </div>
+          </div>
+          <div>
+            <span className="text-sm font-extrabold text-white tracking-wide block leading-tight">
+              مجموعة خالد السليم القابضة
+            </span>
+            <span className="text-[10px] text-slate-400 font-medium block">
+              منظومة تخطيط الموارد المؤسسية الموحدة • Sovereign Enterprise Cloud
+            </span>
+          </div>
+        </div>
+
+        {/* Security Status & Language */}
+        <div className="flex items-center gap-3">
+          {/* NCA Security Indicator */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-[11px] text-slate-300">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-emerald-400">TLS 1.3 / NCA ECC</span>
+            <span className="text-slate-500">|</span>
+            <span>اتصال سيادي مشفر</span>
+          </div>
+
+          {/* Language Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              aria-expanded={showLangMenu}
+              className="px-3 py-1.5 text-xs rounded-full bg-slate-900/80 border border-slate-800 text-slate-200 hover:border-slate-700 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <span>{currentLanguage.flag}</span>
+              <span className="font-semibold">{currentLanguage.nativeName}</span>
+              <ChevronDown className="w-3 h-3 text-slate-400" />
+            </button>
+
+            {showLangMenu && (
+              <div 
+                className={`absolute top-10 ${isRtl ? 'left-0' : 'right-0'} bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 min-w-[150px] animate-in fade-in zoom-in-95 duration-150`}
+              >
+                {LANGUAGES.map((lang: Language) => (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => {
+                      setLanguage(lang);
+                      setShowLangMenu(false);
+                    }}
+                    className={`w-full text-right px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                      currentLanguage.code === lang.code 
+                        ? 'bg-emerald-600 text-white font-bold' 
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{lang.flag}</span>
+                      <span>{lang.nativeName}</span>
+                    </span>
+                    {currentLanguage.code === lang.code && <Check className="w-3.5 h-3.5" />}
+                  </button>
+                ))}
               </div>
-              <span className="text-xs font-bold text-slate-200">
-                منظومات الدخول المستقلة للمجموعة:
-              </span>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* ========================================================================= */}
+      {/* MAIN CONTAINER: TWO-PANEL EXECUTIVE ENTERPRISE GATEWAY */}
+      {/* ========================================================================= */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 z-10">
+        <div 
+          className="w-full max-w-6xl rounded-3xl backdrop-blur-2xl bg-slate-900/70 border border-slate-800/90 shadow-2xl overflow-hidden flex flex-col lg:flex-row"
+          style={{
+            flexDirection: isRtl ? 'row-reverse' : 'row'
+          }}
+        >
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* PANEL 1: SOVEREIGN REGULATORY TRUST & CORPORATE SHOWCASE     */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          <div 
+            className="hidden lg:flex flex-1 relative overflow-hidden flex-col justify-between p-8 xl:p-10 border-inline-end border-slate-800/70 min-h-[660px]"
+            style={{
+              background: 'radial-gradient(circle at 50% 40%, rgba(13, 27, 44, 0.45) 0%, rgba(6, 11, 18, 0.95) 100%)'
+            }}
+          >
+            {/* Background Three.js Geospatial Canvas */}
+            <div
+              ref={containerRef}
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full opacity-45 pointer-events-none z-0"
+            />
+
+            {/* Top Identity & Scope */}
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold mb-4">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>البيئة السحابية السيادية المعتمدة</span>
+              </div>
+
+              <h2 className="text-2xl xl:text-3xl font-black text-white leading-tight mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>
+                بوابة الحوكمة والتحول الرقمي
+              </h2>
+              <p className="text-xs text-slate-300 leading-relaxed max-w-md">
+                المنصة المركزية لإدارة عمليات الاستقدام والتشغيل والمنافسات، المعتمدة والمربوطة بالكامل مع المنظومات والمنصات الحكومية السعودية.
+              </p>
             </div>
 
-            {/* Segmented Category Buttons */}
-            <div className="flex items-center gap-1 bg-slate-950/70 p-1 rounded-xl border border-slate-800/70">
-              {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map((cat) => {
+            {/* Selected Subsidiary Dossier Spotlight */}
+            <div className="relative z-10 my-4 p-5 rounded-2xl bg-slate-950/80 border border-slate-800/80 backdrop-blur-md shadow-xl">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-md"
+                    style={{ background: selectedPortal.gradient || selectedPortal.themeColor }}
+                  >
+                    {renderPortalIcon(selectedPortal.iconName, 'w-5 h-5')}
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-white block">
+                      {selectedPortal.nameAr}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono block">
+                      {selectedPortal.license}
+                    </span>
+                  </div>
+                </div>
+
+                <span 
+                  className="px-2.5 py-1 rounded-full text-[10px] font-bold border"
+                  style={{
+                    background: `${selectedPortal.themeColor}15`,
+                    color: selectedPortal.themeColor,
+                    borderColor: `${selectedPortal.themeColor}35`
+                  }}
+                >
+                  {selectedPortal.tagBadge}
+                </span>
+              </div>
+
+              <p className="text-[11px] text-slate-300 leading-relaxed mb-3">
+                {selectedPortal.description}
+              </p>
+
+              {/* Dynamic Live Metric Counters */}
+              <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/70">
+                {selectedPortal.kpis.map((kpi, idx) => (
+                  <div key={idx} className="bg-slate-900/70 p-2 rounded-lg border border-slate-800/50 text-center">
+                    <span className="text-xs font-black text-white font-mono block">{kpi.value}</span>
+                    <span className="text-[9.5px] text-slate-400 block mt-0.5">{kpi.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Official Saudi Regulatory Compliance Grid */}
+            <div className="relative z-10 pt-4 border-t border-slate-800/70">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2.5">
+                الاعتمادات والتكاملات الحكومية السعودية المباشرة
+              </span>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/60 border border-slate-800/60 text-[11px] text-slate-200">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
+                    <FileCheck2 className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="truncate">
+                    <span className="font-bold block truncate">ZATCA الفوترة الإلكترونية</span>
+                    <span className="text-[9px] text-slate-400 block truncate">المرحلة الثانية • الربط والتكامل</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/60 border border-slate-800/60 text-[11px] text-slate-200">
+                  <div className="w-6 h-6 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0">
+                    <Building2 className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="truncate">
+                    <span className="font-bold block truncate">منصة مساند (HRSD)</span>
+                    <span className="text-[9px] text-slate-400 block truncate">توثيق العقود والتأشيرات</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/60 border border-slate-800/60 text-[11px] text-slate-200">
+                  <div className="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
+                    <Cpu className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="truncate">
+                    <span className="font-bold block truncate">الأمن السيبراني (NCA)</span>
+                    <span className="text-[9px] text-slate-400 block truncate">ضوابط ECC وعزل البيانات</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-950/60 border border-slate-800/60 text-[11px] text-slate-200">
+                  <div className="w-6 h-6 rounded-lg bg-teal-500/15 text-teal-400 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="truncate">
+                    <span className="font-bold block truncate">رؤية المملكة 2030</span>
+                    <span className="text-[9px] text-slate-400 block truncate">التحول الرقمي والأتمتة</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* PANEL 2: EXECUTIVE ACCESS GATEWAY & CREDENTIALS FORM          */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          <div className="w-full lg:w-[480px] p-6 sm:p-9 bg-slate-950/95 flex flex-col justify-between relative z-10">
+            <div>
+              {/* Subsidiary / Portal Compact Switcher */}
+              <div className="mb-6 pb-4 border-b border-slate-800/70">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-[11px] font-bold text-slate-400">
+                    المنظومة المستهدفة للدخول:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowPortalSelectorModal(true)}
+                    className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <span>تبديل المنظومة ({SYSTEM_PORTALS.length})</span>
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                </div>
+
+                {/* Selected Portal Trigger Bar */}
+                <div 
+                  onClick={() => setShowPortalSelectorModal(true)}
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div 
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-white shrink-0"
+                      style={{ background: selectedPortal.themeColor }}
+                    >
+                      {renderPortalIcon(selectedPortal.iconName, 'w-3.5 h-3.5')}
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-xs font-bold text-white block truncate">
+                        {selectedPortal.nameAr}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block truncate font-mono">
+                        {selectedPortal.license.split('•')[0].trim()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-semibold group-hover:bg-slate-700 transition-colors shrink-0">
+                    نشط
+                  </span>
+                </div>
+              </div>
+
+              {/* Error Notification Banner */}
+              {displayedError && (
+                <div className="p-3.5 rounded-xl bg-red-950/60 border border-red-800 text-red-200 text-xs font-medium mb-5 flex items-center gap-2.5 shadow-lg shadow-red-950/40">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  <span className="flex-1">{displayedError}</span>
+                </div>
+              )}
+
+              {!is2FAStep ? (
+                /* Standard Login Flow */
+                <div>
+                  <div className="mb-5">
+                    <h1 className="text-xl font-bold text-white m-0" style={{ fontFamily: 'var(--font-family-display)' }}>
+                      تسجيل الدخول المؤسسي
+                    </h1>
+                    <p className="text-xs text-slate-400 mt-1 m-0">
+                      أدخل بيانات الاعتماد المعتمدة للوصول إلى بيئة العمل السحابية.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleInitialSubmit} className="space-y-4">
+                    {/* Username Input */}
+                    <div>
+                      <label 
+                        htmlFor="login-username" 
+                        className="block text-xs font-bold text-slate-300 mb-1.5"
+                      >
+                        اسم المستخدم أو البريد الإلكتروني المعتمد
+                      </label>
+                      <div className="relative flex items-center">
+                        <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-500">
+                          <User className="w-4 h-4" />
+                        </div>
+                        <input
+                          id="login-username"
+                          type="text"
+                          value={username}
+                          onChange={e => setUsername(e.target.value)}
+                          placeholder="user.name أو admin@alsulaim.com"
+                          className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white rounded-xl py-2.5 pr-10 pl-3.5 text-xs transition-all outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Password Input */}
+                    <div>
+                      <label 
+                        htmlFor="login-password" 
+                        className="block text-xs font-bold text-slate-300 mb-1.5"
+                      >
+                        {t('password', 'كلمة المرور المؤسسية')}
+                      </label>
+                      <div className="relative flex items-center">
+                        <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-500">
+                          <Lock className="w-4 h-4" />
+                        </div>
+                        <input
+                          id="login-password"
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={e => setPassword(e.target.value)}
+                          placeholder="••••••••••••"
+                          className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white rounded-xl py-2.5 pr-10 pl-10 text-xs transition-all outline-none font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
+                          className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 hover:text-slate-300 cursor-pointer"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Remember & Forgot Links */}
+                    <div className="flex items-center justify-between text-xs pt-0.5">
+                      <label className="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-300">
+                        <input
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={e => setRememberMe(e.target.checked)}
+                          className="w-4 h-4 rounded bg-slate-900 border-slate-800 text-emerald-600 focus:ring-emerald-500/20 focus:ring-offset-0"
+                        />
+                        <span>{t('rememberMe', 'حفظ الجلسة على هذا الجهاز')}</span>
+                      </label>
+                      <a 
+                        href="#forgot" 
+                        onClick={e => e.preventDefault()} 
+                        className="text-emerald-400 hover:text-emerald-300 font-semibold"
+                      >
+                        {t('forgotPassword', 'نسيت كلمة المرور؟')}
+                      </a>
+                    </div>
+
+                    {/* Primary CTA */}
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 hover:shadow-emerald-900/80 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>جاري التحقق من الهوية والصلاحيات...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>تسجيل الدخول إلى المنظومة</span>
+                          <ArrowLeft className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+
+                  {/* Biometric Passkey / WebAuthn Options */}
+                  <div className="mt-5 pt-4 border-t border-slate-800/80">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                        <Fingerprint className="w-3.5 h-3.5 text-amber-400" />
+                        <span>المصادقة البيومترية المعتمدة (FIDO2 / WebAuthn)</span>
+                      </span>
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 font-mono">
+                        {hasHardwareWebAuthn ? '● متصل بالأمان' : '● بروتوكول جاهز'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => handleTriggerBiometric('fingerprint')}
+                        className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 text-amber-300 hover:bg-slate-850 text-xs font-bold transition-all shadow-sm cursor-pointer"
+                      >
+                        <Fingerprint className="w-4 h-4 text-amber-400" />
+                        <span>بصمة الإصبع</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTriggerBiometric('face')}
+                        className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 text-purple-300 hover:bg-slate-850 text-xs font-bold transition-all shadow-sm cursor-pointer"
+                      >
+                        <ScanFace className="w-4 h-4 text-purple-400" />
+                        <span>بصمة الوجه</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* 2FA TOTP Verification Step */
+                <div className="animate-in fade-in zoom-in-95 duration-200">
+                  <div className="mb-4">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 inline-block mb-1.5">
+                      المصادقة الثنائية الإلزامية 2FA
+                    </span>
+                    <h1 className="text-xl font-bold text-white m-0" style={{ fontFamily: 'var(--font-family-display)' }}>
+                      {enrollment || enrollLoading ? 'تفعيل المصادقة الثنائية لأول مرة' : 'تأكيد رمز التحقق (TOTP)'}
+                    </h1>
+                    <p className="text-xs text-slate-400 mt-1 m-0 leading-relaxed">
+                      {enrollment || enrollLoading
+                        ? 'امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Microsoft Authenticator) وأدخل الرمز لتأمين حسابك.'
+                        : <>أدخل الرمز المتجدد من تطبيق المصادقة للدخول إلى <strong>{selectedPortal.nameAr}</strong>.</>}
+                    </p>
+                  </div>
+
+                  {enrollLoading && (
+                    <div className="flex flex-col items-center justify-center p-6 bg-slate-900/50 rounded-2xl border border-slate-800 mb-4">
+                      <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mb-2" />
+                      <span className="text-xs text-slate-400 font-medium">جاري إنشاء وتجهيز مفتاح المصادقة الثنائية...</span>
+                    </div>
+                  )}
+
+                  {enrollment && (
+                    <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-3 mb-4">
+                      <div className="p-2 rounded-xl bg-white shadow-xl">
+                        <img
+                          src={enrollment.qrCode}
+                          alt="QR Code"
+                          width={160}
+                          height={160}
+                          className="block rounded-lg"
+                        />
+                      </div>
+                      <div className="text-center w-full">
+                        <span className="text-[11px] text-slate-400 block mb-1">أو أدخل المفتاح السري يدوياً:</span>
+                        <div className="flex items-center justify-center gap-1.5">
+                          <code 
+                            dir="ltr"
+                            className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs select-all tracking-wider"
+                          >
+                            {enrollment.secret}
+                          </code>
+                          <button
+                            type="button"
+                            onClick={() => copySecretToClipboard(enrollment.secret)}
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                            title="نسخ المفتاح"
+                          >
+                            {copiedSecret ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                        {copiedSecret && <span className="text-[10px] text-emerald-400 mt-1 block">تم النسخ إلى الحافظة</span>}
+                      </div>
+                    </div>
+                  )}
+
+                  <form onSubmit={handle2FASubmit} className="space-y-4">
+                    <div
+                      role="group"
+                      aria-label="أرقام المصادقة الثنائية"
+                      className="flex gap-2 justify-center"
+                      dir="ltr"
+                      onPaste={handleOtpPaste}
+                    >
+                      {otpValues.map((val, idx) => (
+                        <input
+                          key={idx}
+                          ref={el => { otpInputsRef.current[idx] = el; }}
+                          type="text"
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          maxLength={1}
+                          aria-label={`الرقم ${idx + 1}`}
+                          value={val}
+                          onChange={e => handleOtpChange(idx, e.target.value)}
+                          onKeyDown={e => handleOtpKeyDown(idx, e)}
+                          className={`w-11 h-14 rounded-xl text-center text-xl font-bold font-mono transition-all outline-none ${
+                            val 
+                              ? 'bg-slate-900 border-2 border-emerald-500 text-white shadow-lg shadow-emerald-950/60' 
+                              : 'bg-slate-950 border border-slate-800 text-slate-300 focus:border-slate-600'
+                          }`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <span className="text-slate-400 text-[11px]">
+                        يتجدد الرمز تلقائياً كل 30 ثانية في هاتفك
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleCancelMfa}
+                        disabled={submitting}
+                        className="text-slate-400 hover:text-white font-semibold underline cursor-pointer"
+                      >
+                        إلغاء والعودة
+                      </button>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submitting || enrollLoading}
+                      className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>جاري التحقق من الرمز...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="w-4 h-4" />
+                          <span>تأكيد الرمز والدخول إلى {selectedPortal.nameAr}</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              )}
+            </div>
+
+            {/* Institutional Compliance Notice & Security Seal */}
+            <div className="pt-6 mt-6 border-t border-slate-900">
+              <p className="text-[10px] text-slate-400 leading-relaxed text-justify mb-3">
+                نظام مصرح به لموظفي مجموعة خالد السليم والجهات المعتمدة فقط. تخضع كافة العمليات للرقابة والتدقيق الأمني المستمر وفق أنظمة ولوائح المملكة العربية السعودية.
+              </p>
+              <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-900/80">
+                <span>© ٢٠٢٦ مجموعة خالد السليم القابضة</span>
+                <span className="flex items-center gap-1 text-slate-400 font-mono text-[10px]">
+                  <Lock className="w-3 h-3 text-emerald-500" />
+                  <span>256-BIT TLS • NCA COMPLIANT</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* ========================================================================= */}
+      {/* EXECUTIVE SUBSIDIARY SELECTOR MODAL (Clean Institutional Popover)       */}
+      {/* ========================================================================= */}
+      {showPortalSelectorModal && (
+        <div 
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setShowPortalSelectorModal(false)}
+        >
+          <div 
+            onClick={e => e.stopPropagation()}
+            className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl relative"
+            dir={currentLanguage.dir}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white m-0">
+                    منظومات وبوابات مجموعة خالد السليم
+                  </h3>
+                  <p className="text-xs text-slate-400 m-0">
+                    حدد مساحة العمل التشغيلية أو الشركة التابعة لتسجيل الدخول المباشر
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPortalSelectorModal(false)}
+                className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Category Tabs */}
+            <div className="flex items-center gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800/80 mb-4">
+              {(['شركات المجموعة', 'البوابات الرقمية', 'الإدارة والسيطرة'] as const).map(cat => {
+                const isCatActive = selectorModalCategory === cat;
                 const count = SYSTEM_PORTALS.filter(p => p.category === cat).length;
-                const isCatActive = selectedCategory === cat;
                 return (
                   <button
                     key={cat}
                     type="button"
-                    onClick={() => {
-                      setSelectedCategory(cat);
-                      const firstInCat = SYSTEM_PORTALS.find(p => p.category === cat);
-                      if (firstInCat) handleSelectPortal(firstInCat);
-                    }}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 ${
+                    onClick={() => setSelectorModalCategory(cat)}
+                    className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       isCatActive
-                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/50'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/60'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850'
                     }`}
                   >
                     <span>{cat}</span>
@@ -771,531 +1312,54 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 );
               })}
             </div>
-          </div>
 
-          {/* Portals Grid */}
-          <div className={`grid gap-2 ${
-            selectedCategory === 'شركات المجموعة'
-              ? 'grid-cols-1 sm:grid-cols-3'
-              : selectedCategory === 'البوابات الرقمية'
-              ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
-              : 'grid-cols-1 max-w-lg mx-auto'
-          }`}>
-            {SYSTEM_PORTALS.filter(p => p.category === selectedCategory).map((portal) => {
-              const isCurrent = selectedPortal.id === portal.id;
-              return (
-                <button
-                  key={portal.id}
-                  type="button"
-                  dir={currentLanguage.dir}
-                  onClick={() => handleSelectPortal(portal)}
-                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-start transition-all cursor-pointer relative overflow-hidden group ${
-                    isCurrent
-                      ? 'bg-slate-800/90 border-emerald-500/80 shadow-md shadow-emerald-950/40 ring-1 ring-emerald-500/40'
-                      : 'bg-slate-900/40 border-slate-800/60 hover:border-slate-700 hover:bg-slate-800/40'
-                  }`}
-                >
-                  {isCurrent && (
+            {/* Portals List */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
+              {SYSTEM_PORTALS.filter(p => p.category === selectorModalCategory).map(portal => {
+                const isCurrent = selectedPortal.id === portal.id;
+                return (
+                  <button
+                    key={portal.id}
+                    type="button"
+                    onClick={() => handleSelectPortal(portal)}
+                    className={`flex items-start gap-3 p-3 rounded-2xl border text-start transition-all cursor-pointer relative overflow-hidden group ${
+                      isCurrent
+                        ? 'bg-slate-800/90 border-emerald-500 shadow-md ring-1 ring-emerald-500/40'
+                        : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700 hover:bg-slate-850'
+                    }`}
+                  >
                     <div 
-                      className="absolute top-0 right-0 left-0 h-[2.5px] transition-all"
-                      style={{ background: portal.themeColor }} 
-                    />
-                  )}
-                  <div 
-                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 transition-transform group-hover:scale-105"
-                    style={{
-                      background: `${portal.themeColor}22`,
-                      color: portal.themeColor,
-                      border: `1px solid ${portal.themeColor}44`
-                    }}
-                  >
-                    {renderPortalIcon(portal.iconName, 'w-3.5 h-3.5')}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <span className="text-xs font-bold text-slate-100 truncate">{portal.nameAr}</span>
-                      {isCurrent && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                      style={{
+                        background: `${portal.themeColor}22`,
+                        color: portal.themeColor,
+                        border: `1px solid ${portal.themeColor}40`
+                      }}
+                    >
+                      {renderPortalIcon(portal.iconName, 'w-4 h-4')}
                     </div>
-                    <span className="text-[10px] text-slate-400 truncate block">{portal.license}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 2. MAIN LOGIN CARD CONTAINER (Executive Split Layout) */}
-      {/* ========================================================================= */}
-      <div 
-        className="w-full max-w-6xl xl:max-w-7xl rounded-3xl backdrop-blur-2xl bg-slate-900/80 border border-slate-800/90 shadow-2xl overflow-hidden flex flex-col lg:flex-row relative z-10"
-        style={{
-          flexDirection: isRtl ? 'row-reverse' : 'row',
-        }}
-      >
-        {/* Right Side: Visual Hero & 3D Interactive Mascot Dossier */}
-        <div 
-          className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center p-8 xl:p-10 border-inline-end border-slate-800/70 min-h-[660px]"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.4) 0%, rgba(8, 14, 24, 0.9) 100%)'
-          }}
-        >
-          {/* Three.js Interactive Wireframe Canvas */}
-          <div
-            ref={containerRef}
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full opacity-60 pointer-events-none z-0"
-          />
-
-          {/* Hero Centerpiece: Mascot + Floating Glass Company Dossier */}
-          <div className="relative z-10 w-full flex flex-col xl:flex-row items-center justify-center gap-6 xl:gap-8">
-            {/* Mascot */}
-            <div className="shrink-0 drop-shadow-2xl">
-              <SaudiAssistantMascot selectedPortal={selectedPortal} isRtl={isRtl} />
-            </div>
-
-            {/* Executive Glass Dossier Card */}
-            <div
-              ref={visualCardRef}
-              className="max-w-[370px] w-full p-6 rounded-2xl backdrop-blur-xl bg-slate-950/75 border border-slate-700/60 shadow-2xl text-center relative overflow-hidden"
-              style={{
-                boxShadow: `0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 30px -10px ${selectedPortal.themeColor}33`
-              }}
-            >
-              {/* Portal Icon Stamp */}
-              <div className="flex justify-center mb-3">
-                <div 
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform duration-300 hover:scale-105"
-                  style={{
-                    background: selectedPortal.gradient || selectedPortal.themeColor,
-                    boxShadow: `0 10px 25px -5px ${selectedPortal.themeColor}66`
-                  }}
-                >
-                  {selectedPortal.id === 'admin' ? <ShieldCheck className="w-8 h-8" /> :
-                   selectedPortal.id === 'client' ? <UserCheck className="w-8 h-8" /> :
-                   selectedPortal.id === 'agent' ? <Globe className="w-8 h-8" /> :
-                   selectedPortal.id === 'shelter' ? <Hotel className="w-8 h-8" /> :
-                   selectedPortal.id === 'ecommerce' ? <Store className="w-8 h-8" /> :
-                   selectedPortal.id === 'kas' ? <Briefcase className="w-8 h-8" /> :
-                   <Building2 className="w-8 h-8" />}
-                </div>
-              </div>
-
-              {/* Tag Badge */}
-              <div className="mb-2">
-                <span 
-                  className="px-3 py-1 rounded-full text-xs font-bold inline-block border"
-                  style={{
-                    background: `${selectedPortal.themeColor}18`,
-                    color: selectedPortal.themeColor,
-                    borderColor: `${selectedPortal.themeColor}40`
-                  }}
-                >
-                  {selectedPortal.tagBadge}
-                </span>
-              </div>
-
-              {/* Company Title */}
-              <h2 className="text-xl font-bold text-white mb-1.5" style={{ fontFamily: 'var(--font-family-display)' }}>
-                {selectedPortal.nameAr}
-              </h2>
-              <div 
-                className="w-12 h-1 mx-auto mb-3 rounded-full" 
-                style={{ background: selectedPortal.themeColor }}
-              />
-
-              <p className="text-xs text-slate-300 leading-relaxed m-0">
-                {selectedPortal.description}
-              </p>
-
-              <div className="mt-3 p-2 bg-slate-900/80 border border-slate-800 rounded-xl text-[11px] font-bold text-slate-300">
-                {selectedPortal.license}
-              </div>
-
-              {/* Live Metric Counters */}
-              <div className="grid grid-cols-3 gap-2 mt-4 pt-3.5 border-t border-slate-800/80">
-                {selectedPortal.kpis.map((kpi, idx) => (
-                  <div key={idx} className="bg-slate-900/60 p-2 rounded-lg border border-slate-800/50">
-                    <span className="font-extrabold text-xs text-white block font-mono">{kpi.value}</span>
-                    <span className="text-[10px] text-slate-400 block mt-0.5">{kpi.label}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Compliance Trust Seal */}
-              <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-center gap-3 text-[10px] text-slate-400 font-medium">
-                <span className="flex items-center gap-1 text-emerald-400">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>ZATCA Phase 2</span>
-                </span>
-                <span className="text-slate-600">•</span>
-                <span className="flex items-center gap-1 text-sky-400">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>مساند HRSD</span>
-                </span>
-                <span className="text-slate-600">•</span>
-                <span className="text-amber-400 font-bold">رؤية 2030</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Left Side: Luxury Form & Authentication Panel */}
-        <div className="w-full lg:w-[500px] p-6 sm:p-9 bg-slate-950/90 flex flex-col justify-between relative z-10 mx-auto">
-          <div>
-            {/* Brand Header & Language Selector */}
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-800/70">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 p-0.5 shadow-lg shadow-emerald-950/60">
-                  <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center overflow-hidden">
-                    <img src="/logo.png" alt="Logo" className="w-7 h-7 object-contain" />
-                  </div>
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-white block">مجموعة خالد السليم ERP</span>
-                  <span className="text-[10px] text-emerald-400 font-mono">SECURE ENTERPRISE GATE</span>
-                </div>
-              </div>
-
-              {/* Language Dropdown */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowLangMenu(!showLangMenu)}
-                  aria-expanded={showLangMenu}
-                  aria-haspopup="true"
-                  className="px-3 py-1.5 text-xs rounded-full bg-slate-900 border border-slate-800 text-slate-200 hover:border-slate-700 hover:text-white flex items-center gap-1.5 transition-all"
-                >
-                  <span>{currentLanguage.flag}</span>
-                  <span className="font-semibold">{currentLanguage.nativeName}</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
-                </button>
-
-                {showLangMenu && (
-                  <div 
-                    className="absolute top-10 left-0 right-auto bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-1 z-50 min-w-[160px] animate-in fade-in zoom-in-95 duration-150"
-                  >
-                    {LANGUAGES.map((lang: Language) => (
-                      <button
-                        key={lang.code}
-                        type="button"
-                        onClick={() => {
-                          setLanguage(lang);
-                          setShowLangMenu(false);
-                        }}
-                        className={`w-full text-right px-3 py-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
-                          currentLanguage.code === lang.code 
-                            ? 'bg-emerald-600 text-white font-bold' 
-                            : 'text-slate-300 hover:bg-slate-800 hover:text-white'
-                        }`}
-                      >
-                        <span className="flex items-center gap-2">
-                          <span>{lang.flag}</span>
-                          <span>{lang.nativeName}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1 mb-1">
+                        <span className="text-xs font-bold text-white truncate block">
+                          {portal.nameAr}
                         </span>
-                        {currentLanguage.code === lang.code && <Check className="w-3.5 h-3.5" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                        {isCurrent && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                      </div>
+                      <span className="text-[10.5px] text-slate-400 block truncate">
+                        {portal.license}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-
-            {/* Error Notification Banner */}
-            {displayedError && (
-              <div className="p-3.5 rounded-xl bg-red-950/60 border border-red-800 text-red-200 text-xs font-medium mb-5 flex items-center gap-2.5 shadow-lg shadow-red-950/40">
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                <span className="flex-1">{displayedError}</span>
-              </div>
-            )}
-
-            {!is2FAStep ? (
-              /* Step 1: Standard Username & Password Form */
-              <div>
-                {/* Active Portal Header */}
-                <div className="mb-5">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span 
-                      className="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider" 
-                      style={{ background: selectedPortal.themeColor }}
-                    >
-                      {selectedPortal.license.split('•')[0].trim()}
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-medium">بوابة دخول آمنة</span>
-                  </div>
-
-                  <h1 className="text-xl font-bold text-white m-0" style={{ fontFamily: 'var(--font-family-display)' }}>
-                    تسجيل الدخول: {selectedPortal.nameAr}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1 m-0">
-                    أدخل بيانات الاعتماد المعتمدة للوصول إلى مساحة العمل التشغيلية المعزولة.
-                  </p>
-                </div>
-
-                <form onSubmit={handleInitialSubmit} className="space-y-4">
-                  {/* Username Input */}
-                  <div>
-                    <label 
-                      htmlFor="login-username" 
-                      className="block text-xs font-bold text-slate-300 mb-1.5"
-                    >
-                      اسم المستخدم أو البريد الإلكتروني المعتمد
-                    </label>
-                    <div className="relative flex items-center">
-                      <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-500">
-                        <User className="w-4 h-4" />
-                      </div>
-                      <input
-                        id="login-username"
-                        type="text"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="user.name أو username@alsulaim.sa"
-                        className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white rounded-xl py-2.5 pr-10 pl-3.5 text-xs transition-all outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Password Input */}
-                  <div>
-                    <label 
-                      htmlFor="login-password" 
-                      className="block text-xs font-bold text-slate-300 mb-1.5"
-                    >
-                      {t('password', 'كلمة المرور')}
-                    </label>
-                    <div className="relative flex items-center">
-                      <div className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-500">
-                        <Lock className="w-4 h-4" />
-                      </div>
-                      <input
-                        id="login-password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        placeholder="••••••••••••"
-                        className="w-full bg-slate-900 border border-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-white rounded-xl py-2.5 pr-10 pl-10 text-xs transition-all outline-none font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
-                        className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 hover:text-slate-300"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Remember & Forgot */}
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <label className="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-300">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={e => setRememberMe(e.target.checked)}
-                        className="w-4 h-4 rounded bg-slate-900 border-slate-800 text-emerald-600 focus:ring-emerald-500/20 focus:ring-offset-0"
-                      />
-                      <span>{t('rememberMe', 'تذكرني على هذا الجهاز')}</span>
-                    </label>
-                    <a 
-                      href="#forgot" 
-                      onClick={e => e.preventDefault()} 
-                      className="text-emerald-400 hover:text-emerald-300 font-semibold"
-                    >
-                      {t('forgotPassword', 'نسيت كلمة المرور؟')}
-                    </a>
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 hover:shadow-emerald-900/80 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>جاري التحقق من الهوية والصلاحيات...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>دخول {selectedPortal.nameAr.startsWith('بوابة') ? selectedPortal.nameAr : `منظومة ${selectedPortal.nameAr}`}</span>
-                        <ArrowLeft className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
-
-                {/* Biometric FIDO2 / WebAuthn Hardware Chips */}
-                <div className="mt-5 pt-4 border-t border-slate-800/80">
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                      <Fingerprint className="w-3.5 h-3.5 text-amber-400" />
-                      <span>المصادقة البيومترية المعتمدة (FIDO2 / WebAuthn)</span>
-                    </span>
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 font-mono">
-                      {hasHardwareWebAuthn ? '● متصل بالأمان' : '● بروتوكول جاهز'}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => handleTriggerBiometric('fingerprint')}
-                      className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-500/70 text-amber-300 hover:bg-slate-850 text-xs font-bold transition-all shadow-sm cursor-pointer"
-                    >
-                      <Fingerprint className="w-4 h-4 text-amber-400" />
-                      <span>بصمة الإصبع</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleTriggerBiometric('face')}
-                      className="flex items-center justify-center gap-2 h-10 rounded-xl bg-slate-900/90 border border-purple-500/30 hover:border-purple-500/70 text-purple-300 hover:bg-slate-850 text-xs font-bold transition-all shadow-sm cursor-pointer"
-                    >
-                      <ScanFace className="w-4 h-4 text-purple-400" />
-                      <span>بصمة الوجه</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Step 2: 2FA TOTP Form */
-              <div className="animate-in fade-in zoom-in-95 duration-200">
-                <div className="mb-4">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 inline-block mb-1.5">
-                    المصادقة الثنائية الإلزامية 2FA
-                  </span>
-                  <h1 className="text-xl font-bold text-white m-0" style={{ fontFamily: 'var(--font-family-display)' }}>
-                    {enrollment || enrollLoading ? 'تفعيل المصادقة الثنائية للمرة الأولى' : 'تأكيد رمز التحقق (TOTP)'}
-                  </h1>
-                  <p className="text-xs text-slate-400 mt-1 m-0 leading-relaxed">
-                    {enrollment || enrollLoading
-                      ? 'امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Microsoft Authenticator) وأدخل الرمز لتأمين حسابك.'
-                      : <>أدخل الرمز المتجدد من تطبيق المصادقة للدخول إلى <strong>{selectedPortal.nameAr}</strong>.</>}
-                  </p>
-                </div>
-
-                {enrollLoading && (
-                  <div className="flex flex-col items-center justify-center p-6 bg-slate-900/50 rounded-2xl border border-slate-800 mb-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald-400 mb-2" />
-                    <span className="text-xs text-slate-400 font-medium">جاري إنشاء وتجهيز مفتاح المصادقة الثنائية...</span>
-                  </div>
-                )}
-
-                {enrollment && (
-                  <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl bg-white shadow-xl">
-                      <img
-                        src={enrollment.qrCode}
-                        alt="QR Code"
-                        width={160}
-                        height={160}
-                        className="block rounded-lg"
-                      />
-                    </div>
-                    <div className="text-center w-full">
-                      <span className="text-[11px] text-slate-400 block mb-1">أو أدخل المفتاح السري يدوياً:</span>
-                      <div className="flex items-center justify-center gap-1.5">
-                        <code 
-                          dir="ltr"
-                          className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs select-all tracking-wider"
-                        >
-                          {enrollment.secret}
-                        </code>
-                        <button
-                          type="button"
-                          onClick={() => copySecretToClipboard(enrollment.secret)}
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-                          title="نسخ المفتاح"
-                        >
-                          {copiedSecret ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                      {copiedSecret && <span className="text-[10px] text-emerald-400 mt-1 block">تم النسخ إلى الحافظة</span>}
-                    </div>
-                  </div>
-                )}
-
-                <form onSubmit={handle2FASubmit} className="space-y-4">
-                  <div
-                    role="group"
-                    aria-label="أرقام المصادقة الثنائية"
-                    className="flex gap-2 justify-center"
-                    dir="ltr"
-                    onPaste={handleOtpPaste}
-                  >
-                    {otpValues.map((val, idx) => (
-                      <input
-                        key={idx}
-                        ref={el => { otpInputsRef.current[idx] = el; }}
-                        type="text"
-                        inputMode="numeric"
-                        autoComplete="one-time-code"
-                        maxLength={1}
-                        aria-label={`الرقم ${idx + 1}`}
-                        value={val}
-                        onChange={e => handleOtpChange(idx, e.target.value)}
-                        onKeyDown={e => handleOtpKeyDown(idx, e)}
-                        className={`w-11 h-14 rounded-xl text-center text-xl font-bold font-mono transition-all outline-none ${
-                          val 
-                            ? 'bg-slate-900 border-2 border-emerald-500 text-white shadow-lg shadow-emerald-950/60' 
-                            : 'bg-slate-950 border border-slate-800 text-slate-300 focus:border-slate-600'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="text-slate-400 text-[11px]">
-                      يتجدد الرمز تلقائياً كل 30 ثانية في هاتفك
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleCancelMfa}
-                      disabled={submitting}
-                      className="text-slate-400 hover:text-white font-semibold underline cursor-pointer"
-                    >
-                      إلغاء والعودة
-                    </button>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={submitting || enrollLoading}
-                    className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/60 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                  >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>جاري التحقق من الرمز...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Shield className="w-4 h-4" />
-                        <span>تأكيد الرمز والدخول إلى {selectedPortal.nameAr}</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-
-          {/* Footer Security Badges */}
-          <div className="pt-6 mt-6 border-t border-slate-850 flex items-center justify-between text-[11px] text-slate-500">
-            <span>© ٢٠٢٦ مجموعة خالد السليم القابضة</span>
-            <span className="flex items-center gap-1 text-slate-400">
-              <Lock className="w-3 h-3 text-emerald-500" />
-              <span>اتصال مشفر 256-bit TLS</span>
-            </span>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Biometric Scan HUD Modal (Futuristic Security Radar) */}
+      {/* ========================================================================= */}
+      {/* BIOMETRIC HUD MODAL                                                       */}
+      {/* ========================================================================= */}
       {biometricModal && (
         <div
           role="dialog"
@@ -1303,7 +1367,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-200"
         >
           <div className="w-full max-w-md bg-slate-900 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl text-center relative overflow-hidden">
-            {/* Top Security Pill */}
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5" />
@@ -1311,7 +1374,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               </span>
             </div>
 
-            {/* Scanner Target */}
             <div className="relative w-28 h-28 mx-auto my-5 rounded-2xl bg-slate-950 border-2 border-dashed border-slate-700 flex items-center justify-center overflow-hidden">
               {biometricStatus === 'scanning' && (
                 <div
@@ -1345,7 +1407,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               {biometricMessage}
             </p>
 
-            {/* Progress Bar */}
             <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mb-6">
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
