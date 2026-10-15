@@ -6,7 +6,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { 
   ArrowLeft, Network, TrendingUp, Bot, ShieldCheck, 
   Menu, X, Building2, ChevronDown, Sparkles, LogIn, CheckCircle2,
-  Lock, Globe, Hotel, Briefcase, Users, MessageSquare, Volume2, VolumeX
+  Lock, Globe, Hotel, Briefcase, Users, MessageSquare, Volume2, VolumeX, Smartphone
 } from 'lucide-react';
 import { playPersonaIntroGreeting, stopAllAudio, subscribeAudioState } from '../services/audioVoiceService';
 
@@ -190,7 +190,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         </nav>
 
         {/* Desktop Action Buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
+          <button
+            type="button"
+            className="px-3.5 py-2 rounded-full text-xs font-extrabold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1.5 transition-all shadow-sm"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-mobile-experience-studio'))}
+            title="فتح نسخة الهاتف التفاعلية وإشعاراتها والعمل في الخلفية"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-amber-600" />
+            <span>نسخة الهاتف</span>
+          </button>
           <button
             type="button"
             className="button-outline-on-light text-xs px-4 py-2 rounded-full font-bold flex items-center gap-1.5"

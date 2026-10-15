@@ -13,7 +13,7 @@ import {
   ChevronDown, Plus, FileText, BarChart3, DollarSign, 
   MessageSquare, ShieldCheck, Settings, LogOut, Check, X,
   Globe, Languages as LanguagesIcon, Building2, ArrowLeftRight,
-  Database, Sparkles
+  Database, Sparkles, Smartphone
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -312,6 +312,17 @@ export const Header: React.FC<HeaderProps> = ({
             <kbd className="hidden xl:inline-block text-[9px] bg-white text-zinc-500 px-1 py-0.2 rounded border border-amber-200/80 font-mono">
               Ctrl+Space
             </kbd>
+          </button>
+
+          {/* Mobile Version Studio Trigger Button */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-mobile-experience-studio'))}
+            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-full text-xs font-extrabold text-amber-900 h-9 transition-all shadow-sm"
+            title="فتح نسخة الهاتف التفاعلية وإشعاراتها والعمل في الخلفية"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-amber-600" />
+            <span>نسخة الهاتف</span>
           </button>
 
           {/* 25 Languages Selector Dropdown */}

@@ -46,10 +46,21 @@ class NotificationPopupEngine {
    * Listens for NOTIFICATION_CLICK events from Service Worker (when user taps a lock-screen or shade notification on mobile)
    */
   private initServiceWorkerBridge(): void {
-    if (this.swListenerAttached || typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    if (this.swListenerAttached || typeof window === 'undefined') {
       return;
     }
     this.swListenerAttached = true;
+
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (data && typeof data === 'object' && data.type === 'MOBILE_STUDIO_TRIGGER_NOTIFICATION' && data.payload) {
+        this.show(data.payload);
+      }
+    });
+
+    if (!('serviceWorker' in navigator)) {
+      return;
+    }
 
     navigator.serviceWorker.addEventListener('message', (event) => {
       const data = event.data;
