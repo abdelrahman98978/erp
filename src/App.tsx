@@ -17,7 +17,6 @@ import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { UniversalNotificationToaster } from './components/common/UniversalNotificationToaster';
 import { PwaInstallPrompt } from './components/common/PwaInstallPrompt';
-import { MobileExperienceStudio } from './components/common/MobileExperienceStudio';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
 import { employeeMonitoringService } from './services/employeeMonitoringService';
@@ -690,7 +689,6 @@ const MainContent: React.FC = () => {
       )}
       <UniversalNotificationToaster onNavigate={(tabKey, title) => handleSelectTab(tabKey, title || '')} />
       <PwaInstallPrompt />
-      <MobileExperienceStudio />
       {showLegalModal && (
         <LegalDisclaimerModal
           user={currentUserForLegal}

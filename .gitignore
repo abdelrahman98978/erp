@@ -40,3 +40,8 @@ supabase/.branches/
 .agents/skills/community-skills/
 \#\ Smacc\ Login.txt
 
+# Duplicate APK binaries (kept in public/ for static downloads)
+/alsulaim-erp-mobile.apk
+mobile_app/*.apk
+
+

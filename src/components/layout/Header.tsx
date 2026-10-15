@@ -314,17 +314,6 @@ export const Header: React.FC<HeaderProps> = ({
             </kbd>
           </button>
 
-          {/* Mobile Version Studio Trigger Button */}
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent('open-mobile-experience-studio'))}
-            className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-full text-xs font-extrabold text-amber-900 h-9 transition-all shadow-sm"
-            title="فتح نسخة الهاتف التفاعلية وإشعاراتها والعمل في الخلفية"
-          >
-            <Smartphone className="w-3.5 h-3.5 text-amber-600" />
-            <span>نسخة الهاتف</span>
-          </button>
-
           {/* 25 Languages Selector Dropdown */}
           <div className="relative">
             <button
