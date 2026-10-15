@@ -899,28 +899,29 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   return (
     <>
-      {/* 1. Docked Edge Pill Tab (When minimized/docked) */}
-      {isDocked && !isOpen && (
+      {/* 1. Docked Edge Pill Tab (When minimized/docked on desktop, or compact floating orb on mobile) */}
+      {!isOpen && (
         <div
-          className="dock-pill-slide-in"
-          style={{
-            position: 'fixed',
-            bottom: '24px',
-            left: '24px',
-            zIndex: 9999,
-            direction: 'rtl',
-          }}
+          className={`dock-pill-slide-in fixed bottom-[calc(74px+env(safe-area-inset-bottom,0px))] lg:bottom-6 left-3 lg:left-6 z-[9990] ${
+            isDocked ? 'block' : 'block lg:hidden'
+          }`}
+          style={{ direction: 'rtl' }}
         >
           <button
             type="button"
             onClick={() => {
-              setIsDocked(false);
-              localStorage.setItem('assistant_mascot_docked', 'false');
+              if (isDocked) {
+                setIsDocked(false);
+                localStorage.setItem('assistant_mascot_docked', 'false');
+              } else {
+                setIsOpen(true);
+                setShowTooltip(false);
+              }
             }}
-            className="group flex items-center gap-2.5 px-3.5 py-2 bg-white/95 backdrop-blur-md border border-amber-300/80 rounded-full shadow-lg hover:shadow-xl hover:bg-amber-50/90 transition-all duration-300 cursor-pointer"
-            title={`إظهار ${persona === 'noura' ? 'نُورة' : 'فارس'} — اختصار: Ctrl + Space`}
+            className="group flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-white/95 backdrop-blur-md border border-amber-300/80 rounded-full shadow-lg hover:shadow-xl hover:bg-amber-50/90 transition-all duration-300 cursor-pointer"
+            title={`التحدث مع ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
           >
-            <div className="relative w-8 h-8 flex-shrink-0">
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
               <img
                 src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
                 alt={persona === 'noura' ? 'نُورة' : 'فارس'}
@@ -930,38 +931,31 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             </div>
 
             <div className="flex flex-col text-right">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black text-zinc-900">
+              <div className="flex items-center gap-1">
+                <span className="text-[11px] sm:text-xs font-black text-zinc-900">
                   {persona === 'noura' ? 'نُورة' : 'فارس'}
                 </span>
-                <span className="text-[9.5px] text-emerald-700 font-bold bg-emerald-50 px-1 rounded border border-emerald-200">
-                  جاهز للمناداة
+                <span className="text-[9px] text-emerald-700 font-bold bg-emerald-50 px-1 rounded border border-emerald-200">
+                  ذكي
                 </span>
               </div>
-              <span className="text-[10px] text-zinc-500">
-                انقر للإظهار • <span className="font-mono text-amber-700 font-bold">Ctrl+Space</span>
+              <span className="hidden sm:inline text-[10px] text-zinc-500">
+                انقر للمحادثة الصوتية
               </span>
             </div>
 
-            <div className="mr-1 text-amber-600 group-hover:translate-x-[-2px] transition-transform">
-              <Bot className="w-4 h-4" />
+            <div className="mr-0.5 text-amber-600">
+              <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </button>
         </div>
       )}
 
-      {/* 2. Frameless 3D Mascot Character (Without circular frame, standing directly) */}
+      {/* 2. Frameless 3D Mascot Character (Desktop Only so it never blocks mobile viewport) */}
       {!isDocked && !isOpen && (
         <div
-          className="mascot-pop-in group"
+          className="mascot-pop-in group hidden lg:flex fixed bottom-4 left-6 z-[9999] flex-col items-center"
           style={{
-            position: 'fixed',
-            bottom: '16px',
-            left: '24px',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
             direction: 'rtl',
           }}
         >
@@ -1100,28 +1094,16 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         </div>
       )}
 
-      {/* 2. Executive Luxury Glassmorphic Chat Window */}
+      {/* 3. Executive Luxury Glassmorphic Chat Window (Full-width bottom sheet on mobile, floating card on desktop) */}
       {isOpen && (
         <div
-          className="speech-bubble-anim"
+          className="speech-bubble-anim fixed inset-x-2.5 bottom-[calc(70px+env(safe-area-inset-bottom,0px))] lg:inset-x-auto lg:bottom-6 lg:left-6 lg:w-[450px] max-w-[calc(100vw-20px)] h-[calc(100dvh-86px-env(safe-area-inset-bottom,0px))] lg:h-[84vh] lg:max-h-[680px] z-[9999] flex flex-col overflow-hidden rounded-3xl"
           style={{
-            position: 'fixed',
-            bottom: '24px',
-            left: '24px',
-            width: '450px',
-            maxWidth: 'calc(100vw - 32px)',
-            maxHeight: '680px',
-            height: '84vh',
             backgroundColor: 'rgba(255, 255, 255, 0.98)',
             backdropFilter: 'blur(24px) saturate(180%)',
             WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-            borderRadius: '28px',
             boxShadow: '0 24px 60px -12px rgba(9, 23, 37, 0.28), 0 0 0 1px rgba(207, 166, 74, 0.35), 0 8px 24px -6px rgba(207, 166, 74, 0.12)',
             border: '1.5px solid rgba(207, 166, 74, 0.45)',
-            zIndex: 9999,
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
             fontFamily: 'var(--font-family-ui)',
             direction: 'rtl',
           }}

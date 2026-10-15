@@ -12,6 +12,47 @@ const NOT_CONFIGURED = supabaseConfigError || 'قاعدة البيانات غي�
 
 // --- Generic CRUD Operations ---
 
+export type ErpTableName =
+  | 'clients'
+  | 'cvs'
+  | 'contracts'
+  | 'recruitment-contracts'
+  | 'rent_contracts'
+  | 'rent-contracts'
+  | 'orders'
+  | 'shelter_records'
+  | 'shelter_inmates'
+  | 'accounts'
+  | 'employees'
+  | 'complaints'
+  | 'financial_requests'
+  | 'group_dispatches'
+  | 'activity_logs'
+  | 'activity_log'
+  | 'system_users'
+  | 'attendances'
+  | 'branch_communications'
+  | 'custodies'
+  | 'vouchers'
+  | 'cost_centers'
+  | 'zatca_invoices'
+  | 'website_visitors'
+  | 'whatsapp_messages'
+  | 'company_journal_entries'
+  | 'accounting_journal_entries'
+  | 'sponsorship_transfers'
+  | 'ingaz_delegations'
+  | 'flights'
+  | 'tenders'
+  | 'kas_monafasat_master'
+  | 'bank_guarantees'
+  | 'domain_outbox_events'
+  | 'idempotency_records'
+  | 'escrow_settlements'
+  | 'ecommerce_store_sync_logs'
+  | 'user_biometrics'
+  | (string & {});
+
 export type ListOptions = {
   order?: { column: string; ascending?: boolean };
   limit?: number;
@@ -25,10 +66,10 @@ export type ListOptions = {
  * Get records from any table with optional filtering, ordering, and pagination.
  * Returns a discriminated { data, error, count } so the UI can react to failures.
  */
-export const getTableRecords = async (
-  tableName: string,
+export const getTableRecords = async <T = Record<string, unknown>>(
+  tableName: ErpTableName,
   options: ListOptions = {}
-): Promise<{ data: any[] | null; error: string | null; count: number | null }> => {
+): Promise<{ data: T[] | null; error: string | null; count: number | null }> => {
   if (!isSupabaseConfigured) {
     return { data: [], error: NOT_CONFIGURED, count: 0 };
   }
@@ -68,19 +109,20 @@ export const getTableRecords = async (
       console.warn(`Supabase fetch notice (${tableName}):`, error.message);
       return { data: [], error: error.message, count: null };
     }
-    return { data: (data as any[]) ?? [], error: null, count };
-  } catch (err: any) {
-    return { data: [], error: err?.message || 'Offline mode active', count: 0 };
+    return { data: (data as unknown as T[]) ?? [], error: null, count };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Offline mode active';
+    return { data: [], error: message, count: 0 };
   }
 };
 
 /**
  * Insert a record into a table. Returns a discriminated { data, error } result.
  */
-export const insertTableRecord = async (
-  tableName: string,
-  recordData: Record<string, any>
-): Promise<{ data: any | null; error: string | null }> => {
+export const insertTableRecord = async <T = Record<string, unknown>>(
+  tableName: ErpTableName,
+  recordData: Record<string, unknown>
+): Promise<{ data: T | null; error: string | null }> => {
   if (!isSupabaseConfigured) {
     return { data: null, error: NOT_CONFIGURED };
   }
@@ -92,17 +134,17 @@ export const insertTableRecord = async (
   if (error) {
     return { data: null, error: error.message };
   }
-  return { data, error: null };
+  return { data: data as unknown as T, error: null };
 };
 
 /**
  * Update a record by id. Returns a discriminated { data, error } result.
  */
-export const updateTableRecord = async (
-  tableName: string,
+export const updateTableRecord = async <T = Record<string, unknown>>(
+  tableName: ErpTableName,
   id: string | number,
-  recordData: Record<string, any>
-): Promise<{ data: any | null; error: string | null }> => {
+  recordData: Record<string, unknown>
+): Promise<{ data: T | null; error: string | null }> => {
   if (!isSupabaseConfigured) {
     return { data: null, error: NOT_CONFIGURED };
   }
@@ -115,14 +157,14 @@ export const updateTableRecord = async (
   if (error) {
     return { data: null, error: error.message };
   }
-  return { data, error: null };
+  return { data: data as unknown as T, error: null };
 };
 
 /**
  * Delete a record by id. Returns { success, error } result.
  */
 export const deleteTableRecord = async (
-  tableName: string,
+  tableName: ErpTableName,
   id: string | number
 ): Promise<{ success: boolean; error: string | null }> => {
   if (!isSupabaseConfigured) {

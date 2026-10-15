@@ -260,4 +260,192 @@ export const journalEngine = {
     savePersistedJournals(CURRENT_MAP);
     return { success: true, error: null };
   },
+
+  /**
+   * Append-Only Ledger Guard: Direct modification of POSTED entries is strictly forbidden (rules.md §4.1).
+   */
+  updateJournalEntry(
+    companyId: CompanyId,
+    entryId: string,
+    updates: Partial<Pick<JournalEntry, 'description' | 'lines'>>
+  ): { entry: JournalEntry | null; error: string | null } {
+    CURRENT_MAP = loadPersistedJournals();
+    const norm = normalizeCompanyId(companyId);
+    const targetCompany = norm === 'all' ? 'SAF' : norm;
+    const journals = CURRENT_MAP[targetCompany] || [];
+    const entry = journals.find((j) => j.id === entryId);
+
+    if (!entry) {
+      return { entry: null, error: 'القيد المحاسبي غير موجود.' };
+    }
+
+    if (entry.status === 'POSTED' || entry.status === 'REVERSED') {
+      return {
+        entry: null,
+        error: '[Append-Only Ledger Violation] يمنع تعديل القيود المرحلة نهائياً. يجب إنشاء قيد عكسي (Reversal Entry) لتصحيح الأخطاء المحاسبية.',
+      };
+    }
+
+    if (updates.description) entry.description = updates.description;
+    savePersistedJournals(CURRENT_MAP);
+    return { entry, error: null };
+  },
+
+  /**
+   * Append-Only Ledger Guard: Deleting POSTED entries is strictly forbidden (rules.md §4.1).
+   */
+  deleteJournalEntry(companyId: CompanyId, entryId: string): { success: boolean; error: string | null } {
+    CURRENT_MAP = loadPersistedJournals();
+    const norm = normalizeCompanyId(companyId);
+    const targetCompany = norm === 'all' ? 'SAF' : norm;
+    const journals = CURRENT_MAP[targetCompany] || [];
+    const idx = journals.findIndex((j) => j.id === entryId);
+
+    if (idx === -1) {
+      return { success: false, error: 'القيد المحاسبي غير موجود.' };
+    }
+
+    const entry = journals[idx];
+    if (entry.status === 'POSTED' || entry.status === 'REVERSED') {
+      return {
+        success: false,
+        error: '[Append-Only Ledger Violation] يمنع حذف القيود المحاسبية المرحلة نهائياً وفق معايير المراجعة والزكاة (ZATCA). استخدم القيد العكسي فقط.',
+      };
+    }
+
+    journals.splice(idx, 1);
+    savePersistedJournals(CURRENT_MAP);
+    return { success: true, error: null };
+  },
+
+  /**
+   * Creates an immutable Reversal Entry (قيد عكسي) that swaps Debit and Credit lines of a POSTED entry
+   * and marks the original entry as REVERSED (TASK-303 / architecture.md §8.2).
+   */
+  reverseJournalEntry(
+    companyId: CompanyId,
+    originalEntryId: string,
+    reason: string,
+    reversedBy: string
+  ): { reversalEntry: JournalEntry | null; originalEntry: JournalEntry | null; error: string | null } {
+    CURRENT_MAP = loadPersistedJournals();
+    const norm = normalizeCompanyId(companyId);
+    const targetCompany = norm === 'all' ? 'SAF' : norm;
+    const journals = CURRENT_MAP[targetCompany] || [];
+    const original = journals.find((j) => j.id === originalEntryId);
+
+    if (!original) {
+      return { reversalEntry: null, originalEntry: null, error: 'القيد الأصلي المراد عكسه غير موجود.' };
+    }
+
+    if (original.status !== 'POSTED') {
+      return {
+        reversalEntry: null,
+        originalEntry: original,
+        error: 'لا يمكن إجراء قيد عكسي إلا للقيود المرحلة (POSTED) فقط.',
+      };
+    }
+
+    if (!reason || reason.trim().length < 3) {
+      return {
+        reversalEntry: null,
+        originalEntry: original,
+        error: 'يجب توثيق السبب المحاسبي لإصدار القيد العكسي.',
+      };
+    }
+
+    const reversedLines: Omit<JournalLine, 'id'>[] = original.lines.map((line) => ({
+      accountCode: line.accountCode,
+      accountName: line.accountName,
+      description: `عكس بند: ${line.description || original.description}`,
+      debit: line.credit,
+      credit: line.debit,
+      costCenterCode: line.costCenterCode,
+      projectId: line.projectId,
+    }));
+
+    const created = this.createJournalEntry(targetCompany, {
+      entryDate: new Date().toISOString().split('T')[0],
+      entryType: 'REVERSAL',
+      sourceModule: original.sourceModule,
+      sourceReference: original.entryNumber,
+      description: `قيد عكسي للقيد (${original.entryNumber}) - السبب: ${reason}`,
+      branchName: original.branchName,
+      costCenterCode: original.costCenterCode,
+      projectId: original.projectId,
+      createdBy: reversedBy,
+      lines: reversedLines,
+      autoPost: true,
+    });
+
+    if (created.error || !created.entry) {
+      return { reversalEntry: null, originalEntry: original, error: created.error };
+    }
+
+    // Reload and mark original as REVERSED
+    CURRENT_MAP = loadPersistedJournals();
+    const updatedOriginal = (CURRENT_MAP[targetCompany] || []).find((j) => j.id === originalEntryId) || original;
+    updatedOriginal.status = 'REVERSED';
+    savePersistedJournals(CURRENT_MAP);
+
+    return {
+      reversalEntry: created.entry,
+      originalEntry: updatedOriginal,
+      error: null,
+    };
+  },
 };
+
+/**
+ * Convenience functional wrappers used by paymentOrchestratorService and automated settlement hooks.
+ */
+export function createJournalEntry(
+  entryDate: string,
+  description: string,
+  sourceReference: string,
+  lines: Array<{
+    accountCode: string;
+    accountName: string;
+    debit: number;
+    credit: number;
+    costCenterId?: string;
+  }>,
+  createdBy = 'SYSTEM'
+): JournalEntry {
+  const companyId = (lines[0]?.costCenterId as CompanyId) || 'SAF';
+  const { entry, error } = journalEngine.createJournalEntry(companyId, {
+    entryDate,
+    entryType: 'AUTOMATIC',
+    sourceModule: 'PAYMENT_ORCHESTRATOR',
+    sourceReference,
+    description,
+    createdBy,
+    lines: lines.map((l) => ({
+      accountCode: l.accountCode,
+      accountName: l.accountName,
+      debit: l.debit,
+      credit: l.credit,
+      costCenterCode: l.costCenterId,
+    })),
+    autoPost: false,
+  });
+
+  if (error || !entry) {
+    throw new Error(error || 'فشل إنشاء القيد المحاسبي');
+  }
+  return entry;
+}
+
+export function postJournalEntry(entry: JournalEntry, approvedBy = 'SYSTEM_AUTO_POST'): JournalEntry {
+  const res = journalEngine.postJournalEntry(entry.companyId, entry.id, approvedBy);
+  if (!res.success) {
+    throw new Error(res.error || 'فشل ترحيل القيد المحاسبي');
+  }
+  return {
+    ...entry,
+    status: 'POSTED',
+    approvedBy,
+    postedAt: new Date().toISOString(),
+  };
+}
+

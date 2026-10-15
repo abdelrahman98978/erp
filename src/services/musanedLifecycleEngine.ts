@@ -234,6 +234,156 @@ class MusanedLifecycleEngine {
         };
     }
   }
+
+  /**
+   * Deterministic state transition graph (TASK-201 / prd.md §4.1).
+   * Prevents skipping mandatory legal/medical milestones (e.g. cannot issue visa or flight before medical_passed).
+   */
+  public static readonly ALLOWED_STAGE_TRANSITIONS: Record<MusanedContractStage, MusanedContractStage[]> = {
+    new_order: ['candidate_selected', 'cancelled_refund_pending'],
+    candidate_selected: ['musaned_contract_issued', 'new_order', 'cancelled_refund_pending'],
+    musaned_contract_issued: ['client_paid', 'cancelled_refund_pending'],
+    client_paid: ['agency_delegated', 'disputed', 'cancelled_refund_pending'],
+    agency_delegated: ['medical_passed', 'disputed', 'cancelled_refund_pending'],
+    medical_passed: ['visa_stamped', 'disputed', 'cancelled_refund_pending'],
+    visa_stamped: ['flight_booked', 'disputed', 'cancelled_refund_pending'],
+    flight_booked: ['airport_arrived', 'disputed', 'cancelled_refund_pending'],
+    airport_arrived: ['probation_active', 'disputed'],
+    probation_active: ['completed', 'disputed', 'cancelled_refund_pending'],
+    completed: [],
+    disputed: ['agency_delegated', 'probation_active', 'cancelled_refund_pending', 'completed'],
+    cancelled_refund_pending: ['cancelled_refunded'],
+    cancelled_refunded: [],
+  };
+
+  /**
+   * Validates whether a contract can transition from `currentStage` to `targetStage`.
+   */
+  public validateStageTransition(
+    currentStage: MusanedContractStage,
+    targetStage: MusanedContractStage
+  ): { allowed: boolean; reasonAr: string } {
+    if (currentStage === targetStage) {
+      return { allowed: true, reasonAr: 'المرحلة الحالية مطابقة للمرحلة المستهدفة.' };
+    }
+    const allowedTargets = MusanedLifecycleEngine.ALLOWED_STAGE_TRANSITIONS[currentStage] || [];
+    if (!allowedTargets.includes(targetStage)) {
+      return {
+        allowed: false,
+        reasonAr: `انتقال غير نظامي: لا يمكن الانتقال مباشرة من مرحلة (${currentStage}) إلى (${targetStage}) دون استيفاء المراحل الإلزامية السابقة.`,
+      };
+    }
+    return {
+      allowed: true,
+      reasonAr: `انتقال نظامي معتمد من (${currentStage}) إلى (${targetStage}).`,
+    };
+  }
+
+  /**
+   * Executes a validated contract stage transition and returns an audit log descriptor.
+   */
+  public transitionContractStage(params: {
+    contractId: string;
+    currentStage: MusanedContractStage;
+    targetStage: MusanedContractStage;
+    actorId: string;
+  }): {
+    contractId: string;
+    previousStage: MusanedContractStage;
+    currentStage: MusanedContractStage;
+    transitionedAt: string;
+    actorId: string;
+    reasonAr: string;
+  } {
+    const check = this.validateStageTransition(params.currentStage, params.targetStage);
+    if (!check.allowed) {
+      throw new Error(check.reasonAr);
+    }
+    return {
+      contractId: params.contractId,
+      previousStage: params.currentStage,
+      currentStage: params.targetStage,
+      transitionedAt: new Date().toISOString(),
+      actorId: params.actorId,
+      reasonAr: check.reasonAr,
+    };
+  }
+
+  /**
+   * Evaluates the 90-day statutory probation/warranty period (TASK-202 / prd.md §4.1)
+   * starting from airport arrival date, and generates a replacement order or compensation settlement if needed.
+   */
+  public calculateWarrantyStatus(params: {
+    contractId: string;
+    arrivalDate: string;
+    evaluationDate?: string;
+    recruitmentFee: number;
+    incidentType?: 'none' | 'worker_refusal' | 'runaway' | 'medical_unfit';
+  }): {
+    contractId: string;
+    daysPassed: number;
+    daysRemaining: number;
+    isUnderWarranty: boolean;
+    warrantyStatus: 'ACTIVE_WARRANTY' | 'EXPIRED_COMPLETED' | 'WARRANTY_CLAIM_APPROVED';
+    replacementOrderEligible: boolean;
+    agencyLiabilityAmount: number;
+    clientCompensationAmount: number;
+    decisionAr: string;
+  } {
+    const arrivalMs = new Date(params.arrivalDate).getTime();
+    const evalMs = params.evaluationDate ? new Date(params.evaluationDate).getTime() : Date.now();
+    const daysPassed = Math.max(0, Math.floor((evalMs - arrivalMs) / (1000 * 60 * 60 * 24)));
+    const STATUTORY_WARRANTY_DAYS = 90;
+    const daysRemaining = Math.max(0, STATUTORY_WARRANTY_DAYS - daysPassed);
+    const isUnderWarranty = daysPassed <= STATUTORY_WARRANTY_DAYS;
+    const incident = params.incidentType || 'none';
+
+    if (!isUnderWarranty) {
+      return {
+        contractId: params.contractId,
+        daysPassed,
+        daysRemaining: 0,
+        isUnderWarranty: false,
+        warrantyStatus: 'EXPIRED_COMPLETED',
+        replacementOrderEligible: false,
+        agencyLiabilityAmount: 0,
+        clientCompensationAmount: 0,
+        decisionAr: 'انتهت فترة التجربة النظامية (90 يوماً) وأصبح العقد مكتملاً نهائياً.',
+      };
+    }
+
+    if (incident !== 'none') {
+      // Proportional deduction for days worked if worker refused/absconded, or 100% agency liability on medical unfit
+      const dailyRate = params.recruitmentFee / (24 * 30); // 24-month contract
+      const utilizedValue = incident === 'medical_unfit' ? 0 : Math.round(dailyRate * daysPassed);
+      const clientCompensationAmount = Math.max(0, Number((params.recruitmentFee - utilizedValue).toFixed(2)));
+
+      return {
+        contractId: params.contractId,
+        daysPassed,
+        daysRemaining,
+        isUnderWarranty: true,
+        warrantyStatus: 'WARRANTY_CLAIM_APPROVED',
+        replacementOrderEligible: true,
+        agencyLiabilityAmount: clientCompensationAmount,
+        clientCompensationAmount,
+        decisionAr: `المطالبة ضمن فترة الضمان النظامية (${daysPassed} يوماً من أصل 90): يحق للعميل إصدار عقد استقدام بديل مجاناً أو استرداد تعويضي بقيمة ${clientCompensationAmount} ر.س وتحميل الوكالة الخارجية التكلفة.`,
+      };
+    }
+
+    return {
+      contractId: params.contractId,
+      daysPassed,
+      daysRemaining,
+      isUnderWarranty: true,
+      warrantyStatus: 'ACTIVE_WARRANTY',
+      replacementOrderEligible: false,
+      agencyLiabilityAmount: 0,
+      clientCompensationAmount: 0,
+      decisionAr: `العقد سارٍ ضمن فترة الضمان النظامية (متبقي ${daysRemaining} يوماً من أصل 90 يوماً).`,
+    };
+  }
 }
 
 export const musanedLifecycleEngine = new MusanedLifecycleEngine();
+

@@ -17,8 +17,12 @@ import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { UniversalNotificationToaster } from './components/common/UniversalNotificationToaster';
 import { PwaInstallPrompt } from './components/common/PwaInstallPrompt';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
 import { employeeMonitoringService } from './services/employeeMonitoringService';
+import { backgroundExecutionService } from './services/backgroundExecutionService';
+import { realtimeSubscriptionService } from './services/realtimeSubscriptionService';
+import { notificationPopupEngine } from './services/notificationPopupEngine';
 
 import './styles/index.css';
 import './styles/layout.css';
@@ -121,10 +125,27 @@ const PageFallback: React.FC = () => (
 );
 
 const MainContent: React.FC = () => {
-  const { flowState, setFlowState, activeTab, activeTabTitle, setActiveTab } = useAppStore();
+  const {
+    flowState,
+    setFlowState,
+    loginPortalCode,
+    navigateToCompanyLogin,
+    activeTab,
+    activeTabTitle,
+    setActiveTab,
+    syncFromUrlLocation,
+  } = useAppStore();
   const { user, session, loading: authLoading, isAuthenticated, mfaRequirement, signOut } = useAuthContext();
 
   const [showLegalModal, setShowLegalModal] = useState(false);
+
+  useEffect(() => {
+    const onPopState = () => {
+      syncFromUrlLocation();
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [syncFromUrlLocation]);
 
   // Display-only profile for the legal modal / telemetry. Never used for access decisions.
   const currentUserForLegal = useMemo(() => ({
@@ -159,16 +180,26 @@ const MainContent: React.FC = () => {
   }, [authLoading, isProtectedFlow, isAuthenticated]);
 
   const handleLogout = async () => {
+    const returnPortalCode =
+      loginPortalCode ||
+      localStorage.getItem('ALSULAIM_TARGET_SYSTEM') ||
+      (user?.company_id && user.company_id !== 'all' ? user.company_id.toLowerCase() : null);
+
     try {
       await signOut();
     } catch (e) {
       console.warn('Sign-out failed:', e);
     }
     setShowLegalModal(false);
-    setFlowState('landing');
+    // Return directly to the dedicated login portal of the company the user logged out from
+    if (returnPortalCode) {
+      navigateToCompanyLogin(returnPortalCode);
+    } else {
+      setFlowState('landing');
+    }
   };
 
-  // SECURITY: Also guard navigation events — require auth for workspace transitions
+  // SECURITY: Also guard navigation events — require auth and enforce per-company workspace boundaries
   const handleSelectTab = (href: string, title: string = '') => {
     if (href === 'logout') {
       void handleLogout();
@@ -179,6 +210,17 @@ const MainContent: React.FC = () => {
       setFlowState('landing');
       return;
     }
+
+    // Cross-Company Tab Isolation Guard
+    const currentUser = authService.getCurrentUser();
+    const isGroupAdmin = authService.isAdmin(currentUser);
+    const activeCo = (localStorage.getItem('alsulaim_active_company') || currentUser?.company_id || 'SAF').toUpperCase();
+    const kasExclusiveTabs = ['kas-suite', 'kas-portal', 'kas-standalone', 'kas-company', 'kas-etmad', 'kas-etmad-cloud', 'etmad-cloud', 'etmad', 'kas-cloud-suite'];
+    if (!isGroupAdmin && activeCo !== 'KAS' && kasExclusiveTabs.includes(href)) {
+      console.warn(`[TENANT ISOLATION] Blocked access to KAS-exclusive module (${href}) from company (${activeCo}).`);
+      return;
+    }
+
     setFlowState('workspace');
     setActiveTab(href, title || href);
   };
@@ -212,6 +254,32 @@ const MainContent: React.FC = () => {
     });
     return cleanup;
   }, [isAuthenticated]);
+
+  // Initialize Mobile Background Execution Engine, ServiceWorker Sync & Realtime Order Notifications
+  useEffect(() => {
+    const stopBackgroundEngine = backgroundExecutionService.start();
+    return () => {
+      stopBackgroundEngine();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const targetCompany = user?.company_id || useAppStore.getState().activeCompanyId || 'SAF';
+    const unsubscribeRealtime = realtimeSubscriptionService.subscribeTenantOrders(
+      targetCompany,
+      (payload) => {
+        notificationPopupEngine.info(
+          'تحديث فوري على الطلبات (Realtime)',
+          `تم تحديث حالة الطلب #${payload.id} إلى (${payload.status}) في الكيان [${payload.company_id || targetCompany}].`,
+          { label: 'عرض الطلبات', tabKey: 'orders' }
+        );
+      }
+    );
+    return () => {
+      unsubscribeRealtime();
+    };
+  }, [isAuthenticated, user?.company_id]);
 
   // Router Page Content Resolver
   const renderPage = () => {
@@ -572,10 +640,7 @@ const MainContent: React.FC = () => {
       {flowState === 'landing' && (
         <Suspense fallback={<PageFallback />}>
           <LandingPage onSelectCompany={(companyId: string) => {
-            if (companyId && companyId !== 'login') {
-              localStorage.setItem('ALSULAIM_TARGET_SYSTEM', companyId.toLowerCase());
-            }
-            setFlowState('login');
+            navigateToCompanyLogin(companyId);
           }} />
         </Suspense>
       )}
@@ -608,9 +673,11 @@ const MainContent: React.FC = () => {
             onOpenAppLauncher={() => setFlowState('launcher')}
             onLogout={handleLogout}
           >
-            <Suspense fallback={<PageFallback />}>
-              {renderPage()}
-            </Suspense>
+            <ErrorBoundary key={activeTab}>
+              <Suspense fallback={<PageFallback />}>
+                {renderPage()}
+              </Suspense>
+            </ErrorBoundary>
           </AppShell>
           <QuickSearchModal onNavigate={handleSelectTab} />
         </>

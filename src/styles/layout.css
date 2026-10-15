@@ -3,6 +3,11 @@
 :root {
   --sidebar-width: 300px;
   --header-height: 64px;
+  --mobile-bottom-nav-height: 68px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 .app-container {
@@ -346,7 +351,7 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
 
 /* Content Body Outer Padding */
 .content-body {
-  padding: 16px 12px;
+  padding: 14px 10px calc(var(--mobile-bottom-nav-height) + var(--safe-bottom) + 24px) 10px;
   flex: 1;
   min-width: 0;
   width: 100%;
@@ -356,7 +361,7 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
 
 @media (min-width: 640px) {
   .content-body {
-    padding: 20px 18px;
+    padding: 20px 18px calc(var(--mobile-bottom-nav-height) + var(--safe-bottom) + 24px) 18px;
   }
 }
 
@@ -376,9 +381,41 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
     display: none !important;
   }
 
+  .app-sidebar {
+    width: min(300px, 86vw) !important;
+    min-width: min(300px, 86vw) !important;
+    padding-bottom: calc(20px + var(--safe-bottom)) !important;
+  }
+
   .stat-card-grid {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .stat-card {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .stat-value {
+    font-size: clamp(22px, 6.5vw, 30px) !important;
+  }
+
+  .table-card {
+    border-radius: 16px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .table-card-header {
+    padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+
+  .odoo-data-table th,
+  .odoo-data-table td {
+    padding: 10px 12px !important;
+    font-size: 12.5px !important;
   }
 
   .card-feature-cinematic {
@@ -396,8 +433,8 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
   }
 
   .header-title-box h1 {
-    font-size: 13px !important;
-    max-width: 140px;
+    font-size: 12.5px !important;
+    max-width: 118px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -406,23 +443,25 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
   /* Table horizontal scrolling container */
   .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
-    margin-left: -4px;
-    margin-right: -4px;
+    margin-left: -2px;
+    margin-right: -2px;
     padding-bottom: 6px;
   }
 
-  /* Full screen touch modals */
+  /* Full screen touch modals with safe-area scroll containment */
   .fixed.inset-0 > div {
     max-width: calc(100vw - 16px) !important;
+    max-height: calc(100dvh - 24px - var(--safe-top) - var(--safe-bottom)) !important;
     margin: 8px !important;
     border-radius: 20px !important;
+    overflow-y: auto !important;
   }
 }
 
 /* Tablet (640px - 1023px) */
 @media (min-width: 640px) and (max-width: 1023px) {
   .content-body {
-    padding: 20px 18px !important;
+    padding: 20px 18px calc(var(--mobile-bottom-nav-height) + var(--safe-bottom) + 24px) 18px !important;
   }
 
   .stat-card-grid {
@@ -491,11 +530,15 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
   }
 }
 
-/* Touch Device Optimizations */
+/* Touch Device & Mobile iOS Auto-Zoom Prevention Optimizations */
 @media (hover: none) and (pointer: coarse) {
   button, .button-primary-pill, .button-outline-on-light, .button-white-pill, select, input {
     min-height: 40px;
     touch-action: manipulation;
+  }
+
+  input, select, textarea {
+    font-size: max(16px, 0.875rem);
   }
 
   .nav-item, .submenu-item {

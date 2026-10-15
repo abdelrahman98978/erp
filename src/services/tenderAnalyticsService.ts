@@ -198,3 +198,211 @@ export const DEFAULT_SUPPLIERS: SupplierRecord[] = [
     notes: 'يوفر شالات مطرزة وأكواب سيراميك محفورة بالشعارات الرسمية',
   },
 ];
+
+// ============================================================================
+// TASK-403: BANK GUARANTEES MANAGEMENT (إدارة الضمانات البنكية الابتدائي والنهائي)
+// ============================================================================
+
+export type BankGuaranteeType = 'INITIAL' | 'FINAL' | 'ADVANCE_PAYMENT';
+export type BankGuaranteeStatus = 'ACTIVE' | 'RELEASED' | 'EXPIRED' | 'CONFISCATED';
+
+export interface BankGuaranteeRecord {
+  id: string;
+  companyId: string;
+  tenderId: string;
+  tenderReference: string;
+  guaranteeNumber: string;
+  guaranteeType: BankGuaranteeType;
+  guaranteeTypeAr: string;
+  bankName: string;
+  beneficiaryEntity: string;
+  tenderTotalValue: number;
+  guaranteePercentage: number;
+  guaranteeAmount: number;
+  cashMarginPercentage: number;
+  cashMarginAmount: number;
+  issueDate: string;
+  expiryDate: string;
+  status: BankGuaranteeStatus;
+}
+
+export function createBankGuarantee(params: {
+  companyId?: string;
+  tenderId: string;
+  tenderReference: string;
+  guaranteeNumber: string;
+  guaranteeType: BankGuaranteeType;
+  bankName: string;
+  beneficiaryEntity: string;
+  tenderTotalValue: number;
+  customPercentage?: number;
+  cashMarginPercentage?: number;
+  issueDate: string;
+  expiryDate: string;
+}): BankGuaranteeRecord {
+  const defaultPctMap: Record<BankGuaranteeType, number> = {
+    INITIAL: 1, // 1% - 2% statutory initial bid bond on Etimad
+    FINAL: 5,   // 5% statutory performance bond on Etimad
+    ADVANCE_PAYMENT: 10,
+  };
+  const typeArMap: Record<BankGuaranteeType, string> = {
+    INITIAL: 'ضمان بنكي ابتدائي (1% - 2%)',
+    FINAL: 'ضمان بنكي نهائي لحسن التنفيذ (5%)',
+    ADVANCE_PAYMENT: 'ضمان الدفعة المقدمة',
+  };
+
+  const guaranteePercentage = params.customPercentage ?? defaultPctMap[params.guaranteeType];
+  const guaranteeAmount = Number(((params.tenderTotalValue * guaranteePercentage) / 100).toFixed(2));
+  const cashMarginPercentage = params.cashMarginPercentage ?? 10;
+  const cashMarginAmount = Number(((guaranteeAmount * cashMarginPercentage) / 100).toFixed(2));
+
+  return {
+    id: `BG-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+    companyId: params.companyId && params.companyId !== 'all' ? params.companyId : 'KAS',
+    tenderId: params.tenderId,
+    tenderReference: params.tenderReference,
+    guaranteeNumber: params.guaranteeNumber,
+    guaranteeType: params.guaranteeType,
+    guaranteeTypeAr: typeArMap[params.guaranteeType],
+    bankName: params.bankName,
+    beneficiaryEntity: params.beneficiaryEntity,
+    tenderTotalValue: params.tenderTotalValue,
+    guaranteePercentage,
+    guaranteeAmount,
+    cashMarginPercentage,
+    cashMarginAmount,
+    issueDate: params.issueDate,
+    expiryDate: params.expiryDate,
+    status: 'ACTIVE',
+  };
+}
+
+/**
+ * Checks bank guarantees for upcoming expiration (default alert threshold: 15 days).
+ */
+export function checkExpiringBankGuarantees(
+  guarantees: BankGuaranteeRecord[],
+  alertWindowDays = 15,
+  referenceDateStr?: string
+): Array<{
+  guarantee: BankGuaranteeRecord;
+  daysUntilExpiry: number;
+  urgency: 'EXPIRED' | 'CRITICAL' | 'WARNING' | 'SAFE';
+  recommendationAr: string;
+}> {
+  const refMs = referenceDateStr ? new Date(referenceDateStr).getTime() : Date.now();
+
+  return guarantees
+    .filter((g) => g.status === 'ACTIVE')
+    .map((guarantee) => {
+      const expMs = new Date(guarantee.expiryDate).getTime();
+      const daysUntilExpiry = Math.ceil((expMs - refMs) / (1000 * 60 * 60 * 24));
+
+      if (daysUntilExpiry < 0) {
+        return {
+          guarantee,
+          daysUntilExpiry,
+          urgency: 'EXPIRED' as const,
+          recommendationAr: `الضمان البنكي (${guarantee.guaranteeNumber}) منتهي الصلاحية منذ ${Math.abs(daysUntilExpiry)} يوم — يجب الإفراج عنه أو تمديده فوراً.`,
+        };
+      }
+      if (daysUntilExpiry <= 7) {
+        return {
+          guarantee,
+          daysUntilExpiry,
+          urgency: 'CRITICAL' as const,
+          recommendationAr: `تنبيه حرج: يتبقى ${daysUntilExpiry} أيام فقط على انتهاء الضمان البنكي (${guarantee.guaranteeNumber}) لدى ${guarantee.bankName}.`,
+        };
+      }
+      if (daysUntilExpiry <= alertWindowDays) {
+        return {
+          guarantee,
+          daysUntilExpiry,
+          urgency: 'WARNING' as const,
+          recommendationAr: `يتبقى ${daysUntilExpiry} يوماً على انتهاء الضمان البنكي (${guarantee.guaranteeNumber}) للجهة ${guarantee.beneficiaryEntity}.`,
+        };
+      }
+      return {
+        guarantee,
+        daysUntilExpiry,
+        urgency: 'SAFE' as const,
+        recommendationAr: `الضمان البنكي سارٍ (${daysUntilExpiry} يوماً متبقية).`,
+      };
+    });
+}
+
+// ============================================================================
+// TASK-402: HISTORICAL PRICING & COMPETITOR BENCHMARKING (مقارنة الأسعار التاريخية)
+// ============================================================================
+
+export interface HistoricalPriceBenchmarkResult {
+  itemDescription: string;
+  proposedUnitPrice: number;
+  historicalAvgPrice: number;
+  historicalMinPrice: number;
+  historicalMaxPrice: number;
+  variancePercentage: number;
+  winProbabilityScore: number; // 0 - 100
+  pricingPosition: 'COMPETITIVE' | 'OPTIMAL_MARGIN' | 'OVERPRICED_RISK' | 'UNDERPRICED_DUMPING_RISK';
+  adviceAr: string;
+}
+
+export function benchmarkBoqItemPricing(params: {
+  itemDescription: string;
+  proposedUnitPrice: number;
+  historicalUnitPrices: number[];
+}): HistoricalPriceBenchmarkResult {
+  const validHistory = params.historicalUnitPrices.filter((p) => p > 0);
+  if (validHistory.length === 0) {
+    return {
+      itemDescription: params.itemDescription,
+      proposedUnitPrice: params.proposedUnitPrice,
+      historicalAvgPrice: params.proposedUnitPrice,
+      historicalMinPrice: params.proposedUnitPrice,
+      historicalMaxPrice: params.proposedUnitPrice,
+      variancePercentage: 0,
+      winProbabilityScore: 75,
+      pricingPosition: 'OPTIMAL_MARGIN',
+      adviceAr: 'لا توجد تسعيرات تاريخية سابقة لهذا البند — السعر المقترح معتمد كخط أساس.',
+    };
+  }
+
+  const sum = validHistory.reduce((a, b) => a + b, 0);
+  const historicalAvgPrice = Number((sum / validHistory.length).toFixed(2));
+  const historicalMinPrice = Math.min(...validHistory);
+  const historicalMaxPrice = Math.max(...validHistory);
+  const variancePercentage = Number(
+    (((params.proposedUnitPrice - historicalAvgPrice) / historicalAvgPrice) * 100).toFixed(2)
+  );
+
+  let pricingPosition: HistoricalPriceBenchmarkResult['pricingPosition'] = 'OPTIMAL_MARGIN';
+  let winProbabilityScore = 82;
+  let adviceAr = 'التسعير ضمن النطاق التنافسي الأمثل لمنافسات منصة اعتماد.';
+
+  if (variancePercentage < -25) {
+    pricingPosition = 'UNDERPRICED_DUMPING_RISK';
+    winProbabilityScore = 60;
+    adviceAr = 'تنبيه: السعر أقل بأكثر من 25% من المتوسط التاريخي وقد يستدعي استفسار لجنة فحص العروض (مخاطر تدني الأسعار).';
+  } else if (variancePercentage <= 0) {
+    pricingPosition = 'COMPETITIVE';
+    winProbabilityScore = 92;
+    adviceAr = 'سعر تنافسي ممتاز أقل من المتوسط التاريخي مع الحفاظ على هامش ربح آمن.';
+  } else if (variancePercentage > 15) {
+    pricingPosition = 'OVERPRICED_RISK';
+    winProbabilityScore = 35;
+    adviceAr = 'تحذير: السعر المقترح أعلى بأكثر من 15% من متوسط ترسيات المنافسين السابقة مما يخفض احتمالية الترسية.';
+  }
+
+  return {
+    itemDescription: params.itemDescription,
+    proposedUnitPrice: params.proposedUnitPrice,
+    historicalAvgPrice,
+    historicalMinPrice,
+    historicalMaxPrice,
+    variancePercentage,
+    winProbabilityScore,
+    pricingPosition,
+    adviceAr,
+  };
+}
+

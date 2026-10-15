@@ -91,7 +91,7 @@ export const PwaInstallPrompt: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="fixed bottom-4 start-4 z-[99998] max-w-md w-[calc(100%-2rem)] bg-slate-950/95 text-white backdrop-blur-xl border border-amber-400/40 rounded-2xl p-4 shadow-2xl animate-in slide-in-from-bottom-4 duration-300"
+      className="fixed bottom-[calc(74px+env(safe-area-inset-bottom,0px))] lg:bottom-4 inset-x-3 sm:inset-x-auto sm:start-4 z-[99998] sm:max-w-md w-auto sm:w-[calc(100%-2rem)] bg-slate-950/95 text-white backdrop-blur-xl border border-amber-400/40 rounded-2xl p-3.5 sm:p-4 shadow-2xl animate-in slide-in-from-bottom-4 duration-300"
       style={{ filter: 'drop-shadow(0 16px 32px rgba(0,0,0,0.35))' }}
     >
       <div className="flex items-start justify-between gap-3">

@@ -37,7 +37,7 @@
       if ('caches' in window) {
         caches.keys().then(function(keys) {
           keys.forEach(function(key) {
-            if (key === 'khalid-erp-pwa-v1') {
+            if (key === 'khalid-erp-pwa-v1' || key === 'khalid-erp-pwa-v2') {
               caches.delete(key);
             }
           });
@@ -48,7 +48,12 @@
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('/sw.js').then(function(reg) {
             reg.update();
-            console.log('[PWA] ServiceWorker registered successfully:', reg.scope);
+            if ('periodicSync' in reg) {
+              reg.periodicSync.register('alsulaim-erp-periodic-check', {
+                minInterval: 15 * 60 * 1000
+              }).catch(function() {});
+            }
+            console.log('[PWA] ServiceWorker v3 registered successfully:', reg.scope);
           }).catch(function(err) {
             console.warn('[PWA] ServiceWorker registration error:', err);
           });

@@ -15,26 +15,9 @@ import {
 } from '../types/iam';
 import { iamPolicyEngine } from '../services/iamPolicyEngine';
 
-const IamContext = createContext<IamSessionContextType | undefined>(undefined);
+import { authService, UserProfile } from '../services/authService';
 
-// Initial Super Admin User conforming to corporate structure
-const DEFAULT_SUPER_ADMIN: IamUser = {
-  id: 'usr-admin-001',
-  employeeNumber: 'EMP-0001',
-  fullName: 'خالد بن عبدالعزيز السليم',
-  username: 'khalid.admin',
-  email: 'khalid@alsulaim.sa',
-  phone: '0501234567',
-  jobTitle: 'رئيس مجلس الإدارة والرئيس التنفيذي للمجموعة',
-  accountType: 'Group Super Admin',
-  status: 'نشط',
-  dataScope: 6,
-  mfaEnabled: true,
-  mfaMethod: 'Google Authenticator',
-  biometricEnabled: true,
-  biometricType: 'بصمة مزدوجة',
-  sessionTimeoutMinutes: 45,
-};
+const IamContext = createContext<IamSessionContextType | undefined>(undefined);
 
 // 4 Official Corporate Group Companies
 const DEFAULT_COMPANIES: IamCompany[] = DEFAULT_IAM_COMPANIES;
@@ -49,63 +32,173 @@ const DATA_SCOPE_NAMES: Record<DataScopeLevel, DataScopeName> = {
   6: 'Group',
 };
 
+const ALL_ADMIN_PERMISSIONS = [
+  '*',
+  'dashboard.view',
+  'group.dashboard.view',
+  'recruitment.view',
+  'recruitment.create',
+  'recruitment.edit',
+  'recruitment.approve',
+  'recruitment.export',
+  'hr.view',
+  'hr.create',
+  'hr.edit',
+  'hr.delete',
+  'hr.export',
+  'finance.view',
+  'finance.create',
+  'finance.edit',
+  'finance.approve',
+  'finance.export',
+  'rent.view',
+  'rent.create',
+  'rent.edit',
+  'rent.approve',
+  'tenders.view',
+  'tenders.create',
+  'tenders.edit',
+  'tenders.approve',
+  'shelter.view',
+  'shelter.create',
+  'shelter.edit',
+  'shelter.export',
+  'iam.view',
+  'iam.manage',
+  'settings.view',
+  'settings.edit',
+  'audit.view',
+  'audit.export',
+];
+
+function mapProfileToIamUser(profile: UserProfile | null): {
+  iamUser: IamUser | null;
+  permissions: Set<string>;
+} {
+  if (!profile) {
+    return { iamUser: null, permissions: new Set<string>() };
+  }
+
+  let accountType: AccountType = 'Employee';
+  let scope: DataScopeLevel = 4;
+  let perms: string[] = ['dashboard.view'];
+
+  if (['رئيس المجموعة', 'مدير نظام'].includes(profile.role)) {
+    accountType = 'Group Super Admin';
+    scope = 6;
+    perms = ALL_ADMIN_PERMISSIONS;
+  } else if (profile.role === 'مدير تنفيذي') {
+    accountType = 'Board / Group Executive';
+    scope = 6;
+    perms = ALL_ADMIN_PERMISSIONS.filter(p => p !== '*');
+  } else if (['مدير شركة', 'مدير عام'].includes(profile.role)) {
+    accountType = 'Company Admin';
+    scope = 5;
+    perms = [
+      'dashboard.view',
+      'recruitment.*',
+      'rent.*',
+      'hr.view',
+      'finance.view',
+      'shelter.*',
+      'tenders.*',
+      'settings.view',
+    ];
+  } else if (authService.isFinance(profile)) {
+    accountType = 'Department Manager';
+    scope = 5;
+    perms = ['dashboard.view', 'finance.*', 'recruitment.view', 'rent.view', 'audit.view'];
+  } else if (authService.isHR(profile)) {
+    accountType = 'Department Manager';
+    scope = 5;
+    perms = ['dashboard.view', 'hr.*', 'shelter.view'];
+  } else if (authService.isOperations(profile)) {
+    accountType = 'Branch Manager';
+    scope = 4;
+    perms = ['dashboard.view', 'recruitment.*', 'rent.*', 'shelter.*', 'tenders.view'];
+  } else {
+    accountType = 'Employee';
+    scope = 3;
+    perms = ['dashboard.view', 'recruitment.view', 'rent.view', 'shelter.view'];
+  }
+
+  return {
+    iamUser: {
+      id: profile.id,
+      employeeNumber: `EMP-${profile.id.slice(0, 4).toUpperCase()}`,
+      fullName: profile.full_name,
+      username: profile.username,
+      email: profile.email,
+      phone: '',
+      jobTitle: profile.role,
+      accountType,
+      status: 'نشط',
+      dataScope: scope,
+      mfaEnabled: true,
+      mfaMethod: 'Google Authenticator',
+      biometricEnabled: true,
+      biometricType: 'بصمة مزدوجة',
+      sessionTimeoutMinutes: 45,
+    },
+    permissions: new Set(perms),
+  };
+}
+
 export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<IamUser | null>(DEFAULT_SUPER_ADMIN);
+  const initialMapped = mapProfileToIamUser(authService.getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<IamUser | null>(initialMapped.iamUser);
   const [companies, setCompanies] = useState<IamCompany[]>(DEFAULT_COMPANIES);
-  const [activeCompanyCode, setActiveCompanyCode] = useState<string>('SAF');
+  const [activeCompanyCode, setActiveCompanyCode] = useState<string>(
+    authService.getCurrentUser()?.company_id && authService.getCurrentUser()?.company_id !== 'all'
+      ? authService.getCurrentUser()!.company_id!
+      : 'SAF'
+  );
   const [userMemberships, setUserMemberships] = useState<IamMembership[]>([]);
   const [activeRoles, setActiveRoles] = useState<IamRole[]>([]);
   const [delegations, setDelegations] = useState<IamDelegation[]>([]);
-  
-  // Default Permissions Set for Super Admin / Active Session
-  const [permissionCodes, setPermissionCodes] = useState<Set<string>>(new Set([
-    '*',
-    'dashboard.view',
-    'group.dashboard.view',
-    'recruitment.view',
-    'recruitment.create',
-    'recruitment.edit',
-    'recruitment.approve',
-    'recruitment.export',
-    'hr.view',
-    'hr.create',
-    'hr.edit',
-    'hr.delete',
-    'hr.export',
-    'finance.view',
-    'finance.create',
-    'finance.edit',
-    'finance.approve',
-    'finance.export',
-    'rent.view',
-    'rent.create',
-    'rent.edit',
-    'rent.approve',
-    'tenders.view',
-    'tenders.create',
-    'tenders.edit',
-    'tenders.approve',
-    'shelter.view',
-    'shelter.create',
-    'shelter.edit',
-    'shelter.export',
-    'iam.view',
-    'iam.manage',
-    'settings.view',
-    'settings.edit',
-    'audit.view',
-    'audit.export',
-  ]));
+  const [permissionCodes, setPermissionCodes] = useState<Set<string>>(initialMapped.permissions);
 
-  // Load real companies from Supabase / IAM engine
+  // Sync IAM session state with Supabase Auth state changes
   useEffect(() => {
     let isMounted = true;
+
+    const syncFromProfile = async (profile: UserProfile | null) => {
+      if (!isMounted) return;
+      const mapped = mapProfileToIamUser(profile);
+      setCurrentUser(mapped.iamUser);
+      setPermissionCodes(mapped.permissions);
+
+      if (profile?.company_id && profile.company_id !== 'all') {
+        setActiveCompanyCode(profile.company_id.toUpperCase());
+      }
+
+      if (profile?.id) {
+        const memberships = await iamPolicyEngine.getUserMemberships(profile.id);
+        if (isMounted && memberships.length > 0) {
+          setUserMemberships(memberships);
+        }
+      } else {
+        setUserMemberships([]);
+      }
+    };
+
+    void syncFromProfile(authService.getCurrentUser());
+
+    const { data: { subscription } } = authService.onAuthStateChange((_event, session) => {
+      const nextProfile: UserProfile | null = session?.user?.profile || authService.getCurrentUser();
+      void syncFromProfile(nextProfile);
+    });
+
     iamPolicyEngine.getCompanies().then((realCos) => {
       if (isMounted && realCos.length > 0) {
         setCompanies(realCos);
       }
     });
-    return () => { isMounted = false; };
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const activeCompany = useMemo(() => {
@@ -113,18 +206,19 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [companies, activeCompanyCode]);
 
   const activeMembership = useMemo(() => {
+    if (!currentUser) return null;
     if (userMemberships.length > 0) {
       return userMemberships.find(m => m.companyId === activeCompany?.id || m.companyCode === activeCompany?.code) || null;
     }
-    // Fallback membership for root super admin across all 4 companies
+    const effectiveScope = (currentUser.accountType === 'Group Super Admin' ? 6 : (currentUser.dataScope ?? 4)) as DataScopeLevel;
     return {
-      id: `mem-root-${activeCompany?.code}`,
-      userId: currentUser?.id || 'usr-admin-001',
+      id: `mem-${currentUser.id}-${activeCompany?.code}`,
+      userId: currentUser.id,
       companyId: activeCompany?.id || '',
       companyCode: activeCompany?.code,
       companyName: activeCompany?.legalName,
-      dataScope: (currentUser?.accountType === 'Group Super Admin' ? 6 : (currentUser?.dataScope ?? 5)) as DataScopeLevel,
-      dataScopeName: DATA_SCOPE_NAMES[(currentUser?.accountType === 'Group Super Admin' ? 6 : (currentUser?.dataScope ?? 5)) as DataScopeLevel],
+      dataScope: effectiveScope,
+      dataScopeName: DATA_SCOPE_NAMES[effectiveScope],
       branchScope: ['*'],
       departmentScope: ['*'],
       isPrimary: true,
@@ -134,9 +228,10 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [userMemberships, activeCompany, currentUser]);
 
   const dataScope: DataScopeLevel = useMemo(() => {
-    if (currentUser?.accountType === 'Group Super Admin') return 6;
+    if (!currentUser) return 0;
+    if (currentUser.accountType === 'Group Super Admin') return 6;
     if (activeMembership?.dataScope !== undefined) return activeMembership.dataScope;
-    return (currentUser?.dataScope ?? 5) as DataScopeLevel;
+    return (currentUser.dataScope ?? 4) as DataScopeLevel;
   }, [currentUser, activeMembership]);
 
   const dataScopeName: DataScopeName = DATA_SCOPE_NAMES[dataScope] || 'Company';

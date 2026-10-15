@@ -10,6 +10,7 @@ export interface ZatcaInvoicePayload {
   issueTime: string;
   sellerName: string;
   sellerVatNumber: string;
+  sellerCrNumber?: string;
   sellerAddress: string;
   buyerName?: string;
   buyerVatNumber?: string;
@@ -26,6 +27,10 @@ export interface ZatcaInvoicePayload {
   grandTotal: number;
   previousInvoiceHash?: string;
 }
+
+export const ZATCA_GENESIS_PIH =
+  'NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==';
+
 
 export interface ZatcaComplianceResult {
   qrCodeBase64: string;
@@ -109,8 +114,9 @@ export function generateZatcaQR(
  * Generates UBL 2.1 XML structure compliant with ZATCA Phase 2
  */
 export function generateUblXml(payload: ZatcaInvoicePayload): string {
-  const timestamp = `${payload.issueDate}T${payload.issueTime}Z`;
-  
+  const pih = payload.previousInvoiceHash || ZATCA_GENESIS_PIH;
+  const crNumber = payload.sellerCrNumber || '1010892345';
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
          xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
@@ -123,12 +129,18 @@ export function generateUblXml(payload: ZatcaInvoicePayload): string {
   <cbc:InvoiceTypeCode name="0111010">388</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>PIH</cbc:ID>
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">${pih}</cbc:EmbeddedDocumentBinaryObject>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
   
   <!-- Seller Party -->
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cac:PartyIdentification>
-        <cbc:ID schemeID="CRN">1010892345</cbc:ID>
+        <cbc:ID schemeID="CRN">${crNumber}</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyLegalEntity>
         <cbc:RegistrationName>${payload.sellerName}</cbc:RegistrationName>
@@ -209,3 +221,30 @@ export async function processZatcaInvoice(payload: ZatcaInvoicePayload): Promise
     errors: []
   };
 }
+
+/**
+ * Processes a chain of invoices sequentially so each invoice embeds the SHA-256 hash
+ * of the preceding invoice (`PIH` cryptographic hash chain per ZATCA Phase 2).
+ */
+export async function chainZatcaInvoices(
+  invoices: ZatcaInvoicePayload[]
+): Promise<Array<ZatcaComplianceResult & { previousInvoiceHash: string }>> {
+  const results: Array<ZatcaComplianceResult & { previousInvoiceHash: string }> = [];
+  let currentPih = ZATCA_GENESIS_PIH;
+
+  for (const inv of invoices) {
+    const withPih: ZatcaInvoicePayload = {
+      ...inv,
+      previousInvoiceHash: inv.previousInvoiceHash || currentPih,
+    };
+    const res = await processZatcaInvoice(withPih);
+    results.push({
+      ...res,
+      previousInvoiceHash: withPih.previousInvoiceHash!,
+    });
+    currentPih = res.invoiceHash;
+  }
+
+  return results;
+}
+

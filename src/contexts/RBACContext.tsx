@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
-import { CompanyId, RoleType, PermissionAction, UserPermission, ApprovalRule } from '../types';
-import { useCompany } from './CompanyContext';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { CompanyId, RoleType, PermissionAction, UserPermission } from '../types';
+import { useCompany, normalizeCompanyId } from './CompanyContext';
+import { authService, UserProfile } from '../services/authService';
 
 export interface UserRoleProfile {
   id: string;
@@ -11,16 +12,95 @@ export interface UserRoleProfile {
   permissions: UserPermission[];
 }
 
-const DEFAULT_SUPER_ADMIN_PROFILE: UserRoleProfile = {
-  id: 'USER-001',
-  name: 'سليمان خالد السليم',
-  role: 'SUPER_ADMIN',
-  primaryCompanyId: 'all',
-  allowedCompanyIds: ['all', 'SAF', 'YAQ', 'TOP', 'DAR', 'KAS'],
-  permissions: [
-    { module: '*', actions: ['view', 'create', 'edit', 'approve', 'post', 'cancel', 'export', 'print', 'download', 'share', 'delete'], scope: 'GROUP' },
-  ],
+const GUEST_RESTRICTED_PROFILE: UserRoleProfile = {
+  id: 'unauthenticated',
+  name: 'زائر غير مصادق',
+  role: 'VIEWER',
+  primaryCompanyId: 'SAF',
+  allowedCompanyIds: [],
+  permissions: [],
 };
+
+function buildRoleProfileFromAuthUser(user: UserProfile | null): UserRoleProfile {
+  if (!user) return GUEST_RESTRICTED_PROFILE;
+
+  const assignedCompany = normalizeCompanyId((user.company_id as CompanyId) || 'SAF');
+
+  if (authService.isAdmin(user)) {
+    return {
+      id: user.id,
+      name: user.full_name,
+      role: 'SUPER_ADMIN',
+      primaryCompanyId: 'all',
+      allowedCompanyIds: ['all', 'SAF', 'YAQ', 'TOP', 'DAR', 'KAS'],
+      permissions: [
+        {
+          module: '*',
+          actions: ['view', 'create', 'edit', 'approve', 'post', 'cancel', 'export', 'print', 'download', 'share', 'delete'],
+          scope: 'GROUP',
+        },
+      ],
+    };
+  }
+
+  if (authService.isFinance(user)) {
+    return {
+      id: user.id,
+      name: user.full_name,
+      role: user.role === 'مدير مالي' ? 'GROUP_FINANCE' : 'ACCOUNTANT',
+      primaryCompanyId: assignedCompany,
+      allowedCompanyIds: user.role === 'مدير مالي' ? ['all', 'SAF', 'YAQ', 'TOP', 'DAR', 'KAS'] : [assignedCompany],
+      permissions: [
+        {
+          module: 'finance',
+          actions: ['view', 'create', 'edit', 'approve', 'post', 'export', 'print', 'download'],
+          scope: user.role === 'مدير مالي' ? 'GROUP' : 'COMPANY',
+          companyId: assignedCompany,
+        },
+        {
+          module: '*',
+          actions: ['view', 'print', 'export'],
+          scope: 'COMPANY',
+          companyId: assignedCompany,
+        },
+      ],
+    };
+  }
+
+  if (authService.isHR(user)) {
+    return {
+      id: user.id,
+      name: user.full_name,
+      role: 'GROUP_HR',
+      primaryCompanyId: assignedCompany,
+      allowedCompanyIds: [assignedCompany],
+      permissions: [
+        {
+          module: 'hr',
+          actions: ['view', 'create', 'edit', 'approve', 'export', 'print'],
+          scope: 'COMPANY',
+          companyId: assignedCompany,
+        },
+      ],
+    };
+  }
+
+  return {
+    id: user.id,
+    name: user.full_name,
+    role: 'OPERATIONS_OFFICER',
+    primaryCompanyId: assignedCompany,
+    allowedCompanyIds: [assignedCompany],
+    permissions: [
+      {
+        module: '*',
+        actions: ['view', 'create', 'edit', 'print'],
+        scope: 'COMPANY',
+        companyId: assignedCompany,
+      },
+    ],
+  };
+}
 
 interface RBACContextType {
   currentRoleProfile: UserRoleProfile;
@@ -35,8 +115,21 @@ interface RBACContextType {
 const RBACContext = createContext<RBACContextType | undefined>(undefined);
 
 export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentRoleProfile, setRoleProfile] = useState<UserRoleProfile>(DEFAULT_SUPER_ADMIN_PROFILE);
+  const [currentRoleProfile, setRoleProfile] = useState<UserRoleProfile>(() =>
+    buildRoleProfileFromAuthUser(authService.getCurrentUser())
+  );
   const { activeCompanyId } = useCompany();
+
+  useEffect(() => {
+    const syncRole = (profile: UserProfile | null) => {
+      setRoleProfile(buildRoleProfileFromAuthUser(profile));
+    };
+    syncRole(authService.getCurrentUser());
+    const { data: { subscription } } = authService.onAuthStateChange((_event, session) => {
+      syncRole(session?.user?.profile || authService.getCurrentUser());
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const isSuperAdmin = currentRoleProfile.role === 'SUPER_ADMIN';
 

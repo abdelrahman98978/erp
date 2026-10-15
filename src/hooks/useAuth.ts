@@ -14,7 +14,11 @@ export interface AuthContext {
    * a real Supabase session exists AND MFA requirements are satisfied.
    */
   isAuthenticated: boolean;
-  signIn: (identifier: string, password: string) => Promise<{ success: boolean; error?: string; mfa?: MfaRequirement }>;
+  signIn: (
+    identifier: string,
+    password: string,
+    targetCompanyId?: string
+  ) => Promise<{ success: boolean; error?: string; mfa?: MfaRequirement }>;
   signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   verifyMfa: (code: string, factorId?: string) => Promise<{ success: boolean; error?: string }>;
   enrollMfa: () => Promise<{ data: TotpEnrollment | null; error: string | null }>;
@@ -70,9 +74,9 @@ export const useAuth = (): AuthContext => {
     };
   }, [refreshMfa]);
 
-  const signIn = useCallback(async (identifier: string, password: string) => {
+  const signIn = useCallback(async (identifier: string, password: string, targetCompanyId?: string) => {
     setError(null);
-    const { data, error: signInError, mfa } = await authService.signIn(identifier, password);
+    const { data, error: signInError, mfa } = await authService.signIn(identifier, password, targetCompanyId);
     if (signInError || !data) {
       const errMsg = signInError?.message || 'فشل تسجيل الدخول';
       setError(errMsg);

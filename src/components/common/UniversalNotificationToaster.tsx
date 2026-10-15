@@ -116,24 +116,35 @@ export const UniversalNotificationToaster: React.FC<UniversalNotificationToaster
   return (
     <div
       dir="rtl"
-      className="fixed top-4 end-4 z-[99999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-3 select-none"
-      style={{ filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.12))' }}
+      className="fixed top-[calc(8px+env(safe-area-inset-top,0px))] inset-x-2.5 sm:inset-x-auto sm:top-4 sm:left-4 z-[99999] flex flex-col gap-2 sm:w-96 max-w-[calc(100vw-20px)] mx-auto sm:mx-0 pointer-events-none select-none"
+      style={{ filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.14))' }}
     >
       {/* Sound Mute Toggle Bar when notifications are active */}
-      <div className="flex items-center justify-between px-2 text-[11px] text-zinc-500 pointer-events-auto">
-        <span className="font-bold text-zinc-600">🔔 الإشعارات المنبثقة الحية ({notifications.length})</span>
-        <button
-          type="button"
-          onClick={() => {
-            const next = notificationPopupEngine.toggleMute();
-            setIsMuted(next);
-          }}
-          className="flex items-center gap-1 hover:text-zinc-800 p-1 rounded transition-colors"
-          title={isMuted ? 'تشغيل نغمة الإشعارات' : 'كتم نغمة الإشعارات'}
-        >
-          {isMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-500" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-600" />}
-          <span>{isMuted ? 'مكتوم' : 'صوت منبه'}</span>
-        </button>
+      <div className="flex items-center justify-between px-2.5 py-1 rounded-full bg-slate-950/90 backdrop-blur-md text-[11px] text-white pointer-events-auto shadow-md border border-white/10">
+        <span className="font-bold text-amber-300">🔔 تنبيهات حية ({notifications.length})</span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              const next = notificationPopupEngine.toggleMute();
+              setIsMuted(next);
+            }}
+            className="flex items-center gap-1 hover:text-amber-300 px-1.5 py-0.5 rounded transition-colors"
+            title={isMuted ? 'تشغيل نغمة الإشعارات والاهتزاز' : 'كتم نغمة الإشعارات والاهتزاز'}
+          >
+            {isMuted ? <VolumeX className="w-3.5 h-3.5 text-rose-400" /> : <Volume2 className="w-3.5 h-3.5 text-emerald-400" />}
+            <span>{isMuted ? 'مكتوم' : 'صوت واهتزاز'}</span>
+          </button>
+          {notifications.length > 1 && (
+            <button
+              type="button"
+              onClick={() => notificationPopupEngine.clearAll()}
+              className="text-[10px] text-slate-300 hover:text-white px-1.5 py-0.5 rounded bg-white/10"
+            >
+              إغلاق الكل
+            </button>
+          )}
+        </div>
       </div>
 
       {notifications.map((notif) => {
@@ -142,17 +153,23 @@ export const UniversalNotificationToaster: React.FC<UniversalNotificationToaster
         return (
           <div
             key={notif.id}
-            className={`pointer-events-auto relative overflow-hidden bg-white/95 backdrop-blur-md rounded-xl p-3.5 border ${meta.border} shadow-lg transition-all duration-300 animate-in slide-in-from-top-3 fade-in`}
+            onTouchEnd={(e) => {
+              const touch = e.changedTouches?.[0];
+              if (touch && touch.clientY < 40) {
+                notificationPopupEngine.dismiss(notif.id);
+              }
+            }}
+            className={`pointer-events-auto relative overflow-hidden bg-white/98 backdrop-blur-xl rounded-2xl p-3 sm:p-3.5 border ${meta.border} shadow-xl transition-all duration-300 animate-in slide-in-from-top-3 fade-in`}
           >
             {/* Top Bar: Icon + Category Badge + Time + Close Button */}
             <div className="flex items-center justify-between gap-2 mb-1.5">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
                 {meta.icon}
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${meta.badgeBg}`}>
                   {meta.label}
                 </span>
                 {notif.companyName && (
-                  <span className="text-[10px] font-semibold text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-semibold text-zinc-500 bg-zinc-100 px-1.5 py-0.5 rounded truncate max-w-[130px]">
                     {notif.companyName}
                   </span>
                 )}

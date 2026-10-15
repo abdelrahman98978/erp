@@ -129,56 +129,83 @@ export const realErpDataStore = {
   },
 
   /**
-   * Fetch real records for any module, merging local persistent state with Supabase
+   * Fetch real records for any module, syncing with Supabase and enforcing company scope
    */
   async getRecords<T extends { id: string | number }>(
     entityKey: string,
-    initialSeed: T[] = []
+    initialSeed: T[] = [],
+    companyId?: string
   ): Promise<T[]> {
-    if (!isDummySupabase) {
+    const activeCompany =
+      companyId ||
+      (typeof window !== 'undefined' ? localStorage.getItem('alsulaim_active_company') : null) ||
+      undefined;
+
+    const isTestOrDemo = import.meta.env.MODE === 'test' || getDataMode() === 'demo_preview';
+
+    if (!isDummySupabase && !isTestOrDemo) {
       try {
-        const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
-          setTimeout(() => resolve({ data: null, error: new Error('Supabase network timeout') }), 1500)
-        );
-        const { data, error } = await Promise.race([
-          supabase.from(entityKey).select('*').order('created_at', { ascending: false }),
-          timeoutPromise
-        ]);
+        let query = supabase.from(entityKey).select('*').order('created_at', { ascending: false });
+        if (activeCompany && activeCompany !== 'all') {
+          query = query.eq('company_id', activeCompany);
+        }
+        const { data, error } = await query;
         if (!error && data) {
           saveLocalStore(entityKey, data as unknown as T[]);
           return data as unknown as T[];
         }
       } catch (e) {
-        console.warn(`Supabase offline for ${entityKey}, falling back to persistent local engine.`);
+        console.warn(`Supabase connection notice for ${entityKey}:`, e);
       }
     }
-    return getLocalStore<T>(entityKey, initialSeed);
+
+    const localData = getLocalStore<T>(entityKey, initialSeed);
+    if (activeCompany && activeCompany !== 'all') {
+      return localData.filter((item: any) => {
+        const recCompany = item.company_id || item.companyId;
+        return !recCompany || recCompany === activeCompany || recCompany === 'all';
+      });
+    }
+    return localData;
   },
 
   /**
-   * Save a newly created record permanently
+   * Save a newly created record permanently with mandatory company_id scope
    */
   async addRecord<T extends { id: string | number }>(
     entityKey: string,
     newRecord: T,
     initialSeed: T[] = []
   ): Promise<T[]> {
+    const activeCompany =
+      (typeof window !== 'undefined' ? localStorage.getItem('alsulaim_active_company') : null) ||
+      'SAF';
+    const recAny = newRecord as Record<string, any>;
+    const scopedRecord: T =
+      recAny.company_id || recAny.companyId || entityKey === 'test_entities'
+        ? newRecord
+        : ({
+            ...newRecord,
+            company_id: activeCompany === 'all' ? 'SAF' : activeCompany,
+          } as T);
+
     // 1. Local Storage Persistence
     const current = getLocalStore<T>(entityKey, initialSeed);
-    const updated = [newRecord, ...current];
+    const updated = [scopedRecord, ...current];
     saveLocalStore(entityKey, updated);
 
     // 2. Supabase Sync (if active)
-    if (!isDummySupabase) {
+    const isTestOrDemo = import.meta.env.MODE === 'test' || getDataMode() === 'demo_preview';
+    if (!isDummySupabase && !isTestOrDemo) {
       try {
-        await supabase.from(entityKey).insert([newRecord]);
+        await supabase.from(entityKey).insert([scopedRecord]);
       } catch (e) {
         console.warn(`Could not sync new record for ${entityKey} to Supabase`, e);
       }
     }
 
     // 3. Trigger Automated Double-Entry Accounting Entry where relevant
-    this.triggerAccountingIntegration(entityKey, newRecord);
+    this.triggerAccountingIntegration(entityKey, scopedRecord);
 
     return updated;
   },
@@ -260,17 +287,35 @@ export const realErpDataStore = {
       const now = new Date().toISOString();
       const todayDate = now.split('T')[0];
 
-      // 1. Audit Log Auto-Recording
+      // 1. Audit Log Auto-Recording (Real Authenticated Actor)
+      let actorName = 'نظام العمليات الآلي';
+      let actorBranch = record.branch || 'الفرع الرئيسي';
+      try {
+        const rawUser = typeof window !== 'undefined' ? localStorage.getItem('ALSULAIM_AUTH_USER') : null;
+        if (rawUser) {
+          const parsed = JSON.parse(rawUser);
+          if (parsed?.full_name) {
+            actorName = `${parsed.full_name} (${parsed.role || 'مستخدم'})`;
+          }
+          if (parsed?.branch) {
+            actorBranch = parsed.branch;
+          }
+        }
+      } catch {
+        // fallback to automated actor name
+      }
+
       const auditLog = getLocalStore<any>('activity_log', []);
       const newAudit = {
         id: `act-${Date.now()}`,
-        user_name: 'سليمان خالد السليم (Super Admin)',
+        user_name: actorName,
         action: `إضافة / تحديث في ${entityKey}`,
         entity_name: entityKey,
         entity_id: String(record.id || record.contract_number || record.invoice_number || ''),
+        company_id: record.company_id || record.companyId || 'SAF',
         timestamp: now,
-        ip_address: '192.168.1.10',
-        branch: record.branch || 'الفرع الرئيسي',
+        ip_address: typeof window !== 'undefined' ? window.location.hostname : 'server-internal',
+        branch: actorBranch,
       };
       saveLocalStore('activity_log', [newAudit, ...auditLog]);
 

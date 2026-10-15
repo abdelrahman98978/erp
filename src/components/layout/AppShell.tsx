@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { MobileBottomNav } from './MobileBottomNav';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface AppShellProps {
@@ -18,7 +19,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   onSelectTab,
   onOpenAppLauncher,
   onLogout,
-  children
+  children,
 }) => {
   const { currentLanguage, theme } = useLanguage();
   const [isDesktop, setIsDesktop] = useState<boolean>(() => {
@@ -31,6 +32,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   // Desktop sidebar collapse state vs Mobile drawer open state
   const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState<boolean>(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
+  const [mobileNotifOpen, setMobileNotifOpen] = useState<boolean>(false);
+  const touchStartXRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -70,23 +73,52 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   const handleToggleSidebar = useCallback(() => {
     if (isDesktop) {
-      setDesktopSidebarCollapsed(prev => !prev);
+      setDesktopSidebarCollapsed((prev) => !prev);
     } else {
-      setMobileDrawerOpen(prev => !prev);
+      setMobileDrawerOpen((prev) => !prev);
     }
   }, [isDesktop]);
 
-  const handleSelectTab = useCallback((href: string, title: string) => {
-    onSelectTab(href, title);
-    if (!isDesktop) {
-      setMobileDrawerOpen(false);
-    }
-  }, [onSelectTab, isDesktop]);
+  const handleSelectTab = useCallback(
+    (href: string, title: string) => {
+      onSelectTab(href, title);
+      if (!isDesktop) {
+        setMobileDrawerOpen(false);
+        setMobileNotifOpen(false);
+      }
+    },
+    [onSelectTab, isDesktop]
+  );
+
+  const handleToggleMobileNotifications = useCallback(() => {
+    setMobileDrawerOpen(false);
+    setMobileNotifOpen((prev) => !prev);
+    window.dispatchEvent(new CustomEvent('toggle-mobile-notifications'));
+  }, []);
 
   const isRtl = currentLanguage.dir === 'rtl';
 
   return (
-    <div className="app-container" data-theme={theme} dir={currentLanguage.dir}>
+    <div
+      className="app-container"
+      data-theme={theme}
+      dir={currentLanguage.dir}
+      onTouchStart={(e) => {
+        if (!isDesktop && e.touches.length === 1) {
+          touchStartXRef.current = e.touches[0].clientX;
+        }
+      }}
+      onTouchEnd={(e) => {
+        if (!isDesktop && touchStartXRef.current !== null && e.changedTouches.length === 1) {
+          const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
+          // In RTL, swiping right (> 70px) while drawer is open closes it
+          if (mobileDrawerOpen && ((isRtl && deltaX > 70) || (!isRtl && deltaX < -70))) {
+            setMobileDrawerOpen(false);
+          }
+          touchStartXRef.current = null;
+        }
+      }}
+    >
       {/* Mobile Backdrop Overlay */}
       {!isDesktop && mobileDrawerOpen && (
         <div
@@ -122,10 +154,10 @@ export const AppShell: React.FC<AppShellProps> = ({
           transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <Sidebar 
-          activeTab={activeTab} 
-          onSelectTab={handleSelectTab} 
-          onClose={() => setMobileDrawerOpen(false)} 
+        <Sidebar
+          activeTab={activeTab}
+          onSelectTab={handleSelectTab}
+          onClose={() => setMobileDrawerOpen(false)}
         />
       </aside>
 
@@ -150,9 +182,17 @@ export const AppShell: React.FC<AppShellProps> = ({
         />
 
         {/* Content Body */}
-        <main className="content-body">
-          {children}
-        </main>
+        <main className="content-body">{children}</main>
+
+        {/* Native-Feel Mobile Bottom Navigation Bar (< 1024px) */}
+        <MobileBottomNav
+          activeTab={activeTab}
+          onSelectTab={handleSelectTab}
+          onOpenAppLauncher={onOpenAppLauncher}
+          onToggleSidebar={handleToggleSidebar}
+          onToggleNotifications={handleToggleMobileNotifications}
+          isNotificationsOpen={mobileNotifOpen}
+        />
       </div>
     </div>
   );

@@ -33,50 +33,7 @@ export interface RegisteredBiometricCredential {
   status: 'نشط' | 'معطل';
 }
 
-const INITIAL_SEEDED_CREDENTIALS: RegisteredBiometricCredential[] = [
-  {
-    id: 'bio-seed-1',
-    credentialId: 'ALSULAIM_FIDO2_SECURE_ADMIN_HASH_981',
-    userId: '1',
-    username: 'admin',
-    fullName: 'مشرف admin (خالد السليم)',
-    deviceName: 'Windows Hello Platform Authenticator (Windows 11 Pro)',
-    authenticatorType: 'windows-hello',
-    biometricType: 'بصمة مزدوجة',
-    enrolledAt: '2026-08-20T10:30:00Z',
-    lastUsedAt: '2026-08-31T09:15:00Z',
-    systemScope: 'جميع المنظومات (SAF, YAQ, TOP, KAS)',
-    status: 'نشط'
-  },
-  {
-    id: 'bio-seed-2',
-    credentialId: 'ALSULAIM_FIDO2_MOHAMMED_FINANCE_HASH_442',
-    userId: '2',
-    username: 'mohammed',
-    fullName: 'محمد مصطفى',
-    deviceName: 'Apple Touch ID Sensor (MacBook Pro M3)',
-    authenticatorType: 'touch-id',
-    biometricType: 'Touch ID (بصمة إصبع)',
-    enrolledAt: '2026-08-22T14:20:00Z',
-    lastUsedAt: '2026-08-30T16:45:00Z',
-    systemScope: 'شركة الصفا الماسي (SAF)',
-    status: 'نشط'
-  },
-  {
-    id: 'bio-seed-3',
-    credentialId: 'ALSULAIM_FIDO2_SARA_HR_HASH_773',
-    userId: '3',
-    username: 'sara_hr',
-    fullName: 'سارة خالد السليم',
-    deviceName: 'Apple Face ID 3D Sensor (iPad Pro)',
-    authenticatorType: 'face-id',
-    biometricType: 'Face ID (بصمة وجه)',
-    enrolledAt: '2026-08-25T11:10:00Z',
-    lastUsedAt: '2026-08-31T08:00:00Z',
-    systemScope: 'شركة توب تالنت الدولية (TOP)',
-    status: 'نشط'
-  }
-];
+const INITIAL_SEEDED_CREDENTIALS: RegisteredBiometricCredential[] = [];
 
 /**
  * Check if the browser and operating system support WebAuthn
@@ -223,31 +180,17 @@ export const registerUserBiometric = async (
           errorMessage: 'تم إلغاء نافذة تسجيل البصمة من قبلك على نظام التشغيل.'
         };
       }
+      return {
+        success: false,
+        errorMessage: err?.message || 'فشل تسجيل البصمة العتادية عبر مستشعر الجهاز.'
+      };
     }
   }
 
-  // Fallback: Create high-security cryptographic registered profile in environment where physical sensor is emulated
-  const generatedId = `FIDO2_SECURE_CRED_${Date.now()}_${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-  const record: RegisteredBiometricCredential = {
-    id: `bio-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-    credentialId: generatedId,
-    userId: user.id,
-    username: user.username,
-    fullName: user.fullName,
-    deviceName: support.detectedDevice || 'مستشعر بيومتري معتمد (Secure Vault)',
-    authenticatorType: biometricType === 'Touch ID (بصمة إصبع)' ? 'touch-id' : 'windows-hello',
-    biometricType,
-    enrolledAt: new Date().toISOString(),
-    lastUsedAt: new Date().toISOString(),
-    systemScope: user.systemScope || 'جميع المنظومات',
-    status: 'نشط'
+  return {
+    success: false,
+    errorMessage: 'المستشعر البيومتري العتادي (WebAuthn / FIDO2) غير متوفر على هذا الجهاز أو المتصفح.'
   };
-
-  await realErpDataStore.addRecord<RegisteredBiometricCredential>('user_biometrics', record, INITIAL_SEEDED_CREDENTIALS);
-  localStorage.setItem(`alsulaim_webauthn_cred_${user.username}_${user.systemScope || 'default'}`, generatedId);
-  localStorage.setItem(`alsulaim_webauthn_cred_${user.username}`, generatedId);
-
-  return { success: true, credential: record };
 };
 
 /**
@@ -314,22 +257,18 @@ export const testBiometricAssertion = async (
           errorMessage: 'تم إلغاء نافذة المطابقة البيومترية.'
         };
       }
+      return {
+        success: false,
+        isRealHardware: true,
+        errorMessage: err?.message || 'فشل التحقق من البصمة العتادية.'
+      };
     }
   }
 
-  // Fallback assertion simulation
-  await realErpDataStore.updateRecord<RegisteredBiometricCredential>(
-    'user_biometrics',
-    credential.id,
-    { lastUsedAt: new Date().toISOString() },
-    INITIAL_SEEDED_CREDENTIALS
-  );
-
   return {
-    success: true,
+    success: false,
     isRealHardware: false,
-    credentialId: credential.credentialId,
-    authenticatorType: credential.authenticatorType
+    errorMessage: 'المستشعر البيومتري العتادي (WebAuthn / FIDO2) غير متاح للمصادقة.'
   };
 };
 

@@ -303,7 +303,9 @@ export type RoleType =
   | 'AUDITOR'
   | 'EXTERNAL_OFFICE'
   | 'AGENT'
-  | 'PROCUREMENT_MANAGER';
+  | 'PROCUREMENT_MANAGER'
+  | 'OPERATIONS_OFFICER'
+  | 'VIEWER';
 
 export type PermissionScope = 'GROUP' | 'COMPANY' | 'BRANCH' | 'DEPARTMENT' | 'OWN';
 

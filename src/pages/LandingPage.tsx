@@ -65,20 +65,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
     playVoice(newPersona);
   };
 
-  const handleSelect = (id: CompanyId | string) => {
-    if (id !== 'login') {
+  const handleSelect = (id: CompanyId | string, portalCode?: string) => {
+    const resolvedPortal = portalCode || id;
+    if (id !== 'login' && id !== 'gateway') {
       setActiveCompanyId(id as CompanyId);
     }
     setMobileMenuOpen(false);
-    onSelectCompany(id);
+    onSelectCompany(resolvedPortal);
   };
 
   const companies = [
     {
       id: 'SAF' as CompanyId,
+      portalCode: 'saf',
       code: 'COMPANY 01 [SAF]',
-      nameAr: 'شركة الصفا الماسي للاستقدام',
-      nameEn: 'Al-Safa Al-Masi Recruitment Co.',
+      nameAr: 'شركة السفير الماسي للاستقدام',
+      nameEn: 'Al-Safeer Al-Masi Recruitment Co.',
       badge: 'عقود الاستقدام مساند',
       desc: 'بوابة متكاملة لإدارة عقود استقدام الأفراد، إصدار التأشيرات الفورية، التوثيق عبر مساند، وبوالص التأمين الشاملة.',
       image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
@@ -88,6 +90,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
     },
     {
       id: 'YAQ' as CompanyId,
+      portalCode: 'yaq',
       code: 'COMPANY 02 [YAQ]',
       nameAr: 'شركة الياقوت الشرقية للتشغيل والتأجير',
       nameEn: 'Yaqoot Eastern Operation & Rental Co.',
@@ -100,6 +103,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
     },
     {
       id: 'TOP' as CompanyId,
+      portalCode: 'top',
       code: 'COMPANY 03 [TOP]',
       nameAr: 'شركة توب تالنت الدولية للتوظيف والـ ATS',
       nameEn: 'Top Talent ATS & Recruitment Co.',
@@ -112,6 +116,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
     },
     {
       id: 'KAS' as CompanyId,
+      portalCode: 'kas',
       code: 'COMPANY 04 [KAS]',
       nameAr: 'شركة كاس للمنافسات والتشغيل',
       nameEn: 'KAS Trading & Etmad Suite',
@@ -123,16 +128,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       license: 'سجل تجاري 1010789234 • ضريبي 3102847592'
     },
     {
-      id: 'SAF' as CompanyId, // Directs to shelter portal
+      id: 'DAR' as CompanyId,
+      portalCode: 'shelter',
       code: 'FACILITY 05 [SHELTER]',
-      nameAr: 'مراكز الإيواء والتسكين والرعاية',
-      nameEn: 'Shelter, Housing & Care Suite',
+      nameAr: 'دار الرواد لمراكز الإيواء والتسكين والرعاية',
+      nameEn: 'Dar Al-Ruwad Shelter, Housing & Care Suite',
       badge: 'ترخيص مراكز الإيواء HRSD',
       desc: 'بوابة إدارة غرف وأسرة الإيواء والضيافة، المتابعة الصحية والغذائية، وإجراءات الترحيل الممتثلة لمعايير وزارة الموارد البشرية.',
       image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
       stats: '120 سرير • امتثال 100%',
       themeColor: '#0d9488',
-      license: 'ترخيص مراكز الإيواء HRSD-MOL'
+      license: 'ترخيص مراكز الإيواء HRSD-MOL • س.ت 1010642918'
     }
   ];
 
@@ -188,7 +194,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           <button
             type="button"
             className="button-outline-on-light text-xs px-4 py-2 rounded-full font-bold flex items-center gap-1.5"
-            onClick={() => handleSelect('all')}
+            onClick={() => handleSelect('all', 'admin')}
           >
             <Building2 className="w-3.5 h-3.5 text-zinc-700" />
             <span>دخول الإدارة المركزية</span>
@@ -196,10 +202,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           <button
             type="button"
             className="button-primary-pill text-xs px-5 py-2 rounded-full font-bold flex items-center gap-1.5 shadow-sm"
-            onClick={() => handleSelect('login')}
+            onClick={() => handleSelect('gateway', 'gateway')}
           >
             <LogIn className="w-3.5 h-3.5" />
-            <span>تسجيل الدخول الموحد</span>
+            <span>بوابات دخول الشركات</span>
           </button>
         </div>
 
@@ -249,13 +255,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
             <div className="pt-4 border-t border-zinc-200 space-y-3">
               <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">
-                الدخول السريع للشركات
+                بوابات الدخول المستقلة للشركات
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {companies.map((c) => (
                   <button
                     key={c.code}
-                    onClick={() => handleSelect(c.id)}
+                    onClick={() => handleSelect(c.id, c.portalCode)}
                     className="p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-right text-xs font-semibold hover:border-champagne hover:bg-white transition-all text-zinc-900 flex items-center justify-between"
                   >
                     <span>{c.nameAr}</span>
@@ -270,7 +276,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             <button
               type="button"
               className="w-full button-outline-on-light py-3 text-sm rounded-full font-bold flex items-center justify-center gap-2"
-              onClick={() => handleSelect('all')}
+              onClick={() => handleSelect('all', 'admin')}
             >
               <Building2 className="w-4 h-4 text-zinc-700" />
               <span>دخول الإدارة المركزية</span>
@@ -278,10 +284,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             <button
               type="button"
               className="w-full button-primary-pill py-3 text-sm rounded-full font-bold flex items-center justify-center gap-2 shadow-sm"
-              onClick={() => handleSelect('login')}
+              onClick={() => handleSelect('gateway', 'gateway')}
             >
               <LogIn className="w-4 h-4" />
-              <span>تسجيل الدخول المباشر</span>
+              <span>بوابات دخول الشركات المستقلة</span>
             </button>
           </div>
         </div>
@@ -318,17 +324,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               <button
                 type="button"
                 className="w-full sm:w-auto button-primary-pill px-7 py-3.5 text-sm rounded-full font-bold flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all"
-                onClick={() => handleSelect('login')}
+                onClick={() => handleSelect('gateway', 'gateway')}
               >
                 <LogIn className="w-4 h-4" />
-                <span>تسجيل الدخول الموحد للمنظومة</span>
+                <span>بوابات دخول الشركات المستقلة</span>
                 <ArrowLeft className="w-4 h-4" />
               </button>
 
               <button
                 type="button"
                 className="w-full sm:w-auto button-outline-on-light px-6 py-3.5 text-sm rounded-full font-bold flex items-center justify-center gap-2 hover:bg-zinc-50 transition-all"
-                onClick={() => handleSelect('all')}
+                onClick={() => handleSelect('all', 'admin')}
               >
                 <Building2 className="w-4 h-4 text-zinc-700" />
                 <span>دخول الإدارة المركزية (Super Admin)</span>
@@ -363,6 +369,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
             {/* Speech Bubble / Welcoming Card - Clickable to open Assistant Chat */}
             <div 
+              role="button"
+              tabIndex={0}
               className="speech-bubble-anim relative z-30 max-w-[340px] mb-2 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-all group"
               style={{
                 boxShadow: '0 16px 36px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04)'
@@ -376,6 +384,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                       : 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم' 
                   }
                 }));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  window.dispatchEvent(new CustomEvent('open-faris-assistant', {
+                    detail: {
+                      persona,
+                      query: persona === 'noura'
+                        ? 'مرحباً نُورة، حدثيني عن خدمات الأقسام النسائية ومراكز الإيواء ومنظومة مجموعة السليم'
+                        : 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم'
+                    }
+                  }));
+                }
               }}
               title={persona === 'noura' ? 'انقر لبدء محادثة مباشرة مع نُورة' : 'انقر لبدء محادثة مباشرة مع فارس'}
             >
@@ -468,6 +489,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
             {/* 3D Mascot Character with Float Animation & Ground Shadow */}
             <div 
+              role="button"
+              tabIndex={0}
               className="relative z-20 flex flex-col items-center cursor-pointer group"
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('open-faris-assistant', {
@@ -478,6 +501,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                       : 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟' 
                   }
                 }));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  window.dispatchEvent(new CustomEvent('open-faris-assistant', {
+                    detail: {
+                      persona,
+                      query: persona === 'noura'
+                        ? 'مرحباً نُورة، كيف يمكنني بدء استخدام المنظومة والوصول للأقسام النسائية ومراكز الإيواء؟'
+                        : 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟'
+                    }
+                  }));
+                }
               }}
               title={persona === 'noura' ? 'انقر للتحدث مع نُورة' : 'انقر للتحدث مع فارس'}
             >
@@ -559,7 +595,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           {companies.map((comp) => (
             <div
               key={comp.code}
-              onClick={() => handleSelect(comp.id)}
+              onClick={() => handleSelect(comp.id, comp.portalCode)}
               className="luxury-white-card group flex flex-col justify-between overflow-hidden cursor-pointer"
               style={{
                 backgroundColor: '#ffffff',
@@ -635,7 +671,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               {/* Bottom Action Button & License */}
               <div className="p-5 pt-0 text-right space-y-2.5">
                 <div className="w-full py-2.5 px-3.5 rounded-xl bg-zinc-50 group-hover:bg-zinc-950 text-zinc-800 group-hover:text-white border border-zinc-200/90 group-hover:border-zinc-950 transition-all duration-200 font-bold text-xs flex items-center justify-between shadow-2xs">
-                  <span className="text-[11.5px]">دخول بيئة العمل</span>
+                  <span className="text-[11.5px]">بوابة الدخول المستقلة</span>
                   <div className="w-6 h-6 rounded-full bg-white group-hover:bg-zinc-800 text-zinc-700 group-hover:text-amber-400 flex items-center justify-center transition-all shadow-2xs">
                     <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
                   </div>

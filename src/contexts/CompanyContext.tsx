@@ -187,25 +187,72 @@ interface CompanyContextType {
   setActiveBranch: (branch: string) => void;
   companies: CompanyEntity[];
   isGroupAdminView: boolean;
+  isSessionCompanyLocked: boolean;
   getCompanyByCode: (code: string) => CompanyEntity | undefined;
 }
+
+import { authService, getLockedSessionCompany } from '../services/authService';
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeCompanyId, setActiveCompanyIdState] = useState<CompanyId>('all');
+  const [activeCompanyId, setActiveCompanyIdState] = useState<CompanyId>('SAF');
   const [activeBranch, setActiveBranch] = useState<string>('الفرع الرئيسي');
 
   const setActiveCompanyId = (id: CompanyId) => {
     const normalized = normalizeCompanyId(id);
+    const currentUser = authService.getCurrentUser();
+    const isGroupAdmin = authService.isAdmin(currentUser);
+    const sessionLocked = getLockedSessionCompany();
+
+    // Enforce strict per-company session lock for non-Group-Admin sessions
+    if (sessionLocked && currentUser && !isGroupAdmin) {
+      const enforcedCompany = normalizeCompanyId(sessionLocked);
+      setActiveCompanyIdState(enforcedCompany);
+      localStorage.setItem('alsulaim_active_company', enforcedCompany);
+      return;
+    }
+
+    if (normalized === 'all' && currentUser && !isGroupAdmin) {
+      const assigned = normalizeCompanyId((currentUser.company_id as CompanyId) || 'SAF');
+      setActiveCompanyIdState(assigned);
+      localStorage.setItem('alsulaim_active_company', assigned);
+      return;
+    }
+
     setActiveCompanyIdState(normalized);
     localStorage.setItem('alsulaim_active_company', normalized);
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem('alsulaim_active_company') as CompanyId;
+    const currentUser = authService.getCurrentUser();
+    const isGroupAdmin = authService.isAdmin(currentUser);
+    const sessionLocked = getLockedSessionCompany();
+    const saved = localStorage.getItem('alsulaim_active_company') as CompanyId | null;
+
+    if (sessionLocked && !isGroupAdmin) {
+      const lockedCompany = normalizeCompanyId(sessionLocked);
+      setActiveCompanyIdState(lockedCompany);
+      localStorage.setItem('alsulaim_active_company', lockedCompany);
+      if (currentUser?.branch) setActiveBranch(currentUser.branch);
+      return;
+    }
+
+    if (currentUser && !isGroupAdmin && currentUser.company_id && currentUser.company_id !== 'all') {
+      const lockedCompany = normalizeCompanyId(currentUser.company_id);
+      setActiveCompanyIdState(lockedCompany);
+      localStorage.setItem('alsulaim_active_company', lockedCompany);
+      if (currentUser.branch) setActiveBranch(currentUser.branch);
+      return;
+    }
+
     if (saved) {
-      setActiveCompanyIdState(normalizeCompanyId(saved));
+      const normSaved = normalizeCompanyId(saved);
+      if (normSaved === 'all' && !isGroupAdmin) {
+        setActiveCompanyIdState('SAF');
+      } else {
+        setActiveCompanyIdState(normSaved);
+      }
     }
   }, []);
 
@@ -217,6 +264,7 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
       : COMPANIES_LIST.find((c) => c.id === normalizedId || c.code === normalizedId) || GROUP_MASTER_ENTITY;
 
   const isGroupAdminView = normalizedId === 'all';
+  const isSessionCompanyLocked = Boolean(getLockedSessionCompany()) && !authService.isAdmin(authService.getCurrentUser());
 
   const getCompanyByCode = (code: string): CompanyEntity | undefined => {
     const norm = normalizeCompanyId(code);
@@ -233,6 +281,7 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setActiveBranch,
         companies: COMPANIES_LIST,
         isGroupAdminView,
+        isSessionCompanyLocked,
         getCompanyByCode,
       }}
     >

@@ -1,12 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  getTableRecords,
-  insertTableRecord,
-  updateTableRecord,
-  deleteTableRecord,
+  ErpTableName,
   ListOptions,
 } from '../../services/erpSupabaseService';
 import { useCompany } from '../../contexts/CompanyContext';
+import { dataIsolationService } from '../../services/dataIsolationService';
+import { enforceCompanyScope } from '../../services/companyDataGuard';
 import {
   MOCK_CLIENTS,
   MOCK_ORDERS,
@@ -18,23 +17,35 @@ import {
 
 import { realErpDataStore, getDataMode } from '../../services/realErpDataStore';
 
-// --- Generic Table Hook with Cache Invalidation and Fallback ---
-export function useTableData<T = any>(
-  tableName: string,
+// --- Generic Table Hook with Tenant-Isolated Cache Key and Strict Company Filtering ---
+export function useTableData<T = Record<string, unknown>>(
+  tableName: ErpTableName,
   options: ListOptions = {},
   fallbackData: T[] = []
 ) {
   const { activeCompanyId } = useCompany();
-  const effectiveCompanyId = options.companyId || (activeCompanyId !== 'all' ? activeCompanyId : undefined);
+  const effectiveCompanyId = options.companyId || activeCompanyId || 'SAF';
+  const scopedCacheKey = dataIsolationService.getScopedCacheKey(
+    effectiveCompanyId,
+    tableName,
+    JSON.stringify(options)
+  );
 
   return useQuery({
-    queryKey: [tableName, effectiveCompanyId, options, getDataMode()],
+    queryKey: [scopedCacheKey, tableName, effectiveCompanyId, getDataMode()],
     queryFn: async () => {
       const isProduction = getDataMode() === 'production_real';
       const effectiveFallback = isProduction ? [] : fallbackData;
-      const records = await realErpDataStore.getRecords<any>(tableName, effectiveFallback);
-      if (effectiveCompanyId && records.length > 0) {
-        return records.filter((item: any) => !item.company_id && !item.companyId || item.company_id === effectiveCompanyId || item.companyId === effectiveCompanyId || item.companyId === 'all') as T[];
+      const records = await realErpDataStore.getRecords<any>(
+        tableName,
+        effectiveFallback,
+        effectiveCompanyId
+      );
+      if (effectiveCompanyId && effectiveCompanyId !== 'all' && records.length > 0) {
+        return records.filter((item: Record<string, unknown>) => {
+          const itemCompany = item.company_id || item.companyId;
+          return itemCompany === effectiveCompanyId;
+        }) as T[];
       }
       return records as T[];
     },
@@ -95,23 +106,27 @@ export function useVouchers(options: ListOptions = {}) {
   return useTableData('vouchers', options, []);
 }
 
-// --- Generic Mutation Hook for Real-time CRUD ---
-export function useTableMutation<T = any>(tableName: string) {
+// --- Generic Mutation Hook for Real-time Tenant-Scoped CRUD ---
+export function useTableMutation<T = Record<string, any>>(tableName: ErpTableName) {
   const queryClient = useQueryClient();
+  const { activeCompanyId } = useCompany();
 
   const createItem = useMutation({
     mutationFn: async (newRecord: Record<string, any>) => {
-      // 1. Always persist to realErpDataStore (dual local + Supabase engine)
+      const targetCompany = activeCompanyId === 'all' ? 'SAF' : activeCompanyId;
+      const scopedPayload = enforceCompanyScope(newRecord, targetCompany);
       const recordWithId = {
-        id: newRecord.id || `${tableName.slice(0, 3).toUpperCase()}-${Date.now()}`,
-        created_at: newRecord.created_at || new Date().toISOString(),
-        ...newRecord,
+        id: (scopedPayload.id as string) || `${tableName.slice(0, 3).toUpperCase()}-${Date.now()}`,
+        created_at: (scopedPayload.created_at as string) || new Date().toISOString(),
+        ...scopedPayload,
       };
       await realErpDataStore.addRecord(tableName, recordWithId);
       return recordWithId as unknown as T;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [tableName] });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey.includes(tableName),
+      });
     },
   });
 
@@ -121,7 +136,9 @@ export function useTableMutation<T = any>(tableName: string) {
       return { id, ...data } as unknown as T;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [tableName] });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey.includes(tableName),
+      });
     },
   });
 
@@ -131,7 +148,9 @@ export function useTableMutation<T = any>(tableName: string) {
       return true;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [tableName] });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey.includes(tableName),
+      });
     },
   });
 

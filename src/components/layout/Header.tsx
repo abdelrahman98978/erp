@@ -58,8 +58,17 @@ export const Header: React.FC<HeaderProps> = ({
         setAssistantPersona(e.detail.persona);
       }
     };
+    const handleToggleMobileNotifs = () => {
+      setShowNotifDropdown((prev) => !prev);
+      setShowUserDropdown(false);
+      setShowLangDropdown(false);
+    };
     window.addEventListener('assistant-persona-changed', handlePersonaChange);
-    return () => window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+    window.addEventListener('toggle-mobile-notifications', handleToggleMobileNotifs);
+    return () => {
+      window.removeEventListener('assistant-persona-changed', handlePersonaChange);
+      window.removeEventListener('toggle-mobile-notifications', handleToggleMobileNotifs);
+    };
   }, []);
 
   useEffect(() => {
@@ -309,8 +318,12 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative">
             <button
               type="button"
-              onClick={() => setShowLangDropdown(!showLangDropdown)}
-              className="flex items-center gap-1 px-2.5 py-1 bg-zinc-50 border border-zinc-200 rounded-full hover:bg-zinc-100 transition-colors text-xs font-semibold text-zinc-800"
+              onClick={() => {
+                setShowLangDropdown(!showLangDropdown);
+                setShowUserDropdown(false);
+                setShowNotifDropdown(false);
+              }}
+              className="flex items-center gap-1 px-2 sm:px-2.5 py-1 bg-zinc-50 border border-zinc-200 rounded-full hover:bg-zinc-100 transition-colors text-xs font-semibold text-zinc-800 h-9"
               title="تغيير لغة المنظومة (25 لغة)"
             >
               <span className="text-sm leading-none">{currentLanguage.flag}</span>
@@ -319,7 +332,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {showLangDropdown && (
-              <div className="absolute top-full mt-2 left-0 sm:right-auto bg-white border border-zinc-200 rounded-2xl shadow-2xl w-64 max-w-[calc(100vw-32px)] z-[300] p-2 space-y-2 font-sans text-right">
+              <div className="fixed inset-x-3 top-[calc(var(--header-height,64px)+8px)] sm:absolute sm:inset-x-auto sm:top-full sm:mt-2 sm:left-0 bg-white border border-zinc-200 rounded-2xl shadow-2xl sm:w-64 max-w-[calc(100vw-24px)] z-[350] p-2.5 space-y-2 font-sans text-right">
                 <div className="px-2 pt-1 pb-2 border-b border-zinc-100 flex items-center justify-between">
                   <span className="text-xs font-bold text-black flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5 text-emerald-600" />
@@ -340,7 +353,7 @@ export const Header: React.FC<HeaderProps> = ({
                     placeholder="ابحث عن لغة..."
                     value={langSearch}
                     onChange={e => setLangSearch(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pr-7 pl-3 py-1 text-xs text-black focus:border-black outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pr-7 pl-3 py-1.5 text-xs text-black focus:border-black outline-none"
                   />
                 </div>
 
@@ -380,7 +393,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Quick Search Button */}
           <button
-            className="w-9 h-9 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-black hover:bg-zinc-50 transition-colors"
+            className="w-9 h-9 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-black hover:bg-zinc-50 transition-colors shrink-0"
             onClick={() => setQuickSearchOpen(true)}
             title="البحث السريع (Ctrl + K)"
             aria-label="البحث السريع"
@@ -390,7 +403,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Fullscreen Button */}
           <button
-            className="hidden sm:flex w-9 h-9 rounded-full bg-white border border-zinc-200 items-center justify-center text-black hover:bg-zinc-50 transition-colors"
+            className="hidden sm:flex w-9 h-9 rounded-full bg-white border border-zinc-200 items-center justify-center text-black hover:bg-zinc-50 transition-colors shrink-0"
             onClick={toggleFullscreen}
             title={isFullscreen ? 'الخروج من ملء الشاشة' : 'ملء الشاشة'}
             aria-label="ملء الشاشة"
@@ -398,11 +411,11 @@ export const Header: React.FC<HeaderProps> = ({
             {isFullscreen ? <Minimize className="w-4 h-4 text-zinc-700" /> : <Maximize className="w-4 h-4 text-zinc-700" />}
           </button>
 
-          {/* Daily Mood Pulse Check-In Trigger */}
+          {/* Daily Mood Pulse Check-In Trigger (Hidden on narrow mobile, available in user menu) */}
           <button
             type="button"
             onClick={() => setShowMoodModal(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:bg-emerald-50/60 hover:border-emerald-400 transition-all shadow-sm text-xs font-semibold"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white border border-zinc-200 text-zinc-700 hover:bg-emerald-50/60 hover:border-emerald-400 transition-all shadow-sm text-xs font-semibold shrink-0"
             title="تسجيل وتحديث حالتي المزاجية ونبض اليوم"
           >
             <span className="text-base leading-none">{userMoodEmoji}</span>
@@ -412,8 +425,12 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Notifications Bell */}
           <div className="relative">
             <button
-              className="w-9 h-9 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-black hover:bg-zinc-50 transition-colors relative"
-              onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+              className="w-9 h-9 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-black hover:bg-zinc-50 transition-colors relative shrink-0"
+              onClick={() => {
+                setShowNotifDropdown(!showNotifDropdown);
+                setShowUserDropdown(false);
+                setShowLangDropdown(false);
+              }}
               title="الإشعارات والتنبيهات"
               aria-label="الإشعارات"
             >
@@ -424,15 +441,23 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               )}
             </button>
-            <NotificationDropdown isOpen={showNotifDropdown} onClose={() => setShowNotifDropdown(false)} />
+            <NotificationDropdown
+              isOpen={showNotifDropdown}
+              onClose={() => setShowNotifDropdown(false)}
+              onNavigate={(href, title) => setActiveTab(href, title)}
+            />
           </div>
 
           {/* User Profile */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => setShowUserDropdown(!showUserDropdown)}
-              className="flex items-center gap-1.5 bg-white border border-zinc-200 rounded-full p-1 pl-2.5 sm:pl-3 hover:bg-zinc-50 transition-colors"
+              onClick={() => {
+                setShowUserDropdown(!showUserDropdown);
+                setShowNotifDropdown(false);
+                setShowLangDropdown(false);
+              }}
+              className="flex items-center gap-1.5 bg-white border border-zinc-200 rounded-full p-1 pl-2 sm:pl-3 hover:bg-zinc-50 transition-colors shrink-0"
             >
               <div className="w-7 h-7 rounded-full bg-charcoal text-champagne-light border border-champagne/40 flex items-center justify-center text-xs font-black shadow-sm">
                 {(iamUser?.fullName || 'خ').slice(0, 1)}
@@ -449,7 +474,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {showUserDropdown && (
-              <div className="absolute top-full mt-2 left-0 bg-white border border-zinc-200 rounded-2xl shadow-xl w-60 max-w-[calc(100vw-32px)] z-[250] p-2 space-y-1">
+              <div className="fixed inset-x-3 top-[calc(var(--header-height,64px)+8px)] sm:absolute sm:inset-x-auto sm:top-full sm:mt-2 sm:left-0 bg-white border border-zinc-200 rounded-2xl shadow-2xl sm:w-64 max-w-[calc(100vw-24px)] z-[350] p-2.5 space-y-1">
                 <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 mb-1">
                   <div className="font-bold text-xs text-black">{iamUser?.fullName || 'خالد بن عبدالعزيز السليم'}</div>
                   <div className="text-[10px] text-zinc-500 font-mono">{iamUser?.email || 'khalid@alsulaim.sa'}</div>
@@ -459,6 +484,19 @@ export const Header: React.FC<HeaderProps> = ({
                     </span>
                   </div>
                 </div>
+
+                {/* Mobile-only Mood Pulse Quick Trigger */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUserDropdown(false);
+                    setShowMoodModal(true);
+                  }}
+                  className="w-full sm:hidden text-right px-3 py-2 rounded-xl text-xs hover:bg-emerald-50 text-zinc-700 flex items-center gap-2 font-semibold"
+                >
+                  <span className="text-sm leading-none">{userMoodEmoji}</span>
+                  <span>نبض اليوم والحالة المزاجية</span>
+                </button>
 
                 <button
                   type="button"

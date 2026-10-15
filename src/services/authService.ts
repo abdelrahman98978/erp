@@ -7,6 +7,7 @@ export interface UserProfile {
   email: string;
   role: string;
   branch: string;
+  company_id?: string;
   status: string;
   created_at: string;
 }
@@ -83,7 +84,47 @@ const USERNAME_EMAIL_ALIASES: Record<string, string> = {
   'operation.user': 'ops@alsulaim.sa',
 };
 
+export interface CompanyAuthMetadata {
+  code: string;
+  nameAr: string;
+  domain: string;
+}
+
+export const COMPANY_AUTH_METADATA: Record<string, CompanyAuthMetadata> = {
+  SAF: {
+    code: 'SAF',
+    nameAr: 'شركة السفير الماسي للاستقدام',
+    domain: 'saf-rec.sa',
+  },
+  YAQ: {
+    code: 'YAQ',
+    nameAr: 'شركة الياقوت الشرقية للتشغيل والتأجير',
+    domain: 'yaqoot-ops.sa',
+  },
+  TOP: {
+    code: 'TOP',
+    nameAr: 'شركة توب تالنت الدولية للتوظيف والـ ATS',
+    domain: 'topaz-rec.sa',
+  },
+  KAS: {
+    code: 'KAS',
+    nameAr: 'مؤسسة كاس وسحابة اعتماد للمنافسات',
+    domain: 'kas-etimad.sa',
+  },
+  DAR: {
+    code: 'DAR',
+    nameAr: 'دار الرواد لمراكز الإيواء والخدمات اللوجستية',
+    domain: 'alruwad.sa',
+  },
+  ALL: {
+    code: 'all',
+    nameAr: 'الإدارة المركزية لمجموعة خالد السليم القابضة',
+    domain: 'alsulaim.sa',
+  },
+};
+
 const AUTH_USER_CACHE_KEY = 'ALSULAIM_AUTH_USER';
+export const LOCKED_SESSION_COMPANY_KEY = 'ALSULAIM_LOCKED_SESSION_COMPANY';
 
 const notConfiguredError = () => ({
   message: supabaseConfigError || 'قاعدة البيانات غير مُعدّة. لا يمكن تسجيل الدخول.',
@@ -98,6 +139,26 @@ function cacheProfile(profile: UserProfile | null): void {
   }
 }
 
+export function setLockedSessionCompany(companyId: string | null): void {
+  try {
+    if (companyId) {
+      localStorage.setItem(LOCKED_SESSION_COMPANY_KEY, companyId);
+    } else {
+      localStorage.removeItem(LOCKED_SESSION_COMPANY_KEY);
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function getLockedSessionCompany(): string | null {
+  try {
+    return localStorage.getItem(LOCKED_SESSION_COMPANY_KEY);
+  } catch {
+    return null;
+  }
+}
+
 function buildProfileFromAuthUser(authUser: any, identifier: string): UserProfile {
   const appMeta = authUser?.app_metadata || {};
   const userMeta = authUser?.user_metadata || {};
@@ -106,28 +167,95 @@ function buildProfileFromAuthUser(authUser: any, identifier: string): UserProfil
     username: userMeta.username || identifier,
     full_name: userMeta.full_name || authUser.email || 'مستخدم',
     email: authUser.email || '',
-    // Role MUST come from app_metadata (only editable with the service role).
+    // Role and company_id MUST come from app_metadata (only editable with the service role).
     // user_metadata is writable by the user themself and must never grant privileges.
     role: appMeta.role || 'مستخدم',
     branch: appMeta.branch || userMeta.branch || '',
+    company_id: appMeta.company_id || 'SAF',
     status: 'نشط',
     created_at: authUser.created_at || new Date().toISOString(),
   };
 }
 
 export const authService = {
+  /** Return the official email domain for a specific company portal. */
+  getCompanyEmailDomain(companyId?: string): string {
+    const key = (companyId || 'ALL').trim().toUpperCase();
+    return COMPANY_AUTH_METADATA[key]?.domain || 'alsulaim.sa';
+  },
+
   /** Resolve a username or email to the login email. */
-  resolveEmail(identifier: string): string {
+  resolveEmail(identifier: string, _targetCompanyId?: string): string {
     const clean = identifier.trim().toLowerCase();
     if (clean.includes('@')) return clean;
     return USERNAME_EMAIL_ALIASES[clean] || `${clean}@alsulaim.sa`;
   },
 
   /**
-   * Sign in against Supabase Auth ONLY. There is no offline / hardcoded fallback.
+   * Deterministic Tenant Boundary Check:
+   * Verifies that the authenticated user is authorized to enter the requested company portal.
+   */
+  validateCompanyAccess(
+    profile: UserProfile | null,
+    targetCompanyId?: string,
+    extraAllowedCompanies: string[] = []
+  ): { allowed: boolean; reason?: string } {
+    if (!profile) {
+      return { allowed: false, reason: 'لم يتم العثور على ملف تعريف المستخدم.' };
+    }
+    if (!targetCompanyId) {
+      return { allowed: true };
+    }
+
+    const normalizedTarget = targetCompanyId.trim().toUpperCase();
+    const normalizedUserCompany = (profile.company_id || 'SAF').trim().toUpperCase();
+    const isGroupAdmin = this.isAdmin(profile) || normalizedUserCompany === 'ALL';
+
+    // 1. Central Group Admin Portal (/login/admin -> targetCompanyId = 'all')
+    if (normalizedTarget === 'ALL') {
+      if (isGroupAdmin) {
+        return { allowed: true };
+      }
+      const userCompName = COMPANY_AUTH_METADATA[normalizedUserCompany]?.nameAr || normalizedUserCompany;
+      return {
+        allowed: false,
+        reason: `رفض أمني (عزل الصلاحيات): هذا الحساب يتبع لـ (${userCompName}) ولا يملك تصريح الدخول لبوابة الإدارة المركزية العليا للمجموعة.`,
+      };
+    }
+
+    // 2. Group Super Admins can access any subsidiary portal for governance/auditing
+    if (isGroupAdmin) {
+      return { allowed: true };
+    }
+
+    // 3. Direct company match or explicit multi-company IAM membership
+    const normalizedExtras = extraAllowedCompanies.map((c) => c.trim().toUpperCase());
+    if (
+      normalizedUserCompany === normalizedTarget ||
+      normalizedExtras.includes(normalizedTarget) ||
+      normalizedExtras.includes('*')
+    ) {
+      return { allowed: true };
+    }
+
+    const userCompName = COMPANY_AUTH_METADATA[normalizedUserCompany]?.nameAr || normalizedUserCompany;
+    const targetCompName = COMPANY_AUTH_METADATA[normalizedTarget]?.nameAr || normalizedTarget;
+
+    return {
+      allowed: false,
+      reason: `رفض أمني (عزل الشركات): هذا الحساب مسجل على ملاك (${userCompName}) ولا يملك تصريح الدخول عبر بوابة (${targetCompName}) المستقلة.`,
+    };
+  },
+
+  /**
+   * Sign in against Supabase Auth ONLY, enforcing strict per-company portal isolation.
    * On success the session may still require MFA — check `mfa` in the result.
    */
-  async signIn(identifier: string, password: string): Promise<{
+  async signIn(
+    identifier: string,
+    password: string,
+    targetCompanyId?: string
+  ): Promise<{
     data: UserProfile | null;
     error: { message: string } | null;
     mfa: MfaRequirement;
@@ -139,7 +267,7 @@ export const authService = {
       return { data: null, error: notConfiguredError(), mfa: 'none' };
     }
 
-    const email = this.resolveEmail(identifier);
+    const email = this.resolveEmail(identifier, targetCompanyId);
     const throttle = checkThrottle(email);
     if (throttle.blocked) {
       return {
@@ -167,7 +295,41 @@ export const authService = {
         ? { ...buildProfileFromAuthUser(authData.user, identifier), ...dbProfile }
         : buildProfileFromAuthUser(authData.user, identifier);
 
+      // Fetch any additional IAM company memberships if targetCompanyId is specified
+      let extraMemberships: string[] = [];
+      if (targetCompanyId) {
+        try {
+          const { data: memRows } = await supabase
+            .from('user_company_memberships')
+            .select('company_id, company_code, status')
+            .eq('user_id', profile.id);
+          if (Array.isArray(memRows)) {
+            extraMemberships = memRows
+              .filter((r: any) => !r.status || r.status === 'نشط' || r.status === 'active')
+              .flatMap((r: any) => [r.company_id, r.company_code].filter(Boolean));
+          }
+        } catch {
+          // Membership lookup is optional if table is empty
+        }
+
+        const accessCheck = this.validateCompanyAccess(profile, targetCompanyId, extraMemberships);
+        if (!accessCheck.allowed) {
+          await supabase.auth.signOut();
+          cacheProfile(null);
+          setLockedSessionCompany(null);
+          return {
+            data: null,
+            error: { message: accessCheck.reason || 'غير مصرح بالدخول لهذه الشركة.' },
+            mfa: 'none',
+          };
+        }
+      }
+
+      const resolvedLockedCompany =
+        targetCompanyId || (profile.company_id ? profile.company_id : 'SAF');
+      setLockedSessionCompany(resolvedLockedCompany);
       cacheProfile(profile);
+
       const mfa = await this.getMfaRequirement();
       return { data: profile, error: null, mfa };
     } catch (netErr: any) {
@@ -250,6 +412,7 @@ export const authService = {
 
   async signOut() {
     cacheProfile(null);
+    setLockedSessionCompany(null);
     if (!isSupabaseConfigured) return { error: null };
     const { error } = await supabase.auth.signOut();
     return { error };
