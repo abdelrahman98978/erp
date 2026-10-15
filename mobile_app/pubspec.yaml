@@ -57,10 +57,20 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/logo.png
+    - assets/alsulaim-gold-emblem.png
+    - assets/login-hero-pro.jpg
+    - assets/mascot.png
+    - assets/noura.png
+    - assets/logos/dar.png
+    - assets/logos/masi.png
+    - assets/logos/ruwad.png
+    - assets/logos/saf.png
+    - assets/logos/top.png
+    - assets/logos/topaz.png
+    - assets/logos/yaq.png
+    - assets/logos/yaqoot.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
