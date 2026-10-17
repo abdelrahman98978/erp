@@ -4,21 +4,15 @@ import { authService, UserProfile, MfaRequirement, TotpEnrollment } from '../ser
 export interface AuthContext {
   user: UserProfile | null;
   session: any;
-  /** True until the initial Supabase session + MFA level have been resolved. */
   loading: boolean;
   error: string | null;
-  /** Remaining MFA step for the current session ('none' when fully authenticated). */
   mfaRequirement: MfaRequirement;
-  /**
-   * The ONLY flag that should gate access to protected areas:
-   * a real Supabase session exists AND MFA requirements are satisfied.
-   */
   isAuthenticated: boolean;
   signIn: (
     identifier: string,
     password: string,
     targetCompanyId?: string
-  ) => Promise<{ success: boolean; error?: string; mfa?: MfaRequirement }>;
+  ) => Promise<{ success: boolean; error?: string; mfa?: MfaRequirement; user?: UserProfile }>;
   signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   verifyMfa: (code: string, factorId?: string) => Promise<{ success: boolean; error?: string }>;
   enrollMfa: () => Promise<{ data: TotpEnrollment | null; error: string | null }>;
@@ -32,8 +26,11 @@ export interface AuthContext {
 }
 
 export const useAuth = (): AuthContext => {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [session, setSession] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(() => authService.getCurrentUser());
+  const [session, setSession] = useState<any>(() => {
+    const cached = authService.getCurrentUser();
+    return cached ? { user: { id: cached.id, email: cached.email, profile: cached } } : null;
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [mfaRequirement, setMfaRequirement] = useState<MfaRequirement>('none');
@@ -68,9 +65,25 @@ export const useAuth = (): AuthContext => {
       if (active && event !== 'INITIAL_SESSION') setLoading(false);
     });
 
+    const handleDirectAuthUpdate = (e: any) => {
+      if (!active) return;
+      const profile = e.detail?.profile as UserProfile | null;
+      if (profile) {
+        setUser(profile);
+        setSession({ user: { id: profile.id, email: profile.email, profile } });
+        setMfaRequirement('none');
+      } else {
+        setUser(null);
+        setSession(null);
+        setMfaRequirement('none');
+      }
+    };
+    window.addEventListener('alsulaim-auth-updated', handleDirectAuthUpdate);
+
     return () => {
       active = false;
       subscription.unsubscribe();
+      window.removeEventListener('alsulaim-auth-updated', handleDirectAuthUpdate);
     };
   }, [refreshMfa]);
 
@@ -83,8 +96,9 @@ export const useAuth = (): AuthContext => {
       return { success: false, error: errMsg };
     }
     setUser(data);
+    setSession({ user: { id: data.id, email: data.email, profile: data } });
     setMfaRequirement(mfa);
-    return { success: true, mfa };
+    return { success: true, mfa, user: data };
   }, []);
 
   const verifyMfa = useCallback(async (code: string, factorId?: string) => {
@@ -123,7 +137,7 @@ export const useAuth = (): AuthContext => {
     loading,
     error,
     mfaRequirement,
-    isAuthenticated: Boolean(session?.user) && mfaRequirement === 'none',
+    isAuthenticated: Boolean(session?.user || user) && mfaRequirement === 'none',
     signIn,
     signInWithGoogle,
     verifyMfa,

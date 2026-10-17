@@ -83,6 +83,12 @@ export const TravelPage: React.FC = () => {
   const { activeCompany } = useCompany();
   const { addNotification } = useAppStore();
   const [flights, setFlights] = useState<FlightRecord[]>([]);
+  const [airportReceptions, setAirportReceptions] = useState([
+    { id: 'REC-RUH-01', maid: 'MARIA SANTOS CORTEZ', nat: 'الفلبين', airport: 'مطار الملك خالد - صالة 2', time: '14:30', driver: 'محمد السائق (حافلة 12)', dest: 'مركز إيواء الرياض الرئيسي', status: 'تم الاستقبال بنجاح' },
+    { id: 'REC-JED-02', maid: 'ALEMITU BEKELE', nat: 'إثيوبيا', airport: 'مطار الملك عبدالعزيز - الصالة 1', time: '09:15', driver: 'أحمد السائق (فان 05)', dest: 'مركز ترانزيت جدة', status: 'تم الاستقبال بنجاح' },
+    { id: 'REC-RUH-03', maid: 'JOYCE MWANGI', nat: 'كينيا', airport: 'مطار الملك خالد - صالة 2', time: '18:45', driver: 'سعيد القحطاني (حافلة 14)', dest: 'تسليم مباشر للعميل', status: 'بانتظار هبوط الطائرة' },
+    { id: 'REC-DMM-04', maid: 'FATIMA NABATANZI', nat: 'أوغندا', airport: 'مطار الملك فهد بالدمام', time: '21:00', driver: 'خالد السائق (فان 08)', dest: 'مركز إيواء الدمام', status: 'بانتظار هبوط الطائرة' },
+  ]);
   const storeActiveTab = useAppStore(state => state.activeTab);
 
   const getMappedTab = (tabKey: string): 'all' | 'arrivals' | 'deportations' | 'reception' => {
@@ -317,33 +323,39 @@ export const TravelPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { id: 'REC-RUH-01', maid: 'MARIA SANTOS CORTEZ', nat: 'الفلبين', airport: 'مطار الملك خالد - صالة 2', time: '14:30', driver: 'محمد السائق (حافلة 12)', dest: 'مركز إيواء الرياض الرئيسي', status: 'تم الاستقبال بنجاح' },
-                  { id: 'REC-JED-02', maid: 'ALEMITU BEKELE', nat: 'إثيوبيا', airport: 'مطار الملك عبدالعزيز - الصالة 1', time: '09:15', driver: 'أحمد السائق (فان 05)', dest: 'مركز ترانزيت جدة', status: 'تم الاستقبال بنجاح' },
-                  { id: 'REC-RUH-03', maid: 'JOYCE MWANGI', nat: 'كينيا', airport: 'مطار الملك خالد - صالة 2', time: '18:45', driver: 'سعيد القحطاني (حافلة 14)', dest: 'تسليم مباشر للعميل', status: 'بانتظار هبوط الطائرة' },
-                  { id: 'REC-DMM-04', maid: 'FATIMA NABATANZI', nat: 'أوغندا', airport: 'مطار الملك فهد بالدمام', time: '21:00', driver: 'خالد السائق (فان 08)', dest: 'مركز إيواء الدمام', status: 'بانتظار هبوط الطائرة' },
-                ].map((r) => (
+                {airportReceptions.map((r) => (
                   <tr key={r.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{r.id}</td>
                     <td className="p-3.5 font-bold text-black">{r.maid} <span className="text-zinc-500 font-normal">({r.nat})</span></td>
                     <td className="p-3.5 font-semibold text-black">{r.airport}</td>
                     <td className="p-3.5 font-mono text-black">{r.time}</td>
                     <td className="p-3.5 text-zinc-700">{r.driver}</td>
-                    <td className="p-3.5 font-bold text-purple-700">{r.dest}</td>
+                    <td className="p-3.5 font-bold text-amber-700">{r.dest}</td>
                     <td className="p-3.5"><Badge text={r.status} type={r.status.includes('تم') ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
                       <button
-                        onClick={() => {
+                        disabled={r.status === 'تم الاستقبال بنجاح'}
+                        onClick={async () => {
+                          setAirportReceptions(prev =>
+                            prev.map(item =>
+                              item.id === r.id ? { ...item, status: 'تم الاستقبال بنجاح' } : item
+                            )
+                          );
+                          await realErpDataStore.addRecord('travel_receptions', {
+                            ...r,
+                            status: 'تم الاستقبال بنجاح',
+                            confirmed_at: new Date().toISOString(),
+                          });
                           addNotification({
-                            title: 'تأكيد استلام العاملة',
-                            message: `تم توثيق استلام العاملة (${r.maid}) وتسليمها للوجهة بنجاح.`,
+                            title: 'تأكيد استلام العاملة بالمطار',
+                            message: `تم توثيق استلام العاملة (${r.maid}) بالمطار وتسليمها للوجهة (${r.dest}) بنجاح.`,
                             type: 'success',
                           });
                         }}
-                        className="button-primary-pill"
+                        className="button-primary-pill disabled:opacity-50"
                         style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
                       >
-                        تأكيد النقل
+                        {r.status === 'تم الاستقبال بنجاح' ? 'تم الاستلام ✓' : 'تأكيد النقل'}
                       </button>
                     </td>
                   </tr>
@@ -608,7 +620,7 @@ export const TravelPage: React.FC = () => {
                 <div>
                   <h2 className="text-base font-extrabold text-black">مجموعة السليم للاستقدام - إدارة الحركة والترحيل</h2>
                   <div className="text-[11px] text-zinc-500">أمر تفويج واستقبال عمالة من صالة القدوم الدولية</div>
-                  <div className="text-[10px] text-purple-700 font-mono font-bold mt-0.5">ORDER ID: #{selectedFlightForPrint.id}-ARRIV</div>
+                  <div className="text-[10px] text-amber-700 font-mono font-bold mt-0.5">ORDER ID: #{selectedFlightForPrint.id}-ARRIV</div>
                 </div>
                 <div className="w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center">
                   <QrCode className="w-10 h-10 text-champagne-light" />
@@ -637,7 +649,7 @@ export const TravelPage: React.FC = () => {
                   <div><span className="text-zinc-500">الجنسية:</span> <strong className="text-black">{selectedFlightForPrint.nationality}</strong></div>
                   <div><span className="text-zinc-500">رقم الجواز:</span> <span className="font-mono font-bold text-black">{selectedFlightForPrint.passport_number}</span></div>
                   <div><span className="text-zinc-500">شركة الطيران:</span> <strong className="text-black">{selectedFlightForPrint.airline}</strong></div>
-                  <div><span className="text-zinc-500">رقم الرحلة:</span> <span className="font-mono font-bold text-purple-700">{selectedFlightForPrint.flight_number}</span></div>
+                  <div><span className="text-zinc-500">رقم الرحلة:</span> <span className="font-mono font-bold text-amber-700">{selectedFlightForPrint.flight_number}</span></div>
                   <div><span className="text-zinc-500">رقم التذكرة:</span> <span className="font-mono text-black">{selectedFlightForPrint.ticket_number}</span></div>
                   <div><span className="text-zinc-500">العميل الكفيل:</span> <strong className="text-black">{selectedFlightForPrint.client_name}</strong></div>
                   <div><span className="text-zinc-500">الوجهة بعد الاستقبال:</span> <strong className="text-emerald-700 font-bold">مركز الإيواء والضيافة الرئيسي</strong></div>

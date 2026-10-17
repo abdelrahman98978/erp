@@ -129,14 +129,16 @@ const MOCK_OFFICES: ForeignOffice[] = [
 ];
 
 export const OfficesPage: React.FC = () => {
-  const { addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
   const [offices, setOffices] = useState<ForeignOffice[]>([]);
   const [countryFilter, setCountryFilter] = useState<string>('الكل');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'add-office');
   const [selectedOfficeStatement, setSelectedOfficeStatement] = useState<ForeignOffice | null>(null);
   const [selectedOfficeCredentials, setSelectedOfficeCredentials] = useState<ForeignOffice | null>(null);
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>(() =>
+    storeActiveTab === 'agent-accounts' || storeActiveTab === 'office-transfers' ? 'table' : 'cards'
+  );
 
   // New Office Form State
   const [formData, setFormData] = useState({
@@ -153,6 +155,14 @@ export const OfficesPage: React.FC = () => {
   useEffect(() => {
     realErpDataStore.getRecords<ForeignOffice>('offices', MOCK_OFFICES).then(data => setOffices(data));
   }, []);
+
+  useEffect(() => {
+    if (storeActiveTab === 'add-office') {
+      setShowAddModal(true);
+    } else if (storeActiveTab === 'agent-accounts' || storeActiveTab === 'office-transfers') {
+      setViewMode('table');
+    }
+  }, [storeActiveTab]);
 
   const handleCreateOffice = async (e: React.FormEvent) => {
     e.preventDefault();

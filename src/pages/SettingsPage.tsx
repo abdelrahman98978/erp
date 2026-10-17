@@ -726,7 +726,7 @@ export const SettingsPage: React.FC = () => {
                     className="button-outline-on-light"
                     style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
-                    <ScanFace className="w-3.5 h-3.5 text-purple-600" />
+                    <ScanFace className="w-3.5 h-3.5 text-amber-600" />
                     <span>تسجيل بصمة الوجه</span>
                   </button>
                 </div>
@@ -1715,7 +1715,7 @@ export const SettingsPage: React.FC = () => {
                 {/* Import / Restore Database */}
                 <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-4">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold">
+                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
                       <UploadCloud className="w-4 h-4" />
                     </div>
                     <div>
@@ -1729,7 +1729,7 @@ export const SettingsPage: React.FC = () => {
                   </p>
 
                   <label className="button-outline-on-light w-full flex items-center justify-center gap-2 cursor-pointer" style={{ padding: '8px 16px', fontSize: '12px', minHeight: '36px' }}>
-                    <UploadCloud className="w-4 h-4 text-indigo-600" />
+                    <UploadCloud className="w-4 h-4 text-amber-600" />
                     <span>رفع واستعادة ملف النسخة الاحتياطية</span>
                     <input
                       type="file"

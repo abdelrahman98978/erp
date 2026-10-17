@@ -22,12 +22,12 @@ export const DualBrandingDocumentGenerator: React.FC<DualBrandingDocumentGenerat
   return (
     <div style={{ backgroundColor: '#FFFFFF', padding: '32px', borderRadius: '16px', border: '1px solid #E2E8F0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', maxWidth: '900px', margin: '0 auto' }}>
       {/* Official Header Header - Dual Branding */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '3px solid #0F172A', paddingBottom: '20px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '3px solid #1D2428', paddingBottom: '20px', marginBottom: '24px' }}>
         {/* Left Side: Group Logo & Company Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ textAlign: 'center' }}>
             <img src="/logo.png" alt="Group Logo" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #D4AF37' }} />
-            <div style={{ fontSize: '10px', fontWeight: '800', color: '#0F172A', marginTop: '2px' }}>خالد السليم</div>
+            <div style={{ fontSize: '10px', fontWeight: '800', color: '#1D2428', marginTop: '2px' }}>خالد السليم</div>
           </div>
 
           <div style={{ height: '40px', width: '2px', backgroundColor: '#CBD5E1' }} />

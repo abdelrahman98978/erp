@@ -230,6 +230,35 @@ export const RentContractsPage: React.FC = () => {
   const [rentalDrivers, setRentalDrivers] = useState<RentalDriver[]>([]);
   const [rentalMaids, setRentalMaids] = useState<RentalMaid[]>([]);
   const [rentPackages, setRentPackages] = useState<RentPackage[]>([]);
+  const [rentalOrders, setRentalOrders] = useState([
+    { id: 'ORD-R-101', client: 'عبدالله بن سعد الدوسري', job: 'عاملة منزلية بالشهر', nat: 'الفلبين', dur: '3 أشهر', date: '2026-09-01', deposit: 1000, status: 'بانتظار التعميد' },
+    { id: 'ORD-R-102', client: 'شركة الأفق للمقاولات', job: 'سائق خاص', nat: 'الهند', dur: '12 شهر', date: '2026-08-25', deposit: 2500, status: 'تم الفحص والموافقة' },
+    { id: 'ORD-R-103', client: 'نورة بنت محمد آل الشيخ', job: 'مربية أطفال', nat: 'إندونيسيا', dur: '6 أشهر', date: '2026-09-05', deposit: 1500, status: 'بانتظار التعميد' },
+  ]);
+  const [rentTerms, setRentTerms] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ALSULAIM_RENT_TERMS');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      {
+        title: 'البند الأول: موضوع العقد وطبيعة التشغيل',
+        body: 'يلتزم الطرف الأول (الشركة المؤجرة) بتوفير خدمات العامل/العاملة المنزلية للطرف الثاني (المستأجر) خلال مدة العقد المحددة، وتبقى كفالة العامل/العاملة تحت مظلة الشركة طوال مدة التشغيل.',
+      },
+      {
+        title: 'البند الثاني: التزامات الشركة (الطرف الأول)',
+        body: 'تلتزم الشركة بصرف رواتب العاملة في مواعيدها النظامية، وتوفير التغطية التأمينية الطبية الشاملة، واستبدال العاملة في حال رفض العمل أو العجز الصحي خلال 48 ساعة دون رسوم إضافية.',
+      },
+      {
+        title: 'البند الثالث: التزامات المستأجر (الطرف الثاني)',
+        body: 'يلتزم المستأجر بتوفير بيئة سكنية ومعيشية لائقة ومناسبة، وتأمين الوجبات الغذائية، وساعات راحة يومية لا تقل عن 9 ساعات، وعدم تشغيل العاملة لدى أي طرف ثالث أو تكليفها بأعمال خطرة.',
+      },
+      {
+        title: 'البند الرابع: الشروط الجزائية والتسوية المالية',
+        body: 'في حال رغبة المستأجر بإنهاء العقد قبل انقضاء مدته يتم خصم قيمة الأيام الفعلية بالإضافة إلى رسوم إدارية بنسبة 10% من قيمة المدة المتبقية، مع إعادة كامل مبلغ التأمين بعد تسليم العاملة واستلام براءة الذمة.',
+      },
+    ];
+  });
 
   // Modals for sub-modules
   const [showAddDriverModal, setShowAddDriverModal] = useState(false);
@@ -563,7 +592,15 @@ export const RentContractsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+          >
+            <Handshake className="w-4 h-4 ml-1 text-[#CFA64A]" />
+            <span>استخلاص عقود التأجير آلياً (PDF / Word / Excel)</span>
+          </button>
           <button
             onClick={() => setShowAddModal(true)}
             className="button-white-pill"
@@ -691,11 +728,7 @@ export const RentContractsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { id: 'ORD-R-101', client: 'عبدالله بن سعد الدوسري', job: 'عاملة منزلية بالشهر', nat: 'الفلبين', dur: '3 أشهر', date: '2026-09-01', deposit: 1000, status: 'بانتظار التعميد' },
-                  { id: 'ORD-R-102', client: 'شركة الأفق للمقاولات', job: 'سائق خاص', nat: 'الهند', dur: '12 شهر', date: '2026-08-25', deposit: 2500, status: 'تم الفحص والموافقة' },
-                  { id: 'ORD-R-103', client: 'نورة بنت محمد آل الشيخ', job: 'مربية أطفال', nat: 'إندونيسيا', dur: '6 أشهر', date: '2026-09-05', deposit: 1500, status: 'بانتظار التعميد' },
-                ].map((ord) => (
+                {rentalOrders.map((ord) => (
                   <tr key={ord.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{ord.id}</td>
                     <td className="p-3.5 font-bold text-black">{ord.client}</td>
@@ -707,17 +740,47 @@ export const RentContractsPage: React.FC = () => {
                     <td className="p-3.5"><Badge text={ord.status} type={ord.status.includes('تم') ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
                       <button
-                        onClick={() => {
+                        disabled={ord.status === 'تم التحويل لعقد نشط'}
+                        onClick={async () => {
+                          setRentalOrders(prev =>
+                            prev.map(item =>
+                              item.id === ord.id ? { ...item, status: 'تم التحويل لعقد نشط' } : item
+                            )
+                          );
+                          const months = parseInt(ord.dur) || 3;
+                          const monthlyRate = 3000;
+                          const totalBeforeTax = months * monthlyRate;
+                          const tax = Math.round(totalBeforeTax * 0.15);
+                          await createItem.mutateAsync({
+                            id: `RNT-${Date.now().toString().slice(-4)}`,
+                            company_id: activeCompanyId !== 'all' ? activeCompanyId : 'YAQ',
+                            contract_no: `RC-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+                            client_name: ord.client,
+                            client_phone: '0550001122',
+                            client_national_id: '1044556677',
+                            maid_name: `كوادر (${ord.job})`,
+                            nationality: ord.nat,
+                            duration_months: months,
+                            monthly_cost: monthlyRate,
+                            total_before_tax: totalBeforeTax,
+                            vat_amount: tax,
+                            total_with_tax: totalBeforeTax + tax,
+                            status: 'نشط - قيد التشغيل',
+                            start_date: ord.date,
+                            end_date: '2026-12-01',
+                            branch: 'فرع الرياض الرئيسي',
+                            created_at: new Date().toISOString(),
+                          });
                           addNotification({
-                            title: 'تحويل الحجز لعقد إيجار',
-                            message: `تم تحويل الطلب #${ord.id} إلى عقد إيجار وتوجيهه للتوقيع.`,
+                            title: 'تحويل الحجز لعقد إيجار رسمي',
+                            message: `تم تحويل الطلب #${ord.id} للعميل (${ord.client}) إلى عقد إيجار نشط وإدراجه في سجل العقود.`,
                             type: 'success',
                           });
                         }}
-                        className="button-primary-pill"
+                        className="button-primary-pill disabled:opacity-50"
                         style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
                       >
-                        تحويل لعقد
+                        {ord.status === 'تم التحويل لعقد نشط' ? 'تم التحويل ✓' : 'تحويل لعقد'}
                       </button>
                     </td>
                   </tr>
@@ -1022,9 +1085,12 @@ export const RentContractsPage: React.FC = () => {
             </div>
             <button
               onClick={() => {
+                try {
+                  localStorage.setItem('ALSULAIM_RENT_TERMS', JSON.stringify(rentTerms));
+                } catch {}
                 addNotification({
                   title: 'حفظ الشروط المحدثة',
-                  message: 'تم حفظ وتحديث بنود عقد التأجير بنجاح.',
+                  message: 'تم حفظ وتحديث بنود عقد التأجير الموحد في قاعدة البيانات بنجاح.',
                   type: 'success',
                 });
               }}
@@ -1036,33 +1102,21 @@ export const RentContractsPage: React.FC = () => {
           </div>
 
           <div className="space-y-4 text-xs">
-            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-              <h3 className="font-bold text-black text-sm mb-2">البند الأول: موضوع العقد وطبيعة التشغيل</h3>
-              <p className="text-zinc-700 leading-relaxed">
-                يلتزم الطرف الأول (الشركة المؤجرة) بتوفير خدمات العامل/العاملة المنزلية للطرف الثاني (المستأجر) خلال مدة العقد المحددة، وتبقى كفالة العامل/العاملة تحت مظلة الشركة طوال مدة التشغيل.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-              <h3 className="font-bold text-black text-sm mb-2">البند الثاني: التزامات الشركة (الطرف الأول)</h3>
-              <p className="text-zinc-700 leading-relaxed">
-                تلتزم الشركة بصرف رواتب العاملة في مواعيدها النظامية، وتوفير التغطية التأمينية الطبية الشاملة، واستبدال العاملة في حال رفض العمل أو العجز الصحي خلال 48 ساعة دون رسوم إضافية.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-              <h3 className="font-bold text-black text-sm mb-2">البند الثالث: التزامات المستأجر (الطرف الثاني)</h3>
-              <p className="text-zinc-700 leading-relaxed">
-                يلتزم المستأجر بتوفير بيئة سكنية ومعيشية لائقة ومناسبة، وتأمين الوجبات الغذائية، وساعات راحة يومية لا تقل عن 9 ساعات، وعدم تشغيل العاملة لدى أي طرف ثالث أو تكليفها بأعمال خطرة.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
-              <h3 className="font-bold text-black text-sm mb-2">البند الرابع: الشروط الجزائية والتسوية المالية</h3>
-              <p className="text-zinc-700 leading-relaxed">
-                في حال رغبة المستأجر بإنهاء العقد قبل انقضاء مدته يتم خصم قيمة الأيام الفعلية بالإضافة إلى رسوم إدارية بنسبة 10% من قيمة المدة المتبقية، مع إعادة كامل مبلغ التأمين بعد تسليم العاملة واستلام براءة الذمة.
-              </p>
-            </div>
+            {rentTerms.map((term: { title: string; body: string }, idx: number) => (
+              <div key={idx} className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
+                <h3 className="font-bold text-black text-sm">{term.title}</h3>
+                <textarea
+                  rows={2}
+                  value={term.body}
+                  onChange={(e) => {
+                    const next = [...rentTerms];
+                    next[idx] = { ...next[idx], body: e.target.value };
+                    setRentTerms(next);
+                  }}
+                  className="w-full p-2.5 rounded-xl bg-white border border-zinc-200 text-zinc-700 leading-relaxed focus:outline-none focus:border-black"
+                />
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -1338,7 +1392,7 @@ export const RentContractsPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-black">حالة العقد:</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">
                       {selectedContractForPrint.status} - ساري المفعول
                     </span>
                   </div>

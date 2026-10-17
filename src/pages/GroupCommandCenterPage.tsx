@@ -107,7 +107,7 @@ export const GroupCommandCenterPage: React.FC = () => {
         <div className="p-4 border-b border-zinc-100 bg-white">
           <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
             <Building2 className="w-4 h-4 text-black" />
-            <span>مصفوفة أداء الكيانات الأربعة (Consolidated Companies Matrix)</span>
+            <span>مصفوفة أداء الكيانات الخمسة المعتمدة (Consolidated 5-Companies Matrix)</span>
           </h3>
         </div>
 

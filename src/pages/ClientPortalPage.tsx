@@ -439,7 +439,7 @@ export const ClientPortalPage: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px]">فترة الضمان المتبقية</span>
-                  <strong className="text-purple-600 font-bold">{contract.guaranteeDaysLeft} يوماً</strong>
+                  <strong className="text-amber-600 font-bold">{contract.guaranteeDaysLeft} يوماً</strong>
                 </div>
               </div>
             </div>

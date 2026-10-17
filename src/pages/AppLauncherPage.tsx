@@ -1,16 +1,24 @@
 import React, { useState, useMemo } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
-import { 
-  Users, FileText, Handshake, Hotel, IdCard, 
-  TrendingUp, Sliders, Wallet, Search, ArrowLeft, 
-  Layers, Sparkles, Building2, CheckCircle2, ShieldCheck, 
+import {
+  Users, FileText, Handshake, Hotel, IdCard,
+  TrendingUp, Sliders, Wallet, Search, ArrowLeft,
+  Layers, Building2, ShieldCheck,
   LayoutDashboard, ShoppingBag, Stamp, RefreshCw, Plane,
-  Headphones, Building, QrCode, BookOpen, Network, 
-  CreditCard, PiggyBank, UserCheck, MapPin, 
+  Headphones, Building, QrCode, BookOpen, Network,
+  CreditCard, PiggyBank, UserCheck, MapPin,
   SlidersHorizontal, GitPullRequest, Radio, FolderSync,
   Cloud, UploadCloud, Clock, UserCog, Settings,
-  MessageSquare, Send, Globe, PackageCheck, LucideIcon, Scale, Briefcase
+  MessageSquare, Send, Globe, PackageCheck, LucideIcon, Scale, Briefcase,
+  LogOut, Lock
 } from 'lucide-react';
+import {
+  authService,
+  resolveDepartmentAndCompany,
+  CORPORATE_DEPARTMENTS,
+  DepartmentId,
+} from '../services/authService';
+import { useCompany } from '../contexts/CompanyContext';
 
 interface AppTile {
   id: string;
@@ -19,9 +27,11 @@ interface AppTile {
   subKey: string;
   defaultSubtitle: string;
   icon: LucideIcon;
+  emoji: string;
   href: string;
-  category: 'operations' | 'finance' | 'crm' | 'hr' | 'governance' | 'tech';
+  category: 'finance' | 'operations' | 'crm' | 'hr' | 'governance' | 'tech';
   categoryLabel: string;
+  smaccCode: string;
   metricBadge?: string;
 }
 
@@ -30,503 +40,637 @@ interface AppLauncherPageProps {
 }
 
 const ALL_SYSTEM_APPS: AppTile[] = [
-  // 1. Operations & Recruitment (Emerald Theme)
+  // ============================================================================
+  // 1. SMACC Accounting & Finance (نظام سماك المحاسبي المعتمد - 6 تقسيمات)
+  // ============================================================================
+  {
+    id: 'smacc-gl',
+    titleKey: 'finance',
+    defaultTitle: '١. الأستاذ العام وشجرة الحسابات (SMACC GL)',
+    subKey: 'financeSub',
+    defaultSubtitle: 'دليل الحسابات الشجري، قيود اليومية المزدوجة، الأرصدة الافتتاحية، وإقفال الفترات المحاسبية.',
+    icon: Wallet,
+    emoji: '📊',
+    href: 'finance-home',
+    category: 'finance',
+    categoryLabel: 'سماك ١ • الأستاذ العام',
+    smaccCode: 'SMACC-01',
+    metricBadge: 'شجرة حسابات سماك'
+  },
+  {
+    id: 'smacc-journals',
+    titleKey: 'journals',
+    defaultTitle: '١.٢ قيود اليومية المزدوجة والترحيل',
+    subKey: 'journalsSub',
+    defaultSubtitle: 'إنشاء ومراجعة قيود اليومية المحاسبية المتوازنة وترحيلها الفوري للأستاذ العام.',
+    icon: BookOpen,
+    emoji: '📘',
+    href: 'journals',
+    category: 'finance',
+    categoryLabel: 'سماك ١ • قيود اليومية',
+    smaccCode: 'SMACC-01B',
+    metricBadge: '1,420 قيد مرحّل'
+  },
+  {
+    id: 'smacc-cash',
+    titleKey: 'vouchers',
+    defaultTitle: '٢. النقدية والبنوك وسندات القبض والصرف',
+    subKey: 'vouchersSub',
+    defaultSubtitle: 'الصناديق النقدية، الحسابات البنكية، سندات القبض والصرف، التسويات البنكية، والعهد النقدية.',
+    icon: PiggyBank,
+    emoji: '🏦',
+    href: 'vouchers',
+    category: 'finance',
+    categoryLabel: 'سماك ٢ • النقدية والبنوك',
+    smaccCode: 'SMACC-02',
+    metricBadge: 'سندات وتسويات'
+  },
+  {
+    id: 'smacc-custodies',
+    titleKey: 'custodies',
+    defaultTitle: '٢.٥ العهد النقدية والسلف التشغيلية',
+    subKey: 'custodiesSub',
+    defaultSubtitle: 'متابعة العهد النقدية المسلمة للموظفين والمشرفين وتسويتها محاسبياً مع الصندوق.',
+    icon: CreditCard,
+    emoji: '💳',
+    href: 'custodies',
+    category: 'finance',
+    categoryLabel: 'سماك ٢ • العهد والسلف',
+    smaccCode: 'SMACC-02B',
+    metricBadge: '6 عهد نشطة'
+  },
+  {
+    id: 'smacc-ar',
+    titleKey: 'zatca',
+    defaultTitle: '٣. حسابات العملاء والمبيعات والفوترة (ZATCA)',
+    subKey: 'zatcaSub',
+    defaultSubtitle: 'إصدار الفواتير الضريبية والمبسطة (المرحلة الثانية ZATCA)، إشعارات الدائن والمدين، وأعمار الديون.',
+    icon: QrCode,
+    emoji: '🧾',
+    href: 'zatca',
+    category: 'finance',
+    categoryLabel: 'سماك ٣ • العملاء وZATCA',
+    smaccCode: 'SMACC-03',
+    metricBadge: 'امتثال ZATCA 100%'
+  },
+  {
+    id: 'smacc-ap',
+    titleKey: 'financial-requests',
+    defaultTitle: '٤. حسابات الموردين والوكلاء والمشتريات',
+    subKey: 'financialRequestsSub',
+    defaultSubtitle: 'ذمم الوكلاء الخارجيين، أوامر الصرف والاعتمادات المالية، رسوم مساند، والإقرارات الضريبية VAT.',
+    icon: CreditCard,
+    emoji: '📑',
+    href: 'financial-requests',
+    category: 'finance',
+    categoryLabel: 'سماك ٤ • الموردين والوكلاء',
+    smaccCode: 'SMACC-04',
+    metricBadge: '16 أمر صرف'
+  },
+  {
+    id: 'smacc-cc',
+    titleKey: 'cost-centers',
+    defaultTitle: '٥. مراكز التكلفة والأصول الثابتة والمستودعات',
+    subKey: 'costCentersSub',
+    defaultSubtitle: 'توزيع الإيرادات والمصروفات على الشركات والفروع والمشاريع، وإدارة الأصول والإهلاك.',
+    icon: Network,
+    emoji: '🏗️',
+    href: 'cost-centers',
+    category: 'finance',
+    categoryLabel: 'سماك ٥ • مراكز التكلفة',
+    smaccCode: 'SMACC-05',
+    metricBadge: '8 مراكز تكلفة'
+  },
+  {
+    id: 'smacc-reports',
+    titleKey: 'trial-balance',
+    defaultTitle: '٦. التقارير والكشوفات المالية الموحدة',
+    subKey: 'trialBalanceSub',
+    defaultSubtitle: 'ميزان المراجعة بالمجاميع والأرصدة، قائمة الدخل والأرباح والخسائر، والميزانية العمومية.',
+    icon: TrendingUp,
+    emoji: '📈',
+    href: 'trial-balance',
+    category: 'finance',
+    categoryLabel: 'سماك ٦ • القوائم الختامية',
+    smaccCode: 'SMACC-06',
+    metricBadge: 'قوائم مالية فورية'
+  },
+
+  // ============================================================================
+  // 2. Operations & Recruitment (تقسيم سماك للعمليات والاستقدام والتأجير)
+  // ============================================================================
   {
     id: 'recruitment-contracts',
     titleKey: 'recruitment-contracts',
-    defaultTitle: 'عقود الاستقدام الموثقة (مساند)',
+    defaultTitle: '١. عقود الاستقدام الموثقة (مساند)',
     subKey: 'recruitmentContractsSub',
-    defaultSubtitle: 'إدارة عقود الاستقدام، الربط الحي مع مساند، وتتبع مراحل التفييز والتذاكر.',
+    defaultSubtitle: 'إدارة عقود الاستقدام، الربط مع منصة مساند، وتتبع مراحل التفييز والتذاكر.',
     icon: Handshake,
+    emoji: '📑',
     href: 'recruitment-contracts',
     category: 'operations',
-    categoryLabel: 'العمليات والعقود',
+    categoryLabel: 'الاستقدام • العقود والتوثيق',
+    smaccCode: 'OPS-01',
     metricBadge: '121 عقد نشط'
   },
   {
     id: 'orders',
     titleKey: 'orders',
-    defaultTitle: 'طلبات العملاء والعمليات (SLA)',
+    defaultTitle: '٢. طلبات الاستقدام والعمليات (SLA)',
     subKey: 'ordersSub',
-    defaultSubtitle: 'استقبال طلبات الاستقدام الجديدة، مؤقتات الـ SLA، والتحويل الفوري لعقود.',
+    defaultSubtitle: 'استقبال طلبات الاستقدام الجديدة، متابعة مؤقتات الإنجاز، والتحويل الفوري لعقود.',
     icon: ShoppingBag,
+    emoji: '📋',
     href: 'orders',
     category: 'operations',
-    categoryLabel: 'العمليات والعقود',
+    categoryLabel: 'الاستقدام • الحركة اليومية',
+    smaccCode: 'OPS-02',
     metricBadge: '48 طلب جديد'
   },
   {
     id: 'cvs',
     titleKey: 'cvs',
-    defaultTitle: 'بنك السير الذاتية (CVs)',
+    defaultTitle: '٣. بنك السير الذاتية والمرشحين (CVs)',
     subKey: 'cvsSub',
-    defaultSubtitle: 'فلترة وتصنيف الكوادر البشرية، السير المحجوزة، والمتاحة للاختيار.',
+    defaultSubtitle: 'فلترة وتصنيف الكوادر البشرية، السير المحجوزة، والمتاحة للتعاقد الفوري.',
     icon: FileText,
+    emoji: '🗂️',
     href: 'cvs-recruitment',
     category: 'operations',
-    categoryLabel: 'الكوادر والتشغيل',
+    categoryLabel: 'الفرز والترشيح • المدخلات',
+    smaccCode: 'ATS-01',
     metricBadge: '163 سيرة جاهزة'
+  },
+  {
+    id: 'ats-pipeline',
+    titleKey: 'ats-pipeline',
+    defaultTitle: '٤. مسار الفرز والتدقيق (12 مرحلة ATS)',
+    subKey: 'atsPipelineSub',
+    defaultSubtitle: 'تتبع المرشحين عبر 12 مرحلة نظامية من الاستقبال والفحص الطبي حتى إصدار التأشيرة.',
+    icon: GitPullRequest,
+    emoji: '🔍',
+    href: 'ats-pipeline',
+    category: 'operations',
+    categoryLabel: 'الفرز والترشيح • الحركة',
+    smaccCode: 'ATS-02',
+    metricBadge: '12 مرحلة نظامية'
   },
   {
     id: 'rent-contracts',
     titleKey: 'rent-contracts',
-    defaultTitle: 'عقود التأجير والتشغيل المرن',
+    defaultTitle: '٥. عقود التأجير والتشغيل المرن',
     subKey: 'rentContractsSub',
-    defaultSubtitle: 'إدارة عقود الإيجار الشهرية والسنوية ومتابعة التسليم والدفعات.',
+    defaultSubtitle: 'إدارة عقود الإيجار الشهرية والسنوية ومتابعة التسليم والتحصيل والدفعات.',
     icon: Layers,
+    emoji: '🏢',
     href: 'rent-contracts',
     category: 'operations',
-    categoryLabel: 'التأجير والتشغيل',
+    categoryLabel: 'التأجير • العقود والحركة',
+    smaccCode: 'RNT-01',
     metricBadge: '34 عقد إيجار'
-  },
-  {
-    id: 'kas-suite',
-    titleKey: 'kas-suite',
-    defaultTitle: 'البوابة المستقلة لشركة كاس (KAS Suite)',
-    subKey: 'kasSuiteSub',
-    defaultSubtitle: 'منظومة معزولة كلياً: منصة اعتماد، جداول الكميات BOQ، سجل الموردين، والفوترة ZATCA.',
-    icon: Briefcase,
-    href: 'kas-suite',
-    category: 'governance',
-    categoryLabel: 'الأجنحة المستقلة والمنافسات',
-    metricBadge: 'جناح مستقل KAS'
   },
   {
     id: 'rent-packages',
     titleKey: 'rent-packages',
-    defaultTitle: 'باقات وأسعار التأجير',
+    defaultTitle: '٦. باقات وأسعار التأجير المعتمدة',
     subKey: 'rentPackagesSub',
-    defaultSubtitle: 'تسعير مدد التأجير (شهر، 3 أشهر، سنة) واحتساب ضريبة القيمة المضافة.',
+    defaultSubtitle: 'تسعير مدد التأجير (شهر، 3 أشهر، 6 أشهر، سنة) واحتساب ضريبة القيمة المضافة.',
     icon: PackageCheck,
+    emoji: '📦',
     href: 'rent-packages',
     category: 'operations',
-    categoryLabel: 'التأجير والتشغيل',
+    categoryLabel: 'التأجير • المدخلات والتسعير',
+    smaccCode: 'RNT-02',
     metricBadge: '12 باقة نشطة'
   },
   {
     id: 'ingaz',
     titleKey: 'ingaz',
-    defaultTitle: 'تفاويض الإنجاز والتأشيرات',
+    defaultTitle: '٧. تفاويض إنجاز والتأشيرات والغرف التجارية',
     subKey: 'ingazSub',
-    defaultSubtitle: 'إصدار وتوثيق تفاويض إنجاز الإلكترونية والربط مع السفارات الخارجية.',
+    defaultSubtitle: 'إصدار وتوثيق تفاويض إنجاز الإلكترونية وتصديق الغرف التجارية والربط مع السفارات.',
     icon: Stamp,
+    emoji: '🛂',
     href: 'ingaz',
     category: 'operations',
-    categoryLabel: 'التأشيرات والربط',
+    categoryLabel: 'التأشيرات • الربط الحكومي',
+    smaccCode: 'OPS-03',
     metricBadge: '29 تفويض موثق'
-  },
-  {
-    id: 'shelter',
-    titleKey: 'shelter',
-    defaultTitle: 'منظومة مراكز الإيواء والسكن المستقلة',
-    subKey: 'shelterSub',
-    defaultSubtitle: 'بوابة متكاملة مستقلة: إدارة الغرف، الأسرة، التغذية، العيادة الطبية، والترحيل (HRSD).',
-    icon: Hotel,
-    href: 'shelter-suite',
-    category: 'operations',
-    categoryLabel: 'الخدمات اللوجستية والإيواء',
-    metricBadge: 'منظومة مستقلة • 9 أقسام'
   },
   {
     id: 'sponsorship-transfer',
     titleKey: 'sponsorship-transfer',
-    defaultTitle: 'نقل الخدمات والتنازل وفترة التجربة',
+    defaultTitle: '٨. نقل الخدمات والتنازل وفترة التجربة',
     subKey: 'sponsorshipTransferSub',
-    defaultSubtitle: 'إدارة عقود التنازل ونقل الخدمات المعتمدة، فترات التجربة النظامية، والتسويات المالية بين أصحاب العمل.',
+    defaultSubtitle: 'إدارة عقود التنازل ونقل الخدمات المعتمدة، فترات التجربة النظامية، والتسويات المالية.',
     icon: RefreshCw,
+    emoji: '🔄',
     href: 'sponsorship-transfer',
     category: 'operations',
-    categoryLabel: 'نقل الخدمات والتنازل',
-    metricBadge: '8 قيد فترة التجربة'
+    categoryLabel: 'نقل الخدمات • قوى وأبشر',
+    smaccCode: 'OPS-04',
+    metricBadge: '8 قيد التجربة'
   },
   {
     id: 'travel',
     titleKey: 'travel',
-    defaultTitle: 'الرحلات الجوية واللوجستيات',
+    defaultTitle: '٩. الرحلات الجوية والاستقبال بالمطار',
     subKey: 'travelSub',
     defaultSubtitle: 'جدولة رحلات الوصول والاستقبال بالمطار، حجوزات التذاكر، وتتبع الترحيل.',
     icon: Plane,
+    emoji: '✈️',
     href: 'travel',
     category: 'operations',
-    categoryLabel: 'الخدمات اللوجستية',
+    categoryLabel: 'الحركة واللوجستيات',
+    smaccCode: 'OPS-05',
     metricBadge: '14 رحلة قادمة'
+  },
+  {
+    id: 'shelter',
+    titleKey: 'shelter',
+    defaultTitle: '١٠. منظومة مراكز الإيواء والتسكين (DAR)',
+    subKey: 'shelterSub',
+    defaultSubtitle: 'إدارة الغرف، الأسرة، الإعاشة والتموين، الرعاية الصحية، والترحيل النظامي (HRSD).',
+    icon: Hotel,
+    emoji: '🏨',
+    href: 'shelter-suite',
+    category: 'operations',
+    categoryLabel: 'الإيواء والتسكين • الحركة',
+    smaccCode: 'SHL-01',
+    metricBadge: 'منظومة الإيواء'
   },
   {
     id: 'agent-imports',
     titleKey: 'agent-imports',
-    defaultTitle: 'ملفات السير الذاتية بالدفعة',
+    defaultTitle: '١١. استيراد دفعات السير الذاتية من الوكلاء',
     subKey: 'agentImportsSub',
     defaultSubtitle: 'استعراض الدفعات المرفوعة من المكاتب الدولية واعتمادها في بنك السير.',
     icon: FolderSync,
+    emoji: '📥',
     href: 'agent-imports',
     category: 'operations',
-    categoryLabel: 'المكاتب الخارجية',
+    categoryLabel: 'الوكلاء • توريد السير',
+    smaccCode: 'ATS-03',
     metricBadge: '5 دفعات معلقة'
   },
 
-  // 2. Finance & Accounting (Amber Theme)
-  {
-    id: 'finance',
-    titleKey: 'finance',
-    defaultTitle: 'المحاسبة العامة (General Ledger)',
-    subKey: 'financeSub',
-    defaultSubtitle: 'دليل الحسابات الشجري، قيود اليومية، موازين المراجعة، والقوائم الختامية.',
-    icon: Wallet,
-    href: 'finance-home',
-    category: 'finance',
-    categoryLabel: 'المالية والمحاسبة',
-    metricBadge: 'محدث لحظياً'
-  },
-  {
-    id: 'zatca',
-    titleKey: 'zatca',
-    defaultTitle: 'الفوترة الإلكترونية (ZATCA)',
-    subKey: 'zatcaSub',
-    defaultSubtitle: 'إصدار الفواتير الضريبية والمبسطة المتوافقة مع متطلبات المرحلة الثانية لهيئة الزكاة.',
-    icon: QrCode,
-    href: 'zatca',
-    category: 'finance',
-    categoryLabel: 'الفوترة والزكاة',
-    metricBadge: '100% امتثال'
-  },
-  {
-    id: 'journals',
-    titleKey: 'journals',
-    defaultTitle: 'قيود اليومية والسندات',
-    subKey: 'journalsSub',
-    defaultSubtitle: 'إنشاء ومراجعة القيود المحاسبية وسندات القبض والصرف وترحيلها.',
-    icon: BookOpen,
-    href: 'journals',
-    category: 'finance',
-    categoryLabel: 'المالية والمحاسبة',
-    metricBadge: '1,420 قيد'
-  },
-  {
-    id: 'cost-centers',
-    titleKey: 'cost-centers',
-    defaultTitle: 'مراكز التكلفة والأرباح',
-    subKey: 'costCentersSub',
-    defaultSubtitle: 'توزيع المصروفات والإيرادات على الفروع والمشاريع واستخراج تقارير الربحية.',
-    icon: Network,
-    href: 'cost-centers',
-    category: 'finance',
-    categoryLabel: 'المالية والمحاسبة',
-    metricBadge: '8 مراكز تكلفة'
-  },
-  {
-    id: 'financial-requests',
-    titleKey: 'financial-requests',
-    defaultTitle: 'الطلبات المالية والتشغيلية',
-    subKey: 'financialRequestsSub',
-    defaultSubtitle: 'طلبات سداد مساند، رسوم الإقامات والجوازات، ودفعات الوكلاء الخارجيين.',
-    icon: CreditCard,
-    href: 'financial-requests',
-    category: 'finance',
-    categoryLabel: 'المالية والمدفوعات',
-    metricBadge: '16 طلب سداد'
-  },
-  {
-    id: 'custodies',
-    titleKey: 'custodies',
-    defaultTitle: 'العهد النقدية والأصول',
-    subKey: 'custodiesSub',
-    defaultSubtitle: 'متابعة العهد المسلمة للموظفين والمشرفين وتسويتها مع الحسابات.',
-    icon: PiggyBank,
-    href: 'custodies',
-    category: 'finance',
-    categoryLabel: 'المالية والمصروفات',
-    metricBadge: '6 عهد جارية'
-  },
-
-  // 3. CRM & Communication (Sky Theme)
+  // ============================================================================
+  // 3. CRM & Client Service (تقسيم سماك لخدمة العملاء والمبيعات)
+  // ============================================================================
   {
     id: 'crm',
     titleKey: 'crm',
-    defaultTitle: 'إدارة علاقات العملاء (CRM)',
+    defaultTitle: '١. سجل العملاء والتصنيفات الائتمانية (CRM)',
     subKey: 'crmSub',
-    defaultSubtitle: 'سجل العملاء، التصنيفات، التقييم الائتماني، وتاريخ المعاملات الموحد.',
+    defaultSubtitle: 'بطاقات العملاء، التصنيفات الائتمانية، القوائم السوداء، وتاريخ العقود الموحد.',
     icon: Users,
+    emoji: '🤝',
     href: 'clients',
     category: 'crm',
-    categoryLabel: 'العملاء والتسويق',
+    categoryLabel: 'العملاء • المدخلات والسجلات',
+    smaccCode: 'CRM-01',
     metricBadge: '241 عميل نشط'
   },
   {
     id: 'complaints',
     titleKey: 'complaints',
-    defaultTitle: 'إدارة الشكاوى والدعم الفني',
+    defaultTitle: '٢. الشكاوى والدعم الفني ومؤشرات SLA',
     subKey: 'complaintsSub',
-    defaultSubtitle: 'إدارة بلاغات رفض العمل، تأخير الاستقدام، تذاكر SLA، والنزاعات البينية.',
+    defaultSubtitle: 'إدارة بلاغات رفض العمل، تأخير الوصول، تذاكر SLA، والمطالبات والتعويضات.',
     icon: Headphones,
+    emoji: '🎧',
     href: 'complaints',
     category: 'crm',
-    categoryLabel: 'خدمة العملاء',
-    metricBadge: '3 تذاكر حرجة'
+    categoryLabel: 'العملاء • البلاغات والتذاكر',
+    smaccCode: 'CRM-02',
+    metricBadge: '3 تذاكر عاجلة'
   },
   {
     id: 'whatsapp-inbox',
     titleKey: 'whatsapp-inbox',
-    defaultTitle: 'صندوق الواتساب والرد الآلي',
+    defaultTitle: '٣. صندوق الواتساب المؤسسي الموحد',
     subKey: 'whatsappInboxSub',
-    defaultSubtitle: 'مراسلة العملاء عبر قنوات واتساب الرسمية، الردود التلقائية، وإرسال العقود.',
+    defaultSubtitle: 'مراسلة العملاء عبر قنوات واتساب الرسمية وإرسال العقود وسندات القبض.',
     icon: MessageSquare,
+    emoji: '💬',
     href: 'whatsapp-inbox',
     category: 'crm',
-    categoryLabel: 'قنوات التواصل',
+    categoryLabel: 'العملاء • قنوات التواصل',
+    smaccCode: 'CRM-03',
     metricBadge: 'متصل ومفعل'
   },
   {
     id: 'sent-messages',
     titleKey: 'sent-messages',
-    defaultTitle: 'سجل الرسائل والحملات',
+    defaultTitle: '٤. سجل الإشعارات والرسائل النصية (SMS)',
     subKey: 'sentMessagesSub',
-    defaultSubtitle: 'سجل إرسال الإشعارات التلقائية عبر SMS والواتساب، وحملات العروض.',
+    defaultSubtitle: 'سجل إرسال الإشعارات التلقائية عبر SMS والواتساب وتنبيهات العقود.',
     icon: Send,
+    emoji: '📨',
     href: 'sent-messages',
     category: 'crm',
-    categoryLabel: 'قنوات التواصل',
-    metricBadge: '3,890 مرسلة'
+    categoryLabel: 'العملاء • التقارير والرسائل',
+    smaccCode: 'CRM-04',
+    metricBadge: '3,890 رسالة'
   },
   {
     id: 'website-visitors',
     titleKey: 'website-visitors',
-    defaultTitle: 'زوار الموقع والطلبات',
+    defaultTitle: '٥. طلبات البوابة الإلكترونية وزوار الموقع',
     subKey: 'websiteVisitorsSub',
-    defaultSubtitle: 'تتبع طلبات الاستقدام والتأجير القادمة من البوابة الإلكترونية وتحويلها لـ Leads.',
+    defaultSubtitle: 'تتبع طلبات الاستقدام والتأجير الواردة من البوابة الإلكترونية وتحويلها لعملاء.',
     icon: Globe,
+    emoji: '🌐',
     href: 'website-visitors',
     category: 'crm',
-    categoryLabel: 'التسويق الرقمي',
-    metricBadge: '52 زيارة اليوم'
+    categoryLabel: 'العملاء • الاستقطاب الرقمي',
+    smaccCode: 'CRM-05',
+    metricBadge: '52 طلب بوابة'
   },
 
-  // 4. HR & External Agencies (Purple Theme)
+  // ============================================================================
+  // 4. HR & External Agencies (تقسيم سماك للموارد البشرية والوكلاء)
+  // ============================================================================
   {
     id: 'hr',
     titleKey: 'hr',
-    defaultTitle: 'الموارد البشرية والرواتب (HR)',
+    defaultTitle: '١. شؤون الموظفين ومسيرات الرواتب (WPS)',
     subKey: 'hrSub',
-    defaultSubtitle: 'ملفات الموظفين، الحضور، الإجازات، والمسيرات المتوافقة مع نظام حماية الأجور.',
+    defaultSubtitle: 'ملفات الموظفين، العقود، الإجازات، ومسيرات الرواتب المتوافقة مع حماية الأجور والتأمينات.',
     icon: IdCard,
+    emoji: '👥',
     href: 'employees',
     category: 'hr',
-    categoryLabel: 'الموارد البشرية',
+    categoryLabel: 'الموارد البشرية • الرواتب',
+    smaccCode: 'HRM-01',
     metricBadge: '32 موظف'
   },
   {
     id: 'attendances',
     titleKey: 'attendances',
-    defaultTitle: 'الحضور والانصراف والبصمة',
+    defaultTitle: '٢. الحضور والانصراف وأجهزة البصمة',
     subKey: 'attendancesSub',
-    defaultSubtitle: 'مزامنة سجلات البصمة الحيوية، التأخيرات، ساعات العمل الإضافية، والغياب.',
+    defaultSubtitle: 'مزامنة سجلات البصمة الحيوية، التأخيرات، العمل الإضافي، وتقارير الدوام اليومية.',
     icon: UserCheck,
+    emoji: '⏱️',
     href: 'attendances',
     category: 'hr',
-    categoryLabel: 'الموارد البشرية',
-    metricBadge: 'مباشر'
+    categoryLabel: 'الموارد البشرية • الدوام',
+    smaccCode: 'HRM-02',
+    metricBadge: 'مزامنة مباشرة'
   },
   {
     id: 'offices',
     titleKey: 'offices',
-    defaultTitle: 'المكاتب والوكلاء الدوليين',
+    defaultTitle: '٣. المكاتب والوكلاء الدوليين بالخارج',
     subKey: 'officesSub',
-    defaultSubtitle: 'إدارة المكاتب المصدرة في الفلبين وإثيوبيا وأوغندا وسريلانكا وحساباتها.',
+    defaultSubtitle: 'إدارة المكاتب المصدرة في الفلبين وإثيوبيا وأوغندا وسريلانكا وكشوف حساباتها.',
     icon: Building,
+    emoji: '🌍',
     href: 'offices',
     category: 'hr',
-    categoryLabel: 'الوكلاء الخارجيين',
-    metricBadge: '14 مكتب خارجي'
+    categoryLabel: 'الوكلاء • العقود والحسابات',
+    smaccCode: 'AGN-01',
+    metricBadge: '14 مكتب دولي'
   },
   {
     id: 'external-offices',
     titleKey: 'external-offices',
-    defaultTitle: 'تراخيص وعقود الوكلاء بالخارج',
+    defaultTitle: '٤. تراخيص وحصص الوكلاء الدوليين',
     subKey: 'externalOfficesSub',
     defaultSubtitle: 'تتبع تراخيص المكاتب الخارجية، أسعار التوريد، ونسب الإنجاز والامتثال.',
     icon: MapPin,
+    emoji: '📍',
     href: 'external-offices',
     category: 'hr',
-    categoryLabel: 'الوكلاء الخارجيين',
+    categoryLabel: 'الوكلاء • التراخيص والحصص',
+    smaccCode: 'AGN-02',
     metricBadge: '5 دول معتمدة'
   },
 
-  // 5. Governance & Executive (Luxury Dark Carbon Theme)
+  // ============================================================================
+  // 5. Governance, Tenders & Executive (الحوكمة والمنافسات والإدارة العليا)
+  // ============================================================================
   {
     id: 'dashboard',
     titleKey: 'dashboard',
-    defaultTitle: 'لوحة القيادة والمؤشرات',
+    defaultTitle: '١. لوحة المؤشرات التشغيلية للقسم',
     subKey: 'dashboardSub',
-    defaultSubtitle: 'نظرة شاملة ومؤشرات أداء KPI لعمليات الاستقدام والمالية والعملاء في لمحة واحدة.',
+    defaultSubtitle: 'مؤشرات الأداء التشغيلية والمالية وملخص العقود والحركات اليومية للقسم المعتمد.',
     icon: LayoutDashboard,
+    emoji: '🏛️',
     href: 'dashboard',
     category: 'governance',
-    categoryLabel: 'القيادة والمؤشرات',
+    categoryLabel: 'القيادة • المؤشرات اليومية',
+    smaccCode: 'GOV-01',
     metricBadge: 'الرئيسية'
+  },
+  {
+    id: 'kas-suite',
+    titleKey: 'kas-suite',
+    defaultTitle: '٢. بوابة المنافسات الحكومية ومنصة اعتماد (KAS)',
+    subKey: 'kasSuiteSub',
+    defaultSubtitle: 'كراسات الشروط، جداول الكميات BOQ، الضمانات البنكية، ومستخلصات منصة اعتماد.',
+    icon: Briefcase,
+    emoji: '⚖️',
+    href: 'kas-suite',
+    category: 'governance',
+    categoryLabel: 'المنافسات • منصة اعتماد',
+    smaccCode: 'KAS-01',
+    metricBadge: 'جناح كاس KAS'
+  },
+  {
+    id: 'tenders-boq',
+    titleKey: 'tenders-boq',
+    defaultTitle: '٣. تسعير المنافسات وجداول الكميات (BOQ)',
+    subKey: 'tendersBoqSub',
+    defaultSubtitle: 'تحليل بنود المناقصات الحكومية، احتساب التكاليف المباشرة، وهوامش الربح.',
+    icon: FileText,
+    emoji: '📐',
+    href: 'tenders-boq',
+    category: 'governance',
+    categoryLabel: 'المنافسات • جداول الكميات',
+    smaccCode: 'KAS-02',
+    metricBadge: 'تسعير BOQ'
   },
   {
     id: 'group-command-center',
     titleKey: 'group-command-center',
-    defaultTitle: 'مركز قيادة المجموعة والحوكمة',
+    defaultTitle: '٤. مركز قيادة المجموعة والحوكمة المركزية',
     subKey: 'groupCommandCenterSub',
-    defaultSubtitle: 'الرقابة الموحدة على الشركات الأربعة، مقارنة الإيرادات، ومؤشرات الأداء.',
+    defaultSubtitle: 'الرقابة الموحدة على شركات المجموعة، مقارنة الإيرادات، ومؤشرات الالتزام.',
     icon: Building2,
+    emoji: '👑',
     href: 'group-command-center',
     category: 'governance',
-    categoryLabel: 'الحوكمة المركزية',
+    categoryLabel: 'الإدارة العليا • الحوكمة',
+    smaccCode: 'GOV-02',
     metricBadge: 'إشراف مركزي'
   },
   {
     id: 'company-selector',
     titleKey: 'company-selector',
-    defaultTitle: 'بوابة اختيار وتبديل الشركات',
+    defaultTitle: '٥. بوابة الكيانات والشركات التابعة',
     subKey: 'companySelectorSub',
-    defaultSubtitle: 'التبديل بين شركة خالد السليم، شركة الرائد، شركة إنجاز، وشركة المساند.',
+    defaultSubtitle: 'استعراض الكيانات القانونية الخمسة للمجموعة وإعدادات العزل المؤسسي.',
     icon: SlidersHorizontal,
+    emoji: '🏛️',
     href: 'company-selector',
     category: 'governance',
-    categoryLabel: 'الحوكمة المركزية',
-    metricBadge: '4 شركات'
-  },
-  {
-    id: 'ats-pipeline',
-    titleKey: 'ats-pipeline',
-    defaultTitle: 'نظام ATS لفرز وتدقيق المرشحات',
-    subKey: 'atsPipelineSub',
-    defaultSubtitle: '12 مرحلة مؤتمتة لفرز وتدقيق المرشحات من مرحلة الاستقبال وحتى التوثيق.',
-    icon: GitPullRequest,
-    href: 'ats-pipeline',
-    category: 'governance',
-    categoryLabel: 'الحوكمة والفرز',
-    metricBadge: '12 مرحلة ATS'
+    categoryLabel: 'الإدارة العليا • الكيانات',
+    smaccCode: 'GOV-03',
+    metricBadge: '5 كيانات'
   },
   {
     id: 'reports',
     titleKey: 'reports',
-    defaultTitle: 'مركز التقارير والذكاء المالي',
+    defaultTitle: '٦. مركز التقارير الإدارية والمالية الشامل',
     subKey: 'reportsSub',
-    defaultSubtitle: 'استخراج تقارير الأداء المالي، معدلات وصول العمالة، ونسب الربحية لكل فرع.',
+    defaultSubtitle: 'استخراج تقارير الأداء المالي، معدلات وصول العمالة، ونسب الربحية.',
     icon: TrendingUp,
+    emoji: '📊',
     href: 'reports',
     category: 'governance',
-    categoryLabel: 'التحليلات والمؤشرات',
-    metricBadge: 'تقارير فورية'
+    categoryLabel: 'التقارير • التحليل المالي',
+    smaccCode: 'GOV-04',
+    metricBadge: 'تقارير رسمية'
   },
 
-  // 6. Integrations & Technology (Rose & Ruby Theme)
+  // ============================================================================
+  // 6. Security, Compliance & System Settings (الأمان والامتثال والإعدادات)
+  // ============================================================================
+  {
+    id: 'users',
+    titleKey: 'users',
+    defaultTitle: '١. إدارة الهوية وصلاحيات الأقسام (IAM)',
+    subKey: 'usersSub',
+    defaultSubtitle: 'إدارة حسابات الموظفين، عزل الصلاحيات حسب الشركة والقسم، والمصادقة الثنائية.',
+    icon: UserCog,
+    emoji: '🔐',
+    href: 'users',
+    category: 'tech',
+    categoryLabel: 'الأمان • صلاحيات الأقسام',
+    smaccCode: 'SEC-01',
+    metricBadge: 'RBAC & IAM'
+  },
+  {
+    id: 'activity-log',
+    titleKey: 'activity-log',
+    defaultTitle: '٢. سجل التدقيق والعمليات الأمنية (Audit Log)',
+    subKey: 'activityLogSub',
+    defaultSubtitle: 'تتبع كافة الحركات التشغيلية والمالية مع توثيق المستخدم والوقت والفرع.',
+    icon: Clock,
+    emoji: '🛡️',
+    href: 'activity-log',
+    category: 'tech',
+    categoryLabel: 'الأمان • سجل الرقابة',
+    smaccCode: 'SEC-02',
+    metricBadge: 'Audit Trail'
+  },
+  {
+    id: 'legal-compliance',
+    titleKey: 'legal-compliance',
+    defaultTitle: '٣. الامتثال القانوني والتواقيع الرقمية',
+    subKey: 'legalComplianceSub',
+    defaultSubtitle: 'سياسات استخدام النظام المخصصة لكل قسم، التواقيع الإلكترونية، وإقرارات عدم الإفصاح.',
+    icon: Scale,
+    emoji: '⚖️',
+    href: 'legal-compliance',
+    category: 'tech',
+    categoryLabel: 'الحوكمة • الامتثال القانوني',
+    smaccCode: 'SEC-03',
+    metricBadge: 'أنظمة KSA'
+  },
   {
     id: 'branch-communication',
     titleKey: 'branch-communication',
-    defaultTitle: 'مركز اتصالات ومراسلات الفروع',
+    defaultTitle: '٤. مركز التعاميم ومراسلات الفروع',
     subKey: 'branchCommunicationSub',
-    defaultSubtitle: 'التواصل الفوري والتعاميم الإدارية بين الفرع الرئيسي والفروع الخارجية.',
+    defaultSubtitle: 'التواصل الإداري الرسمي والتعاميم المعتمدة بين الإدارة العامة والفروع.',
     icon: Radio,
+    emoji: '📡',
     href: 'branch-communication',
     category: 'tech',
-    categoryLabel: 'الربط والشبكات',
-    metricBadge: 'بث مباشر'
+    categoryLabel: 'الاتصال الداخلي • الفروع',
+    smaccCode: 'SYS-01',
+    metricBadge: 'تعاميم داخلية'
   },
   {
     id: 'group-dispatch',
     titleKey: 'group-dispatch',
-    defaultTitle: 'الترحيل والمناقلة بين الشركات',
+    defaultTitle: '٥. المناقلة والترحيل بين شركات المجموعة',
     subKey: 'groupDispatchSub',
-    defaultSubtitle: 'نقل وتوزيع السير الذاتية والطلبات والموظفين بين كيانات المجموعة الأربعة.',
+    defaultSubtitle: 'نقل وتوزيع السير الذاتية والطلبات بين كيانات المجموعة المعتمدة.',
     icon: FolderSync,
+    emoji: '🔄',
     href: 'group-dispatch',
     category: 'tech',
-    categoryLabel: 'الربط والشبكات',
-    metricBadge: 'مزامنة سحابية'
+    categoryLabel: 'العمليات البينية • المجموعة',
+    smaccCode: 'SYS-02',
+    metricBadge: 'مزامنة داخلية'
   },
   {
     id: 'microsoft-center',
     titleKey: 'microsoft-center',
-    defaultTitle: 'مركز التكامل مع Microsoft 365',
+    defaultTitle: '٦. التكامل السحابي مع Microsoft 365',
     subKey: 'microsoftCenterSub',
-    defaultSubtitle: 'الربط مع بريد Outlook السحابي، تقويم الفرق، ومزامنة المستندات مع OneDrive.',
+    defaultSubtitle: 'الربط مع البريد الرسمي Outlook وتقويم الاجتماعات وأرشفة العقود.',
     icon: Cloud,
+    emoji: '☁️',
     href: 'microsoft-center',
     category: 'tech',
-    categoryLabel: 'الربط السحابي',
+    categoryLabel: 'التكامل السحابي • M365',
+    smaccCode: 'SYS-03',
     metricBadge: 'Azure & M365'
   },
   {
     id: 'data-import',
     titleKey: 'data-import',
-    defaultTitle: 'معالج استيراد البيانات (Excel / CSV)',
+    defaultTitle: '٧. معالج استيراد البيانات (Excel / CSV)',
     subKey: 'dataImportSub',
-    defaultSubtitle: 'استيراد وترحيل قواعد البيانات القديمة، السير، العملاء، والعقود دفعة واحدة.',
+    defaultSubtitle: 'استيراد وترحيل البيانات المحاسبية والسير الذاتية والعقود من ملفات Excel.',
     icon: UploadCloud,
+    emoji: '📤',
     href: 'data-import',
     category: 'tech',
-    categoryLabel: 'أدوات النظام',
-    metricBadge: 'ترحيل ذكي'
-  },
-  {
-    id: 'activity-log',
-    titleKey: 'activity-log',
-    defaultTitle: 'سجل النشاط وتدقيق الأمان',
-    subKey: 'activityLogSub',
-    defaultSubtitle: 'تتبع كافة الحركات التشغيلية والمالية مع تسجيل IP والمستخدم والوقت بالتفصيل.',
-    icon: Clock,
-    href: 'activity-log',
-    category: 'tech',
-    categoryLabel: 'الأمان والرقابة',
-    metricBadge: 'Audit Trail'
-  },
-  {
-    id: 'users',
-    titleKey: 'users',
-    defaultTitle: 'إدارة المستخدمين والمصادقة',
-    subKey: 'usersSub',
-    defaultSubtitle: 'إنشاء حسابات الموظفين، تعيين الأدوار، وإدارة كلمات المرور والمصادقة الثنائية.',
-    icon: UserCog,
-    href: 'users',
-    category: 'tech',
-    categoryLabel: 'الأمان والرقابة',
-    metricBadge: 'RBAC Security'
+    categoryLabel: 'أدوات النظام • الاستيراد',
+    smaccCode: 'SYS-04',
+    metricBadge: 'Excel / CSV'
   },
   {
     id: 'master-constants',
     titleKey: 'master-constants',
-    defaultTitle: 'الثوابت والمتغيرات العامة',
+    defaultTitle: '٨. الثوابت والترميزات القياسية للنظام',
     subKey: 'masterConstantsSub',
-    defaultSubtitle: 'إدارة الجنسيات، المهن، المطارات، والمهارات المعتمدة للاستقدام.',
+    defaultSubtitle: 'إدارة الجنسيات، المهن، المطارات، والبنوك المعتمدة في النظام.',
     icon: Settings,
+    emoji: '⚙️',
     href: 'master-constants',
     category: 'tech',
-    categoryLabel: 'ثوابت النظام',
-    metricBadge: '7 قوائم'
-  },
-  {
-    id: 'legal-compliance',
-    titleKey: 'legal-compliance',
-    defaultTitle: 'الامتثال القانوني والتبرئة والتواقيع الرقمية',
-    subKey: 'legalComplianceSub',
-    defaultSubtitle: 'سياسات استخدام النظام المخصصة لكل قسم، التواقيع الإلكترونية، وإقرارات إبراء الذمة وفق الأنظمة السعودية.',
-    icon: Scale,
-    href: 'legal-compliance',
-    category: 'tech',
-    categoryLabel: 'الأمان والامتثال',
-    metricBadge: 'أنظمة وقوانين KSA'
+    categoryLabel: 'إعدادات النظام • الثوابت',
+    smaccCode: 'SYS-05',
+    metricBadge: '7 قوائم ترميز'
   },
   {
     id: 'settings',
     titleKey: 'settings',
-    defaultTitle: 'إعدادات النظام ومحتوى المنصة والأمان',
+    defaultTitle: '٩. إعدادات المنشأة والأمان والنسخ الاحتياطي',
     subKey: 'settingsSub',
-    defaultSubtitle: 'ضبط سياسات 2FA، بيانات المنشأة، الروابط السريعة، SEO، واللايف شات Zoho.',
+    defaultSubtitle: 'ضبط بيانات السجل التجاري، الرقم الضريبي، سياسات الأمان، والنسخ الاحتياطي.',
     icon: Sliders,
+    emoji: '🔧',
     href: 'settings',
     category: 'tech',
     categoryLabel: 'إعدادات المنظومة',
-    metricBadge: '10 أقسام'
+    smaccCode: 'SYS-06',
+    metricBadge: 'إعدادات عامة'
   }
 ];
 
 interface CategoryMeta {
   id: string;
   label: string;
-  colorName: string;
+  emoji: string;
   cellBg: string;
   cellHover: string;
   titleColor: string;
@@ -544,236 +688,313 @@ interface CategoryMeta {
   isDark?: boolean;
 }
 
+/**
+ * Strict Adherence to Original Institutional Theme:
+ * Primary Ink (#000000), Warm Cream Canvas (#FBFBF5), Pure White Cards (#FFFFFF),
+ * Champagne Gold Accents (#CFA64A / #FAEBD7), Hairline Borders (#E4E4E7).
+ */
 const CATEGORY_STYLES: Record<string, CategoryMeta> = {
-  operations: {
-    id: 'operations',
-    label: 'العمليات والاستقدام',
-    colorName: 'أخضر زمردي',
-    cellBg: 'bg-[#f4fbf7]',
-    cellHover: 'hover:bg-[#e6f7ec]',
-    titleColor: 'text-[#064e3b]',
-    subColor: 'text-[#065f46]/80',
-    iconBg: 'bg-[#059669]',
-    iconColor: 'text-white',
-    categoryTagBg: 'bg-[#d1fae5]',
-    categoryTagColor: 'text-[#065f46]',
-    metricTagBg: 'bg-[#a7f3d0]',
-    metricTagColor: 'text-[#064e3b]',
-    footerBorder: 'border-[#a7f3d0]/60',
-    actionColor: 'text-[#059669] group-hover:text-[#064e3b]',
-    activePillBg: 'bg-[#059669] border-[#059669]',
-    activePillText: 'text-white'
-  },
   finance: {
     id: 'finance',
-    label: 'المالية والمحاسبة',
-    colorName: 'كهرماني ذهبي',
-    cellBg: 'bg-[#fdfaf3]',
-    cellHover: 'hover:bg-[#fbf1dc]',
-    titleColor: 'text-[#78350f]',
-    subColor: 'text-[#92400e]/80',
-    iconBg: 'bg-[#d97706]',
+    label: 'محاسبة سماك (SMACC)',
+    emoji: '📊',
+    cellBg: 'bg-white',
+    cellHover: 'hover:bg-[#FBFBF5]',
+    titleColor: 'text-black',
+    subColor: 'text-zinc-600',
+    iconBg: 'bg-black',
+    iconColor: 'text-[#CFA64A]',
+    categoryTagBg: 'bg-[#FAEBD7]',
+    categoryTagColor: 'text-[#8C6239]',
+    metricTagBg: 'bg-zinc-100',
+    metricTagColor: 'text-zinc-800',
+    footerBorder: 'border-zinc-200',
+    actionColor: 'text-black group-hover:text-[#8C6239]',
+    activePillBg: 'bg-black border-black',
+    activePillText: 'text-[#CFA64A]'
+  },
+  operations: {
+    id: 'operations',
+    label: 'العمليات والاستقدام والتأجير',
+    emoji: '📑',
+    cellBg: 'bg-white',
+    cellHover: 'hover:bg-[#FBFBF5]',
+    titleColor: 'text-black',
+    subColor: 'text-zinc-600',
+    iconBg: 'bg-zinc-900',
     iconColor: 'text-white',
-    categoryTagBg: 'bg-[#fef3c7]',
-    categoryTagColor: 'text-[#92400e]',
-    metricTagBg: 'bg-[#fde68a]',
-    metricTagColor: 'text-[#78350f]',
-    footerBorder: 'border-[#fde68a]/60',
-    actionColor: 'text-[#d97706] group-hover:text-[#78350f]',
-    activePillBg: 'bg-[#d97706] border-[#d97706]',
+    categoryTagBg: 'bg-zinc-100',
+    categoryTagColor: 'text-zinc-800',
+    metricTagBg: 'bg-[#FAEBD7]/70',
+    metricTagColor: 'text-[#8C6239]',
+    footerBorder: 'border-zinc-200',
+    actionColor: 'text-black group-hover:text-zinc-700',
+    activePillBg: 'bg-black border-black',
     activePillText: 'text-white'
   },
   crm: {
     id: 'crm',
-    label: 'العملاء والتسويق',
-    colorName: 'أزرق سماوي',
-    cellBg: 'bg-[#f4f9fd]',
-    cellHover: 'hover:bg-[#e5f3fc]',
-    titleColor: 'text-[#0c4a6e]',
-    subColor: 'text-[#0369a1]/80',
-    iconBg: 'bg-[#0284c7]',
-    iconColor: 'text-white',
-    categoryTagBg: 'bg-[#e0f2fe]',
-    categoryTagColor: 'text-[#0369a1]',
-    metricTagBg: 'bg-[#bae6fd]',
-    metricTagColor: 'text-[#0c4a6e]',
-    footerBorder: 'border-[#bae6fd]/60',
-    actionColor: 'text-[#0284c7] group-hover:text-[#0c4a6e]',
-    activePillBg: 'bg-[#0284c7] border-[#0284c7]',
+    label: 'خدمة العملاء والمبيعات',
+    emoji: '🤝',
+    cellBg: 'bg-white',
+    cellHover: 'hover:bg-[#FBFBF5]',
+    titleColor: 'text-black',
+    subColor: 'text-zinc-600',
+    iconBg: 'bg-zinc-900',
+    iconColor: 'text-[#CFA64A]',
+    categoryTagBg: 'bg-zinc-100',
+    categoryTagColor: 'text-zinc-800',
+    metricTagBg: 'bg-zinc-100',
+    metricTagColor: 'text-zinc-800',
+    footerBorder: 'border-zinc-200',
+    actionColor: 'text-black group-hover:text-zinc-700',
+    activePillBg: 'bg-black border-black',
     activePillText: 'text-white'
   },
   hr: {
     id: 'hr',
     label: 'الموارد البشرية والوكلاء',
-    colorName: 'بنفسجي ملكي',
-    cellBg: 'bg-[#fbf6fd]',
-    cellHover: 'hover:bg-[#f4e6fb]',
-    titleColor: 'text-[#581c87]',
-    subColor: 'text-[#6b21a8]/80',
-    iconBg: 'bg-[#9333ea]',
+    emoji: '👥',
+    cellBg: 'bg-white',
+    cellHover: 'hover:bg-[#FBFBF5]',
+    titleColor: 'text-black',
+    subColor: 'text-zinc-600',
+    iconBg: 'bg-zinc-900',
     iconColor: 'text-white',
-    categoryTagBg: 'bg-[#f3e8ff]',
-    categoryTagColor: 'text-[#6b21a8]',
-    metricTagBg: 'bg-[#e9d5ff]',
-    metricTagColor: 'text-[#581c87]',
-    footerBorder: 'border-[#e9d5ff]/60',
-    actionColor: 'text-[#9333ea] group-hover:text-[#581c87]',
-    activePillBg: 'bg-[#9333ea] border-[#9333ea]',
+    categoryTagBg: 'bg-[#FAEBD7]/60',
+    categoryTagColor: 'text-[#8C6239]',
+    metricTagBg: 'bg-zinc-100',
+    metricTagColor: 'text-zinc-800',
+    footerBorder: 'border-zinc-200',
+    actionColor: 'text-black group-hover:text-zinc-700',
+    activePillBg: 'bg-black border-black',
     activePillText: 'text-white'
   },
   governance: {
     id: 'governance',
-    label: 'الحوكمة والقيادة',
-    colorName: 'أسود كربوني فاخر',
+    label: 'القيادة والمنافسات والحوكمة',
+    emoji: '🏛️',
     cellBg: 'bg-[#09090b]',
     cellHover: 'hover:bg-[#18181b]',
     titleColor: 'text-white',
     subColor: 'text-zinc-400',
     iconBg: 'bg-zinc-800',
-    iconColor: 'text-champagne-light',
+    iconColor: 'text-[#CFA64A]',
     categoryTagBg: 'bg-zinc-800',
-    categoryTagColor: 'text-zinc-300',
+    categoryTagColor: 'text-[#CFA64A]',
     metricTagBg: 'bg-zinc-800',
-    metricTagColor: 'text-champagne-light',
+    metricTagColor: 'text-zinc-200',
     footerBorder: 'border-zinc-800',
-    actionColor: 'text-zinc-300 group-hover:text-white',
+    actionColor: 'text-[#CFA64A] group-hover:text-white',
     activePillBg: 'bg-black border-black',
-    activePillText: 'text-white',
+    activePillText: 'text-[#CFA64A]',
     isDark: true
   },
   tech: {
     id: 'tech',
-    label: 'الربط والتقنية والأمان',
-    colorName: 'وردي ياقوتي',
-    cellBg: 'bg-[#fdf4f5]',
-    cellHover: 'hover:bg-[#fbe4e7]',
-    titleColor: 'text-[#881337]',
-    subColor: 'text-[#9f1239]/80',
-    iconBg: 'bg-[#e11d48]',
+    label: 'الأمان والامتثال والإعدادات',
+    emoji: '🔐',
+    cellBg: 'bg-white',
+    cellHover: 'hover:bg-[#FBFBF5]',
+    titleColor: 'text-black',
+    subColor: 'text-zinc-600',
+    iconBg: 'bg-black',
     iconColor: 'text-white',
-    categoryTagBg: 'bg-[#ffe4e6]',
-    categoryTagColor: 'text-[#9f1239]',
-    metricTagBg: 'bg-[#fecdd3]',
-    metricTagColor: 'text-[#881337]',
-    footerBorder: 'border-[#fecdd3]/60',
-    actionColor: 'text-[#e11d48] group-hover:text-[#881337]',
-    activePillBg: 'bg-[#e11d48] border-[#e11d48]',
+    categoryTagBg: 'bg-zinc-100',
+    categoryTagColor: 'text-zinc-700',
+    metricTagBg: 'bg-zinc-100',
+    metricTagColor: 'text-zinc-800',
+    footerBorder: 'border-zinc-200',
+    actionColor: 'text-black group-hover:text-zinc-700',
+    activePillBg: 'bg-black border-black',
     activePillText: 'text-white'
   }
 };
 
 const CATEGORIES = [
-  { id: 'all', label: 'كافة الأقسام والأنظمة' },
-  { id: 'operations', label: 'العمليات والاستقدام' },
-  { id: 'finance', label: 'المالية والمحاسبة' },
-  { id: 'crm', label: 'العملاء والتسويق' },
-  { id: 'hr', label: 'الموارد البشرية والوكلاء' },
-  { id: 'governance', label: 'الحوكمة والقيادة' },
-  { id: 'tech', label: 'الربط والتقنية والأمان' },
+  { id: 'all', label: 'كافة الوحدات المصرحة للقسم', emoji: '🏛️' },
+  { id: 'finance', label: 'محاسبة سماك (SMACC)', emoji: '📊' },
+  { id: 'operations', label: 'العمليات والاستقدام والتأجير', emoji: '📑' },
+  { id: 'crm', label: 'العملاء والشكاوى (CRM)', emoji: '🤝' },
+  { id: 'hr', label: 'الموارد البشرية والوكلاء', emoji: '👥' },
+  { id: 'governance', label: 'الحوكمة والمنافسات', emoji: '⚖️' },
+  { id: 'tech', label: 'الأمان والإعدادات', emoji: '🔐' },
 ];
 
 export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp }) => {
   const { t } = useLanguage();
+  const { activeCompany } = useCompany();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  const currentUser = authService.getCurrentUser();
+  const isGroupAdmin = authService.isAdmin(currentUser);
+  const resolvedScope = useMemo(
+    () =>
+      resolveDepartmentAndCompany(
+        currentUser?.email || currentUser?.username || '',
+        currentUser?.role,
+        currentUser?.company_id,
+        currentUser?.department_id
+      ),
+    [currentUser]
+  );
+
+  const currentDeptMeta =
+    CORPORATE_DEPARTMENTS[resolvedScope.departmentId as DepartmentId] ||
+    CORPORATE_DEPARTMENTS.executive;
+
+  // Enforce strict department + company isolation on the App Launcher tiles
+  const authorizedApps = useMemo(() => {
+    return ALL_SYSTEM_APPS.filter((app) =>
+      authService.isTabAuthorizedForUser(currentUser, app.href)
+    );
+  }, [currentUser]);
+
   const filteredApps = useMemo(() => {
-    return ALL_SYSTEM_APPS.filter(app => {
+    return authorizedApps.filter((app) => {
       const title = t(app.titleKey, app.defaultTitle);
       const subtitle = t(app.subKey, app.defaultSubtitle);
       const categoryMatch = selectedCategory === 'all' || app.category === selectedCategory;
-      const searchMatch = !search || 
-        title.toLowerCase().includes(search.toLowerCase()) || 
+      const searchMatch =
+        !search ||
+        title.toLowerCase().includes(search.toLowerCase()) ||
         subtitle.toLowerCase().includes(search.toLowerCase()) ||
-        app.categoryLabel.toLowerCase().includes(search.toLowerCase());
+        app.categoryLabel.toLowerCase().includes(search.toLowerCase()) ||
+        app.smaccCode.toLowerCase().includes(search.toLowerCase());
 
       return categoryMatch && searchMatch;
     });
-  }, [search, selectedCategory, t]);
+  }, [authorizedApps, search, selectedCategory, t]);
 
   const countsByCategory = useMemo(() => {
-    const counts: Record<string, number> = { all: ALL_SYSTEM_APPS.length };
-    ALL_SYSTEM_APPS.forEach(app => {
+    const counts: Record<string, number> = { all: authorizedApps.length };
+    authorizedApps.forEach((app) => {
       counts[app.category] = (counts[app.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [authorizedApps]);
+
+  const visibleCategories = useMemo(() => {
+    return CATEGORIES.filter((cat) => cat.id === 'all' || (countsByCategory[cat.id] || 0) > 0);
+  }, [countsByCategory]);
 
   return (
-    <main className="min-h-screen min-h-[100dvh] w-full bg-[#fbfbf5] text-zinc-900 flex flex-col font-sans selection:bg-champagne selection:text-black">
-      {/* Top Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-zinc-200 px-4 sm:px-8 lg:px-12 py-3 flex items-center justify-between shadow-xs">
+    <main
+      dir="rtl"
+      className="min-h-screen min-h-[100dvh] w-full bg-[#FBFBF5] text-zinc-900 flex flex-col font-sans selection:bg-[#FAEBD7] selection:text-black"
+    >
+      {/* Top Institutional Header */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-zinc-200 px-4 sm:px-8 lg:px-12 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-3 min-w-0">
-          <img
-            src="/logo.png"
-            alt="ALSALIM GROUP LOGO"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-black p-0.5 bg-white object-cover flex-shrink-0"
-          />
+          <div className="w-10 h-10 rounded-2xl bg-black text-[#CFA64A] border border-[#CFA64A]/40 flex items-center justify-center text-lg shadow-xs shrink-0">
+            {currentDeptMeta.emoji}
+          </div>
           <div className="min-w-0">
-            <div className="font-bold text-sm sm:text-lg text-black font-display leading-tight">
-              مستكشف الأقسام والأنظمة التشغيلية
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-black text-sm sm:text-base text-black font-display leading-tight">
+                {currentDeptMeta.nameAr}
+              </span>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#FAEBD7] text-[#8C6239] border border-[#CFA64A]/40">
+                🔒 {isGroupAdmin ? 'صلاحية الإدارة العليا الشاملة' : 'معزول ومقيد للقسم فقط'}
+              </span>
             </div>
-            <div className="text-[11px] text-zinc-400 font-medium hidden sm:block">
-              Enterprise Application Launcher • Multi-Entity Edition • 37 وحدة متكاملة
+            <div className="text-[11px] text-zinc-500 font-semibold truncate mt-0.5">
+              {currentUser?.full_name || 'موظف معتمد'} • {activeCompany.name} ({resolvedScope.companyId}) •{' '}
+              {authorizedApps.length} وحدة نظامية مصرحة
             </div>
           </div>
         </div>
 
-        {/* Search Bar & Action Button */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        {/* Search Bar & Primary Actions */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <div className="relative flex items-center">
             <Search className="w-4 h-4 text-zinc-400 absolute right-3 pointer-events-none" />
             <input
               type="text"
-              placeholder={t('searchAppPlaceholder', 'ابحث عن أي قسم أو موديول...')}
+              placeholder={t('searchAppPlaceholder', 'ابحث في وحدات قسمك...')}
               value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="bg-zinc-50 border border-zinc-200 rounded-full pr-9 pl-4 py-1.5 text-xs text-black placeholder-zinc-400 outline-none w-36 sm:w-72 focus:border-black focus:ring-1 focus:ring-black transition-all"
+              onChange={(e) => setSearch(e.target.value)}
+              className="bg-[#FBFBF5] border border-zinc-300 rounded-full pr-9 pl-4 py-1.5 text-xs text-black placeholder-zinc-400 outline-none w-36 sm:w-64 focus:border-black focus:ring-1 focus:ring-black transition-all"
             />
           </div>
 
           <button
             type="button"
-            className="button-primary-pill flex items-center gap-1 text-xs px-4 py-2 rounded-full font-bold min-h-[36px]"
-            onClick={() => onSelectApp('dashboard', 'لوحة المؤشرات التشغيلية')}
+            className="bg-black hover:bg-zinc-800 text-[#CFA64A] border border-black flex items-center gap-1.5 text-xs px-4 py-2 rounded-full font-bold min-h-[36px] transition-all cursor-pointer"
+            onClick={() =>
+              onSelectApp(currentDeptMeta.defaultTab, currentDeptMeta.defaultTabTitle)
+            }
           >
             <LayoutDashboard className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">لوحة القيادة والمؤشرات</span>
+            <span className="hidden md:inline">فتح شاشة القسم الرئيسية</span>
+            <span className="md:hidden">شاشة القسم</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onSelectApp('logout', 'تسجيل الخروج')}
+            className="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 flex items-center gap-1.5 text-xs px-3.5 py-2 rounded-full font-bold min-h-[36px] transition-all cursor-pointer"
+            title="تسجيل الخروج والعودة لبوابة الدخول الموحدة"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">تسجيل الخروج</span>
           </button>
         </div>
       </header>
 
-      {/* Explorer Content Container - Full Widescreen Width */}
+      {/* Department Isolation Banner */}
+      <div className="bg-black text-white border-b border-zinc-800 px-4 sm:px-8 lg:px-12 py-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-[#CFA64A] shrink-0" />
+            <span className="font-bold text-[#CFA64A]">
+              بوابة القسم المعزولة (تقسيمات نظام سماك SMACC المعتمدة):
+            </span>
+            <span className="text-zinc-300">
+              يتم عرض الوحدات المصرحة فقط لقسم ({currentDeptMeta.nameAr}) داخل ({activeCompany.name}).
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
+            <span>DEPT: {currentDeptMeta.id.toUpperCase()}</span>
+            <span>•</span>
+            <span>ENTITY: {String(resolvedScope.companyId).toUpperCase()}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Explorer Content Container */}
       <div className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 flex-1 space-y-6">
-        
-        {/* Category Filter Pills with distinct active colors */}
+        {/* Category Filter Pills */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
-          {CATEGORIES.map(cat => {
+          {visibleCategories.map((cat) => {
             const isActive = selectedCategory === cat.id;
             const count = countsByCategory[cat.id] || 0;
             const catStyle = CATEGORY_STYLES[cat.id];
 
-            let activeClass = "bg-black text-white border-black shadow-xs";
-            let activeCountBadge = "bg-zinc-800 text-champagne-light";
+            let activeClass = 'bg-black text-[#CFA64A] border-black shadow-xs';
+            let activeCountBadge = 'bg-zinc-800 text-[#CFA64A]';
             if (isActive && catStyle) {
               activeClass = `${catStyle.activePillBg} ${catStyle.activePillText} shadow-xs`;
-              activeCountBadge = "bg-black/20 text-white";
+              activeCountBadge = 'bg-white/15 text-white';
             }
 
             return (
               <button
                 key={cat.id}
+                type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
-                  isActive 
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border cursor-pointer ${
+                  isActive
                     ? activeClass
-                    : 'bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400 hover:bg-zinc-50'
+                    : 'bg-white text-zinc-800 border-zinc-200 hover:border-black hover:bg-[#FBFBF5]'
                 }`}
               >
+                <span>{cat.emoji}</span>
                 <span>{cat.label}</span>
-                <span 
+                <span
                   className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                    isActive ? activeCountBadge : 'bg-zinc-100 text-zinc-600'
+                    isActive ? activeCountBadge : 'bg-zinc-100 text-zinc-700'
                   }`}
                 >
                   {count}
@@ -783,8 +1004,8 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
           })}
         </div>
 
-        {/* Seamless Gapless Connected Bento Grid with Distinct Category Color Palette */}
-        <div className="bg-zinc-200/90 border border-zinc-200/90 rounded-3xl overflow-hidden shadow-sm grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6 gap-[1px]">
+        {/* Seamless Institutional Bento Grid */}
+        <div className="bg-zinc-200 border border-zinc-200 rounded-3xl overflow-hidden shadow-xs grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-[1px]">
           {filteredApps.map((app) => {
             const title = t(app.titleKey, app.defaultTitle);
             const subtitle = t(app.subKey, app.defaultSubtitle);
@@ -795,7 +1016,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
               <div
                 key={app.id}
                 onClick={() => onSelectApp(app.href, title)}
-                className={`p-5 sm:p-6 flex flex-col justify-between cursor-pointer transition-all duration-200 group relative min-h-[225px] ${style.cellBg} ${style.cellHover}`}
+                className={`p-5 sm:p-6 flex flex-col justify-between cursor-pointer transition-all duration-200 group relative min-h-[220px] ${style.cellBg} ${style.cellHover}`}
               >
                 <div className="space-y-3">
                   {/* Top Badges & Metric Row */}
@@ -803,12 +1024,15 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                     <div
                       className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-xs group-hover:scale-105 ${style.iconBg} ${style.iconColor}`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <span className="text-base leading-none">{app.emoji}</span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
+                      <span className="text-[9.5px] px-2 py-0.5 rounded-md font-mono font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">
+                        {app.smaccCode}
+                      </span>
                       {app.metricBadge && (
-                        <span 
+                        <span
                           className={`text-[9.5px] px-2.5 py-0.5 rounded-full font-bold font-mono ${style.metricTagBg} ${style.metricTagColor}`}
                         >
                           {app.metricBadge}
@@ -819,12 +1043,16 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
 
                   {/* Title & Description */}
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-[9.5px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${style.categoryTagBg} ${style.categoryTagColor}`}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span
+                        className={`text-[9.5px] px-2 py-0.5 rounded-md font-bold tracking-wider ${style.categoryTagBg} ${style.categoryTagColor}`}
+                      >
                         {app.categoryLabel}
                       </span>
                     </div>
-                    <h3 className={`text-base font-bold font-display mb-1.5 leading-snug line-clamp-1 ${style.titleColor}`}>
+                    <h3
+                      className={`text-sm sm:text-base font-extrabold font-display mb-1.5 leading-snug line-clamp-1 ${style.titleColor}`}
+                    >
                       {title}
                     </h3>
                     <p className={`text-xs leading-relaxed line-clamp-2 ${style.subColor}`}>
@@ -834,13 +1062,16 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                 </div>
 
                 {/* Card Action Footer */}
-                <div className={`pt-3 mt-3 border-t flex items-center justify-between text-xs font-bold ${style.footerBorder}`}>
+                <div
+                  className={`pt-3 mt-3 border-t flex items-center justify-between text-xs font-bold ${style.footerBorder}`}
+                >
                   <span className={`inline-flex items-center gap-1.5 transition-colors ${style.actionColor}`}>
-                    <span>فتح القسم</span>
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>فتح الوحدة النظامية</span>
                     <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
                   </span>
-                  <span className={`text-[10px] font-mono font-medium opacity-60 ${style.titleColor}`}>
-                    مزامنة فورية
+                  <span className={`text-[10px] font-mono font-medium opacity-70 ${style.titleColor}`}>
+                    معتمد
                   </span>
                 </div>
               </div>
@@ -851,21 +1082,29 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
         {filteredApps.length === 0 && (
           <div className="bg-white border border-zinc-200 rounded-3xl p-12 text-center text-zinc-500">
             <Search className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
-            <p className="font-bold text-black text-sm">لم يتم العثور على أي قسم يطابق بحثك</p>
-            <p className="text-xs text-zinc-400 mt-1">جرب البحث بكلمات أخرى أو اختر "كافة الأقسام والأنظمة"</p>
+            <p className="font-bold text-black text-sm">لم يتم العثور على أي وحدة تطابق بحثك في قسمك</p>
+            <p className="text-xs text-zinc-400 mt-1">
+              جرب البحث بكلمات أخرى أو اختر "كافة الوحدات المصرحة للقسم"
+            </p>
           </div>
         )}
       </div>
 
-      {/* Footer - Full Widescreen Width */}
+      {/* Institutional Footer */}
       <footer className="bg-white border-t border-zinc-200 py-4 px-4 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500 mt-auto">
-        <span>
-          مجموعة خالد السليم للاستقدام والتشغيل • المنظومة السحابية الموحدة لخدمات قطاع الأفراد وقطاع الأعمال
-        </span>
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-[#8C6239]" />
+          <span className="font-semibold text-zinc-700">
+            مجموعة خالد السليم للاستقدام والتشغيل • المنظومة السحابية الموحدة المعتمدة على تقسيمات سماك (SMACC)
+          </span>
+        </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="pill-tag-mint text-[10px]">4 شركات مرتبطة</span>
-          <span className="pill-tag-shade text-[10px]">قواعد بيانات سحابية مستقلة</span>
-          <span className="pill-tag-shade text-[10px]">ZATCA Phase 2</span>
+          <span className="px-2.5 py-0.5 rounded-full bg-[#FAEBD7] text-[#8C6239] font-bold text-[10px]">
+            عزل صارم للأقسام والشركات
+          </span>
+          <span className="px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 font-bold text-[10px]">
+            ZATCA المرحلة الثانية
+          </span>
         </div>
       </footer>
     </main>

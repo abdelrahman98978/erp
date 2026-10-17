@@ -248,7 +248,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           {/* Company 3 */}
           <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
             <div className="flex items-center justify-between">
-              <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold font-mono text-[10px]">RC03: TOP</span>
+              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold font-mono text-[10px]">RC03: TOP</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             </div>
             <h4 className="font-bold text-black text-xs m-0">شركة توباز للاستقدام والتشغيل</h4>
@@ -376,7 +376,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
             <h4 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-purple-600" />
+              <ShieldCheck className="w-4 h-4 text-amber-600" />
               <span>التأمين الإلزامي 24 شهراً ومطالبات التعويض</span>
             </h4>
             <p className="text-zinc-600 leading-relaxed m-0">

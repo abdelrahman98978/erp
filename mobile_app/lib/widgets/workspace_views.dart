@@ -374,6 +374,7 @@ class DashboardViewReplica extends StatefulWidget {
   final List<ErpOperationalRecord> records;
   final void Function(String href, String title) onNavigate;
   final VoidCallback onOpenAddRecordModal;
+  final VoidCallback? onOpenDocumentExtractorModal;
 
   const DashboardViewReplica({
     super.key,
@@ -383,6 +384,7 @@ class DashboardViewReplica extends StatefulWidget {
     required this.records,
     required this.onNavigate,
     required this.onOpenAddRecordModal,
+    this.onOpenDocumentExtractorModal,
   });
 
   @override
@@ -526,6 +528,29 @@ class _DashboardViewReplicaState extends State<DashboardViewReplica> {
                       ),
                     ),
                   ),
+                  if (widget.onOpenDocumentExtractorModal != null)
+                    InkWell(
+                      onTap: widget.onOpenDocumentExtractorModal,
+                      borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: ErpTokens.champagneGold,
+                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.upload_file_rounded, size: 15, color: ErpTokens.charcoalDark),
+                            SizedBox(width: 4),
+                            Text(
+                              'رفع واستخلاص مستندات / 100 فاتورة',
+                              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.charcoalDark),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   _buildOutlineOnDarkPill(
                     label: 'الطلبات المباشرة',
                     onTap: () => widget.onNavigate('orders', 'الطلبات المباشرة'),
@@ -714,9 +739,9 @@ class _DashboardViewReplicaState extends State<DashboardViewReplica> {
         _buildQuickPortalCard(
           icon: Icons.attach_money_rounded,
           iconColor: const Color(0xFF047857),
-          title: 'لوحة التحكم المالية',
-          subtitle: 'ملخص الحسابات والفواتير والحركات المالية',
-          onTap: () => widget.onNavigate('finance-home', 'لوحة التحكم المالية'),
+          title: 'نظام سماك المحاسبي (SMACC)',
+          subtitle: 'الأستاذ العام، السندات، الفوترة ZATCA، وميزان المراجعة',
+          onTap: () => widget.onNavigate('smacc-accounting', 'نظام سماك المحاسبي المتكامل (SMACC)'),
         ),
         const SizedBox(height: 10),
         _buildQuickPortalCard(
@@ -1047,13 +1072,15 @@ class _DashboardViewReplicaState extends State<DashboardViewReplica> {
   }
 }
 
-/// Dedicated Interactive Module Page View inside `AppShell` (matches `.table-card`, `.stat-card`, `.btn-odoo-primary`)
+/// Dedicated Interactive Module Page View inside `AppShell`
+/// Supports the 6 Authentic SMACC Accounting Divisions + SMACC 4-Stage Operational Structure
 class EnterpriseModuleWorkspaceView extends StatefulWidget {
   final String activeTab;
   final String activeTabTitle;
   final SystemPortalOption activePortal;
   final List<ErpOperationalRecord> records;
   final VoidCallback onAddRecord;
+  final VoidCallback? onOpenDocumentExtractorModal;
   final VoidCallback onTriggerInstantNotification;
   final VoidCallback onScheduleBackgroundNotification;
   final void Function(String href, String title) onNavigate;
@@ -1065,6 +1092,7 @@ class EnterpriseModuleWorkspaceView extends StatefulWidget {
     required this.activePortal,
     required this.records,
     required this.onAddRecord,
+    this.onOpenDocumentExtractorModal,
     required this.onTriggerInstantNotification,
     required this.onScheduleBackgroundNotification,
     required this.onNavigate,
@@ -1077,6 +1105,37 @@ class EnterpriseModuleWorkspaceView extends StatefulWidget {
 class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspaceView> {
   String _searchQuery = '';
   String _statusFilter = 'الكل';
+  int _smaccOperationalSubTab = 0;
+
+  static const Set<String> _smaccFinanceTabs = {
+    'smacc-accounting',
+    'journals',
+    'vouchers',
+    'zatca',
+    'financial-requests',
+    'cost-centers',
+    'trial-balance',
+    'accounting',
+    'finance-home',
+  };
+
+  static const List<({String href, String code, String emoji, String title})> _smaccSixDivisions = [
+    (href: 'smacc-accounting', code: 'SMACC-01', emoji: '📊', title: '١. الأستاذ العام وشجرة الحسابات'),
+    (href: 'vouchers', code: 'SMACC-02', emoji: '🏦', title: '٢. النقدية والبنوك والسندات'),
+    (href: 'zatca', code: 'SMACC-03', emoji: '🧾', title: '٣. العملاء والفوترة ZATCA'),
+    (href: 'financial-requests', code: 'SMACC-04', emoji: '📑', title: '٤. الموردين والوكلاء والصرف'),
+    (href: 'cost-centers', code: 'SMACC-05', emoji: '🏗️', title: '٥. مراكز التكلفة والأصول'),
+    (href: 'trial-balance', code: 'SMACC-06', emoji: '📈', title: '٦. التقارير وميزان المراجعة'),
+  ];
+
+  static const List<String> _operationalSmaccSubTabs = [
+    '١. المدخلات والسجلات الأساسية',
+    '٢. الحركة اليومية والعقود',
+    '٣. الربط الحكومي والاعتمادات',
+    '٤. الكشوفات والتقارير والميزان',
+  ];
+
+  bool get _isSmaccFinanceModule => _smaccFinanceTabs.contains(widget.activeTab);
 
   @override
   Widget build(BuildContext context) {
@@ -1104,7 +1163,7 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ErpTokens.pillTagMint(
-                    'كيان معزول: ${widget.activePortal.companyId == 'all' ? 'GRP-ALL' : widget.activePortal.companyId}',
+                    'دفتر محاسبي مستقل: ${widget.activePortal.companyId == 'all' ? 'GRP-ALL' : widget.activePortal.companyId}',
                     icon: Icons.verified_user_rounded,
                     fontSize: 10.5,
                   ),
@@ -1117,11 +1176,13 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
               const SizedBox(height: 10),
               Text(
                 widget.activeTabTitle,
-                style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700, color: Colors.white),
+                style: const TextStyle(fontSize: 18.5, fontWeight: FontWeight.w700, color: Colors.white),
               ),
               const SizedBox(height: 4),
               Text(
-                'إدارة ومعالجة سجلات ${widget.activeTabTitle} ضمن بيئة ${widget.activePortal.nameAr} المعزولة مع المزامنة اللحظية وإشعارات الهاتف الأصلية.',
+                _isSmaccFinanceModule
+                    ? 'بيئة نظام سماك المحاسبي المستقل لشركة ${widget.activePortal.nameAr} — قيد مزدوج متوازن، فوترة ZATCA المرحلة الثانية، وعزل محاسبي تام عن بقية الشركات.'
+                    : 'إدارة ومعالجة سجلات ${widget.activeTabTitle} ضمن بيئة ${widget.activePortal.nameAr} المعزولة وفق التقسيم الهيكلي المعتمد.',
                 style: const TextStyle(fontSize: 11.5, color: Color(0xFFA1A1AA), height: 1.4),
               ),
               const SizedBox(height: 14),
@@ -1138,19 +1199,42 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.add_circle_outline_rounded, size: 15, color: ErpTokens.ink),
-                          SizedBox(width: 5),
+                          const Icon(Icons.add_circle_outline_rounded, size: 15, color: ErpTokens.ink),
+                          const SizedBox(width: 5),
                           Text(
-                            'إضافة سجل جديد + إشعار فوري',
-                            style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                            _isSmaccFinanceModule ? 'إضافة قيد / سند محاسبي جديد' : 'إضافة سجل جديد + إشعار فوري',
+                            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
                           ),
                         ],
                       ),
                     ),
                   ),
+                  if (widget.onOpenDocumentExtractorModal != null)
+                    InkWell(
+                      onTap: widget.onOpenDocumentExtractorModal,
+                      borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: ErpTokens.champagneGold,
+                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.upload_file_rounded, size: 15, color: ErpTokens.charcoalDark),
+                            SizedBox(width: 5),
+                            Text(
+                              'رفع دفعة فواتير / مستندات (100 صورة / PDF / Word / Excel)',
+                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.charcoalDark),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   InkWell(
                     onTap: widget.onScheduleBackgroundNotification,
                     borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
@@ -1167,26 +1251,10 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                           Icon(Icons.notifications_active_rounded, size: 14, color: ErpTokens.goldLight),
                           SizedBox(width: 5),
                           Text(
-                            'تجربة إشعار بالخلفية (5 ثوانٍ)',
+                            'إشعار بالخلفية (5 ثوانٍ)',
                             style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: ErpTokens.goldLight),
                           ),
                         ],
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => widget.onNavigate('dashboard', 'الرئيسية والمؤشرات التشغيلية'),
-                    borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: const Text(
-                        'العودة للرئيسية',
-                        style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: Colors.white),
                       ),
                     ),
                   ),
@@ -1195,7 +1263,18 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
+
+        // SMACC 6-Division Accounting Navigator OR 4-Division Operational Sub-Bar
+        if (_isSmaccFinanceModule) ...[
+          _buildSmaccSixDivisionsNavigator(),
+          const SizedBox(height: 12),
+          _buildSmaccAccountingDivisionDetails(),
+          const SizedBox(height: 12),
+        ] else ...[
+          _buildOperationalSmaccSubTabsBar(),
+          const SizedBox(height: 12),
+        ],
 
         // Search & Filter Bar inside `.table-card`
         Container(
@@ -1208,7 +1287,7 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                 onChanged: (v) => setState(() => _searchQuery = v),
                 style: const TextStyle(fontSize: 13, color: ErpTokens.ink),
                 decoration: InputDecoration(
-                  hintText: 'ابحث برقم المرجع، اسم العميل، أو الحالة في ${widget.activeTabTitle}...',
+                  hintText: 'ابحث برقم المرجع، البيان، أو الحالة في ${widget.activeTabTitle}...',
                   hintStyle: const TextStyle(fontSize: 12, color: Color(0xFF71717A)),
                   prefixIcon: const Icon(Icons.search_rounded, size: 18, color: Color(0xFF71717A)),
                   filled: true,
@@ -1232,7 +1311,7 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: ['الكل', 'ساري / نشط', 'تحت الضمان', 'مكتمل / موثق ZATCA'].map((status) {
+                  children: ['الكل', 'مرحّل / نشط', 'تحت المراجعة', 'موثق ZATCA / مساند'].map((status) {
                     final active = _statusFilter == status;
                     return Padding(
                       padding: const EdgeInsetsDirectional.only(end: 6),
@@ -1272,9 +1351,12 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'سجلات ${widget.activeTabTitle}',
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    Expanded(
+                      child: Text(
+                        'سجلات ودفاتر ${widget.activeTabTitle}',
+                        style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     ErpTokens.pillTagMint('${filtered.length} سجل مطابق', fontSize: 10.5),
                   ],
@@ -1333,8 +1415,11 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                           style: const TextStyle(fontSize: 11.5, color: ErpTokens.shade50, height: 1.4),
                         ),
                         const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -1352,6 +1437,33 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
                                 ),
                               ),
                             ),
+                            InkWell(
+                              onTap: () => _showRecordAttachmentPreview(context, rec),
+                              borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: ErpTokens.goldPale,
+                                  borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                  border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.6)),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.visibility_outlined, size: 13, color: ErpTokens.ink),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      rec.attachmentLabel ?? 'معاينة صورة / مرفق المستند (${rec.sourceFormat ?? 'PDF/QR'})',
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        color: ErpTokens.ink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                             Text(
                               rec.amountOrMetric,
                               style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
@@ -1366,6 +1478,489 @@ class _EnterpriseModuleWorkspaceViewState extends State<EnterpriseModuleWorkspac
           ),
         ),
       ],
+    );
+  }
+
+  void _showRecordAttachmentPreview(BuildContext context, ErpOperationalRecord rec) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'معاينة المستند المرفق والفاتورة #${rec.id}',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: ErpTokens.canvasCream,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: ErpTokens.champagneGold, width: 1.5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: ErpTokens.primary,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'النظام المحاسبي المستقل لشركة [${rec.companyId}]',
+                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: ErpTokens.goldLight),
+                          ),
+                        ),
+                        ErpTokens.pillTagMint(rec.sourceFormat ?? 'ZATCA Phase 2 / PDF', fontSize: 9.5),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      rec.title,
+                      style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      rec.subtitle,
+                      style: const TextStyle(fontSize: 11.5, color: Color(0xFF52525B)),
+                    ),
+                    const Divider(height: 20, color: ErpTokens.hairlineLight),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('القيمة المالية الإجمالية:', style: TextStyle(fontSize: 10.5, color: Color(0xFF71717A))),
+                            Text(
+                              rec.amountOrMetric,
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'حالة التوثيق والترحيل: ${rec.status}',
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF065F46)),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          width: 68,
+                          height: 68,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: ErpTokens.ink, width: 1.5),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.qr_code_2_rounded, size: 42, color: ErpTokens.ink),
+                              Text('ZATCA QR', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w900)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ErpTokens.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ErpTokens.radiusPill)),
+                ),
+                onPressed: () => Navigator.of(ctx).pop(),
+                icon: const Icon(Icons.check_circle_outline_rounded, color: ErpTokens.goldLight, size: 16),
+                label: const Text('إغلاق معاينة المستند الموثق'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSmaccSixDivisionsNavigator() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: ErpTokens.cardPricingDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Row(
+                children: [
+                  Text('📊', style: TextStyle(fontSize: 15)),
+                  SizedBox(width: 6),
+                  Text(
+                    'التقسيمات الـ 6 المعتمدة لنظام سماك المحاسبي (SMACC)',
+                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                  ),
+                ],
+              ),
+              ErpTokens.pillTagMint('قيد مزدوج متوازن', fontSize: 9.5),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: _smaccSixDivisions.map((div) {
+                final isSelected = widget.activeTab == div.href ||
+                    (widget.activeTab == 'journals' && div.href == 'smacc-accounting') ||
+                    (widget.activeTab == 'accounting' && div.href == 'smacc-accounting');
+                return Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 8),
+                  child: InkWell(
+                    onTap: () => widget.onNavigate(div.href, div.title),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                      decoration: BoxDecoration(
+                        color: isSelected ? ErpTokens.primary : ErpTokens.surfaceSubtle,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected ? ErpTokens.champagneGold : ErpTokens.hairlineLight,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(div.emoji, style: const TextStyle(fontSize: 14)),
+                          const SizedBox(width: 6),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                div.code,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  color: isSelected ? ErpTokens.goldLight : const Color(0xFF71717A),
+                                ),
+                              ),
+                              Text(
+                                div.title,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: isSelected ? Colors.white : ErpTokens.ink,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSmaccAccountingDivisionDetails() {
+    final tab = widget.activeTab;
+    if (tab == 'vouchers') {
+      return _buildSmaccSummaryBox(
+        badge: 'SMACC-02 • النقدية والبنوك',
+        title: 'أرصدة الصناديق والحسابات البنكية وسندات القبض والصرف',
+        metrics: const [
+          (label: 'مصرف الراجحي الرئيسي', value: '842,500 ر.س', sub: 'مطابق لكشف البنك'),
+          (label: 'البنك الأهلي SNB', value: '514,200 ر.س', sub: 'حساب الضمانات'),
+          (label: 'الصندوق النقدي (العهدة)', value: '38,400 ر.س', sub: 'جرد يومي مطابق'),
+        ],
+        rows: const [
+          (code: 'RV-2026-8841', name: 'سند قبض دفعة عقد استقدام مساند #99412', amount: '+ 19,550 ر.س', tag: 'سند قبض مرحّل'),
+          (code: 'PV-2026-4410', name: 'سند صرف مستحقات وكيل الفلبين (حوالة دولية)', amount: '- 42,000 ر.س', tag: 'سند صرف معتمد'),
+          (code: 'RV-2026-8842', name: 'سند قبض دفعة تأجير شهري — ياقوت', amount: '+ 3,450 ر.س', tag: 'سند قبض مرحّل'),
+        ],
+      );
+    }
+    if (tab == 'zatca') {
+      return _buildSmaccSummaryBox(
+        badge: 'SMACC-03 • الفوترة الإلكترونية ZATCA المرحلة الثانية',
+        title: 'سجل الفواتير الضريبية والمبسطة والربط التشفيري المباشر (Fatoora)',
+        metrics: const [
+          (label: 'فواتير معتمدة (Phase 2)', value: '318 فاتورة', sub: 'ختم تشفيري XML + QR'),
+          (label: 'إجمالي المبيعات الخاضعة', value: '1,480,000 ر.س', sub: 'الربع الحالي'),
+          (label: 'ضريبة القيمة المضافة 15%', value: '222,000 ر.س', sub: 'جاهزة للإقرار الضريبي'),
+        ],
+        rows: const [
+          (code: 'INV-ZATCA-9041', name: 'فاتورة ضريبية مبسطة — عقد استقدام #MSN-99412', amount: '19,550 ر.س (شامل 15%)', tag: 'معتمدة ZATCA QR'),
+          (code: 'INV-ZATCA-9042', name: 'فاتورة ضريبية B2B — عقد تشغيل وإمداد عمالة', amount: '69,000 ر.س (شامل 15%)', tag: 'معتمدة ZATCA XML'),
+          (code: 'CN-ZATCA-104', name: 'إشعار دائن ضريبي — تسوية استبدال خلال الضمان', amount: '- 8,500 ر.س', tag: 'إشعار دائن موثق'),
+        ],
+      );
+    }
+    if (tab == 'financial-requests') {
+      return _buildSmaccSummaryBox(
+        badge: 'SMACC-04 • حسابات الموردين والوكلاء وأوامر الصرف',
+        title: 'ذمم الوكلاء الخارجيين، رسوم مساند، واعتمادات الصرف',
+        metrics: const [
+          (label: 'مستحقات الوكلاء الخارجيين', value: '184,000 ر.س', sub: '6 وكلاء دوليين'),
+          (label: 'رسوم مساند وإنجاز المسددة', value: '62,400 ر.س', sub: 'مفوترة آلياً'),
+          (label: 'أوامر صرف بانتظار الاعتماد', value: '4 أوامر', sub: 'تحت توقيع المدير المالي'),
+        ],
+        rows: const [
+          (code: 'PO-2026-311', name: 'أمر صرف دفعة وكيل مانيلا — 12 تأشيرة مصدرة', amount: '54,000 ر.س', tag: 'معتمد للصرف'),
+          (code: 'PO-2026-312', name: 'سداد رسوم توثيق مساند وتفاويض إنجاز', amount: '14,250 ر.س', tag: 'مسدد عبر سداد'),
+          (code: 'PO-2026-315', name: 'توريد إعاشة وتموين لمركز دار الرواد للإيواء', amount: '18,900 ر.س', tag: 'معتمد للصرف'),
+        ],
+      );
+    }
+    if (tab == 'cost-centers') {
+      return _buildSmaccSummaryBox(
+        badge: 'SMACC-05 • مراكز التكلفة والأصول الثابتة',
+        title: 'توزيع الإيرادات والمصروفات على مراكز التكلفة وإهلاك الأصول',
+        metrics: const [
+          (label: 'مركز تكلفة الاستقدام (SAF)', value: '+ 612,000 ر.س', sub: 'هامش ربح 28%'),
+          (label: 'مركز تكلفة التأجير (YAQ)', value: '+ 390,000 ر.س', sub: 'هامش ربح 31%'),
+          (label: 'صافي الأصول الثابتة', value: '1,120,000 ر.س', sub: 'بعد احتساب الإهلاك'),
+        ],
+        rows: const [
+          (code: 'CC-101', name: 'مركز تكلفة عقود الاستقدام — الفرع الرئيسي الرياض', amount: 'إيراد: 920,000 ر.س', tag: 'نشط • SAF'),
+          (code: 'CC-201', name: 'مركز تكلفة عقود التأجير الشهري — ياقوت', amount: 'إيراد: 540,000 ر.س', tag: 'نشط • YAQ'),
+          (code: 'CC-501', name: 'مركز تكلفة تشغيل مركز الإيواء — دار الرواد', amount: 'موازنة: 210,000 ر.س', tag: 'نشط • DAR'),
+        ],
+      );
+    }
+    if (tab == 'trial-balance') {
+      return _buildSmaccSummaryBox(
+        badge: 'SMACC-06 • ميزان المراجعة والقوائم المالية الختامية',
+        title: 'ميزان المراجعة بالمجاميع والأرصدة وقائمة الدخل والميزانية العمومية',
+        metrics: const [
+          (label: 'إجمالي المدين (Debit)', value: '4,820,500 ر.س', sub: 'متوازن 100%'),
+          (label: 'إجمالي الدائن (Credit)', value: '4,820,500 ر.س', sub: 'الفرق: 0.00 ر.س'),
+          (label: 'صافي الربح التشغيلي', value: '945,200 ر.س', sub: 'قائمة الدخل الموحدة'),
+        ],
+        rows: const [
+          (code: '1000', name: 'الأصول المتداولة وغير المتداولة (النقدية، البنوك، الذمم)', amount: 'مدين: 2,640,000 ر.س', tag: 'الميزانية العمومية'),
+          (code: '2000-3000', name: 'الالتزامات وحقوق الملكية ومخصصات الضمان', amount: 'دائن: 1,694,800 ر.س', tag: 'الميزانية العمومية'),
+          (code: '4000-5000', name: 'صافي الإيرادات مطروحاً منه تكلفة النشاط والمصروفات', amount: 'صافي ربح: 945,200 ر.س', tag: 'قائمة الدخل'),
+        ],
+      );
+    }
+
+    // Default SMACC-01: General Ledger & Chart of Accounts (`smacc-accounting` / `journals`)
+    return _buildSmaccSummaryBox(
+      badge: 'SMACC-01 • الأستاذ العام وشجرة الحسابات وقيود اليومية',
+      title: 'شجرة الحسابات القياسية (نظام سماك) ودفتر القيود المزدوجة',
+      metrics: const [
+        (label: 'حسابات الدليل الشجري', value: '64 حساب رئيسي وفرعي', sub: 'الأصول • الخصوم • الإيرادات'),
+        (label: 'قيود اليومية المرحلة', value: '1,420 قيد مزدوج', sub: 'توازن آلي 100%'),
+        (label: 'الرصيد النقدي والبنكي', value: '1,395,100 ر.س', sub: 'الأستاذ العام GL'),
+      ],
+      rows: const [
+        (code: '1101 / 1102', name: 'الأصول المتداولة — الصناديق النقدية والبنوك المحلية', amount: '1,395,100 ر.س (مدين)', tag: 'مستوى ١ • أصول'),
+        (code: '1103 / 2101', name: 'ذمم العملاء المدينة مقابل ذمم الوكلاء الخارجيين الدائنة', amount: '412,000 ر.س (صافي)', tag: 'مستوى ٢ • ذمم'),
+        (code: '2104', name: 'حساب ضريبة القيمة المضافة المحصلة (ZATCA VAT 15%)', amount: '222,000 ر.س (دائن)', tag: 'مستوى ٢ • التزامات'),
+        (code: '4101 / 5101', name: 'إيرادات عقود الاستقدام والتأجير مقابل التكاليف المباشرة', amount: '1,480,000 ر.س (دائن)', tag: 'مستوى ١ • إيرادات'),
+      ],
+    );
+  }
+
+  Widget _buildSmaccSummaryBox({
+    required String badge,
+    required String title,
+    required List<({String label, String value, String sub})> metrics,
+    required List<({String code, String name, String amount, String tag})> rows,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: ErpTokens.cardPricingDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              ErpTokens.pillTagMint(badge, fontSize: 10),
+              const Text(
+                'تحديث لحظي • شجرة سماك المعتمدة',
+                style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF71717A)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: metrics
+                .map(
+                  (m) => Expanded(
+                    child: Container(
+                      margin: const EdgeInsetsDirectional.only(end: 6),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: ErpTokens.surfaceSubtle,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: ErpTokens.hairlineLight),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            m.label,
+                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF71717A)),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            m.value,
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            m.sub,
+                            style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w600, color: Color(0xFF047857)),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 12),
+          const Divider(height: 1, color: ErpTokens.hairlineLight),
+          ...rows.map(
+            (r) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 9),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: ErpTokens.primary,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      r.code,
+                      style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: ErpTokens.goldLight),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          r.name,
+                          style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: ErpTokens.ink),
+                        ),
+                        Text(
+                          r.tag,
+                          style: const TextStyle(fontSize: 10, color: Color(0xFF71717A)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    r.amount,
+                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOperationalSmaccSubTabsBar() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: ErpTokens.cardPricingDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.account_tree_outlined, size: 15, color: ErpTokens.ink),
+              SizedBox(width: 6),
+              Text(
+                'التقسيم الهيكلي الموحد للقسم (على نمط نظام سماك SMACC):',
+                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(_operationalSmaccSubTabs.length, (idx) {
+                final selected = _smaccOperationalSubTab == idx;
+                return Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 6),
+                  child: ChoiceChip(
+                    label: Text(_operationalSmaccSubTabs[idx]),
+                    selected: selected,
+                    onSelected: (_) => setState(() => _smaccOperationalSubTab = idx),
+                    selectedColor: ErpTokens.primary,
+                    backgroundColor: ErpTokens.surfaceSubtle,
+                    labelStyle: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: selected ? Colors.white : ErpTokens.ink,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                      side: BorderSide(color: selected ? ErpTokens.champagneGold : ErpTokens.hairlineLight),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

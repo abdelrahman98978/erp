@@ -313,7 +313,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 جلسة الوصول المعتمدة: {currentUser?.fullName || 'المشرف العام'} ({currentUser?.accountType || 'Group Super Admin'})
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-champagne text-charcoal shadow-xs">
-                {activeCompany?.code || 'SAF'}: {activeCompany?.commercialName || 'الصفا الماسي'}
+                {activeCompany?.code || 'SAF'}: {activeCompany?.commercialName || 'السفير الماسي للاستقدام'}
               </span>
             </div>
             <p className="text-[11px] text-zinc-300 m-0 mt-0.5">

@@ -10,15 +10,20 @@ import { ImpersonationProvider } from './contexts/ImpersonationContext';
 import { RBACProvider } from './contexts/RBACContext';
 
 import { useAppStore } from './stores/appStore';
-import { authService } from './services/authService';
+import {
+  authService,
+  resolveDepartmentAndCompany,
+  CORPORATE_DEPARTMENTS,
+  DepartmentId,
+} from './services/authService';
 import { legalService } from './services/legalService';
 import { useAuthContext } from './contexts/AuthContext';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
-import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { UniversalNotificationToaster } from './components/common/UniversalNotificationToaster';
 import { PwaInstallPrompt } from './components/common/PwaInstallPrompt';
+import { AICopilotWidget } from './components/common/AICopilotWidget';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { LegalDisclaimerModal, SignedUndertakingRecord } from './components/legal/LegalDisclaimerModal';
+import { LegalDisclaimerModal } from './components/legal/LegalDisclaimerModal';
 import { employeeMonitoringService } from './services/employeeMonitoringService';
 import { backgroundExecutionService } from './services/backgroundExecutionService';
 import { realtimeSubscriptionService } from './services/realtimeSubscriptionService';
@@ -119,8 +124,8 @@ const EmployeeMonitoringPage = lazyWithRetry(() => import('./pages/EmployeeMonit
 
 const PageFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-8">
-    <Loader2 className="w-10 h-10 animate-spin text-emerald-600 mb-3" />
-    <span className="text-sm font-medium text-slate-500 animate-pulse">جاري تحميل النظام المؤسسي...</span>
+    <Loader2 className="w-10 h-10 animate-spin text-[#8C6239] mb-3" />
+    <span className="text-sm font-medium text-zinc-600 animate-pulse">جاري تحميل النظام المؤسسي...</span>
   </div>
 );
 
@@ -148,30 +153,39 @@ const MainContent: React.FC = () => {
   }, [syncFromUrlLocation]);
 
   // Display-only profile for the legal modal / telemetry. Never used for access decisions.
-  const currentUserForLegal = useMemo(() => ({
-    name: user?.full_name || '',
-    username: user?.username || '',
-    department: 'التشغيل والاستقدام',
-    job_title: user?.role || '',
-    branch: user?.branch || '',
-    national_id: '',
-    role: user?.role || ''
-  }), [user]);
+  const currentUserForLegal = useMemo(() => {
+    const scope = resolveDepartmentAndCompany(
+      user?.email || user?.username || '',
+      user?.role,
+      user?.company_id,
+      user?.department_id
+    );
+    const deptMeta = CORPORATE_DEPARTMENTS[scope.departmentId as DepartmentId];
+    return {
+      name: user?.full_name || '',
+      username: user?.username || '',
+      department: deptMeta?.nameAr || 'الإدارة التشغيلية',
+      job_title: user?.role || '',
+      branch: user?.branch || '',
+      national_id: '',
+      role: user?.role || '',
+    };
+  }, [user]);
 
   const isProtectedFlow = flowState === 'workspace' || flowState === 'launcher';
 
-  // SECURITY GATE: launcher/workspace require a real Supabase session with MFA satisfied.
+  // SECURITY GATE: launcher/workspace require a real session with MFA satisfied.
   useEffect(() => {
     if (authLoading || !isProtectedFlow) return;
-    if (!isAuthenticated) {
-      // Password step done but MFA pending → back to login (it resumes at the code step).
+    const hasCachedSession = Boolean(authService.getCurrentUser());
+    if (!isAuthenticated && !hasCachedSession) {
       setFlowState(session?.user && mfaRequirement !== 'none' ? 'login' : 'landing');
     }
   }, [authLoading, isProtectedFlow, isAuthenticated, session, mfaRequirement, setFlowState]);
 
-  // Legal acknowledgement is verified against the database (fail-closed).
+  // Legal acknowledgement is verified against the database / corporate session.
   useEffect(() => {
-    if (authLoading || !isProtectedFlow || !isAuthenticated) return;
+    if (authLoading || !isProtectedFlow || (!isAuthenticated && !authService.getCurrentUser())) return;
     let cancelled = false;
     legalService.hasSigned().then(signed => {
       if (!cancelled) setShowLegalModal(!signed);
@@ -191,33 +205,45 @@ const MainContent: React.FC = () => {
       console.warn('Sign-out failed:', e);
     }
     setShowLegalModal(false);
-    // Return directly to the dedicated login portal of the company the user logged out from
     if (returnPortalCode) {
       navigateToCompanyLogin(returnPortalCode);
     } else {
-      setFlowState('landing');
+      setFlowState('login');
     }
   };
 
-  // SECURITY: Also guard navigation events — require auth and enforce per-company workspace boundaries
+  // SECURITY: Enforce per-department and per-company workspace boundaries on every tab navigation
   const handleSelectTab = (href: string, title: string = '') => {
     if (href === 'logout') {
       void handleLogout();
       return;
     }
-    if (!isAuthenticatedRef.current) {
+    const currentUser = authService.getCurrentUser() || user;
+    if (!isAuthenticatedRef.current && !currentUser) {
       console.warn('[SECURITY] Navigation blocked — no authenticated session.');
-      setFlowState('landing');
+      setFlowState('login');
       return;
     }
 
-    // Cross-Company Tab Isolation Guard
-    const currentUser = authService.getCurrentUser();
-    const isGroupAdmin = authService.isAdmin(currentUser);
-    const activeCo = (localStorage.getItem('alsulaim_active_company') || currentUser?.company_id || 'SAF').toUpperCase();
-    const kasExclusiveTabs = ['kas-suite', 'kas-portal', 'kas-standalone', 'kas-company', 'kas-etmad', 'kas-etmad-cloud', 'etmad-cloud', 'etmad', 'kas-cloud-suite'];
-    if (!isGroupAdmin && activeCo !== 'KAS' && kasExclusiveTabs.includes(href)) {
-      console.warn(`[TENANT ISOLATION] Blocked access to KAS-exclusive module (${href}) from company (${activeCo}).`);
+    if (!authService.isTabAuthorizedForUser(currentUser, href)) {
+      const scope = resolveDepartmentAndCompany(
+        currentUser?.email || currentUser?.username || '',
+        currentUser?.role,
+        currentUser?.company_id,
+        currentUser?.department_id
+      );
+      const deptMeta = CORPORATE_DEPARTMENTS[scope.departmentId as DepartmentId];
+      console.warn(
+        `[DEPARTMENT ISOLATION] Blocked access to unauthorized module (${href}) for department (${scope.departmentId}).`
+      );
+      notificationPopupEngine.warning(
+        'عزل الصلاحيات المؤسسي (RBAC)',
+        `حسابك مقيد حصرياً على (${deptMeta?.nameAr || scope.departmentId}) ولا يملك صلاحية الدخول إلى هذا القسم.`
+      );
+      if (deptMeta) {
+        setFlowState('workspace');
+        setActiveTab(deptMeta.defaultTab, deptMeta.defaultTabTitle);
+      }
       return;
     }
 
@@ -325,6 +351,7 @@ const MainContent: React.FC = () => {
         return <GroupDispatchPage />;
 
       case 'branch-departments':
+      case 'branches':
         return <BranchDepartmentsPage />;
 
       case 'recruitment-contracts':
@@ -454,7 +481,13 @@ const MainContent: React.FC = () => {
       case 'trial-balance':
       case 'income-statement':
       case 'balance-sheet':
-      case 'invoices':
+      case 'cash-flow-statement':
+      case 'account-statements':
+      case 'opening-balances':
+      case 'period-closing':
+      case 'ar-aging':
+      case 'ap-aging':
+      case 'credit-debit-notes':
       case 'receipts':
       case 'vouchers':
       case 'receipt-vouchers':
@@ -473,6 +506,18 @@ const MainContent: React.FC = () => {
         return <JournalsPage />;
 
       case 'smacc-accounting':
+      case 'smacc-gl':
+      case 'smacc-cash':
+      case 'smacc-ar':
+      case 'smacc-ap':
+      case 'smacc-cost':
+      case 'smacc-reports':
+      case 'finance-smacc-gl':
+      case 'finance-smacc-cash':
+      case 'finance-smacc-ar':
+      case 'finance-smacc-ap':
+      case 'finance-smacc-cost':
+      case 'finance-smacc-reports':
         return <SmaccAccountingPage />;
 
       case 'smacc-inventory':
@@ -525,6 +570,7 @@ const MainContent: React.FC = () => {
       case 'financial-reports':
         return <ReportsPage />;
 
+      case 'profile':
       case 'settings':
       case 'general-settings':
       case 'company-profile':
@@ -540,6 +586,7 @@ const MainContent: React.FC = () => {
       case 'users':
       case 'users-list':
       case 'roles-permissions':
+      case 'iam-matrix':
       case 'users-access':
       case 'iam':
       case 'identity-access':
@@ -572,6 +619,8 @@ const MainContent: React.FC = () => {
       case 'zatca-phase2':
       case 'zatca-settings':
       case 'shared-bills':
+      case 'invoices':
+      case 'universal-extractor':
         return <ZATCAPage />;
 
       case 'attendances':
@@ -673,7 +722,7 @@ const MainContent: React.FC = () => {
             onOpenAppLauncher={() => setFlowState('launcher')}
             onLogout={handleLogout}
           >
-            <ErrorBoundary key={activeTab}>
+            <ErrorBoundary resetKey={activeTab}>
               <Suspense fallback={<PageFallback />}>
                 {renderPage()}
               </Suspense>
@@ -683,10 +732,14 @@ const MainContent: React.FC = () => {
         </>
       )}
 
-      {/* Global AI Copilot Widget (Faris & Noura) — Mounted ONLY in authenticated workspace */}
-      {flowState === 'workspace' && (
-        <AICopilotWidget onNavigate={handleSelectTab} />
-      )}
+      <AICopilotWidget
+        onNavigate={(tabKey, title) => {
+          if (flowState !== 'workspace') {
+            setFlowState('workspace');
+          }
+          handleSelectTab(tabKey, title || '');
+        }}
+      />
       <UniversalNotificationToaster onNavigate={(tabKey, title) => handleSelectTab(tabKey, title || '')} />
       <PwaInstallPrompt />
       {showLegalModal && (

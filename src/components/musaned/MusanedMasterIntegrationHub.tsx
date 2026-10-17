@@ -246,7 +246,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
 
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
                 <div className="flex items-center gap-2 text-black font-bold text-xs mb-2">
-                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
                   <span>3. عزل الشركات (Tenant Isolation)</span>
                 </div>
                 <p className="text-[11.5px] text-zinc-600 leading-relaxed m-0">
@@ -285,7 +285,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
                   ].map((row, idx) => (
                     <tr key={idx} className="hover:bg-zinc-50">
                       <td className="p-3.5 font-mono font-bold text-black">{row.code}</td>
-                      <td className="p-3.5 font-bold text-purple-700">{row.official}</td>
+                      <td className="p-3.5 font-bold text-amber-700">{row.official}</td>
                       <td className="p-3.5 font-bold text-emerald-800">{row.erp}</td>
                       <td className="p-3.5 text-zinc-700">{row.action}</td>
                       <td className="p-3.5"><Badge text={row.sla} type="shade" /></td>
@@ -407,7 +407,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
                 <div className="p-3 bg-white rounded-xl border border-zinc-200">
                   <div className="text-zinc-400 text-[11px] mb-1 font-mono">2. Webhook HMAC Secret</div>
                   <div className="font-bold text-black font-mono text-xs">sec_hmac_{selectedCompany.toLowerCase()}_99x</div>
-                  <div className="text-[10.5px] text-purple-700 mt-1">SHA-256 Signature Guard</div>
+                  <div className="text-[10.5px] text-amber-700 mt-1">SHA-256 Signature Guard</div>
                 </div>
 
                 <div className="p-3 bg-white rounded-xl border border-zinc-200">
@@ -447,7 +447,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
 
                 <div className="p-3.5 bg-white rounded-xl border border-zinc-200 space-y-1">
                   <div className="font-bold text-zinc-900 text-xs flex items-center gap-1.5">
-                    <ArrowRightLeft className="w-3.5 h-3.5 text-purple-600" />
+                    <ArrowRightLeft className="w-3.5 h-3.5 text-amber-600" />
                     <span>توجيه الـ Webhooks بالبصمة الرقمية</span>
                   </div>
                   <p className="text-[11px] text-zinc-500 m-0 leading-relaxed">
@@ -490,7 +490,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
                         <td className="p-3 text-center font-mono font-bold text-emerald-700">{row.tech}</td>
                         <td className="p-3 text-center font-mono text-zinc-700">{row.ops}</td>
                         <td className="p-3 text-center font-mono text-blue-700">{row.fin}</td>
-                        <td className="p-3 text-center font-mono text-purple-700">{row.comp}</td>
+                        <td className="p-3 text-center font-mono text-amber-700">{row.comp}</td>
                         <td className="p-3 text-center font-mono text-amber-700">{row.grp}</td>
                       </tr>
                     ))}
@@ -695,16 +695,16 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
             {/* Sponsorship Transfer Domain */}
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex items-center gap-2 mb-3">
-                <ArrowRightLeft className="w-5 h-5 text-purple-600" />
+                <ArrowRightLeft className="w-5 h-5 text-amber-600" />
                 <h3 className="text-sm font-bold text-black m-0">نظام نقل الخدمات المستقل (Transfer of Sponsorship Domain)</h3>
               </div>
               <p className="text-xs text-zinc-500 mb-4">
                 إدارة طلبات نقل خدمات العمالة المنزلية بين أصحاب العمل عبر منصة مساند مع ضبط الفترات التجريبية.
               </p>
               <div className="space-y-2 text-xs">
-                <div className="p-3 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-between">
-                  <span className="font-bold text-purple-900">طلبات نقل الخدمات النشطة حالياً</span>
-                  <span className="font-mono font-bold text-purple-700">14 طلباً</span>
+                <div className="p-3 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-between">
+                  <span className="font-bold text-amber-900">طلبات نقل الخدمات النشطة حالياً</span>
+                  <span className="font-mono font-bold text-amber-700">14 طلباً</span>
                 </div>
                 <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-between">
                   <span className="font-semibold text-zinc-700">عمالة في مرحلة التجربة (Trial Period - 7 أيام)</span>
@@ -754,7 +754,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
                   ].map((row) => (
                     <tr key={row.id} className="hover:bg-zinc-50">
                       <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
-                      <td className="p-3.5 font-mono font-bold text-purple-700">{row.type}</td>
+                      <td className="p-3.5 font-mono font-bold text-amber-700">{row.type}</td>
                       <td className="p-3.5 font-mono text-zinc-700">{row.ref}</td>
                       <td className="p-3.5 font-semibold text-black">{row.tenant}</td>
                       <td className="p-3.5 font-mono text-zinc-500">{row.time}</td>

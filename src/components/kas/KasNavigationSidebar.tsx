@@ -75,7 +75,7 @@ export const KAS_DEPARTMENTS: {
     title: 'أوامر التوريد وصرف المستودعات',
     titleEn: 'Purchase Orders & Warehousing',
     badge: '18 أمر صرف',
-    badgeColor: 'bg-purple-500/20 text-purple-300 border border-purple-500/30',
+    badgeColor: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
     icon: Truck,
     description: 'إصدار أوامر الصرف لمستودعات كاس المركزية للمشاريع المعتمدة',
   },

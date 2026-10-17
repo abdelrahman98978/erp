@@ -103,11 +103,35 @@ const DEFAULT_MEDICAL_CHECKS: ShelterMedicalCheck[] = [
 
 export const ShelterSuitePortalPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
-  const { setActiveTab: setGlobalActiveTab, addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, setActiveTab: setGlobalActiveTab, addNotification } = useAppStore();
   const { data: rawShelter = [], isLoading } = useShelterRecords();
   const { createItem, updateItem, deleteItem } = useTableMutation('shelter_records');
 
-  const [activeDepartment, setActiveDepartment] = useState<ShelterDepartmentId>('dashboard');
+  const mapStoreTabToDepartment = (tabKey: string): ShelterDepartmentId => {
+    switch (tabKey) {
+      case 'create-shelter':
+      case 'shelter':
+      case 'inside-shelter':
+        return 'checkin';
+      case 'room-management':
+        return 'rooms';
+      case 'food-catering':
+        return 'catering';
+      case 'available-transfer':
+        return 'welfare';
+      case 'outside-shelter':
+      case 'deportation-stage':
+        return 'deportation';
+      case 'shelter-places':
+        return 'branches';
+      default:
+        return 'dashboard';
+    }
+  };
+
+  const [activeDepartment, setActiveDepartment] = useState<ShelterDepartmentId>(() =>
+    mapStoreTabToDepartment(storeActiveTab)
+  );
   const [selectedBranch, setSelectedBranch] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -117,11 +141,18 @@ export const ShelterSuitePortalPage: React.FC = () => {
   const [medicalChecks, setMedicalChecks] = useState<ShelterMedicalCheck[]>([]);
 
   // Modals
-  const [showCheckinModal, setShowCheckinModal] = useState(false);
+  const [showCheckinModal, setShowCheckinModal] = useState(() => storeActiveTab === 'create-shelter');
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [showMealModal, setShowMealModal] = useState(false);
   const [showClinicModal, setShowClinicModal] = useState(false);
   const [selectedInmateForPrint, setSelectedInmateForPrint] = useState<ShelterRecordItem | null>(null);
+
+  useEffect(() => {
+    setActiveDepartment(mapStoreTabToDepartment(storeActiveTab));
+    if (storeActiveTab === 'create-shelter') {
+      setShowCheckinModal(true);
+    }
+  }, [storeActiveTab]);
 
   // Forms
   const [checkinForm, setCheckinForm] = useState({
@@ -358,7 +389,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
       {/* 2. Main Work Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#0f1316]">
         {/* Top Control Bar */}
-        <header className="h-16 bg-[#14181c] border-b border-white/10 px-6 flex items-center justify-between gap-4 shrink-0 shadow-md">
+        <header className="min-h-16 py-2.5 bg-[#14181c] border-b border-white/10 px-4 flex flex-wrap items-center justify-between gap-3 shrink-0 shadow-md">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md">
               <Hotel className="w-5 h-5 text-amber-400" />
@@ -382,11 +413,11 @@ export const ShelterSuitePortalPage: React.FC = () => {
           </div>
 
           {/* Quick Actions & Profile */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <button
               type="button"
               onClick={() => setShowCheckinModal(true)}
-              className="px-3.5 py-1.5 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
+              className="px-3 py-1.5 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shadow-md shadow-amber-400/20"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>تسكين نزيلة</span>
@@ -395,7 +426,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowRoomModal(true)}
-              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
               <Bed className="w-3.5 h-3.5 text-zinc-400" />
               <span>+ غرفة</span>
@@ -404,7 +435,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowMealModal(true)}
-              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
               <Utensils className="w-3.5 h-3.5 text-amber-400" />
               <span>+ وجبة</span>
@@ -413,7 +444,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowClinicModal(true)}
-              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-200 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
               <Stethoscope className="w-3.5 h-3.5 text-rose-400" />
               <span>+ فحص طبي</span>
@@ -424,14 +455,14 @@ export const ShelterSuitePortalPage: React.FC = () => {
               sectionKey="shelter"
               data={filteredInmates}
               customTitle={`كشف نزيلات مراكز الإيواء - ${activeCompany.name}`}
-              buttonLabel="تصدير الكشوفات (10 صيغ)"
+              buttonLabel="تصدير الكشوفات"
             />
 
             {/* Return to general ERP button */}
             <button
               type="button"
               onClick={() => setGlobalActiveTab('dashboard', 'لوحة التحكم')}
-              className="px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
+              className="px-2.5 py-1.5 rounded-xl border border-white/15 bg-white/5 text-zinc-300 hover:bg-white/10 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all"
               title="العودة إلى الـ ERP العام"
             >
               <span>الـ ERP العام</span>
@@ -590,7 +621,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                     </div>
                     <div className="p-3 bg-black/40 rounded-xl border border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-purple-400" />
+                        <Building2 className="w-4 h-4 text-amber-400" />
                         <span className="font-bold text-white">فرع المنطقة الشرقية (الدمام)</span>
                       </div>
                       <Badge text="طاقة: 30 سرير (إشغال 30%)" type="success" />

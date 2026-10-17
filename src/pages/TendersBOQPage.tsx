@@ -7,6 +7,7 @@ import { tafqeet } from '../services/tafqeetService';
 import { computeTenderKPIs, DEFAULT_SUPPLIERS } from '../services/tenderAnalyticsService';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
 import { kasEtmadRealService } from '../services/kasEtmadRealService';
+import { realErpDataStore } from '../services/realErpDataStore';
 import { RealBoqEngine } from '../services/realBoqEngine';
 import { RealZatcaEngine } from '../services/realZatcaEngine';
 const KasMonafasatSpreadsheetView = React.lazy(() => 
@@ -215,11 +216,30 @@ const DEFAULT_MOCK_TENDERS: TenderRecord[] = [
 
 export const TendersBOQPage: React.FC = () => {
   const { activeCompany } = useCompany();
-  const { addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
+
+  const mapStoreTabToTenderTab = (
+    tabKey: string
+  ): 'kas-sheet' | 'etmad-cloud' | 'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics' => {
+    switch (tabKey) {
+      case 'boq':
+        return 'excel-boq';
+      case 'boq-analytics':
+        return 'analytics';
+      default:
+        return 'kas-sheet';
+    }
+  };
 
   const [tendersList, setTendersList] = useState<TenderRecord[]>(DEFAULT_MOCK_TENDERS);
   const [selectedTender, setSelectedTender] = useState<TenderRecord>(DEFAULT_MOCK_TENDERS[0]);
-  const [activeTab, setActiveTab] = useState<'kas-sheet' | 'etmad-cloud' | 'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>('kas-sheet');
+  const [activeTab, setActiveTab] = useState<'kas-sheet' | 'etmad-cloud' | 'excel-boq' | 'directory' | 'awards' | 'suppliers' | 'analytics'>(() =>
+    mapStoreTabToTenderTab(storeActiveTab)
+  );
+
+  useEffect(() => {
+    setActiveTab(mapStoreTabToTenderTab(storeActiveTab));
+  }, [storeActiveTab]);
   
   // Modals state
   const [showPrintModal, setShowPrintModal] = useState(false);
@@ -994,6 +1014,15 @@ export const TendersBOQPage: React.FC = () => {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+            >
+              <FileUp className="w-3.5 h-3.5 ml-1 text-[#CFA64A]" />
+              <span>استخلاص كراسات ومنافسات (PDF / Word / Excel)</span>
+            </button>
+
+            <button
               onClick={() => setShowNewTenderModal(true)}
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
@@ -1275,7 +1304,7 @@ export const TendersBOQPage: React.FC = () => {
       {activeTab === 'etmad-cloud' && (
         <React.Suspense fallback={
           <div className="p-8 text-center bg-white rounded-2xl border border-zinc-200 shadow-sm animate-pulse space-y-3">
-            <div className="inline-block w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="inline-block w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
             <div className="text-sm font-bold text-zinc-700">جاري تحميل سحابة منصة اعتماد...</div>
           </div>
         }>
@@ -1370,10 +1399,10 @@ export const TendersBOQPage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setShowPrintModal(true)}
-                    className="px-2 py-1 text-[11px] font-bold text-purple-800 hover:bg-purple-50 rounded-lg flex items-center gap-1 cursor-pointer"
+                    className="px-2 py-1 text-[11px] font-bold text-amber-800 hover:bg-amber-50 rounded-lg flex items-center gap-1 cursor-pointer"
                     title="طباعة / تصدير PDF"
                   >
-                    <Printer className="w-3 h-3 text-purple-600" />
+                    <Printer className="w-3 h-3 text-amber-600" />
                     <span>PDF</span>
                   </button>
                 </div>
@@ -1571,10 +1600,10 @@ export const TendersBOQPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => window.print()}
-                  className="px-2.5 py-1 text-[11px] font-bold text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950 rounded-xl flex items-center gap-1"
+                  className="px-2.5 py-1 text-[11px] font-bold text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950 rounded-xl flex items-center gap-1"
                   title="طباعة السجل / PDF"
                 >
-                  <Printer className="w-3 h-3 text-purple-600" />
+                  <Printer className="w-3 h-3 text-amber-600" />
                   <span>PDF</span>
                 </button>
               </div>
@@ -1750,7 +1779,7 @@ export const TendersBOQPage: React.FC = () => {
             {/* Status Distribution */}
             <div className="card-pricing" style={{ padding: '24px', borderRadius: '20px', background: '#ffffff' }}>
               <h4 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
-                <PieChart className="w-4 h-4 text-violet-600" />
+                <PieChart className="w-4 h-4 text-amber-600" />
                 <span>توزيع المنافسات حسب الحالة</span>
               </h4>
               <div className="space-y-3">
@@ -1815,7 +1844,7 @@ export const TendersBOQPage: React.FC = () => {
               <div className="flex gap-3 mt-1">
                 <span className="text-xs"><span className="font-bold text-amber-600">{kpis.totalDraft}</span> مسودة</span>
                 <span className="text-xs"><span className="font-bold text-sky-600">{kpis.totalSubmitted}</span> مقدمة</span>
-                <span className="text-xs"><span className="font-bold text-violet-600">{kpis.totalInvoiced}</span> مفوترة</span>
+                <span className="text-xs"><span className="font-bold text-amber-600">{kpis.totalInvoiced}</span> مفوترة</span>
               </div>
             </div>
           </div>
@@ -1897,10 +1926,10 @@ export const TendersBOQPage: React.FC = () => {
                   </button>
                   <button
                     onClick={() => window.print()}
-                    className="px-2.5 py-1 text-[11px] font-bold text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950 rounded-xl flex items-center gap-1"
+                    className="px-2.5 py-1 text-[11px] font-bold text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950 rounded-xl flex items-center gap-1"
                     title="طباعة سجل الموردين / PDF"
                   >
-                    <Printer className="w-3 h-3 text-purple-600" />
+                    <Printer className="w-3 h-3 text-amber-600" />
                     <span>PDF</span>
                   </button>
                 </div>
@@ -1921,9 +1950,9 @@ export const TendersBOQPage: React.FC = () => {
                 <div className="text-xl font-black font-mono text-sky-800 dark:text-sky-300">{suppliers.reduce((s, sup) => s + sup.totalDeals, 0)}</div>
                 <div className="text-[11px] font-bold text-sky-700 dark:text-sky-400 mt-0.5">إجمالي التعاملات</div>
               </div>
-              <div className="p-4 rounded-2xl bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800 text-center">
-                <div className="text-xl font-black font-mono text-violet-800 dark:text-violet-300">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
-                <div className="text-[11px] font-bold text-violet-700 dark:text-violet-400 mt-0.5">إجمالي القيمة (ر.س)</div>
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-center">
+                <div className="text-xl font-black font-mono text-amber-800 dark:text-amber-300">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
+                <div className="text-[11px] font-bold text-amber-700 dark:text-amber-400 mt-0.5">إجمالي القيمة (ر.س)</div>
               </div>
             </div>
 
@@ -2096,10 +2125,35 @@ export const TendersBOQPage: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    const poNo = `PO-2026-${selectedTender.referenceNumber.slice(-4)}`;
+                    await realErpDataStore.addRecord('purchase_orders', {
+                      id: poNo,
+                      tender_id: selectedTender.id,
+                      reference_number: selectedTender.referenceNumber,
+                      entity_name: selectedTender.entityName,
+                      items_count: selectedTender.itemsCount,
+                      total_amount: selectedTender.grandTotal,
+                      status: 'معتمد للتوريد',
+                      created_at: new Date().toISOString(),
+                    });
+                    exportData(
+                      'orders',
+                      selectedTender.items.map((item, idx) => ({
+                        'م': idx + 1,
+                        'رقم أمر التوريد': poNo,
+                        'البند': item.description,
+                        'الوحدة': item.unit,
+                        'الكمية': item.quantity,
+                        'سعر الوحدة': item.unitPrice,
+                        'الإجمالي شاملاً الضريبة': item.totalWithVat,
+                      })),
+                      'excel',
+                      `أمر_توريد_${poNo}`
+                    );
                     addNotification({
                       title: 'أمر توريد مستودعي (PO)',
-                      message: `تم إنشاء أمر الصرف والتوريد الداخلي #PO-2026-${selectedTender.referenceNumber.slice(-4)} لمستودعات شركة كاس للتجارة.`,
+                      message: `تم إنشاء وتصدير أمر الصرف والتوريد الداخلي #${poNo} لمستودعات شركة كاس للتجارة.`,
                       type: 'success'
                     });
                   }}

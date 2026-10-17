@@ -563,7 +563,24 @@
    ========================================================================== */
 
 /* 1. BUTTONS */
+button svg,
+a svg,
+.button-primary-pill svg,
+.button-white-pill svg,
+.button-outline-on-dark svg,
+.button-outline-on-light svg,
+.button-aloe-pill svg,
+.btn-odoo svg {
+  flex-shrink: 0;
+}
+
 /* button-primary-pill: The dominant CTA across the system */
+:where(.button-primary-pill) {
+  font-size: 14px;
+  padding: 10px 20px;
+  min-height: 40px;
+}
+
 .button-primary-pill, button.button-primary-pill, a.button-primary-pill {
   display: inline-flex;
   align-items: center;
@@ -572,18 +589,15 @@
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   font-family: var(--font-family-ui);
-  font-size: 16px;
-  font-weight: 420;
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.4;
   border-radius: var(--rounded-pill);
-  padding: 12px 24px;
   border: none;
   cursor: pointer;
   text-decoration: none;
   font-feature-settings: "ss03" 1;
   transition: background-color var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
   user-select: none;
-  min-height: 44px;
 }
 
 .button-primary-pill:hover {
@@ -597,6 +611,12 @@
 }
 
 /* button-white-pill: Solid white pill with black text for dark backgrounds */
+:where(.button-white-pill) {
+  font-size: 14px;
+  padding: 10px 20px;
+  min-height: 40px;
+}
+
 .button-white-pill, button.button-white-pill, a.button-white-pill {
   display: inline-flex;
   align-items: center;
@@ -605,18 +625,15 @@
   background-color: #ffffff !important;
   color: #000000 !important;
   font-family: var(--font-family-ui);
-  font-size: 16px;
   font-weight: 550;
-  line-height: 1.5;
+  line-height: 1.4;
   border-radius: var(--rounded-pill);
-  padding: 12px 24px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   text-decoration: none;
   font-feature-settings: "ss03" 1;
   transition: all var(--transition-fast);
   user-select: none;
-  min-height: 44px;
 }
 
 .button-white-pill:hover {
@@ -629,6 +646,12 @@
 }
 
 /* button-outline-on-dark: The cinematic hero CTA */
+:where(.button-outline-on-dark) {
+  font-size: 14px;
+  padding: 10px 22px;
+  min-height: 40px;
+}
+
 .button-outline-on-dark, button.button-outline-on-dark, a.button-outline-on-dark {
   display: inline-flex;
   align-items: center;
@@ -637,18 +660,15 @@
   background-color: transparent;
   color: var(--color-on-primary) !important;
   font-family: var(--font-family-ui);
-  font-size: 16px;
-  font-weight: 420;
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.4;
   border-radius: var(--rounded-pill);
-  padding: 12px 26px;
   border: 2px solid var(--color-on-primary);
   cursor: pointer;
   text-decoration: none;
   font-feature-settings: "ss03" 1;
   transition: all var(--transition-fast);
   user-select: none;
-  min-height: 44px;
 }
 
 .button-outline-on-dark:hover {
@@ -661,6 +681,12 @@
 }
 
 /* button-outline-on-light: The light-track equivalent */
+:where(.button-outline-on-light) {
+  font-size: 14px;
+  padding: 10px 20px;
+  min-height: 40px;
+}
+
 .button-outline-on-light, button.button-outline-on-light, a.button-outline-on-light {
   display: inline-flex;
   align-items: center;
@@ -669,18 +695,15 @@
   background-color: var(--color-canvas-light);
   color: var(--color-ink) !important;
   font-family: var(--font-family-ui);
-  font-size: 16px;
-  font-weight: 420;
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.4;
   border-radius: var(--rounded-pill);
-  padding: 12px 24px;
   border: 1px solid var(--color-ink);
   cursor: pointer;
   text-decoration: none;
   font-feature-settings: "ss03" 1;
   transition: all var(--transition-fast);
   user-select: none;
-  min-height: 44px;
 }
 
 .button-outline-on-light:hover {
@@ -693,6 +716,12 @@
 }
 
 /* button-aloe-pill: The featured CTA on pricing/dashboard */
+:where(.button-aloe-pill) {
+  font-size: 14px;
+  padding: 10px 20px;
+  min-height: 40px;
+}
+
 .button-aloe-pill, button.button-aloe-pill, a.button-aloe-pill {
   display: inline-flex;
   align-items: center;
@@ -701,18 +730,15 @@
   background-color: var(--color-aloe-10);
   color: var(--color-ink) !important;
   font-family: var(--font-family-ui);
-  font-size: 16px;
-  font-weight: 420;
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.4;
   border-radius: var(--rounded-pill);
-  padding: 12px 24px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   cursor: pointer;
   text-decoration: none;
   font-feature-settings: "ss03" 1;
   transition: all var(--transition-fast);
   user-select: none;
-  min-height: 44px;
 }
 
 .button-aloe-pill:hover {

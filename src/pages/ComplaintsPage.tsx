@@ -108,6 +108,11 @@ export const ComplaintsPage: React.FC = () => {
 
   const complaints: ComplaintTicket[] = rawComplaints.length > 0 ? (rawComplaints as any[]) : MOCK_COMPLAINTS;
   const [interDisputes, setInterDisputes] = useState<InterCompanyDispute[]>(MOCK_INTER_DISPUTES);
+  const [refundClaims, setRefundClaims] = useState([
+    { id: 'CLM-2026-081', client: 'بندر صالح الهويريني', ref: 'RC-2026-0014', reason: 'استرجاع متبقي عقد بعد رفض العمل', amount: 8400, iban: 'SA4480000123608010119283', status: 'معتمد بانتظار التحويل' },
+    { id: 'CLM-2026-082', client: 'سارة أحمد محمد', ref: 'REC-2026-0089', reason: 'تعويض تأخير وصول أكثر من المدة النظامية', amount: 1500, iban: 'SA1220000001283920194821', status: 'تم التحويل والإيداع' },
+    { id: 'CLM-2026-083', client: 'شركة دار الرواد', ref: 'RC-2026-0010', reason: 'استرجاع مبلغ تأمين سكن عقد منتهي', amount: 3000, iban: 'SA9050000004810294819203', status: 'معتمد بانتظار التحويل' },
+  ]);
 
   const storeActiveTab = useAppStore(state => state.activeTab);
 
@@ -454,11 +459,7 @@ export const ComplaintsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {[
-                  { id: 'CLM-2026-081', client: 'بندر صالح الهويريني', ref: 'RC-2026-0014', reason: 'استرجاع متبقي عقد بعد رفض العمل', amount: 8400, iban: 'SA4480000123608010119283', status: 'معتمد بانتظار التحويل' },
-                  { id: 'CLM-2026-082', client: 'سارة أحمد محمد', ref: 'REC-2026-0089', reason: 'تعويض تأخير وصول أكثر من المدة النظامية', amount: 1500, iban: 'SA1220000001283920194821', status: 'تم التحويل والإيداع' },
-                  { id: 'CLM-2026-083', client: 'شركة دار الرواد', ref: 'RC-2026-0010', reason: 'استرجاع مبلغ تأمين سكن عقد منتهي', amount: 3000, iban: 'SA9050000004810294819203', status: 'معتمد بانتظار التحويل' },
-                ].map((c) => (
+                {refundClaims.map((c) => (
                   <tr key={c.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{c.id}</td>
                     <td className="p-3.5 font-bold text-black">{c.client}</td>
@@ -469,17 +470,34 @@ export const ComplaintsPage: React.FC = () => {
                     <td className="p-3.5"><Badge text={c.status} type={c.status.includes('تم') ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
                       <button
-                        onClick={() => {
+                        disabled={c.status === 'تم التحويل والإيداع'}
+                        onClick={async () => {
+                          setRefundClaims(prev =>
+                            prev.map(item =>
+                              item.id === c.id ? { ...item, status: 'تم التحويل والإيداع' } : item
+                            )
+                          );
+                          await realErpDataStore.addRecord('vouchers', {
+                            id: `PAY-${c.id}`,
+                            company_id: activeCompanyId !== 'all' ? activeCompanyId : 'SAF',
+                            voucher_type: 'سند صرف',
+                            party_name: c.client,
+                            amount: c.amount,
+                            payment_method: 'حوالة بنكية',
+                            description: `صرف تعويض مطالبة #${c.id} - ${c.reason} (${c.iban})`,
+                            date: new Date().toISOString().slice(0, 10),
+                            status: 'معتمد',
+                          });
                           addNotification({
-                            title: 'اعتماد الحوالة البنكية',
-                            message: `تم إصدار أمر التحويل للمطالبة #${c.id} بنجاح.`,
+                            title: 'اعتماد الحوالة البنكية وسند الصرف',
+                            message: `تم إصدار أمر التحويل البنكي وسند الصرف للمطالبة #${c.id} بمبلغ ${c.amount.toLocaleString()} ر.س بنجاح.`,
                             type: 'success',
                           });
                         }}
-                        className="button-primary-pill"
+                        className="button-primary-pill disabled:opacity-50"
                         style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
                       >
-                        إصدار تحويل
+                        {c.status === 'تم التحويل والإيداع' ? 'تم الصرف ✓' : 'إصدار تحويل'}
                       </button>
                     </td>
                   </tr>

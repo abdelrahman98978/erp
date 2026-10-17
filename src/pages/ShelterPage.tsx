@@ -623,7 +623,7 @@ export const ShelterPage: React.FC = () => {
                     <p className="text-xs text-zinc-500 mb-3">{p.city}</p>
                     <div className="space-y-1.5 text-xs">
                       <div className="flex justify-between"><span className="text-zinc-500">الطاقة الاستيعابية:</span><span className="font-bold text-black">{p.cap}</span></div>
-                      <div className="flex justify-between"><span className="text-zinc-500">الإشغال الحالي:</span><span className="font-bold text-purple-700">{p.occ}</span></div>
+                      <div className="flex justify-between"><span className="text-zinc-500">الإشغال الحالي:</span><span className="font-bold text-amber-700">{p.occ}</span></div>
                       <div className="flex justify-between"><span className="text-zinc-500">المشرف:</span><span className="text-black font-semibold">{p.sup}</span></div>
                       <div className="flex justify-between"><span className="text-zinc-500">الترخيص:</span><span className="font-mono text-zinc-600">{p.license}</span></div>
                     </div>

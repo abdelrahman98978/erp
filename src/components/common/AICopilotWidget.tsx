@@ -191,11 +191,11 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   const getInitialWelcome = (p: AssistantPersona, compName: string) => {
     if (p === 'noura') {
-      return `أهلاً بكِ عزيزتي! أنا "نُورة"، مرشدتكِ الرقمية الذكية لمجموعة خالد السليم.
-يسعدني تقديم الإرشاد والمساعدة الفورية في خدمات الأقسام النسائية ومراكز الإيواء وبيانات ${compName} بأعلى درجات الخصوصية والموثوقية.`;
+      return `أهلاً بكِ في نطاق (${compName})! أنا "نُورة"، المستشارة المؤسسية والتشغيلية لمجموعة خالد السليم.
+يسعدني مساعدتكِ في إدارة مراكز الإيواء والتسكين، عقود مساند والتأجير، محاسبة سماك (SMACC)، أو رفع واستخلاص حتى 100 فاتورة ومستندات PDF وWord وExcel تلقائياً.`;
     }
-    return `أهلاً بك! أنا "فارس"، مرشدك الرقمي الذكي لمجموعة خالد السليم.
-يسعدني مساعدتك في استعراض بيانات ${compName}، تتبع عقود مساند، فحص جداول كميات كاس، أو مراجعة الحسابات والفوترة المشفرة ZATCA.`;
+    return `أهلاً بك في نطاق (${compName})! أنا "فارس"، المستشار التنفيذي لمجموعة خالد السليم.
+يسعدني مساعدتك في إدارة محاسبة سماك بـ 6 أنظمة، الفوترة الضريبية ZATCA، عقود مساند، منافسات كاس وجداول BOQ، أو استخلاص حتى 100 فاتورة وأي مستند تلقائياً.`;
   };
 
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -616,12 +616,22 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   // Dynamic Contextual Quick Prompts based on activeCompany & persona
   const getContextualPrompts = () => {
+    const commonExtractor = {
+      label: '📄 رفع 100 فاتورة / مستند',
+      query: 'أريد رفع 100 صورة فاتورة أو مستندات PDF وWord وExcel واستخلاص بياناتها تلقائياً',
+    };
+    const commonSmacc = {
+      label: '📊 محاسبة سماك (6 أنظمة)',
+      query: 'استعرض حالة نظام سماك المحاسبي (SMACC) والقيود والفواتير المعزولة للشركة',
+    };
+
     if (persona === 'noura') {
       return [
-        { label: 'مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية وحالة النزيلات في مراكز الإيواء؟' },
-        { label: 'كوادر الصفا والياقوت النسائية', query: 'أريد معرفة جاهزية الكوادر النسائية وعقود التشغيل المرن' },
-        { label: 'الرعاية الصحية والغذائية', query: 'ما هي مؤشرات الرعاية الصحية والغذائية للنزيلات في المراكز؟' },
-        { label: 'حماية الخصوصية و HRSD', query: 'استعرض إجراءات حماية الخصوصية والامتثال لوزارة الموارد البشرية' },
+        commonExtractor,
+        commonSmacc,
+        { label: '🏥 مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية وحالة النزيلات في مراكز الإيواء؟' },
+        { label: '📑 عقود مساند والتأجير', query: 'أريد معرفة جاهزية الكوادر وعقود الاستقدام والتشغيل المرن' },
+        { label: '🛡️ الرعاية والامتثال HRSD', query: 'ما هي مؤشرات الرعاية الصحية والامتثال لوزارة الموارد البشرية؟' },
       ];
     }
 
@@ -629,46 +639,51 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
     if (companyId === 'KAS' || companyId === 'kas') {
       return [
-        { label: 'منصة اعتماد والمنافسات', query: 'ما هي أحدث منافسات منصة اعتماد المتاحة للمشاركة؟' },
-        { label: 'محرر جداول الكميات BOQ', query: 'أريد مراجعة بنود وتسعير جدول كميات المنافسة الحالية' },
-        { label: 'الفوترة المشفرة ZATCA', query: 'ما هي حالة الامتثال للفوترة الإلكترونية المشفرة للمرحلة الثانية؟' },
-        { label: 'سجل الموردين والمقاولين', query: 'استعرض سجل الموردين المعتمدين لشركة كاس' },
+        commonExtractor,
+        commonSmacc,
+        { label: '🏗️ منصة اعتماد والمنافسات', query: 'ما هي أحدث منافسات منصة اعتماد المتاحة للمشاركة؟' },
+        { label: '📐 محرر جداول الكميات BOQ', query: 'أريد مراجعة بنود وتسعير جدول كميات المنافسة الحالية' },
+        { label: '🧾 الفوترة الضريبية ZATCA', query: 'ما هي حالة الامتثال للفوترة الإلكترونية المشفرة للمرحلة الثانية؟' },
       ];
     }
 
     if (companyId === 'SAF' || companyId === 'masi') {
       return [
-        { label: 'عقود مساند المتأخرة', query: 'ما هي العقود المتأخرة في مرحلة التأشيرة أو السفارة؟' },
-        { label: 'تتبع وصول العمالة', query: 'ما هي الرحلات المجدولة لوصول العمالة المنزلية هذا الأسبوع؟' },
-        { label: 'بوالص التأمين الشاملة', query: 'ما هي حالة توثيق بوالص التأمين على عقود الاستقدام؟' },
-        { label: 'تفويض إنجاز الفوري', query: 'كيف أقوم بإصدار تفويض إلكتروني فوري عبر إنجاز؟' },
+        commonExtractor,
+        commonSmacc,
+        { label: '📑 عقود مساند السارية', query: 'ما هي حالة عقود مساند في مرحلة التأشيرة أو السفارة؟' },
+        { label: '🧾 الفوترة الضريبية ZATCA', query: 'ما هي حالة فواتير ZATCA والضريبة لشركة سواعد؟' },
+        { label: '🛂 تفويض إنجاز الفوري', query: 'كيف أقوم بإصدار تفويض إلكتروني فوري عبر إنجاز؟' },
       ];
     }
 
     if (companyId === 'YAQ' || companyId === 'yaqoot') {
       return [
-        { label: 'عقود التأجير والتشغيل', query: 'أعطني إحصائية عقود التأجير الشهرية والسنوية السارية' },
-        { label: 'جاهزية الكوادر والتشغيل', query: 'ما هو عدد الكوادر المهنية الجاهزة للتسليم للعملاء؟' },
-        { label: 'سندات القبض والتحصيل', query: 'ما هي مبالغ التحصيل المستحقة هذا الشهر للياقوت؟' },
-        { label: 'باقات قطاع الأعمال', query: 'ما هي العروض والخصومات المتاحة للشركات والمصانع؟' },
+        commonExtractor,
+        commonSmacc,
+        { label: '🤝 عقود التأجير والتشغيل', query: 'أعطني إحصائية عقود التأجير الشهرية والسنوية السارية' },
+        { label: '💵 سندات القبض والتحصيل', query: 'ما هي مبالغ التحصيل المستحقة هذا الشهر للياقوت؟' },
+        { label: '🏢 باقات قطاع الأعمال', query: 'ما هي العروض والخصومات المتاحة للشركات والمصانع؟' },
       ];
     }
 
     if (companyId === 'TOP' || companyId === 'topaz') {
       return [
-        { label: 'فرز السير الذاتية ATS', query: 'ما هي السير الذاتية المطابقة لمعايير التوظيف الذكي؟' },
-        { label: 'وكالات التوظيف الخارجية', query: 'ما هي حالة الربط مع الوكالات الخارجية في الفلبين وإندونيسيا؟' },
-        { label: 'متوسط زمن التوظيف', query: 'ما هو مؤشر سرعة فرز وتوظيف الكفاءات في توب تالنت؟' },
+        commonExtractor,
+        commonSmacc,
+        { label: '🗂️ فرز السير الذاتية ATS', query: 'ما هي السير الذاتية المطابقة لمعايير التوظيف الذكي؟' },
+        { label: '🌍 وكالات التوظيف الخارجية', query: 'ما هي حالة الربط مع الوكالات الخارجية في الفلبين وإندونيسيا؟' },
       ];
     }
 
     // Default / All / Super Admin
     return [
-      { label: 'ملخص الأداء المالي والسيولة', query: 'أعطني ملخص السيولة والأرباح المجمعة لشركات المجموعة' },
-      { label: 'عقود مساند وسير العمل', query: 'ما هي عقود مساند النشطة وحالة الربط مع الوزارة؟' },
-      { label: 'نسبة التوطين وحماية الأجور', query: 'ما هي نسبة التوطين المعتمدة وحالة ملف WPS؟' },
-      { label: 'نسبة إشغال مراكز الإيواء', query: 'ما هي الطاقة الاستيعابية الشاغرة لأسرة مراكز الإيواء؟' },
-      { label: 'بوابة منافسات كاس', query: 'كيف أنتقل إلى البوابة المستقلة لشركة كاس؟' },
+      commonExtractor,
+      commonSmacc,
+      { label: '🧾 الفوترة الضريبية ZATCA', query: 'ما هي حالة الفوترة الضريبية ZATCA المرحلة الثانية؟' },
+      { label: '📑 عقود مساند والتأجير', query: 'ما هي عقود مساند النشطة وحالة الربط مع الوزارة؟' },
+      { label: '👥 التوطين وحماية الأجور WPS', query: 'ما هي نسبة التوطين المعتمدة وحالة ملف WPS؟' },
+      { label: '🏥 مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية الشاغرة لأسرة مراكز الإيواء؟' },
     ];
   };
 
@@ -897,6 +912,25 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   handleSendMessageRef.current = handleSendMessage;
 
+  const handleTriggerActionButton = (actionKey: string, label: string) => {
+    if (actionKey === 'open-document-extractor') {
+      window.dispatchEvent(new CustomEvent('open-document-extractor'));
+      setIsOpen(false);
+      return;
+    }
+    if (onNavigate) {
+      onNavigate(actionKey, label);
+      setIsOpen(false);
+    } else {
+      window.dispatchEvent(
+        new CustomEvent('alsulaim_navigate', {
+          detail: { tab: actionKey, title: label },
+        })
+      );
+      setIsOpen(false);
+    }
+  };
+
   return (
     <>
       {/* 1. Docked Edge Pill Tab (When minimized/docked on desktop, or compact floating orb on mobile) */}
@@ -918,34 +952,30 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 setShowTooltip(false);
               }
             }}
-            className="group flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-white/95 backdrop-blur-md border border-amber-300/80 rounded-full shadow-lg hover:shadow-xl hover:bg-amber-50/90 transition-all duration-300 cursor-pointer"
+            className="group flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-[#1D2428] border border-[#CFA64A] rounded-full shadow-lg hover:bg-black transition-all duration-300 cursor-pointer"
             title={`التحدث مع ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
           >
-            <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 rounded-full bg-[#FBFBF5] border border-[#CFA64A] p-0.5">
               <img
                 src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
                 alt={persona === 'noura' ? 'نُورة' : 'فارس'}
-                className="w-full h-full object-contain drop-shadow-sm group-hover:scale-110 transition-transform"
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform"
               />
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#1D2428]" />
             </div>
 
             <div className="flex flex-col text-right">
               <div className="flex items-center gap-1">
-                <span className="text-[11px] sm:text-xs font-black text-zinc-900">
+                <span className="text-[11px] sm:text-xs font-black text-white">
                   {persona === 'noura' ? 'نُورة' : 'فارس'}
                 </span>
-                <span className="text-[9px] text-emerald-700 font-bold bg-emerald-50 px-1 rounded border border-emerald-200">
-                  ذكي
+                <span className="text-[9px] text-black font-black bg-[#CFA64A] px-1.5 py-0.2 rounded-full">
+                  مستشار
                 </span>
               </div>
-              <span className="hidden sm:inline text-[10px] text-zinc-500">
-                انقر للمحادثة الصوتية
+              <span className="hidden sm:inline text-[10px] text-[#F5EDDC]">
+                المستشار المؤسسي • صوتي ونصي
               </span>
-            </div>
-
-            <div className="mr-0.5 text-amber-600">
-              <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </button>
         </div>
@@ -962,19 +992,21 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           {/* Floating Greeting Bubble with Persona Switcher & Dismiss/Dock Button */}
           {showTooltip && (
             <div
-              className="speech-bubble-anim relative mb-2 max-w-[270px] bg-white/95 backdrop-blur-md border border-amber-300/80 rounded-2xl p-2.5 shadow-xl select-none"
+              className="speech-bubble-anim relative mb-2 max-w-[280px] bg-white border border-[#CFA64A] rounded-2xl p-3 shadow-xl select-none"
             >
               {/* Top Control Bar: Persona Switcher & Minimize to Dock */}
-              <div className="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-zinc-100 text-[10.5px]">
-                <div className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200">
+              <div className="flex items-center justify-between gap-2 pb-1.5 mb-1.5 border-b border-[#E4E4E7] text-[10.5px]">
+                <div className="inline-flex items-center bg-[#FBFBF5] rounded-full p-0.5 border border-[#E4E4E7]">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       switchPersona('faris');
                     }}
-                    className={`px-2 py-0.5 rounded-full font-bold transition-all ${
-                      persona === 'faris' ? 'bg-white text-zinc-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-800'
+                    className={`px-2.5 py-0.5 rounded-full font-black transition-all cursor-pointer ${
+                      persona === 'faris'
+                        ? 'bg-black text-[#CFA64A] shadow-xs'
+                        : 'text-zinc-600 hover:text-black'
                     }`}
                   >
                     فارس
@@ -985,8 +1017,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                       e.stopPropagation();
                       switchPersona('noura');
                     }}
-                    className={`px-2 py-0.5 rounded-full font-bold transition-all ${
-                      persona === 'noura' ? 'bg-amber-100 text-amber-900 shadow-xs' : 'text-zinc-500 hover:text-zinc-800'
+                    className={`px-2.5 py-0.5 rounded-full font-black transition-all cursor-pointer ${
+                      persona === 'noura'
+                        ? 'bg-[#CFA64A] text-black shadow-xs'
+                        : 'text-zinc-600 hover:text-black'
                     }`}
                   >
                     نُورة
@@ -1001,35 +1035,36 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     setIsDocked(true);
                     localStorage.setItem('assistant_mascot_docked', 'true');
                   }}
-                  className="text-zinc-400 hover:text-rose-600 p-1 rounded-full hover:bg-zinc-100 transition-colors"
-                  title="تصغير إلى الشريط الجانبي (إخفاء)"
+                  className="text-zinc-400 hover:text-black p-1 rounded-full hover:bg-zinc-100 transition-colors cursor-pointer"
+                  title="تصغير إلى الشريط الجانبي"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* Bubble Message / Click Prompt */}
-              <div 
+              <div
                 onClick={() => {
                   setIsOpen(true);
                   setShowTooltip(false);
                 }}
-                className="cursor-pointer hover:text-amber-800 transition-colors"
+                className="cursor-pointer hover:opacity-90 transition-opacity"
               >
-                <p className="text-xs font-bold text-zinc-900 leading-snug m-0">
-                  {persona === 'noura' ? 'أهلاً بكِ! أنا نُورة، مرشدتكِ الرقمية' : 'أهلاً بك! أنا فارس، مرشدك الرقمي'}
+                <p className="text-xs font-black text-black leading-snug m-0">
+                  {persona === 'noura'
+                    ? 'أهلاً بكِ! أنا نُورة، المستشارة المؤسسية'
+                    : 'أهلاً بك! أنا فارس، المستشار التنفيذي'}
                 </p>
-                <p className="text-[11px] text-zinc-500 mt-1 mb-0 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-600 inline shrink-0" />
-                  <span>انقر للبدء أو نادني: </span>
-                  <strong className="text-amber-700 font-black whitespace-nowrap">
+                <p className="text-[11px] text-zinc-600 mt-1 mb-0 flex items-center gap-1">
+                  <span>انقر للمحادثة أو نادني صوتياً: </span>
+                  <strong className="text-[#8C681E] font-black whitespace-nowrap">
                     {persona === 'noura' ? '"يا نُورة"' : '"يا فارس"'}
                   </strong>
                 </p>
               </div>
 
               {/* Bubble Pointer Arrow pointing down to character */}
-              <div 
+              <div
                 style={{
                   position: 'absolute',
                   bottom: '-6px',
@@ -1037,15 +1072,15 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   width: '12px',
                   height: '12px',
                   backgroundColor: '#ffffff',
-                  borderRight: '1px solid rgba(252, 211, 77, 0.8)',
-                  borderBottom: '1px solid rgba(252, 211, 77, 0.8)',
+                  borderRight: '1px solid #CFA64A',
+                  borderBottom: '1px solid #CFA64A',
                   transform: 'rotate(45deg)',
                 }}
               />
             </div>
           )}
 
-          {/* The Frameless 3D Mascot Character (No circular frame, standing directly) */}
+          {/* The Frameless 3D Mascot Character */}
           <div
             onClick={() => {
               setIsOpen(true);
@@ -1054,20 +1089,18 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             className="relative cursor-pointer select-none flex flex-col items-center"
             title={persona === 'noura' ? 'انقري للتحدث مع نُورة' : 'انقر للتحدث مع فارس'}
           >
-            {/* Floating Mascot Image with soft ambient lighting */}
             <div className="mascot-float relative transition-all duration-300 group-hover:scale-105">
               <img
                 src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
-                alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية' : 'فارس - المرشد الرقمي الذكي'}
+                alt={persona === 'noura' ? 'نُورة - المستشارة المؤسسية' : 'فارس - المستشار التنفيذي'}
                 className="w-auto h-32 sm:h-36 object-contain pointer-events-auto"
                 style={{
-                  filter: 'drop-shadow(0 12px 18px rgba(0,0,0,0.18)) drop-shadow(0 0 12px rgba(207, 166, 74, 0.22))',
+                  filter: 'drop-shadow(0 12px 18px rgba(0,0,0,0.18)) drop-shadow(0 0 12px rgba(207, 166, 74, 0.25))',
                 }}
                 loading="eager"
               />
 
-              {/* Floating status dot on character */}
-              <span 
+              <span
                 style={{
                   position: 'absolute',
                   bottom: '14px',
@@ -1075,73 +1108,64 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   width: '12px',
                   height: '12px',
                   borderRadius: '50%',
-                  backgroundColor: '#10B981',
+                  backgroundColor: '#047857',
                   border: '2px solid #ffffff',
-                  boxShadow: '0 0 8px #10B981',
                 }}
                 title="متصل بالخدمة"
               />
             </div>
 
-            {/* Realistic Soft Radial Ground Shadow Under Character Feet */}
-            <div 
+            <div
               className="mascot-shadow w-24 h-3.5 rounded-full pointer-events-none -mt-1"
               style={{
-                background: 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.38) 0%, rgba(15, 23, 42, 0.1) 55%, transparent 75%)',
+                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.08) 55%, transparent 75%)',
               }}
             />
           </div>
         </div>
       )}
 
-      {/* 3. Executive Luxury Glassmorphic Chat Window (Full-width bottom sheet on mobile, floating card on desktop) */}
+      {/* 3. Institutional Shopifi + Warm Champagne Gold Advisor Window */}
       {isOpen && (
         <div
           className="speech-bubble-anim fixed inset-x-2.5 bottom-[calc(70px+env(safe-area-inset-bottom,0px))] lg:inset-x-auto lg:bottom-6 lg:left-6 lg:w-[450px] max-w-[calc(100vw-20px)] h-[calc(100dvh-86px-env(safe-area-inset-bottom,0px))] lg:h-[84vh] lg:max-h-[680px] z-[9999] flex flex-col overflow-hidden rounded-3xl"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.98)',
-            backdropFilter: 'blur(24px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-            boxShadow: '0 24px 60px -12px rgba(9, 23, 37, 0.28), 0 0 0 1px rgba(207, 166, 74, 0.35), 0 8px 24px -6px rgba(207, 166, 74, 0.12)',
-            border: '1.5px solid rgba(207, 166, 74, 0.45)',
+            backgroundColor: '#FFFFFF',
+            boxShadow: '0 24px 60px -12px rgba(0, 0, 0, 0.26), 0 0 0 1px rgba(207, 166, 74, 0.45)',
+            border: '1.5px solid #CFA64A',
             fontFamily: 'var(--font-family-ui)',
             direction: 'rtl',
           }}
         >
-          {/* Header - Luxury Champagne Gold & Executive Presence */}
-          <div className="p-3.5 sm:p-4 bg-gradient-to-b from-white via-white to-amber-50/40 border-b border-amber-200/50 shrink-0">
+          {/* Header - Obsidian Black & Warm Champagne Gold Institutional Bar */}
+          <div className="p-3.5 sm:p-4 bg-[#1D2428] text-white border-b border-[#CFA64A]/40 shrink-0">
             {/* Row 1: Identity & Controls */}
             <div className="flex items-center justify-between gap-3">
               {/* Avatar & Title */}
               <div className="flex items-center gap-3 min-w-0">
-                <div className={`relative w-11 h-11 rounded-2xl p-0.5 shrink-0 transition-all duration-300 ${
-                  persona === 'noura'
-                    ? 'bg-gradient-to-tr from-amber-400 via-rose-300 to-amber-200 shadow-md shadow-amber-500/20'
-                    : 'bg-gradient-to-tr from-amber-400 via-sky-300 to-amber-200 shadow-md shadow-amber-500/20'
-                }`}>
-                  <div className="w-full h-full rounded-[14px] bg-white flex items-center justify-center overflow-hidden">
+                <div className="relative w-11 h-11 rounded-2xl p-0.5 shrink-0 bg-[#CFA64A] shadow-sm">
+                  <div className="w-full h-full rounded-[14px] bg-[#FBFBF5] flex items-center justify-center overflow-hidden">
                     <img
                       src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
                       alt={persona === 'noura' ? 'نُورة' : 'فارس'}
                       className="w-full h-full object-contain p-0.5"
                     />
                   </div>
-                  {/* Live Active Status Ring */}
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#1D2428]" />
                 </div>
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <h4 className="font-extrabold text-[15px] text-zinc-900 tracking-tight m-0 truncate">
-                      {persona === 'noura' ? 'نُورة • المرشدة الذكية' : 'فارس • المرشد التنفيذي'}
+                    <h4 className="font-black text-[14.5px] text-white tracking-tight m-0 truncate">
+                      {persona === 'noura' ? 'نُورة • المستشارة المؤسسية' : 'فارس • المستشار التنفيذي'}
                     </h4>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300/60 shrink-0">
-                      {persona === 'noura' ? 'Noura AI' : 'Faris AI'}
+                    <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-[#CFA64A] text-black shrink-0">
+                      {persona === 'noura' ? 'نُورة' : 'فارس'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-zinc-500 m-0 truncate flex items-center gap-1 mt-0.5">
-                    <Sparkles className="w-3 h-3 text-amber-500 shrink-0 inline" />
-                    <span>ذكاء اصطناعي سيادي محلي • On-Device Qwen 3B</span>
+                  <p className="text-[11px] text-[#F5EDDC] m-0 truncate flex items-center gap-1 mt-0.5">
+                    <ShieldCheck className="w-3 h-3 text-[#CFA64A] shrink-0 inline" />
+                    <span>نظام التوجيه والحوكمة المؤسسية المعزول</span>
                   </p>
                 </div>
               </div>
@@ -1152,11 +1176,11 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 <button
                   type="button"
                   onClick={toggleVoice}
-                  title={voiceEnabled ? 'تعطيل القراءة الصوتية' : 'تفعيل القراءة الصوتية بالذكاء الاصطناعي'}
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                  title={voiceEnabled ? 'تعطيل القراءة الصوتية' : 'تفعيل القراءة الصوتية'}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                     voiceEnabled
-                      ? 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 shadow-xs'
-                      : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100'
+                      ? 'bg-[#CFA64A] text-black font-bold shadow-xs'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -1165,12 +1189,12 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 {/* Voice Commands Guide Button */}
                 <button
                   type="button"
-                  onClick={() => setShowVoiceGuide(prev => !prev)}
-                  title={showVoiceGuide ? 'إخفاء دليل الأوامر الصوتية' : 'عرض دليل الأوامر الصوتية الذكية'}
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                  onClick={() => setShowVoiceGuide((prev) => !prev)}
+                  title={showVoiceGuide ? 'إخفاء دليل الأوامر الصوتية' : 'عرض دليل الأوامر الصوتية'}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                     showVoiceGuide
-                      ? 'bg-amber-400 text-zinc-950 font-bold shadow-xs'
-                      : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100'
+                      ? 'bg-[#F5EDDC] text-black font-bold shadow-xs'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <Radio className="w-4 h-4" />
@@ -1181,10 +1205,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   type="button"
                   onClick={toggleWakeWord}
                   title={wakeWordEnabled ? 'المناداة الصوتية مفعلة (يا فارس / يا نُورة)' : 'تفعيل المناداة الصوتية التلقائية'}
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                     wakeWordEnabled
-                      ? 'bg-emerald-100 text-emerald-700 border border-emerald-300 hover:bg-emerald-200 shadow-xs'
-                      : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100'
+                      ? 'bg-emerald-600/30 text-emerald-300 border border-emerald-500/50'
+                      : 'text-zinc-400 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   {wakeWordEnabled ? <Mic className="w-4 h-4 animate-pulse" /> : <MicOff className="w-4 h-4" />}
@@ -1198,8 +1222,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     setIsDocked(true);
                     localStorage.setItem('assistant_mascot_docked', 'true');
                   }}
-                  title="تصغير إلى الشاشة (إخفاء مؤقت)"
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-all"
+                  title="تصغير إلى الشاشة"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
                 >
                   <Minimize2 className="w-4 h-4" />
                 </button>
@@ -1209,7 +1233,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   type="button"
                   onClick={() => setIsOpen(false)}
                   title="إغلاق"
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center text-zinc-400 hover:text-rose-400 hover:bg-white/10 transition-all cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1217,39 +1241,39 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             </div>
 
             {/* Row 2: Persona Switcher & Company Scope Badges */}
-            <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-amber-200/40">
+            <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-white/10">
               {/* Persona Switcher Pill */}
-              <div className="inline-flex items-center bg-zinc-100/90 p-0.5 rounded-full border border-zinc-200/80 shadow-inner">
+              <div className="inline-flex items-center bg-black/50 p-0.5 rounded-full border border-white/15">
                 <button
                   type="button"
                   onClick={() => switchPersona('faris')}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-full text-xs font-black transition-all flex items-center gap-1 cursor-pointer ${
                     persona === 'faris'
-                      ? 'bg-white text-zinc-900 shadow-sm border border-zinc-200/50'
-                      : 'text-zinc-500 hover:text-zinc-800'
+                      ? 'bg-[#CFA64A] text-black shadow-xs'
+                      : 'text-zinc-300 hover:text-white'
                   }`}
                 >
-                  <span>فارس</span>
+                  <span>فارس (تنفيذي)</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchPersona('noura')}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-full text-xs font-black transition-all flex items-center gap-1 cursor-pointer ${
                     persona === 'noura'
-                      ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-zinc-950 shadow-sm font-black'
-                      : 'text-zinc-500 hover:text-zinc-800'
+                      ? 'bg-[#CFA64A] text-black shadow-xs'
+                      : 'text-zinc-300 hover:text-white'
                   }`}
                 >
-                  <span>نُورة</span>
+                  <span>نُورة (مؤسسي)</span>
                 </button>
               </div>
 
               {/* Company Data Isolation Badge */}
               <div
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50/90 text-amber-900 border border-amber-300/70 truncate max-w-[220px]"
-                title={`عزل بيانات سيادي مشفر: ${activeCompany.name}`}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#F5EDDC] text-black border border-[#CFA64A] truncate max-w-[220px]"
+                title={`عزل بيانات الشركة: ${activeCompany.name}`}
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#047857] shrink-0" />
                 <span className="truncate">{activeCompany.name}</span>
               </div>
             </div>
@@ -1257,46 +1281,52 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             {/* Row 3: Dynamic Audio Equalizer Wave (shown when speaking or listening) */}
             {(isSpeaking || isListening) && (
               <div
-                onClick={isSpeaking ? () => { stopAllAudio(); setIsSpeaking(false); } : undefined}
+                onClick={
+                  isSpeaking
+                    ? () => {
+                        stopAllAudio();
+                        setIsSpeaking(false);
+                      }
+                    : undefined
+                }
                 className={`mt-2.5 px-3 py-1.5 rounded-xl border flex items-center justify-between gap-2 cursor-pointer transition-all ${
                   isSpeaking
-                    ? 'bg-amber-500/15 border-amber-400/50 text-amber-900 hover:bg-amber-500/20'
-                    : 'bg-emerald-500/15 border-emerald-400/50 text-emerald-900'
+                    ? 'bg-[#F5EDDC] border-[#CFA64A] text-black'
+                    : 'bg-emerald-950/80 border-emerald-500/50 text-emerald-200'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   {isSpeaking ? (
-                    <Volume2 className="w-4 h-4 text-amber-600 animate-pulse shrink-0" />
+                    <Volume2 className="w-4 h-4 text-[#8C681E] animate-pulse shrink-0" />
                   ) : (
-                    <Mic className="w-4 h-4 text-emerald-600 animate-pulse shrink-0" />
+                    <Mic className="w-4 h-4 text-emerald-400 animate-pulse shrink-0" />
                   )}
                   <span className="text-xs font-bold">
                     {isSpeaking
-                      ? `${persona === 'noura' ? 'نُورة' : 'فارس'} تتحدث بالصوت الطبيعي... (انقر للإيقاف)`
+                      ? `${persona === 'noura' ? 'نُورة' : 'فارس'} يتحدث الآن... (انقر للإيقاف)`
                       : 'جاري الاستماع لصوتك عبر المايكروفون...'}
                   </span>
                 </div>
 
-                {/* 5-bar animated harmonic equalizer */}
                 <div className="flex items-center gap-0.5 h-5 px-1">
-                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-amber-500 anim-wave-1' : 'bg-emerald-500 anim-wave-1'}`} />
-                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-amber-500 anim-wave-2' : 'bg-emerald-500 anim-wave-2'}`} />
-                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-amber-500 anim-wave-3' : 'bg-emerald-500 anim-wave-3'}`} />
-                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-amber-500 anim-wave-4' : 'bg-emerald-500 anim-wave-4'}`} />
-                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-amber-500 anim-wave-5' : 'bg-emerald-500 anim-wave-5'}`} />
+                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-[#8C681E] anim-wave-1' : 'bg-emerald-400 anim-wave-1'}`} />
+                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-[#8C681E] anim-wave-2' : 'bg-emerald-400 anim-wave-2'}`} />
+                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-[#8C681E] anim-wave-3' : 'bg-emerald-400 anim-wave-3'}`} />
+                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-[#8C681E] anim-wave-4' : 'bg-emerald-400 anim-wave-4'}`} />
+                  <span className={`w-1 rounded-full ${isSpeaking ? 'bg-[#8C681E] anim-wave-5' : 'bg-emerald-400 anim-wave-5'}`} />
                 </div>
               </div>
             )}
           </div>
 
           {/* Contextual Quick Suggestions Pill Bar */}
-          <div className="px-3.5 py-2.5 bg-zinc-50/80 border-b border-zinc-200/70 flex gap-2 overflow-x-auto thin-scrollbar shrink-0">
+          <div className="px-3.5 py-2.5 bg-[#FBFBF5] border-b border-[#E4E4E7] flex gap-2 overflow-x-auto thin-scrollbar shrink-0">
             {getContextualPrompts().map((qp, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleSendMessage(qp.query)}
-                className="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-zinc-800 border border-zinc-200/90 hover:border-amber-400 hover:bg-amber-50/60 hover:text-amber-900 transition-all shadow-2xs whitespace-nowrap shrink-0 flex items-center gap-1.5 hover:-translate-y-0.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-black border border-[#E4E4E7] hover:border-[#CFA64A] hover:bg-[#F5EDDC] transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer"
               >
                 <span>{qp.label}</span>
               </button>
@@ -1305,27 +1335,27 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
           {/* Voice Commands Guide Panel (When toggled) */}
           {showVoiceGuide && (
-            <div className="p-3.5 bg-amber-50/95 border-b border-amber-200 text-zinc-900 shrink-0 text-xs shadow-inner">
+            <div className="p-3.5 bg-[#F5EDDC] border-b border-[#CFA64A] text-black shrink-0 text-xs">
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5 font-black text-amber-950">
-                  <Radio className="w-4 h-4 text-amber-600 animate-pulse" />
-                  <span>دليل الأوامر الصوتية الذكية (تحدث مباشرة بالمايكروفون)</span>
+                <div className="flex items-center gap-1.5 font-black text-black">
+                  <Radio className="w-4 h-4 text-[#8C681E] animate-pulse" />
+                  <span>دليل الأوامر الصوتية المباشرة (تحدث بالمايكروفون)</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowVoiceGuide(false)}
-                  className="text-zinc-400 hover:text-zinc-700 p-1 rounded-md hover:bg-amber-100"
+                  className="text-zinc-600 hover:text-black p-1 rounded-md"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
               <div className="space-y-2 max-h-48 overflow-y-auto thin-scrollbar pr-1">
                 {VOICE_COMMANDS_GUIDE.map((cat, idx) => (
-                  <div key={idx} className="bg-white p-2.5 rounded-xl border border-amber-200/80 shadow-2xs">
-                    <div className="flex items-center justify-between font-bold text-zinc-900 mb-1 text-[11px]">
+                  <div key={idx} className="bg-white p-2.5 rounded-xl border border-[#CFA64A]/40">
+                    <div className="flex items-center justify-between font-bold text-black mb-1 text-[11px]">
                       <span>{cat.category}</span>
                       {cat.badge && (
-                        <span className="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-black">
+                        <span className="text-[10px] bg-[#F5EDDC] text-[#8C681E] px-1.5 py-0.5 rounded font-black border border-[#CFA64A]/40">
                           {cat.badge}
                         </span>
                       )}
@@ -1339,7 +1369,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                             setShowVoiceGuide(false);
                             handleSendMessage(phrase);
                           }}
-                          className="text-[11px] bg-zinc-50 hover:bg-amber-100 hover:text-amber-950 border border-zinc-200/80 px-2 py-0.5 rounded-lg text-zinc-700 transition-all text-right"
+                          className="text-[11px] bg-[#FBFBF5] hover:bg-[#F5EDDC] border border-[#E4E4E7] px-2 py-0.5 rounded-lg text-black transition-all text-right cursor-pointer"
                         >
                           "{phrase}"
                         </button>
@@ -1352,19 +1382,17 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           )}
 
           {/* Chat Messages Section */}
-          <div
-            className="flex-1 p-3.5 sm:p-4 overflow-y-auto flex flex-col gap-3.5 bg-gradient-to-b from-[#FAF9F5] to-[#F5F3ED]"
-          >
-            {messages.map(msg => (
+          <div className="flex-1 p-3.5 sm:p-4 overflow-y-auto flex flex-col gap-3.5 bg-[#FBFBF5]">
+            {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex gap-2.5 items-start max-w-[90%] ${
                   msg.sender === 'user' ? 'self-start flex-row-reverse' : 'self-end'
                 }`}
               >
-                {/* Assistant Avatar for AI messages */}
+                {/* Advisor Avatar */}
                 {msg.sender === 'ai' && (
-                  <div className="w-7 h-7 rounded-xl bg-amber-50 border border-amber-300 p-0.5 shrink-0 overflow-hidden mt-1 shadow-xs">
+                  <div className="w-7 h-7 rounded-xl bg-white border border-[#CFA64A] p-0.5 shrink-0 overflow-hidden mt-1 shadow-xs">
                     <img
                       src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
                       alt={persona === 'noura' ? 'نُورة' : 'فارس'}
@@ -1376,10 +1404,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                   {/* Message Bubble */}
                   <div
-                    className={`p-3.5 text-xs sm:text-[13px] leading-relaxed shadow-sm transition-all ${
+                    className={`p-3.5 text-xs sm:text-[13px] leading-relaxed shadow-xs transition-all ${
                       msg.sender === 'user'
-                        ? 'bg-gradient-to-tr from-[#091725] to-[#16304d] text-white rounded-2xl rounded-tl-xs shadow-md shadow-zinc-900/10'
-                        : 'bg-white text-zinc-900 border border-amber-200/70 rounded-2xl rounded-tr-xs shadow-sm'
+                        ? 'bg-[#1D2428] text-white rounded-2xl rounded-tl-xs border border-black'
+                        : 'bg-white text-black border border-[#E4E4E7] rounded-2xl rounded-tr-xs'
                     }`}
                   >
                     {msg.sender === 'user' ? (
@@ -1392,8 +1420,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                             const content = trimmed.replace(/^[•\-\*]\s*/, '');
                             return (
                               <div key={lIdx} className="flex items-start gap-2 my-0.5 pr-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0 shadow-xs" />
-                                <span className="leading-relaxed text-zinc-800">{content}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#CFA64A] mt-2 shrink-0" />
+                                <span className="leading-relaxed text-zinc-900">{content}</span>
                               </div>
                             );
                           }
@@ -1401,7 +1429,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                             return <div key={lIdx} className="h-1.5" />;
                           }
                           return (
-                            <p key={lIdx} className="m-0 leading-relaxed text-zinc-800">
+                            <p key={lIdx} className="m-0 leading-relaxed text-zinc-900 font-medium">
                               {line}
                             </p>
                           );
@@ -1411,35 +1439,34 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                   </div>
 
                   {/* Direct Action Button (if present) */}
-                  {msg.actionButton && onNavigate && (
+                  {msg.actionButton && (
                     <button
                       type="button"
                       onClick={() => {
                         if (msg.actionButton) {
-                          onNavigate(msg.actionButton.actionKey, msg.actionButton.label);
-                          setIsOpen(false);
+                          handleTriggerActionButton(msg.actionButton.actionKey, msg.actionButton.label);
                         }
                       }}
-                      className="self-start mt-1 px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-zinc-950 font-extrabold text-xs border border-amber-300 shadow-md shadow-amber-500/25 flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
+                      className="self-start mt-1 px-4 py-2 rounded-full bg-black hover:bg-zinc-900 text-[#CFA64A] font-black text-xs border border-[#CFA64A] shadow-xs flex items-center gap-2 transition-all cursor-pointer"
                     >
-                      <Zap className="w-3.5 h-3.5 fill-current text-zinc-950" />
+                      <Zap className="w-3.5 h-3.5 text-[#CFA64A]" />
                       <span>{msg.actionButton.label}</span>
-                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <ArrowLeft className="w-3.5 h-3.5 text-[#CFA64A]" />
                     </button>
                   )}
 
                   {/* Timestamp & Speech Read Action */}
-                  <div className="flex items-center justify-between gap-2 px-1 text-[10.5px] text-zinc-400">
+                  <div className="flex items-center justify-between gap-2 px-1 text-[10.5px] text-zinc-500">
                     <span>{msg.timestamp}</span>
 
                     {msg.sender === 'ai' && (
                       <button
                         type="button"
                         onClick={() => speakText(msg.spokenSummary || msg.text, persona, true)}
-                        title={persona === 'noura' ? 'استمع لصوت نُورة الطبيعي' : 'استمع لصوت فارس الطبيعي'}
-                        className="flex items-center gap-1.5 px-2 py-0.5 rounded-full font-bold bg-amber-50 text-amber-900 border border-amber-200/80 hover:bg-amber-100 hover:border-amber-300 transition-all cursor-pointer"
+                        title={persona === 'noura' ? 'استمع لصوت نُورة' : 'استمع لصوت فارس'}
+                        className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold bg-[#F5EDDC] text-black border border-[#CFA64A]/60 hover:bg-[#CFA64A] transition-all cursor-pointer"
                       >
-                        <Volume2 className="w-3 h-3 text-amber-600" />
+                        <Volume2 className="w-3 h-3 text-[#8C681E]" />
                         <span>استمع</span>
                       </button>
                     )}
@@ -1449,10 +1476,12 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             ))}
 
             {isTyping && (
-              <div className="self-end flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-amber-200 text-zinc-600 text-xs shadow-sm">
-                <RefreshCw className="w-4 h-4 animate-spin text-amber-600 shrink-0" />
-                <span className="font-semibold">
-                  {persona === 'noura' ? 'نُورة تحلل السجلات وتستخرج البيانات...' : 'فارس يحلل السجلات ويستخرج البيانات...'}
+              <div className="self-end flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-[#CFA64A] text-black text-xs shadow-xs">
+                <RefreshCw className="w-4 h-4 animate-spin text-[#8C681E] shrink-0" />
+                <span className="font-bold">
+                  {persona === 'noura'
+                    ? 'نُورة تراجع السجلات المؤسسية...'
+                    : 'فارس يراجع السجلات والدفاتر المحاسبية...'}
                 </span>
               </div>
             )}
@@ -1461,40 +1490,27 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
           {/* Input & Voice Controls Command Center */}
           <form
-            onSubmit={e => {
+            onSubmit={(e) => {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="p-3 sm:p-3.5 bg-white border-t border-zinc-200/80 flex items-center gap-2 shrink-0"
+            className="p-3 sm:p-3.5 bg-white border-t border-[#E4E4E7] flex items-center gap-2 shrink-0"
           >
-            {/* Live Interim Speech Indicator */}
-            {isListening && (
-              <div className="px-4 py-2 bg-gradient-to-r from-rose-50 via-amber-50 to-rose-50 border-t border-rose-200/80 flex items-center justify-between text-xs text-rose-700 animate-pulse shrink-0">
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping shrink-0"></span>
-                  <span className="font-bold truncate">
-                    {interimSpeech ? `"${interimSpeech}"` : 'تفضل بالتحدث الآن عبر المايكروفون...'}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={toggleListening}
-                  className="text-[11px] bg-rose-200/80 hover:bg-rose-300 text-rose-900 px-2.5 py-0.5 rounded-md font-bold shrink-0 mr-2"
-                >
-                  إيقاف
-                </button>
-              </div>
-            )}
-
             {/* Voice Dictation Button */}
             <button
               type="button"
               onClick={toggleListening}
-              title={isListening ? 'إيقاف الاستماع' : (persona === 'noura' ? 'تحدثي بالمايكروفون إلى نُورة' : 'تحدث بالمايكروفون إلى فارس')}
+              title={
+                isListening
+                  ? 'إيقاف الاستماع'
+                  : persona === 'noura'
+                  ? 'تحدثي بالمايكروفون إلى نُورة'
+                  : 'تحدث بالمايكروفون إلى فارس'
+              }
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                 isListening
-                  ? 'bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/30'
-                  : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200 border border-zinc-200'
+                  ? 'bg-[#BE123C] text-white animate-pulse'
+                  : 'bg-[#FBFBF5] text-black hover:bg-[#F5EDDC] border border-[#E4E4E7]'
               }`}
             >
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
@@ -1504,18 +1520,18 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             <input
               type="text"
               value={inputQuery}
-              onChange={e => setInputQuery(e.target.value)}
+              onChange={(e) => setInputQuery(e.target.value)}
               placeholder={
                 isListening
-                  ? 'جاري الاستماع لصوتك الآن...'
-                  : (persona === 'noura'
-                    ? 'اكتبي استفساركِ أو اطلبي إجراءً من نُورة...'
-                    : 'اكتب سؤالك أو اطلب إجراءً من فارس...')
+                  ? interimSpeech || 'جاري الاستماع لصوتك الآن...'
+                  : persona === 'noura'
+                  ? 'اكتبي استفساركِ أو اطلبي إجراءً من نُورة...'
+                  : 'اكتب سؤالك أو اطلب إجراءً من فارس...'
               }
-              className={`flex-1 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition-all ${
+              className={`flex-1 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-black placeholder:text-zinc-400 outline-none transition-all ${
                 isListening
-                  ? 'bg-rose-50/80 border-1.5 border-rose-300'
-                  : 'bg-zinc-50 border border-zinc-200 focus:bg-white focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20'
+                  ? 'bg-rose-50 border border-rose-300'
+                  : 'bg-[#FBFBF5] border border-[#E4E4E7] focus:bg-white focus:border-[#CFA64A]'
               }`}
             />
 
@@ -1526,7 +1542,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
               title="إرسال"
               className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer ${
                 inputQuery.trim()
-                  ? 'bg-gradient-to-tr from-[#091725] to-[#1c3c60] text-amber-400 hover:scale-105 shadow-md shadow-zinc-900/20'
+                  ? 'bg-black text-[#CFA64A] border border-[#CFA64A] hover:bg-zinc-900'
                   : 'bg-zinc-100 text-zinc-300 cursor-not-allowed border border-zinc-200'
               }`}
             >
@@ -1553,57 +1569,45 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
           onClick={handleCancelToolCall}
         >
           <div
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             className="speech-bubble-anim"
             style={{
               width: '420px',
               maxWidth: 'calc(100vw - 32px)',
               backgroundColor: '#ffffff',
               borderRadius: '24px',
-              boxShadow: '0 24px 60px -12px rgba(9, 23, 37, 0.35), 0 0 0 1px rgba(207, 166, 74, 0.5)',
-              border: '1.5px solid rgba(207, 166, 74, 0.5)',
+              boxShadow: '0 24px 60px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px #CFA64A',
+              border: '1.5px solid #CFA64A',
               overflow: 'hidden',
               fontFamily: 'var(--font-family-ui)',
             }}
           >
             {/* Header */}
-            <div
-              className="px-5 py-4 flex items-center gap-3"
-              style={{
-                background: pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical'
-                  ? 'linear-gradient(135deg, #FEF3C7, #FBBF24 40%, #F59E0B)'
-                  : 'linear-gradient(135deg, #ECFDF5, #6EE7B7 40%, #10B981)',
-                borderBottom: '1px solid rgba(0,0,0,0.08)',
-              }}
-            >
-              <div className="w-10 h-10 rounded-2xl bg-white/90 flex items-center justify-center shadow-sm">
-                {pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical'
-                  ? <ShieldAlert className="w-5 h-5 text-amber-700" />
-                  : <ShieldCheck className="w-5 h-5 text-emerald-700" />
-                }
+            <div className="px-5 py-4 flex items-center gap-3 bg-[#1D2428] text-white border-b border-[#CFA64A]/40">
+              <div className="w-10 h-10 rounded-2xl bg-[#F5EDDC] flex items-center justify-center">
+                {pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical' ? (
+                  <ShieldAlert className="w-5 h-5 text-[#B45309]" />
+                ) : (
+                  <ShieldCheck className="w-5 h-5 text-[#047857]" />
+                )}
               </div>
               <div>
-                <h3 className="m-0 text-sm font-black text-zinc-900">
-                  تأكيد تنفيذ الأمر
-                </h3>
-                <p className="m-0 text-xs text-zinc-700 font-medium">
-                  {pendingToolCall.tool.nameAr}
-                </p>
+                <h3 className="m-0 text-sm font-black text-white">تأكيد تنفيذ الأمر المؤسسي</h3>
+                <p className="m-0 text-xs text-[#CFA64A] font-bold">{pendingToolCall.tool.nameAr}</p>
               </div>
             </div>
 
             {/* Confirmation Summary */}
             <div className="px-5 py-4">
-              <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs leading-relaxed text-zinc-800 whitespace-pre-wrap">
+              <div className="p-3.5 rounded-xl bg-[#FBFBF5] border border-[#E4E4E7] text-xs leading-relaxed text-black whitespace-pre-wrap">
                 {pendingToolCall.confirmationSummary}
               </div>
 
-              {/* Risk Warning for high/critical */}
               {(pendingToolCall.tool.riskLevel === 'high' || pendingToolCall.tool.riskLevel === 'critical') && (
-                <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-300 flex items-start gap-2.5">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <p className="m-0 text-xs text-amber-900 font-bold leading-relaxed">
-                    تنبيه: هذا الإجراء يُعدّل بيانات حساسة. تأكد من صحة التفاصيل قبل المتابعة.
+                <div className="mt-3 p-3 rounded-xl bg-[#F5EDDC] border border-[#CFA64A] flex items-start gap-2.5">
+                  <AlertTriangle className="w-4 h-4 text-[#B45309] shrink-0 mt-0.5" />
+                  <p className="m-0 text-xs text-black font-bold leading-relaxed">
+                    تنبيه حوكمة: هذا الإجراء يُعدّل سجلات رسمية. يرجى التحقق من التفاصيل قبل الاعتماد.
                   </p>
                 </div>
               )}
@@ -1615,14 +1619,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 type="button"
                 onClick={handleConfirmToolCall}
                 disabled={isExecutingTool}
-                className="flex-1 px-4 py-2.5 rounded-xl font-extrabold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
-                style={{
-                  background: 'linear-gradient(135deg, #091725, #1c3c60)',
-                  color: '#FBBF24',
-                  border: '1px solid rgba(207, 166, 74, 0.4)',
-                  boxShadow: '0 4px 12px rgba(9, 23, 37, 0.25)',
-                  opacity: isExecutingTool ? 0.7 : 1,
-                }}
+                className="flex-1 px-4 py-2.5 rounded-full font-black text-sm bg-black text-[#CFA64A] border border-[#CFA64A] hover:bg-zinc-900 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isExecutingTool ? (
                   <>
@@ -1641,7 +1638,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 type="button"
                 onClick={handleCancelToolCall}
                 disabled={isExecutingTool}
-                className="px-4 py-2.5 rounded-xl font-bold text-sm bg-zinc-100 text-zinc-700 border border-zinc-200 hover:bg-zinc-200 transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-full font-bold text-sm bg-[#FBFBF5] text-black border border-[#E4E4E7] hover:bg-zinc-100 transition-all cursor-pointer"
               >
                 إلغاء
               </button>
@@ -1654,4 +1651,5 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 };
 
 export default AICopilotWidget;
+
 

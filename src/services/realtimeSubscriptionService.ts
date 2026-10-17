@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured, isSupabaseRealtimeAvailable } from './supabaseClient';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
 export interface RealtimeOrderPayload {
@@ -34,7 +34,7 @@ export const realtimeSubscriptionService = {
     const scopedCompany = companyId && companyId !== 'all' ? companyId : 'SAF';
     const channelName = `tenant:${scopedCompany}:orders`;
 
-    if (!isSupabaseConfigured || import.meta.env.MODE === 'test') {
+    if (!isSupabaseConfigured || !isSupabaseRealtimeAvailable() || import.meta.env.MODE === 'test') {
       return () => {};
     }
 
@@ -84,7 +84,7 @@ export const realtimeSubscriptionService = {
     const scopedCompany = companyId && companyId !== 'all' ? companyId : 'SAF';
     const channelName = `contract:${contractId}:milestones`;
 
-    if (!isSupabaseConfigured || import.meta.env.MODE === 'test') {
+    if (!isSupabaseConfigured || !isSupabaseRealtimeAvailable() || import.meta.env.MODE === 'test') {
       return () => {};
     }
 

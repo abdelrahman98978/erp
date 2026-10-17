@@ -2953,13 +2953,13 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-6">
           {/* Top KPI Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-violet-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي العروض التجارية</span>
                 <span className="text-2xl font-bold font-mono text-foreground block mt-1">{proposals.length}</span>
                 <span className="text-[10px] text-muted-foreground">عرض مسجل بالنظام</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-600">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
                 <Send className="w-6 h-6" />
               </div>
             </div>
@@ -3015,7 +3015,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   onClick={() => setStatusFilter(st)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     statusFilter === st
-                      ? 'bg-violet-600 text-white shadow-xs'
+                      ? 'bg-amber-600 text-white shadow-xs'
                       : 'bg-secondary text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -3034,7 +3034,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   setItemLines([{ description: 'بند توريد/خدمات كاس', qty: 1, rate: 1000, taxPct: 15, total: 1150 }]);
                   setShowAddProposalModal(true);
                 }}
-                className="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-violet-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-amber-600/20 transition-all hover:scale-[1.02] cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>إنشاء عرض تجاري جديد</span>
@@ -3080,7 +3080,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       .filter(p => statusFilter === 'all' || p.status === statusFilter)
                       .map((p) => (
                         <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
-                          <td className="px-4 py-3 font-mono font-bold text-violet-600 dark:text-violet-400">
+                          <td className="px-4 py-3 font-mono font-bold text-amber-600 dark:text-amber-400">
                             {p.proposalNumber}
                           </td>
                           <td className="px-4 py-3 font-semibold text-foreground max-w-[240px] truncate">
@@ -3102,7 +3102,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                           </td>
                           <td className="px-4 py-3 text-muted-foreground">
                             {p.project ? (
-                              <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 text-[10px] font-medium">
+                              <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 text-[10px] font-medium">
                                 {p.project}
                               </span>
                             ) : (
@@ -3498,13 +3498,13 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-6">
           {/* Top KPI Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-indigo-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي الطلبات</span>
                 <span className="text-2xl font-bold font-mono text-foreground block mt-1">{estimateRequests.length}</span>
                 <span className="text-[10px] text-muted-foreground">طلب تسعير مستلم</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
                 <FilePlus className="w-6 h-6" />
               </div>
             </div>
@@ -3535,17 +3535,17 @@ export const KasEtimadCloudPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-violet-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">نسبة إنجاز التسعير</span>
-                <span className="text-2xl font-bold font-mono text-violet-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-amber-600 block mt-1">
                   {estimateRequests.length
                     ? Math.round((estimateRequests.filter(r => r.status === 'تم التحويل لعرض سعر').length / estimateRequests.length) * 100)
                     : 100}%
                 </span>
                 <span className="text-[10px] text-muted-foreground">معدل الاستجابة</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-600">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
                 <Award className="w-6 h-6" />
               </div>
             </div>
@@ -3554,7 +3554,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           {/* Action Toolbar */}
           <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <FilePlus className="w-4 h-4 text-indigo-600" />
+              <FilePlus className="w-4 h-4 text-amber-600" />
               <span>سجل طلبات عروض الأسعار والمواصفات المستلمة</span>
               <span className="text-xs text-muted-foreground font-mono">({estimateRequests.length})</span>
             </h3>
@@ -3564,7 +3564,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 setFormData({});
                 setShowAddEstimateRequestModal(true);
               }}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-indigo-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-amber-600/20 transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>تسجيل طلب عرض سعر جديد</span>
@@ -3596,7 +3596,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   ) : (
                     estimateRequests.map((req) => (
                       <tr key={req.id} className="hover:bg-secondary/30 transition-colors">
-                        <td className="px-4 py-3 font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                        <td className="px-4 py-3 font-mono font-bold text-amber-600 dark:text-amber-400">
                           {req.requestNumber}
                         </td>
                         <td className="px-4 py-3 font-semibold text-foreground">
@@ -3858,7 +3858,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             {/* 3. Fast Tafqeet Tool */}
             <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-600">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -3880,7 +3880,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
 
                 {formData.tafqeetNumber && parseFloat(formData.tafqeetNumber) > 0 && (
-                  <div className="p-4 rounded-2xl bg-violet-500/10 border border-violet-500/30 space-y-2">
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
                     <span className="text-[11px] text-muted-foreground block font-medium">الصيغة النصية المعتمدة:</span>
                     <p className="text-xs font-bold text-foreground leading-relaxed">
                       فقط {tafqeet(parseFloat(formData.tafqeetNumber))} لا غير.
@@ -3890,7 +3890,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                         navigator.clipboard?.writeText(`فقط ${tafqeet(parseFloat(formData.tafqeetNumber))} لا غير.`);
                         addNotification({ title: 'تم النسخ', message: 'تم نسخ النص المفقّط.', type: 'success' });
                       }}
-                      className="px-3 py-1 rounded-lg bg-violet-600 text-white font-bold text-[10px] flex items-center gap-1 mt-2 cursor-pointer"
+                      className="px-3 py-1 rounded-lg bg-amber-600 text-white font-bold text-[10px] flex items-center gap-1 mt-2 cursor-pointer"
                     >
                       <Copy className="w-3 h-3" />
                       <span>نسخ النص</span>
@@ -4600,7 +4600,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               </div>
               <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
                 <span className="text-[11px] text-muted-foreground block">العقود النشطة</span>
-                <span className="text-base font-bold font-mono text-indigo-600 mt-0.5 block">
+                <span className="text-base font-bold font-mono text-amber-600 mt-0.5 block">
                   {contracts.filter(c => c.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(c.clientName)).length} عقد
                 </span>
               </div>
@@ -4858,7 +4858,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Send className="w-5 h-5 text-violet-600" />
+                <Send className="w-5 h-5 text-amber-600" />
                 <span>إنشاء عرض تجاري جديد (Proposal)</span>
               </h3>
               <button onClick={() => setShowAddProposalModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -4940,7 +4940,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddProposalModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveProposal} className="px-5 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveProposal} className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs">
                 حفظ وإصدار العرض
               </button>
             </div>
@@ -5114,7 +5114,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <FilePlus className="w-5 h-5 text-indigo-600" />
+                <FilePlus className="w-5 h-5 text-amber-600" />
                 <span>تسجيل طلب عرض سعر جديد</span>
               </h3>
               <button onClick={() => setShowAddEstimateRequestModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -5154,7 +5154,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddEstimateRequestModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveEstimateRequest} className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveEstimateRequest} className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs">
                 تسجيل الطلب
               </button>
             </div>

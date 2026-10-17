@@ -225,35 +225,48 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    const isGroupAdmin = authService.isAdmin(currentUser);
-    const sessionLocked = getLockedSessionCompany();
-    const saved = localStorage.getItem('alsulaim_active_company') as CompanyId | null;
+    const syncCompanyFromAuth = () => {
+      const currentUser = authService.getCurrentUser();
+      const isGroupAdmin = authService.isAdmin(currentUser);
+      const sessionLocked = getLockedSessionCompany();
+      const saved = localStorage.getItem('alsulaim_active_company') as CompanyId | null;
 
-    if (sessionLocked && !isGroupAdmin) {
-      const lockedCompany = normalizeCompanyId(sessionLocked);
-      setActiveCompanyIdState(lockedCompany);
-      localStorage.setItem('alsulaim_active_company', lockedCompany);
-      if (currentUser?.branch) setActiveBranch(currentUser.branch);
-      return;
-    }
-
-    if (currentUser && !isGroupAdmin && currentUser.company_id && currentUser.company_id !== 'all') {
-      const lockedCompany = normalizeCompanyId(currentUser.company_id);
-      setActiveCompanyIdState(lockedCompany);
-      localStorage.setItem('alsulaim_active_company', lockedCompany);
-      if (currentUser.branch) setActiveBranch(currentUser.branch);
-      return;
-    }
-
-    if (saved) {
-      const normSaved = normalizeCompanyId(saved);
-      if (normSaved === 'all' && !isGroupAdmin) {
-        setActiveCompanyIdState('SAF');
-      } else {
-        setActiveCompanyIdState(normSaved);
+      if (sessionLocked && !isGroupAdmin) {
+        const lockedCompany = normalizeCompanyId(sessionLocked);
+        setActiveCompanyIdState(lockedCompany);
+        localStorage.setItem('alsulaim_active_company', lockedCompany);
+        if (currentUser?.branch) setActiveBranch(currentUser.branch);
+        return;
       }
-    }
+
+      if (currentUser && !isGroupAdmin && currentUser.company_id && currentUser.company_id !== 'all') {
+        const lockedCompany = normalizeCompanyId(currentUser.company_id);
+        setActiveCompanyIdState(lockedCompany);
+        localStorage.setItem('alsulaim_active_company', lockedCompany);
+        if (currentUser.branch) setActiveBranch(currentUser.branch);
+        return;
+      }
+
+      if (currentUser && isGroupAdmin) {
+        setActiveCompanyIdState('all');
+        localStorage.setItem('alsulaim_active_company', 'all');
+        if (currentUser.branch) setActiveBranch(currentUser.branch);
+        return;
+      }
+
+      if (saved) {
+        const normSaved = normalizeCompanyId(saved);
+        if (normSaved === 'all' && !isGroupAdmin) {
+          setActiveCompanyIdState('SAF');
+        } else {
+          setActiveCompanyIdState(normSaved);
+        }
+      }
+    };
+
+    syncCompanyFromAuth();
+    window.addEventListener('alsulaim-auth-updated', syncCompanyFromAuth);
+    return () => window.removeEventListener('alsulaim-auth-updated', syncCompanyFromAuth);
   }, []);
 
   const normalizedId = normalizeCompanyId(activeCompanyId);

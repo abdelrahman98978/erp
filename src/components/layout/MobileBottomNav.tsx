@@ -10,9 +10,19 @@ import {
   ShieldCheck,
   Building2,
   HeartHandshake,
+  Wallet,
+  FileText,
+  Users,
+  IdCard,
 } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { useCompany } from '../../contexts/CompanyContext';
+import {
+  authService,
+  resolveDepartmentAndCompany,
+  CORPORATE_DEPARTMENTS,
+  DepartmentId,
+} from '../../services/authService';
 import {
   backgroundExecutionService,
   BackgroundExecutionState,
@@ -49,48 +59,86 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     return unsub;
   }, []);
 
-  // Resolve primary operations tab dynamically per company
+  const currentUser = authService.getCurrentUser();
+  const resolvedScope = resolveDepartmentAndCompany(
+    currentUser?.email || currentUser?.username || '',
+    currentUser?.role,
+    currentUser?.company_id || activeCompanyId,
+    currentUser?.department_id
+  );
+
+  const deptMeta =
+    CORPORATE_DEPARTMENTS[resolvedScope.departmentId as DepartmentId] ||
+    CORPORATE_DEPARTMENTS.executive;
+
+  // Resolve primary operations tab dynamically per employee's locked department
   const primaryOpsTab = (() => {
-    const co = String(activeCompanyId || 'SAF').toUpperCase();
-    if (co === 'KAS') {
-      return {
-        href: 'kas-suite',
-        label: 'منافسات كاس',
-        title: 'البوابة المستقلة لشركة كاس (KAS Suite)',
-        icon: Building2,
-      };
+    switch (resolvedScope.departmentId) {
+      case 'finance':
+        return {
+          href: 'finance-home',
+          label: 'سماك المحاسبي',
+          title: 'الأستاذ العام والمحاسبة (SMACC)',
+          icon: Wallet,
+        };
+      case 'rental':
+        return {
+          href: 'rent-contracts',
+          label: 'عقود التأجير',
+          title: 'عقود التأجير والتشغيل المرن',
+          icon: Briefcase,
+        };
+      case 'ats':
+        return {
+          href: 'cvs-recruitment',
+          label: 'بنك السير',
+          title: 'بنك السير الذاتية والفرز (ATS)',
+          icon: FileText,
+        };
+      case 'hr':
+        return {
+          href: 'employees',
+          label: 'شؤون الموظفين',
+          title: 'الموارد البشرية ومسيرات الرواتب',
+          icon: IdCard,
+        };
+      case 'crm':
+        return {
+          href: 'clients',
+          label: 'العملاء CRM',
+          title: 'إدارة علاقات العملاء والشكاوى',
+          icon: Users,
+        };
+      case 'shelter':
+        return {
+          href: 'shelter-suite',
+          label: 'الإيواء DAR',
+          title: 'بوابة مراكز الإيواء والتسكين (DAR)',
+          icon: HeartHandshake,
+        };
+      case 'tenders':
+        return {
+          href: 'kas-suite',
+          label: 'منافسات كاس',
+          title: 'البوابة المستقلة لشركة كاس (KAS Suite)',
+          icon: Building2,
+        };
+      case 'recruitment':
+      default:
+        return {
+          href: 'recruitment-contracts',
+          label: 'عقود مساند',
+          title: 'عقود الاستقدام الموثقة (مساند)',
+          icon: Briefcase,
+        };
     }
-    if (co === 'DAR') {
-      return {
-        href: 'shelter',
-        label: 'الإيواء',
-        title: 'بوابة مراكز الإيواء والتسكين (DAR)',
-        icon: HeartHandshake,
-      };
-    }
-    if (co === 'YAQ') {
-      return {
-        href: 'rent-contracts',
-        label: 'عقود التأجير',
-        title: 'عقود التأجير والتشغيل (YAQ)',
-        icon: Briefcase,
-      };
-    }
-    return {
-      href: 'recruitment-contracts',
-      label: 'العقود',
-      title: 'عقود الاستقدام ومساند',
-      icon: Briefcase,
-    };
   })();
 
   const OpsIcon = primaryOpsTab.icon;
   const isHomeActive = activeTab === 'dashboard' && !isNotificationsOpen;
   const isOpsActive =
     (activeTab === primaryOpsTab.href ||
-      activeTab.includes('contract') ||
-      activeTab.includes('kas') ||
-      activeTab.includes('shelter')) &&
+      activeTab === deptMeta.defaultTab) &&
     !isNotificationsOpen;
 
   const handleManualSync = async () => {
@@ -107,7 +155,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     <nav
       dir="rtl"
       aria-label="شريط التنقل السفلي للهاتف"
-      className="fixed bottom-0 inset-x-0 z-[95] lg:hidden bg-white/95 backdrop-blur-xl border-t border-zinc-200/90 shadow-[0_-8px_24px_rgba(9,23,37,0.08)] select-none"
+      className="fixed bottom-0 inset-x-0 z-[95] lg:hidden bg-white/95 backdrop-blur-xl border-t border-zinc-200 shadow-[0_-8px_24px_rgba(0,0,0,0.06)] select-none"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
@@ -117,21 +165,21 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <div
           className={`px-3 py-1 text-[10.5px] font-bold flex items-center justify-between border-b ${
             !bgState.isOnline
-              ? 'bg-amber-500/15 text-amber-950 border-amber-300/60'
-              : 'bg-emerald-500/15 text-emerald-950 border-emerald-300/60'
+              ? 'bg-[#FAEBD7] text-[#8C6239] border-[#CFA64A]/40'
+              : 'bg-zinc-900 text-[#CFA64A] border-zinc-800'
           }`}
         >
           <div className="flex items-center gap-1.5 truncate">
             {!bgState.isOnline ? (
               <>
-                <WifiOff className="w-3 h-3 text-amber-600 shrink-0 animate-pulse" />
+                <WifiOff className="w-3 h-3 text-[#8C6239] shrink-0 animate-pulse" />
                 <span className="truncate">
-                  وضع عدم الاتصال • العمل في الخلفية نشط ({bgState.pendingOfflineCount} بالانتظار)
+                  وضع عدم الاتصال • المزامنة الخلفية نشطة ({bgState.pendingOfflineCount} بالانتظار)
                 </span>
               </>
             ) : (
               <>
-                <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                <ShieldCheck className="w-3 h-3 text-[#CFA64A] shrink-0" />
                 <span className="truncate">
                   طابور المزامنة الخلفية ({bgState.pendingOfflineCount} عمليات جاهزة للمزامنة)
                 </span>
@@ -143,7 +191,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <button
               type="button"
               onClick={handleManualSync}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold shrink-0"
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#CFA64A] text-black text-[10px] font-extrabold shrink-0"
             >
               <RefreshCw className={`w-2.5 h-2.5 ${syncingNow ? 'animate-spin' : ''}`} />
               <span>مزامنة الآن</span>
@@ -159,12 +207,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           type="button"
           onClick={() => onSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')}
           className={`flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-            isHomeActive ? 'text-zinc-950 font-extrabold' : 'text-zinc-500 hover:text-zinc-800'
+            isHomeActive ? 'text-black font-extrabold' : 'text-zinc-500 hover:text-black'
           }`}
         >
           <div
             className={`w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-              isHomeActive ? 'bg-amber-400/25 text-amber-900' : ''
+              isHomeActive ? 'bg-black text-[#CFA64A]' : ''
             }`}
           >
             <Home className="w-4 h-4" />
@@ -172,17 +220,17 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <span className="text-[10.5px] leading-none truncate">الرئيسية</span>
         </button>
 
-        {/* 2. Primary Company Operations */}
+        {/* 2. Primary Department Screen */}
         <button
           type="button"
           onClick={() => onSelectTab(primaryOpsTab.href, primaryOpsTab.title)}
           className={`flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-            isOpsActive ? 'text-zinc-950 font-extrabold' : 'text-zinc-500 hover:text-zinc-800'
+            isOpsActive ? 'text-black font-extrabold' : 'text-zinc-500 hover:text-black'
           }`}
         >
           <div
             className={`w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-              isOpsActive ? 'bg-amber-400/25 text-amber-900' : ''
+              isOpsActive ? 'bg-black text-[#CFA64A]' : ''
             }`}
           >
             <OpsIcon className="w-4 h-4" />
@@ -190,16 +238,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <span className="text-[10.5px] leading-none truncate">{primaryOpsTab.label}</span>
         </button>
 
-        {/* 3. Center Elevated Action Button: App Launcher */}
+        {/* 3. Center Elevated Action Button: Department App Launcher */}
         <div className="flex items-center justify-center h-full">
           <button
             type="button"
             onClick={onOpenAppLauncher}
-            aria-label="بوابة الأقسام"
-            className="w-12 h-12 -mt-4 rounded-2xl bg-gradient-to-tr from-[#091725] to-[#1c3c60] text-amber-400 border-2 border-amber-400/60 shadow-lg shadow-zinc-900/25 flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
+            aria-label="بوابة وحدات القسم"
+            className="w-12 h-12 -mt-4 rounded-2xl bg-black text-[#CFA64A] border-2 border-[#CFA64A] shadow-lg shadow-black/20 flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
           >
-            <Grid className="w-5 h-5" />
-            <span className="text-[9px] font-black text-white leading-none">الأقسام</span>
+            <Grid className="w-4 h-4" />
+            <span className="text-[9px] font-black text-white leading-none">وحدات القسم</span>
           </button>
         </div>
 
@@ -208,12 +256,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           type="button"
           onClick={onToggleNotifications}
           className={`relative flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-            isNotificationsOpen ? 'text-zinc-950 font-extrabold' : 'text-zinc-500 hover:text-zinc-800'
+            isNotificationsOpen ? 'text-black font-extrabold' : 'text-zinc-500 hover:text-black'
           }`}
         >
           <div
             className={`relative w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-              isNotificationsOpen ? 'bg-amber-400/25 text-amber-900' : ''
+              isNotificationsOpen ? 'bg-black text-[#CFA64A]' : ''
             }`}
           >
             <Bell className="w-4 h-4" />
@@ -230,7 +278,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <button
           type="button"
           onClick={onToggleSidebar}
-          className="flex flex-col items-center justify-center gap-1 h-full rounded-xl text-zinc-500 hover:text-zinc-800 transition-colors"
+          className="flex flex-col items-center justify-center gap-1 h-full rounded-xl text-zinc-500 hover:text-black transition-colors"
         >
           <div className="w-9 h-7 rounded-full flex items-center justify-center">
             <Menu className="w-4 h-4" />

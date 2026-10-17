@@ -66,11 +66,17 @@ export const supabaseConfigError: string | null = CONFIG.error;
 /** True when the client has a usable URL + key. */
 export const isSupabaseConfigured: boolean = CONFIG.error === null;
 
+// When unconfigured or when local loopback (127.0.0.1:54421) is offline, circuit-break to avoid spamming ERR_CONNECTION_REFUSED
+let localSupabaseOfflineCircuitOpen =
+  isLocalHost(CONFIG.url) &&
+  typeof window !== 'undefined' &&
+  window.localStorage.getItem('ENABLE_LOCAL_SUPABASE_DOCKER') !== 'true';
+
 /**
  * @deprecated Kept for backwards compatibility with existing read-only callers.
- * Means "Supabase is NOT configured". Write paths must return an error in this case, never fake success.
+ * Means "Supabase is NOT configured or local loopback is in offline standby".
  */
-export const isDummySupabase: boolean = !isSupabaseConfigured;
+export const isDummySupabase: boolean = !isSupabaseConfigured || localSupabaseOfflineCircuitOpen;
 
 export const STANDALONE_SUPABASE_URL = CONFIG.url;
 export const STANDALONE_SUPABASE_ANON_KEY = CONFIG.anonKey;
@@ -82,10 +88,21 @@ export class SupabaseNotConfiguredError extends Error {
   }
 }
 
-// When unconfigured, every network call fails loudly instead of hitting an unreachable host
-// or returning fabricated data.
-const failingFetch: typeof fetch = async () => {
-  throw new SupabaseNotConfiguredError();
+export const isSupabaseRealtimeAvailable = (): boolean =>
+  isSupabaseConfigured && !localSupabaseOfflineCircuitOpen;
+
+const resilientSupabaseFetch: typeof fetch = async (input, init) => {
+  if (!isSupabaseConfigured || localSupabaseOfflineCircuitOpen) {
+    throw new SupabaseNotConfiguredError();
+  }
+  try {
+    return await fetch(input, init);
+  } catch (err) {
+    if (isLocalHost(CONFIG.url)) {
+      localSupabaseOfflineCircuitOpen = true;
+    }
+    throw err;
+  }
 };
 
 // createClient requires a syntactically valid URL even when we will never use it.
@@ -95,11 +112,11 @@ const CLIENT_KEY = isSupabaseConfigured ? CONFIG.anonKey : 'not-configured';
 export const supabase: SupabaseClient = createClient(CLIENT_URL, CLIENT_KEY, {
   auth: {
     persistSession: true,
-    autoRefreshToken: isSupabaseConfigured,
-    detectSessionInUrl: isSupabaseConfigured,
+    autoRefreshToken: isSupabaseConfigured && !localSupabaseOfflineCircuitOpen,
+    detectSessionInUrl: isSupabaseConfigured && !localSupabaseOfflineCircuitOpen,
     storageKey: 'erp-supabase-auth',
   },
-  global: isSupabaseConfigured ? undefined : { fetch: failingFetch },
+  global: { fetch: resilientSupabaseFetch },
 });
 
 export interface StandaloneSupabaseStatus {
@@ -113,8 +130,8 @@ export interface StandaloneSupabaseStatus {
 export const getStandaloneSupabaseStatus = async (): Promise<StandaloneSupabaseStatus> => {
   const isLocal = isLocalHost(CONFIG.url);
   const studioUrl = isLocal ? 'http://127.0.0.1:54423' : '';
-  if (!isSupabaseConfigured) {
-    return { url: CONFIG.url, studioUrl: '', isLocal: false, connected: false, error: supabaseConfigError };
+  if (!isSupabaseConfigured || localSupabaseOfflineCircuitOpen) {
+    return { url: CONFIG.url, studioUrl: isLocal ? studioUrl : '', isLocal, connected: false, error: supabaseConfigError || 'Local offline standby mode' };
   }
   try {
     // Auth health endpoint does not depend on table privileges (anon has no table access after P0.6).

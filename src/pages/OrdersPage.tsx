@@ -120,10 +120,13 @@ export const OrdersPage: React.FC = () => {
 
   useEffect(() => {
     setActiveFilter(getMappedFilter(storeActiveTab));
+    if (storeActiveTab === 'create-order') {
+      setShowAddModal(true);
+    }
   }, [storeActiveTab]);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'create-order');
   const [editingOrder, setEditingOrder] = useState<OrderRecord | null>(null);
 
   // Add Form State

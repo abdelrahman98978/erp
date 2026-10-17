@@ -21,7 +21,10 @@ class KasEtmadRealService {
   // ============================================================================
 
   public async getTenders(): Promise<TenderRecord[]> {
-    if (isDummySupabase) return [];
+    if (isDummySupabase) {
+      const local = localStorage.getItem('kas_real_tenders_backup');
+      return local ? JSON.parse(local) : [];
+    }
     try {
       const { data: tenders, error } = await supabase
         .from('kas_tenders')
@@ -204,6 +207,7 @@ class KasEtmadRealService {
   // ============================================================================
 
   public async getInvoices(): Promise<KasEtmadInvoice[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('kas_invoices')
@@ -391,6 +395,7 @@ class KasEtmadRealService {
   // ============================================================================
 
   public async getProposals(): Promise<KasEtmadProposal[]> {
+    if (isDummySupabase) return [];
     try {
       const { data, error } = await supabase
         .from('kas_proposals')

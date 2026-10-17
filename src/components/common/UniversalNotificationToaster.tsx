@@ -54,9 +54,9 @@ export const UniversalNotificationToaster: React.FC<UniversalNotificationToaster
         };
       case 'etimad':
         return {
-          icon: <Building2 className="w-5 h-5 text-indigo-600 shrink-0" />,
-          border: 'border-indigo-500/40',
-          badgeBg: 'bg-indigo-50 text-indigo-800 border-indigo-200',
+          icon: <Building2 className="w-5 h-5 text-amber-600 shrink-0" />,
+          border: 'border-amber-500/40',
+          badgeBg: 'bg-amber-50 text-amber-800 border-amber-200',
           label: 'منصة اعتماد الحكومية',
           accent: '#6366f1',
         };

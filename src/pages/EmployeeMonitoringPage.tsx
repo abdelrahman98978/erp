@@ -22,8 +22,27 @@ import { useAppStore } from '../stores/appStore';
 import { Badge } from '../components/ui/Badge';
 
 export const EmployeeMonitoringPage: React.FC = () => {
-  const { addNotification } = useAppStore();
-  const [activeTab, setActiveTab] = useState<'matrix' | 'mood_stream' | 'telemetry' | 'rules'>('matrix');
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
+  const mapStoreTabToMonitoringTab = (
+    tabKey: string
+  ): 'matrix' | 'mood_stream' | 'telemetry' | 'rules' => {
+    switch (tabKey) {
+      case 'mood-pulse':
+      case 'employee-pulse':
+        return 'mood_stream';
+      case 'telemetry':
+        return 'telemetry';
+      default:
+        return 'matrix';
+    }
+  };
+  const [activeTab, setActiveTab] = useState<'matrix' | 'mood_stream' | 'telemetry' | 'rules'>(() =>
+    mapStoreTabToMonitoringTab(storeActiveTab)
+  );
+
+  useEffect(() => {
+    setActiveTab(mapStoreTabToMonitoringTab(storeActiveTab));
+  }, [storeActiveTab]);
   const [summaries, setSummaries] = useState<EmployeeMonitoringSummary[]>([]);
   const [moodLogs, setMoodLogs] = useState<DailyMoodRecord[]>([]);
   const [telemetryEvents, setTelemetryEvents] = useState<ActivityTelemetryEvent[]>([]);
@@ -42,13 +61,19 @@ export const EmployeeMonitoringPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // Settings State for Rules Tab
-  const [rulesConfig, setRulesConfig] = useState({
-    rageClickThreshold: 3,
-    idleAlertMinutes: 20,
-    exportSecurityLimit: 50,
-    consecutiveStressedDays: 3,
-    notifyManagerOnBurnout: true,
-    enableSelfDashboard: true,
+  const [rulesConfig, setRulesConfig] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ALSULAIM_MONITORING_RULES');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      rageClickThreshold: 3,
+      idleAlertMinutes: 20,
+      exportSecurityLimit: 50,
+      consecutiveStressedDays: 3,
+      notifyManagerOnBurnout: true,
+      enableSelfDashboard: true,
+    };
   });
 
   const loadData = async () => {
@@ -132,8 +157,9 @@ export const EmployeeMonitoringPage: React.FC = () => {
     <div className="space-y-6">
       {/* 1. Cinematic Hero Header */}
       <div
-        className="card-feature-cinematic"
+        className="card-feature-cinematic bg-[#000000] text-white"
         style={{
+          backgroundColor: '#000000',
           background: 'linear-gradient(135deg, #09090b 0%, #111827 50%, #064e3b 100%)',
           borderRadius: '18px',
           padding: '28px',
@@ -179,7 +205,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setIsMoodModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-black bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 rounded-xl shadow-lg transition-all transform active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-black bg-emerald-400 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 rounded-xl shadow-lg transition-all transform active:scale-95"
             >
               <Smile className="w-4 h-4" />
               <span>تسجيل حالتي اليوم 😊</span>
@@ -371,7 +397,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
                 : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
             }`}
           >
-            <Sliders className="w-3.5 h-3.5 text-purple-500" />
+            <Sliders className="w-3.5 h-3.5 text-amber-500" />
             <span>قواعد وضوابط المراقبة</span>
           </button>
         </div>
@@ -562,11 +588,30 @@ export const EmployeeMonitoringPage: React.FC = () => {
 
                         <td className="p-3.5 text-center">
                           <button
-                            onClick={() => {
+                            onClick={async () => {
+                              setSummaries(prev =>
+                                prev.map(item =>
+                                  item.user_id === emp.user_id
+                                    ? { ...item, burnout_risk: 'منخفض', latest_mood: 'happy' as MoodType }
+                                    : item
+                                )
+                              );
+                              await employeeMonitoringService.recordTelemetryEvent({
+                                user_id: emp.user_id,
+                                user_name: emp.user_name,
+                                role: emp.role,
+                                branch: emp.branch,
+                                event_type: 'navigation' as any,
+                                target_element: 'button#1on1-support-session',
+                                target_label: 'عقد جلسة مساندة 1-on-1',
+                                module: 'رادار الموارد البشرية',
+                                details: `تم عقد وتوثيق جلسة استماع ومساندة إدارية مع (${emp.user_name}) وتخفيض مؤشر الاحتراق الوظيفي إلى مستقر.`,
+                                severity: 'info',
+                              });
                               addNotification({
                                 title: `جلسة استماع 1-on-1 مع ${emp.user_name}`,
-                                message: `تم جدولة إشعار للدعم والمساعدة الإدارية مع الموظف في ${emp.branch}.`,
-                                type: 'info',
+                                message: `تم توثيق جلسة المساندة الإدارية مع الموظف في ${emp.branch} وتحديث حالته إلى مستقر.`,
+                                type: 'success',
                               });
                             }}
                             className="px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-lg border border-emerald-500/30 transition-colors"
@@ -829,10 +874,25 @@ export const EmployeeMonitoringPage: React.FC = () => {
 
               <div className="mt-6 flex justify-end">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    try {
+                      localStorage.setItem('ALSULAIM_MONITORING_RULES', JSON.stringify(rulesConfig));
+                    } catch {}
+                    await employeeMonitoringService.recordTelemetryEvent({
+                      user_id: 'USR-ADMIN',
+                      user_name: 'الإدارة العامة',
+                      role: 'مدير النظام',
+                      branch: 'المقر الرئيسي',
+                      event_type: 'navigation' as any,
+                      target_element: 'button#save-monitoring-rules',
+                      target_label: 'تحديث ضوابط المراقبة الذكية',
+                      module: 'حوكمة المراقبة',
+                      details: `تم حفظ عتبات الرصد: النقرات العصبية (${rulesConfig.rageClickThreshold}/ث)، الخمول (${rulesConfig.idleAlertMinutes} د)، حد التصدير (${rulesConfig.exportSecurityLimit} سجل).`,
+                      severity: 'info',
+                    });
                     addNotification({
                       title: 'حفظ قواعد وضوابط المراقبة',
-                      message: 'تم تحديث عتبات الاستشعار الرقابي وتطبيقها على جميع شاشات المجموعة.',
+                      message: 'تم تحديث عتبات الاستشعار الرقابي وحفظها وتطبيقها على جميع شاشات المجموعة.',
                       type: 'success',
                     });
                   }}

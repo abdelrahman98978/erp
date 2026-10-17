@@ -249,12 +249,17 @@ export const HRPage: React.FC = () => {
   const [promotions, setPromotions] = useState<PromotionRecord[]>(DEFAULT_MOCK_PROMOTIONS);
 
   useEffect(() => {
-    if (rawEmployees.length > 0) {
-      setEmployeesList(rawEmployees as EmployeeRecord[]);
-    } else {
-      realErpDataStore.getRecords<EmployeeRecord>('hr_employees', DEFAULT_MOCK_EMPLOYEES).then(d => setEmployeesList(d));
-    }
-    realErpDataStore.getRecords<PromotionRecord>('hr_promotions', DEFAULT_MOCK_PROMOTIONS).then(d => setPromotions(d));
+    const loadHrRecords = () => {
+      if (rawEmployees.length > 0) {
+        setEmployeesList(rawEmployees as EmployeeRecord[]);
+      } else {
+        realErpDataStore.getRecords<EmployeeRecord>('hr_employees', DEFAULT_MOCK_EMPLOYEES).then(d => setEmployeesList(d));
+      }
+      realErpDataStore.getRecords<PromotionRecord>('hr_promotions', DEFAULT_MOCK_PROMOTIONS).then(d => setPromotions(d));
+    };
+    loadHrRecords();
+    window.addEventListener('erp-data-updated', loadHrRecords);
+    return () => window.removeEventListener('erp-data-updated', loadHrRecords);
   }, [rawEmployees]);
 
   const storeActiveTab = useAppStore(state => state.activeTab);
@@ -286,6 +291,7 @@ export const HRPage: React.FC = () => {
       case 'payrolls':
       case 'payroll':
       case 'wps':
+      case 'wps-generator':
       case 'salary':
       case 'salaries':
         return 'payroll';
@@ -773,6 +779,15 @@ export const HRPage: React.FC = () => {
 
         <div className="flex items-center gap-2 flex-wrap">
           <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+          >
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-[#CFA64A]" />
+            <span>استخلاص ملفات موظفين / مسيرات (PDF / Word / Excel)</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('signatures')}
             className="button-outline-on-dark"
             style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(52, 211, 153, 0.5)', color: '#34d399' }}
@@ -960,7 +975,7 @@ export const HRPage: React.FC = () => {
                           style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                           title="ترقية الموظف"
                         >
-                          <TrendingUp className="w-3 h-3 ml-1 text-purple-600" />
+                          <TrendingUp className="w-3 h-3 ml-1 text-amber-600" />
                           <span>ترقية</span>
                         </button>
                         <button
@@ -1213,8 +1228,8 @@ export const HRPage: React.FC = () => {
                         <span className="pill-tag-mint text-[10px]">{promo.increment_percentage}</span>
                       </td>
                       <td className="p-3.5">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 text-purple-900 border border-purple-200 text-[11px] font-bold">
-                          <ShieldCheck className="w-3 h-3 text-purple-600" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-[11px] font-bold">
+                          <ShieldCheck className="w-3 h-3 text-amber-600" />
                           <span>{promo.system_role_updated || 'Administrator'}</span>
                         </span>
                       </td>
@@ -1648,12 +1663,12 @@ export const HRPage: React.FC = () => {
                   </div>
 
                   {/* Legal Explanation Box */}
-                  <div className="p-4 bg-purple-50/60 rounded-2xl border border-purple-200 space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-xs text-purple-950">
-                      <Scale className="w-4 h-4 text-purple-700" />
+                  <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-amber-950">
+                      <Scale className="w-4 h-4 text-amber-700" />
                       <span>السند النظامي للحسبة:</span>
                     </div>
-                    <p className="text-xs text-purple-900 leading-relaxed font-sans">
+                    <p className="text-xs text-amber-900 leading-relaxed font-sans">
                       {legalArticle}
                     </p>
                   </div>
@@ -1899,7 +1914,7 @@ export const HRPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-mono font-bold text-zinc-700">{w.iqama}</td>
                     <td className="p-3.5">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${w.status.includes('مؤجرة') ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${w.status.includes('مؤجرة') ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>
                         {w.status}
                       </span>
                       <div className="text-[10px] text-zinc-400 mt-0.5">{w.location}</div>
@@ -2042,16 +2057,16 @@ export const HRPage: React.FC = () => {
 
               {/* System Access & RBAC Role Assignment */}
               <div className="border-t border-zinc-100 pt-3">
-                <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-200 space-y-3">
+                <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
                   <label className="flex items-center gap-2.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={createSystemUser}
                       onChange={(e) => setCreateSystemUser(e.target.checked)}
-                      className="rounded text-purple-700 focus:ring-0 w-4 h-4"
+                      className="rounded text-amber-700 focus:ring-0 w-4 h-4"
                     />
-                    <span className="font-bold text-xs text-purple-950 flex items-center gap-1.5">
-                      <Key className="w-3.5 h-3.5 text-purple-700" />
+                    <span className="font-bold text-xs text-amber-950 flex items-center gap-1.5">
+                      <Key className="w-3.5 h-3.5 text-amber-700" />
                       <span>إنشاء حساب مستخدم في منظومة الـ ERP وتعيين الصلاحيات فوراً</span>
                     </span>
                   </label>
@@ -2059,11 +2074,11 @@ export const HRPage: React.FC = () => {
                   {createSystemUser && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                       <div>
-                        <label className="block text-xs font-semibold text-purple-900 mb-1">الدور الوظيفي والصلاحيات (RBAC Role)</label>
+                        <label className="block text-xs font-semibold text-amber-900 mb-1">الدور الوظيفي والصلاحيات (RBAC Role)</label>
                         <select
                           value={assignedRole}
                           onChange={(e) => setAssignedRole(e.target.value)}
-                          className="w-full bg-white border border-purple-200 rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
+                          className="w-full bg-white border border-amber-200 rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
                         >
                           <option value="Administrator">Administrator (مدير نظام - كامل الصلاحيات)</option>
                           <option value="Branch Manager">Branch Manager (مدير فرع)</option>
@@ -2081,9 +2096,9 @@ export const HRPage: React.FC = () => {
                             type="checkbox"
                             checked={enable2FA}
                             onChange={(e) => setEnable2FA(e.target.checked)}
-                            className="rounded text-purple-700 focus:ring-0 w-4 h-4"
+                            className="rounded text-amber-700 focus:ring-0 w-4 h-4"
                           />
-                          <span className="text-xs font-semibold text-purple-900">
+                          <span className="text-xs font-semibold text-amber-900">
                             تفعيل المصادقة الثنائية (2FA) والبصمة البيومترية للحساب
                           </span>
                         </label>
@@ -2238,14 +2253,14 @@ export const HRPage: React.FC = () => {
               {/* RBAC Role & Performance Rating */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-zinc-100">
                 <div>
-                  <label className="block text-xs font-semibold text-purple-900 mb-1 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-purple-700" />
+                  <label className="block text-xs font-semibold text-amber-900 mb-1 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
                     <span>ترقية الصلاحية في الـ ERP (RBAC Role Upgrade)</span>
                   </label>
                   <select
                     value={promoSystemRole}
                     onChange={(e) => setPromoSystemRole(e.target.value)}
-                    className="w-full bg-purple-50/50 border border-purple-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
+                    className="w-full bg-amber-50/50 border border-amber-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
                   >
                     <option value="Administrator">Administrator (مدير نظام عام)</option>
                     <option value="Branch Manager">Branch Manager (مدير فرع)</option>

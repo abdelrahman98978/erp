@@ -16,12 +16,16 @@ export const ClientsPage: React.FC = () => {
   const { activeCompanyId } = useCompany();
   const { setActiveTab, addNotification } = useAppStore();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'blacklist' | 'person' | 'company'>('all');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [editingClient, setEditingClient] = useState<any | null>(null);
-
   const storeActiveTab = useAppStore(state => state.activeTab);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'blacklist' | 'person' | 'company'>(() => {
+    if (storeActiveTab === 'client-blacklist' || storeActiveTab === 'black-list') return 'blacklist';
+    if (storeActiveTab === 'client-categories') return 'company';
+    return 'all';
+  });
+  const [showAddModal, setShowAddModal] = useState(() => storeActiveTab === 'new-client');
+  const [editingClient, setEditingClient] = useState<any | null>(null);
 
   useEffect(() => {
     if (storeActiveTab === 'client-blacklist' || storeActiveTab === 'black-list') {
@@ -30,6 +34,8 @@ export const ClientsPage: React.FC = () => {
       setActiveFilter('company');
     } else if (storeActiveTab === 'new-client') {
       setShowAddModal(true);
+    } else if (storeActiveTab === 'clients') {
+      setActiveFilter('all');
     }
   }, [storeActiveTab]);
 

@@ -426,9 +426,9 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                 <div className="rounded-2xl p-4 bg-[#14181c] border border-white/10 shadow-md">
                   <div className="flex items-center justify-between text-zinc-400 text-xs mb-2">
                     <span>المشاريع والعقود الجارية</span>
-                    <Award className="w-4 h-4 text-purple-400" />
+                    <Award className="w-4 h-4 text-amber-400" />
                   </div>
-                  <div className="text-2xl font-black text-purple-300">12 مشروعاً</div>
+                  <div className="text-2xl font-black text-amber-300">12 مشروعاً</div>
                   <div className="text-[11px] text-emerald-400 mt-1 font-bold">
                     نسبة الترسية 56.6%
                   </div>
@@ -814,7 +814,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                           <td className="p-3.5 font-mono font-bold text-emerald-400">{po.amount.toLocaleString()} ر.س</td>
                           <td className="p-3.5 text-zinc-400">{po.date}</td>
                           <td className="p-3.5">
-                            <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                               {po.status}
                             </span>
                           </td>
@@ -1184,7 +1184,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           <div className="bg-[#171c20] border border-white/15 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
             <div className="p-4 border-b border-white/10 bg-[#1a2126] flex items-center justify-between">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Truck className="w-4 h-4 text-purple-400" />
+                <Truck className="w-4 h-4 text-amber-400" />
                 <span>إصدار أمر توريد / صرف مستودعات (PO)</span>
               </h3>
               <button onClick={() => setShowAddPoModal(false)} className="text-zinc-400 hover:text-white">
@@ -1257,7 +1257,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-purple-500 text-white hover:bg-purple-400 shadow-md"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 text-white hover:bg-amber-400 shadow-md"
                 >
                   اعتماد أمر الصرف
                 </button>

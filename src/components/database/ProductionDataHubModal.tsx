@@ -33,7 +33,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
   const [customKey, setCustomKey] = useState(() => localStorage.getItem('CUSTOM_SUPABASE_KEY') || '');
 
   // Import State
-  const [targetTable, setTargetTable] = useState('contracts');
+  const [targetTable, setTargetTable] = useState('auto');
   const [isImporting, setIsImporting] = useState(false);
 
   const refreshStats = () => {
@@ -111,16 +111,24 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setIsImporting(true);
     try {
-      const result = await importAnyFileToTable(targetTable, file);
-      if (result.success) {
+      let totalImported = 0;
+      const routedDepts = new Set<string>();
+      for (let i = 0; i < files.length; i++) {
+        const res = await importAnyFileToTable(targetTable, files[i]);
+        if (res.success) {
+          totalImported += res.importedCount;
+          if (res.detectedDepartmentAr) routedDepts.add(res.detectedDepartmentAr);
+        }
+      }
+      if (totalImported > 0) {
         addNotification({
-          title: 'اكتمال الاستيراد',
-          message: `تم استيراد ${result.importedCount} سجل بنجاح إلى جدول (${targetTable}).`,
+          title: 'اكتمال الاستخلاص والتوجيه للقسم المعني',
+          message: `تم التعرف على ${files.length} ملف واستخلاص ${totalImported} سجل بنجاح (${Array.from(routedDepts).join('، ') || targetTable}).`,
           type: 'success',
         });
         refreshStats();
@@ -128,7 +136,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
       } else {
         addNotification({
           title: 'خطأ في الاستيراد',
-          message: result.errors?.[0] || 'تعذر معالجة الملف',
+          message: 'تعذر استخلاص السجلات من الملفات المرفوعة',
           type: 'error',
         });
       }
@@ -430,13 +438,14 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             <div className="space-y-5">
               <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200">
                 <label className="block text-xs font-bold text-black mb-2">
-                  اختر الجدول المراد استيراد بياناته:
+                  آلية التعرف وتوجيه المستندات المرفوعة:
                 </label>
                 <select
                   value={targetTable}
                   onChange={(e) => setTargetTable(e.target.value)}
                   className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-bold text-black"
                 >
+                  <option value="auto">⚡ التعرف التلقائي وتوجيه المستند للقسم المعني والنظام المحاسبي المنفصل للشركة</option>
                   {Object.entries(tableLabels).map(([k, v]) => (
                     <option key={k} value={k}>{v.label} ({k})</option>
                   ))}
@@ -446,19 +455,20 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
               <div className="p-8 border-2 border-dashed border-zinc-300 rounded-2xl bg-zinc-50 text-center space-y-3">
                 <FileSpreadsheet className="w-10 h-10 text-emerald-600 mx-auto" />
                 <h4 className="text-sm font-bold text-black m-0">
-                  استيراد ملف البيانات المعتمد (Excel, CSV, JSON)
+                  استيراد واستخلاص أي مستند مهما كانت صيغته (PDF, Word, Excel, CSV, XML, JSON, صور الفواتير)
                 </h4>
                 <p className="text-xs text-zinc-500 max-w-md mx-auto">
-                  قم باختيار ملف البيانات المعتمد الخاص بالمنشأة ليتم إدراجه فوراً في جدول ({tableLabels[targetTable]?.label || targetTable})
+                  قم باختيار مستند واحد أو دفعة مستندات وفواتير (حتى 100+ ملف أو مخرجات نظام محاسبي منفصل للشركة الأخرى) ليتم التعرف عليها وتوجيهها تلقائياً للقسم المعني
                 </p>
 
                 <div className="pt-2">
                   <label className="button-black-pill cursor-pointer inline-flex items-center gap-2">
                     <Upload className="w-4 h-4 ml-1" />
-                    <span>{isImporting ? 'جاري الاستيراد والمعالجة...' : 'اختر ملف من جهازك'}</span>
+                    <span>{isImporting ? 'جاري الاستخلاص والتوجيه للقسم المعني...' : 'اختر ملفاً أو دفعة ملفات من جهازك (جميع الصيغ)'}</span>
                     <input
                       type="file"
-                      accept=".xlsx,.xls,.csv,.json"
+                      multiple
+                      accept=".pdf,.doc,.docx,.xlsx,.xls,.csv,.tsv,.json,.xml,.jpg,.jpeg,.png,.webp,.txt,*/*"
                       onChange={handleFileUpload}
                       disabled={isImporting}
                       className="hidden"

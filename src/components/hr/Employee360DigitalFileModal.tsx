@@ -211,7 +211,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
           {activeTab === 'info' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ margin: '0 0 12px 0', color: '#0F172A', fontSize: '14px', fontWeight: '800' }}>
+                <h4 style={{ margin: '0 0 12px 0', color: '#1D2428', fontSize: '14px', fontWeight: '800' }}>
                   معلومات الهوية والاتصال:
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
@@ -223,7 +223,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               </div>
 
               <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '16px', border: '1px solid #E2E8F0' }}>
-                <h4 style={{ margin: '0 0 12px 0', color: '#0F172A', fontSize: '14px', fontWeight: '800' }}>
+                <h4 style={{ margin: '0 0 12px 0', color: '#1D2428', fontSize: '14px', fontWeight: '800' }}>
                   الموقع الهيكلي والبنكي:
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
@@ -296,14 +296,14 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
 
                 {/* Department Specific Clauses Summary */}
                 <div style={{ backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '14px', border: '1px solid #E2E8F0' }}>
-                  <h5 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: '800', color: '#0F172A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <h5 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: '800', color: '#1D2428', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Building2 className="w-4 h-4 text-emerald-600" />
                     <span>البنود الموقعة المخصصة لـ ({policy.departmentName}):</span>
                   </h5>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {policy.clauses.map((clause, idx) => (
                       <div key={clause.id} style={{ fontSize: '11px', padding: '8px 12px', backgroundColor: '#F8FAFC', borderRadius: '8px', border: '1px solid #F1F5F9' }}>
-                        <div style={{ fontWeight: '700', color: '#0F172A', display: 'flex', justifyContent: 'space-between' }}>
+                        <div style={{ fontWeight: '700', color: '#1D2428', display: 'flex', justifyContent: 'space-between' }}>
                           <span>{idx + 1}. {clause.title}</span>
                           <span style={{ color: '#64748B', fontSize: '10px' }}>{clause.lawReference}</span>
                         </div>
@@ -373,7 +373,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ backgroundColor: '#F8FAFC', padding: '18px', borderRadius: '16px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>سجل الترقية والمسار الوظيفي (Career Ladder):</h4>
+                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '800', color: '#1D2428' }}>سجل الترقية والمسار الوظيفي (Career Ladder):</h4>
                   <span style={{ backgroundColor: '#ECFDF5', color: '#047857', padding: '3px 10px', borderRadius: '9999px', fontSize: '11px', fontWeight: '700' }}>
                     ترقية مستحقة ونافذة
                   </span>
@@ -402,7 +402,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                 <div style={{ backgroundColor: '#FFF', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>الراتب الأساسي (70%)</div>
-                  <div style={{ fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>{((employee.salary ?? 8000) * 0.7).toLocaleString()} ر.س</div>
+                  <div style={{ fontSize: '16px', fontWeight: '800', color: '#1D2428' }}>{((employee.salary ?? 8000) * 0.7).toLocaleString()} ر.س</div>
                 </div>
                 <div style={{ backgroundColor: '#FFF', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>بدل السكن والنقل (30%)</div>
@@ -426,7 +426,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 </div>
                 <div style={{ backgroundColor: '#FFF', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>رصيد الإجازات المتبقي</div>
-                  <div style={{ fontSize: '18px', fontWeight: '900', color: '#0F172A' }}>{employee.leave_balance || 24} يوم</div>
+                  <div style={{ fontSize: '18px', fontWeight: '900', color: '#1D2428' }}>{employee.leave_balance || 24} يوم</div>
                 </div>
                 <div style={{ backgroundColor: '#FFF', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
                   <div style={{ fontSize: '11px', color: '#64748B' }}>ساعات التأخير الشهرية</div>

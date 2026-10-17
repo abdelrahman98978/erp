@@ -97,16 +97,23 @@ const MOCK_FIN_REQUESTS: FinancialReq[] = [
 
 export const FinancialRequestsPage: React.FC = () => {
   const { activeCompany } = useCompany();
-  const { addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
   const [requests, setRequests] = useState<FinancialReq[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'incomplete' | 'paid'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(() =>
+    storeActiveTab === 'create-fin-request' || storeActiveTab === 'petty-cash' || storeActiveTab === 'cash-custody'
+  );
 
   useEffect(() => {
-    realErpDataStore.getRecords<FinancialReq>('financial_requests', MOCK_FIN_REQUESTS).then(data => {
-      setRequests(data);
-    });
+    const loadFinReqs = () => {
+      realErpDataStore.getRecords<FinancialReq>('financial_requests', MOCK_FIN_REQUESTS).then(data => {
+        setRequests(data);
+      });
+    };
+    loadFinReqs();
+    window.addEventListener('erp-data-updated', loadFinReqs);
+    return () => window.removeEventListener('erp-data-updated', loadFinReqs);
   }, []);
 
   // Form State
@@ -123,6 +130,16 @@ export const FinancialRequestsPage: React.FC = () => {
   const [accountOwner, setAccountOwner] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [iban, setIban] = useState('');
+
+  useEffect(() => {
+    if (storeActiveTab === 'create-fin-request') {
+      setShowAddModal(true);
+    } else if (storeActiveTab === 'petty-cash' || storeActiveTab === 'cash-custody') {
+      setRequestType('عهدة فرع');
+      setAccountingName('عهدة نقدية تشغيلية');
+      setShowAddModal(true);
+    }
+  }, [storeActiveTab]);
 
   const handleCreateRequest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,6 +259,15 @@ export const FinancialRequestsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="button-outline-on-dark"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+          >
+            <FileText className="w-4 h-4 ml-1 text-[#CFA64A]" />
+            <span>استخلاص مطالبات وفواتير الصرف (PDF / Word / Excel)</span>
+          </button>
+
           <button
             onClick={() => setShowAddModal(true)}
             className="button-white-pill"

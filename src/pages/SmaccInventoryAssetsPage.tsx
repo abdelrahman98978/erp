@@ -86,6 +86,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
   const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [isStockVoucherModalOpen, setIsStockVoucherModalOpen] = useState(false);
+  const [selectedAssetDetail, setSelectedAssetDetail] = useState<FixedAsset | null>(null);
 
   // New Asset State
   const [newAsset, setNewAsset] = useState({
@@ -501,6 +502,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                         <td className="p-3.5 text-center">
                           <button
                             onClick={() => {
+                              setSelectedAssetDetail(asset);
                               addNotification({
                                 title: `تفاصيل الأصل ${asset.code}`,
                                 message: `${asset.name} - التكلفة: ${asset.cost.toLocaleString()} ر.س - القيمة الدفترية: ${asset.bookValue.toLocaleString()} ر.س - نسبة الإهلاك: ${asset.depreciationRate}%.`,
@@ -900,6 +902,47 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             />
           </div>
         </div>
+      </SmaccFormModal>
+
+      {/* Fixed Asset Details Modal */}
+      <SmaccFormModal
+        isOpen={!!selectedAssetDetail}
+        onClose={() => setSelectedAssetDetail(null)}
+        onSubmit={() => setSelectedAssetDetail(null)}
+        title={selectedAssetDetail ? `بطاقة الأصل الثابت: ${selectedAssetDetail.name} (${selectedAssetDetail.code})` : ''}
+        subtitle="استعراض بيانات التكلفة الرأسمالية ومجمع الإهلاك وصافي القيمة الدفترية"
+      >
+        {selectedAssetDetail && (
+          <div className="space-y-4 text-xs">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <span className="text-zinc-500 block">التصنيف المحاسبي</span>
+                <strong className="text-black text-sm mt-0.5 block">{selectedAssetDetail.category}</strong>
+              </div>
+              <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <span className="text-zinc-500 block">تاريخ الشراء والتشغيل</span>
+                <strong className="text-black font-mono text-sm mt-0.5 block">{selectedAssetDetail.purchaseDate}</strong>
+              </div>
+              <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <span className="text-zinc-500 block">التكلفة الرأسمالية</span>
+                <strong className="text-black font-mono text-sm mt-0.5 block">{selectedAssetDetail.cost.toLocaleString()} ر.س</strong>
+              </div>
+              <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <span className="text-zinc-500 block">مجمع الإهلاك ({selectedAssetDetail.depreciationRate}% سنوياً)</span>
+                <strong className="text-rose-700 font-mono text-sm mt-0.5 block">{selectedAssetDetail.accumulatedDepreciation.toLocaleString()} ر.س</strong>
+              </div>
+            </div>
+            <div className="p-4 rounded-2xl bg-[#000000] text-white flex items-center justify-between">
+              <div>
+                <span className="text-zinc-400 block">صافي القيمة الدفترية الحالية (Net Book Value)</span>
+                <strong className="text-xl font-mono text-amber-400 mt-1 block">{selectedAssetDetail.bookValue.toLocaleString()} ر.س</strong>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                {selectedAssetDetail.status}
+              </span>
+            </div>
+          </div>
+        )}
       </SmaccFormModal>
     </div>
   );

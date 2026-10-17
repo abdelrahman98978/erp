@@ -206,6 +206,14 @@ p, span, label, input, select, button, td, th {
 .bg-cream { background-color: var(--color-canvas-cream); }
 .bg-aloe { background-color: var(--color-aloe-10); }
 .bg-pistachio { background-color: var(--color-pistachio-10); }
+.bg-charcoal { background-color: #1D2428 !important; }
+.bg-champagne { background-color: #CFA64A !important; }
+.hover\:bg-champagne-dark:hover { background-color: #A98232 !important; }
+.bg-champagne-pale { background-color: #F5EDDC !important; }
+.text-champagne { color: #CFA64A !important; }
+.text-champagne-light { color: #E4C77B !important; }
+.text-champagne-dark { color: #A98232 !important; }
+.border-champagne { border-color: #CFA64A !important; }
 
 .text-ink { color: var(--color-ink); }
 .text-main { color: var(--color-ink); }

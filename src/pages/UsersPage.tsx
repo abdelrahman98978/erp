@@ -619,7 +619,7 @@ export const UsersPage: React.FC = () => {
                         style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                         title="تعديل وترقية الدور والصلاحيات"
                       >
-                        <UserCog className="w-3 h-3 ml-1 text-purple-600" />
+                        <UserCog className="w-3 h-3 ml-1 text-amber-600" />
                         <span>الصلاحيات</span>
                       </button>
                       <button
@@ -799,7 +799,7 @@ export const UsersPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
             <div className="p-5 bg-black text-white flex items-center justify-between">
               <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <UserCog className="w-4 h-4 text-purple-400" />
+                <UserCog className="w-4 h-4 text-amber-400" />
                 <span>تعديل وترقية دور المستخدم الصلاحيات</span>
               </h3>
               <button onClick={() => setShowEditRoleModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
@@ -819,7 +819,7 @@ export const UsersPage: React.FC = () => {
                 <select
                   value={editRoleForm.role}
                   onChange={e => setEditRoleForm({ ...editRoleForm, role: e.target.value })}
-                  className="w-full bg-purple-50/50 border border-purple-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
+                  className="w-full bg-amber-50/50 border border-amber-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
                 >
                   <option value="Administrator">Administrator (مدير نظام عام - كافة الصلاحيات)</option>
                   <option value="Branch Manager">Branch Manager (مدير فرع)</option>

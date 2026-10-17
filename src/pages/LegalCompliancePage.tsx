@@ -460,12 +460,12 @@ export const LegalCompliancePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-200 space-y-2">
-              <h4 className="font-bold text-xs text-purple-950 flex items-center gap-1.5">
-                <Fingerprint className="w-4 h-4 text-purple-700" />
+            <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-2">
+              <h4 className="font-bold text-xs text-amber-950 flex items-center gap-1.5">
+                <Fingerprint className="w-4 h-4 text-amber-700" />
                 <span>4. ضوابط الهيئة الوطنية للأمن السيبراني (NCA ECC)</span>
               </h4>
-              <p className="text-xs text-purple-900 leading-relaxed">
+              <p className="text-xs text-amber-900 leading-relaxed">
                 تفرض إلزامية التحقق الثنائي (2FA) ومراقبة وتوثيق سجلات الدخول وسجل النشاطات (Audit Trail) ومسؤولية الحسابات الإدارية.
               </p>
             </div>

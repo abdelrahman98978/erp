@@ -191,7 +191,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
       icon: Printer,
       badge: 'طباعة فورية',
       color: 'purple',
-      bgColor: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400 border-purple-200 dark:border-purple-800'
+      bgColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border-amber-200 dark:border-amber-800'
     },
     {
       id: 'html' as ExportFormat,
@@ -200,7 +200,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
       icon: Globe,
       badge: 'تفاعلي أوفلاين',
       color: 'indigo',
-      bgColor: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800'
+      bgColor: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border-amber-200 dark:border-amber-800'
     }
   ];
 

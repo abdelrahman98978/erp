@@ -32,7 +32,7 @@ type IamTab =
   | 'audit-logs';
 
 export const IdentityAccessManagementPage: React.FC = () => {
-  const { addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
   const { 
     currentUser, 
     activeCompany, 
@@ -41,11 +41,27 @@ export const IdentityAccessManagementPage: React.FC = () => {
     logAuditAction 
   } = useIamSession();
 
-  const [activeTab, setActiveTab] = useState<IamTab>('users');
+  const mapStoreTabToIamTab = (tabKey: string): IamTab => {
+    switch (tabKey) {
+      case 'roles-permissions':
+      case 'iam-matrix':
+        return 'roles-matrix';
+      case 'multi-company-iam':
+        return 'companies';
+      default:
+        return 'users';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<IamTab>(() => mapStoreTabToIamTab(storeActiveTab));
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCompany, setFilterCompany] = useState<string>('all');
   const [filterAccountType, setFilterAccountType] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+
+  useEffect(() => {
+    setActiveTab(mapStoreTabToIamTab(storeActiveTab));
+  }, [storeActiveTab]);
 
   // Core Data States
   const [users, setUsers] = useState<IamUser[]>([]);
@@ -275,7 +291,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 lg:p-8 font-sans space-y-6" dir="rtl">
       {/* Top Breadcrumb & Hero Banner */}
-      <div className="bg-gradient-to-l from-zinc-900 via-slate-900 to-black border border-white/10 rounded-3xl p-6 lg:p-8 text-white shadow-2xl relative overflow-hidden">
+      <div className="bg-[#000000] bg-gradient-to-l from-zinc-900 via-slate-900 to-black border border-white/10 rounded-3xl p-6 lg:p-8 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-96 h-96 bg-champagne/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
@@ -302,20 +318,21 @@ export const IdentityAccessManagementPage: React.FC = () => {
             </div>
             <button
               onClick={loadAllIamData}
-              className="p-2.5 bg-champagne hover:bg-champagne-dark text-black rounded-2xl transition border border-champagne/40 flex items-center justify-center shadow-lg"
+              className="px-4 py-2.5 bg-[#CFA64A] hover:bg-[#A98232] text-black font-black text-xs rounded-2xl transition border border-[#CFA64A] flex items-center justify-center gap-1.5 shadow-lg cursor-pointer"
               title="تحديث البيانات اللحظية"
             >
-              <RefreshCw className="w-5 h-5" />
+              <RefreshCw className="w-4 h-4 text-black shrink-0" />
+              <span>تحديث</span>
             </button>
           </div>
         </div>
 
         {/* 10 Navigation Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-6 mt-6 border-t border-white/10 text-xs font-bold">
+        <div className="flex flex-wrap items-center gap-2 pt-6 mt-6 border-t border-white/10 text-xs font-bold">
           {[
             { id: 'users', label: 'المستخدمين (Users)', icon: Users, count: users.length },
             { id: 'companies', label: 'الشركات والفروع', icon: Building2, count: companies.length },
-            { id: 'memberships', label: 'العضويات ونطاق الوصول', icon: Layers },
+            { id: 'memberships', label: 'العضويات ونطاق الوصول', icon: Layers, count: users.length },
             { id: 'roles-matrix', label: 'مصفوفة الصلاحيات (RBAC)', icon: KeyRound, count: roles.length },
             { id: 'access-requests', label: 'طلبات الصلاحيات', icon: Send, count: accessRequests.length },
             { id: 'delegations', label: 'التفويضات والإجازات', icon: ArrowLeftRight, count: delegations.length },
@@ -330,17 +347,17 @@ export const IdentityAccessManagementPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as IamTab)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-champagne text-black font-black shadow-lg scale-105'
-                    : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                    ? 'bg-[#CFA64A] text-black font-black shadow-lg'
+                    : 'bg-[#1D2428] text-white border border-white/15 hover:bg-zinc-800'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-black' : 'text-champagne-light'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-black' : 'text-[#E4C77B]'}`} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                    isActive ? 'bg-black text-champagne-light' : 'bg-white/10 text-slate-300'
+                    isActive ? 'bg-black text-[#E4C77B]' : 'bg-black/60 text-white'
                   }`}>
                     {tab.count}
                   </span>
@@ -571,10 +588,121 @@ export const IdentityAccessManagementPage: React.FC = () => {
       )}
 
       {/* ==================================================================== */}
+      {/* TAB 3: MEMBERSHIPS & DATA SCOPE (العضويات ونطاق الوصول) */}
+      {/* ==================================================================== */}
+      {activeTab === 'memberships' && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Layers className="w-5 h-5 text-champagne-dark" />
+              العضويات المؤسسية ونطاق عزل البيانات (Multi-Company & Department Scope)
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 text-slate-500 font-bold">
+                  <th className="py-3 px-4">الموظف</th>
+                  <th className="py-3 px-4">نوع الحساب</th>
+                  <th className="py-3 px-4">نطاق عزل البيانات (Data Scope)</th>
+                  <th className="py-3 px-4">الفروع والأقسام المصرحة</th>
+                  <th className="py-3 px-4 text-center">إدارة النطاق</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-slate-50/80 transition">
+                    <td className="py-3 px-4 font-bold text-slate-900">{u.fullName}</td>
+                    <td className="py-3 px-4 text-slate-700">{u.accountType}</td>
+                    <td className="py-3 px-4">
+                      <span className="px-2.5 py-1 bg-champagne-pale text-champagne-dark rounded-full font-bold text-[10.5px]">
+                        {u.accountType === 'Group Super Admin' ? 'المستوى 6 — كامل المجموعة (Group)' : 'المستوى 3 — القسم والشركة المختصة'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-600">{u.jobTitle}</td>
+                    <td className="py-3 px-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedUserForDetail(u)}
+                        className="px-3 py-1.5 bg-black text-[#E4C77B] rounded-xl font-bold text-[11px] hover:bg-zinc-800 cursor-pointer"
+                      >
+                        تعديل النطاق
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================================== */}
       {/* TAB 4: ROLES & PERMISSIONS MATRIX (مصفوفة الصلاحيات) */}
       {/* ==================================================================== */}
       {activeTab === 'roles-matrix' && (
         <RolesPermissionsMatrixWidget />
+      )}
+
+      {/* ==================================================================== */}
+      {/* TAB 5: ACCESS REQUESTS (طلبات الصلاحيات) */}
+      {/* ==================================================================== */}
+      {activeTab === 'access-requests' && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Send className="w-5 h-5 text-champagne-dark" />
+              طلبات الصلاحيات والوصول الاستثنائي (Access Requests)
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
+                  <th className="py-3 px-4">رقم الطلب</th>
+                  <th className="py-3 px-4">الموظف</th>
+                  <th className="py-3 px-4">الأدوار المطلوبة</th>
+                  <th className="py-3 px-4">المبرر التشغيلي</th>
+                  <th className="py-3 px-4 text-center">الحالة</th>
+                  <th className="py-3 px-4 text-center">الإجراء</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {accessRequests.map((req) => (
+                  <tr key={req.id} className="hover:bg-slate-50/80 transition">
+                    <td className="py-3 px-4 font-mono font-bold text-slate-800">{req.requestNumber}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900">{req.userName || req.userId}</td>
+                    <td className="py-3 px-4 font-mono text-slate-600">{req.requestedRoles.join(', ')}</td>
+                    <td className="py-3 px-4 text-slate-700">{req.justification}</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                        req.finalStatus === 'معتمد' ? 'bg-champagne-pale text-champagne-dark' : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        {req.finalStatus}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {req.finalStatus !== 'معتمد' ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAccessRequests(prev => prev.map(r => r.id === req.id ? { ...r, finalStatus: 'معتمد', securityAdminStatus: 'معتمد' } : r));
+                            addNotification({ title: 'اعتماد طلب صلاحية', message: `تم اعتماد طلب الصلاحية ${req.requestNumber} بنجاح.`, type: 'success' });
+                          }}
+                          className="px-3 py-1 bg-[#CFA64A] text-black rounded-xl font-bold text-[11px] cursor-pointer"
+                        >
+                          اعتماد الطلب
+                        </button>
+                      ) : (
+                        <span className="text-[11px] text-emerald-700 font-bold">معتمد ✓</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       {/* ==================================================================== */}
@@ -589,7 +717,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
             </h3>
             <button
               onClick={() => setShowNewDelegationModal(true)}
-              className="px-4 py-2 bg-champagne hover:bg-champagne-dark text-black text-xs font-bold rounded-2xl shadow transition flex items-center gap-2"
+              className="px-4 py-2 bg-champagne hover:bg-champagne-dark text-black text-xs font-bold rounded-2xl shadow transition flex items-center gap-2 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               إنشاء تفويض مؤقت
@@ -611,6 +739,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     <span className="text-[10px] text-slate-400">{d.validFrom} إلى {d.validTo}</span>
                   </div>
                   <div className="text-xs space-y-1">
+                    {d.fromUserName && <div><span className="font-bold text-slate-700">من:</span> {d.fromUserName} ← <span className="font-bold">{d.toUserName}</span></div>}
                     <div><span className="font-bold text-slate-700 dark:text-slate-300">السبب:</span> {d.reason}</div>
                   </div>
                 </div>
@@ -637,7 +766,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
             </div>
             <button
               onClick={() => setShowNewSoDModal(true)}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-2xl shadow transition flex items-center gap-2"
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-2xl shadow transition flex items-center gap-2 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               إضافة قاعدة SoD جديدة
@@ -661,6 +790,109 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================================== */}
+      {/* TAB 8: ACCESS REVIEWS (المراجعات الدورية) */}
+      {/* ==================================================================== */}
+      {activeTab === 'access-reviews' && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-champagne-dark" />
+              حملات المراجعة الدورية للصلاحيات (Quarterly Access Reviews)
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
+                  <th className="py-3 px-4">اسم الحملة الرقابية</th>
+                  <th className="py-3 px-4">الربع السنوي</th>
+                  <th className="py-3 px-4">المراجع المسؤول</th>
+                  <th className="py-3 px-4 text-center">عدد الحسابات المراجعة</th>
+                  <th className="py-3 px-4 text-center">الصلاحيات المسحوبة</th>
+                  <th className="py-3 px-4 text-center">الحالة</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {accessReviews.map((rev) => (
+                  <tr key={rev.id} className="hover:bg-slate-50/80 transition">
+                    <td className="py-3 px-4 font-bold text-slate-900">{rev.campaignName}</td>
+                    <td className="py-3 px-4 font-mono text-slate-700">{rev.quarter}</td>
+                    <td className="py-3 px-4 text-slate-700">{rev.reviewerName || 'رئيس مجلس الإدارة'}</td>
+                    <td className="py-3 px-4 text-center font-bold">{rev.totalUsersReviewed}</td>
+                    <td className="py-3 px-4 text-center font-bold text-rose-600">{rev.revokedPermissionsCount}</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="px-2.5 py-1 bg-champagne-pale text-champagne-dark rounded-full font-bold text-[10px]">
+                        {rev.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================================== */}
+      {/* TAB 9: ACTIVE SESSIONS (الجلسات والأجهزة) */}
+      {/* ==================================================================== */}
+      {activeTab === 'sessions' && (
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <Smartphone className="w-5 h-5 text-champagne-dark" />
+              الجلسات النشطة والأجهزة المتصلة (Active Sessions)
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
+                  <th className="py-3 px-4">المستخدم</th>
+                  <th className="py-3 px-4">الشركة النشطة</th>
+                  <th className="py-3 px-4">الجهاز والمتصفح</th>
+                  <th className="py-3 px-4">عنوان IP</th>
+                  <th className="py-3 px-4 text-center">الحالة</th>
+                  <th className="py-3 px-4 text-center">إجراء أمني</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {sessions.map((sess) => (
+                  <tr key={sess.id} className="hover:bg-slate-50/80 transition">
+                    <td className="py-3 px-4 font-bold text-slate-900">{sess.userName || sess.userId}</td>
+                    <td className="py-3 px-4 font-mono font-bold text-champagne-dark">{sess.companyCode || sess.activeCompanyId}</td>
+                    <td className="py-3 px-4 text-slate-600">{sess.userAgent}</td>
+                    <td className="py-3 px-4 font-mono text-slate-600">{sess.ipAddress}</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                        sess.status === 'نشطة' ? 'bg-champagne-pale text-champagne-dark' : 'bg-rose-100 text-rose-700'
+                      }`}>
+                        {sess.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      {sess.status === 'نشطة' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSessions(prev => prev.map(s => s.id === sess.id ? { ...s, status: 'ملغاة إجبارياً' } : s));
+                            addNotification({ title: 'إنهاء الجلسة عن بُعد', message: `تم إنهاء جلسة (${sess.userName || sess.userId}) فوراً.`, type: 'warning' });
+                          }}
+                          className="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl font-bold text-[11px] cursor-pointer"
+                        >
+                          إنهاء الجلسة
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -713,6 +945,98 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: NEW DELEGATION */}
+      {showNewDelegationModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50" dir="rtl">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+              <h3 className="text-base font-black text-slate-900">إنشاء تفويض صلاحيات مؤقت</h3>
+              <button type="button" onClick={() => setShowNewDelegationModal(false)} className="text-slate-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateDelegation} className="space-y-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">المفوِّض (البريد الإلكتروني)</label>
+                <select
+                  value={newDelegationForm.fromUserEmail}
+                  onChange={(e) => setNewDelegationForm({ ...newDelegationForm, fromUserEmail: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
+                >
+                  {users.map(u => <option key={u.id} value={u.email}>{u.fullName} ({u.email})</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">المفوَّض إليه (البديل)</label>
+                <select
+                  value={newDelegationForm.toUserEmail}
+                  onChange={(e) => setNewDelegationForm({ ...newDelegationForm, toUserEmail: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
+                >
+                  {users.map(u => <option key={u.id} value={u.email}>{u.fullName} ({u.email})</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">السبب التشغيلي للتفويض</label>
+                <input
+                  type="text"
+                  required
+                  value={newDelegationForm.reason}
+                  onChange={(e) => setNewDelegationForm({ ...newDelegationForm, reason: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => setShowNewDelegationModal(false)} className="px-4 py-2 bg-slate-100 rounded-xl font-bold">إلغاء</button>
+                <button type="submit" className="px-5 py-2 bg-[#CFA64A] text-black rounded-xl font-black">اعتماد التفويض</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: NEW SOD RULE */}
+      {showNewSoDModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50" dir="rtl">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+              <h3 className="text-base font-black text-slate-900">إضافة قاعدة فصل مهام رقابية (SoD)</h3>
+              <button type="button" onClick={() => setShowNewSoDModal(false)} className="text-slate-400 hover:text-black">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateSoD} className="space-y-3">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">اسم القاعدة الرقابية *</label>
+                <input
+                  type="text"
+                  required
+                  value={newSoDForm.name}
+                  onChange={(e) => setNewSoDForm({ ...newSoDForm, name: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
+                  placeholder="مثال: فصل اعتماد مسير الرواتب عن تعديل الآيبان"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">الوصف والضابط الرقابي *</label>
+                <input
+                  type="text"
+                  required
+                  value={newSoDForm.description}
+                  onChange={(e) => setNewSoDForm({ ...newSoDForm, description: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2"
+                  placeholder="وصف التعارض الرقابي..."
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onClick={() => setShowNewSoDModal(false)} className="px-4 py-2 bg-slate-100 rounded-xl font-bold">إلغاء</button>
+                <button type="submit" className="px-5 py-2 bg-red-600 text-white rounded-xl font-black">حفظ القاعدة</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -167,10 +167,10 @@ export const AppShell: React.FC<AppShellProps> = ({
         style={{
           marginRight: isDesktop && isRtl && !desktopSidebarCollapsed ? 'var(--sidebar-width)' : '0px',
           marginLeft: isDesktop && !isRtl && !desktopSidebarCollapsed ? 'var(--sidebar-width)' : '0px',
-          width: '100%',
-          maxWidth: '100vw',
+          width: isDesktop && !desktopSidebarCollapsed ? 'calc(100% - var(--sidebar-width))' : '100%',
+          maxWidth: isDesktop && !desktopSidebarCollapsed ? 'calc(100vw - var(--sidebar-width))' : '100vw',
           minWidth: 0,
-          transition: 'margin 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'margin 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {/* Sticky Header Navbar */}

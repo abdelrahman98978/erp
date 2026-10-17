@@ -128,7 +128,14 @@ export const RBACProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = authService.onAuthStateChange((_event, session) => {
       syncRole(session?.user?.profile || authService.getCurrentUser());
     });
-    return () => subscription.unsubscribe();
+    const handleDirectAuthUpdate = (e: any) => {
+      syncRole(e.detail?.profile ?? authService.getCurrentUser());
+    };
+    window.addEventListener('alsulaim-auth-updated', handleDirectAuthUpdate);
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('alsulaim-auth-updated', handleDirectAuthUpdate);
+    };
   }, []);
 
   const isSuperAdmin = currentRoleProfile.role === 'SUPER_ADMIN';

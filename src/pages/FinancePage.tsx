@@ -118,6 +118,7 @@ export const FinancePage: React.FC = () => {
       case 'transfers':
         return 'transfers';
       case 'vat-declaration':
+      case 'invoices':
       case 'zatca':
       case 'tax':
         return 'vat-declaration';
@@ -125,6 +126,7 @@ export const FinancePage: React.FC = () => {
         return 'trial-balance';
       case 'income-statement':
         return 'income-statement';
+      case 'balance-sheet':
       case 'financial-position':
         return 'financial-position';
       case 'cash-flow':
@@ -182,13 +184,18 @@ export const FinancePage: React.FC = () => {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
 
   useEffect(() => {
-    Promise.all([
-      realErpDataStore.getRecords<JournalEntry>('finance_journals', MOCK_JOURNALS),
-      realErpDataStore.getRecords<Voucher>('finance_vouchers', MOCK_VOUCHERS),
-    ]).then(([j, v]) => {
-      setJournals(j);
-      setVouchers(v);
-    });
+    const loadFinanceRecords = () => {
+      Promise.all([
+        realErpDataStore.getRecords<JournalEntry>('finance_journals', MOCK_JOURNALS),
+        realErpDataStore.getRecords<Voucher>('finance_vouchers', MOCK_VOUCHERS),
+      ]).then(([j, v]) => {
+        setJournals(j);
+        setVouchers(v);
+      });
+    };
+    loadFinanceRecords();
+    window.addEventListener('erp-data-updated', loadFinanceRecords);
+    return () => window.removeEventListener('erp-data-updated', loadFinanceRecords);
   }, []);
   const [selectedBranch, setSelectedBranch] = useState<string>('ALL');
   
@@ -336,6 +343,15 @@ export const FinancePage: React.FC = () => {
 
           {/* Action Toolbar */}
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+              title="رفع واستخلاص آلي لـ 100+ فاتورة أو مستندات PDF / Word / Excel أو قيود نظام محاسبي منفصل"
+            >
+              <FileCheck className="w-3.5 h-3.5 ml-1 text-[#CFA64A]" />
+              <span>رفع واستخلاص فواتير / مستندات (100+ فاتورة / PDF / Word / Excel)</span>
+            </button>
             <button
               onClick={() => setShowAddJournalModal(true)}
               className="button-white-pill"
@@ -2039,10 +2055,21 @@ export const FinancePage: React.FC = () => {
                 </span>
               </div>
               <button
-                onClick={() => {
+                onClick={async () => {
+                  const newJ: JournalEntry = {
+                    id: `j-rec-${Date.now()}`,
+                    ref_no: `قيد تسوية #${283 + journals.length}`,
+                    date: new Date().toISOString().slice(0, 10),
+                    description: `قيد تسوية بنكية وإثبات مصاريف بنكية لشهر ${reconciliationDate}`,
+                    amount: 57.5,
+                    status: 'معتمد',
+                    branch: 'الإدارة المالية',
+                  };
+                  const updatedJ = await realErpDataStore.addRecord<JournalEntry>('finance_journals', newJ, journals);
+                  setJournals(updatedJ);
                   addNotification({
-                    title: 'اعتماد التسوية البنكية',
-                    message: `تم اعتماد وقفل التسوية البنكية لشهر ${reconciliationDate} بنجاح.`,
+                    title: 'اعتماد التسوية البنكية وترحيل القيد',
+                    message: `تم اعتماد وقفل التسوية البنكية لشهر ${reconciliationDate} وترحيل قيد التسوية (${newJ.ref_no}) بنجاح.`,
                     type: 'success',
                   });
                 }}
@@ -2228,10 +2255,22 @@ export const FinancePage: React.FC = () => {
             </div>
 
             <button
-              onClick={() => {
+              onClick={async () => {
+                const newV: Voucher = {
+                  id: `v-vat-${Date.now()}`,
+                  voucher_no: `صرف #${60 + vouchers.length}`,
+                  type: 'صرف',
+                  date: new Date().toISOString().slice(0, 10),
+                  payee_payer: `هيئة الزكاة والضريبة والجمارك ZATCA - إقرار ${vatPeriod}`,
+                  treasury: 'بنك الراجحي',
+                  amount: 50995.68,
+                  status: 'معتمد',
+                };
+                const updatedV = await realErpDataStore.addRecord<Voucher>('finance_vouchers', newV, vouchers);
+                setVouchers(updatedV);
                 addNotification({
-                  title: 'إرسال الإقرار للهيئة',
-                  message: `تم إرسال إقرار ${vatPeriod} إلكترونياً إلى بوابة هيئة الزكاة والضريبة والجمارك (ZATCA) وتم إصدار سداد رقم #9928192.`,
+                  title: 'إرسال الإقرار للهيئة وإصدار سند سداد',
+                  message: `تم إرسال إقرار ${vatPeriod} إلكترونياً إلى بوابة ZATCA وإصدار سند الصرف (${newV.voucher_no}) لسداد فاتورة سداد #9928192 بمبلغ 50,995.68 ر.س.`,
                   type: 'success',
                 });
               }}

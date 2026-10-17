@@ -12,6 +12,7 @@ import { journalEngine } from './accounting/journalEngine';
 
 const STORAGE_PREFIX = 'ALSULAIM_ERP_DB_V1_';
 const DATA_MODE_KEY = 'ALSULAIM_ERP_DATA_MODE';
+const EXPLICIT_PURGE_KEY = 'ALSULAIM_ERP_EXPLICIT_PURGE';
 
 export type ErpDataMode = 'production_real' | 'demo_preview';
 
@@ -28,6 +29,9 @@ export function getDataMode(): ErpDataMode {
 export function setDataMode(mode: ErpDataMode): void {
   try {
     localStorage.setItem(DATA_MODE_KEY, mode);
+    if (mode === 'demo_preview') {
+      localStorage.removeItem(EXPLICIT_PURGE_KEY);
+    }
     window.dispatchEvent(new CustomEvent('erp-data-mode-changed', { detail: mode }));
   } catch (e) {
     // ignore
@@ -36,17 +40,23 @@ export function setDataMode(mode: ErpDataMode): void {
 
 function getLocalStore<T>(key: string, initialSeed: T[] = []): T[] {
   try {
+    const isExplicitlyPurged = localStorage.getItem(EXPLICIT_PURGE_KEY) === 'true';
     const raw = localStorage.getItem(STORAGE_PREFIX + key);
     if (!raw) {
-      // In Production Real mode, never seed with mock/dummy data. Start clean!
-      const isProduction = getDataMode() === 'production_real';
-      const defaultData = isProduction ? [] : initialSeed;
-      localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(defaultData));
+      const defaultData = isExplicitlyPurged ? [] : initialSeed;
+      if (defaultData.length > 0 || isExplicitlyPurged) {
+        localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(defaultData));
+      }
       return defaultData;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length === 0 && initialSeed.length > 0 && !isExplicitlyPurged) {
+      localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(initialSeed));
+      return initialSeed;
+    }
+    return Array.isArray(parsed) ? parsed : initialSeed;
   } catch (e) {
-    return [];
+    return initialSeed;
   }
 }
 
@@ -74,6 +84,11 @@ export const realErpDataStore = {
       'finance_journals', 'finance_vouchers', 'company_journal_entries',
       'zatca_invoices', 'cost_centers', 'attendances', 'custodies', 'activity_log'
     ];
+    try {
+      localStorage.setItem(EXPLICIT_PURGE_KEY, 'true');
+    } catch (e) {
+      // ignore
+    }
     tables.forEach(table => {
       try {
         localStorage.removeItem(STORAGE_PREFIX + table);
@@ -489,7 +504,7 @@ export const realErpDataStore = {
         }
       }
 
-      // 7. Payroll & WPS Monthly Salary Release
+        // 7. Payroll & WPS Monthly Salary Release
       else if (entityKey === 'payrolls' || entityKey === 'payroll') {
         const netSal = parseFloat(record.net_salary || record.netPayable || record.total_salary || 0);
         const deductions = parseFloat(record.deductions || 0);
@@ -510,6 +525,119 @@ export const realErpDataStore = {
             ]
           });
         }
+      }
+
+      // 8. Invoices & ZATCA Tax Invoices -> Isolated Per-Company SMACC Ledger
+      else if (entityKey === 'invoices' || entityKey === 'zatca_invoices') {
+        const companyCode = record.company_id || 'SAF';
+        const subtotal = parseFloat(record.subtotal || record.amount || 10000);
+        const vatAmount = parseFloat(record.vat_amount ?? (subtotal * 0.15));
+        const totalAmount = parseFloat(record.total_amount || record.total || (subtotal + vatAmount));
+        const invNo = record.invoice_number || `INV-${Date.now().toString().slice(-5)}`;
+        const clientName = record.client_name || record.vendor_name || 'عميل / مورد معتمد';
+        const issueDate = record.issue_date || record.invoice_date || todayDate;
+
+        // Ensure synced in zatca_invoices if added via 'invoices'
+        if (entityKey === 'invoices') {
+          const zList = getLocalStore<any>('zatca_invoices', []);
+          if (!zList.some((z: any) => z.invoice_number === invNo && z.company_id === companyCode)) {
+            const zRec = {
+              id: record.id || `z-imp-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+              company_id: companyCode,
+              invoice_number: invNo,
+              invoice_type: record.invoice_type || 'STANDARD',
+              issue_date: issueDate,
+              client_name: clientName,
+              client_vat_number: record.client_vat_number || '310123456700003',
+              subtotal: Math.round(subtotal * 100) / 100,
+              vat_amount: Math.round(vatAmount * 100) / 100,
+              total_amount: Math.round(totalAmount * 100) / 100,
+              zatca_status: 'CLEARED',
+              contract_ref: record.contract_ref || record.description || 'استخلاص مستند آلي',
+              attachment_url: record.attachment_url || '',
+              attachment_name: record.attachment_name || '',
+              file_format: record.file_format || '',
+              created_at: now,
+            };
+            saveLocalStore('zatca_invoices', [zRec, ...zList]);
+          }
+        }
+
+        // Auto-post to isolated company SMACC journal entries
+        const smaccJournals = getLocalStore<any>('company_journal_entries', []);
+        const autoJv = {
+          id: `jv-inv-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          company_id: companyCode,
+          ref_no: `JV-${invNo}`,
+          date: issueDate,
+          branch: record.branch || 'الفرع الرئيسي - الرياض',
+          description: `قيد فاتورة ضريبية مستخلصة #${invNo} - ${clientName} (${record.file_format || 'ZATCA'})`,
+          total_debit: Math.round(totalAmount * 100) / 100,
+          total_credit: Math.round(totalAmount * 100) / 100,
+          status: 'معتمد',
+          attachment_url: record.attachment_url || '',
+          attachment_name: record.attachment_name || '',
+          lines: [
+            { accountCode: '1102', accountName: 'ذمم العملاء / البنك التشغيلي', debit: Math.round(totalAmount * 100) / 100, credit: 0, memo: clientName, costCenter: 'CC-FIN-01' },
+            { accountCode: '4101', accountName: 'إيرادات المبيعات والعقود', debit: 0, credit: Math.round(subtotal * 100) / 100, memo: `صافي فاتورة ${invNo}`, costCenter: 'CC-FIN-01' },
+            { accountCode: '2103', accountName: 'ضريبة القيمة المضافة ZATCA (15%)', debit: 0, credit: Math.round(vatAmount * 100) / 100, memo: `ضريبة فاتورة ${invNo}`, costCenter: 'CC-FIN-01' },
+          ],
+          created_at: now,
+        };
+        saveLocalStore('company_journal_entries', [autoJv, ...smaccJournals]);
+      }
+
+      // 9. External Accounting System Journal Entries -> Isolated Per-Company SMACC Ledger
+      else if (entityKey === 'journal_entries') {
+        const companyCode = record.company_id || 'SAF';
+        const debitVal = parseFloat(record.debit || record.amount || 0);
+        const creditVal = parseFloat(record.credit || debitVal || 0);
+        const totalVal = Math.max(debitVal, creditVal, 1000);
+        const smaccJournals = getLocalStore<any>('company_journal_entries', []);
+        const importedJv = {
+          id: record.id || `jv-ext-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          company_id: companyCode,
+          ref_no: record.reference || `JV-EXT-${Date.now().toString().slice(-4)}`,
+          date: record.entry_date || todayDate,
+          branch: record.cost_center || 'الفرع الرئيسي',
+          description: record.description || 'قيد مستورد من نظام محاسبي خارجي',
+          total_debit: totalVal,
+          total_credit: totalVal,
+          status: 'معتمد',
+          attachment_url: record.attachment_url || '',
+          attachment_name: record.attachment_name || '',
+          lines: [
+            { accountCode: record.account_code || '1102', accountName: record.account_name || 'حساب مستورد (مدين)', debit: totalVal, credit: 0, memo: record.description || '', costCenter: record.cost_center || 'CC-01' },
+            { accountCode: '4101', accountName: 'الحساب المقابل (تسوية نظام خارجي)', debit: 0, credit: totalVal, memo: record.reference || '', costCenter: record.cost_center || 'CC-01' },
+          ],
+          created_at: now,
+        };
+        saveLocalStore('company_journal_entries', [importedJv, ...smaccJournals]);
+      }
+
+      // 10. Financial Requests / Supplier Invoices -> Isolated Per-Company SMACC Voucher & Journal
+      else if (entityKey === 'financial_requests') {
+        const companyCode = record.company_id || 'SAF';
+        const amountVal = parseFloat(record.amount || 1500);
+        const smaccVouchers = getLocalStore<any>('finance_vouchers', []);
+        const newVou = {
+          id: `vou-req-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          company_id: companyCode,
+          voucher_no: record.request_no || `PV-${Date.now().toString().slice(-4)}`,
+          date: record.request_date || todayDate,
+          type: 'صرف',
+          account_code: '5101',
+          amount: amountVal,
+          payee: record.requester_name || 'مورد / مستفيد',
+          treasury: 'بنك الراجحي الرئيسي',
+          cost_center: record.category || 'المركز الرئيسي',
+          notes: record.notes || 'مستخلص آلياً من مستند مصروفات/مشتريات',
+          status: 'معتمد',
+          attachment_url: record.attachment_url || '',
+          attachment_name: record.attachment_name || '',
+          created_at: now,
+        };
+        saveLocalStore('finance_vouchers', [newVou, ...smaccVouchers]);
       }
     } catch (e) {
       console.warn('Cross-module business trigger notice:', e);

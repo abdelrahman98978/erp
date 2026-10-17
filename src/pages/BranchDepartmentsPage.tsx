@@ -180,54 +180,58 @@ const ALL_GROUP_ENTITIES: BranchEntity[] = [
   },
   {
     id: 'b-topaz',
-    name: '💎 شركة توباز (Topaz Group)',
-    code: 'TPZ-GRP',
+    name: '💎 شركة توباز للاستقدام والتشغيل (TOP - RC03)',
+    code: 'TOP-RC03',
     category: 'شركة مجموعة',
     location: 'الرياض - البرج الرئيسي',
     manager: 'المهندس أحمد السليم',
     staff_count: 18,
     departments: [
       { id: 'd-topaz-1', name: 'إدارة الابتكار والحلول الصناعية المستقبلي', description: 'تطوير الحلول النوعية وتوجيه الاستقدام المتقدم للمؤسسات.', head: 'م. أحمد السليم', staff_count: 8, status: 'مفعل', kpi: 'ابتكار 100%' },
-      { id: 'd-topaz-2', name: 'إدارة المشروعات والتعاقدات الإستراتيجية', description: 'إدارة المشاريع الكبرى للمجموعة وتوفير الكوادر التخصصية.', head: 'فيصل القحطاني', staff_count: 10, status: 'مفعل', kpi: '42 مشروع نشط' }
+      { id: 'd-topaz-2', name: 'إدارة المشروعات والتعاقدات الإستراتيجية', description: 'إدارة المشاريع الكبرى للمجموعة وتوفير الكوادر التخصصية.', head: 'فيصل القحطاني', staff_count: 10, status: 'مفعل', kpi: '42 مشروع نشط' },
+      { id: 'd-topaz-3', name: 'النظام المحاسبي المستقل لشركة توباز (SMACC Ledger)', description: 'دفتر أستاذ مستقل، فواتير ضريبية ZATCA، ومراكز تكلفة خاصة بتوباز.', head: 'ماجد الشهري', staff_count: 4, status: 'مفعل', kpi: 'عزل مالي 100%' }
     ]
   },
   {
     id: 'b-ruwad',
-    name: '🏗️ دار الرواد (Dar Al-Ruwad)',
-    code: 'RWD-EST',
+    name: '🏗️ شركة دار الرواد للاستقدام والحلول العمالية (DAR - RC04)',
+    code: 'DAR-RC04',
     category: 'شركة مجموعة',
     location: 'الرياض - حي طريق الملك فهد',
     manager: 'سليمان العتيبي',
     staff_count: 15,
     departments: [
-      { id: 'd-ruwad-1', name: 'إدارة التطوير العقاري والاستثمار النوعي', description: 'تطوير المقرات والمباني الإدارية ومجمعات الإيواء التابعة.', head: 'سليمان العتيبي', staff_count: 7, status: 'مفعل', kpi: 'استثمار عقاري 98%' },
-      { id: 'd-ruwad-2', name: 'إدارة إدارة الأصول والأملاك التجارية', description: 'إدارة الأصول التأجيرية والمباني الاستثمارية لمجموعة السليم.', head: 'خالد المطيري', staff_count: 8, status: 'مفعل', kpi: 'عائد استثماري +14%' }
+      { id: 'd-ruwad-1', name: 'إدارة الاستقدام والحلول العمالية للمشاريع', description: 'توريد الكوادر المهنية والعمالية وإدارة عقود مساند وقوى.', head: 'سليمان العتيبي', staff_count: 7, status: 'مفعل', kpi: 'إنجاز عقود 98%' },
+      { id: 'd-ruwad-2', name: 'إدارة الأصول ومجمعات الإيواء التابعة', description: 'إدارة الأصول التشغيلية ومراكز الإيواء لشركة دار الرواد.', head: 'خالد المطيري', staff_count: 5, status: 'مفعل', kpi: 'عائد تشغيلي +14%' },
+      { id: 'd-ruwad-3', name: 'النظام المحاسبي المستقل لدار الرواد (SMACC Ledger)', description: 'شجرة حسابات مستقلة، قيود يومية، وفوترة ضريبية معزولة.', head: 'ياسر الحربي', staff_count: 3, status: 'مفعل', kpi: 'عزل مالي 100%' }
     ]
   },
   {
     id: 'b-saffir',
-    name: '🤝 شركة السفير (Al-Saffir Group)',
-    code: 'SFR-AGY',
+    name: '🤝 شركة السفير الماسي للاستقدام (SAF - RC01)',
+    code: 'SAF-RC01',
     category: 'شركة مجموعة',
     location: 'الرياض - طريق العليا العام',
     manager: 'عبد العزيز السليم',
-    staff_count: 12,
+    staff_count: 24,
     departments: [
-      { id: 'd-saffir-1', name: 'إدارة خدمات نقل الكفالة والتنازل', description: 'إدارة طلبات نقل الخدمة والتنازل وفترة التجربة (10 أيام).', head: 'عبد العزيز السليم', staff_count: 6, status: 'مفعل', kpi: '42 نقل نهائي' },
-      { id: 'd-saffir-2', name: 'قسم الدبلوماسية والتواصل الخارجي', description: 'التنسيق مع السفارات ومراكز التوثيق والقنصليات.', head: 'ناصر السبيعي', staff_count: 6, status: 'مفعل', kpi: 'اعتماد 100%' }
+      { id: 'd-saffir-1', name: 'إدارة عقود مساند وتفاويض إنجاز والتفييز', description: 'إصدار عقود الاستقدام الموحدة، الربط مع مساند، وتفاويض السفارات.', head: 'عبد العزيز السليم', staff_count: 10, status: 'مفعل', kpi: '940 عقد موثق' },
+      { id: 'd-saffir-2', name: 'إدارة خدمات نقل الكفالة والتنازل وفترة التجربة', description: 'إدارة طلبات نقل الخدمة والتنازل وفترة التجربة (90 يوماً).', head: 'ناصر السبيعي', staff_count: 8, status: 'مفعل', kpi: 'اعتماد 100%' },
+      { id: 'd-saffir-3', name: 'النظام المحاسبي المستقل للسفير الماسي (SMACC Ledger)', description: 'دفتر الأستاذ العام، سندات القبض والصرف، والفوترة الإلكترونية ZATCA.', head: 'نورة القحطاني', staff_count: 6, status: 'مفعل', kpi: 'مطابقة ZATCA 100%' }
     ]
   },
   {
-    id: 'b-masi',
-    name: '💠 شركة الماسي (Al-Masi Luxury)',
-    code: 'MASI-LUX',
+    id: 'b-yaqoot',
+    name: '💠 شركة ياقوت نجد لتشغيل الكوادر والتأجير (YAQ - RC02)',
+    code: 'YAQ-RC02',
     category: 'شركة مجموعة',
     location: 'الرياض - حي العليا والخدمات الفاخرة',
     manager: 'بندر الهويريني',
-    staff_count: 10,
+    staff_count: 20,
     departments: [
-      { id: 'd-masi-1', name: 'إدارة باقات التأجير والخدمات المنزلية VIP', description: 'تصميم باقات التأجير الفاخرة للكوادر المدربة وتأمين العيوب.', head: 'بندر الهويريني', staff_count: 5, status: 'مفعل', kpi: 'رضا العملاء 99%' },
-      { id: 'd-masi-2', name: 'قسم الضمان والبديل الفوري خلال 24 ساعة', description: 'توفير البديل الفوري وتغطية التأمين الشامل للنزل والعملاء.', head: 'هند العلي', staff_count: 5, status: 'مفعل', kpi: 'استبدال 24h' }
+      { id: 'd-yaq-1', name: 'إدارة باقات التأجير الشهري والسنوي وخدمة معروف', description: 'تصميم وإدارة عقود التأجير للعمالة المنزلية والسائقين وتأمين العيوب.', head: 'بندر الهويريني', staff_count: 9, status: 'مفعل', kpi: 'رضا العملاء 99%' },
+      { id: 'd-yaq-2', name: 'قسم الضمان والبديل الفوري خلال 24 ساعة', description: 'توفير البديل الفوري وتغطية التأمين الشامل للنزل والعملاء.', head: 'هند العلي', staff_count: 6, status: 'مفعل', kpi: 'استبدال 24h' },
+      { id: 'd-yaq-3', name: 'النظام المحاسبي المستقل لياقوت نجد (SMACC Ledger)', description: 'دفتر محاسبي مستقل لعقود التأجير وإيرادات الباقات والضريبة.', head: 'وليد الدوسري', staff_count: 5, status: 'مفعل', kpi: 'عزل مالي 100%' }
     ]
   },
   {
@@ -650,7 +654,7 @@ export const BranchDepartmentsPage: React.FC = () => {
               onClick={() => setSelectedEntityId(e.id)}
               className={`p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
                 isSelected
-                  ? 'bg-gradient-to-br from-charcoal to-black text-white border-champagne shadow-xl scale-[1.02]'
+                  ? 'bg-[#000000] bg-gradient-to-br from-[#1D2428] to-black text-white border-champagne shadow-xl scale-[1.02]'
                   : 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border-zinc-200 dark:border-zinc-800 hover:border-champagne/40 hover:shadow-md'
               }`}
             >

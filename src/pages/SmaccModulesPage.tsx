@@ -208,10 +208,20 @@ const INITIAL_SALES_REPS: SmaccSalesRep[] = [
 ];
 
 export const SmaccModulesPage: React.FC = () => {
-  const { addNotification } = useAppStore();
-  const [activeModuleTab, setActiveModuleTab] = useState<'fixed-assets' | 'inventory' | 'sales-collectors' | 'external-links' | 'ecommerce-stores'>('ecommerce-stores');
+  const { activeTab: storeActiveTab, addNotification } = useAppStore();
+  const [activeModuleTab, setActiveModuleTab] = useState<'fixed-assets' | 'inventory' | 'sales-collectors' | 'external-links' | 'ecommerce-stores'>(() =>
+    storeActiveTab === 'sales-collectors' ? 'sales-collectors' : 'ecommerce-stores'
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [syncingStoreId, setSyncingStoreId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (storeActiveTab === 'sales-collectors') {
+      setActiveModuleTab('sales-collectors');
+    } else if (storeActiveTab === 'smacc-modules') {
+      setActiveModuleTab('ecommerce-stores');
+    }
+  }, [storeActiveTab]);
 
   // Database Persistent State
   const [stores, setStores] = useState<EcommerceStore[]>([]);

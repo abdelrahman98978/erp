@@ -101,27 +101,27 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   // 1. Flow State (`landing` | `login` | `launcher` | `workspace`)
   String _flowState = 'landing';
   SystemPortalOption _selectedPortal = ErpSystemData.systemPortals.first;
-  String _activeTab = 'dashboard';
-  String _activeTabTitle = 'الرئيسية والمؤشرات التشغيلية';
+  CorporateDepartment _activeDepartment = ErpSystemData.departments['recruitment']!;
+  String _activeTab = 'recruitment-contracts';
+  String _activeTabTitle = 'عقود الاستقدام الموثقة (مساند)';
   ErpBranchOption _selectedBranch = ErpSystemData.branches.first;
 
-  // 2. Assistant Persona (`faris` | `noura`) & Mood (`😊`)
-  String _persona = 'faris';
-  String _userMoodEmoji = '😊';
-
-  // 3. Auth Form State (`LoginPage.tsx`)
+  // 2. Unified Auth Form State (`LoginPage.tsx`)
   String _authMode = 'signin'; // 'signin' | 'register'
   bool _portalSwitcherExpanded = false;
+  String _staffDirectoryCompanyFilter = 'ALL';
+  String? _manualSignInDeptOverride;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   String? _authError;
-  String _authenticatedUserName = 'م. سلطان خالد السليم';
-  String _authenticatedUserRole = 'مدير عمليات الاستقدام ومساند';
+  String _authenticatedUserName = 'م. سلطان بن خالد السليم';
+  String _authenticatedUserRole = 'مدير قسم الاستقدام وتوثيق مساند';
 
   // 3-Step Registration Wizard State (`LoginPage.tsx`)
   int _regStep = 1; // 1..3
-  String _regAccountType = 'client'; // 'client' | 'employee' | 'agency'
+  String _regAccountType = 'employee'; // 'employee' | 'client' | 'agency'
+  String _regSelectedDepartmentId = 'recruitment';
   final TextEditingController _regFullNameController = TextEditingController();
   final TextEditingController _regNationalIdController = TextEditingController();
   final TextEditingController _regPhoneController = TextEditingController();
@@ -134,10 +134,10 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   String _launcherSearch = '';
   String _sidebarSearch = '';
   final Map<String, bool> _expandedSidebarGroups = {
-    'crm-section': true,
-    'operations-section': true,
-    'hr-section': false,
     'finance-section': true,
+    'operations-section': true,
+    'crm-section': true,
+    'hr-section': true,
     'governance-section': true,
   };
 
@@ -194,6 +194,9 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   void _applyPortalDefaults(SystemPortalOption portal) {
     _emailController.text = portal.demoEmail;
     _passwordController.text = 'Alsulaim@2026';
+    _activeDepartment = ErpSystemData.departments[portal.defaultDepartmentId] ??
+        ErpSystemData.departments['recruitment']!;
+    _regSelectedDepartmentId = _activeDepartment.id;
     _authError = null;
   }
 
@@ -208,17 +211,17 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           message: 'تم ربط وتوثيق العقد إلكترونياً وتفعيل ضمان الـ 90 يوماً في [$co].',
           timestamp: 'منذ دقيقتين',
           companyCode: co,
-          tabKey: 'recruitment-contracts',
-          tabTitle: 'عقود الاستقدام الموثقة (مساند)',
+          tabKey: _activeDepartment.defaultTab,
+          tabTitle: _activeDepartment.defaultTabTitle,
         ),
         ErpNotificationItem(
           id: 'NTF-102',
-          title: 'اعتماد فاتورة ZATCA المرحلة الثانية',
-          message: 'تم التوقيع التشفيري ECDSA وربط الهاش التسلسلي PIH بنجاح.',
+          title: 'اعتماد فاتورة ZATCA المرحلة الثانية (نظام سماك)',
+          message: 'تم التوقيع التشفيري ECDSA وترحيل القيد المزدوج للأستاذ العام بنجاح.',
           timestamp: 'منذ 10 دقائق',
           companyCode: co,
-          tabKey: 'zatca',
-          tabTitle: 'الفاتورة الإلكترونية ZATCA المرحلة 2',
+          tabKey: 'smacc-accounting',
+          tabTitle: '١. الأستاذ العام وشجرة الحسابات (SMACC GL)',
         ),
       ]);
   }
@@ -259,7 +262,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
     final co = _selectedPortal.companyId == 'all' ? 'GRP' : _selectedPortal.companyId;
     final title = customTitle ?? 'تنبيه فوري — ${_selectedPortal.nameAr}';
     final body = customBody ??
-        'تم تنفيذ العملية بنجاح وتحديث السجلات السحابية للكيان [$co] في الخلفية.';
+        'تم تنفيذ العملية بنجاح وتحديث السجلات السحابية لقسم [${_activeDepartment.shortNameAr}] في [$co].';
 
     setState(() {
       _notifications.insert(
@@ -298,7 +301,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   Future<void> _scheduleBackgroundNotification5s() async {
     final co = _selectedPortal.companyId == 'all' ? 'GRP' : _selectedPortal.companyId;
     final title = 'إشعار خلفي مجدول — ${_selectedPortal.nameAr}';
-    final body = 'تم تنفيذ المزامنة الخلفية للكيان [$co] حتى مع إغلاق الشاشة.';
+    final body = 'تم تنفيذ المزامنة الخلفية لقسم [${_activeDepartment.shortNameAr}] في [$co] حتى مع إغلاق الشاشة.';
 
     try {
       await _nativeChannel.invokeMethod('scheduleBackgroundNotification', {
@@ -361,7 +364,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
     return matching.isNotEmpty ? matching : _allRecords.take(3).toList();
   }
 
-  // Navigation & Portal Isolation Handlers
+  // Navigation & Unified Portal + Department Isolation Handlers
   void _navigateToCompanyLogin(String rawCode) {
     final resolved = ErpSystemData.resolvePortalByCode(rawCode);
     setState(() {
@@ -373,12 +376,32 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
     });
   }
 
+  void _handleQuickStaffLogin(StaffDirectoryAccount staff) {
+    final resolvedPortal = ErpSystemData.resolvePortalByCode(staff.companyId);
+    final resolvedDept =
+        ErpSystemData.departments[staff.departmentId] ?? ErpSystemData.departments['recruitment']!;
+    setState(() {
+      _emailController.text = staff.email;
+      _passwordController.text = 'Alsulaim@2026';
+      _authError = null;
+      _selectedPortal = resolvedPortal;
+      _activeDepartment = resolvedDept;
+      _authenticatedUserName = staff.fullName;
+      _authenticatedUserRole = staff.role;
+      _activeTab = resolvedDept.defaultTab;
+      _activeTabTitle = resolvedDept.defaultTabTitle;
+      _seedInitialNotifications(resolvedPortal);
+      _flowState = 'workspace';
+    });
+    _initializeNativeMobileEngine();
+  }
+
   void _handleSignIn() {
-    final email = _emailController.text.trim().toLowerCase();
+    final identifier = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (email.isEmpty || !email.contains('@')) {
-      setState(() => _authError = 'يرجى إدخال البريد الإلكتروني المؤسسي بشكل صحيح.');
+    if (identifier.isEmpty) {
+      setState(() => _authError = 'يرجى إدخال البريد الإلكتروني المؤسسي أو اسم المستخدم للقسم.');
       return;
     }
     if (password.length < 4) {
@@ -386,29 +409,24 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
       return;
     }
 
-    // Strict Cross-Company Tenant Isolation Check (`validateCompanyAccess` in `authService.ts`)
-    final otherPortal = ErpSystemData.mainSubsidiaryCompanies.where(
-      (p) =>
-          p.companyId != _selectedPortal.companyId &&
-          _selectedPortal.companyId != 'all' &&
-          email.endsWith('@${p.emailDomain}'),
+    // Unified Corporate Login Resolution: Auto-detects Company + Department from Employee Account
+    final resolved = ErpSystemData.resolveUnifiedCredentials(
+      identifier,
+      fallbackCompanyCode: _selectedPortal.companyId,
+      fallbackDepartmentId: _manualSignInDeptOverride,
     );
-    if (otherPortal.isNotEmpty) {
-      final other = otherPortal.first;
-      setState(() {
-        _authError =
-            'عذراً، هذا الحساب يتبع (${other.nameAr} - @${other.emailDomain}) ولا يمكنه الدخول عبر بوابة (${_selectedPortal.nameAr}) المعزولة.';
-      });
-      return;
-    }
 
     setState(() {
       _authError = null;
-      _authenticatedUserName = _selectedPortal.demoEmployeeName;
-      _authenticatedUserRole = _selectedPortal.demoRole;
-      _activeTab = _selectedPortal.targetTab;
-      _activeTabTitle = _selectedPortal.targetTitle;
-      _seedInitialNotifications(_selectedPortal);
+      _selectedPortal = resolved.portal;
+      _activeDepartment = resolved.department;
+      _authenticatedUserName =
+          resolved.staffAccount?.fullName ?? resolved.portal.demoEmployeeName;
+      _authenticatedUserRole =
+          resolved.staffAccount?.role ?? '${resolved.department.nameAr} — ${resolved.portal.nameAr}';
+      _activeTab = resolved.department.defaultTab;
+      _activeTabTitle = resolved.department.defaultTabTitle;
+      _seedInitialNotifications(resolved.portal);
       _flowState = 'workspace';
     });
 
@@ -420,23 +438,26 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
       _handleLogout();
       return;
     }
+    if (href == 'profile') {
+      _openEmployeeProfileModal();
+      return;
+    }
 
-    // Strict KAS Exclusive Guard (`App.tsx` lines 217-222)
-    const kasExclusiveTabs = [
-      'kas-suite',
-      'kas-portal',
-      'kas-standalone',
-      'kas-company',
-      'kas-etmad',
-      'tenders-boq',
-    ];
-    if (_selectedPortal.companyId != 'all' &&
-        _selectedPortal.companyId != 'KAS' &&
-        kasExclusiveTabs.contains(href)) {
+    // Strict Department + Company Isolation Guard (`isTabAuthorized`)
+    final authorized = ErpSystemData.isTabAuthorized(
+      departmentId: _activeDepartment.id,
+      companyId: _selectedPortal.companyId,
+      tabHref: href,
+    );
+    if (!authorized) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: ErpTokens.statusDanger,
-          content: Text('🔒 عذراً، جناح منافسات كاس (KAS Suite) معزول ومقفل لشركة كاس فقط.'),
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+            '🔒 عذراً، حسابك مقيد بـ (${_activeDepartment.nameAr}) في (${_selectedPortal.nameAr}) فقط ولا يملك صلاحية الدخول لهذا القسم.',
+            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Colors.white),
+          ),
         ),
       );
       return;
@@ -598,18 +619,18 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
                   children: [
-                    // Eyebrow Badge (`LandingPage.tsx` lines 302-307)
+                    // Eyebrow Badge (`LandingPage.tsx`)
                     Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: ErpTokens.pillTagMint(
-                        'منظومة أعمال متكاملة • KHALID AL-SULAIM GROUP',
-                        icon: Icons.auto_awesome_rounded,
+                        'منظومة أعمال مؤسسية متكاملة • KHALID AL-SULAIM GROUP',
+                        icon: Icons.verified_user_rounded,
                         fontSize: 10.5,
                       ),
                     ),
                     const SizedBox(height: 14),
 
-                    // Official Flag Slogan (`LandingPage.tsx` lines 310-315)
+                    // Official Flag Slogan (`LandingPage.tsx`)
                     const Text(
                       'نستثمر في الفرص..',
                       style: TextStyle(
@@ -630,7 +651,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      'بوابة التشغيل الذكي والحوكمة الرقمية لمجموعة خالد السليم: تنوع في القطاعات، قوة في التنفيذ، واستدامة في النمو. منظومة سحابية متقدمة تدير شركات المجموعة والمراكز المستقلة ببيئات عمل معزولة ومركز قيادة موحد للأداء والمالية والربط الحكومي.',
+                      'بوابة الحوكمة والتشغيل المؤسسي لمجموعة خالد السليم: تنوع في القطاعات، قوة في التنفيذ، واستدامة في النمو. بوابة نفاذ موحدة توجه كل موظف تلقائياً إلى قسمه المخصص داخل شركته مع نظام سماك المحاسبي (SMACC) بـ 6 تقسيمات قياسية.',
                       style: TextStyle(
                         fontSize: 12.5,
                         color: Color(0xFF52525B),
@@ -639,7 +660,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     ),
                     const SizedBox(height: 16),
 
-                    // Primary & Secondary CTA Pills (`LandingPage.tsx` lines 323-342)
+                    // Primary & Secondary CTA Pills
                     Row(
                       children: [
                         Expanded(
@@ -655,11 +676,11 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                               child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.login_rounded, size: 16, color: Colors.white),
+                                  Icon(Icons.login_rounded, size: 16, color: ErpTokens.goldLight),
                                   SizedBox(width: 6),
                                   Text(
-                                    'بوابات دخول الشركات المستقلة',
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.white),
+                                    '🏛️ بوابة النفاذ الموحدة للأقسام والشركات',
+                                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Colors.white),
                                   ),
                                 ],
                               ),
@@ -678,7 +699,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                               border: Border.all(color: ErpTokens.hairlineLight),
                             ),
                             child: const Text(
-                              'Super Admin',
+                              '🛡️ الإدارة العليا',
                               style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
                             ),
                           ),
@@ -687,7 +708,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     ),
                     const SizedBox(height: 14),
 
-                    // Compliance & Vision 2030 Badges (`LandingPage.tsx` lines 345-357)
+                    // Compliance & Vision 2030 Badges
                     Wrap(
                       spacing: 10,
                       runSpacing: 6,
@@ -709,16 +730,16 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                             Text('منصة مساند و HRSD', style: TextStyle(fontSize: 11, color: Color(0xFF3F3F46), fontWeight: FontWeight.w600)),
                           ],
                         ),
-                        Text('• رؤية المملكة 2030', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.ink)),
+                        Text('• 🇸🇦 رؤية المملكة 2030', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.ink)),
                       ],
                     ),
                     const SizedBox(height: 20),
 
-                    // 3D Saudi Assistant Card (Faris & Noura — `LandingPage.tsx` lines 360-510)
+                    // Institutional Corporate Governance & SMACC 6-Division Panel (Replaces AI Mascot Card)
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: ErpTokens.cardPricingDecoration(
-                        borderColor: ErpTokens.champagneGold.withValues(alpha: 0.45),
+                        borderColor: ErpTokens.champagneGold.withValues(alpha: 0.55),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,96 +747,35 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
+                              const Row(
                                 children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(color: ErpTokens.statusSuccess, shape: BoxShape.circle),
-                                  ),
-                                  const SizedBox(width: 6),
+                                  Text('🏛️', style: TextStyle(fontSize: 16)),
+                                  SizedBox(width: 6),
                                   Text(
-                                    _persona == 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي',
-                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                    'بوابة الحوكمة والتشغيل المؤسسي الموحدة',
+                                    style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w900, color: ErpTokens.ink),
                                   ),
                                 ],
                               ),
-                              Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF4F4F5),
-                                  borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                                  border: Border.all(color: ErpTokens.hairlineLight),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => setState(() => _persona = 'faris'),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: _persona == 'faris' ? Colors.white : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                                        ),
-                                        child: Text(
-                                          '👨 فارس',
-                                          style: TextStyle(
-                                            fontSize: 10.5,
-                                            fontWeight: FontWeight.w800,
-                                            color: _persona == 'faris' ? ErpTokens.ink : const Color(0xFF71717A),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => setState(() => _persona = 'noura'),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: _persona == 'noura' ? Colors.white : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                                        ),
-                                        child: Text(
-                                          '👩 نُورة',
-                                          style: TextStyle(
-                                            fontSize: 10.5,
-                                            fontWeight: FontWeight.w800,
-                                            color: _persona == 'noura' ? ErpTokens.goldDark : const Color(0xFF71717A),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              ErpTokens.pillTagMint('عزل الأقسام 100%', fontSize: 9.5),
                             ],
                           ),
                           const Divider(height: 18, color: ErpTokens.hairlineLight),
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: Container(
-                                  width: 68,
-                                  height: 68,
-                                  color: ErpTokens.goldPale,
-                                  child: Image.asset(
-                                    _persona == 'noura' ? 'assets/noura.png' : 'assets/mascot.png',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, _, _) => const Icon(Icons.support_agent_rounded, size: 36, color: ErpTokens.goldDark),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  _persona == 'noura'
-                                      ? 'أهلاً بك! أنا نُورة، مرشدتك الرقمية في مجموعة خالد السليم. اختر شركتك أدناه للدخول المباشر لبوابتها المعزولة.'
-                                      : 'مرحباً بك! أنا فارس، مرشدك الرقمي في منظومة خالد السليم ERP. جميع الشركات تعمل ببيئات معزولة وإشعارات لحظية.',
-                                  style: const TextStyle(fontSize: 11.5, color: ErpTokens.ink, height: 1.45),
-                                ),
-                              ),
+                          const Text(
+                            'نظام دخول موحد يوجه كل موظف تلقائياً إلى قسمه المخصص في شركته فقط، مع هيكلة المحاسبة وجميع الأقسام وفق تقسيمات نظام سماك (SMACC) المعتمدة:',
+                            style: TextStyle(fontSize: 11.5, color: Color(0xFF3F3F46), height: 1.45),
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: const [
+                              _InstitutionalPillBadge(emoji: '📊', label: '١. الأستاذ العام وقيود اليومية'),
+                              _InstitutionalPillBadge(emoji: '🏦', label: '٢. النقدية والبنوك والسندات'),
+                              _InstitutionalPillBadge(emoji: '🧾', label: '٣. العملاء والفوترة ZATCA'),
+                              _InstitutionalPillBadge(emoji: '📑', label: '٤. الموردين والوكلاء والصرف'),
+                              _InstitutionalPillBadge(emoji: '🏗️', label: '٥. مراكز التكلفة والأصول'),
+                              _InstitutionalPillBadge(emoji: '📈', label: '٦. القوائم وميزان المراجعة'),
                             ],
                           ),
                         ],
@@ -832,19 +792,19 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'الشركات التابعة للمجموعة (بوابات معزولة)',
+                                'الشركات التابعة للمجموعة (بوابات وأقسام معزولة)',
                                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: ErpTokens.ink),
                               ),
                               SizedBox(height: 2),
                               Text(
-                                'كل شركة تمتلك مسار دخول مستقل وعزل كامل للبيانات (Strict RLS)',
+                                'يدخل كل موظف إلى قسمه المخصص داخل شركته فقط (Strict Department RLS)',
                                 style: TextStyle(fontSize: 11, color: Color(0xFF71717A)),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(width: 8),
-                        ErpTokens.pillTagMint('5 كيانات', fontSize: 10.5),
+                        ErpTokens.pillTagMint('5 شركات • 9 أقسام', fontSize: 10.5),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -854,7 +814,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
 
                     const SizedBox(height: 20),
                     const Text(
-                      'البوابات الرقمية والإدارة المركزية',
+                      'بوابات الأقسام المتخصصة والإدارة المركزية',
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: ErpTokens.ink),
                     ),
                     const SizedBox(height: 10),
@@ -909,15 +869,15 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                           decoration: BoxDecoration(
-                            color: comp.themeColor.withValues(alpha: 0.12),
+                            color: ErpTokens.primary,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            comp.companyCodeBadge,
-                            style: TextStyle(
+                            '${comp.emoji} ${comp.companyCodeBadge}',
+                            style: const TextStyle(
                               fontSize: 9.5,
                               fontWeight: FontWeight.w800,
-                              color: comp.themeColor,
+                              color: ErpTokens.goldLight,
                             ),
                           ),
                         ),
@@ -968,7 +928,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'دخول البوابة (${comp.routePath})',
+                        '${comp.emoji} دخول بوابة الشركة والأقسام',
                         style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Colors.white),
                       ),
                       const SizedBox(width: 4),
@@ -993,11 +953,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
         leading: Container(
           width: 38,
           height: 38,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             color: ErpTokens.goldPale,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(portal.icon, color: ErpTokens.goldDark, size: 20),
+          child: Text(portal.emoji, style: const TextStyle(fontSize: 18)),
         ),
         title: Text(
           portal.nameAr,
@@ -1013,7 +974,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // STAGE 2: LOGIN & REGISTRATION PAGE REPLICA (`src/pages/LoginPage.tsx`)
+  // STAGE 2: UNIFIED CORPORATE LOGIN PORTAL (`src/pages/LoginPage.tsx`)
   // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildLoginPageReplica() {
     final portal = _selectedPortal;
@@ -1023,7 +984,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // 1. Mobile Top Bar (`LoginPage.tsx` lines 886-940)
+            // 1. Mobile Top Bar (`LoginPage.tsx`)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: const BoxDecoration(
@@ -1039,7 +1000,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0F172A),
+                        color: ErpTokens.primary,
                         borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
                       ),
                       child: const Row(
@@ -1065,10 +1026,10 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.circle, size: 7, color: Color(0xFF10B981)),
+                        Text('🇸🇦', style: TextStyle(fontSize: 11)),
                         SizedBox(width: 5),
                         Text(
-                          'الربط الحكومي: مساند • ZATCA • قوى (متصل)',
+                          'بوابة موحدة • مساند • ZATCA • سماك',
                           style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF065F46)),
                         ),
                       ],
@@ -1078,19 +1039,19 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               ),
             ),
 
-            // 2. Authentication Card (`RIGHT SECTION` on mobile first due to `flex-col-reverse` in `LoginPage.tsx`!)
+            // 2. Unified Authentication Card & 1-Click Staff Directory
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Locked Sovereign Company Identity Header Card (`LoginPage.tsx` lines 955-1035)
+                  // Unified Corporate Identity Header Card
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: portal.themeColor.withValues(alpha: 0.45), width: 1.5),
+                      border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.55), width: 1.5),
                       boxShadow: ErpTokens.elevation3Shadow,
                     ),
                     child: Column(
@@ -1110,7 +1071,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                               child: Image.asset(
                                 portal.assetLogo,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, _, _) => Icon(portal.icon, color: portal.themeColor),
+                                errorBuilder: (_, _, _) => Icon(portal.icon, color: ErpTokens.ink),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -1125,28 +1086,28 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: portal.themeColor,
+                                          color: ErpTokens.primary,
                                           borderRadius: BorderRadius.circular(5),
                                         ),
                                         child: Text(
-                                          portal.companyId == 'all' ? 'GRP-ALL' : portal.companyId,
-                                          style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: Colors.white),
+                                          '🏛️ بوابة النفاذ الموحدة (${portal.companyId == 'all' ? 'GRP' : portal.companyId})',
+                                          style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: ErpTokens.goldLight),
                                         ),
                                       ),
                                       Text(
                                         '@${portal.emailDomain}',
-                                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: portal.themeColor),
-                                      ),
-                                      Text(
-                                        portal.routePath,
-                                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF71717A)),
+                                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: ErpTokens.goldDark),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 3),
-                                  Text(
-                                    portal.nameAr,
-                                    style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                  const Text(
+                                    'بوابة تسجيل الدخول المؤسسي الموحدة للأقسام',
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                                  ),
+                                  const Text(
+                                    'يدخل أي موظف تلقائياً إلى قسمه المخصص في شركته فقط',
+                                    style: TextStyle(fontSize: 10.5, color: Color(0xFF71717A)),
                                   ),
                                 ],
                               ),
@@ -1154,7 +1115,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                             TextButton(
                               onPressed: () => setState(() => _portalSwitcherExpanded = !_portalSwitcherExpanded),
                               child: Text(
-                                _portalSwitcherExpanded ? 'إخفاء' : 'تغيير البوابة',
+                                _portalSwitcherExpanded ? 'إخفاء' : 'الشركات',
                                 style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.goldDark),
                               ),
                             ),
@@ -1168,7 +1129,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                             children: ErpSystemData.systemPortals.map((p) {
                               final selected = p.id == portal.id;
                               return ChoiceChip(
-                                label: Text(p.nameAr, style: const TextStyle(fontSize: 10.5)),
+                                label: Text('${p.emoji} ${p.nameAr}', style: const TextStyle(fontSize: 10.5)),
                                 selected: selected,
                                 selectedColor: ErpTokens.primary,
                                 labelStyle: TextStyle(
@@ -1185,7 +1146,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                   ),
                   const SizedBox(height: 14),
 
-                  // Mode Switcher Tabs (`تسجيل الدخول` vs `إنشاء حساب جديد`)
+                  // Mode Switcher Tabs (`تسجيل الدخول الموحد` vs `إنشاء حساب موظف/عميل`)
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
@@ -1205,9 +1166,9 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                'تسجيل الدخول لبوابة الشركة',
+                                '🔐 دخول موحد للقسم والشركة',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w800,
                                   color: _authMode == 'signin' ? Colors.white : ErpTokens.ink,
                                 ),
@@ -1226,9 +1187,9 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                               ),
                               alignment: Alignment.center,
                               child: Text(
-                                'إنشاء حساب جديد (3 خطوات)',
+                                '📝 تسجيل حساب قسم جديد',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w800,
                                   color: _authMode == 'register' ? Colors.white : ErpTokens.ink,
                                 ),
@@ -1272,7 +1233,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               ),
             ),
 
-            // 3. Sovereign KAFD Architectural Hero & Telemetry (`LEFT SECTION` in `LoginPage.tsx` lines 663-872)
+            // 3. Sovereign KAFD Architectural Hero & Telemetry (`LEFT SECTION` in `LoginPage.tsx`)
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -1281,7 +1242,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                   image: const AssetImage('assets/login-hero-pro.jpg'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
-                    ErpTokens.kafdHeroBg.withValues(alpha: 0.82),
+                    ErpTokens.kafdHeroBg.withValues(alpha: 0.85),
                     BlendMode.darken,
                   ),
                 ),
@@ -1296,31 +1257,31 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
                       border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.4)),
                     ),
-                    child: Text(
-                      '✨ بوابة الدخول السيادي المستقلة • ${portal.routePath}',
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: ErpTokens.goldLight),
+                    child: const Text(
+                      '🏛️ بوابة النفاذ المؤسسي الموحدة • عزل الأقسام والشركات',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: ErpTokens.goldLight),
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    portal.nameAr,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
+                  const Text(
+                    'مجموعة خالد السليم القابضة',
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900, color: Colors.white),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    portal.sectorTagAr,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: ErpTokens.goldLight),
+                    '${portal.emoji} ${portal.nameAr} — ${portal.sectorTagAr}',
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: ErpTokens.goldLight),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'بوابة دخول مستقلة ومعزولة كلياً لمنسوبي ومستفيدي ${portal.nameAr}، محمية بمعايير العزل المؤسسي الصارم (Strict Tenant RLS) والتكامل الحكومي الفوري.',
-                    style: const TextStyle(fontSize: 11.5, color: Color(0xFFCBD5E1), height: 1.45),
+                  const Text(
+                    'تسجيل دخول موحد يكتشف تلقائياً شركة الموظف وقسمه الإداري (سماك المحاسبي، الاستقدام، التأجير، الفرز ATS، الموارد البشرية، المنافسات، أو الإيواء) ويحصر صلاحياته داخل قسمه فقط.',
+                    style: TextStyle(fontSize: 11.5, color: Color(0xFFCBD5E1), height: 1.45),
                   ),
                   const SizedBox(height: 14),
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F172A).withValues(alpha: 0.85),
+                      color: ErpTokens.charcoalDark.withValues(alpha: 0.92),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: Colors.white12),
                     ),
@@ -1329,20 +1290,20 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       children: [
                         Column(
                           children: [
-                            Text('العمليات ومساند', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
-                            Text('8 مراحل • ضمان 90 يوم', style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8))),
+                            Text('📊 نظام سماك SMACC', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
+                            Text('6 تقسيمات محاسبية', style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8))),
                           ],
                         ),
                         Column(
                           children: [
-                            Text('المالية و ZATCA 2', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
-                            Text('UBL 2.1 • تشفير PIH', style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8))),
+                            Text('🔐 عزل الأقسام RLS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
+                            Text('9 أقسام • 5 شركات', style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8))),
                           ],
                         ),
                         Column(
                           children: [
-                            Text('اعتماد و WPS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
-                            Text('كاس BOQ • PDPL', style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8))),
+                            Text('🧾 ZATCA & مساند', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
+                            Text('ربط حكومي 100%', style: TextStyle(fontSize: 9.5, color: Color(0xFF94A3B8))),
                           ],
                         ),
                       ],
@@ -1358,137 +1319,469 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   }
 
   Widget _buildSignInFormCard(SystemPortalOption portal) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: ErpTokens.cardPricingDecoration(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'البريد الإلكتروني المؤسسي أو اسم المستخدم',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: ErpTokens.ink),
-          ),
-          const SizedBox(height: 6),
-          TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(fontSize: 13.5, color: ErpTokens.ink, fontWeight: FontWeight.w600),
-            decoration: InputDecoration(
-              hintText: 'user@${portal.emailDomain}',
-              prefixIcon: const Icon(Icons.alternate_email_rounded, size: 18, color: Color(0xFF71717A)),
-              filled: true,
-              fillColor: ErpTokens.surfaceSubtle,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: ErpTokens.hairlineLight),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: ErpTokens.hairlineLight),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'كلمة المرور المشفرة',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: ErpTokens.ink),
-          ),
-          const SizedBox(height: 6),
-          TextField(
-            controller: _passwordController,
-            obscureText: _obscurePassword,
-            style: const TextStyle(fontSize: 13.5, color: ErpTokens.ink),
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: Color(0xFF71717A)),
-              suffixIcon: IconButton(
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                  size: 18,
-                  color: const Color(0xFF71717A),
+    final liveResolved = ErpSystemData.resolveUnifiedCredentials(
+      _emailController.text,
+      fallbackCompanyCode: portal.companyId,
+      fallbackDepartmentId: _manualSignInDeptOverride,
+    );
+
+    final filteredStaff = ErpSystemData.staffDirectory.where((s) {
+      if (_staffDirectoryCompanyFilter == 'ALL') return true;
+      return s.companyId == _staffDirectoryCompanyFilter;
+    }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: ErpTokens.cardPricingDecoration(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Interactive Company + Department Quick Selector (Matches Web `LoginPage.tsx`)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: ErpTokens.canvasCream,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: ErpTokens.hairlineLight),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '🏛️ ١. اختيار الشركة مباشرة (أو يتم التعرف عليها تلقائياً):',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 6),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const MapEntry('SAF', '💎 السفير SAF'),
+                          const MapEntry('YAQ', '🏢 ياقوت YAQ'),
+                          const MapEntry('TOP', '🗂️ توب تالنت TOP'),
+                          const MapEntry('KAS', '⚖️ كاس KAS'),
+                          const MapEntry('DAR', '🏨 دار الرواد DAR'),
+                          const MapEntry('all', '🛡️ الإدارة العليا'),
+                        ].map((co) {
+                          final active = portal.companyId == co.key;
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 6),
+                            child: ChoiceChip(
+                              label: Text(co.value),
+                              selected: active,
+                              selectedColor: ErpTokens.primary,
+                              backgroundColor: Colors.white,
+                              labelStyle: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                                color: active ? ErpTokens.goldLight : ErpTokens.ink,
+                              ),
+                              onSelected: (_) {
+                                final nextPortal = ErpSystemData.resolvePortalByCode(co.key);
+                                final matchStaff = ErpSystemData.staffDirectory.firstWhere(
+                                  (s) =>
+                                      s.companyId == co.key &&
+                                      (_manualSignInDeptOverride == null ||
+                                          s.departmentId == _manualSignInDeptOverride),
+                                  orElse: () => ErpSystemData.staffDirectory.firstWhere(
+                                    (s) => s.companyId == co.key,
+                                    orElse: () => ErpSystemData.staffDirectory.first,
+                                  ),
+                                );
+                                setState(() {
+                                  _selectedPortal = nextPortal;
+                                  _emailController.text = matchStaff.email;
+                                  _passwordController.text = 'Alsulaim@2026';
+                                  _authError = null;
+                                });
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '🗂️ ٢. اختيار القسم المختص للموظف (عزل صلاحي كامل للقسم):',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 6),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: ErpSystemData.departments.values.map((dept) {
+                          final active = liveResolved.department.id == dept.id;
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 6),
+                            child: ChoiceChip(
+                              label: Text('${dept.emoji} ${dept.shortNameAr}'),
+                              selected: active,
+                              selectedColor: ErpTokens.primary,
+                              backgroundColor: Colors.white,
+                              labelStyle: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                                color: active ? ErpTokens.goldLight : ErpTokens.ink,
+                              ),
+                              onSelected: (_) {
+                                final matchStaff = ErpSystemData.staffDirectory.where(
+                                  (s) =>
+                                      s.companyId == portal.companyId &&
+                                      s.departmentId == dept.id,
+                                );
+                                setState(() {
+                                  _manualSignInDeptOverride = dept.id;
+                                  if (matchStaff.isNotEmpty) {
+                                    _emailController.text = matchStaff.first.email;
+                                  } else {
+                                    _emailController.text = '${dept.id}@${portal.emailDomain}';
+                                  }
+                                  _passwordController.text = 'Alsulaim@2026';
+                                  _authError = null;
+                                });
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              filled: true,
-              fillColor: ErpTokens.surfaceSubtle,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: ErpTokens.hairlineLight),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: ErpTokens.hairlineLight),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
+              const SizedBox(height: 12),
 
-          // Primary Sign In Button (`.btn-odoo-primary` pure `#000000` pill)
-          ElevatedButton.icon(
-            onPressed: _handleSignIn,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ErpTokens.primary,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+              const Text(
+                'البريد الإلكتروني المؤسسي أو اسم المستخدم للقسم',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
               ),
-            ),
-            icon: const Icon(Icons.login_rounded, size: 18, color: ErpTokens.goldLight),
-            label: Text(
-              'دخول بوابة ${portal.nameAr}',
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-            ),
-          ),
-          const SizedBox(height: 10),
+              const SizedBox(height: 6),
+              TextField(
+                controller: _emailController,
+                onChanged: (_) => setState(() {
+                  _manualSignInDeptOverride = null;
+                }),
+                keyboardType: TextInputType.emailAddress,
+                style: const TextStyle(fontSize: 13.5, color: ErpTokens.ink, fontWeight: FontWeight.w700),
+                decoration: InputDecoration(
+                  hintText: 'accounting@saf-rec.sa أو saf.accounting',
+                  prefixIcon: const Icon(Icons.alternate_email_rounded, size: 18, color: Color(0xFF71717A)),
+                  filled: true,
+                  fillColor: ErpTokens.surfaceSubtle,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: ErpTokens.hairlineLight),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: ErpTokens.hairlineLight),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
 
-          // Biometric Auth & Quick Demo Fill Buttons
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    _applyPortalDefaults(portal);
-                    _handleSignIn();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: ErpTokens.ink,
-                    side: const BorderSide(color: ErpTokens.hairlineLight),
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+              // Live Auto-Detected Company & Locked Department Box
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: ErpTokens.goldPale.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.55)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(liveResolved.department.emoji, style: const TextStyle(fontSize: 15)),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'التوجيه التلقائي للقسم والشركة:',
+                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                            ),
+                          ],
+                        ),
+                        ErpTokens.pillTagMint('عزل القسم مفعل', fontSize: 9.5),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'الشركة: ${liveResolved.portal.emoji} ${liveResolved.portal.nameAr}',
+                      style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'القسم المخصص: ${liveResolved.department.emoji} ${liveResolved.department.nameAr}',
+                      style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF065F46)),
+                    ),
+                    if (liveResolved.staffAccount != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'الموظف: ${liveResolved.staffAccount!.fullName} (${liveResolved.staffAccount!.role})',
+                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: Color(0xFF52525B)),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              const Text(
+                'كلمة المرور المشفرة',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+              ),
+              const SizedBox(height: 6),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                style: const TextStyle(fontSize: 13.5, color: ErpTokens.ink),
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: Color(0xFF71717A)),
+                  suffixIcon: IconButton(
+                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                      size: 18,
+                      color: const Color(0xFF71717A),
                     ),
                   ),
-                  icon: const Icon(Icons.fingerprint_rounded, size: 18, color: ErpTokens.goldDark),
-                  label: const Text(
-                    'الدخول بالبصمة البيومترية',
-                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+                  filled: true,
+                  fillColor: ErpTokens.surfaceSubtle,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: ErpTokens.hairlineLight),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: ErpTokens.hairlineLight),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              OutlinedButton(
-                onPressed: () => setState(() => _applyPortalDefaults(portal)),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: ErpTokens.goldDark,
-                  side: BorderSide(color: ErpTokens.champagneGold.withValues(alpha: 0.5)),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              const SizedBox(height: 14),
+
+              // Primary Sign In Button (`.btn-odoo-primary` pure `#000000` pill)
+              ElevatedButton.icon(
+                onPressed: _handleSignIn,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ErpTokens.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
                   ),
                 ),
-                child: const Text(
-                  'تعبئة تلقائية',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+                icon: const Icon(Icons.login_rounded, size: 18, color: ErpTokens.goldLight),
+                label: Text(
+                  '${liveResolved.department.emoji} دخول مباشر إلى ${liveResolved.department.shortNameAr}',
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800),
                 ),
+              ),
+              const SizedBox(height: 10),
+
+              // Biometric Auth & Quick Demo Fill Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        if (_emailController.text.trim().isEmpty) {
+                          _applyPortalDefaults(portal);
+                        }
+                        _handleSignIn();
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: ErpTokens.ink,
+                        side: const BorderSide(color: ErpTokens.hairlineLight),
+                        padding: const EdgeInsets.symmetric(vertical: 11),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                        ),
+                      ),
+                      icon: const Icon(Icons.fingerprint_rounded, size: 18, color: ErpTokens.goldDark),
+                      label: const Text(
+                        'الدخول بالبصمة البيومترية',
+                        style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: () => setState(() => _applyPortalDefaults(portal)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ErpTokens.goldDark,
+                      side: BorderSide(color: ErpTokens.champagneGold.withValues(alpha: 0.5)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                      ),
+                    ),
+                    child: const Text(
+                      'تعبئة تلقائية',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 14),
+
+        // Interactive 1-Click Corporate Department Staff Directory (28 Department-Scoped Accounts)
+        Container(
+          padding: const EdgeInsets.all(15),
+          decoration: ErpTokens.cardPricingDecoration(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Expanded(
+                    child: Text(
+                      '🏛️ دليل حسابات أقسام وشركات المجموعة (دخول مباشر للقسم)',
+                      style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                    ),
+                  ),
+                  ErpTokens.pillTagMint('${filteredStaff.length} حساب قسم', fontSize: 9.5),
+                ],
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'اضغط على أي موظف للدخول الفوري إلى قسمه المخصص في شركته فقط (مع عزل باقي الأقسام):',
+                style: TextStyle(fontSize: 10.5, color: Color(0xFF71717A)),
+              ),
+              const SizedBox(height: 10),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    MapEntry('ALL', 'جميع الشركات (${ErpSystemData.staffDirectory.length})'),
+                    const MapEntry('SAF', '💎 السفير SAF'),
+                    const MapEntry('YAQ', '🏢 ياقوت YAQ'),
+                    const MapEntry('TOP', '🗂️ توباز TOP'),
+                    const MapEntry('KAS', '⚖️ كاس KAS'),
+                    const MapEntry('DAR', '🏨 دار الرواد DAR'),
+                    const MapEntry('all', '🛡️ الإدارة العليا'),
+                  ].map((filter) {
+                    final selected = _staffDirectoryCompanyFilter == filter.key;
+                    return Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 6),
+                      child: ChoiceChip(
+                        label: Text(filter.value),
+                        selected: selected,
+                        onSelected: (_) => setState(() => _staffDirectoryCompanyFilter = filter.key),
+                        selectedColor: ErpTokens.primary,
+                        backgroundColor: ErpTokens.surfaceSubtle,
+                        labelStyle: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          color: selected ? Colors.white : ErpTokens.ink,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              ...filteredStaff.map((staff) {
+                final dept = ErpSystemData.departments[staff.departmentId] ??
+                    ErpSystemData.departments['recruitment']!;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    color: ErpTokens.surfaceSubtle,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: ErpTokens.hairlineLight),
+                  ),
+                  child: InkWell(
+                    onTap: () => _handleQuickStaffLogin(staff),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 38,
+                          height: 38,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: ErpTokens.primary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(staff.badgeEmoji, style: const TextStyle(fontSize: 17)),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                    decoration: BoxDecoration(
+                                      color: ErpTokens.goldPale,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      '${staff.companyId == 'all' ? 'GRP' : staff.companyId} • ${dept.shortNameAr}',
+                                      style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      staff.fullName,
+                                      style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                staff.role,
+                                style: const TextStyle(fontSize: 10.5, color: Color(0xFF52525B)),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                '${staff.email}  •  @${staff.username}',
+                                style: const TextStyle(fontSize: 9.8, fontWeight: FontWeight.w700, color: Color(0xFF71717A)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: ErpTokens.primary,
+                            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                          ),
+                          child: const Text(
+                            'دخول للقسم ←',
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  /// 3-Step Registration Wizard (`LoginPage.tsx` Stage 7)
+  /// 3-Step Department Account Registration Wizard (`LoginPage.tsx`)
   Widget _buildRegistrationWizardCard(SystemPortalOption portal) {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -1500,8 +1793,8 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'معالج التسجيل الموحد — خطوة $_regStep من 3',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                'معالج تسجيل حساب قسم جديد — خطوة $_regStep من 3',
+                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
               ),
               ErpTokens.pillTagMint(portal.companyId == 'all' ? 'GRP' : portal.companyId, fontSize: 10),
             ],
@@ -1518,12 +1811,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           ),
           const SizedBox(height: 14),
           if (_regStep == 1) ...[
-            const Text('اختر نوع الحساب في الكيان:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+            const Text('١. اختر نوع الحساب والقسم الإداري المخصص:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
             const SizedBox(height: 8),
             ...[
-              const MapEntry('client', 'حساب عميل / مستفيد (متابعة العقود والضمان)'),
-              const MapEntry('employee', 'حساب موظف منسوبي الشركة'),
-              const MapEntry('agency', 'حساب وكالة خارجية / شريك دولي'),
+              const MapEntry('employee', '🏛️ حساب موظف قسم مختص (يدخل لقسمه فقط)'),
+              const MapEntry('client', '🤝 حساب عميل / مستفيد (متابعة العقود والضمان)'),
+              const MapEntry('agency', '📑 حساب وكالة خارجية / مورد دولي'),
             ].map((item) {
               final active = _regAccountType == item.key;
               return Container(
@@ -1539,15 +1832,36 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     active ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
                     color: active ? ErpTokens.primary : const Color(0xFF71717A),
                   ),
-                  title: Text(item.value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                  title: Text(item.value, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700)),
                 ),
               );
             }),
+            const SizedBox(height: 6),
+            const Text('القسم الإداري المعزول للموظف:', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: ErpSystemData.departments.values.map((dept) {
+                final selected = _regSelectedDepartmentId == dept.id;
+                return ChoiceChip(
+                  label: Text('${dept.emoji} ${dept.shortNameAr}'),
+                  selected: selected,
+                  selectedColor: ErpTokens.primary,
+                  labelStyle: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    color: selected ? Colors.white : ErpTokens.ink,
+                  ),
+                  onSelected: (_) => setState(() => _regSelectedDepartmentId = dept.id),
+                );
+              }).toList(),
+            ),
           ] else if (_regStep == 2) ...[
             TextField(
               controller: _regFullNameController,
               decoration: const InputDecoration(
-                labelText: 'الاسم الرباعي الكامل',
+                labelText: 'الاسم الرباعي الكامل للموظف',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -1574,7 +1888,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               controller: _regEmailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                labelText: 'البريد الإلكتروني (@${portal.emailDomain})',
+                labelText: 'البريد الإلكتروني المؤسسي (@${portal.emailDomain})',
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -1583,7 +1897,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               controller: _regPasswordController,
               obscureText: true,
               decoration: const InputDecoration(
-                labelText: 'كلمة المرور القوية',
+                labelText: 'كلمة المرور المشفرة',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -1597,7 +1911,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                   border: Border.all(color: ErpTokens.statusSuccessBorder),
                 ),
                 child: Text(
-                  '✅ تم إصدار الهوية الرقمية بنجاح! الرقم المرجعي: $_regReferenceNumber',
+                  '✅ تم إصدار الهوية الرقمية للقسم بنجاح! الرقم المرجعي: $_regReferenceNumber',
                   style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF065F46)),
                 ),
               ),
@@ -1626,14 +1940,34 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       setState(() => _regStep += 1);
                     } else {
                       final ref = 'REG-${portal.companyId}-${DateTime.now().millisecondsSinceEpoch % 10000}';
-                      setState(() => _regReferenceNumber = ref);
+                      final chosenDept = ErpSystemData.departments[_regSelectedDepartmentId] ??
+                          ErpSystemData.departments['recruitment']!;
+                      final regEmail = _regEmailController.text.trim().isNotEmpty
+                          ? _regEmailController.text.trim()
+                          : '${chosenDept.id}.${DateTime.now().millisecondsSinceEpoch % 1000}@${portal.emailDomain}';
+                      final registeredAccount = ErpSystemData.registerCustomStaffAccount(
+                        email: regEmail,
+                        fullName: _regFullNameController.text.trim(),
+                        companyId: portal.companyId,
+                        departmentId: chosenDept.id,
+                      );
+                      setState(() {
+                        _regReferenceNumber = ref;
+                        _activeDepartment = chosenDept;
+                        _authenticatedUserName = registeredAccount.fullName;
+                        _authenticatedUserRole = registeredAccount.role;
+                        _emailController.text = registeredAccount.email;
+                        _activeTab = chosenDept.defaultTab;
+                        _activeTabTitle = chosenDept.defaultTabTitle;
+                        _flowState = 'workspace';
+                      });
                       _triggerInstantNativeNotification(
-                        customTitle: 'اكتمال التسجيل الرقمي ($ref)',
-                        customBody: 'تم تفعيل حسابك في ${portal.nameAr} بنجاح.',
+                        customTitle: 'اكتمال التسجيل والدخول للقسم ($ref)',
+                        customBody: 'تم تفعيل حسابك في ${chosenDept.nameAr} (${portal.nameAr}) بنجاح.',
                       );
                     }
                   },
-                  child: Text(_regStep < 3 ? 'الخطوة التالية' : 'إصدار الهوية الرقمية وتفعيل الحساب'),
+                  child: Text(_regStep < 3 ? 'الخطوة التالية' : 'تفعيل الحساب والدخول للقسم'),
                 ),
               ),
             ],
@@ -1649,9 +1983,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   Widget _buildAppLauncherPageReplica() {
     final co = _selectedPortal.companyId;
     final visibleApps = ErpSystemData.allSystemApps.where((app) {
-      if (app.exclusiveToCompany != null && co != 'all' && co != app.exclusiveToCompany) {
-        return false;
-      }
+      final authorized = ErpSystemData.isTabAuthorized(
+        departmentId: _activeDepartment.id,
+        companyId: co,
+        tabHref: app.href,
+      );
+      if (!authorized) return false;
       if (_launcherCategory != 'all' && app.category != _launcherCategory) {
         return false;
       }
@@ -1669,7 +2006,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           children: [
             // Top Header
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 border: Border(bottom: BorderSide(color: ErpTokens.hairlineLight)),
@@ -1677,47 +2014,83 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: ErpTokens.primary,
-                          borderRadius: BorderRadius.circular(10),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: ErpTokens.primary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(_activeDepartment.emoji, style: const TextStyle(fontSize: 17)),
                         ),
-                        child: const Icon(Icons.grid_view_rounded, color: ErpTokens.goldLight, size: 18),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'شاشات ${_activeDepartment.nameAr}',
+                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                '${_selectedPortal.nameAr} • ${visibleApps.length} شاشة مصرح بها للقسم',
+                                style: const TextStyle(fontSize: 10.5, color: Color(0xFF71717A)),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: () => setState(() => _flowState = 'workspace'),
+                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: ErpTokens.primary,
+                            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                          ),
+                          child: const Text(
+                            'لوحة القسم',
+                            style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Colors.white),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'بوابة الأقسام والتطبيقات المؤسسية',
-                            style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                      const SizedBox(width: 6),
+                      InkWell(
+                        onTap: _handleLogout,
+                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: ErpTokens.statusDangerBg,
+                            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                            border: Border.all(color: ErpTokens.statusDangerBorder),
                           ),
-                          Text(
-                            _selectedPortal.nameAr,
-                            style: const TextStyle(fontSize: 10.5, color: Color(0xFF71717A)),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.logout_rounded, size: 13, color: ErpTokens.statusDanger),
+                              SizedBox(width: 4),
+                              Text(
+                                'خروج',
+                                style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: ErpTokens.statusDanger),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
-                  ),
-                  InkWell(
-                    onTap: () => setState(() => _flowState = 'workspace'),
-                    borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: ErpTokens.primary,
-                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                      ),
-                      child: const Text(
-                        'العودة للوحة العمل',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
-                      ),
-                    ),
                   ),
                 ],
               ),
@@ -1732,7 +2105,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                   TextField(
                     onChanged: (v) => setState(() => _launcherSearch = v),
                     decoration: InputDecoration(
-                      hintText: 'ابحث في أقسام وتطبيقات المنظومة...',
+                      hintText: 'ابحث في شاشات ${_activeDepartment.shortNameAr}...',
                       prefixIcon: const Icon(Icons.search_rounded, size: 18),
                       filled: true,
                       fillColor: ErpTokens.surfaceSubtle,
@@ -1752,12 +2125,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: const [
-                        MapEntry('all', 'جميع الأقسام'),
-                        MapEntry('operations', 'العمليات والعقود'),
-                        MapEntry('finance', 'المالية و ZATCA'),
-                        MapEntry('crm', 'العملاء والتواصل'),
-                        MapEntry('hr', 'الموارد البشرية WPS'),
-                        MapEntry('governance', 'الحوكمة والقيادة'),
+                        MapEntry('all', '🏛️ شاشات القسم المعتمدة'),
+                        MapEntry('finance', '📊 نظام سماك المحاسبي SMACC'),
+                        MapEntry('operations', '📑 العمليات والعقود'),
+                        MapEntry('crm', '🤝 العملاء والتواصل'),
+                        MapEntry('hr', '👥 الموارد البشرية WPS'),
+                        MapEntry('governance', '🛡️ الحوكمة والقيادة'),
                       ].map((cat) {
                         final selected = _launcherCategory == cat.key;
                         return Padding(
@@ -1783,50 +2156,88 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
 
             // Apps Grid
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(14),
-                itemCount: visibleApps.length,
-                itemBuilder: (context, idx) {
-                  final app = visibleApps[idx];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: ErpTokens.cardPricingDecoration(),
-                    child: ListTile(
-                      onTap: () => _handleSelectTab(app.href, app.title),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      leading: Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: ErpTokens.primary,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(app.icon, color: ErpTokens.goldLight, size: 20),
-                      ),
-                      title: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              app.title,
+              child: visibleApps.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(_activeDepartment.emoji, style: const TextStyle(fontSize: 34)),
+                            const SizedBox(height: 8),
+                            Text(
+                              'حسابك مقيد بـ (${_activeDepartment.nameAr}) فقط.',
                               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                          if (app.metricBadge != null)
-                            ErpTokens.pillTagMint(app.metricBadge!, fontSize: 9.5),
-                        ],
-                      ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          app.subtitle,
-                          style: const TextStyle(fontSize: 11, color: Color(0xFF71717A), height: 1.35),
+                            const SizedBox(height: 8),
+                            OutlinedButton(
+                              onPressed: () => setState(() => _launcherCategory = 'all'),
+                              child: const Text('عرض شاشات القسم المصرح بها'),
+                            ),
+                          ],
                         ),
                       ),
-                      trailing: const Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: ErpTokens.ink),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(14),
+                      itemCount: visibleApps.length,
+                      itemBuilder: (context, idx) {
+                        final app = visibleApps[idx];
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          decoration: ErpTokens.cardPricingDecoration(),
+                          child: ListTile(
+                            onTap: () => _handleSelectTab(app.href, app.title),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            leading: Container(
+                              width: 42,
+                              height: 42,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: ErpTokens.primary,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(app.emoji, style: const TextStyle(fontSize: 19)),
+                            ),
+                            title: Row(
+                              children: [
+                                if (app.smaccCode.isNotEmpty) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: ErpTokens.goldPale,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      app.smaccCode,
+                                      style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                ],
+                                Expanded(
+                                  child: Text(
+                                    app.title,
+                                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                  ),
+                                ),
+                                if (app.metricBadge != null)
+                                  ErpTokens.pillTagMint(app.metricBadge!, fontSize: 9.5),
+                              ],
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                app.subtitle,
+                                style: const TextStyle(fontSize: 11, color: Color(0xFF71717A), height: 1.35),
+                              ),
+                            ),
+                            trailing: const Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: ErpTokens.ink),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -1842,6 +2253,55 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
       key: _workspaceScaffoldKey,
       backgroundColor: ErpTokens.canvasCream,
       drawer: _buildSidebarDrawerReplica(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: InkWell(
+        onTap: _openFarisNouraAdvisorSheet,
+        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1D2428),
+            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+            border: Border.all(color: ErpTokens.champagneGold, width: 1.5),
+            boxShadow: ErpTokens.elevation3Shadow,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: ErpTokens.canvasCream,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ErpTokens.champagneGold),
+                ),
+                child: Image.asset(
+                  'assets/mascot.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) => const Icon(Icons.support_agent_rounded, size: 16, color: ErpTokens.ink),
+                ),
+              ),
+              const SizedBox(width: 7),
+              const Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'فارس ونُورة',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white),
+                  ),
+                  Text(
+                    'المستشار المؤسسي',
+                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: ErpTokens.champagneGold),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -1862,6 +2322,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       records: _scopedRecords,
                       onNavigate: _handleSelectTab,
                       onOpenAddRecordModal: _openCreateRecordSheet,
+                      onOpenDocumentExtractorModal: _openUniversalDocumentExtractorSheet,
                     )
                   else
                     EnterpriseModuleWorkspaceView(
@@ -1870,6 +2331,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       activePortal: _selectedPortal,
                       records: _scopedRecords,
                       onAddRecord: _openCreateRecordSheet,
+                      onOpenDocumentExtractorModal: _openUniversalDocumentExtractorSheet,
                       onTriggerInstantNotification: () => _triggerInstantNativeNotification(
                         tabKey: _activeTab,
                         tabTitle: _activeTabTitle,
@@ -1883,26 +2345,11 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           ],
         ),
       ),
-      // Floating Faris & Noura AI Copilot Button (`<AICopilotWidget />` in `App.tsx`)
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 66),
-        child: FloatingActionButton.extended(
-          onPressed: _openFarisNouraCopilotSheet,
-          backgroundColor: ErpTokens.primary,
-          foregroundColor: Colors.white,
-          elevation: 6,
-          icon: const Icon(Icons.auto_awesome_rounded, color: ErpTokens.goldLight, size: 18),
-          label: Text(
-            _persona == 'noura' ? 'نُورة AI' : 'فارس AI',
-            style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800),
-          ),
-        ),
-      ),
       bottomNavigationBar: _buildMobileBottomNavReplica(),
     );
   }
 
-  /// Exact Replica of `src/components/layout/Header.tsx`
+  /// Exact Replica of `src/components/layout/Header.tsx` (Institutional Header with Department Badge & Logout)
   Widget _buildTopHeaderReplica() {
     return Container(
       height: 60,
@@ -1913,7 +2360,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
       ),
       child: Row(
         children: [
-          // Hamburger Button (`Header.tsx` lines 171-178)
+          // Hamburger Button (`Header.tsx`)
           InkWell(
             onTap: () => _workspaceScaffoldKey.currentState?.openDrawer(),
             borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
@@ -1930,7 +2377,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           ),
           const SizedBox(width: 8),
 
-          // Current Page Title (`Header.tsx` lines 190-194)
+          // Current Page Title & Branch Picker
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1938,7 +2385,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               children: [
                 Text(
                   _activeTabTitle,
-                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1961,18 +2408,87 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
             ),
           ),
 
-          // Mood Pulse Check-in Button (`Header.tsx` `userMoodEmoji`)
+          // Universal Document & 100-Invoice Batch Auto-Extractor Button (`Header.tsx`)
           InkWell(
-            onTap: _openMoodCheckInModal,
+            onTap: _openUniversalDocumentExtractorSheet,
             borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(
-                color: ErpTokens.surfaceSubtle,
+                color: ErpTokens.primary,
                 borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
-                border: Border.all(color: ErpTokens.hairlineLight),
               ),
-              child: Text(_userMoodEmoji, style: const TextStyle(fontSize: 14)),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.upload_file_rounded, size: 13, color: ErpTokens.goldLight),
+                  SizedBox(width: 3),
+                  Text(
+                    'رفع مستندات',
+                    style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w800, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 5),
+
+          // Faris & Noura Header Quick Trigger (`Header.tsx`)
+          InkWell(
+            onTap: _openFarisNouraAdvisorSheet,
+            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+              decoration: BoxDecoration(
+                color: ErpTokens.goldPale,
+                borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                border: Border.all(color: ErpTokens.champagneGold),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: Image.asset(
+                      'assets/mascot.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => const Icon(Icons.support_agent_rounded, size: 13, color: ErpTokens.ink),
+                    ),
+                  ),
+                  const SizedBox(width: 3),
+                  const Text(
+                    'فارس/نُورة',
+                    style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 5),
+
+          // Locked Department & Employee Identity Pill (`Header.tsx` Profile Modal Trigger)
+          InkWell(
+            onTap: _openEmployeeProfileModal,
+            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+              decoration: BoxDecoration(
+                color: ErpTokens.goldPale,
+                borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.6)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(_activeDepartment.emoji, style: const TextStyle(fontSize: 12.5)),
+                  const SizedBox(width: 4),
+                  Text(
+                    _activeDepartment.shortNameAr,
+                    style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 6),
@@ -1985,8 +2501,8 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 35,
+                  height: 35,
                   decoration: BoxDecoration(
                     color: ErpTokens.surfaceSubtle,
                     shape: BoxShape.circle,
@@ -2015,15 +2531,15 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           ),
           const SizedBox(width: 6),
 
-          // Logout to Isolated Company Portal (`Header.tsx`)
+          // Logout to Unified Corporate Login Portal (`Header.tsx`)
           InkWell(
             onTap: _handleLogout,
             borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
             child: Container(
-              width: 36,
-              height: 36,
+              width: 35,
+              height: 35,
               decoration: BoxDecoration(
-                color: ErpTokens.statusDangerBg.withValues(alpha: 0.6),
+                color: ErpTokens.statusDangerBg.withValues(alpha: 0.75),
                 shape: BoxShape.circle,
                 border: Border.all(color: ErpTokens.statusDangerBorder),
               ),
@@ -2035,60 +2551,67 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
     );
   }
 
-  /// Exact Replica of `src/components/layout/Sidebar.tsx` (`SIDEBAR_MENU` Tree Drawer)
+  /// Exact Replica of `src/components/layout/Sidebar.tsx` (Department-Isolated Tree Drawer + Logout Footer)
   Widget _buildSidebarDrawerReplica() {
     final co = _selectedPortal.companyId;
     return Drawer(
-      width: 300,
+      width: 305,
       backgroundColor: ErpTokens.canvasLight,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Sidebar Brand Header
+            // Sidebar Brand & Locked Department Header
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: ErpTokens.hairlineLight)),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: ErpTokens.champagneGold),
-                    ),
-                    child: Image.asset(
-                      _selectedPortal.assetLogo,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const Icon(Icons.apartment_rounded),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _selectedPortal.nameAr,
-                          style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: ErpTokens.champagneGold),
                         ),
-                        Text(
-                          '${_selectedPortal.companyCodeBadge} • عزل نشط',
-                          style: const TextStyle(fontSize: 10, color: ErpTokens.goldDark, fontWeight: FontWeight.w700),
+                        child: Image.asset(
+                          _selectedPortal.assetLogo,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, _, _) => const Icon(Icons.apartment_rounded),
                         ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded, size: 20),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _selectedPortal.nameAr,
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              '${_activeDepartment.emoji} ${_activeDepartment.nameAr}',
+                              style: const TextStyle(fontSize: 10.5, color: ErpTokens.goldDark, fontWeight: FontWeight.w800),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded, size: 20),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -2101,7 +2624,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                 onChanged: (v) => setState(() => _sidebarSearch = v),
                 style: const TextStyle(fontSize: 12),
                 decoration: InputDecoration(
-                  hintText: 'بحث سريع في القائمة الجانبية...',
+                  hintText: 'بحث في قوائم ${_activeDepartment.shortNameAr}...',
                   prefixIcon: const Icon(Icons.search_rounded, size: 17),
                   filled: true,
                   fillColor: ErpTokens.surfaceSubtle,
@@ -2118,17 +2641,20 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               ),
             ),
 
-            // Tree Items (`Sidebar.tsx` lines 161-265)
+            // Tree Items Strictly Filtered by Department & Company (`Sidebar.tsx`)
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 children: ErpSystemData.sidebarMenu.map((item) {
-                  // Strict Tenant Isolation Gate
-                  if (item.exclusiveToCompany != null && co != 'all' && co != item.exclusiveToCompany) {
-                    return const SizedBox.shrink();
-                  }
-
                   if (item.children.isEmpty) {
+                    if (item.href != null &&
+                        !ErpSystemData.isTabAuthorized(
+                          departmentId: _activeDepartment.id,
+                          companyId: co,
+                          tabHref: item.href!,
+                        )) {
+                      return const SizedBox.shrink();
+                    }
                     final isActive = _activeTab == item.href;
                     return Container(
                       margin: const EdgeInsets.only(bottom: 6),
@@ -2158,7 +2684,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                   }
 
                   final visibleChildren = item.children.where((c) {
-                    if (c.exclusiveToCompany != null && co != 'all' && co != c.exclusiveToCompany) {
+                    if (c.href != null &&
+                        !ErpSystemData.isTabAuthorized(
+                          departmentId: _activeDepartment.id,
+                          companyId: co,
+                          tabHref: c.href!,
+                        )) {
                       return false;
                     }
                     if (_sidebarSearch.trim().isNotEmpty) {
@@ -2169,7 +2700,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
 
                   if (visibleChildren.isEmpty) return const SizedBox.shrink();
 
-                  final expanded = _sidebarSearch.trim().isNotEmpty || (_expandedSidebarGroups[item.id] ?? false);
+                  final expanded = _sidebarSearch.trim().isNotEmpty || (_expandedSidebarGroups[item.id] ?? true);
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2277,48 +2808,101 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                 }).toList(),
               ),
             ),
+
+            // Sticky Institutional Employee Identity & Direct Logout Footer (`Sidebar.tsx`)
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(top: BorderSide(color: ErpTokens.hairlineLight)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: ErpTokens.primary,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(_activeDepartment.emoji, style: const TextStyle(fontSize: 16)),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _authenticatedUserName,
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              _authenticatedUserRole,
+                              style: const TextStyle(fontSize: 10.5, color: Color(0xFF71717A)),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _handleLogout();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ErpTokens.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                      ),
+                    ),
+                    icon: const Icon(Icons.logout_rounded, size: 16, color: ErpTokens.goldLight),
+                    label: const Text(
+                      'تسجيل الخروج من القسم',
+                      style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  /// Exact Replica of `src/components/layout/MobileBottomNav.tsx`
+  /// Exact Replica of `src/components/layout/MobileBottomNav.tsx` (Department-Aware Bottom Navigation)
   Widget _buildMobileBottomNavReplica() {
-    final co = _selectedPortal.companyId;
-    // Resolve primary operations tab dynamically per company (`MobileBottomNav.tsx` lines 53-85)
-    String opsHref = 'recruitment-contracts';
-    String opsLabel = 'العقود';
-    String opsTitle = 'عقود الاستقدام ومساند';
-    IconData opsIcon = Icons.work_outline_rounded;
+    final opsHref = _activeDepartment.defaultTab;
+    final opsLabel = _activeDepartment.shortNameAr;
+    final opsTitle = _activeDepartment.defaultTabTitle;
 
-    if (co == 'KAS') {
-      opsHref = 'kas-suite';
-      opsLabel = 'منافسات كاس';
-      opsTitle = 'البوابة المستقلة لشركة كاس (KAS Suite)';
-      opsIcon = Icons.apartment_rounded;
-    } else if (co == 'DAR') {
-      opsHref = 'shelter-suite';
-      opsLabel = 'الإيواء';
-      opsTitle = 'بوابة مراكز الإيواء والتسكين (DAR)';
-      opsIcon = Icons.favorite_border_rounded;
-    } else if (co == 'YAQ') {
-      opsHref = 'rent-contracts';
-      opsLabel = 'عقود التأجير';
-      opsTitle = 'عقود التأجير والتشغيل (YAQ)';
-      opsIcon = Icons.work_outline_rounded;
-    } else if (co == 'TOP') {
-      opsHref = 'ats-pipeline';
-      opsLabel = 'التوظيف ATS';
-      opsTitle = 'منظومة الفرز والتوظيف الذكي (ATS)';
-      opsIcon = Icons.psychology_outlined;
+    IconData opsIcon = Icons.work_outline_rounded;
+    if (_activeDepartment.id == 'finance') {
+      opsIcon = Icons.account_balance_wallet_outlined;
+    } else if (_activeDepartment.id == 'hr') {
+      opsIcon = Icons.badge_outlined;
+    } else if (_activeDepartment.id == 'crm') {
+      opsIcon = Icons.people_outline_rounded;
+    } else if (_activeDepartment.id == 'shelter') {
+      opsIcon = Icons.hotel_outlined;
+    } else if (_activeDepartment.id == 'tenders') {
+      opsIcon = Icons.gavel_rounded;
+    } else if (_activeDepartment.id == 'ats') {
+      opsIcon = Icons.rule_folder_outlined;
     }
 
     final isHomeActive = _activeTab == 'dashboard';
-    final isOpsActive = _activeTab == opsHref ||
-        _activeTab.contains('contract') ||
-        _activeTab.contains('kas') ||
-        _activeTab.contains('shelter');
+    final isOpsActive = _activeTab == opsHref && _activeTab != 'dashboard';
 
     return Container(
       decoration: BoxDecoration(
@@ -2337,7 +2921,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top Micro Status Strip when Offline or Pending Queue (`MobileBottomNav.tsx` lines 116-153)
+            // Top Micro Status Strip when Offline or Pending Queue
             if (_simulatedOfflineMode || _offlineQueue.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -2378,21 +2962,27 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                 ),
               ),
 
-            // 5-Column Ergonomic Bar (`MobileBottomNav.tsx` lines 156-240)
+            // 5-Column Ergonomic Bar (`MobileBottomNav.tsx`)
             SizedBox(
               height: 64,
               child: Row(
                 children: [
-                  // 1. الرئيسية
+                  // 1. الرئيسية (أو شاشة القسم الرئيسية)
                   Expanded(
                     child: _buildBottomNavButton(
                       icon: Icons.home_outlined,
                       label: 'الرئيسية',
                       active: isHomeActive,
-                      onTap: () => _handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية'),
+                      onTap: () {
+                        if (_activeDepartment.id == 'executive') {
+                          _handleSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية');
+                        } else {
+                          _handleSelectTab(opsHref, opsTitle);
+                        }
+                      },
                     ),
                   ),
-                  // 2. العمليات (حسب الشركة)
+                  // 2. القسم المخصص للموظف
                   Expanded(
                     child: _buildBottomNavButton(
                       icon: opsIcon,
@@ -2401,7 +2991,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       onTap: () => _handleSelectTab(opsHref, opsTitle),
                     ),
                   ),
-                  // 3. Center Elevated Action Button: الأقسام (`MobileBottomNav.tsx` lines 194-204)
+                  // 3. Center Elevated Action Button: شاشات القسم (`AppLauncherPage`)
                   Expanded(
                     child: Center(
                       child: InkWell(
@@ -2411,14 +3001,10 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.topRight,
-                              colors: [Color(0xFF091725), Color(0xFF1C3C60)],
-                            ),
+                            color: ErpTokens.primary,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: const Color(0xFFFBBF24).withValues(alpha: 0.65),
+                              color: ErpTokens.champagneGold,
                               width: 1.8,
                             ),
                             boxShadow: const [
@@ -2432,7 +3018,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                           child: const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.grid_view_rounded, size: 18, color: Color(0xFFFBBF24)),
+                              Icon(Icons.grid_view_rounded, size: 18, color: ErpTokens.goldLight),
                               SizedBox(height: 1),
                               Text(
                                 'الأقسام',
@@ -2491,13 +3077,13 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                 width: 36,
                 height: 26,
                 decoration: BoxDecoration(
-                  color: active ? const Color(0xFFFBBF24).withValues(alpha: 0.25) : Colors.transparent,
+                  color: active ? ErpTokens.goldPale : Colors.transparent,
                   borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
                 ),
                 child: Icon(
                   icon,
                   size: 18,
-                  color: active ? const Color(0xFF78350F) : const Color(0xFF71717A),
+                  color: active ? ErpTokens.ink : const Color(0xFF71717A),
                 ),
               ),
               if (badgeCount > 0)
@@ -2521,6 +3107,8 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           const SizedBox(height: 3),
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 10,
               fontWeight: active ? FontWeight.w900 : FontWeight.w600,
@@ -2533,7 +3121,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // MODALS & INTERACTIVE SHEETS (Notifications, Background Engine, AI Copilot, Add Record)
+  // MODALS & INTERACTIVE SHEETS (Notifications, Background Engine, Employee Profile, Add Record)
   // ═══════════════════════════════════════════════════════════════════════════
   void _openNotificationsAndBackgroundSheet() {
     setState(() {
@@ -2728,15 +3316,15 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'إضافة سجل جديد في ${_selectedPortal.nameAr}',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                'إضافة سجل جديد في ${_activeDepartment.nameAr}',
+                style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w900, color: ErpTokens.ink),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: titleCtrl,
                 decoration: const InputDecoration(
-                  labelText: 'عنوان العقد / الطلب / القيد',
-                  hintText: 'مثال: عقد استقدام مساند — الفلبين',
+                  labelText: 'عنوان العقد / الطلب / القيد المحاسبي',
+                  hintText: 'مثال: قيد يومية أو عقد استقدام مساند',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -2771,8 +3359,8 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                         companyId: co,
                         moduleKey: 'contracts',
                         title: recTitle,
-                        subtitle: 'تم الإنشاء عبر تطبيق الهاتف • الفرع: ${_selectedBranch.name}',
-                        status: _simulatedOfflineMode ? 'في طابور الأوفلاين' : 'ساري وموثق',
+                        subtitle: 'تم الإنشاء عبر تطبيق الهاتف • القسم: ${_activeDepartment.shortNameAr} • الفرع: ${_selectedBranch.name}',
+                        status: _simulatedOfflineMode ? 'في طابور الأوفلاين' : 'مرحّل وموثق',
                         badgeText: 'جديد ($co)',
                         amountOrMetric: amountCtrl.text.trim(),
                         updatedAt: 'الآن',
@@ -2792,17 +3380,305 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                   });
                   Navigator.of(ctx).pop();
                   _triggerInstantNativeNotification(
-                    customTitle: 'تم حفظ العملية #$newId (${_selectedPortal.companyId})',
+                    customTitle: 'تم حفظ العملية #$newId (${_activeDepartment.shortNameAr})',
                     customBody: recTitle,
                     tabKey: _activeTab,
                     tabTitle: _activeTabTitle,
                   );
                 },
                 icon: const Icon(Icons.check_circle_outline_rounded, color: ErpTokens.goldLight),
-                label: const Text('حفظ وإرسال إشعار للهاتف', style: TextStyle(fontWeight: FontWeight.w800)),
+                label: const Text('حفظ وترحيل وإرسال إشعار للهاتف', style: TextStyle(fontWeight: FontWeight.w800)),
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  /// Exact Mobile Replica of `UniversalDocumentExtractorModal.tsx`
+  /// Supports 1 to 100+ Invoices / PDF / Word / Excel / External Accounting Systems with Auto-Department Routing & Isolated Company Ledgers
+  void _openUniversalDocumentExtractorSheet() {
+    String targetCompanyCode = _selectedPortal.companyId == 'all' ? 'SAF' : _selectedPortal.companyId;
+    String selectedFormat = 'IMAGE_QR'; // 'IMAGE_QR' | 'PDF_DOC' | 'WORD_DOCX' | 'EXTERNAL_ERP_EXCEL'
+    String routingMode = 'auto'; // 'auto' | 'finance' | 'recruitment' | 'rental' | 'ats' | 'hr' | 'shelter'
+    int batchCount = 100;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final formatLabels = <String, ({String title, String sub, String badge, String deptKey, String deptName})>{
+              'IMAGE_QR': (
+                title: '📷 صور فواتير ضريبية (JPG / PNG / WebP)',
+                sub: 'قراءة باركود ZATCA QR واستخلاص الضريبة 15% وإرفاق صورة كل فاتورة في الجدول',
+                badge: 'صورة فاتورة + ZATCA QR',
+                deptKey: 'finance',
+                deptName: 'قسم المحاسبة والمالية (نظام سماك SMACC — الفوترة ZATCA)',
+              ),
+              'PDF_DOC': (
+                title: '📄 مستند PDF متعدد الصفحات (.pdf)',
+                sub: 'فصل الفواتير والعقود تلقائياً من ملف PDF وإدراج كل صفحة كسجل مستقل مع المرفق',
+                badge: 'مستند PDF موثق',
+                deptKey: 'finance',
+                deptName: 'قسم المحاسبة والمالية (نظام سماك SMACC)',
+              ),
+              'WORD_DOCX': (
+                title: '📝 مستندات وعقود Word (.docx / .doc)',
+                sub: 'استخلاص بيانات العقود أو السير الذاتية أو الخطابات وتوجيهها للقسم المعني',
+                badge: 'مستند Word رسمي',
+                deptKey: 'recruitment',
+                deptName: 'قسم عقود الاستقدام (مساند)',
+              ),
+              'EXTERNAL_ERP_EXCEL': (
+                title: '📊 نظام محاسبي منفصل للشركة الأخرى (Excel / XML / CSV)',
+                sub: 'استيراد قيود اليومية والفواتير وميزان المراجعة من نظام محاسبي خارجي لعزلها في دفاتر الشركة',
+                badge: 'نظام محاسبي منفصل Excel/XML',
+                deptKey: 'finance',
+                deptName: 'قسم المحاسبة والمالية (الأستاذ العام SMACC GL)',
+              ),
+            };
+
+            final currentFmt = formatLabels[selectedFormat]!;
+            final effectiveDeptName = routingMode == 'auto'
+                ? 'التعرف التلقائي ← ${currentFmt.deptName}'
+                : (ErpSystemData.departments[routingMode]?.nameAr ?? currentFmt.deptName);
+
+            return DraggableScrollableSheet(
+              expand: false,
+              initialChildSize: 0.86,
+              maxChildSize: 0.95,
+              minChildSize: 0.6,
+              builder: (_, scrollCtrl) {
+                return ListView(
+                  controller: scrollCtrl,
+                  padding: const EdgeInsets.all(18),
+                  children: [
+                    // Header
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: ErpTokens.charcoalDark,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.5)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: ErpTokens.champagneGold.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: ErpTokens.champagneGold),
+                            ),
+                            child: const Icon(Icons.upload_file_rounded, color: ErpTokens.goldLight, size: 22),
+                          ),
+                          const SizedBox(width: 10),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'بوابة الاستخلاص التلقائي للمستندات والفواتير والأنظمة المحاسبية',
+                                  style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w900, color: Colors.white),
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'رفع 1 إلى 100+ فاتورة أو مستند (PDF / Word / Excel / صور) وتوجيهه تلقائياً للقسم المعني والنظام المحاسبي المستقل للشركة',
+                                  style: TextStyle(fontSize: 10.5, color: Color(0xFFD4D4D8)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            icon: const Icon(Icons.close_rounded, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // 1. Per-Company Isolated Accounting System Selector
+                    const Text(
+                      '١. النظام المحاسبي المستقل للشركة (دفتر محاسبي معزول لكل شركة):',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: ErpSystemData.mainSubsidiaryCompanies.map((comp) {
+                        final active = targetCompanyCode == comp.companyId;
+                        return ChoiceChip(
+                          label: Text('[${comp.companyId}] ${comp.nameAr}', style: const TextStyle(fontSize: 10.5)),
+                          selected: active,
+                          selectedColor: ErpTokens.primary,
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: active ? Colors.white : ErpTokens.ink,
+                          ),
+                          onSelected: (_) => setModalState(() => targetCompanyCode = comp.companyId),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 2. Document Format Selector (Any Format)
+                    const Text(
+                      '٢. صيغة الملفات المرفوعة (يتم التعرف على أي صيغة تلقائياً):',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 6),
+                    ...formatLabels.entries.map((entry) {
+                      final active = selectedFormat == entry.key;
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 7),
+                        child: ListTile(
+                          onTap: () => setModalState(() => selectedFormat = entry.key),
+                          dense: true,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: active ? ErpTokens.primary : ErpTokens.hairlineLight,
+                              width: active ? 1.5 : 1,
+                            ),
+                          ),
+                          tileColor: active ? ErpTokens.goldPale.withValues(alpha: 0.45) : ErpTokens.surfaceSubtle,
+                          leading: Icon(
+                            active ? Icons.check_circle_rounded : Icons.insert_drive_file_outlined,
+                            color: active ? ErpTokens.primary : const Color(0xFF71717A),
+                          ),
+                          title: Text(entry.value.title, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800)),
+                          subtitle: Text(entry.value.sub, style: const TextStyle(fontSize: 10, color: Color(0xFF52525B))),
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 10),
+
+                    // 3. Department Auto-Recognition Mode
+                    const Text(
+                      '٣. التوجيه التلقائي إلى القسم المعني:',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFECFDF5),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFA7F3D0)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.verified_rounded, size: 18, color: Color(0xFF047857)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'القسم المكتشف تلقائياً: $effectiveDeptName • الشركة المعزولة: [$targetCompanyCode]',
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF065F46)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // 4. Batch Size Selector (1, 10, 50, 100 Invoices/Documents)
+                    const Text(
+                      '٤. عدد الفواتير / المستندات المراد رفعها واستخلاصها دفعة واحدة:',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [1, 10, 50, 100].map((cnt) {
+                        final selected = batchCount == cnt;
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.only(end: 6),
+                            child: ChoiceChip(
+                              label: Text('$cnt فاتورة/مستند', style: const TextStyle(fontSize: 10.5)),
+                              selected: selected,
+                              selectedColor: ErpTokens.primary,
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: selected ? Colors.white : ErpTokens.ink,
+                              ),
+                              onSelected: (_) => setModalState(() => batchCount = cnt),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // 5. Execute Extraction & Auto-Route Button
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ErpTokens.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ErpTokens.radiusPill)),
+                      ),
+                      onPressed: () {
+                        final nowSuffix = DateTime.now().millisecondsSinceEpoch % 10000;
+                        final insertedPreviewCount = batchCount > 15 ? 15 : batchCount;
+                        final List<ErpOperationalRecord> newBatch = [];
+
+                        for (int i = 1; i <= insertedPreviewCount; i++) {
+                          final invNum = 'DOC-$targetCompanyCode-${nowSuffix + i}';
+                          final netVal = 12000 + (i * 450);
+                          final vatVal = (netVal * 0.15).round();
+                          final totalVal = netVal + vatVal;
+                          newBatch.add(
+                            ErpOperationalRecord(
+                              id: invNum,
+                              companyId: targetCompanyCode,
+                              moduleKey: currentFmt.deptKey == 'finance' ? 'finance' : 'contracts',
+                              title: i == 1 && batchCount > 1
+                                  ? 'دفعة مستخلصة ($batchCount مستند/فاتورة) — #$invNum (${currentFmt.badge})'
+                                  : 'مستند مستخلص #$invNum — ${currentFmt.badge}',
+                              subtitle: 'تم التعرف التلقائي وتوجيهه إلى ${currentFmt.deptName} • دفتر شركة [$targetCompanyCode] المستقل • صافي: $netVal ر.س + ضريبة: $vatVal ر.س',
+                              status: 'مرحّل وموثق + مرفق محفوظ',
+                              badgeText: '${currentFmt.badge} • $targetCompanyCode',
+                              amountOrMetric: '$totalVal ر.س (شامل 15%)',
+                              updatedAt: 'الآن',
+                              attachmentLabel: 'معاينة المرفق (${currentFmt.badge})',
+                              sourceFormat: currentFmt.badge,
+                            ),
+                          );
+                        }
+
+                        setState(() {
+                          _allRecords.insertAll(0, newBatch);
+                        });
+
+                        Navigator.of(ctx).pop();
+                        _triggerInstantNativeNotification(
+                          customTitle: 'اكتمال استخلاص وتوجيه $batchCount مستند/فاتورة [$targetCompanyCode]',
+                          customBody: 'تم التعرف على الصيغة (${currentFmt.badge}) وإدراجها في ${currentFmt.deptName} وترحيل القيود في النظام المحاسبي المستقل لشركة $targetCompanyCode.',
+                          tabKey: _activeTab,
+                          tabTitle: _activeTabTitle,
+                        );
+                      },
+                      icon: const Icon(Icons.bolt_rounded, color: ErpTokens.goldLight),
+                      label: Text(
+                        'استخلاص وإدراج ($batchCount) مستند/فاتورة في القسم المعني ودفاتر [$targetCompanyCode]',
+                        style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -2840,50 +3716,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
     );
   }
 
-  void _openMoodCheckInModal() {
-    const moods = [
-      MapEntry('😊', 'ممتاز ومتحمس'),
-      MapEntry('🚀', 'إنتاجية عالية'),
-      MapEntry('😌', 'هادئ ومستقر'),
-      MapEntry('☕', 'أحتاج قهوة'),
-    ];
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text('نبض الموظف اليومي (Employee Pulse)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: moods.map((m) {
-                  return ChoiceChip(
-                    label: Text('${m.key} ${m.value}'),
-                    selected: _userMoodEmoji == m.key,
-                    onSelected: (_) {
-                      setState(() => _userMoodEmoji = m.key);
-                      Navigator.of(ctx).pop();
-                    },
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _openFarisNouraCopilotSheet() {
+  void _openEmployeeProfileModal() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -2895,19 +3728,19 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           padding: const EdgeInsets.all(18),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      _persona == 'noura' ? 'assets/noura.png' : 'assets/mascot.png',
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const Icon(Icons.auto_awesome_rounded, size: 32),
+                  Container(
+                    width: 48,
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: ErpTokens.primary,
+                      borderRadius: BorderRadius.circular(14),
                     ),
+                    child: Text(_activeDepartment.emoji, style: const TextStyle(fontSize: 22)),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -2915,12 +3748,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _persona == 'noura' ? 'نُورة • المساعد الذكي للمجموعة' : 'فارس • المساعد الذكي للمجموعة',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
+                          _authenticatedUserName,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: ErpTokens.ink),
                         ),
                         Text(
-                          'متصل ببيانات ${_selectedPortal.nameAr} المعزولة',
-                          style: const TextStyle(fontSize: 11, color: Color(0xFF71717A)),
+                          _authenticatedUserRole,
+                          style: const TextStyle(fontSize: 11.5, color: Color(0xFF71717A)),
                         ),
                       ],
                     ),
@@ -2931,39 +3764,57 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: ErpTokens.goldPale,
+                  color: ErpTokens.goldPale.withValues(alpha: 0.55),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: ErpTokens.champagneGold.withValues(alpha: 0.6)),
                 ),
-                child: Text(
-                  'مرحباً $_authenticatedUserName! جميع مؤشرات ${_selectedPortal.nameAr} تعمل بكفاءة 100%، وخدمة المزامنة الخلفية نشطة ($_heartbeatCount نبضة). اختر إجراءً سريعاً:',
-                  style: const TextStyle(fontSize: 12, height: 1.45),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'الشركة المعزولة: ${_selectedPortal.emoji} ${_selectedPortal.nameAr}',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'القسم الإداري المقفل: ${_activeDepartment.emoji} ${_activeDepartment.nameAr}',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF065F46)),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'الفرع النشط: ${_selectedBranch.name}',
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF52525B)),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
+              const SizedBox(height: 14),
+              Row(
                 children: [
-                  ActionChip(
-                    label: const Text('فتح عقود مساند'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                      _handleSelectTab('recruitment-contracts', 'عقود الاستقدام الموثقة (مساند)');
-                    },
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        setState(() => _flowState = 'launcher');
+                      },
+                      icon: const Icon(Icons.grid_view_rounded, size: 16),
+                      label: const Text('شاشات القسم'),
+                    ),
                   ),
-                  ActionChip(
-                    label: const Text('الفوترة الإلكترونية ZATCA'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                      _handleSelectTab('zatca', 'الفاتورة الإلكترونية ZATCA المرحلة 2');
-                    },
-                  ),
-                  ActionChip(
-                    label: const Text('تجربة إشعار الهاتف الأصلي'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                      _triggerInstantNativeNotification();
-                    },
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        _handleLogout();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ErpTokens.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.logout_rounded, size: 16, color: ErpTokens.goldLight),
+                      label: const Text('تسجيل الخروج'),
+                    ),
                   ),
                 ],
               ),
@@ -2971,6 +3822,587 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           ),
         );
       },
+    );
+  }
+
+  /// Exact Replica of `AICopilotWidget.tsx` & `localAiService.ts` (Faris & Noura Institutional Advisor)
+  void _openFarisNouraAdvisorSheet() {
+    String activePersona = _activeDepartment.id == 'shelter' ? 'noura' : 'faris';
+    final TextEditingController queryController = TextEditingController();
+    final compName = _selectedPortal.nameAr;
+    final compCode = _selectedPortal.companyId == 'all' ? 'GROUP' : _selectedPortal.companyId.toUpperCase();
+    final totalRecordsCount = _scopedRecords.length;
+
+    String buildWelcome(String p) {
+      if (p == 'noura') {
+        return 'أهلاً بكِ في نطاق ($compName)! أنا "نُورة"، المستشارة المؤسسية والتشغيلية لمجموعة خالد السليم.\n'
+            '• يسعدني مساعدتكِ في إدارة مراكز الإيواء والتسكين، عقود مساند والتأجير، محاسبة سماك (SMACC)، أو رفع واستخلاص حتى 100 فاتورة ومستندات PDF وWord وExcel تلقائياً.';
+      }
+      return 'أهلاً بك في نطاق ($compName)! أنا "فارس"، المستشار التنفيذي لمجموعة خالد السليم.\n'
+          '• يسعدني مساعدتك في إدارة محاسبة سماك بـ 6 أنظمة، الفوترة الضريبية ZATCA، عقود مساند، منافسات كاس وجداول BOQ، أو استخلاص حتى 100 فاتورة وأي مستند تلقائياً.';
+    }
+
+    final List<Map<String, String>> chatMessages = [
+      {
+        'sender': 'advisor',
+        'persona': activePersona,
+        'text': buildWelcome(activePersona),
+        'actionLabel': 'فتح منظومة محاسبة سماك (SMACC)',
+        'actionKey': 'smacc-accounting',
+      },
+    ];
+
+    Map<String, String> generateTopicResponse(String query, String p) {
+      final lower = query.toLowerCase();
+      final intro = p == 'noura'
+          ? 'معكِ "نُورة" المستشارة المؤسسية في نطاق ($compName):'
+          : 'معك "فارس" المستشار التنفيذي في نطاق ($compName):';
+
+      if (lower.contains('رفع') ||
+          lower.contains('استخلاص') ||
+          lower.contains('100') ||
+          lower.contains('مستند') ||
+          lower.contains('ملف') ||
+          lower.contains('pdf') ||
+          lower.contains('excel') ||
+          lower.contains('word')) {
+        return {
+          'text': '$intro\n'
+              '• يمكنك رفع من فاتورة واحدة وحتى أكثر من 100 صورة فاتورة أو مستندات PDF وWord وExcel وملفات الأنظمة المحاسبية الخارجية دفعة واحدة.\n'
+              '• يتعرف المحرك تلقائياً على الصيغة ويستخلص الرقم الضريبي والضريبة 15% والإجمالي ويدرجها في القسم المعني ودفاتر [$compCode].',
+          'actionLabel': 'فتح محرك استخلاص المستندات والـ 100 فاتورة',
+          'actionKey': 'open-document-extractor',
+        };
+      }
+      if (lower.contains('سماك') ||
+          lower.contains('smacc') ||
+          lower.contains('محاسب') ||
+          lower.contains('قيد') ||
+          lower.contains('قبض') ||
+          lower.contains('صرف') ||
+          lower.contains('ميزان') ||
+          lower.contains('مالي')) {
+        return {
+          'text': '$intro\n'
+              '• منظومة المحاسبة في ($compName) تعمل بهيكلة نظام سماك (6 أنظمة متكاملة):\n'
+              '  1) المحاسبة المالية والأستاذ العام\n'
+              '  2) المبيعات والعملاء\n'
+              '  3) المشتريات والموردون\n'
+              '  4) المخزون والمستودعات\n'
+              '  5) البنوك والصناديق (القبض والصرف)\n'
+              '  6) مراكز التكلفة والأصول الثابتة\n'
+              '• جميع الدفاتر معزولة كلياً لشركة [$compCode] بإجمالي $totalRecordsCount سجل تشغيلي ومحاسبي نشط.',
+          'actionLabel': 'فتح مركز محاسبة سماك (SMACC)',
+          'actionKey': 'smacc-accounting',
+        };
+      }
+      if (lower.contains('زكاة') || lower.contains('zatca') || lower.contains('ضريب') || lower.contains('فاتور')) {
+        return {
+          'text': '$intro\n'
+              '• الفوترة الإلكترونية ZATCA المرحلة الثانية (الربط والتكامل) مفعلة بنسبة امتثال 100% لشركة [$compCode] مع ختم تشفير TLV Base64 QR وتوقيع ECDSA.',
+          'actionLabel': 'فتح بوابة الفوترة الضريبية ZATCA',
+          'actionKey': 'zatca',
+        };
+      }
+      if (lower.contains('مساند') || lower.contains('استقدام') || lower.contains('تأشير') || lower.contains('إنجاز')) {
+        return {
+          'text': '$intro\n'
+              '• قطاع عقود الاستقدام (مساند): 113 عقداً سارياً في مراحل المعالجة والتفويض الإلكتروني عبر إنجاز مع تفعيل بوالص التأمين وفترة الضمان (90 يوماً).',
+          'actionLabel': 'فتح عقود استقدام مساند',
+          'actionKey': 'recruitment-contracts',
+        };
+      }
+      if (lower.contains('تأجير') || lower.contains('إيجار') || lower.contains('ياقوت') || lower.contains('باقات')) {
+        return {
+          'text': '$intro\n'
+              '• قطاع التأجير والتشغيل المرن: 890+ عقد تشغيلي نشط للأفراد وقطاع الأعمال مع ربط آلي بسندات القبض في نظام سماك.',
+          'actionLabel': 'فتح عقود التأجير والتشغيل',
+          'actionKey': 'rent-contracts',
+        };
+      }
+      if (lower.contains('إيواء') || lower.contains('سكن') || lower.contains('تسكين') || lower.contains('دار الرواد')) {
+        return {
+          'text': '$intro\n'
+              '• مركز الإيواء والتسكين والرعاية (دار الرواد - مرخص من HRSD): طاقة استيعابية 120 سريراً، نسبة إشغال 42% (28 سريراً متاحاً)، ورعاية صحية وغذائية متكاملة.',
+          'actionLabel': 'فتح بوابة مركز الإيواء والتسكين',
+          'actionKey': 'shelter',
+        };
+      }
+      if (lower.contains('منافس') || lower.contains('اعتماد') || lower.contains('boq') || lower.contains('كاس')) {
+        return {
+          'text': '$intro\n'
+              '• منظومة منافسات اعتماد وجداول الكميات (KAS BOQ): 2,651+ منافسة مرصودة، مع حساب آلي للبنود وضريبة 15% والتفقيط بالريال السعودي.',
+          'actionLabel': 'فتح منظومة منافسات كاس وجداول BOQ',
+          'actionKey': 'tenders-boq',
+        };
+      }
+      return {
+        'text': '$intro\n'
+            '• أنت تعمل حالياً ضمن قسم (${_activeDepartment.nameAr}) في شركة ($compName).\n'
+            '• إجمالي السجلات المعزولة في نطاقك: $totalRecordsCount سجل.\n'
+            '• يمكنك طلب استعراض محاسبة سماك، الفوترة ZATCA، عقود مساند، أو رفع واستخلاص 100 فاتورة ومستندات PDF/Word/Excel.',
+        'actionLabel': 'فتح لوحة المؤشرات التنفيذية',
+        'actionKey': 'dashboard',
+      };
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+      ),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setModalState) {
+            void sendQuery(String q) {
+              final trimmed = q.trim();
+              if (trimmed.isEmpty) return;
+              final reply = generateTopicResponse(trimmed, activePersona);
+              setModalState(() {
+                chatMessages.add({
+                  'sender': 'user',
+                  'persona': activePersona,
+                  'text': trimmed,
+                });
+                chatMessages.add({
+                  'sender': 'advisor',
+                  'persona': activePersona,
+                  'text': reply['text']!,
+                  'actionLabel': reply['actionLabel']!,
+                  'actionKey': reply['actionKey']!,
+                });
+                queryController.clear();
+              });
+            }
+
+            final quickPrompts = [
+              {'label': '📄 رفع 100 فاتورة / مستند', 'query': 'أريد رفع 100 فاتورة أو مستند PDF وWord وExcel واستخلاصها'},
+              {'label': '📊 محاسبة سماك (6 أنظمة)', 'query': 'استعرض نظام سماك المحاسبي والدفاتر المعزولة للشركة'},
+              {'label': '🧾 الفوترة الضريبية ZATCA', 'query': 'ما هي حالة الفوترة الإلكترونية ZATCA المرحلة الثانية؟'},
+              {'label': '📑 عقود مساند والتأجير', 'query': 'ما هي حالة عقود استقدام مساند والتأجير؟'},
+              {'label': '🏥 مراكز الإيواء والتسكين', 'query': 'ما هي الطاقة الاستيعابية وحالة مراكز الإيواء؟'},
+              {'label': '🏗️ منافسات كاس و BOQ', 'query': 'استعرض منافسات اعتماد وجداول الكميات BOQ'},
+            ];
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+              child: SizedBox(
+                height: MediaQuery.of(ctx).size.height * 0.82,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // 1. Obsidian Black + Warm Champagne Gold Institutional Header
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF1D2428),
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+                        border: Border(bottom: BorderSide(color: ErpTokens.champagneGold, width: 1.2)),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 44,
+                                height: 44,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: ErpTokens.canvasCream,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: ErpTokens.champagneGold, width: 1.5),
+                                ),
+                                child: Image.asset(
+                                  activePersona == 'noura' ? 'assets/noura.png' : 'assets/mascot.png',
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (_, _, _) => const Icon(Icons.support_agent_rounded, color: ErpTokens.ink),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            activePersona == 'noura'
+                                                ? 'نُورة • المستشارة المؤسسية'
+                                                : 'فارس • المستشار التنفيذي',
+                                            style: const TextStyle(
+                                              fontSize: 13.5,
+                                              fontWeight: FontWeight.w900,
+                                              color: Colors.white,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: ErpTokens.champagneGold,
+                                            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                          ),
+                                          child: Text(
+                                            activePersona == 'noura' ? 'نُورة' : 'فارس',
+                                            style: const TextStyle(
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w900,
+                                              color: ErpTokens.ink,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'عزل بيانات نشط: $compName (${_activeDepartment.shortNameAr})',
+                                      style: const TextStyle(fontSize: 10.5, color: ErpTokens.goldPale),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => Navigator.of(ctx).pop(),
+                                icon: const Icon(Icons.close_rounded, color: Colors.white70, size: 20),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          // Persona Switcher Bar
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                  border: Border.all(color: Colors.white24),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setModalState(() {
+                                          activePersona = 'faris';
+                                          chatMessages.add({
+                                            'sender': 'advisor',
+                                            'persona': 'faris',
+                                            'text': buildWelcome('faris'),
+                                            'actionLabel': 'فتح منظومة محاسبة سماك (SMACC)',
+                                            'actionKey': 'smacc-accounting',
+                                          });
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: activePersona == 'faris' ? ErpTokens.champagneGold : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                        ),
+                                        child: Text(
+                                          'فارس (تنفيذي)',
+                                          style: TextStyle(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w900,
+                                            color: activePersona == 'faris' ? ErpTokens.ink : Colors.white70,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setModalState(() {
+                                          activePersona = 'noura';
+                                          chatMessages.add({
+                                            'sender': 'advisor',
+                                            'persona': 'noura',
+                                            'text': buildWelcome('noura'),
+                                            'actionLabel': 'فتح بوابة مركز الإيواء والتسكين',
+                                            'actionKey': 'shelter',
+                                          });
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: activePersona == 'noura' ? ErpTokens.champagneGold : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                        ),
+                                        child: Text(
+                                          'نُورة (مؤسسي)',
+                                          style: TextStyle(
+                                            fontSize: 10.5,
+                                            fontWeight: FontWeight.w900,
+                                            color: activePersona == 'noura' ? ErpTokens.ink : Colors.white70,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: ErpTokens.goldPale,
+                                  borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                  border: Border.all(color: ErpTokens.champagneGold),
+                                ),
+                                child: Text(
+                                  '🔐 $compCode',
+                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 2. Quick Contextual Prompts Bar
+                    Container(
+                      height: 44,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: const BoxDecoration(
+                        color: ErpTokens.canvasCream,
+                        border: Border(bottom: BorderSide(color: ErpTokens.hairlineLight)),
+                      ),
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: quickPrompts.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 6),
+                        itemBuilder: (_, idx) {
+                          final qp = quickPrompts[idx];
+                          return Center(
+                            child: ActionChip(
+                              backgroundColor: Colors.white,
+                              side: const BorderSide(color: ErpTokens.hairlineLight),
+                              label: Text(
+                                qp['label']!,
+                                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                              ),
+                              onPressed: () => sendQuery(qp['query']!),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // 3. Messages List
+                    Expanded(
+                      child: Container(
+                        color: ErpTokens.canvasCream,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(14),
+                          itemCount: chatMessages.length,
+                          itemBuilder: (_, idx) {
+                            final msg = chatMessages[idx];
+                            final isUser = msg['sender'] == 'user';
+                            final msgPersona = msg['persona'] ?? activePersona;
+                            return Align(
+                              alignment: isUser ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(12),
+                                constraints: BoxConstraints(maxWidth: MediaQuery.of(ctx).size.width * 0.84),
+                                decoration: BoxDecoration(
+                                  color: isUser ? const Color(0xFF1D2428) : Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isUser ? ErpTokens.ink : ErpTokens.hairlineLight,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (!isUser)
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 5),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(
+                                              width: 18,
+                                              height: 18,
+                                              child: Image.asset(
+                                                msgPersona == 'noura' ? 'assets/noura.png' : 'assets/mascot.png',
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              msgPersona == 'noura' ? 'نُورة • المستشارة المؤسسية' : 'فارس • المستشار التنفيذي',
+                                              style: const TextStyle(
+                                                fontSize: 10.5,
+                                                fontWeight: FontWeight.w900,
+                                                color: ErpTokens.goldDark,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    Text(
+                                      msg['text'] ?? '',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        height: 1.45,
+                                        fontWeight: FontWeight.w600,
+                                        color: isUser ? Colors.white : ErpTokens.ink,
+                                      ),
+                                    ),
+                                    if (!isUser && msg['actionKey'] != null) ...[
+                                      const SizedBox(height: 8),
+                                      InkWell(
+                                        onTap: () {
+                                          final actionKey = msg['actionKey']!;
+                                          final actionLabel = msg['actionLabel'] ?? actionKey;
+                                          Navigator.of(ctx).pop();
+                                          if (actionKey == 'open-document-extractor') {
+                                            _openUniversalDocumentExtractorSheet();
+                                          } else {
+                                            _handleSelectTab(actionKey, actionLabel);
+                                          }
+                                        },
+                                        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                                          decoration: BoxDecoration(
+                                            color: ErpTokens.primary,
+                                            borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                            border: Border.all(color: ErpTokens.champagneGold),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Icon(Icons.bolt_rounded, size: 14, color: ErpTokens.champagneGold),
+                                              const SizedBox(width: 4),
+                                              Flexible(
+                                                child: Text(
+                                                  msg['actionLabel'] ?? 'انتقال للقسم',
+                                                  style: const TextStyle(
+                                                    fontSize: 10.5,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: ErpTokens.champagneGold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // 4. Input Bar
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        border: Border(top: BorderSide(color: ErpTokens.hairlineLight)),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: queryController,
+                              onSubmitted: sendQuery,
+                              style: const TextStyle(fontSize: 12.5, color: ErpTokens.ink),
+                              decoration: InputDecoration(
+                                hintText: activePersona == 'noura'
+                                    ? 'اكتبي سؤالكِ لنُورة (الإيواء، سماك، رفع 100 فاتورة...)'
+                                    : 'اكتب سؤالك لفارس (سماك، ZATCA، مساند، رفع 100 فاتورة...)',
+                                hintStyle: const TextStyle(fontSize: 11, color: Color(0xFF71717A)),
+                                filled: true,
+                                fillColor: ErpTokens.canvasCream,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: ErpTokens.hairlineLight),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: ErpTokens.hairlineLight),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: ErpTokens.champagneGold, width: 1.5),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () => sendQuery(queryController.text),
+                            borderRadius: BorderRadius.circular(14),
+                            child: Container(
+                              width: 42,
+                              height: 42,
+                              decoration: BoxDecoration(
+                                color: ErpTokens.primary,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: ErpTokens.champagneGold),
+                              ),
+                              child: const Icon(Icons.send_rounded, size: 18, color: ErpTokens.champagneGold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _InstitutionalPillBadge extends StatelessWidget {
+  final String emoji;
+  final String label;
+
+  const _InstitutionalPillBadge({
+    required this.emoji,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: ErpTokens.surfaceSubtle,
+        borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+        border: Border.all(color: ErpTokens.hairlineLight),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 12)),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+          ),
+        ],
+      ),
     );
   }
 }

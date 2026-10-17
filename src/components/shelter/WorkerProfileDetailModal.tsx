@@ -113,7 +113,7 @@ export const WorkerProfileDetailModal: React.FC<WorkerProfileDetailModalProps> =
                 <span className="bg-amber-400/15 text-amber-300 border border-amber-400/30 px-2.5 py-1 rounded-xl font-bold">
                   المكتب الأصلي: {originalOffice?.name || worker.originalOfficeId}
                 </span>
-                <span className="bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2.5 py-1 rounded-xl font-bold">
+                <span className="bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-xl font-bold">
                   تجارب العملاء السابقة: {worker.clientTrialsCount}
                 </span>
               </div>

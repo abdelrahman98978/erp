@@ -981,72 +981,72 @@ function generateZatcaQrSvg(): string {
   return `
     <svg width="88" height="88" viewBox="0 0 100 100" style="background:#ffffff; padding:4px; border:1.5px solid #059669; border-radius:10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
       <!-- Corner Position Squares -->
-      <rect x="5" y="5" width="26" height="26" rx="4" fill="#0F172A" />
+      <rect x="5" y="5" width="26" height="26" rx="4" fill="#1D2428" />
       <rect x="9" y="9" width="18" height="18" rx="2" fill="#FFFFFF" />
       <rect x="13" y="13" width="10" height="10" rx="1" fill="#059669" />
 
-      <rect x="69" y="5" width="26" height="26" rx="4" fill="#0F172A" />
+      <rect x="69" y="5" width="26" height="26" rx="4" fill="#1D2428" />
       <rect x="73" y="9" width="18" height="18" rx="2" fill="#FFFFFF" />
       <rect x="77" y="13" width="10" height="10" rx="1" fill="#059669" />
 
-      <rect x="5" y="69" width="26" height="26" rx="4" fill="#0F172A" />
+      <rect x="5" y="69" width="26" height="26" rx="4" fill="#1D2428" />
       <rect x="9" y="73" width="18" height="18" rx="2" fill="#FFFFFF" />
       <rect x="13" y="77" width="10" height="10" rx="1" fill="#059669" />
 
       <!-- Data Dots Matrix Pattern -->
-      <rect x="36" y="8" width="5" height="5" fill="#0F172A" />
-      <rect x="46" y="8" width="5" height="5" fill="#0F172A" />
-      <rect x="56" y="8" width="5" height="5" fill="#0F172A" />
+      <rect x="36" y="8" width="5" height="5" fill="#1D2428" />
+      <rect x="46" y="8" width="5" height="5" fill="#1D2428" />
+      <rect x="56" y="8" width="5" height="5" fill="#1D2428" />
 
       <rect x="36" y="18" width="5" height="5" fill="#059669" />
-      <rect x="46" y="18" width="5" height="5" fill="#0F172A" />
+      <rect x="46" y="18" width="5" height="5" fill="#1D2428" />
       <rect x="56" y="18" width="5" height="5" fill="#059669" />
 
-      <rect x="36" y="28" width="5" height="5" fill="#0F172A" />
-      <rect x="46" y="28" width="5" height="5" fill="#0F172A" />
-      <rect x="56" y="28" width="5" height="5" fill="#0F172A" />
+      <rect x="36" y="28" width="5" height="5" fill="#1D2428" />
+      <rect x="46" y="28" width="5" height="5" fill="#1D2428" />
+      <rect x="56" y="28" width="5" height="5" fill="#1D2428" />
 
-      <rect x="8" y="36" width="5" height="5" fill="#0F172A" />
+      <rect x="8" y="36" width="5" height="5" fill="#1D2428" />
       <rect x="18" y="36" width="5" height="5" fill="#059669" />
-      <rect x="28" y="36" width="5" height="5" fill="#0F172A" />
-      <rect x="68" y="36" width="5" height="5" fill="#0F172A" />
+      <rect x="28" y="36" width="5" height="5" fill="#1D2428" />
+      <rect x="68" y="36" width="5" height="5" fill="#1D2428" />
       <rect x="78" y="36" width="5" height="5" fill="#059669" />
-      <rect x="88" y="36" width="5" height="5" fill="#0F172A" />
+      <rect x="88" y="36" width="5" height="5" fill="#1D2428" />
 
       <rect x="8" y="46" width="5" height="5" fill="#059669" />
-      <rect x="18" y="46" width="5" height="5" fill="#0F172A" />
+      <rect x="18" y="46" width="5" height="5" fill="#1D2428" />
       <rect x="28" y="46" width="5" height="5" fill="#059669" />
       <rect x="68" y="46" width="5" height="5" fill="#059669" />
-      <rect x="78" y="46" width="5" height="5" fill="#0F172A" />
+      <rect x="78" y="46" width="5" height="5" fill="#1D2428" />
       <rect x="88" y="46" width="5" height="5" fill="#059669" />
 
-      <rect x="8" y="56" width="5" height="5" fill="#0F172A" />
-      <rect x="18" y="56" width="5" height="5" fill="#0F172A" />
-      <rect x="28" y="56" width="5" height="5" fill="#0F172A" />
-      <rect x="68" y="56" width="5" height="5" fill="#0F172A" />
-      <rect x="78" y="56" width="5" height="5" fill="#0F172A" />
-      <rect x="88" y="56" width="5" height="5" fill="#0F172A" />
+      <rect x="8" y="56" width="5" height="5" fill="#1D2428" />
+      <rect x="18" y="56" width="5" height="5" fill="#1D2428" />
+      <rect x="28" y="56" width="5" height="5" fill="#1D2428" />
+      <rect x="68" y="56" width="5" height="5" fill="#1D2428" />
+      <rect x="78" y="56" width="5" height="5" fill="#1D2428" />
+      <rect x="88" y="56" width="5" height="5" fill="#1D2428" />
 
-      <rect x="36" y="68" width="5" height="5" fill="#0F172A" />
+      <rect x="36" y="68" width="5" height="5" fill="#1D2428" />
       <rect x="46" y="68" width="5" height="5" fill="#059669" />
-      <rect x="56" y="68" width="5" height="5" fill="#0F172A" />
-      <rect x="68" y="68" width="5" height="5" fill="#0F172A" />
-      <rect x="78" y="68" width="5" height="5" fill="#0F172A" />
+      <rect x="56" y="68" width="5" height="5" fill="#1D2428" />
+      <rect x="68" y="68" width="5" height="5" fill="#1D2428" />
+      <rect x="78" y="68" width="5" height="5" fill="#1D2428" />
       <rect x="88" y="68" width="5" height="5" fill="#059669" />
 
       <rect x="36" y="78" width="5" height="5" fill="#059669" />
-      <rect x="46" y="78" width="5" height="5" fill="#0F172A" />
+      <rect x="46" y="78" width="5" height="5" fill="#1D2428" />
       <rect x="56" y="78" width="5" height="5" fill="#059669" />
       <rect x="68" y="78" width="5" height="5" fill="#059669" />
-      <rect x="78" y="78" width="5" height="5" fill="#0F172A" />
-      <rect x="88" y="78" width="5" height="5" fill="#0F172A" />
+      <rect x="78" y="78" width="5" height="5" fill="#1D2428" />
+      <rect x="88" y="78" width="5" height="5" fill="#1D2428" />
 
-      <rect x="36" y="88" width="5" height="5" fill="#0F172A" />
-      <rect x="46" y="88" width="5" height="5" fill="#0F172A" />
-      <rect x="56" y="88" width="5" height="5" fill="#0F172A" />
-      <rect x="68" y="88" width="5" height="5" fill="#0F172A" />
+      <rect x="36" y="88" width="5" height="5" fill="#1D2428" />
+      <rect x="46" y="88" width="5" height="5" fill="#1D2428" />
+      <rect x="56" y="88" width="5" height="5" fill="#1D2428" />
+      <rect x="68" y="88" width="5" height="5" fill="#1D2428" />
       <rect x="78" y="88" width="5" height="5" fill="#059669" />
-      <rect x="88" y="88" width="5" height="5" fill="#0F172A" />
+      <rect x="88" y="88" width="5" height="5" fill="#1D2428" />
 
       <!-- Center Verified Shield Emblem -->
       <circle cx="50" cy="50" r="13" fill="#FFFFFF" stroke="#059669" stroke-width="2" />
@@ -1148,9 +1148,9 @@ export function generateExecutiveReportHtml(
   const kpis = calculateReportKpis(config.headers, mappedRows);
 
   const headersHtml = `
-    <th style="padding: 10px 8px; background: #0F172A; color: #F8FAFC; border: 1px solid #334155; width: 44px; text-align: center; font-weight: 800; font-size: 11px;">#</th>
+    <th style="padding: 10px 8px; background: #1D2428; color: #F8FAFC; border: 1px solid #334155; width: 44px; text-align: center; font-weight: 800; font-size: 11px;">#</th>
     ${config.headers.map(h => `
-      <th style="padding: 10px 10px; background: #0F172A; color: #F8FAFC; border: 1px solid #334155; font-size: 11.5px; font-weight: 700; text-align: right; white-space: nowrap;">
+      <th style="padding: 10px 10px; background: #1D2428; color: #F8FAFC; border: 1px solid #334155; font-size: 11.5px; font-weight: 700; text-align: right; white-space: nowrap;">
         ${h}
       </th>
     `).join('')}
@@ -1185,14 +1185,14 @@ export function generateExecutiveReportHtml(
   if (hasTotals) {
     tfootHtml = `
       <tfoot>
-        <tr style="background-color: #F1F5F9; font-weight: 900; border-top: 2.5px solid #0F172A; page-break-inside: avoid;">
-          <td colspan="1" style="text-align: center; padding: 10px 8px; border: 1px solid #CBD5E1; font-size: 11px; color: #0F172A;">
+        <tr style="background-color: #F1F5F9; font-weight: 900; border-top: 2.5px solid #1D2428; page-break-inside: avoid;">
+          <td colspan="1" style="text-align: center; padding: 10px 8px; border: 1px solid #CBD5E1; font-size: 11px; color: #1D2428;">
             المجموع
           </td>
           ${config.headers.map((_, colIdx) => {
             const tot = kpis.columnTotals[colIdx];
             if (colIdx === 0 && tot === null) {
-              return `<td style="padding: 10px; border: 1px solid #CBD5E1; font-size: 11px; color: #0F172A; font-weight: 800;">الإجمالي العام</td>`;
+              return `<td style="padding: 10px; border: 1px solid #CBD5E1; font-size: 11px; color: #1D2428; font-weight: 800;">الإجمالي العام</td>`;
             }
             if (tot !== null) {
               return `
@@ -1225,7 +1225,7 @@ export function generateExecutiveReportHtml(
           font-family: 'Tajawal', 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
           margin: 0;
           padding: 24px;
-          color: #0F172A;
+          color: #1D2428;
           background: #FFFFFF;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
@@ -1245,7 +1245,7 @@ export function generateExecutiveReportHtml(
             display: none !important;
           }
           .header-banner {
-            border-bottom: 2px solid #0F172A !important;
+            border-bottom: 2px solid #1D2428 !important;
           }
           table {
             page-break-inside: auto;
@@ -1267,7 +1267,7 @@ export function generateExecutiveReportHtml(
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: #0F172A;
+          background: #1D2428;
           color: #FFFFFF;
           padding: 12px 24px;
           border-radius: 16px;
@@ -1297,7 +1297,7 @@ export function generateExecutiveReportHtml(
         }
         .btn-secondary {
           background: #FFFFFF;
-          color: #0F172A;
+          color: #1D2428;
         }
         .btn-secondary:hover {
           background: #F1F5F9;
@@ -1308,7 +1308,7 @@ export function generateExecutiveReportHtml(
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          border-bottom: 2.5px solid #0F172A;
+          border-bottom: 2.5px solid #1D2428;
           padding-bottom: 18px;
           margin-bottom: 20px;
           gap: 16px;
@@ -1324,7 +1324,7 @@ export function generateExecutiveReportHtml(
           height: 58px;
           border-radius: 14px;
           border: 2px solid #D4AF37;
-          background: #0F172A;
+          background: #1D2428;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1338,7 +1338,7 @@ export function generateExecutiveReportHtml(
           margin: 0;
           font-size: 20px;
           font-weight: 900;
-          color: #0F172A;
+          color: #1D2428;
           line-height: 1.2;
         }
         .company-titles .en-name {
@@ -1357,7 +1357,7 @@ export function generateExecutiveReportHtml(
           flex-wrap: wrap;
         }
         .company-titles .legal-info strong {
-          color: #0F172A;
+          color: #1D2428;
         }
 
         .center-meta {
@@ -1369,7 +1369,7 @@ export function generateExecutiveReportHtml(
           display: inline-block;
           background: #F1F5F9;
           border: 1px solid #CBD5E1;
-          color: #0F172A;
+          color: #1D2428;
           font-size: 10px;
           font-weight: 800;
           padding: 3px 12px;
@@ -1379,7 +1379,7 @@ export function generateExecutiveReportHtml(
         .report-title-text {
           font-size: 18px;
           font-weight: 900;
-          color: #0F172A;
+          color: #1D2428;
           margin: 0;
         }
         .report-subtitle {
@@ -1430,7 +1430,7 @@ export function generateExecutiveReportHtml(
         .kpi-box .val {
           font-size: 16px;
           font-weight: 900;
-          color: #0F172A;
+          color: #1D2428;
           margin-top: 2px;
         }
         .kpi-box .val.emerald { color: #059669; }
@@ -1467,7 +1467,7 @@ export function generateExecutiveReportHtml(
         .sig-box .sig-title {
           font-size: 11.5px;
           font-weight: 800;
-          color: #0F172A;
+          color: #1D2428;
         }
         .sig-box .sig-role {
           font-size: 10px;
@@ -1999,8 +1999,8 @@ export function exportToWord(sectionKey: string, data: any[], customTitle?: stri
   `).join('');
 
   const tableHeadersHtml = `
-    <th style="background-color: #0F172A; color: #FFFFFF; font-weight: bold; border: 1px solid #334155; padding: 8px; width: 35px; text-align: center;">#</th>
-    ${config.headers.map(h => `<th style="background-color: #0F172A; color: #FFFFFF; font-weight: bold; border: 1px solid #334155; padding: 8px; text-align: right; font-size: 10.5pt;">${h}</th>`).join('')}
+    <th style="background-color: #1D2428; color: #FFFFFF; font-weight: bold; border: 1px solid #334155; padding: 8px; width: 35px; text-align: center;">#</th>
+    ${config.headers.map(h => `<th style="background-color: #1D2428; color: #FFFFFF; font-weight: bold; border: 1px solid #334155; padding: 8px; text-align: right; font-size: 10.5pt;">${h}</th>`).join('')}
   `;
 
   let totalRowHtml = '';
@@ -2041,7 +2041,7 @@ export function exportToWord(sectionKey: string, data: any[], customTitle?: stri
           font-family: 'Calibri', 'Tajawal', 'Arial', sans-serif;
           direction: rtl;
           text-align: right;
-          color: #0F172A;
+          color: #1D2428;
           margin: 0;
           padding: 10px;
         }
@@ -2054,7 +2054,7 @@ export function exportToWord(sectionKey: string, data: any[], customTitle?: stri
         .header-title {
           font-size: 18pt;
           font-weight: bold;
-          color: #0F172A;
+          color: #1D2428;
           margin-bottom: 2px;
         }
         .sub-header {
@@ -2078,7 +2078,7 @@ export function exportToWord(sectionKey: string, data: any[], customTitle?: stri
       </style>
     </head>
     <body lang=AR-SA>
-      <div style="border-bottom: 2.5pt solid #0F172A; padding-bottom: 12px; margin-bottom: 16px;">
+      <div style="border-bottom: 2.5pt solid #1D2428; padding-bottom: 12px; margin-bottom: 16px;">
         <div style="float: left; font-size: 9pt; color: #64748B; text-align: left;">
           <div>ZATCA &amp; SAMA Compliant</div>
           <div>رقم السجل: ${company.crNumber}</div>

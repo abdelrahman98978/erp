@@ -79,47 +79,56 @@ function mapProfileToIamUser(profile: UserProfile | null): {
     return { iamUser: null, permissions: new Set<string>() };
   }
 
-  let accountType: AccountType = 'Employee';
-  let scope: DataScopeLevel = 4;
-  let perms: string[] = ['dashboard.view'];
+  let accountType: AccountType = 'Department Manager';
+  let scope: DataScopeLevel = 3;
+  let perms: string[] = [];
 
-  if (['رئيس المجموعة', 'مدير نظام'].includes(profile.role)) {
+  const dept = profile.department_id;
+
+  if (
+    dept === 'executive' ||
+    profile.company_id === 'all' ||
+    ['رئيس مجلس الإدارة', 'رئيس المجموعة', 'مدير نظام', 'مدير تنفيذي'].includes(profile.role)
+  ) {
     accountType = 'Group Super Admin';
     scope = 6;
     perms = ALL_ADMIN_PERMISSIONS;
-  } else if (profile.role === 'مدير تنفيذي') {
-    accountType = 'Board / Group Executive';
-    scope = 6;
-    perms = ALL_ADMIN_PERMISSIONS.filter(p => p !== '*');
-  } else if (['مدير شركة', 'مدير عام'].includes(profile.role)) {
-    accountType = 'Company Admin';
-    scope = 5;
-    perms = [
-      'dashboard.view',
-      'recruitment.*',
-      'rent.*',
-      'hr.view',
-      'finance.view',
-      'shelter.*',
-      'tenders.*',
-      'settings.view',
-    ];
-  } else if (authService.isFinance(profile)) {
+  } else if (dept === 'finance' || authService.isFinance(profile)) {
     accountType = 'Department Manager';
-    scope = 5;
-    perms = ['dashboard.view', 'finance.*', 'recruitment.view', 'rent.view', 'audit.view'];
-  } else if (authService.isHR(profile)) {
+    scope = 3;
+    perms = ['finance.*', 'finance.view', 'finance.create', 'finance.edit', 'finance.approve', 'finance.export'];
+  } else if (dept === 'recruitment') {
     accountType = 'Department Manager';
-    scope = 5;
-    perms = ['dashboard.view', 'hr.*', 'shelter.view'];
-  } else if (authService.isOperations(profile)) {
-    accountType = 'Branch Manager';
-    scope = 4;
-    perms = ['dashboard.view', 'recruitment.*', 'rent.*', 'shelter.*', 'tenders.view'];
+    scope = 3;
+    perms = ['recruitment.*', 'recruitment.view', 'recruitment.create', 'recruitment.edit', 'travel.view', 'transfer.view'];
+  } else if (dept === 'rental') {
+    accountType = 'Department Manager';
+    scope = 3;
+    perms = ['rent.*', 'rent.view', 'rent.create', 'rent.edit'];
+  } else if (dept === 'ats') {
+    accountType = 'Department Manager';
+    scope = 3;
+    perms = ['ats.view', 'agents.view'];
+  } else if (dept === 'hr' || authService.isHR(profile)) {
+    accountType = 'Department Manager';
+    scope = 3;
+    perms = ['hr.*', 'hr.view', 'hr.create', 'hr.edit', 'hr.export'];
+  } else if (dept === 'crm' || authService.isCustomerService(profile)) {
+    accountType = 'Department Manager';
+    scope = 3;
+    perms = ['crm.*', 'crm.view', 'crm.create', 'crm.edit'];
+  } else if (dept === 'shelter') {
+    accountType = 'Department Manager';
+    scope = 3;
+    perms = ['shelter.*', 'shelter.view', 'shelter.create', 'shelter.edit'];
+  } else if (dept === 'tenders') {
+    accountType = 'Department Manager';
+    scope = 3;
+    perms = ['tenders.*', 'tenders.view', 'tenders.create', 'tenders.edit', 'tenders.approve'];
   } else {
     accountType = 'Employee';
     scope = 3;
-    perms = ['dashboard.view', 'recruitment.view', 'rent.view', 'shelter.view'];
+    perms = ['recruitment.view'];
   }
 
   return {
@@ -158,7 +167,7 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [delegations, setDelegations] = useState<IamDelegation[]>([]);
   const [permissionCodes, setPermissionCodes] = useState<Set<string>>(initialMapped.permissions);
 
-  // Sync IAM session state with Supabase Auth state changes
+  // Sync IAM session state with Auth state changes and direct department login
   useEffect(() => {
     let isMounted = true;
 
@@ -172,7 +181,7 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setActiveCompanyCode(profile.company_id.toUpperCase());
       }
 
-      if (profile?.id) {
+      if (profile?.id && !profile.id.startsWith('USR-')) {
         const memberships = await iamPolicyEngine.getUserMemberships(profile.id);
         if (isMounted && memberships.length > 0) {
           setUserMemberships(memberships);
@@ -189,6 +198,12 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       void syncFromProfile(nextProfile);
     });
 
+    const handleDirectUpdate = (e: any) => {
+      const nextProfile: UserProfile | null = e.detail?.profile ?? authService.getCurrentUser();
+      void syncFromProfile(nextProfile);
+    };
+    window.addEventListener('alsulaim-auth-updated', handleDirectUpdate);
+
     iamPolicyEngine.getCompanies().then((realCos) => {
       if (isMounted && realCos.length > 0) {
         setCompanies(realCos);
@@ -198,6 +213,7 @@ export const IamSessionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return () => {
       isMounted = false;
       subscription.unsubscribe();
+      window.removeEventListener('alsulaim-auth-updated', handleDirectUpdate);
     };
   }, []);
 

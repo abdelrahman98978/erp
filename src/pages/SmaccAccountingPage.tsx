@@ -24,9 +24,11 @@ import {
   TrendingUp,
   FolderTree,
   Receipt,
-  FileText
+  FileText,
+  UploadCloud
 } from 'lucide-react';
 import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
+import { UniversalDocumentExtractorModal } from '../components/common/UniversalDocumentExtractorModal';
 import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
@@ -152,15 +154,52 @@ const DEFAULT_MOCK_VOUCHERS: VoucherRecord[] = [
 ];
 
 export const SmaccAccountingPage: React.FC = () => {
-  const { activeTab: storeActiveTab, addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, setActiveTab: setGlobalActiveTab, addNotification } = useAppStore();
   const { activeCompanyId, activeCompany } = useCompany();
+
+  const mapStoreTabToSmaccTab = (
+    tabKey: string
+  ): 'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing' => {
+    switch (tabKey) {
+      case 'receipt-vouchers':
+      case 'payment-vouchers':
+      case 'vouchers':
+      case 'smacc-cash':
+      case 'finance-smacc-cash':
+        return 'vouchers';
+      case 'journals':
+      case 'smacc-gl':
+      case 'finance-smacc-gl':
+        return 'journals';
+      case 'general-ledger':
+      case 'account-statements':
+      case 'smacc-ar':
+      case 'finance-smacc-ar':
+      case 'smacc-ap':
+      case 'finance-smacc-ap':
+        return 'ledger';
+      case 'trial-balance':
+      case 'smacc-reports':
+      case 'finance-smacc-reports':
+        return 'trial-balance';
+      case 'income-statement':
+        return 'income-statement';
+      case 'balance-sheet':
+        return 'balance-sheet';
+      case 'cost-centers':
+      case 'smacc-cost':
+      case 'finance-smacc-cost':
+        return 'cost-centers';
+      case 'period-closing':
+        return 'fiscal-closing';
+      default:
+        return 'coa';
+    }
+  };
 
   const [activeTab, setActiveTab] = useState<
     'coa' | 'cost-centers' | 'journals' | 'vouchers' | 'ledger' | 'trial-balance' | 'income-statement' | 'balance-sheet' | 'fiscal-closing'
-  >(() => {
-    if (storeActiveTab === 'receipt-vouchers' || storeActiveTab === 'payment-vouchers') return 'vouchers';
-    return 'coa';
-  });
+  >(() => mapStoreTabToSmaccTab(storeActiveTab));
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLedgerAccount, setSelectedLedgerAccount] = useState('1101');
@@ -171,6 +210,7 @@ export const SmaccAccountingPage: React.FC = () => {
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isJournalModalOpen, setIsJournalModalOpen] = useState(false);
   const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false);
+  const [showBatchExtractor, setShowBatchExtractor] = useState(false);
   const [voucherType, setVoucherType] = useState<'قبض' | 'صرف'>('قبض');
   const [selectedJournalForPreview, setSelectedJournalForPreview] = useState<JournalRecord | null>(null);
   const [selectedVoucherForPreview, setSelectedVoucherForPreview] = useState<VoucherRecord | null>(null);
@@ -179,21 +219,29 @@ export const SmaccAccountingPage: React.FC = () => {
   const [rawAccounts, setRawAccounts] = useState<AccountItem[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({ '1': true, '2': true, '3': true, '4': true, '5': true, '11': true });
 
-  // Persistence for Journals and Vouchers
+  // Persistence for Journals and Vouchers (Strictly Isolated Per Company)
   const [journals, setJournals] = useState<JournalRecord[]>([]);
   const [vouchers, setVouchers] = useState<VoucherRecord[]>([]);
 
-  // Load Accounts & Persisted Data
+  // Load Accounts & Persisted Data (Isolated by activeCompanyId)
   const loadData = async () => {
     const accs = chartOfAccountsService.getAccountsByCompany(activeCompanyId);
     setRawAccounts(accs);
 
     try {
       const storedJournals = await realErpDataStore.getRecords<JournalRecord>('company_journal_entries');
-      setJournals(storedJournals && storedJournals.length > 0 ? storedJournals : DEFAULT_MOCK_JOURNALS);
+      const allJournals = [...(storedJournals || []), ...DEFAULT_MOCK_JOURNALS];
+      const filteredJv = activeCompanyId === 'all'
+        ? allJournals
+        : allJournals.filter(j => (j.company_id || 'SAF') === activeCompanyId);
+      setJournals(filteredJv);
 
       const storedVouchers = await realErpDataStore.getRecords<VoucherRecord>('finance_vouchers');
-      setVouchers(storedVouchers && storedVouchers.length > 0 ? storedVouchers : DEFAULT_MOCK_VOUCHERS);
+      const allVouchers = [...(storedVouchers || []), ...DEFAULT_MOCK_VOUCHERS];
+      const filteredVou = activeCompanyId === 'all'
+        ? allVouchers
+        : allVouchers.filter(v => (v.company_id || 'SAF') === activeCompanyId);
+      setVouchers(filteredVou);
     } catch (e) {
       console.warn('Could not fetch real journals/vouchers:', e);
     }
@@ -201,14 +249,16 @@ export const SmaccAccountingPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    const handleDataUpdated = () => loadData();
+    window.addEventListener('erp-data-updated', handleDataUpdated);
+    return () => window.removeEventListener('erp-data-updated', handleDataUpdated);
   }, [activeCompanyId]);
 
   useEffect(() => {
+    setActiveTab(mapStoreTabToSmaccTab(storeActiveTab));
     if (storeActiveTab === 'receipt-vouchers') {
-      setActiveTab('vouchers');
       setVoucherType('قبض');
     } else if (storeActiveTab === 'payment-vouchers') {
-      setActiveTab('vouchers');
       setVoucherType('صرف');
     }
   }, [storeActiveTab]);
@@ -633,7 +683,7 @@ export const SmaccAccountingPage: React.FC = () => {
             </span>
           </td>
           <td className="p-3 text-xs">
-            <span className={node.nature === 'مدين' ? 'text-emerald-700 font-bold' : 'text-indigo-700 font-bold'}>
+            <span className={node.nature === 'مدين' ? 'text-emerald-700 font-bold' : 'text-[#8C681E] font-bold'}>
               {node.nature}
             </span>
           </td>
@@ -705,19 +755,26 @@ export const SmaccAccountingPage: React.FC = () => {
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint text-[11px]">SMACC FINANCIAL ERP V2</span>
                 <span className="pill-tag-shade text-[11px]" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>
-                  {activeCompany.name}
+                  {activeCompany.name} ({activeCompanyId === 'all' ? 'GROUP' : activeCompanyId})
                 </span>
               </div>
               <h1 className="text-xl md:text-2xl font-bold text-white m-0">
-                منظومة سماك (SMACC) للمحاسبة المالية الموحدة
+                منظومة سماك (SMACC) للمحاسبة المالية الموحدة — 6 أنظمة متكاملة
               </h1>
               <p className="text-xs text-zinc-400 mt-1 font-sans">
-                دليل الحسابات الشجري الخماسي، قيود اليومية المزدوجة، سندات القبض والصرف، ميزان المراجعة، ودفتر الأستاذ
+                عزل محاسبي مستقل لكل شركة • دليل الحسابات الشجري الخماسي، قيود اليومية المزدوجة، سندات القبض والصرف، المبيعات و ZATCA، المشتريات، المخزون والأصول، ومراكز التكلفة
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setShowBatchExtractor(true)}
+              className="px-4 py-2 rounded-full bg-[#CFA64A] hover:bg-[#b88f38] text-black font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+            >
+              <UploadCloud className="w-4 h-4" />
+              <span>استيراد فواتير / مستندات / نظام محاسبي منفصل (100 صورة / PDF / Word / Excel)</span>
+            </button>
             <button
               onClick={() => {
                 loadData();
@@ -775,6 +832,82 @@ export const SmaccAccountingPage: React.FC = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* SMACC 6-Division Architecture Quick Navigation Strip (Per-Company Isolated) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5">
+        {[
+          {
+            code: 'SMACC-01',
+            title: '1. الأستاذ العام والحسابات',
+            subtitle: 'شجرة الحسابات والقيود والقوائم',
+            emoji: '📘',
+            onClick: () => setActiveTab('coa'),
+            active: ['coa', 'journals', 'ledger', 'trial-balance', 'income-statement', 'balance-sheet', 'fiscal-closing'].includes(activeTab),
+          },
+          {
+            code: 'SMACC-02',
+            title: '2. النقدية والبنوك والسندات',
+            subtitle: 'سندات القبض والصرف والخزائن',
+            emoji: '🏦',
+            onClick: () => setActiveTab('vouchers'),
+            active: activeTab === 'vouchers',
+          },
+          {
+            code: 'SMACC-03',
+            title: '3. المبيعات والفوترة ZATCA',
+            subtitle: 'فواتير العملاء والربط الضريبي',
+            emoji: '🧾',
+            onClick: () => setGlobalActiveTab('zatca', 'الفاتورة الإلكترونية ZATCA المرحلة 2'),
+            active: false,
+          },
+          {
+            code: 'SMACC-04',
+            title: '4. المشتريات والوكلاء',
+            subtitle: 'مستحقات الموردين وأوامر الصرف',
+            emoji: '📑',
+            onClick: () => setGlobalActiveTab('financial-requests', 'المطالبات وأوامر الصرف المعتمدة'),
+            active: false,
+          },
+          {
+            code: 'SMACC-05',
+            title: '5. المخزون والأصول الثابتة',
+            subtitle: 'سجل الأصول والمستودعات والباقات',
+            emoji: '📦',
+            onClick: () => setGlobalActiveTab('smacc-inventory', 'سجل الأصول الثابتة والمخزون والمستودعات'),
+            active: false,
+          },
+          {
+            code: 'SMACC-06',
+            title: '6. مراكز التكلفة والتقارير',
+            subtitle: `تحليل مراكز تكلفة (${activeCompanyId === 'all' ? 'المجموعة' : activeCompanyId})`,
+            emoji: '📊',
+            onClick: () => setActiveTab('cost-centers'),
+            active: activeTab === 'cost-centers',
+          },
+        ].map((div) => (
+          <button
+            key={div.code}
+            type="button"
+            onClick={div.onClick}
+            className={`text-right p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+              div.active
+                ? 'bg-[#F5EDDC] border-[#CFA64A] shadow-xs'
+                : 'bg-white hover:bg-zinc-50 border-zinc-200'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-base">{div.emoji}</span>
+              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold bg-black text-[#CFA64A]">
+                {div.code}
+              </span>
+            </div>
+            <div>
+              <div className="text-xs font-extrabold text-black leading-snug">{div.title}</div>
+              <div className="text-[10.5px] text-zinc-500 mt-0.5 line-clamp-1">{div.subtitle}</div>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* 1. CHART OF ACCOUNTS TAB */}
@@ -1247,7 +1380,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 </div>
                 <div className="pt-3 border-t border-zinc-100 flex justify-between font-bold text-sm text-black">
                   <span>إجمالي الخصوم وحقوق الملكية:</span>
-                  <span className="font-mono text-indigo-700">{(totalLiabilities + totalEquity + netProfit).toLocaleString()} ر.س</span>
+                  <span className="font-mono text-amber-700">{(totalLiabilities + totalEquity + netProfit).toLocaleString()} ر.س</span>
                 </div>
               </div>
             </div>
@@ -1807,6 +1940,15 @@ export const SmaccAccountingPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <UniversalDocumentExtractorModal
+        isOpen={showBatchExtractor}
+        onClose={() => setShowBatchExtractor(false)}
+        defaultEntityKey="auto"
+        onImportSuccess={() => {
+          loadData();
+        }}
+      />
     </div>
   );
 };

@@ -4,70 +4,51 @@ import { NavItem } from '../../types';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useIamSession } from '../../contexts/IamSessionContext';
 import { useCompany } from '../../contexts/CompanyContext';
-import { 
-  X, Search, ChevronDown, ChevronLeft, ChevronRight, 
+import { useAuthContext } from '../../contexts/AuthContext';
+import {
+  authService,
+  CORPORATE_DEPARTMENTS,
+  COMPANY_AUTH_METADATA,
+  resolveDepartmentAndCompany,
+} from '../../services/authService';
+import {
+  X, Search, ChevronDown, ChevronLeft, ChevronRight,
   ListTree, Columns, LayoutGrid, CircleDot, Folder,
-  LayoutDashboard, Contact, Users, Activity, MessageCircle, 
-  Send, MailCheck, Layers, FileText, UserPlus, UserCheck, 
-  Handshake, UserX, Trash2, Clock, ShoppingCart, ListOrdered, 
-  Sparkles, FileCheck, AlertTriangle, Briefcase, Star, RefreshCw, 
-  HelpingHand, Headphones, FileSignature, FilePlus, CheckCircle2, 
-  RotateCcw, Truck, Clock3, Receipt, Zap, ArrowRightLeft, 
-  ClipboardCheck, Package, Scale, Stamp, ShieldCheck, Hotel, 
-  Home, Building2, LogOut, Plane, MapPin, Repeat, 
-  Hourglass, CheckCheck, ScrollText, PlaneLanding, PlaneTakeoff, 
-  AlertCircle, PlusCircle, Tags, Globe2, Building, FileDown, 
-  BadgeDollarSign, Plus, BarChart3, Network, CalendarDays, Coins, 
-  Vault, ShieldAlert, DoorOpen, FileSpreadsheet, CreditCard, Award, 
-  Wallet, BarChart4, FolderTree, Landmark, FolderKanban, BookOpen, 
-  MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio, 
-  GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders, 
-  History, Settings2
+  LayoutDashboard, Contact, Users, Activity, MessageCircle,
+  Send, MailCheck, Layers, FileText, UserPlus, UserCheck,
+  Handshake, UserX, Trash2, Clock, ShoppingCart, ListOrdered,
+  FileCheck, AlertTriangle, Briefcase, Star, RefreshCw,
+  HelpingHand, Headphones, FileSignature, FilePlus, CheckCircle2,
+  RotateCcw, Truck, Clock3, Receipt, Zap, ArrowRightLeft,
+  ClipboardCheck, Package, Scale, Stamp, ShieldCheck, Hotel,
+  Home, Building2, LogOut, Plane, MapPin, Repeat,
+  Hourglass, CheckCheck, ScrollText, PlaneLanding, PlaneTakeoff,
+  AlertCircle, PlusCircle, Tags, Globe2, Building, FileDown,
+  BadgeDollarSign, Plus, BarChart3, Network, CalendarDays, Coins,
+  Vault, ShieldAlert, DoorOpen, FileSpreadsheet, CreditCard, Award,
+  Wallet, BarChart4, FolderTree, Landmark, FolderKanban, BookOpen,
+  MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio,
+  GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders,
+  History, Settings2, Lock,
 } from 'lucide-react';
 
 const LUCIDE_ICONS: Record<string, React.FC<{ className?: string }>> = {
-  LayoutDashboard, Contact, Users, Activity, MessageCircle, 
-  Send, MailCheck, Layers, FileText, UserPlus, UserCheck, 
-  Handshake, UserX, Trash2, Clock, ShoppingCart, ListOrdered, 
-  Sparkles, FileCheck, AlertTriangle, Briefcase, Star, RefreshCw, 
-  HelpingHand, Headphones, FileSignature, FilePlus, CheckCircle2, 
-  RotateCcw, Truck, Clock3, Receipt, Zap, ArrowRightLeft, 
-  ClipboardCheck, Package, Scale, Stamp, ShieldCheck, Hotel, 
-  Home, Building2, LogOut, Plane, MapPin, Repeat, 
-  Hourglass, CheckCheck, ScrollText, PlaneLanding, PlaneTakeoff, 
-  AlertCircle, PlusCircle, Tags, Globe2, Building, FileDown, 
-  BadgeDollarSign, Plus, BarChart3, Network, CalendarDays, Coins, 
-  Vault, ShieldAlert, DoorOpen, FileSpreadsheet, CreditCard, Award, 
-  Wallet, BarChart4, FolderTree, Landmark, FolderKanban, BookOpen, 
-  MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio, 
-  GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders, 
-  History, Settings2, Folder, CircleDot
-};
-
-const MODULE_PERMISSIONS_MAP: Record<string, string> = {
-  'dashboard': 'dashboard.view',
-  'crm-section': 'crm.view',
-  'clients': 'crm.view',
-  'operations-section': 'recruitment.view',
-  'recruitment-contracts': 'recruitment.view',
-  'rent-contracts': 'rent.view',
-  'travel-section': 'travel.view',
-  'shelter-section': 'shelter.view',
-  'sponsorship-transfer': 'transfer.view',
-  'external-agents-section': 'agents.view',
-  'hr-recruitment-section': 'hr.view',
-  'hr': 'hr.view',
-  'attendances': 'hr.view',
-  'employee-monitoring': 'hr.view',
-  'finance-section': 'finance.view',
-  'finance': 'finance.view',
-  'zatca': 'finance.view',
-  'tenders-boq': 'tenders.view',
-  'microsoft-analytics-section': 'analytics.view',
-  'settings-section': 'settings.view',
-  'iam-matrix': 'iam.manage',
-  'users': 'iam.manage',
-  'activity-log': 'audit.view',
+  LayoutDashboard, Contact, Users, Activity, MessageCircle,
+  Send, MailCheck, Layers, FileText, UserPlus, UserCheck,
+  Handshake, UserX, Trash2, Clock, ShoppingCart, ListOrdered,
+  FileCheck, AlertTriangle, Briefcase, Star, RefreshCw,
+  HelpingHand, Headphones, FileSignature, FilePlus, CheckCircle2,
+  RotateCcw, Truck, Clock3, Receipt, Zap, ArrowRightLeft,
+  ClipboardCheck, Package, Scale, Stamp, ShieldCheck, Hotel,
+  Home, Building2, LogOut, Plane, MapPin, Repeat,
+  Hourglass, CheckCheck, ScrollText, PlaneLanding, PlaneTakeoff,
+  AlertCircle, PlusCircle, Tags, Globe2, Building, FileDown,
+  BadgeDollarSign, Plus, BarChart3, Network, CalendarDays, Coins,
+  Vault, ShieldAlert, DoorOpen, FileSpreadsheet, CreditCard, Award,
+  Wallet, BarChart4, FolderTree, Landmark, FolderKanban, BookOpen,
+  MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio,
+  GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders,
+  History, Settings2, Folder, CircleDot,
 };
 
 interface SidebarProps {
@@ -78,27 +59,77 @@ interface SidebarProps {
 
 export type SidebarDisplayMode = 'tree' | 'compact' | 'cards';
 
+function findFirstLeaf(item: NavItem): { href: string; title: string } | null {
+  if (item.href) return { href: item.href, title: item.title };
+  if (item.children) {
+    for (const child of item.children) {
+      const found = findFirstLeaf(child);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function collectLeafItems(item: NavItem): NavItem[] {
+  if (item.href && (!item.children || item.children.length === 0)) {
+    return [item];
+  }
+  if (!item.children) return [];
+  return item.children.flatMap((c) => collectLeafItems(c));
+}
+
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClose }) => {
-  const { t, currentLanguage } = useLanguage();
-  const { hasPermission, isSuperAdmin, dataScopeName, activeCompany } = useIamSession();
+  const { currentLanguage } = useLanguage();
+  const { isSuperAdmin, activeCompany } = useIamSession();
   const { activeCompanyId } = useCompany();
+  const { user: authUser } = useAuthContext();
   const isRtl = currentLanguage.dir === 'rtl';
+
   const [displayMode, setDisplayMode] = useState<SidebarDisplayMode>('tree');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  const effectiveProfile = authUser || authService.getCurrentUser();
+  const resolvedScope = useMemo(() => {
+    if (!effectiveProfile) {
+      return resolveDepartmentAndCompany('accounting@saf-rec.sa');
+    }
+    return resolveDepartmentAndCompany(
+      effectiveProfile.email,
+      effectiveProfile.role,
+      effectiveProfile.company_id,
+      effectiveProfile.department_id
+    );
+  }, [effectiveProfile]);
+
+  const companyMeta = useMemo(() => {
+    const key = resolvedScope.companyId === 'all' ? 'ALL' : resolvedScope.companyId.toUpperCase();
+    return COMPANY_AUTH_METADATA[key] || COMPANY_AUTH_METADATA.SAF;
+  }, [resolvedScope.companyId]);
+
+  const departmentDef = CORPORATE_DEPARTMENTS[resolvedScope.departmentId];
+
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
-    'governance-section': true,
-    'hr-recruitment-section': true,
-    'communications-section': true,
-    'microsoft-analytics-section': true,
-    'crm-sales-section': true,
     'finance-section': true,
-    'settings-section': true,
-    'cvs': true,
-    'recruitment-contracts': true,
-    'rent-contracts': true,
-    'crm': true,
-    'orders': true,
+    'smacc-gl-group': true,
+    'smacc-cash-group': true,
+    'smacc-ar-group': true,
+    'smacc-ap-group': true,
+    'smacc-cc-group': true,
+    'smacc-reports-group': true,
+    'operations-section': true,
+    'recruitment-group': true,
+    'rent-group': true,
+    'cvs-group': true,
+    'offices-group': true,
+    'orders-group': true,
+    'ingaz-group': true,
+    'shelter-group': true,
+    'transfer-group': true,
+    'logistics-group': true,
+    'complaints-group': true,
+    'crm-section': true,
+    'hr-section': true,
+    'governance-section': true,
   });
 
   const toggleExpand = (id: string, e: React.MouseEvent) => {
@@ -106,168 +137,208 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
     setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const renderIcon = (iconName?: string, className = "w-4 h-4") => {
+  const renderIcon = (iconName?: string, className = 'w-4 h-4') => {
     if (!iconName) return <CircleDot className={className} />;
     const Component = LUCIDE_ICONS[iconName];
     if (Component) return <Component className={className} />;
     return <CircleDot className={className} />;
   };
 
-  // Multi-Company & Tenant Isolation Gate (Hides KAS completely from other companies)
+  // Multi-Company Isolation Gate
   const isCompanyMatch = (item: NavItem): boolean => {
     if (!item.exclusiveToCompany) return true;
-    const currentCode = (activeCompany?.code || activeCompanyId || '').toUpperCase();
-    if (item.exclusiveToCompany === 'KAS') {
-      return currentCode === 'KAS';
-    }
+    if (resolvedScope.departmentId === 'executive' || isSuperAdmin) return true;
+    const currentCode = (
+      effectiveProfile?.company_id ||
+      activeCompany?.code ||
+      activeCompanyId ||
+      ''
+    ).toUpperCase();
     return currentCode === item.exclusiveToCompany.toUpperCase();
   };
 
-  // RBAC Permission Check (Deny by Default)
-  const isItemAuthorized = (item: NavItem): boolean => {
-    if (isSuperAdmin) return true;
-    const requiredPerm = MODULE_PERMISSIONS_MAP[item.id] || MODULE_PERMISSIONS_MAP[item.href || ''];
-    if (!requiredPerm) return true; // Standard common item
-    return hasPermission(requiredPerm);
+  // STRICT Department Isolation Gate (Deny by Default!)
+  const isLeafAuthorized = (href: string): boolean => {
+    if (resolvedScope.departmentId === 'executive' || isSuperAdmin) return true;
+    return authService.isTabAuthorizedForUser(effectiveProfile, href);
   };
 
-  // Filter items if user typed in quick search + RBAC Gate + Company Isolation Gate
+  // Filter Sidebar Menu strictly by Company + Department + Search Query
   const filteredMenu = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
 
     const filterItem = (item: NavItem): NavItem | null => {
-      // 0. Company Isolation Gate: Deny cross-company exclusive items
       if (!isCompanyMatch(item)) return null;
 
-      // 1. RBAC Gate: Deny unauthorized items
-      if (!isItemAuthorized(item)) return null;
-
-      const titleMatch = query ? t(item.id, item.title).toLowerCase().includes(query) : true;
       if (item.children && item.children.length > 0) {
-        const matchingChildren = item.children
-          .map((child) => filterItem(child))
-          .filter((c): c is NavItem => c !== null);
-        if (matchingChildren.length > 0 || (query && titleMatch)) {
-          return { ...item, children: matchingChildren };
+        const authorizedChildren = item.children
+          .map(filterItem)
+          .filter((child): child is NavItem => child !== null);
+
+        if (authorizedChildren.length === 0) return null;
+
+        if (!query) {
+          return { ...item, children: authorizedChildren };
         }
+
+        const selfMatches = item.title.toLowerCase().includes(query);
+        if (selfMatches) {
+          return { ...item, children: authorizedChildren };
+        }
+        return { ...item, children: authorizedChildren };
+      }
+
+      // Leaf item: MUST be explicitly authorized for this employee's department
+      if (!item.href || !isLeafAuthorized(item.href)) {
         return null;
       }
-      return titleMatch ? item : null;
+
+      if (query && !item.title.toLowerCase().includes(query)) {
+        return null;
+      }
+
+      return item;
     };
 
-    return SIDEBAR_MENU.map((item) => filterItem(item)).filter((i): i is NavItem => i !== null);
-  }, [searchQuery, t, hasPermission, isSuperAdmin, activeCompany, activeCompanyId]);
+    return SIDEBAR_MENU.map(filterItem).filter((item): item is NavItem => item !== null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, effectiveProfile, resolvedScope, activeCompany, activeCompanyId, isSuperAdmin]);
 
-  const renderTreeItem = (item: NavItem, level: number = 0) => {
-    const hasChildren = item.children && item.children.length > 0;
-    const isExpanded = searchQuery.trim().length > 0 ? true : !!expandedItems[item.id];
+  const hasActiveChild = (item: NavItem): boolean => {
+    if (item.href === activeTab) return true;
+    if (!item.children) return false;
+    return item.children.some((c) => hasActiveChild(c));
+  };
+
+  const getBadgeStyle = (type?: string, isSelected?: boolean) => {
+    if (isSelected) {
+      return 'bg-zinc-800 text-[#e4c77b] border border-zinc-700';
+    }
+    switch (type) {
+      case 'success':
+        return 'bg-[#faebd7] text-black font-semibold';
+      case 'danger':
+        return 'bg-rose-50 text-rose-700 border border-rose-200';
+      case 'warning':
+        return 'bg-amber-50 text-amber-800 border border-amber-200';
+      default:
+        return 'bg-zinc-100 text-zinc-700 border border-zinc-200';
+    }
+  };
+
+  const renderTreeItem = (item: NavItem, depth = 0) => {
+    const hasChildren = Boolean(item.children && item.children.length > 0);
+    const isExpanded = Boolean(expandedItems[item.id]) || searchQuery.trim().length > 0;
     const isDirectActive = item.href === activeTab;
-    const translatedTitle = t(item.id, item.title);
+    const isBranchActive = !isDirectActive && hasActiveChild(item);
 
-    // Level 0 Group Header
-    if (level === 0 && hasChildren) {
+    const handleClick = (e: React.MouseEvent) => {
+      if (hasChildren) {
+        toggleExpand(item.id, e);
+        if (item.href) {
+          onSelectTab(item.href, item.title);
+          if (onClose && window.innerWidth < 1024) onClose();
+        }
+      } else if (item.href) {
+        onSelectTab(item.href, item.title);
+        if (onClose && window.innerWidth < 1024) onClose();
+      }
+    };
+
+    if (depth === 0 && hasChildren) {
       return (
-        <div key={item.id} className="mb-2">
-          <div
-            onClick={(e) => toggleExpand(item.id, e)}
-            className={`flex items-center justify-between px-3 py-2.5 rounded-2xl cursor-pointer select-none transition-all ${
-              isExpanded 
-                ? 'bg-zinc-100/90 text-black font-bold border border-zinc-200/80 shadow-xs' 
-                : 'hover:bg-zinc-50 text-zinc-800'
+        <div key={item.id} className="mb-2.5">
+          <button
+            type="button"
+            onClick={handleClick}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              isBranchActive
+                ? 'bg-zinc-100 text-black border border-zinc-200'
+                : 'text-zinc-800 hover:bg-zinc-100'
             }`}
           >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-xl bg-black text-white flex items-center justify-center flex-shrink-0 shadow-xs">
-                {renderIcon(item.icon, "w-3.5 h-3.5 text-white")}
+            <div className="flex items-center gap-2 min-w-0">
+              <div
+                className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${
+                  isBranchActive ? 'bg-black text-white' : 'bg-zinc-100 text-black border border-zinc-200'
+                }`}
+              >
+                {renderIcon(item.icon, 'w-3.5 h-3.5')}
               </div>
-              <span className="text-xs font-bold text-black leading-tight">
-                {translatedTitle}
-              </span>
+              <span className="truncate">{item.title}</span>
             </div>
-
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              {item.badge && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
-                  {item.badge}
-                </span>
-              )}
-              {isExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
-              ) : isRtl ? (
-                <ChevronLeft className="w-3.5 h-3.5 text-zinc-400" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
-              )}
-            </div>
-          </div>
+            <ChevronDown
+              className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-200 shrink-0 ${
+                isExpanded ? 'rotate-180 text-black' : ''
+              }`}
+            />
+          </button>
 
           {isExpanded && (
-            <div className={`space-y-1 mt-1.5 ${isRtl ? 'pr-3 border-r-2 border-zinc-200 mr-2.5' : 'pl-3 border-l-2 border-zinc-200 ml-2.5'}`}>
-              {item.children!.map((child) => renderTreeItem(child, level + 1))}
+            <div
+              className={`mt-1 space-y-0.5 ${
+                isRtl ? 'pr-3 mr-3 border-r' : 'pl-3 ml-3 border-l'
+              } border-zinc-200`}
+            >
+              {item.children!.map((child) => renderTreeItem(child, depth + 1))}
             </div>
           )}
         </div>
       );
     }
 
-    // Leaf / Submenu Item
     return (
-      <div key={item.id} className="mb-0.5">
-        <div
-          onClick={(e) => {
-            if (hasChildren) {
-              toggleExpand(item.id, e);
-            } else if (item.href) {
-              onSelectTab(item.href, item.title);
-            }
-          }}
-          className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs cursor-pointer select-none transition-all ${
+      <div key={item.id} className="my-0.5">
+        <button
+          type="button"
+          onClick={handleClick}
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs transition-all cursor-pointer ${
             isDirectActive
-              ? 'bg-black text-white font-bold shadow-sm'
-              : 'hover:bg-zinc-100 text-zinc-700 hover:text-black font-medium'
+              ? 'bg-black text-white font-semibold shadow-xs'
+              : isBranchActive
+              ? 'bg-zinc-100 text-black font-semibold'
+              : 'text-zinc-600 hover:bg-zinc-100 hover:text-black'
           }`}
         >
-          <div className="flex items-center gap-2.5 min-w-0">
-            {renderIcon(
-              item.icon, 
-              `w-4 h-4 flex-shrink-0 transition-colors ${
-                isDirectActive 
-                  ? 'text-champagne-light' 
-                  : 'text-zinc-400 group-hover:text-zinc-800'
-              }`
-            )}
-            <span className="leading-snug">
-              {translatedTitle}
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`shrink-0 ${isDirectActive ? 'text-white' : 'text-zinc-500'}`}>
+              {renderIcon(item.icon, 'w-3.5 h-3.5')}
             </span>
+            <span className="truncate">{item.title}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            {item.badge && (
+          <div className="flex items-center gap-1.5 shrink-0">
+            {item.badge !== undefined && (
               <span
-                className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors ${
-                  isDirectActive 
-                    ? 'bg-zinc-900 text-champagne-light border border-champagne/30' 
-                    : 'bg-zinc-100 text-zinc-700 group-hover:bg-champagne-pale group-hover:text-champagne-dark'
-                }`}
+                className={`px-2 py-0.5 text-[10px] rounded-full ${getBadgeStyle(
+                  item.badgeType,
+                  isDirectActive
+                )}`}
               >
                 {item.badge}
               </span>
             )}
             {hasChildren && (
-              isExpanded ? (
-                <ChevronDown className={`w-3.5 h-3.5 ${isDirectActive ? 'text-white' : 'text-zinc-400'}`} />
-              ) : isRtl ? (
-                <ChevronLeft className={`w-3.5 h-3.5 ${isDirectActive ? 'text-white' : 'text-zinc-400'}`} />
-              ) : (
-                <ChevronRight className={`w-3.5 h-3.5 ${isDirectActive ? 'text-white' : 'text-zinc-400'}`} />
-              )
+              <span className="text-zinc-400">
+                {isExpanded ? (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                ) : isRtl ? (
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronRight className="w-3.5 h-3.5" />
+                )}
+              </span>
             )}
           </div>
-        </div>
+        </button>
 
         {hasChildren && isExpanded && (
-          <div className={`space-y-1 mt-1 ${isRtl ? 'pr-2.5 border-r border-dashed border-zinc-200 mr-2' : 'pl-2.5 border-l border-dashed border-zinc-200 ml-2'}`}>
-            {item.children!.map((child) => renderTreeItem(child, level + 1))}
+          <div
+            className={`mt-1 space-y-0.5 ${
+              isRtl ? 'pr-3 mr-2.5 border-r' : 'pl-3 ml-2.5 border-l'
+            } border-zinc-200`}
+          >
+            {item.children!.map((subChild) => renderTreeItem(subChild, depth + 1))}
           </div>
         )}
       </div>
@@ -275,77 +346,93 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
   };
 
   return (
-    <div className="h-full flex flex-col bg-white text-zinc-900 select-none border-inline-end border-zinc-200">
-      {/* Sidebar Header */}
-      <div className="p-4 border-b border-zinc-200 space-y-3 bg-white">
+    <div
+      className={`h-full flex flex-col bg-white border-zinc-200 select-none transition-all duration-200 ${
+        isRtl ? 'border-l' : 'border-r'
+      } ${displayMode === 'compact' ? 'w-20' : 'w-72'}`}
+    >
+      {/* 1. Top Corporate Brand & Locked Department Context Header */}
+      <div className="p-3.5 border-b border-zinc-200 space-y-2.5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
             <img
               src="/logo.png"
-              alt="ALSALIM GROUP"
-              className="w-9 h-9 rounded-full object-cover p-0.5 border border-black flex-shrink-0"
+              alt="مجموعة خالد السليم"
+              className="w-9 h-9 rounded-full border border-[#cfa64a] p-0.5 object-cover shrink-0 bg-white"
             />
             {displayMode !== 'compact' && (
-              <div>
-                <div className="text-xs font-black text-black tracking-tight leading-tight font-display">
-                  ALSALIM GROUP
+              <div className="min-w-0">
+                <div className="font-black text-xs text-black truncate">
+                  {companyMeta.emoji} {companyMeta.nameAr}
                 </div>
-                <div className="text-[10.5px] text-zinc-400 font-medium">
-                  {t('sidebarTitle', 'مجموعة خالد السليم ERP')}
+                <div className="text-[10.5px] font-bold text-[#a98232] truncate">
+                  {departmentDef.emoji} {departmentDef.badgeText}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Close button on Mobile */}
           {onClose && (
             <button
+              type="button"
               onClick={onClose}
-              className="lg:hidden p-1.5 rounded-full hover:bg-zinc-100 text-zinc-500 hover:text-black transition-colors"
-              title="إغلاق القائمة"
+              className="lg:hidden p-1.5 rounded-full text-zinc-500 hover:text-black hover:bg-zinc-100"
               aria-label="إغلاق القائمة"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
 
-        {/* Display Mode Switcher Controls */}
-        <div className="flex bg-zinc-100 rounded-full p-0.5 border border-zinc-200">
+        {/* Locked Department Security Badge */}
+        {displayMode !== 'compact' && (
+          <div className="px-2.5 py-1.5 rounded-xl bg-[#f5eddc]/70 border border-[#cfa64a]/40 flex items-center justify-between text-[10.5px]">
+            <span className="font-bold text-black flex items-center gap-1 truncate">
+              <Lock className="w-3 h-3 text-[#a98232] shrink-0" />
+              <span className="truncate">{departmentDef.nameAr}</span>
+            </span>
+            <span className="px-1.5 py-0.5 rounded bg-black text-white font-mono text-[9.5px] font-bold shrink-0">
+              {companyMeta.code === 'all' ? 'GROUP' : companyMeta.code}
+            </span>
+          </div>
+        )}
+
+        {/* Display Mode Switcher */}
+        <div className="flex items-center justify-between bg-zinc-100 p-1 rounded-full border border-zinc-200">
           <button
             type="button"
-            title="القائمة الهرمية"
             onClick={() => setDisplayMode('tree')}
-            className={`flex-1 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1 transition-all ${
-              displayMode === 'tree' ? 'bg-black text-white shadow-sm' : 'text-zinc-500 hover:text-black'
+            className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+              displayMode === 'tree' ? 'bg-black text-white shadow-2xs' : 'text-zinc-600 hover:text-black'
             }`}
+            title="عرض شجري"
           >
-            <ListTree className="w-3 h-3" />
-            {displayMode !== 'compact' && <span>هرمي</span>}
+            <ListTree className="w-3.5 h-3.5" />
+            {displayMode !== 'compact' && <span>شجري</span>}
           </button>
 
           <button
             type="button"
-            title="الشريط المصغر"
             onClick={() => setDisplayMode('compact')}
-            className={`flex-1 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1 transition-all ${
-              displayMode === 'compact' ? 'bg-black text-white shadow-sm' : 'text-zinc-500 hover:text-black'
+            className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+              displayMode === 'compact' ? 'bg-black text-white shadow-2xs' : 'text-zinc-600 hover:text-black'
             }`}
+            title="عرض مضغوط"
           >
-            <Columns className="w-3 h-3" />
-            {displayMode !== 'compact' && <span>مصغر</span>}
+            <Columns className="w-3.5 h-3.5" />
+            {displayMode !== 'compact' && <span>مضغوط</span>}
           </button>
 
           <button
             type="button"
-            title="نمط الكروت"
             onClick={() => setDisplayMode('cards')}
-            className={`flex-1 py-1 rounded-full text-[11px] font-bold flex items-center justify-center gap-1 transition-all ${
-              displayMode === 'cards' ? 'bg-black text-white shadow-sm' : 'text-zinc-500 hover:text-black'
+            className={`flex-1 flex items-center justify-center gap-1 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+              displayMode === 'cards' ? 'bg-black text-white shadow-2xs' : 'text-zinc-600 hover:text-black'
             }`}
+            title="عرض بطاقات"
           >
-            <LayoutGrid className="w-3 h-3" />
-            {displayMode !== 'compact' && <span>كروت</span>}
+            <LayoutGrid className="w-3.5 h-3.5" />
+            {displayMode !== 'compact' && <span>بطاقات</span>}
           </button>
         </div>
 
@@ -355,7 +442,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
             <Search className="w-3.5 h-3.5 text-zinc-400" />
             <input
               type="text"
-              placeholder="بحث سريع في القائمة..."
+              placeholder="بحث في شاشات القسم..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-transparent border-none outline-none text-xs text-black placeholder-zinc-400"
@@ -370,74 +457,118 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
         )}
       </div>
 
-      {/* Navigation Content */}
+      {/* 2. Navigation Content */}
       <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
         {/* MODE 1: HIERARCHICAL TREE VIEW */}
         {displayMode === 'tree' && filteredMenu.map((item) => renderTreeItem(item, 0))}
 
-        {/* MODE 2: COMPACT ICON RAIL */}
+        {/* MODE 2: COMPACT ICON RAIL (Fixed so all icons navigate to first authorized leaf) */}
         {displayMode === 'compact' && (
           <div className="flex flex-col items-center gap-2 py-2">
             {filteredMenu.map((item) => {
-              const isDirectActive = item.href === activeTab;
+              const isActive = item.href === activeTab || hasActiveChild(item);
               return (
                 <button
                   key={item.id}
+                  type="button"
                   onClick={() => {
-                    if (item.href) onSelectTab(item.href, item.title);
+                    const target = findFirstLeaf(item);
+                    if (target) {
+                      onSelectTab(target.href, target.title);
+                      if (onClose && window.innerWidth < 1024) onClose();
+                    }
                   }}
                   title={item.title}
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${
-                    isDirectActive ? 'bg-black text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-700'
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer ${
+                    isActive ? 'bg-black text-white shadow-sm' : 'hover:bg-zinc-100 text-zinc-700'
                   }`}
                 >
-                  {renderIcon(item.icon, "w-4 h-4")}
+                  {renderIcon(item.icon, 'w-4 h-4')}
                 </button>
               );
             })}
           </div>
         )}
 
-        {/* MODE 3: CARD VIEW */}
+        {/* MODE 3: CARD VIEW (Fixed to flatten nested SMACC & operational sub-groups) */}
         {displayMode === 'cards' && (
           <div className="space-y-2.5 p-1">
-            {filteredMenu.map((item) => (
-              <div
-                key={item.id}
-                className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2.5 shadow-xs"
-              >
-                <div className="flex items-center gap-2.5 text-xs font-bold text-black">
-                  <div className="w-6 h-6 rounded-lg bg-black text-white flex items-center justify-center">
-                    {renderIcon(item.icon, "w-3 h-3 text-white")}
+            {filteredMenu.map((item) => {
+              const leaves = collectLeafItems(item);
+              return (
+                <div
+                  key={item.id}
+                  className="p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl space-y-2.5 shadow-xs"
+                >
+                  <div className="flex items-center gap-2.5 text-xs font-bold text-black">
+                    <div className="w-6 h-6 rounded-lg bg-black text-white flex items-center justify-center">
+                      {renderIcon(item.icon, 'w-3 h-3 text-white')}
+                    </div>
+                    <span>{item.title}</span>
                   </div>
-                  <span>{item.title}</span>
-                </div>
 
-                {item.children && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {item.children.map((child) => {
-                      const isChildActive = child.href === activeTab;
-                      return (
-                        <button
-                          key={child.id}
-                          type="button"
-                          onClick={() => {
-                            if (child.href) onSelectTab(child.href, child.title);
-                          }}
-                          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                            isChildActive
-                              ? 'bg-black text-white font-bold shadow-xs'
-                              : 'bg-white hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
-                          }`}
-                        >
-                          {child.title}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {leaves.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {leaves.map((leaf) => {
+                        const isChildActive = leaf.href === activeTab;
+                        return (
+                          <button
+                            key={leaf.id}
+                            type="button"
+                            onClick={() => {
+                              if (leaf.href) {
+                                onSelectTab(leaf.href, leaf.title);
+                                if (onClose && window.innerWidth < 1024) onClose();
+                              }
+                            }}
+                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                              isChildActive
+                                ? 'bg-black text-white font-bold shadow-xs'
+                                : 'bg-white hover:bg-zinc-200 text-zinc-700 border border-zinc-200'
+                            }`}
+                          >
+                            {leaf.title}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* 3. Sticky Institutional Footer with Direct Logout Button */}
+      <div className="p-3 border-t border-zinc-200 bg-[#fbfbf5]">
+        {displayMode === 'compact' ? (
+          <button
+            type="button"
+            onClick={() => onSelectTab('logout', 'تسجيل الخروج')}
+            title="تسجيل الخروج من القسم"
+            className="w-full h-10 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 flex items-center justify-center cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[11px] px-1">
+              <span className="font-bold text-zinc-700 truncate">
+                {effectiveProfile?.full_name || 'موظف القسم'}
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500">
+                {effectiveProfile?.branch || 'الفرع الرئيسي'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => onSelectTab('logout', 'تسجيل الخروج')}
+              className="w-full py-2 px-3 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>تسجيل الخروج من القسم</span>
+            </button>
           </div>
         )}
       </div>

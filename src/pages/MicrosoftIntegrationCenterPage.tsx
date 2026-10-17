@@ -58,6 +58,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'project' | 'powerbi' | 'visio'>('project');
   const [projectTasks, setProjectTasks] = useState<MsProjectTask[]>([]);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [selectedPowerBiDash, setSelectedPowerBiDash] = useState<PowerBiDashboardItem | null>(null);
 
   // Form State
   const [projectForm, setProjectForm] = useState<{
@@ -317,6 +318,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
+                  setSelectedPowerBiDash(dash);
                   addNotification({
                     title: 'فتح تقرير Power BI',
                     message: `تم تحميل لوحة (${dash.title}) وتفعيل أمان الوصول حسب دورك المؤسسي.`,
@@ -487,6 +489,93 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Power BI Embedded Live Viewer Modal */}
+      {selectedPowerBiDash && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-zinc-200 space-y-5">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-black text-amber-400 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-black m-0">{selectedPowerBiDash.title}</h3>
+                  <span className="text-[11px] text-zinc-500 font-mono">
+                    Dataset: {selectedPowerBiDash.datasetName} • RLS: {selectedPowerBiDash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPowerBiDash(null)}
+                className="p-1.5 rounded-full hover:bg-zinc-100 text-zinc-500"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <div className="text-[11px] text-zinc-500">دقة مزامنة البيانات</div>
+                <div className="text-lg font-black text-emerald-600 font-mono mt-1">99.8%</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <div className="text-[11px] text-zinc-500">حالة اتصال الـ Gateway</div>
+                <div className="text-lg font-black text-black mt-1">متصل حياً</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
+                <div className="text-[11px] text-zinc-500">الكيان النشط</div>
+                <div className="text-xs font-bold text-amber-700 mt-1.5">{activeCompany.name}</div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#000000] text-white space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-amber-400 font-bold">مؤشرات الأداء المباشرة (Power BI Live Stream)</span>
+                <span className="font-mono text-[11px] text-zinc-400">{new Date().toISOString().slice(0, 10)}</span>
+              </div>
+              <div className="space-y-2 text-xs">
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span>نسبة تحقيق المستهدف التشغيلي</span>
+                    <span className="font-mono text-emerald-400">94%</span>
+                  </div>
+                  <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: '94%' }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span>كفاءة التحصيل المالي والالتزام الضريبي</span>
+                    <span className="font-mono text-amber-400">98%</span>
+                  </div>
+                  <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-amber-400 rounded-full" style={{ width: '98%' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="button-outline-on-light text-xs py-1.5 px-4"
+              >
+                طباعة التقرير
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedPowerBiDash(null)}
+                className="button-primary-pill text-xs py-1.5 px-5"
+              >
+                إغلاق اللوحة
+              </button>
+            </div>
           </div>
         </div>
       )}

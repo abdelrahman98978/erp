@@ -16,9 +16,9 @@ class ErpTokens {
   static const Color canvasCream = Color(0xFFFBFBF5);
   static const Color surfaceElevatedDark = Color(0xFF1E2C31);
 
-  // KAFD Login Architectural Dark Palette (`LoginPage.tsx`)
-  static const Color kafdDarkBg = Color(0xFF070B14);
-  static const Color kafdHeroBg = Color(0xFF080D1A);
+  // KAFD Login Architectural Dark Palette (`LoginPage.tsx` - Shopifi Pitch Black & Charcoal)
+  static const Color kafdDarkBg = Color(0xFF000000);
+  static const Color kafdHeroBg = Color(0xFF1D2428);
   static const Color loginAuthSurface = Color(0xFFFAFBFC);
 
   // Neutral Shades & Hairlines (`tokens.css`)

@@ -85,7 +85,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'بوابة متكاملة لإدارة عقود استقدام الأفراد، إصدار التأشيرات الفورية، التوثيق عبر مساند، وبوالص التأمين الشاملة.',
       image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
       stats: '1,420+ عقد نشط',
-      themeColor: '#0284c7',
+      themeColor: '#8C681E',
       license: 'ترخيص مساند RC01 • س.ت 1010123456'
     },
     {
@@ -98,7 +98,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'حلول تشغيلية مرنة لقطاع الأعمال وباقات تأجير الكوادر المهنية والعمالة المنزلية المعتمدة.',
       image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
       stats: '890+ عقد إيجار',
-      themeColor: '#e11d48',
+      themeColor: '#1D2428',
       license: 'ترخيص مساند RC02 • س.ت 1010543210'
     },
     {
@@ -111,7 +111,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'منظومة الفرز والتوظيف الذكي ATS، استيراد السير بالدفعة، وشبكة مكاتب التوظيف في 14 دولة.',
       image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
       stats: '3,250+ سيرة ذاتية',
-      themeColor: '#7c3aed',
+      themeColor: '#8C681E',
       license: 'ترخيص مساند RC03 • س.ت 1010776543'
     },
     {
@@ -124,7 +124,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'بوابة مستقلة ومعزولة كلياً لإدارة منافسات اعتماد، جداول الكميات الذكية BOQ، الفوترة المشفرة ZATCA، وسجل الموردين.',
       image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
       stats: '2,650+ منافسة اعتماد',
-      themeColor: '#d97706',
+      themeColor: '#1D2428',
       license: 'سجل تجاري 1010789234 • ضريبي 3102847592'
     },
     {
@@ -137,7 +137,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'بوابة إدارة غرف وأسرة الإيواء والضيافة، المتابعة الصحية والغذائية، وإجراءات الترحيل الممتثلة لمعايير وزارة الموارد البشرية.',
       image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
       stats: '120 سرير • امتثال 100%',
-      themeColor: '#0d9488',
+      themeColor: '#047857',
       license: 'ترخيص مراكز الإيواء HRSD-MOL • س.ت 1010642918'
     }
   ];
@@ -357,182 +357,136 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </div>
           </div>
 
-          {/* Left Column: 3D Saudi Assistant Mascot (5 cols) */}
+          {/* Left Column: Corporate Governance & SMACC Architecture Showcase (5 cols) */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center relative">
-            {/* Subtle Ambient Golden Glow Behind Mascot */}
-            <div 
-              className="absolute w-72 h-72 rounded-full pointer-events-none opacity-60"
-              style={{
-                background: 'radial-gradient(circle, rgba(207, 166, 74, 0.22) 0%, rgba(207, 166, 74, 0.05) 55%, transparent 75%)'
-              }}
-            />
-
-            {/* Speech Bubble / Welcoming Card - Clickable to open Assistant Chat */}
-            <div 
-              role="button"
-              tabIndex={0}
-              className="speech-bubble-anim relative z-30 max-w-[340px] mb-2 p-4 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-all group"
-              style={{
-                boxShadow: '0 16px 36px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04)'
-              }}
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent('open-faris-assistant', {
-                  detail: { 
-                    persona,
-                    query: persona === 'noura'
-                      ? 'مرحباً نُورة، حدثيني عن خدمات الأقسام النسائية ومراكز الإيواء ومنظومة مجموعة السليم'
-                      : 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم' 
-                  }
-                }));
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  window.dispatchEvent(new CustomEvent('open-faris-assistant', {
-                    detail: {
-                      persona,
-                      query: persona === 'noura'
-                        ? 'مرحباً نُورة، حدثيني عن خدمات الأقسام النسائية ومراكز الإيواء ومنظومة مجموعة السليم'
-                        : 'مرحباً فارس، عرفني على خدمات وشركات مجموعة خالد السليم'
-                    }
-                  }));
-                }
-              }}
-              title={persona === 'noura' ? 'انقر لبدء محادثة مباشرة مع نُورة' : 'انقر لبدء محادثة مباشرة مع فارس'}
-            >
-              {/* Pointer Triangle */}
-              <div 
-                className="absolute -bottom-2 right-12 w-3.5 h-3.5 bg-white border-b border-l border-zinc-200 rotate-[-45deg]"
-              />
-
-              <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-zinc-100">
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="live-pulse-dot" />
-                  <span className="text-[11.5px] font-extrabold text-zinc-900 whitespace-nowrap">
-                    {persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}
-                  </span>
+            <div className="w-full card-pricing p-6 sm:p-8 bg-white border border-zinc-200 rounded-3xl shadow-lg space-y-5 text-right">
+              <div className="flex items-center justify-between gap-3 pb-4 border-b border-zinc-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#000000] border border-[#cfa64a] p-1.5 flex items-center justify-center shrink-0">
+                    <img
+                      src="/alsulaim-gold-emblem.png"
+                      alt="شعار مجموعة خالد السليم"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-sm font-black text-black">بوابة النفاذ المؤسسي الموحد</div>
+                    <div className="text-[11px] font-semibold text-[#a98232]">
+                      تسجيل دخول واحد يوجه كل موظف لقسمه وشركته
+                    </div>
+                  </div>
                 </div>
+                <span className="pill-tag-mint text-[10.5px] font-bold">🔐 عزل صارم</span>
+              </div>
 
-                {/* Persona Switcher Pill [ 👨 فارس | 👩 نُورة ] */}
-                <div 
-                  className="inline-flex items-center bg-zinc-100 rounded-full p-0.5 border border-zinc-200 shrink-0"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      switchPersona('faris');
-                    }}
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold transition-all cursor-pointer ${
-                      persona === 'faris'
-                        ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
-                        : 'text-zinc-500 hover:text-zinc-800'
-                    }`}
-                  >
-                    👨 فارس
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      switchPersona('noura');
-                    }}
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold transition-all cursor-pointer ${
-                      persona === 'noura'
-                        ? 'bg-white text-amber-700 shadow-xs border border-champagne/40'
-                        : 'text-zinc-500 hover:text-zinc-800'
-                    }`}
-                  >
-                    👩 نُورة
-                  </button>
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
+                  <div className="text-xs font-black text-black">📊 محاسبة سماك SMACC</div>
+                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                    الأستاذ العام، القبض والصرف، التسوية البنكية، ومراكز التكلفة
+                  </div>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
+                  <div className="text-xs font-black text-black">📑 الاستقدام والتأجير</div>
+                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                    عقود مساند، باقات التأجير المرن، تفاويض إنجاز، ونقل الخدمات
+                  </div>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
+                  <div className="text-xs font-black text-black">👥 الموارد البشرية WPS</div>
+                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                    شؤون الموظفين، مسير الرواتب، حماية الأجور، ونهاية الخدمة
+                  </div>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
+                  <div className="text-xs font-black text-black">⚖️ المنافسات والإيواء</div>
+                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                    منافسات اعتماد وجداول BOQ لشركة كاس، ومراكز إيواء دار الرواد
+                  </div>
                 </div>
               </div>
 
-              <h4 className="text-[13px] font-bold text-zinc-900 mb-1">
-                أهلاً بكم في مجموعة خالد السليم!
-              </h4>
-              <p className="text-[11px] text-zinc-600 leading-relaxed m-0">
-                {persona === 'noura' ? (
-                  <>أنا <strong className="text-zinc-950">نُورة</strong>، مرشدتكم الرقمية الذكية. يسعدني مرافقتكم وتوجيهكم للأقسام النسائية ومراكز الإيواء والتسكين وكافة أنظمة شركات المجموعة.</>
-                ) : (
-                  <>أنا <strong className="text-zinc-950">فارس</strong>، مرشدكم الرقمي الذكي. يسعدني مرافقتكم وتوجيهكم للدخول إلى أنظمة شركات المجموعة أو الإجابة عن أي استفسار.</>
-                )}
-              </p>
+              <button
+                type="button"
+                onClick={() => handleSelect('gateway', 'gateway')}
+                className="w-full button-primary-pill py-3.5 px-6 text-xs sm:text-sm font-black flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>الدخول لبوابة الموظفين والأقسام الموحدة</span>
+                <ArrowLeft className="w-4 h-4" />
+              </button>
 
-              <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between gap-2 text-[11px]">
-                <span className="font-bold text-amber-700 group-hover:text-amber-600 flex items-center gap-1.5 transition-colors whitespace-nowrap">
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>{persona === 'noura' ? 'تحدث مع نُورة الآن' : 'تحدث مع فارس الآن'}</span>
-                  <span>←</span>
-                </span>
+              {/* Interactive Faris & Noura Institutional Advisors Showcase */}
+              <div className="pt-4 border-t border-[#E4E4E7] space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-11 h-11 rounded-2xl bg-[#FBFBF5] border border-[#CFA64A] p-0.5 flex items-center justify-center shrink-0">
+                      <img
+                        src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
+                        alt={persona === 'noura' ? 'نُورة' : 'فارس'}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-black">
+                        {persona === 'noura' ? 'نُورة • المستشارة المؤسسية' : 'فارس • المستشار التنفيذي'}
+                      </div>
+                      <div className="text-[10.5px] text-zinc-500">
+                        توجيه صوتي ونصي للمحاسبة ومستخرج الـ 100 فاتورة والأقسام
+                      </div>
+                    </div>
+                  </div>
 
-                {/* Direct audio button on Landing Page */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleLandingVoice();
-                  }}
-                  title={isPlayingVoice ? 'إيقاف الصوت' : `استمع لصوت ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer shrink-0 ${
-                    isPlayingVoice
-                      ? 'bg-amber-500 text-white border-amber-600 shadow-sm animate-pulse'
-                      : 'bg-zinc-100 hover:bg-amber-50 text-zinc-700 hover:text-amber-900 border-zinc-200'
-                  }`}
-                >
-                  {isPlayingVoice ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3 text-amber-600" />}
-                  <span>{isPlayingVoice ? 'إيقاف' : (persona === 'noura' ? 'استمع لنُورة' : 'استمع لفارس')}</span>
-                </button>
+                  {/* Persona Switcher */}
+                  <div className="inline-flex items-center bg-[#FBFBF5] p-0.5 rounded-full border border-[#E4E4E7]">
+                    <button
+                      type="button"
+                      onClick={() => switchPersona('faris')}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-black transition-all cursor-pointer ${
+                        persona === 'faris'
+                          ? 'bg-black text-[#CFA64A]'
+                          : 'text-zinc-600 hover:text-black'
+                      }`}
+                    >
+                      فارس
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => switchPersona('noura')}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-black transition-all cursor-pointer ${
+                        persona === 'noura'
+                          ? 'bg-[#CFA64A] text-black'
+                          : 'text-zinc-600 hover:text-black'
+                      }`}
+                    >
+                      نُورة
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={toggleLandingVoice}
+                    className="flex-1 py-2 px-3 rounded-full bg-[#F5EDDC] hover:bg-[#CFA64A] text-black border border-[#CFA64A] text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    {isPlayingVoice ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                    <span>{isPlayingVoice ? 'إيقاف الصوت التعريفي' : `استمع لتعريف ${persona === 'noura' ? 'نُورة' : 'فارس'}`}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.dispatchEvent(
+                        new CustomEvent('open-faris-assistant', { detail: { persona } })
+                      );
+                    }}
+                    className="py-2 px-3.5 rounded-full bg-[#1D2428] hover:bg-black text-[#CFA64A] border border-[#CFA64A] text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>محادثة مباشرة</span>
+                  </button>
+                </div>
               </div>
-            </div>
-
-            {/* 3D Mascot Character with Float Animation & Ground Shadow */}
-            <div 
-              role="button"
-              tabIndex={0}
-              className="relative z-20 flex flex-col items-center cursor-pointer group"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent('open-faris-assistant', {
-                  detail: { 
-                    persona,
-                    query: persona === 'noura'
-                      ? 'مرحباً نُورة، كيف يمكنني بدء استخدام المنظومة والوصول للأقسام النسائية ومراكز الإيواء؟'
-                      : 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟' 
-                  }
-                }));
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  window.dispatchEvent(new CustomEvent('open-faris-assistant', {
-                    detail: {
-                      persona,
-                      query: persona === 'noura'
-                        ? 'مرحباً نُورة، كيف يمكنني بدء استخدام المنظومة والوصول للأقسام النسائية ومراكز الإيواء؟'
-                        : 'مرحباً فارس، كيف يمكنني بدء استخدام المنظومة؟'
-                    }
-                  }));
-                }
-              }}
-              title={persona === 'noura' ? 'انقر للتحدث مع نُورة' : 'انقر للتحدث مع فارس'}
-            >
-              <div className="mascot-float transition-transform group-hover:scale-105">
-                <img
-                  src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
-                  alt={persona === 'noura' ? 'نُورة - المرشدة الرقمية الذكية لمجموعة خالد السليم' : 'فارس - المرشد الرقمي الذكي لمجموعة خالد السليم'}
-                  className="w-auto h-[380px] sm:h-[440px] lg:h-[470px] object-contain drop-shadow-2xl"
-                  loading="eager"
-                />
-              </div>
-
-              {/* Ambient Ground Shadow */}
-              <div 
-                className="mascot-shadow w-48 h-4 rounded-full -mt-3"
-                style={{
-                  background: 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.06) 55%, transparent 75%)'
-                }}
-              />
             </div>
           </div>
         </div>
@@ -695,146 +649,140 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               بنية تحتية موحدة بمقاييس عالمية
             </h2>
             <p className="text-sm text-zinc-500 mt-2">
-              منظومة إلكترونية رائدة تدير وتتكامل مع المنصات الحكومية وأنظمة المحاسبة والذكاء الاصطناعي المؤسسي
+              منظومة إلكترونية متكاملة تدير الشركات والأقسام المستقلة وتتكامل مع المنصات الحكومية ومحاسبة سماك
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
             {/* Card 1: Government Compliance & Integration */}
-            <div 
+            <div
               className="white-feature-card group"
-              style={{ backgroundColor: '#ffffff', color: '#091725' }}
+              style={{ backgroundColor: '#ffffff', color: '#000000' }}
             >
               {/* Top Accent Line */}
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400 opacity-80" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-[#047857]" />
 
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-[#FBFBF5] border border-[#E4E4E7] text-[#047857] flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
                 <Network className="w-7 h-7" />
               </div>
 
-              <h3 className="text-xl font-bold text-zinc-950 font-display mb-2.5">
+              <h3 className="text-xl font-bold text-black font-display mb-2.5">
                 الربط والامتثال الحكومي الشامل
               </h3>
-              
+
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
                 تكامل مباشر مع منصة مساند، الفوترة الإلكترونية للمرحلة الثانية من هيئة الزكاة والضريبة والجمارك (ZATCA)، منصة مقيم، التأمينات الاجتماعية، وسحابة اعتماد.
               </p>
 
-              {/* Verified Feature Checklist */}
               <div className="space-y-2 pt-4 border-t border-zinc-100 text-xs text-zinc-700">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0" />
                   <span className="font-semibold">ربط وتوثيق فوري مع مساند (RC01 - RC03)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0" />
                   <span className="font-semibold">فوترة مشفرة ZATCA متوافقة كلياً مع المرحلة الثانية</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[#047857] shrink-0" />
                   <span className="font-semibold">تكامل آلي مع التأمينات ومقيم وسحابة اعتماد</span>
                 </div>
               </div>
 
-              {/* Live Status Tag */}
               <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
-                <span className="font-bold text-emerald-700 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-bold text-[#047857] flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#047857] animate-pulse" />
                   <span>ربط نشط وممتثل 100%</span>
                 </span>
-                <span className="font-mono text-[10px] text-zinc-400">API Gateway v2.4</span>
+                <span className="font-mono text-[10px] text-zinc-400">GOV Gateway v2.4</span>
               </div>
             </div>
 
             {/* Card 2: SMACC & Advanced Accounting */}
-            <div 
+            <div
               className="white-feature-card group"
-              style={{ backgroundColor: '#ffffff', color: '#091725' }}
+              style={{ backgroundColor: '#ffffff', color: '#000000' }}
             >
               {/* Top Accent Line */}
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-500 to-indigo-500 opacity-80" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-[#1D2428]" />
 
-              <div className="w-14 h-14 rounded-2xl bg-sky-50 border border-sky-200/80 text-sky-700 flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-[#FBFBF5] border border-[#E4E4E7] text-black flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
                 <TrendingUp className="w-7 h-7" />
               </div>
 
-              <h3 className="text-xl font-bold text-zinc-950 font-display mb-2.5">
-                المحاسبة المتقدمة و SMACC
+              <h3 className="text-xl font-bold text-black font-display mb-2.5">
+                منظومة محاسبة سماك (SMACC)
               </h3>
-              
+
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
-                شجرة حسابات مالية متعددة المستويات مع مراكز تكلفة مستقلة لكل شركة، موازين مراجعة، فواتير إلكترونية QR، وتقارير تفاعلية لحظية للإيرادات والأرباح.
+                محاسبة مالية متكاملة من 6 أنظمة (الأستاذ العام، المبيعات، المشتريات، المخزون، البنوك والصناديق، ومراكز التكلفة) مع عزل كامل للدفاتر المحاسبية لكل شركة.
               </p>
 
-              {/* Verified Feature Checklist */}
               <div className="space-y-2 pt-4 border-t border-zinc-100 text-xs text-zinc-700">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0" />
-                  <span className="font-semibold">شجرة حسابات مالية متعددة المستويات ومراكز التكلفة</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#8C681E] shrink-0" />
+                  <span className="font-semibold">6 أنظمة محاسبية متكاملة وعزل دفاتر كل شركة</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0" />
-                  <span className="font-semibold">موازين مراجعة وتقارير تفاعلية لحظية للإيرادات</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#8C681E] shrink-0" />
+                  <span className="font-semibold">رفع واستخلاص حتى 100 فاتورة ومستندات PDF/Word/Excel</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[#8C681E] shrink-0" />
                   <span className="font-semibold">أرشفة رقمية للقيود وتفقيط مالي آلي بالريال السعودي</span>
                 </div>
               </div>
 
-              {/* Live Status Tag */}
               <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
-                <span className="font-bold text-sky-700 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                  <span>تزامن مالي فوري</span>
+                <span className="font-bold text-black flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#CFA64A]" />
+                  <span>عزل مالي ومحاسبي 100%</span>
                 </span>
-                <span className="font-mono text-[10px] text-zinc-400">SMACC Enterprise</span>
+                <span className="font-mono text-[10px] text-zinc-400">SMACC 6-Divisions</span>
               </div>
             </div>
 
-            {/* Card 3: AI Copilot & Saudi Digital Guide */}
-            <div 
+            {/* Card 3: Institutional Advisors Faris & Noura */}
+            <div
               className="white-feature-card group"
-              style={{ backgroundColor: '#ffffff', color: '#091725' }}
+              style={{ backgroundColor: '#ffffff', color: '#000000' }}
             >
               {/* Top Accent Line */}
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-500 to-yellow-400 opacity-80" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-[#CFA64A]" />
 
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200/80 text-amber-700 flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
-                <Bot className="w-7 h-7" />
+              <div className="w-14 h-14 rounded-2xl bg-[#F5EDDC] border border-[#CFA64A] text-black flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
+                <Bot className="w-7 h-7 text-[#8C681E]" />
               </div>
 
-              <h3 className="text-xl font-bold text-zinc-950 font-display mb-2.5">
-                المرشد ومساعد الذكاء الاصطناعي
+              <h3 className="text-xl font-bold text-black font-display mb-2.5">
+                المستشاران المؤسسيان (فارس ونُورة)
               </h3>
-              
+
               <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-6">
-                مساعد آلي ذكي (AI Copilot) ومرشد رقمي سعودي مدمج لتحليل البيانات، إنشاء العقود الفورية، تدقيق السجلات، وتقديم التوصيات التشغيلية لقيادة المجموعة.
+                إرشاد صوتي ونصي مباشر للموظفين والإدارة التنفيذية لتحليل السجلات المعزولة، التوجيه السريع للأقسام، واستخلاص الفواتير والعقود بضغطة زر.
               </p>
 
-              {/* Verified Feature Checklist */}
               <div className="space-y-2 pt-4 border-t border-zinc-100 text-xs text-zinc-700">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span className="font-semibold">مرشد رقمي سعودي 3D مدمج للإرشاد والدعم 24/7</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#8C681E] shrink-0" />
+                  <span className="font-semibold">فارس للمنافسات والمحاسبة • نُورة للإيواء والتشغيل</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span className="font-semibold">تحليل استباقي للبيانات واستخراج القرارات والتنبيهات</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#8C681E] shrink-0" />
+                  <span className="font-semibold">أوامر صوتية وتوجيه مباشر للشاشات المصرح بها</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span className="font-semibold">صياغة وتدقيق العقود والخطابات الرسمية بضغطة زر</span>
+                  <CheckCircle2 className="w-4 h-4 text-[#8C681E] shrink-0" />
+                  <span className="font-semibold">عزل تام للبيانات حسب شركة وقسم كل موظف</span>
                 </div>
               </div>
 
-              {/* Live Status Tag */}
               <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
-                <span className="font-bold text-amber-700 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                  <span>دعم وتشغيل ذكي 24/7</span>
+                <span className="font-bold text-[#8C681E] flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#CFA64A]" />
+                  <span>توجيه مؤسسي 24/7</span>
                 </span>
-                <span className="font-mono text-[10px] text-zinc-400">AI Assistant v3.0</span>
+                <span className="font-mono text-[10px] text-zinc-400">Faris & Noura Suite</span>
               </div>
             </div>
           </div>
@@ -862,10 +810,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-950 mb-4">الشركات والكيانات</h4>
             <div className="space-y-2.5 text-xs text-zinc-600">
-              <button type="button" onClick={() => handleSelect('SAF')} className="block hover:text-black text-right">شركة الصفا الماسي للاستقدام</button>
-              <button type="button" onClick={() => handleSelect('YAQ')} className="block hover:text-black text-right">شركة الياقوت الشرقية للتشغيل</button>
-              <button type="button" onClick={() => handleSelect('TOP')} className="block hover:text-black text-right">شركة توب تالنت الدولية للـ ATS</button>
-              <button type="button" onClick={() => handleSelect('KAS')} className="block hover:text-black text-right">بوابة شركة كاس للمنافسات والتشغيل</button>
+              <button type="button" onClick={() => handleSelect('SAF')} className="block hover:text-black text-right cursor-pointer">شركة السفير الماسي للاستقدام</button>
+              <button type="button" onClick={() => handleSelect('YAQ')} className="block hover:text-black text-right cursor-pointer">شركة الياقوت الشرقية للتشغيل</button>
+              <button type="button" onClick={() => handleSelect('TOP')} className="block hover:text-black text-right cursor-pointer">شركة توب تالنت الدولية للـ ATS</button>
+              <button type="button" onClick={() => handleSelect('KAS')} className="block hover:text-black text-right cursor-pointer">بوابة شركة كاس للمنافسات والتشغيل</button>
+              <button type="button" onClick={() => handleSelect('DAR')} className="block hover:text-black text-right cursor-pointer">دار الرواد لمراكز الإيواء والتسكين والرعاية</button>
             </div>
           </div>
 

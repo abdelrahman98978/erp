@@ -17,10 +17,13 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Initialize Sentry Error Monitoring only when configured in environment
+// Initialize Sentry Error Monitoring only when configured in production environment
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+const isLocalDev =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
-if (sentryDsn) {
+if (sentryDsn && !isLocalDev) {
   try {
     Sentry.init({
       dsn: sentryDsn,

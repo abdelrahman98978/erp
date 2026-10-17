@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { UniversalDocumentExtractorModal } from '../components/common/UniversalDocumentExtractorModal';
 import { useZatcaInvoices, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { generateZatcaQR } from '../services/zatcaPhase2Service';
 import { realZatcaEngine } from '../services/realZatcaEngine';
+import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
-import { QrCode, Plus, FileSpreadsheet, FileText, Search, Key, X, ShieldCheck, Download, Copy, Check } from 'lucide-react';
+import { QrCode, Plus, FileSpreadsheet, FileText, Search, Key, X, ShieldCheck, Download, Copy, Check, UploadCloud, Eye } from 'lucide-react';
 
 export interface ZatcaInvoiceRecord {
   id: string;
@@ -27,6 +29,9 @@ export interface ZatcaInvoiceRecord {
   zatca_status: 'CLEARED' | 'REPORTED' | 'REJECTED';
   xml_hash?: string;
   contract_ref?: string;
+  attachment_url?: string;
+  attachment_name?: string;
+  file_format?: string;
   created_at: string;
 }
 
@@ -47,6 +52,8 @@ const DEFAULT_MOCK_INVOICES: ZatcaInvoiceRecord[] = [
     cryptographic_stamp: 'MEUCIQDbK5N4v8...x109FzatcaValidated',
     xml_hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
     contract_ref: 'RC-2026-0594',
+    file_format: 'PDF / ZATCA QR',
+    attachment_name: 'SAF-INV-2026-0001.pdf',
     created_at: new Date().toISOString(),
   },
   {
@@ -65,17 +72,61 @@ const DEFAULT_MOCK_INVOICES: ZatcaInvoiceRecord[] = [
     cryptographic_stamp: 'MEQCIDaF812g...zatcaClearedUBL21',
     xml_hash: '8743b52063cd84097a65d1633f5c74f51928374109823741',
     contract_ref: 'RENT-2026-0014',
+    file_format: 'Image OCR / QR',
+    attachment_name: 'SAF-INV-2026-0002.jpg',
     created_at: new Date().toISOString(),
   },
 ];
 
 export const ZATCAPage: React.FC = () => {
-  const { addNotification } = useAppStore();
+  const { addNotification, activeTab: storeActiveTab } = useAppStore();
   const { activeCompanyId, activeCompany } = useCompany();
-  const { data: rawInvoices = [], isLoading } = useZatcaInvoices();
+  const { data: rawInvoices = [], isLoading, refetch } = useZatcaInvoices();
   const { createItem } = useTableMutation('zatca_invoices');
 
-  const invoices: ZatcaInvoiceRecord[] = rawInvoices.length > 0 ? rawInvoices : DEFAULT_MOCK_INVOICES;
+  const [localStoreInvoices, setLocalStoreInvoices] = useState<ZatcaInvoiceRecord[]>([]);
+  const [showBatchExtractor, setShowBatchExtractor] = useState(storeActiveTab === 'universal-extractor');
+  const [selectedInvoiceAttachment, setSelectedInvoiceAttachment] = useState<ZatcaInvoiceRecord | null>(null);
+
+  useEffect(() => {
+    if (storeActiveTab === 'universal-extractor') {
+      setShowBatchExtractor(true);
+    }
+  }, [storeActiveTab]);
+
+  const loadLocalInvoices = async () => {
+    try {
+      const stored = await realErpDataStore.getRecords<ZatcaInvoiceRecord>('zatca_invoices');
+      if (stored && stored.length > 0) {
+        setLocalStoreInvoices(stored);
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    loadLocalInvoices();
+    const handler = () => {
+      loadLocalInvoices();
+      refetch();
+    };
+    window.addEventListener('erp-data-updated', handler);
+    return () => window.removeEventListener('erp-data-updated', handler);
+  }, [activeCompanyId]);
+
+  const combinedInvoices: ZatcaInvoiceRecord[] = (() => {
+    const mergedMap = new Map<string, ZatcaInvoiceRecord>();
+    [...localStoreInvoices, ...rawInvoices, ...DEFAULT_MOCK_INVOICES].forEach((inv) => {
+      const key = `${inv.company_id || 'SAF'}-${inv.invoice_number}`;
+      if (!mergedMap.has(key)) mergedMap.set(key, inv);
+    });
+    const allList = Array.from(mergedMap.values());
+    if (activeCompanyId === 'all') return allList;
+    return allList.filter((inv) => (inv.company_id || 'SAF') === activeCompanyId);
+  })();
+
+  const invoices: ZatcaInvoiceRecord[] = combinedInvoices;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('ALL');
@@ -209,6 +260,13 @@ export const ZATCAPage: React.FC = () => {
 
         <div className="flex items-center gap-2 flex-wrap">
           <button
+            onClick={() => setShowBatchExtractor(true)}
+            className="px-4 py-2 rounded-full bg-[#CFA64A] hover:bg-[#b88f38] text-black font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+          >
+            <UploadCloud className="w-4 h-4" />
+            <span>رفع دفعة فواتير (100 صورة / PDF / Word / Excel)</span>
+          </button>
+          <button
             onClick={() => setShowAddModal(true)}
             className="button-white-pill"
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
@@ -300,6 +358,14 @@ export const ZATCAPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowBatchExtractor(true)}
+              className="px-3.5 py-1.5 rounded-full bg-black text-[#CFA64A] text-xs font-black flex items-center gap-1.5 cursor-pointer"
+            >
+              <UploadCloud className="w-3.5 h-3.5" />
+              <span>إضافة صور / مستندات فواتير للجدول</span>
+            </button>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
@@ -320,6 +386,7 @@ export const ZATCAPage: React.FC = () => {
               <tr>
                 <th className="p-3.5">رقم الفاتورة</th>
                 <th className="p-3.5">العميل</th>
+                <th className="p-3.5">صورة / مرفق الفاتورة</th>
                 <th className="p-3.5">النوع</th>
                 <th className="p-3.5">المبلغ الخاضع</th>
                 <th className="p-3.5">الضريبة (15%)</th>
@@ -331,13 +398,13 @@ export const ZATCAPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-zinc-400">
+                  <td colSpan={9} className="py-10 text-center text-zinc-400">
                     جاري تحميل فواتير ZATCA...
                   </td>
                 </tr>
               ) : filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-zinc-400">
+                  <td colSpan={9} className="py-10 text-center text-zinc-400">
                     لا توجد فواتير مطابقة للبحث
                   </td>
                 </tr>
@@ -350,6 +417,16 @@ export const ZATCAPage: React.FC = () => {
                       <div className="text-[11px] text-zinc-400 font-mono">
                         {inv.client_vat_number ? `ضريبي: ${inv.client_vat_number}` : `هوية: ${inv.client_national_id || 'أفراد'}`}
                       </div>
+                    </td>
+                    <td className="p-3.5">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedInvoiceAttachment(inv)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FBFBF5] hover:bg-[#FAEBD7] border border-zinc-200 text-[11px] font-bold text-black transition-colors cursor-pointer"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-[#a98232]" />
+                        <span>{inv.file_format || 'صورة / PDF'}</span>
+                      </button>
                     </td>
                     <td className="p-3.5">
                       <Badge
@@ -681,6 +758,65 @@ export const ZATCAPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Invoice Attachment Preview Modal */}
+      {selectedInvoiceAttachment && (
+        <div
+          className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[2100] flex items-center justify-center p-4"
+          onClick={() => setSelectedInvoiceAttachment(null)}
+        >
+          <div
+            className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-[#CFA64A] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-[#000000] text-white px-5 py-3.5 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-black text-[#CFA64A]">
+                  مرفق / صورة الفاتورة: {selectedInvoiceAttachment.invoice_number}
+                </h3>
+                <p className="text-[11px] text-zinc-300">
+                  {selectedInvoiceAttachment.client_name} • {selectedInvoiceAttachment.file_format || 'مستند مؤرشف'}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedInvoiceAttachment(null)}
+                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5 bg-[#FBFBF5] flex flex-col items-center">
+              {selectedInvoiceAttachment.attachment_url ? (
+                <img
+                  src={selectedInvoiceAttachment.attachment_url}
+                  alt={selectedInvoiceAttachment.invoice_number}
+                  className="max-h-[55vh] w-auto rounded-xl border border-zinc-300 shadow-md bg-white"
+                />
+              ) : (
+                <div className="w-full p-6 rounded-xl bg-white border border-zinc-200 text-center space-y-2">
+                  <FileText className="w-10 h-10 text-[#CFA64A] mx-auto" />
+                  <div className="text-sm font-black text-zinc-900">
+                    فاتورة ضريبية إلكترونية معتمدة #{selectedInvoiceAttachment.invoice_number}
+                  </div>
+                  <div className="text-xs text-zinc-600">
+                    العميل: {selectedInvoiceAttachment.client_name} • الإجمالي: {(selectedInvoiceAttachment.total_amount ?? 0).toLocaleString()} ر.س
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <UniversalDocumentExtractorModal
+        isOpen={showBatchExtractor}
+        onClose={() => setShowBatchExtractor(false)}
+        defaultEntityKey="invoices"
+        onImportSuccess={() => {
+          loadLocalInvoices();
+          refetch();
+        }}
+      />
     </div>
   );
 };

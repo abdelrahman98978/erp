@@ -38,5 +38,45 @@ void main() {
     await tester.pump();
 
     expect(find.textContaining('شركة السفير الماسي للاستقدام'), findsWidgets);
+
+    // Verify Unified Login Portal Departments & SMACC 6-Division Isolation
+    expect(ErpSystemData.departments.length, 9);
+    expect(ErpSystemData.staffDirectory.length, 14);
+
+    // Finance employee can access SMACC GL, cannot access Recruitment
+    expect(
+      ErpSystemData.isTabAuthorized(
+        companyId: 'SAF',
+        departmentId: 'finance',
+        tabHref: 'finance-smacc-gl',
+      ),
+      isTrue,
+    );
+    expect(
+      ErpSystemData.isTabAuthorized(
+        companyId: 'SAF',
+        departmentId: 'finance',
+        tabHref: 'recruitment',
+      ),
+      isFalse,
+    );
+
+    // Recruitment employee can access Recruitment, cannot access SMACC GL
+    expect(
+      ErpSystemData.isTabAuthorized(
+        companyId: 'SAF',
+        departmentId: 'recruitment',
+        tabHref: 'recruitment',
+      ),
+      isTrue,
+    );
+    expect(
+      ErpSystemData.isTabAuthorized(
+        companyId: 'SAF',
+        departmentId: 'recruitment',
+        tabHref: 'finance-smacc-gl',
+      ),
+      isFalse,
+    );
   });
 }

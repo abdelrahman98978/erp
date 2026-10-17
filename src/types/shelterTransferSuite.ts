@@ -32,7 +32,7 @@ export const GROUP_OFFICES: Record<GroupOfficeId, OfficeMeta> = {
     id: 'TOP',
     name: 'شركة توباز / توب تالنت الدولية للتوظيف',
     shortName: 'توباز / توب تالنت',
-    badgeColor: 'bg-purple-100 text-purple-900 border-purple-300',
+    badgeColor: 'bg-amber-100 text-amber-900 border-amber-300',
     primaryColor: '#8B5CF6',
   },
   YAQ: {

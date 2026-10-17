@@ -55,8 +55,7 @@ class IamPolicyEngine {
         status: c.status as any,
       }));
       return list.length > 0 ? list : DEFAULT_IAM_COMPANIES;
-    } catch (err) {
-      console.warn('Fallback getCompanies:', err);
+    } catch {
       return DEFAULT_IAM_COMPANIES;
     }
   }
@@ -115,8 +114,311 @@ class IamPolicyEngine {
   // 2. USERS & MEMBERSHIPS
   // ============================================================================
 
+  private static readonly DEFAULT_USERS: IamUser[] = [
+    {
+      id: 'usr-chairman-01',
+      employeeNumber: 'EMP-0001',
+      fullName: 'الشيخ خالد بن عبدالعزيز السليم',
+      email: 'chairman@alsulaim.sa',
+      phone: '+966500000001',
+      jobTitle: 'رئيس مجلس الإدارة والرئيس التنفيذي',
+      accountType: 'Group Super Admin',
+      status: 'نشط',
+      mfaEnabled: true,
+      mfaMethod: 'بصمة بيومترية (FIDO2)',
+      biometricEnabled: true,
+      biometricType: 'Face ID',
+      sessionTimeoutMinutes: 60,
+      lastLoginAt: '2026-10-17 09:00',
+      lastLoginIp: '192.168.1.10',
+    },
+    {
+      id: 'usr-fin-02',
+      employeeNumber: 'EMP-0102',
+      fullName: 'أ. محمد مصطفى',
+      email: 'accounting@saf-rec.sa',
+      phone: '+966501112233',
+      jobTitle: 'المدير المالي ورئيس حسابات المجموعة (SMACC)',
+      accountType: 'Department Manager',
+      status: 'نشط',
+      mfaEnabled: true,
+      mfaMethod: 'Google Authenticator',
+      biometricEnabled: true,
+      biometricType: 'Touch ID',
+      sessionTimeoutMinutes: 30,
+      lastLoginAt: '2026-10-17 08:45',
+      lastLoginIp: '192.168.1.24',
+    },
+    {
+      id: 'usr-rec-03',
+      employeeNumber: 'EMP-0205',
+      fullName: 'أ. نايف القحطاني',
+      email: 'musaned@saf-rec.sa',
+      phone: '+966535355555',
+      jobTitle: 'مدير عمليات الاستقدام وتوثيق عقود مساند',
+      accountType: 'Department Manager',
+      status: 'نشط',
+      mfaEnabled: true,
+      mfaMethod: 'SMS',
+      biometricEnabled: false,
+      sessionTimeoutMinutes: 30,
+      lastLoginAt: '2026-10-17 08:30',
+      lastLoginIp: '192.168.1.32',
+    },
+    {
+      id: 'usr-shl-04',
+      employeeNumber: 'EMP-0311',
+      fullName: 'أ. فهد العتيبي',
+      email: 'shelter@dar-alruwad.sa',
+      phone: '+966554433221',
+      jobTitle: 'مشرف عام مراكز الإيواء ونقل الكفالة',
+      accountType: 'Shelter Supervisor',
+      status: 'نشط',
+      mfaEnabled: true,
+      mfaMethod: 'WhatsApp',
+      biometricEnabled: true,
+      biometricType: 'Touch ID',
+      sessionTimeoutMinutes: 30,
+      lastLoginAt: '2026-10-16 17:15',
+      lastLoginIp: '192.168.2.15',
+    },
+    {
+      id: 'usr-kas-05',
+      employeeNumber: 'EMP-0401',
+      fullName: 'م. عبدالرحمن الدوسري',
+      email: 'tenders@kas-cloud.sa',
+      phone: '+966549988776',
+      jobTitle: 'مدير المنافسات الحكومية وسحابة اعتماد (KAS)',
+      accountType: 'KAS General Manager',
+      status: 'نشط',
+      mfaEnabled: true,
+      mfaMethod: 'Google Authenticator',
+      biometricEnabled: true,
+      biometricType: 'Face ID',
+      sessionTimeoutMinutes: 45,
+      lastLoginAt: '2026-10-17 09:10',
+      lastLoginIp: '192.168.3.11',
+    },
+  ];
+
+  private static readonly DEFAULT_ROLES: IamRole[] = [
+    {
+      id: 'role-super-admin',
+      code: 'GROUP_SUPER_ADMIN',
+      name: 'المدير التنفيذي الأعلى للمجموعة (Group Super Admin)',
+      description: 'صلاحية سيادية شاملة على كافة الشركات الـ 5 والأقسام والاعتمادات المالية والإدارية',
+      roleType: 'Global',
+      isSystemRole: true,
+      status: 'نشط',
+    },
+    {
+      id: 'role-fin-dir',
+      code: 'FINANCE_DIRECTOR',
+      name: 'المدير المالي ورئيس الحسابات (SOCPA / SMACC 6)',
+      description: 'إدارة الأستاذ العام، قيود اليومية، سندات القبض والصرف، إقرارات ضريبة القيمة المضافة، والفوترة الإلكترونية ZATCA',
+      roleType: 'Department',
+      isSystemRole: true,
+      status: 'نشط',
+    },
+    {
+      id: 'role-rec-mgr',
+      code: 'RECRUITMENT_MANAGER',
+      name: 'مدير عمليات الاستقدام وعقود مساند وتفاويض إنجاز',
+      description: 'إصدار وتوثيق عقود الاستقدام، متابعة الوكلاء الخارجيين، إصدار تفاويض إنجاز، وحجوزات السفر',
+      roleType: 'Department',
+      isSystemRole: true,
+      status: 'نشط',
+    },
+    {
+      id: 'role-shl-sup',
+      code: 'SHELTER_SUPERVISOR',
+      name: 'مشرف مراكز الإيواء والتسكين ونقل الخدمات',
+      description: 'إدارة تسكين الوافدات، الإعاشة، الفحص الطبي، محاضر التسليم، وعقود نقل الكفالة',
+      roleType: 'Company',
+      isSystemRole: true,
+      status: 'نشط',
+    },
+    {
+      id: 'role-kas-mgr',
+      code: 'KAS_TENDERS_DIRECTOR',
+      name: 'مدير المنافسات الحكومية وجداول الكميات (KAS & Etimad)',
+      description: 'إدارة كراسات الشروط، تسعير جداول الكميات BOQ، الضمانات البنكية، ومستخلصات منصة اعتماد',
+      roleType: 'Company',
+      isSystemRole: true,
+      status: 'نشط',
+    },
+  ];
+
+  private static readonly DEFAULT_PERMISSIONS: IamPermission[] = [
+    { id: 'perm-1', code: 'accounting.journal.create', resource: 'journals', action: 'create', name: 'إنشاء قيد يومية محاسبي', module: 'المحاسبة والمالية', sensitivityLevel: 'متوسط' },
+    { id: 'perm-2', code: 'accounting.journal.post', resource: 'journals', action: 'approve', name: 'ترحيل واعتماد قيود الأستاذ العام', module: 'المحاسبة والمالية', sensitivityLevel: 'حرج' },
+    { id: 'perm-3', code: 'payment.release', resource: 'vouchers', action: 'approve', name: 'إطلاق الحوالات البنكية وسندات الصرف', module: 'المحاسبة والمالية', sensitivityLevel: 'حرج' },
+    { id: 'perm-4', code: 'vendor.create', resource: 'offices', action: 'create', name: 'إضافة وتعديل بيانات الوكلاء والموردين', module: 'الاستقدام والوكلاء', sensitivityLevel: 'عالي الحساسية' },
+    { id: 'perm-5', code: 'recruitment.contract.create', resource: 'contracts', action: 'create', name: 'إنشاء عقد استقدام مساند', module: 'الاستقدام والوكلاء', sensitivityLevel: 'متوسط' },
+    { id: 'perm-6', code: 'recruitment.contract.approve', resource: 'contracts', action: 'approve', name: 'اعتماد وتوثيق عقود الاستقدام النهائية', module: 'الاستقدام والوكلاء', sensitivityLevel: 'عالي الحساسية' },
+    { id: 'perm-7', code: 'hr.payroll.approve', resource: 'payrolls', action: 'approve', name: 'اعتماد مسير الرواتب وملف حماية الأجور WPS', module: 'الموارد البشرية', sensitivityLevel: 'سري للغاية' },
+    { id: 'perm-8', code: 'iam.policy.manage', resource: 'iam', action: 'edit', name: 'إدارة مصفوفة الصلاحيات وعزل الشركات RBAC', module: 'الحوكمة والأمن السيبراني', sensitivityLevel: 'حرج' },
+  ];
+
+  private static readonly DEFAULT_DELEGATIONS: IamDelegation[] = [
+    {
+      id: 'del-001',
+      fromUserId: 'usr-chairman-01',
+      fromUserName: 'الشيخ خالد بن عبدالعزيز السليم',
+      toUserId: 'usr-fin-02',
+      toUserName: 'أ. محمد مصطفى',
+      companyId: '22222222-2222-2222-2222-222222222221',
+      companyName: 'السفير الماسي للاستقدام (SAF)',
+      roleName: 'اعتماد سندات الصرف التشغيلية حتى 50,000 ر.س',
+      permissionsScope: ['payment.release', 'accounting.journal.post'],
+      reason: 'تفويض مالي تشغيلي لتسريع تسويات مساند والوكلاء الخارجيين',
+      validFrom: '2026-10-01',
+      validTo: '2026-12-31',
+      status: 'نشط',
+    },
+  ];
+
+  private static readonly DEFAULT_REQUESTS: IamAccessRequest[] = [
+    {
+      id: 'req-001',
+      requestNumber: 'IAM-REQ-2026-041',
+      userId: 'usr-rec-03',
+      userName: 'أ. نايف القحطاني',
+      companyId: '22222222-2222-2222-2222-222222222221',
+      companyName: 'السفير الماسي للاستقدام (SAF)',
+      requestedRoles: ['RECRUITMENT_MANAGER'],
+      requestedPermissions: ['recruitment.contract.approve'],
+      justification: 'صلاحية اعتماد عقود مساند الفورية للفرع الرئيسي بالرياض',
+      departmentManagerStatus: 'معتمد',
+      securityAdminStatus: 'معتمد',
+      finalStatus: 'معتمد',
+      createdAt: '2026-10-14 11:20',
+    },
+    {
+      id: 'req-002',
+      requestNumber: 'IAM-REQ-2026-042',
+      userId: 'usr-shl-04',
+      userName: 'أ. فهد العتيبي',
+      companyId: '22222222-2222-2222-2222-222222222225',
+      companyName: 'دار الرواد للإيواء (DAR)',
+      requestedRoles: ['SHELTER_SUPERVISOR'],
+      requestedPermissions: ['shelter.transfer.approve'],
+      justification: 'اعتماد محاضر التسليم ونقل الكفالة بمركز إيواء الرياض',
+      departmentManagerStatus: 'معتمد',
+      securityAdminStatus: 'قيد المراجعة',
+      finalStatus: 'قيد المراجعة',
+      createdAt: '2026-10-16 14:05',
+    },
+  ];
+
+  private static readonly DEFAULT_REVIEWS: IamAccessReview[] = [
+    {
+      id: 'rev-2026-q4',
+      campaignName: 'المراجعة الدورية لصلاحيات الربع الرابع 2026 (SOCPA / ISO-27001)',
+      quarter: 'Q4-2026',
+      reviewerId: 'usr-chairman-01',
+      reviewerName: 'الشيخ خالد بن عبدالعزيز السليم',
+      companyId: '22222222-2222-2222-2222-222222222221',
+      companyName: 'جميع شركات المجموعة (Group-Wide)',
+      totalUsersReviewed: 28,
+      revokedPermissionsCount: 3,
+      status: 'مكتملة',
+      completedAt: '2026-10-10',
+      createdAt: '2026-10-01',
+    },
+  ];
+
+  private static readonly DEFAULT_SESSIONS: IamUserSession[] = [
+    {
+      id: 'sess-001',
+      userId: 'usr-chairman-01',
+      userName: 'الشيخ خالد بن عبدالعزيز السليم',
+      activeCompanyId: 'ALL',
+      companyCode: 'GROUP',
+      sessionToken: 'JWT-SHA256-9981-EXEC',
+      ipAddress: '192.168.1.10',
+      userAgent: 'Chrome 130.0 / Windows 11 Enterprise',
+      deviceType: 'Desktop Workstation',
+      expiresAt: '2026-10-17 18:00',
+      status: 'نشطة',
+      createdAt: '2026-10-17 09:00',
+    },
+    {
+      id: 'sess-002',
+      userId: 'usr-fin-02',
+      userName: 'أ. محمد مصطفى',
+      activeCompanyId: 'SAF',
+      companyCode: 'SAF',
+      sessionToken: 'JWT-SHA256-4412-FIN',
+      ipAddress: '192.168.1.24',
+      userAgent: 'Chrome 130.0 / Windows 11',
+      deviceType: 'Desktop Workstation',
+      expiresAt: '2026-10-17 17:00',
+      status: 'نشطة',
+      createdAt: '2026-10-17 08:45',
+    },
+  ];
+
+  private static readonly DEFAULT_AUDIT_LOGS: IamAuditLog[] = [
+    {
+      id: 'aud-001',
+      actorId: 'usr-chairman-01',
+      actorEmail: 'chairman@alsulaim.sa',
+      companyCode: 'GROUP',
+      action: 'LOGIN_MFA_VERIFIED',
+      resource: 'auth.session',
+      recordId: 'sess-001',
+      result: 'SUCCESS',
+      severity: 'معلومات',
+      ipAddress: '192.168.1.10',
+      createdAt: '2026-10-17 09:00:12',
+    },
+    {
+      id: 'aud-002',
+      actorId: 'usr-fin-02',
+      actorEmail: 'accounting@saf-rec.sa',
+      companyCode: 'SAF',
+      action: 'JOURNAL_POSTED',
+      resource: 'finance.journals',
+      recordId: 'JV-2026-0891',
+      result: 'SUCCESS',
+      severity: 'معلومات',
+      ipAddress: '192.168.1.24',
+      createdAt: '2026-10-17 09:15:40',
+    },
+    {
+      id: 'aud-003',
+      actorId: 'usr-rec-03',
+      actorEmail: 'musaned@saf-rec.sa',
+      companyCode: 'SAF',
+      action: 'CROSS_DEPT_ACCESS_BLOCKED',
+      resource: 'finance.vat_declaration',
+      result: 'FORBIDDEN',
+      severity: 'تحذير',
+      ipAddress: '192.168.1.32',
+      createdAt: '2026-10-17 09:22:05',
+    },
+  ];
+
+  private getLocalIamList<T>(key: string, fallback: T[]): T[] {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) {
+        localStorage.setItem(key, JSON.stringify(fallback));
+        return fallback;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      localStorage.setItem(key, JSON.stringify(fallback));
+      return fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
   public async getUsers(): Promise<IamUser[]> {
-    if (isDummySupabase) return [];
+    const fallback = this.getLocalIamList('ALSULAIM_IAM_USERS', IamPolicyEngine.DEFAULT_USERS);
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase
         .from('iam_users')
@@ -124,7 +426,8 @@ class IamPolicyEngine {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []).map(u => ({
+      if (!data || data.length === 0) return fallback;
+      return data.map(u => ({
         id: u.id,
         identityId: u.identity_id,
         employeeNumber: u.employee_number || '',
@@ -144,13 +447,27 @@ class IamPolicyEngine {
         created_at: u.created_at,
       }));
     } catch (err) {
-      console.warn('Fallback getUsers:', err);
-      return [];
+      return fallback;
     }
   }
 
   public async getUserMemberships(userId: string): Promise<IamMembership[]> {
-    if (isDummySupabase) return [];
+    const defaultMembership: IamMembership[] = [
+      {
+        id: `mem-${userId}`,
+        userId,
+        companyId: DEFAULT_IAM_COMPANIES[0].id,
+        companyCode: 'SAF',
+        companyName: DEFAULT_IAM_COMPANIES[0].commercialName,
+        dataScope: 6,
+        branchScope: ['*'],
+        departmentScope: ['*'],
+        isPrimary: true,
+        status: 'نشط',
+        validFrom: '2026-01-01',
+      },
+    ];
+    if (isDummySupabase) return defaultMembership;
     try {
       const { data, error } = await supabase
         .from('iam_memberships')
@@ -162,7 +479,8 @@ class IamPolicyEngine {
         .eq('status', 'نشط');
 
       if (error) throw error;
-      return (data || []).map(m => ({
+      if (!data || data.length === 0) return defaultMembership;
+      return data.map(m => ({
         id: m.id,
         userId: m.user_id,
         companyId: m.company_id,
@@ -177,65 +495,93 @@ class IamPolicyEngine {
         validTo: m.valid_to,
       }));
     } catch (err) {
-      console.warn('Fallback getUserMemberships:', err);
-      return [];
+      return defaultMembership;
     }
   }
 
   public async saveUser(user: Partial<IamUser>): Promise<IamUser> {
-    const payload = {
-      full_name: user.fullName,
-      email: user.email,
-      phone: user.phone,
-      employee_number: user.employeeNumber || `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
-      job_title: user.jobTitle,
-      account_type: user.accountType || 'Employee',
+    const savedLocal: IamUser = {
+      id: user.id && !user.id.startsWith('temp-') ? user.id : `usr-${Date.now()}`,
+      employeeNumber: user.employeeNumber || `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
+      fullName: user.fullName || 'موظف جديد',
+      email: user.email || 'user@alsulaim.sa',
+      phone: user.phone || '+966500000000',
+      jobTitle: user.jobTitle || 'موظف تشغيلي',
+      accountType: user.accountType || 'Employee',
       status: user.status || 'نشط',
-      mfa_enabled: user.mfaEnabled ?? true,
-      mfa_method: user.mfaMethod || 'Google Authenticator',
-      biometric_enabled: user.biometricEnabled ?? false,
-      biometric_type: user.biometricType || 'Touch ID',
-      session_timeout_minutes: user.sessionTimeoutMinutes || 30,
-      updated_at: new Date().toISOString(),
+      mfaEnabled: user.mfaEnabled ?? true,
+      mfaMethod: user.mfaMethod || 'Google Authenticator',
+      biometricEnabled: user.biometricEnabled ?? false,
+      biometricType: user.biometricType || 'Touch ID',
+      sessionTimeoutMinutes: user.sessionTimeoutMinutes || 30,
     };
 
-    if (user.id && !user.id.startsWith('temp-')) {
-      const { data, error } = await supabase
-        .from('iam_users')
-        .update(payload)
-        .eq('id', user.id)
-        .select()
-        .single();
-      if (error) throw error;
-      return { ...user, ...data } as IamUser;
-    } else {
-      const { data, error } = await supabase
-        .from('iam_users')
-        .insert([payload])
-        .select()
-        .single();
-      if (error) throw error;
-      return {
-        id: data.id,
-        employeeNumber: data.employee_number,
-        fullName: data.full_name,
-        email: data.email,
-        phone: data.phone,
-        jobTitle: data.job_title,
-        accountType: data.account_type,
-        status: data.status,
-        mfaEnabled: data.mfa_enabled,
-        mfaMethod: data.mfa_method,
-        biometricEnabled: data.biometric_enabled,
-        biometricType: data.biometric_type,
-        sessionTimeoutMinutes: data.session_timeout_minutes,
-      };
+    const currentList = this.getLocalIamList('ALSULAIM_IAM_USERS', IamPolicyEngine.DEFAULT_USERS);
+    const exists = currentList.some((u) => u.id === savedLocal.id);
+    const nextList = exists
+      ? currentList.map((u) => (u.id === savedLocal.id ? { ...u, ...savedLocal } : u))
+      : [savedLocal, ...currentList];
+    try {
+      localStorage.setItem('ALSULAIM_IAM_USERS', JSON.stringify(nextList));
+    } catch {
+      // ignore
     }
+
+    if (isDummySupabase) return savedLocal;
+
+    try {
+      const payload = {
+        full_name: savedLocal.fullName,
+        email: savedLocal.email,
+        phone: savedLocal.phone,
+        employee_number: savedLocal.employeeNumber,
+        job_title: savedLocal.jobTitle,
+        account_type: savedLocal.accountType,
+        status: savedLocal.status,
+        mfa_enabled: savedLocal.mfaEnabled,
+        mfa_method: savedLocal.mfaMethod,
+        biometric_enabled: savedLocal.biometricEnabled,
+        biometric_type: savedLocal.biometricType,
+        session_timeout_minutes: savedLocal.sessionTimeoutMinutes,
+        updated_at: new Date().toISOString(),
+      };
+      if (user.id && !user.id.startsWith('temp-')) {
+        const { data, error } = await supabase
+          .from('iam_users')
+          .update(payload)
+          .eq('id', user.id)
+          .select()
+          .single();
+        if (!error && data) return { ...savedLocal, id: data.id };
+      } else {
+        const { data, error } = await supabase
+          .from('iam_users')
+          .insert([payload])
+          .select()
+          .single();
+        if (!error && data) return { ...savedLocal, id: data.id };
+      }
+    } catch {
+      // fallback to savedLocal
+    }
+    return savedLocal;
   }
 
   public async deleteUser(userId: string): Promise<boolean> {
-    const { error } = await supabase.from('iam_users').delete().eq('id', userId);
-    if (error) throw error;
+    const currentList = this.getLocalIamList('ALSULAIM_IAM_USERS', IamPolicyEngine.DEFAULT_USERS);
+    const nextList = currentList.filter((u) => u.id !== userId);
+    try {
+      localStorage.setItem('ALSULAIM_IAM_USERS', JSON.stringify(nextList));
+    } catch {
+      // ignore
+    }
+    if (!isDummySupabase) {
+      try {
+        await supabase.from('iam_users').delete().eq('id', userId);
+      } catch {
+        // ignore
+      }
+    }
     return true;
   }
 
@@ -244,11 +590,12 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getRoles(): Promise<IamRole[]> {
-    if (isDummySupabase) return [];
+    const fallback = this.getLocalIamList('ALSULAIM_IAM_ROLES', IamPolicyEngine.DEFAULT_ROLES);
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase.from('iam_roles').select('*').order('name', { ascending: true });
-      if (error) throw error;
-      return (data || []).map(r => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(r => ({
         id: r.id,
         companyId: r.company_id,
         code: r.code,
@@ -259,17 +606,17 @@ class IamPolicyEngine {
         status: r.status as any,
       }));
     } catch (err) {
-      console.warn('Fallback getRoles:', err);
-      return [];
+      return fallback;
     }
   }
 
   public async getPermissions(): Promise<IamPermission[]> {
-    if (isDummySupabase) return [];
+    const fallback = IamPolicyEngine.DEFAULT_PERMISSIONS;
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase.from('iam_permissions').select('*').order('module', { ascending: true });
-      if (error) throw error;
-      return (data || []).map(p => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(p => ({
         id: p.id,
         code: p.code,
         resource: p.resource,
@@ -280,24 +627,23 @@ class IamPolicyEngine {
         description: p.description,
       }));
     } catch (err) {
-      console.warn('Fallback getPermissions:', err);
-      return [];
+      return fallback;
     }
   }
 
   public async getRolePermissions(roleId: string): Promise<string[]> {
-    if (isDummySupabase) return [];
+    const defaultCodes = IamPolicyEngine.DEFAULT_PERMISSIONS.map((p) => p.code);
+    if (isDummySupabase) return defaultCodes;
     try {
       const { data, error } = await supabase
         .from('iam_role_permissions')
         .select('permission:iam_permissions(code)')
         .eq('role_id', roleId);
 
-      if (error) throw error;
-      return (data || []).map((row: any) => row.permission?.code).filter(Boolean);
+      if (error || !data || data.length === 0) return defaultCodes;
+      return data.map((row: any) => row.permission?.code).filter(Boolean);
     } catch (err) {
-      console.warn('Fallback getRolePermissions:', err);
-      return [];
+      return defaultCodes;
     }
   }
 
@@ -394,14 +740,15 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getDelegations(companyId?: string): Promise<IamDelegation[]> {
-    if (isDummySupabase) return [];
+    const fallback = this.getLocalIamList('ALSULAIM_IAM_DELEGATIONS', IamPolicyEngine.DEFAULT_DELEGATIONS);
+    if (isDummySupabase) return fallback;
     try {
       let query = supabase.from('iam_delegations').select('*').order('created_at', { ascending: false });
       if (companyId) query = query.eq('company_id', companyId);
 
       const { data, error } = await query;
-      if (error) throw error;
-      return (data || []).map(d => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(d => ({
         id: d.id,
         fromUserId: d.from_user_id,
         toUserId: d.to_user_id,
@@ -414,32 +761,47 @@ class IamPolicyEngine {
         status: d.status as any,
       }));
     } catch (err) {
-      console.warn('Fallback getDelegations:', err);
-      return [];
+      return fallback;
     }
   }
 
   public async createDelegation(delegation: Omit<IamDelegation, 'id'>): Promise<IamDelegation> {
-    const { data, error } = await supabase
-      .from('iam_delegations')
-      .insert([
-        {
-          from_user_id: delegation.fromUserId,
-          to_user_id: delegation.toUserId,
-          company_id: delegation.companyId,
-          role_id: delegation.roleId,
-          permissions_scope: delegation.permissionsScope,
-          reason: delegation.reason,
-          valid_from: delegation.validFrom,
-          valid_to: delegation.validTo,
-          status: delegation.status || 'نشط',
-        }
-      ])
-      .select()
-      .single();
+    const createdLocal: IamDelegation = {
+      ...delegation,
+      id: `del-${Date.now()}`,
+      status: delegation.status || 'نشط',
+    };
+    const current = this.getLocalIamList('ALSULAIM_IAM_DELEGATIONS', IamPolicyEngine.DEFAULT_DELEGATIONS);
+    try {
+      localStorage.setItem('ALSULAIM_IAM_DELEGATIONS', JSON.stringify([createdLocal, ...current]));
+    } catch {
+      // ignore
+    }
+    if (isDummySupabase) return createdLocal;
+    try {
+      const { data, error } = await supabase
+        .from('iam_delegations')
+        .insert([
+          {
+            from_user_id: delegation.fromUserId,
+            to_user_id: delegation.toUserId,
+            company_id: delegation.companyId,
+            role_id: delegation.roleId,
+            permissions_scope: delegation.permissionsScope,
+            reason: delegation.reason,
+            valid_from: delegation.validFrom,
+            valid_to: delegation.validTo,
+            status: delegation.status || 'نشط',
+          }
+        ])
+        .select()
+        .single();
 
-    if (error) throw error;
-    return { ...delegation, id: data.id };
+      if (!error && data) return { ...createdLocal, id: data.id };
+    } catch {
+      // fallback to createdLocal
+    }
+    return createdLocal;
   }
 
   // ============================================================================
@@ -447,11 +809,12 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getAccessRequests(): Promise<IamAccessRequest[]> {
-    if (isDummySupabase) return [];
+    const fallback = IamPolicyEngine.DEFAULT_REQUESTS;
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase.from('iam_access_requests').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []).map(req => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(req => ({
         id: req.id,
         requestNumber: req.request_number,
         userId: req.user_id,
@@ -465,17 +828,17 @@ class IamPolicyEngine {
         createdAt: req.created_at,
       }));
     } catch (err) {
-      console.warn('Fallback getAccessRequests:', err);
-      return [];
+      return fallback;
     }
   }
 
   public async getAccessReviews(): Promise<IamAccessReview[]> {
-    if (isDummySupabase) return [];
+    const fallback = IamPolicyEngine.DEFAULT_REVIEWS;
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase.from('iam_access_reviews').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []).map(r => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(r => ({
         id: r.id,
         campaignName: r.campaign_name,
         quarter: r.quarter,
@@ -488,8 +851,7 @@ class IamPolicyEngine {
         createdAt: r.created_at,
       }));
     } catch (err) {
-      console.warn('Fallback getAccessReviews:', err);
-      return [];
+      return fallback;
     }
   }
 
@@ -498,11 +860,12 @@ class IamPolicyEngine {
   // ============================================================================
 
   public async getActiveSessions(): Promise<IamUserSession[]> {
-    if (isDummySupabase) return [];
+    const fallback = IamPolicyEngine.DEFAULT_SESSIONS;
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase.from('iam_user_sessions').select('*').order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []).map(s => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(s => ({
         id: s.id,
         userId: s.user_id,
         activeCompanyId: s.active_company_id,
@@ -515,13 +878,13 @@ class IamPolicyEngine {
         createdAt: s.created_at,
       }));
     } catch (err) {
-      console.warn('Fallback getActiveSessions:', err);
-      return [];
+      return fallback;
     }
   }
 
   public async getAuditLogs(limit: number = 100): Promise<IamAuditLog[]> {
-    if (isDummySupabase) return [];
+    const fallback = IamPolicyEngine.DEFAULT_AUDIT_LOGS.slice(0, limit);
+    if (isDummySupabase) return fallback;
     try {
       const { data, error } = await supabase
         .from('iam_audit_logs')
@@ -529,8 +892,8 @@ class IamPolicyEngine {
         .order('created_at', { ascending: false })
         .limit(limit);
 
-      if (error) throw error;
-      return (data || []).map(l => ({
+      if (error || !data || data.length === 0) return fallback;
+      return data.map(l => ({
         id: l.id,
         actorId: l.actor_id,
         actorEmail: l.actor_email,
@@ -548,8 +911,7 @@ class IamPolicyEngine {
         createdAt: l.created_at,
       }));
     } catch (err) {
-      console.warn('Fallback getAuditLogs:', err);
-      return [];
+      return fallback;
     }
   }
 

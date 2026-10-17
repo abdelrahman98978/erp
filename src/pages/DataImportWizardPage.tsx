@@ -203,6 +203,14 @@ export const DataImportWizardPage: React.FC = () => {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+              className="button-outline-on-dark"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+            >
+              <Database className="w-4 h-4 ml-1 text-[#CFA64A]" />
+              <span>بوابة استخلاص 100+ فاتورة وأي مستند (PDF / Word / Excel / صور)</span>
+            </button>
+            <button
               className="button-white-pill"
               onClick={() => setStep(step === 'history' ? 'select-type' : 'history')}
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}

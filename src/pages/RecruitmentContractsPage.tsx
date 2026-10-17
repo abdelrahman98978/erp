@@ -774,9 +774,9 @@ export const RecruitmentContractsPage: React.FC = () => {
       <div 
         className="rounded-3xl p-6 sm:p-7 relative overflow-hidden transition-all duration-300"
         style={{
-          background: 'linear-gradient(135deg, #091725 0%, #11253c 50%, #091725 100%)',
+          background: '#000000',
           border: '1.5px solid rgba(207, 166, 74, 0.35)',
-          boxShadow: '0 20px 40px -15px rgba(9, 23, 37, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+          boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
@@ -815,6 +815,15 @@ export const RecruitmentContractsPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-[#1D2428] hover:bg-zinc-800 text-[#F5EDDC] border border-[#CFA64A]/50 flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <FileText className="w-4 h-4 text-[#CFA64A]" />
+            <span>استخلاص عقود ومستندات (PDF / Word / Excel / صور)</span>
+          </button>
+
           {/* Table / Kanban Toggle */}
           <div className="bg-zinc-950/70 border border-zinc-800 p-1 rounded-2xl flex gap-1 shadow-inner backdrop-blur-md">
             <button
@@ -839,9 +848,9 @@ export const RecruitmentContractsPage: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-zinc-950 border border-amber-300 shadow-lg shadow-amber-500/25 flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#CFA64A] bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-zinc-950 border border-amber-300 shadow-lg shadow-amber-500/25 flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 shrink-0" />
             <span>إضافة عقد استقدام</span>
           </button>
 
@@ -1627,7 +1636,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-black">رقم توثيق منصة مساند:</span>
-                    <span className="font-mono font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-lg border border-purple-200">
+                    <span className="font-mono font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
                       {selectedContractForPrint.musaned_number || 'MSN-2026-99201'}
                     </span>
                   </div>

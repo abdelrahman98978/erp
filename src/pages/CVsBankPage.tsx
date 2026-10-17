@@ -503,7 +503,12 @@ export const CVsBankPage: React.FC = () => {
 
   // Load CV records from realErpDataStore
   useEffect(() => {
-    realErpDataStore.getRecords<CVRecord>('cvs', INITIAL_CVS).then(setCvs);
+    const loadCvs = () => {
+      realErpDataStore.getRecords<CVRecord>('cvs', INITIAL_CVS).then(setCvs);
+    };
+    loadCvs();
+    window.addEventListener('erp-data-updated', loadCvs);
+    return () => window.removeEventListener('erp-data-updated', loadCvs);
   }, []);
 
   // Filtered list based on tab, nationality, and search query
@@ -689,6 +694,16 @@ export const CVsBankPage: React.FC = () => {
         <div className="flex items-center gap-2.5 flex-wrap">
           <button
             type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="button-outline-on-dark flex items-center gap-1.5"
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '40px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+          >
+            <Sparkles className="w-4 h-4 text-[#CFA64A]" />
+            <span>استخلاص سير ذاتية (PDF / Word / صور)</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('create-cv', 'إضافة وتدقيق سيرة ذاتية جديدة')}
             className="button-white-pill flex items-center gap-1.5 shadow-md hover:scale-105 transition-all"
             style={{ fontSize: '12.5px', padding: '7px 20px', minHeight: '40px', backgroundColor: '#ffffff', color: '#000000', fontWeight: 'bold' }}
@@ -761,7 +776,7 @@ export const CVsBankPage: React.FC = () => {
         {[
           { key: 'recruitment', label: `سير ذاتية التوسط (استقدام)`, count: counts.recruitment, icon: UserCheck, color: 'text-blue-600' },
           { key: 'rental', label: `سير ذاتية التأجير والتشغيل`, count: counts.rental, icon: HeartHandshake, color: 'text-amber-600' },
-          { key: 'reserved', label: `سير ذاتية محجوزة`, count: counts.reserved, icon: BookmarkCheck, color: 'text-purple-600' },
+          { key: 'reserved', label: `سير ذاتية محجوزة`, count: counts.reserved, icon: BookmarkCheck, color: 'text-amber-600' },
           { key: 'backout', label: `سير ذاتية تراجع (باك أوت)`, count: counts.backout, icon: UserX, color: 'text-rose-600' },
           { key: 'pending', label: `سير بانتظار الاعتماد`, count: counts.pending, icon: Clock, color: 'text-zinc-600' },
           { key: 'all', label: `جميع السير الذاتية`, count: counts.all, icon: Layers, color: 'text-black' },

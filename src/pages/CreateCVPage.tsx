@@ -96,7 +96,7 @@ export const CreateCVPage: React.FC = () => {
       message: `تم حفظ السيرة الذاتية #${cvCode} للعاملة (${formData.full_name_en}) ونشرها في المنظومة.`,
       type: 'success',
     });
-    setActiveTab('operations-cv-recruitment', 'السير الذاتية المتاحة للاستقدام');
+    setActiveTab('cvs-recruitment', 'سير ذاتية الاستقدام المعتمدة');
   };
 
   return (
@@ -138,6 +138,15 @@ export const CreateCVPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="button-white-pill flex items-center gap-1.5 shadow-sm"
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#CFA64A', color: '#000000', fontWeight: 'bold' }}
+          >
+            <Upload className="w-4 h-4 text-black" />
+            <span>استخلاص آلي من ملف سيرة (PDF / Word / صورة)</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setShowPrintPreview(true)}
             className="button-white-pill flex items-center gap-1.5 shadow-sm"
             style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: 'bold' }}
@@ -156,7 +165,7 @@ export const CreateCVPage: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => window.history.back()}
+            onClick={() => setActiveTab('cvs-recruitment', 'سير ذاتية الاستقدام المعتمدة')}
             className="button-outline-on-light"
             style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', background: '#ffffff' }}
           >

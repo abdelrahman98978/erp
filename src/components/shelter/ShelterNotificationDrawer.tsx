@@ -223,8 +223,8 @@ export const ShelterNotificationDrawer: React.FC<ShelterNotificationDrawerProps>
                 onClick={() => setCategoryFilter('SHELTER')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
                   categoryFilter === 'SHELTER'
-                    ? 'bg-purple-600 text-white'
-                    : 'text-purple-700 hover:bg-purple-50'
+                    ? 'bg-amber-600 text-white'
+                    : 'text-amber-700 hover:bg-amber-50'
                 }`}
               >
                 <Hotel className="w-3.5 h-3.5" />

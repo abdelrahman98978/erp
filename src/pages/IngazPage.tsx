@@ -631,7 +631,7 @@ export const IngazPage: React.FC = () => {
                 </div>
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
                   <span className="text-[10px] text-zinc-400 font-bold block">بيانات التأشيرة الصادرة</span>
-                  <div className="font-mono font-bold text-sm text-purple-700">{selectedDelegationForPrint.visa_number}</div>
+                  <div className="font-mono font-bold text-sm text-amber-700">{selectedDelegationForPrint.visa_number}</div>
                   <div className="text-zinc-600 text-[11px]">{selectedDelegationForPrint.profession} • {selectedDelegationForPrint.nationality}</div>
                 </div>
               </div>

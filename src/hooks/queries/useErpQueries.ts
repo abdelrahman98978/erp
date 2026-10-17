@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ErpTableName,
@@ -23,6 +24,7 @@ export function useTableData<T = Record<string, unknown>>(
   options: ListOptions = {},
   fallbackData: T[] = []
 ) {
+  const queryClient = useQueryClient();
   const { activeCompanyId } = useCompany();
   const effectiveCompanyId = options.companyId || activeCompanyId || 'SAF';
   const scopedCacheKey = dataIsolationService.getScopedCacheKey(
@@ -31,11 +33,21 @@ export function useTableData<T = Record<string, unknown>>(
     JSON.stringify(options)
   );
 
+  useEffect(() => {
+    const handleRefresh = () => {
+      queryClient.invalidateQueries({ queryKey: [scopedCacheKey] });
+    };
+    window.addEventListener('erp-data-updated', handleRefresh);
+    return () => window.removeEventListener('erp-data-updated', handleRefresh);
+  }, [queryClient, scopedCacheKey]);
+
   return useQuery({
     queryKey: [scopedCacheKey, tableName, effectiveCompanyId, getDataMode()],
     queryFn: async () => {
-      const isProduction = getDataMode() === 'production_real';
-      const effectiveFallback = isProduction ? [] : fallbackData;
+      const isExplicitlyPurged =
+        typeof window !== 'undefined' &&
+        localStorage.getItem('ALSULAIM_ERP_EXPLICIT_PURGE') === 'true';
+      const effectiveFallback = isExplicitlyPurged ? [] : fallbackData;
       const records = await realErpDataStore.getRecords<any>(
         tableName,
         effectiveFallback,
@@ -44,7 +56,7 @@ export function useTableData<T = Record<string, unknown>>(
       if (effectiveCompanyId && effectiveCompanyId !== 'all' && records.length > 0) {
         return records.filter((item: Record<string, unknown>) => {
           const itemCompany = item.company_id || item.companyId;
-          return itemCompany === effectiveCompanyId;
+          return !itemCompany || itemCompany === effectiveCompanyId || itemCompany === 'all';
         }) as T[];
       }
       return records as T[];

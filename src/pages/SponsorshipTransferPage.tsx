@@ -53,8 +53,23 @@ export const SponsorshipTransferPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const storeActiveTab = useAppStore(state => state.activeTab);
 
+  const getMappedTab = (tabKey: string): 'followup' | 'catalog' | 'dashboard' | 'inmates' | 'transfers' | 'timeline' => {
+    switch (tabKey) {
+      case 'trial-period':
+        return 'followup';
+      case 'transferred-done':
+        return 'transfers';
+      case 'transfer-contract-terms':
+        return 'timeline';
+      case 'sponsorship-transfer':
+        return 'catalog';
+      default:
+        return 'followup';
+    }
+  };
+
   // Active sub-tab
-  const [activeTab, setActiveTab] = useState<'followup' | 'catalog' | 'dashboard' | 'inmates' | 'transfers' | 'timeline'>('followup');
+  const [activeTab, setActiveTab] = useState<'followup' | 'catalog' | 'dashboard' | 'inmates' | 'transfers' | 'timeline'>(() => getMappedTab(storeActiveTab));
 
   // Modal triggers
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -72,11 +87,7 @@ export const SponsorshipTransferPage: React.FC = () => {
 
   // Sync initial tab if came from sidebar
   useEffect(() => {
-    if (storeActiveTab === 'trial-period') {
-      setActiveTab('followup');
-    } else if (storeActiveTab === 'transferred-done') {
-      setActiveTab('transfers');
-    }
+    setActiveTab(getMappedTab(storeActiveTab));
   }, [storeActiveTab]);
 
   const state = shelterTransferStore.getState();
@@ -132,13 +143,13 @@ export const SponsorshipTransferPage: React.FC = () => {
 
   // Helper for office badge
   const getOfficeMeta = (officeId: GroupOfficeId) => {
-    return GROUP_OFFICES[officeId] || { name: officeId, primaryColor: '#6366f1', badgeColor: 'bg-indigo-900/40 text-indigo-300 border border-indigo-500/30' };
+    return GROUP_OFFICES[officeId] || { name: officeId, primaryColor: '#6366f1', badgeColor: 'bg-amber-900/40 text-amber-300 border border-amber-500/30' };
   };
 
   return (
-    <div className="space-y-6 text-zinc-100 font-sans" dir="rtl">
+    <div className="space-y-6 text-zinc-900 font-sans" dir="rtl">
       {/* 1. Master Cinematic Hero Header - KAS Suite Luxury Design */}
-      <div className="rounded-2xl p-6 bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] border border-amber-500/20 shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl p-6 bg-[#000000] bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] text-white border border-amber-500/20 shadow-xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2.5">
             <div className="flex items-center gap-2 flex-wrap">
@@ -302,9 +313,9 @@ export const SponsorshipTransferPage: React.FC = () => {
         <div className="rounded-2xl p-4 bg-[#14181c] border border-white/10 shadow-md">
           <div className="flex items-center justify-between text-zinc-400 text-xs mb-2">
             <span>عقود وتجارب العملاء النشطة</span>
-            <Hourglass className="w-4 h-4 text-purple-400" />
+            <Hourglass className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-2xl font-black text-purple-300 font-display">
+          <div className="text-2xl font-black text-amber-300 font-display">
             {metrics.workersInClientTrial} <span className="text-xs font-normal text-zinc-400">عقد تجربة</span>
           </div>
           <div className="text-[11px] text-emerald-400 mt-1 font-bold flex items-center gap-1">
@@ -330,7 +341,7 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* 3. Navigation SubTabs - KAS Suite Pill Styling */}
       <div className="rounded-2xl p-2 bg-[#14181c] border border-white/10 shadow-md">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-white/10 p-1">
+        <div className="flex items-center gap-2 flex-wrap p-1">
           {/* Tab 1: Daily Follow-up */}
           <button
             type="button"
@@ -732,7 +743,7 @@ export const SponsorshipTransferPage: React.FC = () => {
               </p>
             </div>
 
-            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
+            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
               {timeline.length} حدث موثق
             </span>
           </div>

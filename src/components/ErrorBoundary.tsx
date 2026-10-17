@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react';
 interface ErrorBoundaryProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
+  resetKey?: string;
 }
 
 interface ErrorBoundaryState {
@@ -20,6 +21,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true, error };
+  }
+
+  componentDidUpdate(prevProps: ErrorBoundaryProps): void {
+    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
