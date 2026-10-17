@@ -721,9 +721,20 @@ class ErpSystemData {
       fullName: 'أ. محمد بن عبدالرحمن السليم',
       role: 'المدير المالي التنفيذي للمجموعة (SMACC Group CFO)',
       companyId: 'all',
-      departmentId: 'finance',
+      departmentId: 'executive',
       branch: 'المقر الرئيسي للمجموعة - الرياض',
       badgeEmoji: '📊',
+    ),
+    const StaffDirectoryAccount(
+      id: 'USR-GRP-DEV-01',
+      username: 'abdo12uk',
+      email: 'abdo12uk@gmail.com',
+      fullName: 'م. عبدالرحمن (مطور النظام الرئيسي)',
+      role: 'مطور النظام ومدير الصلاحيات العليا (System Developer)',
+      companyId: 'all',
+      departmentId: 'executive',
+      branch: 'المقر الرئيسي للمجموعة - الرياض',
+      badgeEmoji: '💻',
     ),
   ];
 
