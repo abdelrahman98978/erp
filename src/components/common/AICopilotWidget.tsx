@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { 
   X, Send, Mic, MicOff, Volume2, VolumeX, Sparkles, 
   ArrowLeft, Bot, MessageSquare, CheckCircle2, RefreshCw, Zap,
-  Minimize2, ShieldCheck, ShieldAlert, AlertTriangle, Radio, HelpCircle
+  Minimize2, ShieldCheck, ShieldAlert, AlertTriangle, Radio, HelpCircle,
+  Paperclip, Copy, Check, ClipboardList, ArrowRightLeft, UserCheck
 } from 'lucide-react';
 import { 
   playPersonaSwitchGreeting, 
@@ -17,10 +18,16 @@ import {
   getLastSpeechTimestamp,
   subscribeAudioState
 } from '../../services/audioVoiceService';
-import { generateLocalAiResponse, checkLocalAiAvailable } from '../../services/localAiService';
+import { 
+  generateLocalAiResponse, 
+  checkLocalAiAvailable, 
+  getDepartmentTaskPlaybook, 
+  generateEmployeeDailyBriefing 
+} from '../../services/localAiService';
 import { executeToolCall, logToolCancellation, buildConfirmationSummary, type ToolCallParsed } from '../../services/aiToolExecutor';
 import { getToolById } from '../../services/aiToolRegistry';
 import { dispatchVoiceCommand, VOICE_COMMANDS_GUIDE } from '../../services/voiceCommandService';
+import { authService, resolveDepartmentAndCompany } from '../../services/authService';
 
 interface ChatMessage {
   id: string;
@@ -31,6 +38,10 @@ interface ChatMessage {
   actionButton?: {
     label: string;
     actionKey: string;
+  };
+  suggestedPersonaHandoff?: {
+    persona: AssistantPersona;
+    reasonAr: string;
   };
 }
 
@@ -614,77 +625,131 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     startDictation(false);
   };
 
-  // Dynamic Contextual Quick Prompts based on activeCompany & persona
+  const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Resolve current employee profile & department task playbook
+  const currentUserProfile = authService.getCurrentUser();
+  const employeeScope = useMemo(() => {
+    return resolveDepartmentAndCompany(
+      currentUserProfile?.email || currentUserProfile?.username || 'accounting@saf-rec.sa',
+      currentUserProfile?.role,
+      currentUserProfile?.company_id || activeCompany.id,
+      currentUserProfile?.department_id
+    );
+  }, [currentUserProfile?.email, currentUserProfile?.username, currentUserProfile?.role, currentUserProfile?.company_id, currentUserProfile?.department_id, activeCompany.id]);
+
+  const departmentPlaybook = useMemo(() => {
+    return getDepartmentTaskPlaybook(employeeScope.departmentId, activeCompany.id);
+  }, [employeeScope.departmentId, activeCompany.id]);
+
+  const handleCopyMessage = (msgId: string, text: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).catch(() => {});
+      setCopiedMsgId(msgId);
+      setTimeout(() => {
+        setCopiedMsgId((prev) => (prev === msgId ? null : prev));
+      }, 2200);
+    }
+  };
+
+  // Trigger personalized daily task briefing for the logged-in employee
+  const handleDailyBriefing = () => {
+    const briefingText = generateEmployeeDailyBriefing(
+      {
+        id: activeCompany.id,
+        name: activeCompany.name,
+        code: (activeCompany as any).code,
+      },
+      persona
+    );
+
+    const userMsg: ChatMessage = {
+      id: `u-brief-${Date.now()}`,
+      sender: 'user',
+      text: '📋 أعطني إيجاز مهامي اليومي ومؤشرات قسمي',
+      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const aiMsg: ChatMessage = {
+      id: `ai-brief-${Date.now()}`,
+      sender: 'ai',
+      text: briefingText,
+      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setMessages((prev) => [...prev, userMsg, aiMsg]);
+    speakText(briefingText, persona, true);
+  };
+
+  // Handle direct file attachment in chat (Invoices, Contracts, CVs, Excel/PDF/Images)
+  const handleFileAttachment = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileList = Array.from(files);
+    const fileNames = fileList.map((f) => f.name).join('، ');
+    const firstFile = fileList[0];
+    const lowerName = firstFile.name.toLowerCase();
+
+    const userMsg: ChatMessage = {
+      id: `u-file-${Date.now()}`,
+      sender: 'user',
+      text: `📎 مرفق (${fileList.length}): ${fileNames}`,
+      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    let responseText = '';
+    let suggestedQuery = '';
+
+    if (lowerName.includes('cv') || lowerName.includes('سير') || lowerName.includes('resume')) {
+      responseText = `تم استلام ملف السيرة الذاتية (${firstFile.name}) بنجاح في نطاق (${activeCompany.name}).\n• يمكنني تسجيل المرشح فوراً في بنك السير الذاتية (ATS) أو فتح مستخرج المستندات الذكي لقراءة كافة الحقول تلقائياً.`;
+      suggestedQuery = `سجل سيرة ذاتية جديدة من الملف ${firstFile.name.replace(/\.[^/.]+$/, '')} بمهنة عاملة منزلية`;
+    } else if (lowerName.includes('contract') || lowerName.includes('عقد') || lowerName.includes('مساند')) {
+      responseText = `تم استلام ملف العقد (${firstFile.name}) بنجاح.\n• يمكنني إنشاء مسودة عقد استقدام/تأجير مباشرة أو استخلاص بنود العقد عبر المستخرج الشامل.`;
+      suggestedQuery = `أنشئ عقد استقدام جديد للعميل ${firstFile.name.replace(/\.[^/.]+$/, '')} بمبلغ 17250 ريال`;
+    } else {
+      responseText = `تم استلام (${fileList.length}) ملف/فاتورة (${fileNames}) بنجاح في نطاق (${activeCompany.name}).\n• يمكنني إصدار فاتورة ضريبية ZATCA فورية أو فتح مستخرج الـ 100 فاتورة ومستندات PDF/Excel/Word لمعالجتها دفعة واحدة.`;
+      suggestedQuery = `أصدر فاتورة ضريبية للملف ${firstFile.name.replace(/\.[^/.]+$/, '')} بمبلغ 1500 ريال`;
+    }
+
+    const aiMsg: ChatMessage = {
+      id: `ai-file-${Date.now()}`,
+      sender: 'ai',
+      text: responseText,
+      timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+      actionButton: {
+        label: '📄 فتح مستخرج الـ 100 مستند وفاتورة الذكي',
+        actionKey: 'open-document-extractor',
+      },
+    };
+
+    setMessages((prev) => [...prev, userMsg, aiMsg]);
+    setInputQuery(suggestedQuery);
+    speakText(responseText, persona, false);
+    e.target.value = '';
+  };
+
+  // Dynamic Contextual Quick Prompts based on logged-in Employee's Department Playbook & activeCompany
   const getContextualPrompts = () => {
+    const deptTasks = departmentPlaybook.tasks.map((t) => ({
+      label: t.label,
+      query: t.prompt,
+    }));
+
     const commonExtractor = {
       label: '📄 رفع 100 فاتورة / مستند',
       query: 'أريد رفع 100 صورة فاتورة أو مستندات PDF وWord وExcel واستخلاص بياناتها تلقائياً',
     };
-    const commonSmacc = {
-      label: '📊 محاسبة سماك (6 أنظمة)',
-      query: 'استعرض حالة نظام سماك المحاسبي (SMACC) والقيود والفواتير المعزولة للشركة',
-    };
 
-    if (persona === 'noura') {
-      return [
-        commonExtractor,
-        commonSmacc,
-        { label: '🏥 مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية وحالة النزيلات في مراكز الإيواء؟' },
-        { label: '📑 عقود مساند والتأجير', query: 'أريد معرفة جاهزية الكوادر وعقود الاستقدام والتشغيل المرن' },
-        { label: '🛡️ الرعاية والامتثال HRSD', query: 'ما هي مؤشرات الرعاية الصحية والامتثال لوزارة الموارد البشرية؟' },
-      ];
-    }
-
-    const companyId = activeCompany.id;
-
-    if (companyId === 'KAS' || companyId === 'kas') {
-      return [
-        commonExtractor,
-        commonSmacc,
-        { label: '🏗️ منصة اعتماد والمنافسات', query: 'ما هي أحدث منافسات منصة اعتماد المتاحة للمشاركة؟' },
-        { label: '📐 محرر جداول الكميات BOQ', query: 'أريد مراجعة بنود وتسعير جدول كميات المنافسة الحالية' },
-        { label: '🧾 الفوترة الضريبية ZATCA', query: 'ما هي حالة الامتثال للفوترة الإلكترونية المشفرة للمرحلة الثانية؟' },
-      ];
-    }
-
-    if (companyId === 'SAF' || companyId === 'masi') {
-      return [
-        commonExtractor,
-        commonSmacc,
-        { label: '📑 عقود مساند السارية', query: 'ما هي حالة عقود مساند في مرحلة التأشيرة أو السفارة؟' },
-        { label: '🧾 الفوترة الضريبية ZATCA', query: 'ما هي حالة فواتير ZATCA والضريبة لشركة سواعد؟' },
-        { label: '🛂 تفويض إنجاز الفوري', query: 'كيف أقوم بإصدار تفويض إلكتروني فوري عبر إنجاز؟' },
-      ];
-    }
-
-    if (companyId === 'YAQ' || companyId === 'yaqoot') {
-      return [
-        commonExtractor,
-        commonSmacc,
-        { label: '🤝 عقود التأجير والتشغيل', query: 'أعطني إحصائية عقود التأجير الشهرية والسنوية السارية' },
-        { label: '💵 سندات القبض والتحصيل', query: 'ما هي مبالغ التحصيل المستحقة هذا الشهر للياقوت؟' },
-        { label: '🏢 باقات قطاع الأعمال', query: 'ما هي العروض والخصومات المتاحة للشركات والمصانع؟' },
-      ];
-    }
-
-    if (companyId === 'TOP' || companyId === 'topaz') {
-      return [
-        commonExtractor,
-        commonSmacc,
-        { label: '🗂️ فرز السير الذاتية ATS', query: 'ما هي السير الذاتية المطابقة لمعايير التوظيف الذكي؟' },
-        { label: '🌍 وكالات التوظيف الخارجية', query: 'ما هي حالة الربط مع الوكالات الخارجية في الفلبين وإندونيسيا؟' },
-      ];
-    }
-
-    // Default / All / Super Admin
-    return [
-      commonExtractor,
-      commonSmacc,
-      { label: '🧾 الفوترة الضريبية ZATCA', query: 'ما هي حالة الفوترة الضريبية ZATCA المرحلة الثانية؟' },
-      { label: '📑 عقود مساند والتأجير', query: 'ما هي عقود مساند النشطة وحالة الربط مع الوزارة؟' },
-      { label: '👥 التوطين وحماية الأجور WPS', query: 'ما هي نسبة التوطين المعتمدة وحالة ملف WPS؟' },
-      { label: '🏥 مراكز الإيواء والتسكين', query: 'ما هي الطاقة الاستيعابية الشاغرة لأسرة مراكز الإيواء؟' },
-    ];
+    // Combine department-tailored tasks with universal document extraction
+    const combined = [...deptTasks, commonExtractor];
+    const seen = new Set<string>();
+    return combined.filter((item) => {
+      if (seen.has(item.label)) return false;
+      seen.add(item.label);
+      return true;
+    });
   };
 
   // Handle confirming a tool call (Gate 2: User Approval)
@@ -696,7 +761,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
       const result = await executeToolCall(
         pendingToolCall,
         activeCompany.id,
-        'current_user',
+        currentUserProfile?.username || 'current_user',
         onNavigate
       );
 
@@ -728,7 +793,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
   // Handle cancelling a tool call
   const handleCancelToolCall = () => {
     if (pendingToolCall) {
-      logToolCancellation(pendingToolCall, activeCompany.id, 'current_user');
+      logToolCancellation(pendingToolCall, activeCompany.id, currentUserProfile?.username || 'current_user');
       const cancelMsg: ChatMessage = {
         id: `tool-cancel-${Date.now()}`,
         sender: 'ai',
@@ -795,7 +860,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 const res = await executeToolCall(
                   { tool: toolDef, params, confirmationSummary: '' },
                   activeCompany.id,
-                  'current_user',
+                  currentUserProfile?.username || 'current_user',
                   onNavigate
                 );
                 setMessages(prev => [
@@ -865,6 +930,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
         text: aiRes.text,
         timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
         actionButton: aiRes.actionButton,
+        suggestedPersonaHandoff: aiRes.suggestedPersonaHandoff,
       };
 
       setMessages(prev => [...prev, newAiMsg]);
@@ -878,7 +944,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             const autoRes = await executeToolCall(
               aiRes.toolCall,
               activeCompany.id,
-              'current_user',
+              currentUserProfile?.username || 'current_user',
               onNavigate
             );
 
@@ -1319,7 +1385,44 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             )}
           </div>
 
-          {/* Contextual Quick Suggestions Pill Bar */}
+          {/* Employee Identity & Co-Pilot Task Bar */}
+          <div className="px-3.5 py-2 bg-[#F5EDDC] border-b border-[#CFA64A]/50 flex items-center justify-between gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <UserCheck className="w-3.5 h-3.5 text-[#8C681E] shrink-0" />
+              <span className="text-[11px] font-black text-black truncate">
+                {currentUserProfile?.full_name || 'موظف المجموعة'}
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-[#8C681E] border border-[#CFA64A]/60 truncate">
+                {departmentPlaybook.departmentNameAr}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={handleDailyBriefing}
+                title="إيجاز مهامي اليومي ومؤشرات القسم"
+                className="px-2.5 py-1 rounded-full text-[11px] font-black bg-black text-[#CFA64A] border border-[#CFA64A] hover:bg-zinc-900 transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <ClipboardList className="w-3 h-3 text-[#CFA64A]" />
+                <span>إيجاز مهامي</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('open-document-extractor'));
+                  setIsOpen(false);
+                }}
+                title="فتح مستخرج الـ 100 فاتورة ومستندات PDF/Word/Excel الذكي"
+                className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-white text-black border border-[#CFA64A] hover:bg-[#FBFBF5] transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <Paperclip className="w-3 h-3 text-[#8C681E]" />
+                <span>مستخرج المستندات</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Contextual Department Task Playbook Pill Bar */}
           <div className="px-3.5 py-2.5 bg-[#FBFBF5] border-b border-[#E4E4E7] flex gap-2 overflow-x-auto thin-scrollbar shrink-0">
             {getContextualPrompts().map((qp, idx) => (
               <button
@@ -1455,20 +1558,59 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                     </button>
                   )}
 
-                  {/* Timestamp & Speech Read Action */}
+                  {/* Persona Collaboration Handoff Button (Faris <-> Noura) */}
+                  {msg.suggestedPersonaHandoff && msg.suggestedPersonaHandoff.persona !== persona && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (msg.suggestedPersonaHandoff) {
+                          switchPersona(msg.suggestedPersonaHandoff.persona);
+                        }
+                      }}
+                      className="self-start mt-1 px-3.5 py-1.5 rounded-full bg-[#F5EDDC] hover:bg-[#CFA64A] text-black font-bold text-[11px] border border-[#CFA64A] shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <ArrowRightLeft className="w-3.5 h-3.5 text-[#8C681E]" />
+                      <span>
+                        التحويل إلى {msg.suggestedPersonaHandoff.persona === 'noura' ? 'نُورة' : 'فارس'}: {msg.suggestedPersonaHandoff.reasonAr}
+                      </span>
+                    </button>
+                  )}
+
+                  {/* Timestamp, Copy Action & Speech Read Action */}
                   <div className="flex items-center justify-between gap-2 px-1 text-[10.5px] text-zinc-500">
                     <span>{msg.timestamp}</span>
 
                     {msg.sender === 'ai' && (
-                      <button
-                        type="button"
-                        onClick={() => speakText(msg.spokenSummary || msg.text, persona, true)}
-                        title={persona === 'noura' ? 'استمع لصوت نُورة' : 'استمع لصوت فارس'}
-                        className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold bg-[#F5EDDC] text-black border border-[#CFA64A]/60 hover:bg-[#CFA64A] transition-all cursor-pointer"
-                      >
-                        <Volume2 className="w-3 h-3 text-[#8C681E]" />
-                        <span>استمع</span>
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyMessage(msg.id, msg.text)}
+                          title="نسخ النص أو الخطاب"
+                          className="flex items-center gap-1 px-2.5 py-0.5 rounded-full font-bold bg-white text-black border border-[#E4E4E7] hover:border-[#CFA64A] hover:bg-[#F5EDDC] transition-all cursor-pointer"
+                        >
+                          {copiedMsgId === msg.id ? (
+                            <>
+                              <Check className="w-3 h-3 text-emerald-700" />
+                              <span className="text-emerald-700">تم النسخ</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3 text-[#8C681E]" />
+                              <span>نسخ</span>
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => speakText(msg.spokenSummary || msg.text, persona, true)}
+                          title={persona === 'noura' ? 'استمع لصوت نُورة' : 'استمع لصوت فارس'}
+                          className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-bold bg-[#F5EDDC] text-black border border-[#CFA64A]/60 hover:bg-[#CFA64A] transition-all cursor-pointer"
+                        >
+                          <Volume2 className="w-3 h-3 text-[#8C681E]" />
+                          <span>استمع</span>
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1488,7 +1630,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             <div ref={chatEndRef} />
           </div>
 
-          {/* Input & Voice Controls Command Center */}
+          {/* Input, File Attachment & Voice Controls Command Center */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -1496,6 +1638,26 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
             }}
             className="p-3 sm:p-3.5 bg-white border-t border-[#E4E4E7] flex items-center gap-2 shrink-0"
           >
+            {/* Hidden File Input for Direct Invoice/CV/Contract Attachment */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.xls,.xlsx,.csv"
+              onChange={handleFileAttachment}
+              className="hidden"
+            />
+
+            {/* Attach File / Invoice Button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              title="إرفاق فاتورة أو سيرة ذاتية أو عقد (PDF, Excel, Word, صورة)"
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all shrink-0 cursor-pointer bg-[#FBFBF5] text-black hover:bg-[#F5EDDC] border border-[#E4E4E7] hover:border-[#CFA64A]"
+            >
+              <Paperclip className="w-4 h-4 text-[#8C681E]" />
+            </button>
+
             {/* Voice Dictation Button */}
             <button
               type="button"
@@ -1525,8 +1687,8 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                 isListening
                   ? interimSpeech || 'جاري الاستماع لصوتك الآن...'
                   : persona === 'noura'
-                  ? 'اكتبي استفساركِ أو اطلبي إجراءً من نُورة...'
-                  : 'اكتب سؤالك أو اطلب إجراءً من فارس...'
+                  ? 'اطلبي مهمة من نُورة (تسكين، عقد، خطاب، نهاية خدمة)...'
+                  : 'اطلب مهمة من فارس (فاتورة، قيد، سند، عقد، BOQ)...'
               }
               className={`flex-1 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm text-black placeholder:text-zinc-400 outline-none transition-all ${
                 isListening

@@ -277,21 +277,34 @@ export function playPreRecordedAudio(
 }
 
 /**
- * Clean and prepare text for speech synthesis
+ * Clean and prepare text for fluent Arabic speech synthesis
+ * Converts technical acronyms and currency symbols into natural spoken Arabic.
  */
 function cleanSpeechText(text: string): string {
   return text
     .replace(/\{[\s\S]*?"tool_call"[\s\S]*?\}[\s\S]*?\}/g, '')
     .replace(/\{[\s\S]*?\}/g, '')
     .replace(/```[\s\S]*?```/g, '')
+    .replace(/\bZATCA\b/gi, 'زاتكا')
+    .replace(/\bSMACC\b/gi, 'سماك')
+    .replace(/\bBOQ\b/gi, 'جدول الكميات')
+    .replace(/\bHRSD\b/gi, 'وزارة الموارد البشرية')
+    .replace(/\bWPS\b/gi, 'نظام حماية الأجور')
+    .replace(/\bATS\b/gi, 'منظومة التوظيف الذكي')
+    .replace(/\bCRM\b/gi, 'إدارة العملاء')
+    .replace(/\bIAM\b/gi, 'إدارة الهوية والصلاحيات')
+    .replace(/\bSLA\b/gi, 'اتفاقية مستوى الخدمة')
+    .replace(/\bVIP\b/gi, 'كبار العملاء')
+    .replace(/\bB2B\b/gi, 'قطاع الأعمال')
+    .replace(/ر\.س|SAR/gi, 'ريال سعودي')
     .replace(/[*_#`~]/g, '')
-    .replace(/•/g, '')
-    .replace(/\|/g, ' ')
+    .replace(/•/g, '، ')
+    .replace(/\|/g, '، ')
     .replace(/\(.*?\)/g, '')
     .replace(/\[.*?\]/g, '')
     .replace(/https?:\/\/\S+/g, '')
     .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F100}-\u{1F1FF}\u{1F200}-\u{1F2FF}]/gu, '')
-    .replace(/[\n\r]+/g, ' ')
+    .replace(/[\n\r]+/g, '، ')
     .replace(/\+/g, ' زائد ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -299,8 +312,8 @@ function cleanSpeechText(text: string): string {
 
 /**
  * Dynamic speech synthesis engine:
- * 1. Tries /api/tts endpoint first for ultra-realistic authentic Saudi voices (Zariyah / Hamed).
- * 2. Falls back to Web Speech API if endpoint is unavailable or errors out.
+ * 1. Tries /api/tts endpoint if ENABLE_SERVER_TTS is enabled.
+ * 2. Uses zero-latency Web Speech API with Saudi Arabic voice selection and phonetic normalization.
  */
 export async function speakDynamicSpeech(
   text: string,
@@ -320,48 +333,49 @@ export async function speakDynamicSpeech(
   stopAllAudio();
   notifyStateChange(true);
 
-  // Attempt 1: High-fidelity Server-side Neural TTS stream (/api/tts)
-  try {
-    const res = clean.length > 120
-      ? await fetch('/api/tts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: clean, persona }),
-        })
-      : await fetch(`/api/tts?text=${encodeURIComponent(clean)}&persona=${persona}`);
+  // Attempt 1: Optional Server-side Neural TTS stream (/api/tts) when enabled
+  if (typeof window !== 'undefined' && window.localStorage.getItem('ENABLE_SERVER_TTS') === 'true') {
+    try {
+      const res = clean.length > 120
+        ? await fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: clean, persona }),
+          })
+        : await fetch(`/api/tts?text=${encodeURIComponent(clean)}&persona=${persona}`);
 
-    if (res.ok && res.headers.get('content-type')?.includes('audio')) {
-      const blob = await res.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      const audio = new Audio(objectUrl);
-      currentHtmlAudio = audio;
+      if (res.ok && res.headers.get('content-type')?.includes('audio')) {
+        const blob = await res.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const audio = new Audio(objectUrl);
+        currentHtmlAudio = audio;
 
-      audio.onplay = () => {
-        callbacks?.onStart?.();
-      };
+        audio.onplay = () => {
+          callbacks?.onStart?.();
+        };
 
-      audio.onended = () => {
-        URL.revokeObjectURL(objectUrl);
-        currentHtmlAudio = null;
-        notifyStateChange(false);
-        callbacks?.onEnd?.();
-      };
+        audio.onended = () => {
+          URL.revokeObjectURL(objectUrl);
+          currentHtmlAudio = null;
+          notifyStateChange(false);
+          callbacks?.onEnd?.();
+        };
 
-      audio.onerror = (e) => {
-        console.warn('[Audio] Neural TTS playback failed, falling back to Web Speech:', e);
-        URL.revokeObjectURL(objectUrl);
-        currentHtmlAudio = null;
-        speakViaWebSpeechApi(clean, persona, callbacks);
-      };
+        audio.onerror = (e) => {
+          URL.revokeObjectURL(objectUrl);
+          currentHtmlAudio = null;
+          speakViaWebSpeechApi(clean, persona, callbacks);
+        };
 
-      await audio.play();
-      return;
+        await audio.play();
+        return;
+      }
+    } catch {
+      // Fallback to Web Speech API
     }
-  } catch (err) {
-    console.debug('[Audio] Neural TTS stream unavailable, falling back to browser voice:', err);
   }
 
-  // Attempt 2: Fallback to Web Speech API
+  // Attempt 2: Zero-latency Web Speech API
   speakViaWebSpeechApi(clean, persona, callbacks);
 }
 

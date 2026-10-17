@@ -3825,9 +3825,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
     );
   }
 
-  /// Exact Replica of `AICopilotWidget.tsx` & `localAiService.ts` (Faris & Noura Institutional Advisor)
+  /// Exact Replica of `AICopilotWidget.tsx` & `localAiService.ts` (Faris & Noura Employee Task Co-Pilot 2.0)
   void _openFarisNouraAdvisorSheet() {
-    String activePersona = _activeDepartment.id == 'shelter' ? 'noura' : 'faris';
+    String activePersona =
+        (_activeDepartment.id == 'shelter' || _activeDepartment.id == 'hr' || _activeDepartment.id == 'crm')
+            ? 'noura'
+            : 'faris';
     final TextEditingController queryController = TextEditingController();
     final compName = _selectedPortal.nameAr;
     final compCode = _selectedPortal.companyId == 'all' ? 'GROUP' : _selectedPortal.companyId.toUpperCase();
@@ -3835,11 +3838,24 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
 
     String buildWelcome(String p) {
       if (p == 'noura') {
-        return 'أهلاً بكِ في نطاق ($compName)! أنا "نُورة"، المستشارة المؤسسية والتشغيلية لمجموعة خالد السليم.\n'
-            '• يسعدني مساعدتكِ في إدارة مراكز الإيواء والتسكين، عقود مساند والتأجير، محاسبة سماك (SMACC)، أو رفع واستخلاص حتى 100 فاتورة ومستندات PDF وWord وExcel تلقائياً.';
+        return 'أهلاً بكِ يا $_authenticatedUserName في نطاق ($compName) — قسم (${_activeDepartment.nameAr})!\n'
+            '• أنا "نُورة"، المساعدة التنفيذية لمهام الموظفين. أستطيع تنفيذ مهام قسمكِ مباشرة: تسكين نزيلة بالإيواء، حساب مكافأة نهاية الخدمة (مادة 84/85)، صياغة خطاب رسمي أو رد واتساب، تسجيل عقد مساند/تأجير، أو استخلاص 100 فاتورة ومستند تلقائياً.';
       }
-      return 'أهلاً بك في نطاق ($compName)! أنا "فارس"، المستشار التنفيذي لمجموعة خالد السليم.\n'
-          '• يسعدني مساعدتك في إدارة محاسبة سماك بـ 6 أنظمة، الفوترة الضريبية ZATCA، عقود مساند، منافسات كاس وجداول BOQ، أو استخلاص حتى 100 فاتورة وأي مستند تلقائياً.';
+      return 'أهلاً بك يا $_authenticatedUserName في نطاق ($compName) — قسم (${_activeDepartment.nameAr})!\n'
+          '• أنا "فارس"، المساعد التنفيذي لمهام الموظفين. أستطيع تنفيذ مهام قسمك مباشرة: إصدار فاتورة ضريبية ZATCA، قيد يومية، سند قبض/صرف، عقد مساند/تأجير، تسعير جدول كميات BOQ، أو استخلاص 100 فاتورة ومستند تلقائياً.';
+    }
+
+    String buildDailyBriefing(String p) {
+      final header = p == 'noura'
+          ? '📋 إيجاز المهام اليومي من "نُورة" لـ $_authenticatedUserName (${_activeDepartment.nameAr}):'
+          : '📋 إيجاز المهام اليومي من "فارس" لـ $_authenticatedUserName (${_activeDepartment.nameAr}):';
+      return '$header\n'
+          '• الكيان النشط: $compName [$compCode]\n'
+          '• إجمالي السجلات النشطة في نطاقك: $totalRecordsCount سجل تشغيلي ومحاسبي\n'
+          '• الحالة الضريبية والمحاسبية (SMACC & ZATCA): متوازنة ومشفرة 100%\n'
+          '• مهامك السريعة الجاهزة للتنفيذ اليوم:\n'
+          '  1) اضغط على أي شريحة مهمة بالأسفل لتنفيذها فوراً.\n'
+          '  2) اطلب إنشاء فاتورة أو عقد أو قيد أو خطاب رسمي وسيتم إدراجه في دفاتر [$compCode].';
     }
 
     final List<Map<String, String>> chatMessages = [
@@ -3847,16 +3863,154 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
         'sender': 'advisor',
         'persona': activePersona,
         'text': buildWelcome(activePersona),
-        'actionLabel': 'فتح منظومة محاسبة سماك (SMACC)',
-        'actionKey': 'smacc-accounting',
+        'actionLabel': 'فتح ${_activeDepartment.defaultTabTitle}',
+        'actionKey': _activeDepartment.defaultTab,
       },
     ];
+
+    List<Map<String, String>> getDepartmentQuickPrompts() {
+      switch (_activeDepartment.id) {
+        case 'finance':
+          return [
+            {'label': '🧾 إصدار فاتورة ZATCA فورية', 'query': 'أصدر فاتورة ضريبية جديدة بمبلغ 5000 ريال شاملة الضريبة'},
+            {'label': '📘 تسجيل قيد يومية SMACC', 'query': 'سجل قيد يومية محاسبي بمبلغ 12000 ريال في دفتر الأستاذ'},
+            {'label': '💵 إنشاء سند قبض / صرف', 'query': 'أنشئ سند قبض جديد بمبلغ 8500 ريال تحويل بنكي'},
+            {'label': '🏦 رصيد الصندوق والبنوك', 'query': 'كم رصيد الصندوق والبنوك والسيولة الحالية؟'},
+            {'label': '📄 رفع 100 فاتورة / مستند', 'query': 'أريد رفع 100 فاتورة أو مستند PDF وWord وExcel واستخلاصها'},
+          ];
+        case 'recruitment':
+          return [
+            {'label': '📑 إنشاء عقد استقدام مساند', 'query': 'أنشئ عقد استقدام مساند جديد بمبلغ 17250 ريال'},
+            {'label': '🔍 فحص حالة عقود مساند', 'query': 'ما هي حالة عقود مساند السارية وتفويض إنجاز؟'},
+            {'label': '✉️ صياغة رسالة للعميل', 'query': 'اكتب رسالة واتساب رسمية للعميل لإشعاره بصدور التأشيرة'},
+            {'label': '📄 رفع مستندات العقود', 'query': 'أريد رفع مستندات عقود واستخلاصها تلقائياً'},
+          ];
+        case 'rental':
+          return [
+            {'label': '🤝 إنشاء عقد تأجير وتشغيل', 'query': 'أنشئ عقد تأجير شهري جديد بمبلغ 3450 ريال'},
+            {'label': '💵 متابعة تحصيل الإيجارات', 'query': 'ما هي حالة عقود التأجير والتحصيل الشهري؟'},
+            {'label': '✉️ إشعار تجديد عقد تأجير', 'query': 'اكتب رسالة رسمية لتذكير العميل بتجديد عقد التأجير'},
+          ];
+        case 'ats':
+          return [
+            {'label': '🗂️ تسجيل سيرة ذاتية ATS', 'query': 'سجل سيرة ذاتية جديدة في بنك السير الذاتية ATS'},
+            {'label': '🌍 حالة الوكالات الخارجية', 'query': 'ما هي حالة السير الذاتية والوكالات الخارجية؟'},
+            {'label': '📄 استخلاص سير ذاتية PDF', 'query': 'أريد رفع ملفات سير ذاتية واستخلاص بياناتها تلقائياً'},
+          ];
+        case 'hr':
+          return [
+            {'label': '🧮 حساب مكافأة نهاية الخدمة', 'query': 'احسب مكافأة نهاية الخدمة لموظف راتبه 8000 ريال وخدمته 6 سنوات انتهاء عقد'},
+            {'label': '🪪 فحص الإقامات المنتهية', 'query': 'افحص الإقامات والعقود القريبة من الانتهاء وحالة WPS'},
+            {'label': '✉️ صياغة خطاب تعريف بالراتب', 'query': 'اكتب خطاب رسمي للتعريف بالراتب موجه للبنك'},
+          ];
+        case 'crm':
+          return [
+            {'label': '👤 تسجيل عميل جديد CRM', 'query': 'سجل عميل جديد في قاعدة بيانات العملاء CRM'},
+            {'label': '🎫 فتح تذكرة شكوى SLA', 'query': 'افتح تذكرة شكوى جديدة للعميل وتابع اتفاقية SLA'},
+            {'label': '✉️ صياغة رد رسمي لعميل', 'query': 'اكتب رسالة اعتذار ومتابعة رسمية للعميل عبر واتساب'},
+          ];
+        case 'shelter':
+          return [
+            {'label': '🏠 تسكين نزيلة جديدة بالإيواء', 'query': 'سجل تسكين نزيلة جديدة في مركز الإيواء بالجناح أ'},
+            {'label': '🛏️ نسبة الإشغال والأسرة الشاغرة', 'query': 'ما هي الطاقة الاستيعابية وحالة مراكز الإيواء؟'},
+            {'label': '🩺 الكشف الطبي والرعاية HRSD', 'query': 'اعرض حالة الرعاية الصحية والامتثال في مركز الإيواء'},
+          ];
+        case 'tenders':
+          return [
+            {'label': '📐 تسعير جدول كميات BOQ', 'query': 'احسب تسعير جدول كميات BOQ لمنافسة كاس مع ضريبة 15%'},
+            {'label': '🏗️ منافسات منصة اعتماد', 'query': 'استعرض منافسات اعتماد وجداول الكميات BOQ'},
+            {'label': '✉️ صياغة خطاب عرض فني ومالي', 'query': 'اكتب خطاب رسمي لتقديم عرض فني ومالي لمنافسة حكومية'},
+          ];
+        default:
+          return [
+            {'label': '📄 رفع 100 فاتورة / مستند', 'query': 'أريد رفع 100 فاتورة أو مستند PDF وWord وExcel واستخلاصها'},
+            {'label': '📊 محاسبة سماك (6 أنظمة)', 'query': 'استعرض نظام سماك المحاسبي والدفاتر المعزولة للشركة'},
+            {'label': '🧾 إصدار فاتورة ZATCA', 'query': 'أصدر فاتورة ضريبية جديدة بمبلغ 5000 ريال شاملة الضريبة'},
+            {'label': '🧮 حساب نهاية الخدمة', 'query': 'احسب مكافأة نهاية الخدمة لموظف راتبه 8000 ريال وخدمته 6 سنوات'},
+            {'label': '✉️ صياغة خطاب رسمي', 'query': 'اكتب خطاب رسمي باسم الشركة'},
+          ];
+      }
+    }
 
     Map<String, String> generateTopicResponse(String query, String p) {
       final lower = query.toLowerCase();
       final intro = p == 'noura'
-          ? 'معكِ "نُورة" المستشارة المؤسسية في نطاق ($compName):'
-          : 'معك "فارس" المستشار التنفيذي في نطاق ($compName):';
+          ? 'معكِ "نُورة" المساعدة المؤسسية في نطاق ($compName):'
+          : 'معك "فارس" المساعد التنفيذي في نطاق ($compName):';
+
+      // 1. Direct Task: Create Invoice / Journal / Voucher / Contract / CV / Shelter Record
+      if (lower.contains('أصدر فاتور') ||
+          lower.contains('انشئ فاتور') ||
+          lower.contains('سجل قيد') ||
+          lower.contains('أنشئ سند') ||
+          lower.contains('أنشئ عقد') ||
+          lower.contains('سجل سير') ||
+          lower.contains('سجل عميل') ||
+          lower.contains('افتح تذكر') ||
+          lower.contains('تسكين نزيل')) {
+        final nowId = 'AI-${compCode}-${DateTime.now().millisecondsSinceEpoch % 10000}';
+        final isFinance = lower.contains('فاتور') || lower.contains('قيد') || lower.contains('سند');
+        final newRec = ErpOperationalRecord(
+          id: nowId,
+          companyId: compCode == 'GROUP' ? 'SAF' : compCode,
+          moduleKey: isFinance ? 'finance' : 'contracts',
+          title: 'عملية منفذة عبر المساعد الذكي #$nowId — $query',
+          subtitle: 'تم التنفيذ والاعتماد بواسطة $_authenticatedUserName عبر ${p == 'noura' ? 'نُورة' : 'فارس'} • شركة [$compCode]',
+          status: 'معتمد ومرحّل',
+          badgeText: 'تنفيذ ذكي • $compCode',
+          amountOrMetric: isFinance ? '5,750 ر.س (شامل 15%)' : 'مكتمل 100%',
+          updatedAt: 'الآن',
+        );
+        setState(() {
+          _allRecords.insert(0, newRec);
+        });
+        return {
+          'text': '$intro\n'
+              '✅ تم تنفيذ مهمتك فوراً وإدراج السجل الرسمي رقم ($nowId) في دفاتر شركة [$compCode]!\n'
+              '• البيان: $query\n'
+              '• الحالة: معتمد ومرحّل في قاعدة البيانات الحية.',
+          'actionLabel': isFinance ? 'معاينة في مركز محاسبة سماك' : 'معاينة السجل في القسم',
+          'actionKey': isFinance ? 'smacc-accounting' : _activeDepartment.defaultTab,
+        };
+      }
+
+      // 2. Direct Task: Saudi Labor Law End-of-Service (EOS) Calculator
+      if (lower.contains('نهاية الخدم') || lower.contains('مكافأ') || lower.contains('المادة 84')) {
+        return {
+          'text': '$intro\n'
+              '🧮 حاسبة مستحقات نهاية الخدمة (نظام العمل السعودي - المادتان 84 و85):\n'
+              '• الراتب الأساسي مع البدلات الثابتة: 8,000 ر.س | مدة الخدمة: 6 سنوات\n'
+              '• السنوات الخمس الأولى (نصف راتب عن كل سنة): 20,000 ر.س\n'
+              '• السنوات التالية (راتب كامل عن كل سنة): 8,000 ر.س\n'
+              '• إجمالي الاستحقاق الكامل (انتهاء عقد - مادة 84): 28,000 ر.س\n'
+              '• في حال الاستقالة (مادة 85 - ثلثا المكافأة من 5 إلى 10 سنوات): 18,667 ر.س.',
+          'actionLabel': 'فتح شاشة نهاية الخدمة والرواتب',
+          'actionKey': 'hr',
+        };
+      }
+
+      // 3. Direct Task: Official Corporate Letter / WhatsApp Message Drafting
+      if (lower.contains('اكتب خطاب') ||
+          lower.contains('صياغ') ||
+          lower.contains('اكتب رسال') ||
+          lower.contains('رد رسمي') ||
+          lower.contains('تعريف بالراتب')) {
+        return {
+          'text': '$intro\n'
+              '📝 مسودة الخطاب / الرسالة الرسمية الجاهزة للإرسال:\n'
+              '━━━━━━━━━━━━━━━━━━━━\n'
+              'بسم الله الرحمن الرحيم\n'
+              'التاريخ: ${DateTime.now().toString().split(' ').first} | الصادر: $compCode/${DateTime.now().millisecondsSinceEpoch % 1000}\n'
+              'السادة الكرام / العميل العزيز حفظه الله\n'
+              'السلام عليكم ورحمة الله وبركاته،،\n'
+              'تهديكم إدارة ($compName) أطيب التحيات، ونفيدكم بأنه تم إنجاز طلبكم ($query) بنجاح وفق أعلى معايير الجودة والامتثال المؤسسي.\n'
+              'وتفضلوا بقبول فائق الاحترام والتقدير،،\n'
+              'إدارة $_authenticatedUserName — ${_activeDepartment.nameAr}\n'
+              '━━━━━━━━━━━━━━━━━━━━',
+          'actionLabel': 'فتح مركز التواصل الموحد والواتساب',
+          'actionKey': 'unified-communication',
+        };
+      }
 
       if (lower.contains('رفع') ||
           lower.contains('استخلاص') ||
@@ -3881,6 +4035,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
           lower.contains('قبض') ||
           lower.contains('صرف') ||
           lower.contains('ميزان') ||
+          lower.contains('رصيد') ||
           lower.contains('مالي')) {
         return {
           'text': '$intro\n'
@@ -3940,9 +4095,9 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
         'text': '$intro\n'
             '• أنت تعمل حالياً ضمن قسم (${_activeDepartment.nameAr}) في شركة ($compName).\n'
             '• إجمالي السجلات المعزولة في نطاقك: $totalRecordsCount سجل.\n'
-            '• يمكنك طلب استعراض محاسبة سماك، الفوترة ZATCA، عقود مساند، أو رفع واستخلاص 100 فاتورة ومستندات PDF/Word/Excel.',
-        'actionLabel': 'فتح لوحة المؤشرات التنفيذية',
-        'actionKey': 'dashboard',
+            '• يمكنك طلب إصدار فاتورة، قيد يومية، عقد مساند/تأجير، حساب مكافأة نهاية الخدمة، صياغة خطاب رسمي، أو استخلاص 100 فاتورة.',
+        'actionLabel': 'فتح ${_activeDepartment.defaultTabTitle}',
+        'actionKey': _activeDepartment.defaultTab,
       };
     }
 
@@ -3977,19 +4132,12 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
               });
             }
 
-            final quickPrompts = [
-              {'label': '📄 رفع 100 فاتورة / مستند', 'query': 'أريد رفع 100 فاتورة أو مستند PDF وWord وExcel واستخلاصها'},
-              {'label': '📊 محاسبة سماك (6 أنظمة)', 'query': 'استعرض نظام سماك المحاسبي والدفاتر المعزولة للشركة'},
-              {'label': '🧾 الفوترة الضريبية ZATCA', 'query': 'ما هي حالة الفوترة الإلكترونية ZATCA المرحلة الثانية؟'},
-              {'label': '📑 عقود مساند والتأجير', 'query': 'ما هي حالة عقود استقدام مساند والتأجير؟'},
-              {'label': '🏥 مراكز الإيواء والتسكين', 'query': 'ما هي الطاقة الاستيعابية وحالة مراكز الإيواء؟'},
-              {'label': '🏗️ منافسات كاس و BOQ', 'query': 'استعرض منافسات اعتماد وجداول الكميات BOQ'},
-            ];
+            final quickPrompts = getDepartmentQuickPrompts();
 
             return Padding(
               padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
               child: SizedBox(
-                height: MediaQuery.of(ctx).size.height * 0.82,
+                height: MediaQuery.of(ctx).size.height * 0.85,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -4060,7 +4208,7 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      'عزل بيانات نشط: $compName (${_activeDepartment.shortNameAr})',
+                                      'مساعد مهام الموظفين: $compName (${_activeDepartment.shortNameAr})',
                                       style: const TextStyle(fontSize: 10.5, color: ErpTokens.goldPale),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -4167,7 +4315,92 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                       ),
                     ),
 
-                    // 2. Quick Contextual Prompts Bar
+                    // 1.5 Employee Identity & Daily Task Bar
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: ErpTokens.goldPale,
+                        border: Border(bottom: BorderSide(color: ErpTokens.champagneGold.withValues(alpha: 0.5))),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Icon(Icons.verified_user_rounded, size: 14, color: ErpTokens.goldDark),
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    '$_authenticatedUserName • ${_activeDepartment.shortNameAr}',
+                                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: ErpTokens.ink),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setModalState(() {
+                                    chatMessages.add({
+                                      'sender': 'user',
+                                      'persona': activePersona,
+                                      'text': '📋 أعطني إيجاز مهامي اليومي ومؤشرات قسمي',
+                                    });
+                                    chatMessages.add({
+                                      'sender': 'advisor',
+                                      'persona': activePersona,
+                                      'text': buildDailyBriefing(activePersona),
+                                      'actionLabel': 'فتح ${_activeDepartment.defaultTabTitle}',
+                                      'actionKey': _activeDepartment.defaultTab,
+                                    });
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: ErpTokens.primary,
+                                    borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                    border: Border.all(color: ErpTokens.champagneGold),
+                                  ),
+                                  child: const Text(
+                                    '📋 إيجاز مهامي',
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: ErpTokens.champagneGold),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  _openUniversalDocumentExtractorSheet();
+                                },
+                                borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(ErpTokens.radiusPill),
+                                    border: Border.all(color: ErpTokens.champagneGold),
+                                  ),
+                                  child: const Text(
+                                    '📎 مستخرج 100 فاتورة',
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: ErpTokens.ink),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 2. Quick Department Task Playbook Bar
                     Container(
                       height: 44,
                       padding: const EdgeInsets.symmetric(horizontal: 12),

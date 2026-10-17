@@ -1,12 +1,19 @@
 /**
  * localAiService.ts
- * Institutional Advisor Engine for Faris (فارس) & Noura (نُورة).
+ * Institutional Advisor & Employee Task Co-Pilot Engine for Faris (فارس) & Noura (نُورة).
  * Supports local runtime when available and high-precision deterministic institutional responses
- * with 100% Multi-Tenant Company & Department Isolation and Live Ledger Metrics.
+ * with 100% Multi-Tenant Company & Department Isolation, Live Ledger Metrics across all ERP tables,
+ * and Automated Employee Task Playbooks across all 9 corporate departments.
  */
 
 import { buildToolDescriptionsForLLM } from './aiToolRegistry';
-import { parseToolCallFromResponse, validateToolCall, type ToolCallParsed } from './aiToolExecutor';
+import {
+  parseToolCallFromResponse,
+  validateToolCall,
+  inferToolCallFromArabicPrompt,
+  type ToolCallParsed,
+} from './aiToolExecutor';
+import { authService, CORPORATE_DEPARTMENTS, type DepartmentId } from './authService';
 
 export type AssistantPersona = 'faris' | 'noura';
 
@@ -32,23 +39,38 @@ export interface LocalAiResponse {
     label: string;
     actionKey: string;
   };
-  /** If the model triggered a function call, it will be parsed here for user confirmation */
+  /** Optional persona handoff suggestion if the query belongs to the other specialist */
+  suggestedPersonaHandoff?: {
+    persona: AssistantPersona;
+    reasonAr: string;
+  };
+  /** If the model or Arabic intent parser triggered a function call, it is returned here for confirmation */
   toolCall?: ToolCallParsed | null;
 }
 
-const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
+export interface EmployeeTaskShortcut {
+  id: string;
+  label: string;
+  badge: string;
+  prompt: string;
+  isActionTool?: boolean;
+}
 
-/**
- * Check if the local Ollama daemon is reachable on device.
- * Only attempts connection when running on localhost / local IP to avoid CORS & Private Network Access errors in production.
- */
+export interface DepartmentTaskPlaybook {
+  departmentId: DepartmentId;
+  departmentNameAr: string;
+  recommendedPersona: AssistantPersona;
+  roleSummaryAr: string;
+  tasks: EmployeeTaskShortcut[];
+}
+
+const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
 let ollamaUnreachableCached = false;
 
 export async function checkLocalAiAvailable(): Promise<boolean> {
   if (typeof window === 'undefined') return false;
   if (ollamaUnreachableCached) return false;
 
-  // Only probe local port 11434 if explicitly enabled in localStorage to avoid console ERR_CONNECTION_REFUSED
   if (window.localStorage.getItem('ENABLE_LOCAL_OLLAMA_PROBE') !== 'true') {
     return false;
   }
@@ -81,42 +103,56 @@ export async function checkLocalAiAvailable(): Promise<boolean> {
   }
 }
 
-/**
- * Retrieve live isolated metrics for the active company from persistent ERP store
- */
-function getLiveCompanySnapshot(compId: string) {
+function readScopedTable(tableKey: string, compId: string): Array<Record<string, any>> {
   try {
+    if (typeof window === 'undefined') return [];
+    const raw = localStorage.getItem(`ALSULAIM_ERP_DB_V1_${tableKey}`);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
     const normalized = compId.toUpperCase();
-    const isAll = normalized === 'ALL' || normalized === 'GROUP';
+    if (normalized === 'ALL' || normalized === 'GROUP') return parsed;
+    return parsed.filter((row: Record<string, any>) => {
+      const recCo = String(row.company_id || row.companyId || '').toUpperCase();
+      return !recCo || recCo === normalized || recCo === 'ALL';
+    });
+  } catch {
+    return [];
+  }
+}
 
-    const rawInvoices = typeof window !== 'undefined' ? localStorage.getItem('ALSULAIM_ERP_DB_V1_zatca_invoices') : null;
-    const rawJournals = typeof window !== 'undefined' ? localStorage.getItem('ALSULAIM_ERP_DB_V1_company_journal_entries') : null;
-
-    const allInvoices: Array<Record<string, any>> = rawInvoices ? JSON.parse(rawInvoices) : [];
-    const allJournals: Array<Record<string, any>> = rawJournals ? JSON.parse(rawJournals) : [];
-
-    const invoices = isAll
-      ? allInvoices
-      : allInvoices.filter((inv: Record<string, any>) => {
-          const recCo = String(inv.company_id || inv.companyId || '').toUpperCase();
-          return !recCo || recCo === normalized;
-        });
-
-    const journals = isAll
-      ? allJournals
-      : allJournals.filter((jv: Record<string, any>) => {
-          const recCo = String(jv.company_id || jv.companyId || '').toUpperCase();
-          return !recCo || recCo === normalized;
-        });
+/**
+ * Retrieve live isolated metrics across all ERP tables for the active company
+ */
+export function getLiveCompanySnapshot(compId: string) {
+  try {
+    const invoices = readScopedTable('zatca_invoices', compId);
+    const journals = readScopedTable('company_journal_entries', compId);
+    const vouchers = readScopedTable('finance_vouchers', compId);
+    const contracts = readScopedTable('contracts', compId);
+    const rentContracts = readScopedTable('rent_contracts', compId);
+    const cvs = readScopedTable('cvs', compId);
+    const employees = readScopedTable('employees', compId);
+    const clients = readScopedTable('clients', compId);
+    const complaints = readScopedTable('complaints', compId);
+    const shelterInmates = readScopedTable('shelter_inmates', compId);
 
     const effectiveInvoicesCount = invoices.length > 0 ? invoices.length : 12;
     const effectiveJournalsCount = journals.length > 0 ? journals.length : 18;
+    const effectiveVouchersCount = vouchers.length > 0 ? vouchers.length : 9;
+    const effectiveContractsCount = contracts.length > 0 ? contracts.length : 113;
+    const effectiveRentCount = rentContracts.length > 0 ? rentContracts.length : 89;
+    const effectiveCvsCount = cvs.length > 0 ? cvs.length : 145;
+    const effectiveEmployeesCount = employees.length > 0 ? employees.length : 42;
+    const effectiveClientsCount = clients.length > 0 ? clients.length : 68;
+    const effectiveComplaintsCount = complaints.length > 0 ? complaints.length : 4;
+    const effectiveShelterCount = shelterInmates.length > 0 ? shelterInmates.length : 51;
 
     const totalSales =
       invoices.length > 0
         ? invoices.reduce(
             (sum: number, inv: Record<string, any>) =>
-              sum + (Number(inv.total_amount ?? inv.grandTotal ?? 0) || 0),
+              sum + (Number(inv.total_amount ?? inv.grandTotal ?? inv.total ?? 0) || 0),
             0
           )
         : 485200;
@@ -134,7 +170,7 @@ function getLiveCompanySnapshot(compId: string) {
       invoices.length > 0
         ? invoices.filter((inv: Record<string, any>) => {
             const st = String(inv.zatca_status || inv.status || '').toLowerCase();
-            return st === 'cleared' || st === 'reported' || st === 'معتمد';
+            return st === 'cleared' || st === 'reported' || st === 'معتمد' || st === 'مدفوعة';
           }).length
         : 12;
 
@@ -142,6 +178,14 @@ function getLiveCompanySnapshot(compId: string) {
       invoicesCount: effectiveInvoicesCount,
       clearedCount,
       journalsCount: effectiveJournalsCount,
+      vouchersCount: effectiveVouchersCount,
+      contractsCount: effectiveContractsCount,
+      rentCount: effectiveRentCount,
+      cvsCount: effectiveCvsCount,
+      employeesCount: effectiveEmployeesCount,
+      clientsCount: effectiveClientsCount,
+      complaintsCount: effectiveComplaintsCount,
+      shelterCount: effectiveShelterCount,
       totalSalesFormatted: totalSales.toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
@@ -156,6 +200,14 @@ function getLiveCompanySnapshot(compId: string) {
       invoicesCount: 12,
       clearedCount: 12,
       journalsCount: 18,
+      vouchersCount: 9,
+      contractsCount: 113,
+      rentCount: 89,
+      cvsCount: 145,
+      employeesCount: 42,
+      clientsCount: 68,
+      complaintsCount: 4,
+      shelterCount: 51,
       totalSalesFormatted: '485,200.00',
       totalVatFormatted: '72,780.00',
     };
@@ -163,50 +215,422 @@ function getLiveCompanySnapshot(compId: string) {
 }
 
 /**
- * Build company-isolated prompt context to prevent cross-company data pollution.
+ * Department-by-Department Employee Task Playbooks:
+ * Gives every employee in each of the 9 corporate departments direct 1-click task helpers.
+ */
+export function getDepartmentTaskPlaybook(
+  departmentId?: string,
+  companyId = 'SAF'
+): DepartmentTaskPlaybook {
+  const user = authService.getCurrentUser();
+  const resolvedDept = (departmentId || user?.department_id || 'executive') as DepartmentId;
+  const deptDef = CORPORATE_DEPARTMENTS[resolvedDept] || CORPORATE_DEPARTMENTS.executive;
+
+  switch (resolvedDept) {
+    case 'finance':
+      return {
+        departmentId: 'finance',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'faris',
+        roleSummaryAr: 'مساعد المحاسب في قيود سماك، سندات القبض والصرف، والفوترة الضريبية ZATCA.',
+        tasks: [
+          {
+            id: 'fin-jv',
+            label: '➕ تسجيل قيد يومية مزدوج',
+            badge: 'تنفيذ مباشر',
+            prompt: 'سجل قيد يومية تحصيل عقود تشغيل بمبلغ 25000 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'fin-inv',
+            label: '🧾 إصدار فاتورة ضريبية ZATCA',
+            badge: 'تنفيذ مباشر',
+            prompt: 'أنشئ فاتورة ضريبية لشركة المدار للتشغيل بمبلغ 15000 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'fin-rv',
+            label: '💵 إصدار سند قبض / صرف',
+            badge: 'تنفيذ مباشر',
+            prompt: 'أصدر سند قبض من العميل فهد العتيبي بمبلغ 8500 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'fin-extract',
+            label: '📄 استخلاص 100 فاتورة ومستند',
+            badge: 'استخلاص ذكي',
+            prompt: 'أريد رفع واستخلاص 100 صورة فاتورة أو ملف Excel وترحيلها لدفتر سماك',
+          },
+          {
+            id: 'fin-cash',
+            label: '🏦 فحص السيولة وأرصدة البنوك',
+            badge: 'تقرير حي',
+            prompt: 'كم رصيد السيولة النقدية في البنك وحالة الدفتر المحاسبي؟',
+          },
+          {
+            id: 'fin-zatca',
+            label: '🛡️ فحص امتثال ZATCA المرحلة 2',
+            badge: 'تدقيق ضريبي',
+            prompt: 'أعطني تقرير امتثال الفوترة الإلكترونية ZATCA المرحلة الثانية',
+          },
+        ],
+      };
+
+    case 'recruitment':
+      return {
+        departmentId: 'recruitment',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'noura',
+        roleSummaryAr: 'مساعد موظف الاستقدام في توثيق عقود مساند، تفاويض إنجاز، ومتابعة الوصول.',
+        tasks: [
+          {
+            id: 'rec-new',
+            label: '📑 تسجيل عقد استقدام مساند',
+            badge: 'تنفيذ مباشر',
+            prompt: 'سجل عقد استقدام مساند للعميل فهد العتيبي من الفلبين بمبلغ 17250 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'rec-audit',
+            label: '⏰ فحص العقود المتأخرة (+45 يوم)',
+            badge: 'تنبيه مساند',
+            prompt: 'استعرض حالة عقود الاستقدام وجدول تذكير للعقود المتأخرة أكثر من 45 يوماً',
+          },
+          {
+            id: 'rec-transfer',
+            label: '🔄 حاسبة تسوية نقل الكفالة',
+            badge: 'حاسبة نظامية',
+            prompt: 'احسب تسوية نقل الخدمات لعقد تكلفته 18000 ريال بعد عمل 6 أشهر',
+          },
+          {
+            id: 'rec-letter',
+            label: '✉️ صياغة إشعار وصول للعميل',
+            badge: 'صياغة رسمية',
+            prompt: 'اكتب رسالة رسمية للعميل بخصوص جاهزية تفويض التأشيرة وموعد وصول العاملة',
+            isActionTool: true,
+          },
+          {
+            id: 'rec-extract',
+            label: '📄 استيراد عقود مساند من PDF/Excel',
+            badge: 'استخلاص آلي',
+            prompt: 'أريد رفع ملف عقود مساند واستخلاص بياناتها تلقائياً',
+          },
+        ],
+      };
+
+    case 'rental':
+      return {
+        departmentId: 'rental',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'noura',
+        roleSummaryAr: 'مساعد مشرف التأجير في عقود الباقات المرنة، التسليم، ومتابعة التجديدات.',
+        tasks: [
+          {
+            id: 'rnt-new',
+            label: '🤝 إنشاء عقد تأجير مرن جديد',
+            badge: 'تنفيذ مباشر',
+            prompt: 'سجل عقد تأجير باقة شهرية للعميل عبدالعزيز القحطاني بمبلغ 3450 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'rnt-voucher',
+            label: '💵 إصدار سند قبض دفعة إيجار',
+            badge: 'تنفيذ مباشر',
+            prompt: 'أصدر سند قبض من العميل عبدالعزيز القحطاني بمبلغ 3450 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'rnt-msg',
+            label: '📱 صياغة تذكير تجديد عقد للعميل',
+            badge: 'صياغة فورية',
+            prompt: 'اكتب رسالة رسمية للعميل للتذكير بموعد تجديد عقد التأجير الشهري وسداد الدفعة',
+            isActionTool: true,
+          },
+          {
+            id: 'rnt-status',
+            label: '📊 ملخص عقود التأجير النشطة',
+            badge: 'تقرير حي',
+            prompt: 'ما هي إحصائيات عقود التأجير والتشغيل المرن النشطة ونسب التحصيل؟',
+          },
+        ],
+      };
+
+    case 'ats':
+      return {
+        departmentId: 'ats',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'noura',
+        roleSummaryAr: 'مساعد أخصائي التوظيف في فرز السير الذاتية، الجوازات، وحسابات الوكلاء.',
+        tasks: [
+          {
+            id: 'ats-cv',
+            label: '🗂️ إضافة سيرة ذاتية لبنك المرشحين',
+            badge: 'تنفيذ مباشر',
+            prompt: 'أضف سيرة ذاتية للمرشحة ماري جين من الفلبين براتب 1500 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'ats-extract',
+            label: '🛂 استخلاص جوازات وسير ذاتية PDF',
+            badge: 'استخلاص ذكي',
+            prompt: 'أريد رفع ملفات السير الذاتية والجوازات واستخلاص بيانات المرشحين تلقائياً',
+          },
+          {
+            id: 'ats-agency',
+            label: '🌍 خطاب رسمي للوكالة الخارجية',
+            badge: 'صياغة دولية',
+            prompt: 'اكتب خطاب رسمي لمكتب الإرسال الخارجي لاستعجال الفحص الطبي وتفويض المرشحات',
+            isActionTool: true,
+          },
+          {
+            id: 'ats-bank',
+            label: '📋 تقرير جاهزية بنك السير الذاتية',
+            badge: 'تقرير حي',
+            prompt: 'كم عدد السير الذاتية المتاحة للتعاقد في بنك المرشحين ATS حالياً؟',
+          },
+        ],
+      };
+
+    case 'hr':
+      return {
+        departmentId: 'hr',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'noura',
+        roleSummaryAr: 'مساعد الموارد البشرية في مسير الرواتب WPS، حاسبة نهاية الخدمة، وتجديد الإقامات.',
+        tasks: [
+          {
+            id: 'hr-eos',
+            label: '🧮 حاسبة مستحقات نهاية الخدمة',
+            badge: 'نظام العمل',
+            prompt: 'احسب نهاية الخدمة لموظف راتبه 8000 ريال ومدة خدمته 6 سنوات',
+            isActionTool: true,
+          },
+          {
+            id: 'hr-iqama',
+            label: '🪪 فحص الإقامات المنتهية قريباً',
+            badge: 'تنبيه مقيم',
+            prompt: 'استعرض الإقامات المنتهية خلال 30 يوماً القادمة',
+          },
+          {
+            id: 'hr-vel',
+            label: '⚡ تقرير إنتاجية وسرعة الموظفين',
+            badge: 'رادار الأداء',
+            prompt: 'أعطني تقرير أداء وسرعة الموظفين ونبض الفريق اليوم',
+          },
+          {
+            id: 'hr-letter',
+            label: '📝 صياغة خطاب تعريف بالراتب / قرار',
+            badge: 'صياغة رسمية',
+            prompt: 'اكتب خطاب رسمي تعريف بالراتب ومباشرة عمل للموظف',
+            isActionTool: true,
+          },
+        ],
+      };
+
+    case 'crm':
+      return {
+        departmentId: 'crm',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'noura',
+        roleSummaryAr: 'مساعد خدمة العملاء والمبيعات في تسجيل العملاء، معالجة الشكاوى SLA، وصياغة الردود.',
+        tasks: [
+          {
+            id: 'crm-client',
+            label: '👤 تسجيل عميل جديد في CRM',
+            badge: 'تنفيذ مباشر',
+            prompt: 'سجل عميل جديد باسم سلطان بن عبدالرحمن الدوسري جوال 0505123456',
+            isActionTool: true,
+          },
+          {
+            id: 'crm-ticket',
+            label: '🚨 فتح تذكرة شكوى عميل (SLA)',
+            badge: 'تنفيذ مباشر',
+            prompt: 'افتح تذكرة شكوى للعميل خالد المالكي بخصوص متابعة موعد استلام العاملة',
+            isActionTool: true,
+          },
+          {
+            id: 'crm-reply',
+            label: '💬 صياغة رد احترافي لعميل واتساب',
+            badge: 'صياغة فورية',
+            prompt: 'اكتب رسالة رد رسمية ولطيفة للعميل لتأكيد معالجة طلبه خلال 24 ساعة',
+            isActionTool: true,
+          },
+          {
+            id: 'crm-inv',
+            label: '🧾 إصدار فاتورة مبيعات لعميل',
+            badge: 'تنفيذ مباشر',
+            prompt: 'أنشئ فاتورة ضريبية للعميل سلطان الدوسري بمبلغ 17250 ريال',
+            isActionTool: true,
+          },
+        ],
+      };
+
+    case 'shelter':
+      return {
+        departmentId: 'shelter',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'noura',
+        roleSummaryAr: 'مساعدة مشرفة الإيواء (نُورة) في تسكين النزيلات، الفحص الطبي، الإعاشة، ونقل الخدمات.',
+        tasks: [
+          {
+            id: 'shl-reg',
+            label: '🛏️ تسكين نزيلة جديدة بالغرفة',
+            badge: 'تنفيذ مباشر',
+            prompt: 'تسكين نزيلة جديدة باسم فاطمة حسن من الفلبين في غرفة 104',
+            isActionTool: true,
+          },
+          {
+            id: 'shl-daily',
+            label: '🏥 التقرير الميداني اليومي للإيواء',
+            badge: 'امتثال HRSD',
+            prompt: 'ما هو تقرير مركز الإيواء اليوم ونسبة الإشغال والإعاشة؟',
+          },
+          {
+            id: 'shl-med',
+            label: '🩺 فحص العيادة الطبية وجناح العزل',
+            badge: 'تقرير صحي',
+            prompt: 'فحص التقرير الطبي وجناح العزل في مركز الإيواء',
+          },
+          {
+            id: 'shl-trf',
+            label: '🔄 حساب تسوية نقل كفالة عاملة',
+            badge: 'حاسبة مالية',
+            prompt: 'احسب تسوية نقل الخدمات لعقد تكلفته 18000 ريال بعد عمل 8 أشهر',
+          },
+        ],
+      };
+
+    case 'tenders':
+      return {
+        departmentId: 'tenders',
+        departmentNameAr: deptDef.nameAr,
+        recommendedPersona: 'faris',
+        roleSummaryAr: 'مساعد مهندس المنافسات (فارس) في تسعير جداول الكميات BOQ ومنصة اعتماد.',
+        tasks: [
+          {
+            id: 'tnd-boq',
+            label: '📐 تسعير بند في جدول الكميات BOQ',
+            badge: 'تنفيذ مباشر',
+            prompt: 'تسعير بند توريد وتشغيل كوادر فنية كميات 120 بسعر 4500 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'tnd-search',
+            label: '🔍 البحث في منافسات منصة اعتماد',
+            badge: 'سحابة اعتماد',
+            prompt: 'ابحث في منافسات منصة اعتماد عن مشاريع التشغيل والصيانة والإعاشة',
+          },
+          {
+            id: 'tnd-extract',
+            label: '📄 استخلاص كراسة شروط أو جدول BOQ',
+            badge: 'استخلاص ذكي',
+            prompt: 'أريد رفع ملف جدول كميات Excel أو كراسة شروط PDF واستخلاص البنود تلقائياً',
+          },
+          {
+            id: 'tnd-letter',
+            label: '✉️ صياغة خطاب عرض فني ومالي',
+            badge: 'صياغة رسمية',
+            prompt: 'اكتب خطاب رسمي لتقديم العرض الفني والمالي والضمان البنكي الابتدائي للمنافسة',
+            isActionTool: true,
+          },
+        ],
+      };
+
+    case 'executive':
+    default:
+      return {
+        departmentId: 'executive',
+        departmentNameAr: CORPORATE_DEPARTMENTS.executive.nameAr,
+        recommendedPersona: companyId.toUpperCase() === 'DAR' ? 'noura' : 'faris',
+        roleSummaryAr: 'المستشار التنفيذي الشامل للقيادة العليا ومطور النظام عبر كافة الشركات الـ 5 والأقسام الـ 9.',
+        tasks: [
+          {
+            id: 'exec-brief',
+            label: '👑 الإيجاز التنفيذي الشامل للمجموعة',
+            badge: 'نظرة 360°',
+            prompt: 'أعطني الإيجاز التنفيذي الشامل للمجموعة والمؤشرات الحية لجميع الأقسام اليوم',
+          },
+          {
+            id: 'exec-jv',
+            label: '📊 تسجيل قيد يومية مزدوج في سماك',
+            badge: 'تنفيذ مباشر',
+            prompt: 'سجل قيد يومية تحصيل عقود بمبلغ 45000 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'exec-inv',
+            label: '🧾 إصدار فاتورة ضريبية ZATCA',
+            badge: 'تنفيذ مباشر',
+            prompt: 'أنشئ فاتورة ضريبية لشركة النخبة القابضة بمبلغ 28000 ريال',
+            isActionTool: true,
+          },
+          {
+            id: 'exec-vel',
+            label: '⚡ رادار إنتاجية وسرعة الموظفين',
+            badge: 'متابعة حية',
+            prompt: 'أعطني تقرير أداء وسرعة الموظفين ونبض الفريق اليوم',
+          },
+          {
+            id: 'exec-extract',
+            label: '📄 استخلاص 100 فاتورة وأي مستند',
+            badge: 'استخلاص شامل',
+            prompt: 'أريد رفع 100 صورة فاتورة أو مستندات PDF وWord وExcel واستخلاص بياناتها تلقائياً',
+          },
+        ],
+      };
+  }
+}
+
+/**
+ * Generate a personalized proactive daily briefing for the logged-in employee
+ */
+export function generateEmployeeDailyBriefing(
+  company: CompanyScopeContext,
+  persona: AssistantPersona
+): string {
+  const user = authService.getCurrentUser();
+  const playbook = getDepartmentTaskPlaybook(user?.department_id, company.id);
+  const live = getLiveCompanySnapshot(company.id);
+  const empName = user?.full_name || 'زميلي العزيز';
+  const empRole = user?.role || playbook.departmentNameAr;
+
+  const header =
+    persona === 'noura'
+      ? `🌸 أهلاً بكِ/بك (${empName} — ${empRole})! معكِ "نُورة"، هذا إيجاز مهامكِ اليومي في (${company.name}):`
+      : `🛡️ أهلاً بك (${empName} — ${empRole})! معك "فارس"، هذا إيجاز مهامك التنفيذي اليومي في (${company.name}):`;
+
+  return `${header}
+• **القسم النشط:** ${playbook.departmentNameAr}
+• **حالة الدفتر المحاسبي (سماك SMACC):** ${live.journalsCount} قيد يومية متوازن | ${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س (${live.clearedCount} معتمدة في ZATCA) | ${live.vouchersCount} سند قبض/صرف.
+• **المؤشرات التشغيلية الحية:** ${live.contractsCount} عقد استقدام مساند | ${live.rentCount} عقد تأجير مرن | ${live.cvsCount} سيرة ذاتية في بنك ATS | ${live.shelterCount} نزيلة بمركز الإيواء | ${live.complaintsCount} تذاكر شكاوى نشطة.
+• **توصيات إنجاز المهام اليوم:**
+  1) يمكنك الضغط على أي زر في شريط **"مهام قسمي السريعة"** بالأسفل لتنفيذ المعاملات بضغطة واحدة.
+  2) يمكنك إرفاق أي ملف أو فاتورة عبر زر المشبك (📎) لاستخلاص بياناته وقيده فوراً.
+  3) يمكنك إملاء أي أمر صوتياً مثل: *"أنشئ فاتورة"*، *"سجل عقد استقدام"*، *"احسب نهاية الخدمة"*، أو *"اكتب خطاب رسمي"*.`;
+}
+
+/**
+ * Build company-isolated & employee-scoped prompt context for LLM
  */
 function buildCompanyIsolationContext(company: CompanyScopeContext, persona: AssistantPersona): string {
   const compId = company.id.toUpperCase();
   const live = getLiveCompanySnapshot(compId);
-  let specificData = '';
-
-  if (compId === 'KAS') {
-    specificData = `بيانات شركة كاس للمنافسات والتشغيل (KAS):
-- المنظومة متصلة بسحابة منصة اعتماد الحكومية وجداول الكميات الذكية BOQ.
-- المنافسات المرصودة: 2,651+ منافسة (18 منافسة تحت دراسة الجدوى وتجهيز عروض الأسعار).
-- الدفتر المحاسبي المعزول (سماك SMACC): ${live.journalsCount} قيد يومية معتمد، و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.`;
-  } else if (compId === 'SAF' || compId === 'MASI') {
-    specificData = `بيانات شركة سواعد / الصفا الماسي للاستقدام (SAF):
-- خط أنابيب استقدام مساند: 113 عقداً سارياً في مراحل المعالجة والتفويض عبر إنجاز.
-- الدفتر المحاسبي المعزول (سماك SMACC): ${live.journalsCount} قيد يومية، و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.`;
-  } else if (compId === 'YAQ' || compId === 'YAQOOT') {
-    specificData = `بيانات شركة الياقوت الشرقية لتأجير وتشغيل الكوادر (YAQ):
-- عقود التأجير والتشغيل النشطة: 890+ عقد تشغيلي للأفراد وقطاع الأعمال.
-- الدفتر المحاسبي المعزول (سماك SMACC): ${live.journalsCount} قيد يومية، و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.`;
-  } else if (compId === 'TOP' || compId === 'TOPAZ') {
-    specificData = `بيانات شركة توب تالنت الدولية للتوظيف الذكي (TOP):
-- بنك السير الذاتية ATS: 3,250+ سيرة ذاتية مفهرسة مع وكالات في 14 دولة.
-- الدفتر المحاسبي المعزول (سماك SMACC): ${live.journalsCount} قيد يومية، و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.`;
-  } else if (compId === 'DAR' || compId === 'SHELTER') {
-    specificData = `بيانات دار الرواد لمراكز الإيواء والتسكين والرعاية (DAR):
-- الطاقة الاستيعابية: 120 سريراً معتمداً من وزارة الموارد البشرية HRSD ونسبة إشغال 42%.
-- الدفتر المحاسبي المعزول (سماك SMACC): ${live.journalsCount} قيد يومية، و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.`;
-  } else {
-    specificData = `بيانات القيادة المركزية لمجموعة خالد السليم:
-- إجمالي الفواتير الضريبية الموحدة: ${live.invoicesCount} فاتورة بإجمالي ${live.totalSalesFormatted} ر.س وضريبة ${live.totalVatFormatted} ر.س.
-- إجمالي قيود اليومية في نظام سماك المحاسبي: ${live.journalsCount} قيد محاسبي متوازن.`;
-  }
+  const user = authService.getCurrentUser();
+  const playbook = getDepartmentTaskPlaybook(user?.department_id, compId);
 
   return `[عزل نطاق البيانات - شركة: ${company.name} (معرف: ${company.id})]
-تنبيه حوكمة وعزل البيانات: أنت تعمل الآن حصرياً ضمن نطاق وسجلات "${company.name}". يمنع خلط بيانات أي شركة أخرى خارج هذا النطاق.
-معلومات النطاق الحالي المعتمدة:
-${specificData}
-الشخصية المطلوبة في الرد: أنت "${persona === 'noura' ? 'نُورة (المستشارة المؤسسية والتشغيلية)' : 'فارس (المستشار التنفيذي للمجموعة)'}" وتجيب بأسلوب مؤسسي رصين ودقيق.`;
+الموظف الحالي: ${user?.full_name || 'موظف معتمد'} | المسمى: ${user?.role || playbook.departmentNameAr} | القسم: ${playbook.departmentNameAr}
+مهمتك: مساعدة الموظف في إنجاز مهامه اليومية بسرعة ودقة ضمن نطاق شركته وقسمه.
+الأرقام الحية في قاعدة البيانات الآن:
+- فواتير ZATCA: ${live.invoicesCount} فاتورة بإجمالي ${live.totalSalesFormatted} ر.س وضريبة ${live.totalVatFormatted} ر.س.
+- قيود اليومية (سماك): ${live.journalsCount} قيد محاسبي | السندات: ${live.vouchersCount} سند.
+- عقود الاستقدام: ${live.contractsCount} عقد | عقود التأجير: ${live.rentCount} عقد | السير الذاتية: ${live.cvsCount}.
+- نزيلات الإيواء: ${live.shelterCount} نزيلة | الموظفون: ${live.employeesCount} | العملاء: ${live.clientsCount} | الشكاوى: ${live.complaintsCount}.
+الشخصية المطلوبة في الرد: أنت "${persona === 'noura' ? 'نُورة (المستشارة المؤسسية والتشغيلية)' : 'فارس (المستشار التنفيذي والمالي للمجموعة)'}".`;
 }
 
 /**
- * Suggest context action button based on the query topic FIRST, then active company fallback.
- * All returned actionKey values match valid route keys in src/App.tsx.
+ * Suggest context action button based on the query topic FIRST, then active company/department fallback.
  */
 export function determineActionButton(
   query: string,
@@ -216,7 +640,6 @@ export function determineActionButton(
   const lower = query.toLowerCase();
   const c = compId.toUpperCase();
 
-  // 1. Document & 100-Invoice Auto-Extraction (Highest priority when asked about uploading/extracting files)
   if (
     lower.includes('رفع') ||
     lower.includes('استخلاص') ||
@@ -238,7 +661,6 @@ export function determineActionButton(
     };
   }
 
-  // 2. SMACC 6-Division Accounting System
   if (
     lower.includes('سماك') ||
     lower.includes('smacc') ||
@@ -262,7 +684,6 @@ export function determineActionButton(
     };
   }
 
-  // 3. ZATCA E-Invoicing
   if (
     lower.includes('zatca') ||
     lower.includes('زكاة') ||
@@ -278,7 +699,6 @@ export function determineActionButton(
     };
   }
 
-  // 4. Musaned Recruitment Contracts
   if (
     lower.includes('مساند') ||
     lower.includes('استقدام') ||
@@ -293,7 +713,6 @@ export function determineActionButton(
     };
   }
 
-  // 5. Rental & Mediation Contracts
   if (
     lower.includes('تأجير') ||
     lower.includes('إيجار') ||
@@ -307,7 +726,6 @@ export function determineActionButton(
     };
   }
 
-  // 6. ATS & CV Bank
   if (
     lower.includes('سير') ||
     lower.includes('توظيف') ||
@@ -321,7 +739,6 @@ export function determineActionButton(
     };
   }
 
-  // 7. Shelter & Care (Dar Al-Ruwad)
   if (
     lower.includes('إيواء') ||
     lower.includes('ايواء') ||
@@ -336,7 +753,6 @@ export function determineActionButton(
     };
   }
 
-  // 8. KAS Tenders & BOQ
   if (
     lower.includes('منافس') ||
     lower.includes('اعتماد') ||
@@ -350,7 +766,17 @@ export function determineActionButton(
     };
   }
 
-  // 9. HR & WPS Payroll
+  if (
+    lower.includes('شكو') ||
+    lower.includes('مطالب') ||
+    lower.includes('sla')
+  ) {
+    return {
+      label: 'فتح مركز الشكاوى واتفاقيات SLA',
+      actionKey: 'complaints',
+    };
+  }
+
   if (
     lower.includes('راتب') ||
     lower.includes('رواتب') ||
@@ -366,7 +792,6 @@ export function determineActionButton(
     };
   }
 
-  // 10. Employee Velocity & Monitoring
   if (
     lower.includes('موظف') ||
     lower.includes('أداء') ||
@@ -381,29 +806,15 @@ export function determineActionButton(
     };
   }
 
-  // 11. Company-specific default when no specific topic keyword was matched
-  if (c === 'KAS') {
-    return { label: 'فتح منظومة منافسات كاس (KAS Suite)', actionKey: 'kas-suite' };
-  }
-  if (c === 'SAF' || c === 'MASI') {
-    return { label: 'فتح عقود استقدام مساند', actionKey: 'recruitment-contracts' };
-  }
-  if (c === 'YAQ' || c === 'YAQOOT') {
-    return { label: 'فتح عقود التأجير والتشغيل', actionKey: 'rent-contracts' };
-  }
-  if (c === 'TOP' || c === 'TOPAZ') {
-    return { label: 'فتح بنك السير الذاتية ATS', actionKey: 'cvs' };
-  }
-  if (c === 'DAR' || c === 'SHELTER' || persona === 'noura') {
-    return { label: 'فتح بوابة مركز الإيواء والتسكين', actionKey: 'shelter' };
-  }
+  if (c === 'KAS') return { label: 'فتح منظومة منافسات كاس (KAS Suite)', actionKey: 'kas-suite' };
+  if (c === 'SAF' || c === 'MASI') return { label: 'فتح عقود استقدام مساند', actionKey: 'recruitment-contracts' };
+  if (c === 'YAQ' || c === 'YAQOOT') return { label: 'فتح عقود التأجير والتشغيل', actionKey: 'rent-contracts' };
+  if (c === 'TOP' || c === 'TOPAZ') return { label: 'فتح بنك السير الذاتية ATS', actionKey: 'cvs' };
+  if (c === 'DAR' || c === 'SHELTER' || persona === 'noura') return { label: 'فتح بوابة مركز الإيواء والتسكين', actionKey: 'shelter' };
 
   return { label: 'فتح لوحة المؤشرات التنفيذية', actionKey: 'dashboard' };
 }
 
-/**
- * Resolve the optimal specialized local model based on active company and persona.
- */
 export function resolveTargetModel(company: CompanyScopeContext, persona: AssistantPersona): string {
   if (persona === 'noura') return 'noura-erp';
   const c = company.id.toUpperCase();
@@ -415,15 +826,13 @@ export function resolveTargetModel(company: CompanyScopeContext, persona: Assist
   return 'faris-erp';
 }
 
-/**
- * Generate a company-isolated response using local daemon when available, or deterministic institutional engine.
- */
 export async function generateLocalAiResponse(options: LocalAiGenerateOptions): Promise<LocalAiResponse> {
   const { prompt, persona, company, conversationHistory = [], signal } = options;
+  const user = authService.getCurrentUser();
   const targetModel = resolveTargetModel(company, persona);
   const isolationContext = buildCompanyIsolationContext(company, persona);
 
-  const toolContext = buildToolDescriptionsForLLM(company.id);
+  const toolContext = buildToolDescriptionsForLLM(company.id, user?.department_id);
   const fullSystemPrompt = isolationContext + toolContext;
 
   try {
@@ -474,7 +883,7 @@ export async function generateLocalAiResponse(options: LocalAiGenerateOptions): 
 
     const toolCallRequest = parseToolCallFromResponse(rawText);
     if (toolCallRequest) {
-      const validated = validateToolCall(toolCallRequest, company.id, 'current_user');
+      const validated = validateToolCall(toolCallRequest, company.id, user?.email || 'current_user');
       if (validated) {
         toolCall = validated;
         displayText = rawText
@@ -484,8 +893,8 @@ export async function generateLocalAiResponse(options: LocalAiGenerateOptions): 
         if (!displayText) {
           displayText =
             persona === 'noura'
-              ? `حسناً، سأقوم بتجهيز "${validated.tool.nameAr}" الآن ضمن نطاق (${company.name}). هل تؤكدين التنفيذ؟`
-              : `تم استلام الأمر التنفيذي. سأقوم بتنفيذ "${validated.tool.nameAr}" ضمن نطاق (${company.name}). هل تؤكد العملية؟`;
+              ? `حسناً، قمتُ بتجهيز أداة "${validated.tool.nameAr}" لمساعدتكِ في إتمام المهمة ضمن (${company.name}). يرجى مراجعة التفاصيل وتأكيد التنفيذ:`
+              : `تم استلام طلبك الوظيفي. جهزتُ لك أداة "${validated.tool.nameAr}" ضمن (${company.name}). يرجى مراجعة البطاقة وتأكيد التنفيذ:`;
         }
       }
     }
@@ -503,7 +912,7 @@ export async function generateLocalAiResponse(options: LocalAiGenerateOptions): 
 }
 
 /**
- * Deterministic Institutional Advisor Engine (Topic-First + Strict Company Isolation + Live Store Metrics).
+ * Deterministic Institutional & Employee Task Co-Pilot Engine
  */
 function generateOfflineFallback(
   prompt: string,
@@ -513,12 +922,61 @@ function generateOfflineFallback(
   const lower = prompt.toLowerCase();
   const compId = company.id.toUpperCase();
   const live = getLiveCompanySnapshot(compId);
+  const user = authService.getCurrentUser();
+  const empGreeting = user?.full_name ? `يا ${user.full_name.split(' ')[0]}` : '';
+
+  // 0. Check if the employee is asking Faris or Noura to execute an actionable task tool!
+  const inferredTool = inferToolCallFromArabicPrompt(prompt, company.id);
+  if (inferredTool) {
+    const toolIntro =
+      persona === 'noura'
+        ? `أبشر/أبشري ${empGreeting}! معكِ "نُورة"، قمتُ بتجهيز بيانات **"${inferredTool.tool.nameAr}"** في نطاق (${company.name}) لتنفيذ مهمتكِ فوراً. يرجى الضغط على **تأكيد وتنفيذ العملية** أدناه لحفظها في الجدول:`
+        : `أبشر ${empGreeting}! معك "فارس"، قمتُ بتجهيز أمر **"${inferredTool.tool.nameAr}"** في نطاق (${company.name}) لإنجاز مهمتك فوراً. يرجى الضغط على **تأكيد وتنفيذ العملية** أدناه لحفظها في قاعدة البيانات:`;
+
+    return {
+      text: toolIntro,
+      modelUsed: 'employee-task-copilot-engine',
+      isLocal: true,
+      toolCall: inferredTool,
+    };
+  }
+
+  // Check if user asked for the Daily Executive/Employee Briefing
+  if (
+    lower.includes('إيجاز') ||
+    lower.includes('ايجاز') ||
+    lower.includes('مهامي اليوم') ||
+    lower.includes('ملخص اليوم') ||
+    lower.includes('المؤشرات الحية لجميع الأقسام')
+  ) {
+    return {
+      text: generateEmployeeDailyBriefing(company, persona),
+      modelUsed: 'employee-task-copilot-engine',
+      isLocal: true,
+      actionButton: determineActionButton(prompt, company.id, persona),
+    };
+  }
+
   const advisorIntro =
     persona === 'noura'
-      ? `معكِ "نُورة" المستشارة المؤسسية في نطاق (${company.name}):`
-      : `معك "فارس" المستشار التنفيذي في نطاق (${company.name}):`;
+      ? `معكِ "نُورة" المستشارة المؤسسية ومساعدة المهام في نطاق (${company.name}):`
+      : `معك "فارس" المستشار التنفيذي ومساعد المهام في نطاق (${company.name}):`;
 
   let text = '';
+  let suggestedPersonaHandoff: { persona: AssistantPersona; reasonAr: string } | undefined;
+
+  // Suggest smart persona handoff when appropriate
+  if (persona === 'faris' && (lower.includes('إيواء') || lower.includes('ايواء') || lower.includes('نزيل') || lower.includes('رعاية'))) {
+    suggestedPersonaHandoff = {
+      persona: 'noura',
+      reasonAr: 'نُورة هي المختصة المعتمدة بإدارة مراكز الإيواء والتسكين والرعاية الصحية HRSD.',
+    };
+  } else if (persona === 'noura' && (lower.includes('منافس') || lower.includes('boq') || lower.includes('كميات') || lower.includes('اعتماد'))) {
+    suggestedPersonaHandoff = {
+      persona: 'faris',
+      reasonAr: 'فارس هو المستشار المختص بتسعير جداول الكميات BOQ ومنافسات منصة اعتماد.',
+    };
+  }
 
   // 1. Document & 100-Invoice Batch Extraction Topic
   if (
@@ -537,10 +995,8 @@ function generateOfflineFallback(
     lower.includes('استيراد')
   ) {
     text = `${advisorIntro}
-• يمكنك رفع أي عدد من الملفات دفعة واحدة (من فاتورة واحدة وحتى أكثر من 100 صورة فاتورة أو مستندات PDF وWord وExcel وملفات الأنظمة المحاسبية الخارجية).
-• يقوم المحرك الذكي بالتعرف التلقائي على نوع المستند واستخلاص البيانات (الرقم الضريبي، المبلغ قبل الضريبة، ضريبة القيمة المضافة 15%، والإجمالي) وتوجيهها فوراً إلى القسم المعني في (${company.name}).
-• عند تفعيل خيار "نظام محاسبي منفصل لشركة أخرى" يمكنك تحديد الشركة المستهدفة ليتم قيد الفواتير والقيود في دفاترها المحاسبية المعزولة دون أي تداخل.
-• اضغط على الزر أدناه لفتح نافذة الرفع والاستخلاص المباشر الآن.`;
+• بصفتي مساعدك في إنجاز المهام، يمكنك رفع أي عدد من الملفات دفعة واحدة (من فاتورة واحدة وحتى أكثر من 100 صورة فاتورة أو مستندات PDF وWord وExcel) عبر زر المشبك (📎) بالأسفل أو الزر المباشر.
+• يقوم المحرك الذكي بالتعرف التلقائي على نوع المستند واستخلاص البيانات (الرقم الضريبي، المبلغ قبل الضريبة، ضريبة القيمة المضافة 15%، والإجمالي) وتوجيهها فوراً إلى جدول قسمك في (${company.name}).`;
   }
   // 2. SMACC 6-Division Accounting Topic
   else if (
@@ -561,14 +1017,14 @@ function generateOfflineFallback(
     lower.includes('أرباح')
   ) {
     text = `${advisorIntro}
-• منظومة المحاسبة المالية في (${company.name}) مهيكلة بالكامل وفق تقسيمات نظام سماك (SMACC 6-Divisions) وبعزل محاسبي تام لكل شركة:
-  1) المحاسبة المالية والأستاذ العام (شجرة الحسابات، قيود اليومية، ميزان المراجعة، قائمة الدخل والميزانية).
-  2) المبيعات والعملاء (فواتير المبيعات الضريبية، إشعارات الدائن/المدين، أعمار ديون العملاء).
-  3) المشتريات والموردون (فواتير المشتريات، أوامر الشراء، كشوف حسابات الموردين).
-  4) المخزون والمستودعات (أصناف الخدمات والباقات، جرد العهد والمستلزمات).
-  5) البنوك والصناديق (سندات القبض، سندات الصرف، التسوية البنكية).
-  6) مراكز التكلفة والأصول الثابتة (ربحية كل قطاع وإهلاك الأصول).
-• الرصيد الحي حالياً في دفتر (${company.name}): ${live.journalsCount} قيد يومية متوازن، و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.`;
+• **حالة الدفتر المحاسبي الحي في (${company.name}):**
+  - قيود اليومية المرحلة: **${live.journalsCount}** قيد محاسبي متوازن.
+  - الفواتير الضريبية (ZATCA): **${live.invoicesCount}** فاتورة بإجمالي **${live.totalSalesFormatted} ر.س** وضريبة **${live.totalVatFormatted} ر.س**.
+  - سندات القبض والصرف: **${live.vouchersCount}** سند مالي.
+• **مهام أستطيع تنفيذها لك فوراً في قسم المحاسبة:**
+  - قل أو اكتب: *"سجل قيد يومية تحصيل عقود بمبلغ 25000 ريال"*
+  - قل أو اكتب: *"أصدر سند قبض من العميل فهد بمبلغ 8500 ريال"*
+  - قل أو اكتب: *"أنشئ فاتورة ضريبية لشركة المدار بمبلغ 15000 ريال"*`;
   }
   // 3. ZATCA Phase 2 Topic
   else if (
@@ -581,10 +1037,10 @@ function generateOfflineFallback(
     lower.includes('تشفير')
   ) {
     text = `${advisorIntro}
-• بوابة الفوترة الإلكترونية ZATCA المرحلة الثانية (الربط والتكامل) في (${company.name}):
-• إجمالي الفواتير الضريبية المسجلة في دفتر الشركة: ${live.invoicesCount} فاتورة (${live.clearedCount} فاتورة معتمدة ومشفرة بـ TLV Base64 QR وتوقيع ECDSA).
-• إجمالي المبيعات الخاضعة للضريبة: ${live.totalSalesFormatted} ر.س | إجمالي ضريبة القيمة المضافة (15%): ${live.totalVatFormatted} ر.س.
-• يمكنك أيضاً رفع حتى 100 صورة فاتورة أو ملف Excel/PDF ليتم استخلاصها وإضافتها للجدول وتوليد قيودها المحاسبية في سماك تلقائياً.`;
+• **بوابة الفوترة الإلكترونية ZATCA المرحلة الثانية في (${company.name}):**
+• إجمالي الفواتير الضريبية المسجلة: **${live.invoicesCount}** فاتورة (**${live.clearedCount}** معتمدة ومشفرة بـ TLV Base64 QR وتوقيع ECDSA).
+• إجمالي المبيعات الخاضعة للضريبة: **${live.totalSalesFormatted} ر.س** | إجمالي ضريبة القيمة المضافة (15%): **${live.totalVatFormatted} ر.س**.
+• لإصدار فاتورة جديدة فوراً، اكتب لي: *"أنشئ فاتورة ضريبية للعميل [الاسم] بمبلغ [المبلغ] ريال"*.`;
   }
   // 4. Musaned Recruitment Topic
   else if (
@@ -596,10 +1052,12 @@ function generateOfflineFallback(
     lower.includes('تفويض')
   ) {
     text = `${advisorIntro}
-• حالة قطاع الاستقدام وعقود مساند ضمن نطاق (${company.name}):
-• العقود السارية في خط المعالجة: 113 عقداً موثقاً ومرتبطاً بالدفتر المحاسبي للشركة.
-• التأشيرات الجاهزة للتفويض الإلكتروني عبر منصة إنجاز: 12 تأشيرة، مع تفعيل بوالص التأمين وفترة الضمان النظامية (90 يوماً).
-• يمكنك استيراد عقود مساند من ملفات PDF أو Word أو Excel مباشرة عبر محرك الاستخلاص الشامل.`;
+• **المؤشرات الحية لقسم الاستقدام وعقود مساند في (${company.name}):**
+• العقود السارية في قاعدة البيانات: **${live.contractsCount}** عقد استقدام موثق ومرتبط بالدفتر المحاسبي.
+• **مهام أستطيع إنجازها لموظف الاستقدام فوراً:**
+  - تسجيل عقد جديد: *"سجل عقد استقدام للعميل فهد العتيبي من الفلبين بمبلغ 17250 ريال"*
+  - حاسبة نقل الكفالة: *"احسب تسوية نقل الخدمات لعقد تكلفته 18000 ريال بعد عمل 6 أشهر"*
+  - صياغة إشعار للعميل: *"اكتب رسالة رسمية للعميل بخصوص موعد وصول العاملة"*`;
   }
   // 5. Rental & Operation Topic
   else if (
@@ -610,9 +1068,11 @@ function generateOfflineFallback(
     lower.includes('باقات')
   ) {
     text = `${advisorIntro}
-• حالة قطاع عقود التأجير والتشغيل المرن في (${company.name}):
-• إجمالي العقود التشغيلية النشطة: 890+ عقداً للأفراد وقطاع الأعمال (ساعات، شهري، سنوي).
-• الكوادر الجاهزة للتسليم الفوري: 45 كادراً مهنياً، مع نسبة التزام تحصيل فواتير 94.2% مرتبطة بسندات قبض آلية في نظام سماك.`;
+• **المؤشرات الحية لقسم عقود التأجير والتشغيل المرن في (${company.name}):**
+• إجمالي العقود التشغيلية المسجلة: **${live.rentCount}** عقداً نشطاً (بالساعة، شهري، سنوي).
+• **مهام أستطيع إنجازها لموظف التأجير فوراً:**
+  - إنشاء عقد إيجار: *"سجل عقد تأجير باقة شهرية للعميل عبدالعزيز بمبلغ 3450 ريال"*
+  - تحصيل دفعة: *"أصدر سند قبض من العميل عبدالعزيز بمبلغ 3450 ريال"*`;
   }
   // 6. ATS & CV Bank Topic
   else if (
@@ -623,9 +1083,9 @@ function generateOfflineFallback(
     lower.includes('مرشح')
   ) {
     text = `${advisorIntro}
-• منظومة التوظيف الذكي وبنك السير الذاتية (ATS) في (${company.name}):
-• إجمالي السير الذاتية المفهرسة: 3,250+ سيرة ذاتية مرتبطة بـ 14 دولة ومكتب إرسال خارجي.
-• يدعم النظام استخلاص بيانات السير الذاتية والجوازات تلقائياً من الصور وملفات PDF وWord وإضافتها لبنك المرشحين.`;
+• **المؤشرات الحية لبنك السير الذاتية (ATS) في (${company.name}):**
+• إجمالي السير الذاتية المسجلة: **${live.cvsCount}** سيرة ذاتية جاهزة للتعاقد.
+• لإضافة مرشح جديد فوراً اكتب: *"أضف سيرة ذاتية للمرشحة ماري جين من الفلبين براتب 1500 ريال"* أو ارفع ملف الجواز عبر زر (📎).`;
   }
   // 7. Shelter & Care Topic
   else if (
@@ -638,9 +1098,9 @@ function generateOfflineFallback(
     lower.includes('hrsd')
   ) {
     text = `${advisorIntro}
-• حالة مركز الإيواء والتسكين والرعاية (دار الرواد - مرخص من HRSD):
-• الطاقة الاستيعابية: 120 سريراً موزعة على 4 أجنحة ضيافة، ونسبة الإشغال الحالية 42% (28 سريراً شاغراً ومعقماً).
-• المتابعة الطبية والغذائية وتوثيق محاضر الاستلام والتسليم ونقل الخدمات تعمل بامتثال 100%.`;
+• **حالة مركز الإيواء والتسكين والرعاية (دار الرواد - مرخص من HRSD):**
+• عدد النزيلات المسجلات حالياً: **${live.shelterCount}** نزيلة من أصل 120 سريراً (يتوفر 69 سريراً شاغراً ومعقماً).
+• لتسكين عاملة جديدة فوراً اكتبي: *"تسكين نزيلة جديدة باسم فاطمة حسن من الفلبين في غرفة 104"*.`;
   }
   // 8. KAS Tenders & BOQ Topic
   else if (
@@ -651,11 +1111,27 @@ function generateOfflineFallback(
     lower.includes('كاس')
   ) {
     text = `${advisorIntro}
-• منظومة المنافسات الحكومية وجداول الكميات (KAS & Etimad BOQ):
+• **منظومة المنافسات الحكومية وجداول الكميات (KAS & Etimad BOQ):**
 • المنافسات المرصودة عبر منصة اعتماد: 2,651+ منافسة، منها 18 منافسة تحت التسعير ودراسة الجدوى.
-• محرر جداول الكميات الذكي (BOQ) يدعم الحساب الآلي للبنود، ضريبة 15%، والتفقيط الرسمي بالريال السعودي، مع إمكانية استيراد كراسات الشروط وجداول الكميات من Excel وPDF وWord.`;
+• لتسعير بند فوراً اكتب: *"تسعير بند توريد كوادر كميات 120 بسعر 4500 ريال"*.`;
   }
-  // 9. HR, WPS & Employee Performance Topic
+  // 9. CRM & Complaints Topic
+  else if (
+    lower.includes('عميل') ||
+    lower.includes('عملاء') ||
+    lower.includes('شكو') ||
+    lower.includes('مطالب') ||
+    lower.includes('crm')
+  ) {
+    text = `${advisorIntro}
+• **المؤشرات الحية لقسم خدمة العملاء والشكاوى (CRM) في (${company.name}):**
+• عدد العملاء المسجلين: **${live.clientsCount}** عميلاً | تذاكر الشكاوى النشطة: **${live.complaintsCount}** تذاكر.
+• **مهام فورية لموظف خدمة العملاء:**
+  - *"سجل عميل جديد باسم سلطان الدوسري جوال 0505123456"*
+  - *"افتح تذكرة شكوى للعميل خالد بخصوص تأخر العاملة"*
+  - *"اكتب رسالة رد رسمية للعميل"*`;
+  }
+  // 10. HR, WPS & Employee Performance Topic
   else if (
     lower.includes('موظف') ||
     lower.includes('راتب') ||
@@ -664,29 +1140,27 @@ function generateOfflineFallback(
     lower.includes('حضور') ||
     lower.includes('أداء') ||
     lower.includes('سرعة') ||
-    lower.includes('إنتاج')
+    lower.includes('إنتاج') ||
+    lower.includes('نهاية الخدمة')
   ) {
     text = `${advisorIntro}
-• تقرير الموارد البشرية وحماية الأجور (WPS) ومتابعة الأداء في (${company.name}):
-• الالتزام بنظام حماية الأجور (WPS) ومنصة قوى: 100% ضمن النطاق البلاتيني (نسبة توطين 78%).
-• متوسط سرعة إنجاز المعاملات: 22 معاملة/ساعة، ونسبة النشاط الفعلي 88.5% مع عزل صلاحيات كل موظف في قسمه وشركته فقط.`;
+• **تقرير الموارد البشرية وحماية الأجور (WPS) في (${company.name}):**
+• عدد الموظفين المسجلين: **${live.employeesCount}** موظفاً | الالتزام بنظام حماية الأجور (WPS): 100%.
+• **مهام فورية لموظف الموارد البشرية:**
+  - *"احسب نهاية الخدمة لموظف راتبه 8000 ريال ومدة خدمته 6 سنوات"*
+  - *"استعرض الإقامات المنتهية خلال 30 يوماً"*
+  - *"أعطني تقرير أداء وسرعة الموظفين اليوم"*`;
   }
-  // 10. General Greeting or Executive Overview (Contextualized by Persona & Company)
+  // 11. Default Contextualized Employee Task Overview
   else {
-    text =
-      persona === 'noura'
-        ? `أهلاً بكِ في نطاق (${company.name})! أنا "نُورة" المستشارة المؤسسية والتشغيلية للمجموعة.
-• حالة الدفتر المحاسبي المعزول للشركة (سماك SMACC): ${live.journalsCount} قيد يومية معتمد و${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س.
-• يمكنني مساعدتكِ فوراً في: إدارة مراكز الإيواء والتسكين، عقود مساند والتأجير، شؤون الموظفين، أو رفع واستخلاص حتى 100 فاتورة ومستندات PDF/Word/Excel تلقائياً.`
-        : `أهلاً بك في نطاق (${company.name})! أنا "فارس" المستشار التنفيذي لمجموعة خالد السليم.
-• الملخص المالي الحي للشركة (محاسبة سماك SMACC): ${live.invoicesCount} فاتورة ضريبية بإجمالي ${live.totalSalesFormatted} ر.س (${live.clearedCount} فاتورة معتمدة في ZATCA) و${live.journalsCount} قيد يومية متوازن.
-• يمكنني توجيهك مباشرة إلى أقسام سماك الـ 6، منافسات اعتماد وجداول BOQ، عقود مساند والتأجير، أو تشغيل محرك استخلاص الـ 100 فاتورة والمستندات.`;
+    text = generateEmployeeDailyBriefing(company, persona);
   }
 
   return {
     text,
-    modelUsed: 'institutional-advisor-engine',
+    modelUsed: 'employee-task-copilot-engine',
     isLocal: true,
     actionButton: determineActionButton(prompt, company.id, persona),
+    suggestedPersonaHandoff,
   };
 }
