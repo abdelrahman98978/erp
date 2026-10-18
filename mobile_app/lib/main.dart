@@ -1705,15 +1705,57 @@ class _ErpMasterFlowHostState extends State<ErpMasterFlowHost> with WidgetsBindi
                     borderRadius: BorderRadius.circular(10),
                     child: Row(
                       children: [
-                        Container(
-                          width: 38,
-                          height: 38,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: ErpTokens.primary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(staff.badgeEmoji, style: const TextStyle(fontSize: 17)),
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: 42,
+                              height: 42,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF1D2428), Color(0xFF273036)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(13),
+                                border: Border.all(color: ErpTokens.champagneGold, width: 1.5),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x1F000000),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                staff.departmentId == 'executive'
+                                    ? Icons.workspace_premium_rounded
+                                    : staff.departmentId == 'finance'
+                                        ? Icons.account_balance_wallet_rounded
+                                        : staff.departmentId == 'tenders'
+                                            ? Icons.engineering_rounded
+                                            : staff.departmentId == 'shelter'
+                                                ? Icons.health_and_safety_rounded
+                                                : Icons.person_pin_rounded,
+                                size: 22,
+                                color: ErpTokens.goldLight,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: -2,
+                              right: -2,
+                              child: Container(
+                                width: 13,
+                                height: 13,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF10B981),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(width: 10),
                         Expanded(

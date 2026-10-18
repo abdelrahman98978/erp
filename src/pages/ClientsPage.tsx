@@ -9,6 +9,8 @@ import {
   Upload, X, Check, MessageSquare, ShieldAlert, Trash2, Edit,
   Phone, UserX, UserPlus, Filter
 } from 'lucide-react';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 
 export const ClientsPage: React.FC = () => {
   const { data: clients = [], isLoading } = useClients();
@@ -154,9 +156,13 @@ export const ClientsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <UserCheck className="w-5 h-5" />
+        <div className="flex items-center gap-3.5">
+          <div className="hidden sm:block">
+            <BusinessIllustration
+              type="crm-customer"
+              size="sm"
+              showBackground={false}
+            />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -312,7 +318,10 @@ export const ClientsPage: React.FC = () => {
               ) : filteredClients.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-10 text-center text-zinc-400">
-                    لا يوجد عملاء مطابقين لمعايير البحث
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <BusinessIllustration type="empty-search" size="md" />
+                      <span className="font-bold text-black">لا يوجد عملاء مطابقين لمعايير البحث</span>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -322,9 +331,19 @@ export const ClientsPage: React.FC = () => {
                       {c.client_no || c.client_number || `#${String(c.id).slice(0, 8)}`}
                     </td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{c.name}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
-                        {c.phone} • هوية: {c.national_id || 'غير مسجلة'}
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar
+                          name={c.name}
+                          type={c.type === 'شركة' ? 'client-b2b' : 'client-vip'}
+                          size="sm"
+                          status={c.status === 'محظور' ? undefined : 'verified'}
+                        />
+                        <div>
+                          <div className="font-bold text-black">{c.name}</div>
+                          <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
+                            {c.phone} • هوية: {c.national_id || 'غير مسجلة'}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="p-3.5 font-mono text-zinc-600 font-bold">

@@ -3,6 +3,7 @@ import { exportData, ExportFormat } from '../../services/exportService';
 import { ExportDropdown } from '../common/ExportDropdown';
 import { useAppStore } from '../../stores/appStore';
 import { IMPORT_TEMPLATES, downloadTemplate } from '../../services/importEngine';
+import { BusinessIllustration } from '../common/BusinessIllustration';
 
 export interface Column<T> {
   header: string;
@@ -296,9 +297,27 @@ export function DataTable<T extends { id: string | number }>({
           <tbody>
             {filteredData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '48px 16px', color: '#71717a' }}>
-                  <i className="fa-solid fa-inbox" style={{ fontSize: '32px', marginBottom: '8px', display: 'block', opacity: 0.3 }}></i>
-                  لا توجد نتائج مطابقة لخيارات البحث أو التصفية
+                <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '40px 16px', color: '#71717a' }}>
+                  <div className="flex flex-col items-center justify-center gap-3">
+                    <BusinessIllustration type="empty-search" size="md" />
+                    <div className="space-y-1">
+                      <div className="text-sm font-black text-[#1D2428]">
+                        لا توجد نتائج مطابقة لخيارات البحث أو التصفية
+                      </div>
+                      <div className="text-xs text-zinc-500">
+                        يمكنك تعديل كلمات البحث أو استخدام مستخرج المستندات الذكي لإضافة سجلات جديدة
+                      </div>
+                    </div>
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#FBFBF5] text-[#1D2428] border border-[#B8924A]/50 hover:bg-[#F5EDDC] transition-colors cursor-pointer"
+                      >
+                        إعادة ضبط البحث
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ) : (

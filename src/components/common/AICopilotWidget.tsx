@@ -29,6 +29,8 @@ import { getToolById } from '../../services/aiToolRegistry';
 import { dispatchVoiceCommand, VOICE_COMMANDS_GUIDE } from '../../services/voiceCommandService';
 import { authService, resolveDepartmentAndCompany } from '../../services/authService';
 import { notificationPopupEngine } from '../../services/notificationPopupEngine';
+import { CorporateAvatar } from './CorporateAvatar';
+import { BusinessIllustration } from './BusinessIllustration';
 
 interface ChatMessage {
   id: string;
@@ -1394,8 +1396,15 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
           {/* Employee Identity & Co-Pilot Task Bar */}
           <div className="px-3.5 py-2 bg-[#F5EDDC] border-b border-[#CFA64A]/50 flex items-center justify-between gap-2 shrink-0">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <UserCheck className="w-3.5 h-3.5 text-[#8C681E] shrink-0" />
+            <div className="flex items-center gap-2 min-w-0">
+              <CorporateAvatar
+                name={currentUserProfile?.full_name || 'موظف المجموعة'}
+                email={currentUserProfile?.email}
+                role={currentUserProfile?.role}
+                departmentId={departmentPlaybook.departmentId}
+                size="xs"
+                status="online"
+              />
               <span className="text-[11px] font-black text-black truncate">
                 {currentUserProfile?.full_name || 'موظف المجموعة'}
               </span>

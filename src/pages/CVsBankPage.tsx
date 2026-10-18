@@ -5,6 +5,8 @@ import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import {
   FileUser,
   Search,
@@ -638,19 +640,12 @@ export const CVsBankPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3.5">
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '9999px',
-              background: 'rgba(255,255,255,0.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-            }}
-          >
-            <FileUser className="w-6 h-6 text-emerald-400" />
+          <div className="hidden sm:block">
+            <BusinessIllustration
+              type={activeCategory === 'rental' ? 'flexible-rental' : 'ats-talent'}
+              size="sm"
+              showBackground={false}
+            />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -929,9 +924,12 @@ export const CVsBankPage: React.FC = () => {
 
                 {/* Profile Header */}
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-300 flex items-center justify-center shrink-0 text-black font-black text-base shadow-sm">
-                    {cv.maid_name.slice(0, 1)}
-                  </div>
+                  <CorporateAvatar
+                    name={cv.maid_name_ar || cv.maid_name}
+                    role={cv.job}
+                    size="md"
+                    status={cv.status === 'متاح' ? 'online' : 'verified'}
+                  />
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-black text-black leading-snug truncate">
                       {cv.maid_name_ar || cv.maid_name}

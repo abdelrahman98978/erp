@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { DEPARTMENT_LEGAL_POLICIES } from '../legal/LegalDisclaimerModal';
 import { notificationPopupEngine } from '../../services/notificationPopupEngine';
+import { CorporateAvatar } from '../common/CorporateAvatar';
+import { BusinessIllustration } from '../common/BusinessIllustration';
 
 interface Employee360DigitalFileModalProps {
   employee: any;
@@ -121,22 +123,13 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                backgroundColor: '#10b981',
-                color: '#FFFFFF',
-                fontWeight: '900',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-              }}
-            >
-              {employee.name.charAt(0)}
-            </div>
+            <CorporateAvatar
+              name={employee.name}
+              role={employee.job_title}
+              departmentId={employee.department}
+              size="lg"
+              status="verified"
+            />
             <div>
               <div style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span>{employee.name}</span>
@@ -154,13 +147,22 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFFFFF', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="hidden sm:block">
+              <BusinessIllustration
+                departmentId={employee.department}
+                size="sm"
+                showBackground={false}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: 'none', color: '#FFFFFF', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Modal Tabs Navigation */}

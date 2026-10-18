@@ -5,6 +5,8 @@ import { useIamSession } from '../contexts/IamSessionContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { MOCK_RECRUITMENT_CONTRACTS, DASHBOARD_STATS_BY_PERIOD } from '../data/mockData';
 import { SmaccDashboardWidget } from '../components/smacc/SmaccDashboardWidget';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { 
   Building2, Plus, FileText, ShoppingBag, Users, BarChart3, 
   ArrowLeft, Home, DollarSign, PieChart, Handshake, ShoppingCart, 
@@ -174,20 +176,21 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         <div className="flex flex-wrap items-center justify-between gap-5">
           {/* Right Header Title & Greeting */}
           <div className="flex items-center gap-4">
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '9999px',
-                backgroundColor: 'rgba(255,255,255,0.15)',
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Building2 className="w-6 h-6" />
+            <div className="hidden sm:block">
+              <BusinessIllustration
+                type="exec-command"
+                size="sm"
+                showBackground={false}
+              />
             </div>
+            <CorporateAvatar
+              name={currentUser?.fullName || 'خالد السليم'}
+              email={currentUser?.email}
+              role="executive"
+              departmentId="executive"
+              size="lg"
+              status="verified"
+            />
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>

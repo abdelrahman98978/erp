@@ -27,6 +27,7 @@ import {
 import { useCompany, COMPANIES_LIST as MAIN_SUBSIDIARY_COMPANIES } from '../../contexts/CompanyContext';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useAppStore } from '../../stores/appStore';
+import { BusinessIllustration } from './BusinessIllustration';
 
 interface UniversalDocumentExtractorModalProps {
   isOpen: boolean;
@@ -185,8 +186,8 @@ export const UniversalDocumentExtractorModal: React.FC<UniversalDocumentExtracto
         {/* Institutional Dark Header */}
         <div className="bg-[#000000] text-white px-6 py-4 border-b border-[#CFA64A]/30 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-[#CFA64A]/15 border border-[#CFA64A]/40 flex items-center justify-center text-[#CFA64A]">
-              <UploadCloud className="w-6 h-6" />
+            <div className="hidden sm:block">
+              <BusinessIllustration type="ocr-extractor" size="sm" showBackground={false} />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -297,8 +298,8 @@ export const UniversalDocumentExtractorModal: React.FC<UniversalDocumentExtracto
                 onChange={handleFilesSelected}
                 className="hidden"
               />
-              <div className="w-12 h-12 rounded-2xl bg-[#000000] text-[#CFA64A] flex items-center justify-center mb-3 shadow-md">
-                <UploadCloud className="w-6 h-6" />
+              <div className="mb-2">
+                <BusinessIllustration type="ocr-extractor" size="md" />
               </div>
               <h3 className="text-sm font-black text-zinc-900">
                 اضغط هنا لرفع ملف واحد أو 100+ صورة ومستند دفعة واحدة

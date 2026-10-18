@@ -16,6 +16,8 @@ import {
   FileSignature, Scale, Printer, Fingerprint, Eye, Download, Lock, Calculator
 } from 'lucide-react';
 import { WpsPayrollEngine, EmployeePayrollRecord, WpsSifHeader } from '../services/wpsPayrollEngine';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 
 export interface EmployeeRecord {
   id: string;
@@ -759,9 +761,13 @@ export const HRPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Users className="w-5 h-5" />
+        <div className="flex items-center gap-3.5">
+          <div className="hidden sm:block">
+            <BusinessIllustration
+              type="hr-wps"
+              size="sm"
+              showBackground={false}
+            />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -938,8 +944,19 @@ export const HRPage: React.FC = () => {
                   <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5 font-mono font-bold text-black">{emp.employee_code}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{emp.name}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono">تاريخ التعيين: {emp.hire_date}</div>
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar
+                          name={emp.name}
+                          role={emp.job_title}
+                          departmentId={emp.department}
+                          size="sm"
+                          status={emp.status === 'نشط' ? 'online' : undefined}
+                        />
+                        <div>
+                          <div className="font-bold text-black">{emp.name}</div>
+                          <div className="text-[11px] text-zinc-400 font-mono">تاريخ التعيين: {emp.hire_date}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5 font-mono text-zinc-500">{emp.national_id}</td>
                     <td className="p-3.5">

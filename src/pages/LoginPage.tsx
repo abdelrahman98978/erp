@@ -39,6 +39,8 @@ import {
   performRealBiometricAuth,
   checkWebAuthnSupport,
 } from '../services/webAuthnBiometricService';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 
 export interface SystemPortalOption {
   id: string;
@@ -623,9 +625,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               >
                 {/* Live Auto-Detected Company & Department Banner + Quick Selector */}
                 <div className="p-3.5 rounded-xl bg-[#f5eddc]/70 border border-[#cfa64a]/50 space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-xl">{detectedRouting.departmentDef.emoji}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <CorporateAvatar
+                        name={identifier}
+                        email={identifier}
+                        departmentId={detectedRouting.departmentId}
+                        size="md"
+                        status="verified"
+                      />
                       <div>
                         <div className="text-xs font-black text-black">
                           {detectedCompanyMeta.emoji} {detectedCompanyMeta.nameAr}
@@ -635,9 +643,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         </div>
                       </div>
                     </div>
-                    <span className="pill-tag-mint text-[10.5px] font-bold self-start sm:self-center">
-                      🔒 صلاحية مقيدة بالقسم
-                    </span>
+                    <div className="flex items-center gap-2 self-start sm:self-center">
+                      <div className="hidden md:block">
+                        <BusinessIllustration departmentId={detectedRouting.departmentId} size="sm" />
+                      </div>
+                      <span className="pill-tag-mint text-[10.5px] font-bold">
+                        🔒 صلاحية مقيدة بالقسم
+                      </span>
+                    </div>
                   </div>
 
                   {/* Quick Company & Department Switcher inside the Login Form */}
@@ -984,9 +997,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     }`}
                   >
                     <div className="flex items-start gap-2.5 min-w-0">
-                      <div className="w-9 h-9 rounded-xl bg-black text-white flex items-center justify-center text-base shrink-0">
-                        {staff.badgeEmoji}
-                      </div>
+                      <CorporateAvatar
+                        name={staff.full_name}
+                        role={staff.role}
+                        email={staff.email}
+                        departmentId={staff.department_id}
+                        size="sm"
+                        status={isSelected ? 'verified' : 'online'}
+                      />
                       <div className="min-w-0">
                         <div className="text-xs font-black text-black truncate">
                           {deptDef.badgeText} — {compMeta.code === 'all' ? 'المجموعة' : compMeta.code}

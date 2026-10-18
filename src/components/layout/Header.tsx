@@ -13,6 +13,8 @@ import {
 import { NotificationDropdown } from '../common/NotificationDropdown';
 import { ProductionDataHubModal } from '../database/ProductionDataHubModal';
 import { UniversalDocumentExtractorModal } from '../common/UniversalDocumentExtractorModal';
+import { CorporateAvatar } from '../common/CorporateAvatar';
+import { BusinessIllustration } from '../common/BusinessIllustration';
 import { SIDEBAR_MENU } from '../../data/sidebarMenu';
 import {
   Menu,
@@ -561,9 +563,14 @@ export const Header: React.FC<HeaderProps> = ({
               }}
               className="flex items-center gap-1.5 bg-white border border-zinc-200 rounded-full p-1 pl-2 sm:pl-3 hover:bg-zinc-50 transition-colors shrink-0 cursor-pointer"
             >
-              <div className="w-7 h-7 rounded-full bg-black text-[#e4c77b] border border-[#cfa64a]/50 flex items-center justify-center text-xs font-black shadow-xs">
-                {displayName.slice(0, 1)}
-              </div>
+              <CorporateAvatar
+                name={displayName}
+                email={displayEmail}
+                role={effectiveProfile?.role}
+                departmentId={resolvedScope.departmentId}
+                size="xs"
+                status="online"
+              />
               <div className="hidden sm:block text-right">
                 <div className="text-[11px] font-bold text-black leading-tight truncate max-w-[110px]">
                   {displayName}
@@ -577,16 +584,26 @@ export const Header: React.FC<HeaderProps> = ({
 
             {showUserDropdown && (
               <div className="fixed inset-x-3 top-[calc(var(--header-height,64px)+8px)] sm:absolute sm:inset-x-auto sm:top-full sm:mt-2 sm:left-0 bg-white border border-zinc-200 rounded-2xl shadow-2xl sm:w-72 max-w-[calc(100vw-24px)] z-[350] p-3 space-y-1.5">
-                <div className="p-3 bg-[#fbfbf5] rounded-xl border border-zinc-200 mb-1 space-y-1">
-                  <div className="font-black text-xs text-black">{displayName}</div>
-                  <div className="text-[10.5px] text-zinc-500 font-mono">{displayEmail}</div>
-                  <div className="pt-1 flex flex-wrap items-center gap-1">
-                    <span className="px-2 py-0.5 bg-black text-white text-[9.5px] font-bold rounded-full">
-                      {companyMeta.emoji} {companyMeta.nameAr}
-                    </span>
-                    <span className="px-2 py-0.5 bg-[#f5eddc] text-[#a98232] border border-[#cfa64a]/40 text-[9.5px] font-bold rounded-full">
-                      {departmentDef.emoji} {departmentDef.nameAr}
-                    </span>
+                <div className="p-3 bg-[#fbfbf5] rounded-xl border border-zinc-200 mb-1 flex items-center gap-2.5">
+                  <CorporateAvatar
+                    name={displayName}
+                    email={displayEmail}
+                    role={effectiveProfile?.role}
+                    departmentId={resolvedScope.departmentId}
+                    size="md"
+                    status="verified"
+                  />
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="font-black text-xs text-black truncate">{displayName}</div>
+                    <div className="text-[10.5px] text-zinc-500 font-mono truncate">{displayEmail}</div>
+                    <div className="pt-0.5 flex flex-wrap items-center gap-1">
+                      <span className="px-2 py-0.5 bg-black text-white text-[9.5px] font-bold rounded-full">
+                        {companyMeta.emoji} {companyMeta.nameAr}
+                      </span>
+                      <span className="px-2 py-0.5 bg-[#f5eddc] text-[#a98232] border border-[#cfa64a]/40 text-[9.5px] font-bold rounded-full">
+                        {departmentDef.emoji} {departmentDef.nameAr}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -657,8 +674,15 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="fixed inset-0 z-[500] bg-black/60 flex items-center justify-center p-4">
           <div className="bg-white border border-zinc-200 rounded-2xl max-w-md w-full p-6 space-y-4 text-right shadow-2xl">
             <div className="flex items-center justify-between border-b border-zinc-200 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{departmentDef.emoji}</span>
+              <div className="flex items-center gap-2.5">
+                <CorporateAvatar
+                  name={displayName}
+                  email={displayEmail}
+                  role={effectiveProfile?.role}
+                  departmentId={resolvedScope.departmentId}
+                  size="sm"
+                  status="verified"
+                />
                 <h3 className="text-sm font-black text-black">بطاقة الهوية الوظيفية ونطاق القسم</h3>
               </div>
               <button
@@ -671,6 +695,27 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="p-4 rounded-2xl bg-[#fbfbf5] border border-zinc-200 space-y-2.5 text-xs">
+              <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-zinc-200/80">
+                <div className="flex items-center gap-2.5">
+                  <CorporateAvatar
+                    name={displayName}
+                    email={displayEmail}
+                    role={effectiveProfile?.role}
+                    departmentId={resolvedScope.departmentId}
+                    size="md"
+                    status="online"
+                  />
+                  <div>
+                    <div className="font-black text-black text-sm">{displayName}</div>
+                    <div className="text-[11px] text-[#a98232] font-bold">{departmentDef.badgeText}</div>
+                  </div>
+                </div>
+                <BusinessIllustration
+                  departmentId={resolvedScope.departmentId}
+                  size="sm"
+                  showBackground={false}
+                />
+              </div>
               <div className="flex justify-between">
                 <span className="text-zinc-500">اسم الموظف:</span>
                 <span className="font-black text-black">{displayName}</span>
