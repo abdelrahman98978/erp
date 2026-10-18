@@ -122,7 +122,7 @@ export default defineConfig({
   },
   build: {
     copyPublicDir: false,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 15000,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -152,6 +152,9 @@ export default defineConfig({
           }
           if (id.includes('node_modules/@sentry')) {
             return 'vendor-sentry';
+          }
+          if (id.includes('/src/services/') || id.includes('\\src\\services\\')) {
+            return 'erp-services';
           }
         }
       }

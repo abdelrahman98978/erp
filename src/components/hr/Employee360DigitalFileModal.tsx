@@ -6,6 +6,7 @@ import {
   UserCheck, X, Scale, Printer, Download, Lock, Check, Building2
 } from 'lucide-react';
 import { DEPARTMENT_LEGAL_POLICIES } from '../legal/LegalDisclaimerModal';
+import { notificationPopupEngine } from '../../services/notificationPopupEngine';
 
 interface Employee360DigitalFileModalProps {
   employee: any;
@@ -30,7 +31,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
 
   const policy = getPolicy();
 
-  const sampleDocs: EmployeeDocument[] = [
+  const [sampleDocs, setSampleDocs] = useState<EmployeeDocument[]>([
     {
       id: 'DOC-101',
       title: 'بطاقة الهوية الوطنية / الإقامة',
@@ -75,7 +76,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
       verified: true,
       version: 1,
     },
-  ];
+  ]);
 
   return (
     <div
@@ -329,7 +330,24 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                     input.onchange = (e: any) => {
                       const file = e.target?.files?.[0];
                       if (file) {
-                        alert(`تم استلام المستند (${file.name}) وتدقيقه آلياً عبر محرك OCR.`);
+                        const today = new Date().toISOString().split('T')[0];
+                        const nextYear = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                        const newDoc: EmployeeDocument = {
+                          id: `DOC-${105 + sampleDocs.length}`,
+                          title: file.name.replace(/\.[^/.]+$/, ''),
+                          category: 'أخرى',
+                          documentNumber: `OCR-${Math.floor(10000 + Math.random() * 90000)}`,
+                          issueDate: today,
+                          expiryDate: nextYear,
+                          status: 'ساري',
+                          verified: true,
+                          version: 1,
+                        };
+                        setSampleDocs((prev) => [newDoc, ...prev]);
+                        notificationPopupEngine.success(
+                          'توثيق مستند جديد (OCR)',
+                          `تم استلام المستند (${file.name}) وتدقيقه آلياً وإضافته لملف الموظف الرقمي.`
+                        );
                       }
                     };
                     input.click();
@@ -389,7 +407,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                   </div>
                   <div style={{ backgroundColor: '#FFFFFF', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
                     <div style={{ fontSize: '11px', color: '#64748B' }}>الدور وصلاحيات النظام</div>
-                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#7c3aed', marginTop: '2px' }}>{employee.system_role || 'مستخدم معتمد'}</div>
+                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#8C681E', marginTop: '2px' }}>{employee.system_role || 'مستخدم معتمد'}</div>
                   </div>
                 </div>
               </div>

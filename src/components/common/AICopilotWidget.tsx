@@ -28,6 +28,7 @@ import { executeToolCall, logToolCancellation, buildConfirmationSummary, type To
 import { getToolById } from '../../services/aiToolRegistry';
 import { dispatchVoiceCommand, VOICE_COMMANDS_GUIDE } from '../../services/voiceCommandService';
 import { authService, resolveDepartmentAndCompany } from '../../services/authService';
+import { notificationPopupEngine } from '../../services/notificationPopupEngine';
 
 interface ChatMessage {
   id: string;
@@ -481,7 +482,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     const next = !wakeWordEnabled;
     const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (next && !SpeechRec) {
-      alert('خاصية المناداة الصوتية الذكية تتطلب متصفحاً يدعم الميكروفون مثل Google Chrome أو Microsoft Edge.');
+      notificationPopupEngine.warning(
+        'تنبيه المتصفح الصوتي',
+        'خاصية المناداة الصوتية الذكية تتطلب متصفحاً يدعم الميكروفون مثل Google Chrome أو Microsoft Edge.'
+      );
       return;
     }
     setWakeWordEnabled(next);
@@ -506,7 +510,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
     const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRec) {
       if (!autoSend) {
-        alert('خاصية الإملاء الصوتي غير مدعومة في متصفحك الحالي، يرجى استخدام متصفح Chrome أو Edge الحديث.');
+        notificationPopupEngine.warning(
+          'الإملاء الصوتي غير مدعوم',
+          'خاصية الإملاء الصوتي غير مدعومة في متصفحك الحالي، يرجى استخدام متصفح Chrome أو Edge الحديث.'
+        );
       }
       return;
     }

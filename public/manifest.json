@@ -6,8 +6,8 @@
   "id": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "background_color": "#091725",
-  "theme_color": "#091725",
+  "background_color": "#FBFBF5",
+  "theme_color": "#1D2428",
   "lang": "ar-SA",
   "dir": "rtl",
   "orientation": "any",
@@ -36,7 +36,7 @@
     },
     {
       "name": "خط أنابيب استقدام مساند",
-      "short_name": "الصفا مساند",
+      "short_name": "السفير الماسي مساند",
       "description": "متابعة عقود مساند والتأشيرات",
       "url": "/?tab=ats-pipeline",
       "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
@@ -45,7 +45,7 @@
       "name": "الفوترة الإلكترونية المشفرة ZATCA",
       "short_name": "فوترة ZATCA",
       "description": "فواتير المرحلة الثانية والربط المشفر",
-      "url": "/?tab=zatca-hub",
+      "url": "/?tab=zatca",
       "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
     },
     {
