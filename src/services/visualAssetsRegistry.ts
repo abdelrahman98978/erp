@@ -32,7 +32,9 @@ export type IllustrationKey =
   | 'crm-customer'
   | 'shelter-care'
   | 'kas-tenders'
-  | 'empty-search';
+  | 'empty-search'
+  | 'ai-copilot'
+  | 'innovation';
 
 export interface IllustrationMetadata {
   key: IllustrationKey;
@@ -41,6 +43,7 @@ export interface IllustrationMetadata {
   badgeAr: string;
   accentHex: string;
   secondaryHex: string;
+  funkywaysSvgUrl: string;
 }
 
 export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata> = {
@@ -51,6 +54,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'حوكمة المجموعة 360°',
     accentHex: '#B8924A',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/exec-command.svg',
   },
   'smacc-finance': {
     key: 'smacc-finance',
@@ -59,6 +63,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'توازن محاسبي 100%',
     accentHex: '#B8924A',
     secondaryHex: '#0F172A',
+    funkywaysSvgUrl: '/illustrations/funkyways/smacc-finance.svg',
   },
   'zatca-einvoice': {
     key: 'zatca-einvoice',
@@ -67,6 +72,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'معتمد في منصة فاتورة',
     accentHex: '#059669',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/zatca-einvoice.svg',
   },
   'ocr-extractor': {
     key: 'ocr-extractor',
@@ -75,6 +81,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'ماسح OCR الذكي',
     accentHex: '#B8924A',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/ocr-extractor.svg',
   },
   'musaned-recruitment': {
     key: 'musaned-recruitment',
@@ -83,6 +90,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'تكامل مساند وإنجاز',
     accentHex: '#8C681E',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/musaned-recruitment.svg',
   },
   'flexible-rental': {
     key: 'flexible-rental',
@@ -91,6 +99,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'تشغيل مرن بالساعة والشهر',
     accentHex: '#B8924A',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/flexible-rental.svg',
   },
   'ats-talent': {
     key: 'ats-talent',
@@ -99,6 +108,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'توب تالنت ATS',
     accentHex: '#8C681E',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/ats-talent.svg',
   },
   'hr-wps': {
     key: 'hr-wps',
@@ -107,6 +117,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'متوافق مع نظام العمل السعودي',
     accentHex: '#B8924A',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/hr-wps.svg',
   },
   'crm-customer': {
     key: 'crm-customer',
@@ -115,6 +126,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'مركز إسعاد العملاء',
     accentHex: '#B8924A',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/crm-customer.svg',
   },
   'shelter-care': {
     key: 'shelter-care',
@@ -123,6 +135,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'معايير الإيواء HRSD',
     accentHex: '#0D9488',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/shelter-care.svg',
   },
   'kas-tenders': {
     key: 'kas-tenders',
@@ -131,6 +144,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'سحابة اعتماد كاس',
     accentHex: '#B8924A',
     secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/kas-tenders.svg',
   },
   'empty-search': {
     key: 'empty-search',
@@ -139,6 +153,25 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     badgeAr: 'البحث والتصفية الذكية',
     accentHex: '#B8924A',
     secondaryHex: '#64748B',
+    funkywaysSvgUrl: '/illustrations/funkyways/empty-search.svg',
+  },
+  'ai-copilot': {
+    key: 'ai-copilot',
+    titleAr: 'المساعد الذكي التنفيذي والمؤسسي (فارس ونُورة)',
+    subtitleAr: 'تنفيذ آلي لـ 22 أداة محاسبية وتشغيلية وتوجيه فوري بالصوت والنص لكل موظف',
+    badgeAr: 'ذكاء اصطناعي مؤسسي',
+    accentHex: '#B8924A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/ai-copilot.svg',
+  },
+  'innovation': {
+    key: 'innovation',
+    titleAr: 'الابتكار والتحول الرقمي المؤسسي',
+    subtitleAr: 'بنية سحابية موحدة تربط القطاعات التشغيلية والمالية برؤية المملكة 2030',
+    badgeAr: 'تقنية Funkyways',
+    accentHex: '#B8924A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/innovation.svg',
   },
 };
 

@@ -13,19 +13,20 @@ export interface BusinessIllustrationProps {
   className?: string;
   animated?: boolean;
   showBackground?: boolean;
+  variant?: 'funkyways' | 'vector';
 }
 
 const DIMENSIONS: Record<NonNullable<BusinessIllustrationProps['size']>, { w: number; h: number }> = {
-  sm: { w: 96, h: 76 },
-  md: { w: 148, h: 112 },
-  lg: { w: 210, h: 156 },
-  xl: { w: 280, h: 205 },
+  sm: { w: 84, h: 76 },
+  md: { w: 140, h: 118 },
+  lg: { w: 200, h: 164 },
+  xl: { w: 270, h: 215 },
 };
 
 /**
- * IconScout Business Style Vector Illustration Engine
- * Renders multi-layered isometric & editorial business scenes in Khalid Group's
- * signature Charcoal (#1D2428), Warm Champagne Gold (#B8924A), and Alabaster (#FBFBF5) palette.
+ * Funkyways (Pixels Market) & IconScout Business Style Vector Illustration Engine
+ * Renders authentic brand-recolored Funkyways SVGs (/illustrations/funkyways/*.svg)
+ * in Khalid Group's Charcoal (#1D2428), Warm Champagne Gold (#B8924A), and Alabaster (#FBFBF5) palette.
  */
 export const BusinessIllustration: React.FC<BusinessIllustrationProps> = ({
   type,
@@ -34,11 +35,37 @@ export const BusinessIllustration: React.FC<BusinessIllustrationProps> = ({
   size = 'md',
   className = '',
   animated = true,
+  showBackground = true,
+  variant = 'funkyways',
 }) => {
+  const [imgFailed, setImgFailed] = React.useState(false);
   const resolvedKey: IllustrationKey =
     type || resolveIllustrationForTab(tabKey, departmentId);
+  const meta = getIllustrationMetadata(resolvedKey);
   const { w, h } = DIMENSIONS[size] || DIMENSIONS.md;
   const uid = React.useId().replace(/:/g, '');
+
+  if (variant === 'funkyways' && meta?.funkywaysSvgUrl && !imgFailed) {
+    return (
+      <div
+        className={`relative inline-flex items-center justify-center select-none shrink-0 ${
+          showBackground
+            ? 'rounded-2xl bg-[#FBFBF5] border border-[#B8924A]/35 shadow-xs p-1.5'
+            : 'rounded-xl bg-[#FBFBF5]/95 border border-[#B8924A]/45 p-1'
+        } ${animated ? 'transition-transform duration-300 hover:scale-105' : ''} ${className}`}
+        style={{ width: w, height: h }}
+        title={meta.titleAr}
+      >
+        <img
+          src={meta.funkywaysSvgUrl}
+          alt={meta.titleAr}
+          onError={() => setImgFailed(true)}
+          className="w-full h-full object-contain"
+          loading="lazy"
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -50,7 +77,7 @@ export const BusinessIllustration: React.FC<BusinessIllustrationProps> = ({
         className="w-full h-full overflow-visible"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
-        aria-label={getIllustrationMetadata(resolvedKey).titleAr}
+        aria-label={meta.titleAr}
       >
         <defs>
           <linearGradient id={`ill-gold-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">

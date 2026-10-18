@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { CompanyLogo } from '../components/common/CompanyLogo';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { resolveIllustrationForPortal } from '../services/visualAssetsRegistry';
 import { CompanyId } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
 import { 
@@ -380,29 +382,41 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
-                  <div className="text-xs font-black text-black">📊 محاسبة سماك SMACC</div>
-                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
-                    الأستاذ العام، القبض والصرف، التسوية البنكية، ومراكز التكلفة
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200 flex items-center justify-between gap-2">
+                  <div>
+                    <div className="text-xs font-black text-black">📊 محاسبة سماك SMACC</div>
+                    <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                      الأستاذ العام، القبض والصرف، التسوية البنكية، ومراكز التكلفة
+                    </div>
                   </div>
+                  <BusinessIllustration type="smacc-finance" size="sm" showBackground={false} className="!w-12 !h-12 shrink-0" />
                 </div>
-                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
-                  <div className="text-xs font-black text-black">📑 الاستقدام والتأجير</div>
-                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
-                    عقود مساند، باقات التأجير المرن، تفاويض إنجاز، ونقل الخدمات
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200 flex items-center justify-between gap-2">
+                  <div>
+                    <div className="text-xs font-black text-black">📑 الاستقدام والتأجير</div>
+                    <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                      عقود مساند، باقات التأجير المرن، تفاويض إنجاز، ونقل الخدمات
+                    </div>
                   </div>
+                  <BusinessIllustration type="musaned-recruitment" size="sm" showBackground={false} className="!w-12 !h-12 shrink-0" />
                 </div>
-                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
-                  <div className="text-xs font-black text-black">👥 الموارد البشرية WPS</div>
-                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
-                    شؤون الموظفين، مسير الرواتب، حماية الأجور، ونهاية الخدمة
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200 flex items-center justify-between gap-2">
+                  <div>
+                    <div className="text-xs font-black text-black">👥 الموارد البشرية WPS</div>
+                    <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                      شؤون الموظفين، مسير الرواتب، حماية الأجور، ونهاية الخدمة
+                    </div>
                   </div>
+                  <BusinessIllustration type="hr-wps" size="sm" showBackground={false} className="!w-12 !h-12 shrink-0" />
                 </div>
-                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200">
-                  <div className="text-xs font-black text-black">⚖️ المنافسات والإيواء</div>
-                  <div className="text-[10.5px] text-zinc-500 mt-0.5">
-                    منافسات اعتماد وجداول BOQ لشركة كاس، ومراكز إيواء دار الرواد
+                <div className="p-3 rounded-2xl bg-[#fbfbf5] border border-zinc-200 flex items-center justify-between gap-2">
+                  <div>
+                    <div className="text-xs font-black text-black">⚖️ المنافسات والإيواء</div>
+                    <div className="text-[10.5px] text-zinc-500 mt-0.5">
+                      منافسات اعتماد وجداول BOQ لشركة كاس، ومراكز إيواء دار الرواد
+                    </div>
                   </div>
+                  <BusinessIllustration type="kas-tenders" size="sm" showBackground={false} className="!w-12 !h-12 shrink-0" />
                 </div>
               </div>
 
@@ -580,6 +594,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                     </span>
                   </div>
 
+                  {/* Floating Brand-Recolored Funkyways Illustration Emblem */}
+                  <div className="absolute bottom-2.5 left-3 pointer-events-none">
+                    <BusinessIllustration
+                      type={resolveIllustrationForPortal(comp.id)}
+                      size="sm"
+                      showBackground={false}
+                      className="!w-14 !h-12 shadow-sm"
+                    />
+                  </div>
+
                   {/* Top Accent Line */}
                   <div 
                     className="absolute bottom-0 inset-x-0 h-1"
@@ -662,8 +686,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               {/* Top Accent Line */}
               <div className="absolute top-0 inset-x-0 h-1 bg-[#047857]" />
 
-              <div className="w-14 h-14 rounded-2xl bg-[#FBFBF5] border border-[#E4E4E7] text-[#047857] flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
-                <Network className="w-7 h-7" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#FBFBF5] border border-[#E4E4E7] text-[#047857] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                  <Network className="w-7 h-7" />
+                </div>
+                <BusinessIllustration type="zatca-einvoice" size="sm" showBackground={false} className="!w-20 !h-16" />
               </div>
 
               <h3 className="text-xl font-bold text-black font-display mb-2.5">
@@ -706,8 +733,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               {/* Top Accent Line */}
               <div className="absolute top-0 inset-x-0 h-1 bg-[#1D2428]" />
 
-              <div className="w-14 h-14 rounded-2xl bg-[#FBFBF5] border border-[#E4E4E7] text-black flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
-                <TrendingUp className="w-7 h-7" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#FBFBF5] border border-[#E4E4E7] text-black flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                  <TrendingUp className="w-7 h-7" />
+                </div>
+                <BusinessIllustration type="smacc-finance" size="sm" showBackground={false} className="!w-20 !h-16" />
               </div>
 
               <h3 className="text-xl font-bold text-black font-display mb-2.5">
@@ -750,8 +780,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               {/* Top Accent Line */}
               <div className="absolute top-0 inset-x-0 h-1 bg-[#CFA64A]" />
 
-              <div className="w-14 h-14 rounded-2xl bg-[#F5EDDC] border border-[#CFA64A] text-black flex items-center justify-center shadow-xs mb-6 group-hover:scale-105 transition-transform">
-                <Bot className="w-7 h-7 text-[#8C681E]" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#F5EDDC] border border-[#CFA64A] text-black flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                  <Bot className="w-7 h-7 text-[#8C681E]" />
+                </div>
+                <BusinessIllustration type="ai-copilot" size="sm" showBackground={false} className="!w-20 !h-16" />
               </div>
 
               <h3 className="text-xl font-bold text-black font-display mb-2.5">
