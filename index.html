@@ -31,11 +31,12 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Clean legacy caches from previous deployments to prevent stale bundle mismatch
+      // Purge all legacy caches (v1..v5) from previous deployments to prevent stale bundle mismatch
+      var CURRENT_SW_CACHE = 'khalid-erp-pwa-v6-20261018';
       if ('caches' in window) {
         caches.keys().then(function(keys) {
           keys.forEach(function(key) {
-            if (key === 'khalid-erp-pwa-v1' || key === 'khalid-erp-pwa-v2') {
+            if (key !== CURRENT_SW_CACHE) {
               caches.delete(key);
             }
           });
@@ -43,15 +44,30 @@
       }
 
       if ('serviceWorker' in navigator) {
+        var triggerOneTimeReload = function() {
+          try {
+            if (sessionStorage.getItem('alsulaim_sw_v6_reloaded') !== 'true') {
+              sessionStorage.setItem('alsulaim_sw_v6_reloaded', 'true');
+              window.location.reload();
+            }
+          } catch (_) {}
+        };
+
+        navigator.serviceWorker.addEventListener('message', function(event) {
+          if (event.data && event.data.type === 'FORCE_RELOAD_AFTER_SW_UPDATE') {
+            triggerOneTimeReload();
+          }
+        });
+
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js').then(function(reg) {
+          navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
             reg.update();
             if ('periodicSync' in reg) {
               reg.periodicSync.register('alsulaim-erp-periodic-check', {
                 minInterval: 15 * 60 * 1000
               }).catch(function() {});
             }
-            console.log('[PWA] ServiceWorker v3 registered successfully:', reg.scope);
+            console.log('[PWA] ServiceWorker v6 registered successfully:', reg.scope);
           }).catch(function(err) {
             console.warn('[PWA] ServiceWorker registration error:', err);
           });

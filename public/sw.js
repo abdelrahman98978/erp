@@ -3,27 +3,25 @@
  * Version: 3.0.0 — Mobile Native Push, App Badging, Background Sync & Periodic Sync Engine
  */
 
-const CACHE_NAME = 'khalid-erp-pwa-v3';
+const CACHE_NAME = 'khalid-erp-pwa-v6-20261018';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
   '/manifest.json',
   '/logo.png',
   '/mascot.png',
   '/noura.png'
 ];
 
-// Install Event: Pre-cache shell assets & activate immediately
+// Install Event: Activate immediately without pre-caching HTML shell
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+      return cache.addAll(STATIC_ASSETS).catch(() => {});
     })
   );
 });
 
-// Activate Event: Cleanup stale caches & claim all clients immediately
+// Activate Event: Purge ALL legacy caches (including v1, v2, v3, v4, v5) & claim all clients immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -34,7 +32,16 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => self.clients.claim()).then(() => {
+      return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+        windowClients.forEach((client) => {
+          client.postMessage({
+            type: 'FORCE_RELOAD_AFTER_SW_UPDATE',
+            cacheVersion: CACHE_NAME,
+          });
+        });
+      });
+    })
   );
 });
 

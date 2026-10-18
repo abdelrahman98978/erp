@@ -842,6 +842,11 @@ const USERNAME_EMAIL_ALIASES: Record<string, string> = {
   'khalid.admin': 'chairman@alsulaim.sa',
   'super.admin': 'chairman@alsulaim.sa',
   'admin': 'chairman@alsulaim.sa',
+  'admin@alsulaim.com': 'chairman@alsulaim.sa',
+  'admin@alsulaim.sa': 'chairman@alsulaim.sa',
+  'chairman@alsulaim.com': 'chairman@alsulaim.sa',
+  'ceo@alsulaim.com': 'chairman@alsulaim.sa',
+  'khalid@alsulaim.com': 'chairman@alsulaim.sa',
   'chairman': 'chairman@alsulaim.sa',
   'ceo': 'chairman@alsulaim.sa',
   'developer': 'abdo12uk@gmail.com',
@@ -1005,12 +1010,12 @@ export function resolveDepartmentAndCompany(
 
   // 2. Resolve Company ID from domain or explicitCompanyId
   let companyId = explicitCompanyId || 'SAF';
-  if (clean.endsWith('@saf-rec.sa')) companyId = 'SAF';
-  else if (clean.endsWith('@yaqoot-ops.sa')) companyId = 'YAQ';
-  else if (clean.endsWith('@topaz-rec.sa')) companyId = 'TOP';
-  else if (clean.endsWith('@kas-etimad.sa')) companyId = 'KAS';
-  else if (clean.endsWith('@alruwad.sa')) companyId = 'DAR';
-  else if (clean.endsWith('@alsulaim.sa')) companyId = 'all';
+  if (clean.endsWith('@saf-rec.sa') || clean.endsWith('@saf-rec.com')) companyId = 'SAF';
+  else if (clean.endsWith('@yaqoot-ops.sa') || clean.endsWith('@yaqoot-ops.com')) companyId = 'YAQ';
+  else if (clean.endsWith('@topaz-rec.sa') || clean.endsWith('@topaz-rec.com')) companyId = 'TOP';
+  else if (clean.endsWith('@kas-etimad.sa') || clean.endsWith('@kas-etimad.com')) companyId = 'KAS';
+  else if (clean.endsWith('@alruwad.sa') || clean.endsWith('@alruwad.com')) companyId = 'DAR';
+  else if (clean.endsWith('@alsulaim.sa') || clean.endsWith('@alsulaim.com')) companyId = 'all';
 
   // 3. Resolve Department ID from explicitDepartmentId, email prefix, or role
   let departmentId: DepartmentId = explicitDepartmentId || 'recruitment';
@@ -1020,6 +1025,7 @@ export function resolveDepartmentAndCompany(
     departmentId = explicitDepartmentId;
   } else if (
     companyId === 'all' ||
+    clean.startsWith('admin') ||
     clean.startsWith('chairman') ||
     clean.startsWith('khalid') ||
     clean.startsWith('ceo') ||
