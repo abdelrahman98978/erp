@@ -13,6 +13,8 @@ import { SmaccFormModal } from '../components/smacc/SmaccFormModal';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { exportData } from '../services/exportService';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface SmaccEmployee {
   id: string;
@@ -210,10 +212,13 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Users className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="hr-wps"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC HR & SETTINGS</span>
@@ -346,7 +351,12 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                   filteredEmployees.map(emp => (
                     <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono text-zinc-400 text-[11px]">{emp.id}</td>
-                      <td className="p-3.5 font-bold text-black">{emp.name}</td>
+                      <td className="p-3.5 font-bold text-black">
+                        <div className="flex items-center gap-2.5">
+                          <CorporateAvatar name={emp.name} role={emp.jobTitle} departmentId="hr" size="sm" status="verified" />
+                          <span>{emp.name}</span>
+                        </div>
+                      </td>
                       <td className="p-3.5 font-mono text-zinc-500">{emp.nationalId}</td>
                       <td className="p-3.5 text-black font-semibold">{emp.jobTitle}</td>
                       <td className="p-3.5 text-zinc-600">{emp.department}</td>

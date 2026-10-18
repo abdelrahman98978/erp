@@ -5,6 +5,8 @@ import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { IPWhitelistManager } from '../components/security/IPWhitelistManager';
 import { generateSecurityReport, detectAnomalies, SecurityEvent } from '../services/securityAuditService';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   Shield, ShieldAlert, Database, Radio, Server, Lock, Key, 
   Sparkles, Download, Check, X, AlertTriangle, UserX, Cpu, Network,
@@ -181,12 +183,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Shield className="w-5 h-5 text-champagne-light" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration type="group-command" size="sm" />
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                   SUPER ADMIN CONTROLLER (30 ADVANCED FEATURES)
                 </span>
@@ -203,6 +203,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
 
           {/* Quick Admin Actions & Emergency Buttons */}
           <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-1 px-3">
+              <CorporateAvatar
+                size="sm"
+                archetype="saudi-executive"
+                status="verified"
+                name="مشرف admin (المدير العام)"
+                role="Super Administrator"
+              />
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-white leading-tight">مشرف النظام</div>
+                <div className="text-[10px] text-emerald-300 leading-tight">Super Admin</div>
+              </div>
+            </div>
             <button
               className="button-white-pill"
               onClick={() => setShowBroadcastModal(true)}
@@ -388,8 +401,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                   {sessions.map(s => (
                     <tr key={s.id} className="hover:bg-zinc-50">
                       <td className="p-3.5 font-bold text-black">
-                        {s.name}
-                        <div className="text-[11px] text-zinc-400 font-normal">@{s.username} • {s.role}</div>
+                        <div className="flex items-center gap-2.5">
+                          <CorporateAvatar size="sm" name={s.name} role={s.role} status="verified" />
+                          <div>
+                            <div>{s.name}</div>
+                            <div className="text-[11px] text-zinc-400 font-normal">@{s.username} • {s.role}</div>
+                          </div>
+                        </div>
                       </td>
                       <td className="p-3.5 font-mono font-bold text-zinc-700">{s.ip_address}</td>
                       <td className="p-3.5 text-zinc-600 text-xs">{s.device}</td>

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { useImpersonation } from '../contexts/ImpersonationContext';
 import { CompanyId } from '../types';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { Building2, UserCheck, ShieldCheck, ArrowLeft, Check, X, ShieldAlert, Users, TrendingUp, Layers } from 'lucide-react';
 
 export const GroupCommandCenterPage: React.FC = () => {
@@ -47,10 +49,8 @@ export const GroupCommandCenterPage: React.FC = () => {
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Building2 className="w-5 h-5 text-emerald-400" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration type="group-command" size="sm" />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
@@ -64,15 +64,31 @@ export const GroupCommandCenterPage: React.FC = () => {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowImpersonateModal(true)}
-          className="button-white-pill"
-          style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
-        >
-          <UserCheck className="w-4 h-4 ml-1 text-black" />
-          <span>+ تفعيل محاكاة موظف (Act As Employee)</span>
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-1 px-3">
+            <CorporateAvatar
+              size="sm"
+              archetype="saudi-executive"
+              status="verified"
+              name="خالد عبدالعزيز السليم"
+              role="رئيس مجلس الإدارة"
+            />
+            <div className="text-right">
+              <div className="text-[11px] font-bold text-white leading-tight">خالد عبدالعزيز السليم</div>
+              <div className="text-[10px] text-emerald-300 leading-tight">رئيس مجلس الإدارة</div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowImpersonateModal(true)}
+            className="button-white-pill"
+            style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+          >
+            <UserCheck className="w-4 h-4 ml-1 text-black" />
+            <span>+ تفعيل محاكاة موظف (Act As Employee)</span>
+          </button>
+        </div>
       </div>
 
       {/* Group Consolidated Overview Cards */}
@@ -128,8 +144,8 @@ export const GroupCommandCenterPage: React.FC = () => {
               {companies.map((c) => (
                 <tr key={c.id} className="hover:bg-zinc-50 transition-colors">
                   <td className="p-3.5 font-bold text-black">
-                    <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-black" />
+                    <div className="flex items-center gap-2.5">
+                      <CorporateAvatar size="sm" archetype="saudi-executive" status="verified" name={c.name} />
                       <span>{c.name}</span>
                     </div>
                   </td>
@@ -177,15 +193,18 @@ export const GroupCommandCenterPage: React.FC = () => {
               key={log.id}
               className="flex items-center justify-between p-3 bg-zinc-50 rounded-2xl border border-zinc-100 text-xs"
             >
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-bold text-black">{log.actorName}</span>
-                  <span className="bg-zinc-200 text-black px-2 py-0.5 rounded-full text-[10px] font-bold">
-                    {log.actionType}
-                  </span>
-                  <span className="text-[11px] text-zinc-400 font-mono">IP: {log.ipAddress}</span>
+              <div className="flex items-center gap-3">
+                <CorporateAvatar size="sm" archetype="saudi-executive" status="verified" name={log.actorName} />
+                <div>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="font-bold text-black">{log.actorName}</span>
+                    <span className="bg-zinc-200 text-black px-2 py-0.5 rounded-full text-[10px] font-bold">
+                      {log.actionType}
+                    </span>
+                    <span className="text-[11px] text-zinc-400 font-mono">IP: {log.ipAddress}</span>
+                  </div>
+                  <div className="text-zinc-600">{log.details}</div>
                 </div>
-                <div className="text-zinc-600">{log.details}</div>
               </div>
               <div className="text-[11px] text-zinc-400 font-mono">
                 {new Date(log.timestamp).toLocaleTimeString('ar-SA')}

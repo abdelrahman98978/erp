@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { ArrowLeftRight, Plus, Send, Lock, MessageSquare, Building2, Check, X, ShieldCheck } from 'lucide-react';
@@ -182,8 +184,11 @@ export const BranchCommunicationPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div className="flex items-center gap-3.5">
+          <div className="hidden sm:block">
+            <BusinessIllustration type="branch-network" size="sm" showBackground={false} />
+          </div>
+          <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <ArrowLeftRight className="w-5 h-5 text-champagne-light" />
           </div>
           <div>
@@ -288,16 +293,28 @@ export const BranchCommunicationPage: React.FC = () => {
             {/* Chat History Box */}
             <div className="space-y-3 overflow-y-auto max-h-[300px] pr-1">
               {filteredMessages.length === 0 ? (
-                <div className="p-8 text-center text-zinc-400 text-xs">
-                  لا توجد رسائل في هذه القناة. ابدأ بكتابة رسالة في الأسفل.
+                <div className="p-8 text-center text-zinc-400 text-xs flex flex-col items-center justify-center gap-2">
+                  <BusinessIllustration type="empty-search" size="md" />
+                  <span>لا توجد رسائل في هذه القناة. ابدأ بكتابة رسالة في الأسفل.</span>
                 </div>
               ) : (
                 filteredMessages.map(msg => (
                   <div key={msg.id} className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
-                    <div className="flex items-center justify-between mb-1 text-xs">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-black">{msg.sender_name}</span>
-                        <span className="text-[10px] text-zinc-400 font-mono">({msg.sender_branch})</span>
+                    <div className="flex items-center justify-between mb-2 text-xs">
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar
+                          name={msg.sender_name}
+                          role={msg.sender_role}
+                          size="sm"
+                          status="online"
+                        />
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold text-black">{msg.sender_name}</span>
+                            <span className="text-[10px] text-zinc-500">({msg.sender_role})</span>
+                          </div>
+                          <span className="text-[10px] text-zinc-400 font-mono">{msg.sender_branch}</span>
+                        </div>
                       </div>
                       <span className="text-[10px] font-mono text-zinc-400">{msg.timestamp}</span>
                     </div>

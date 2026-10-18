@@ -11,6 +11,8 @@ import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface AgencyCandidate {
   id: string;
@@ -276,6 +278,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
+            <BusinessIllustration type="foreign-agencies" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
               <Globe2 className="w-5 h-5 text-emerald-400" />
             </div>
@@ -298,6 +301,13 @@ export const ForeignAgencyPortalPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15">
+              <CorporateAvatar name={activeAgency} role="وكيل دولي معتمد" size="sm" status="verified" />
+              <div className="text-right">
+                <div className="text-xs font-bold text-white">{activeAgency}</div>
+                <div className="text-[10px] text-zinc-400">وكالة دولية معتمدة</div>
+              </div>
+            </div>
             {totalUsdBalance > 0 && (
               <button
                 onClick={() => setShowBatchPayoutModal(true)}
@@ -397,7 +407,10 @@ export const ForeignAgencyPortalPage: React.FC = () => {
               {filteredCandidates.map((cand) => (
                 <tr key={cand.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors">
                   <td className="p-4 font-bold text-slate-900 dark:text-white">
-                    {cand.maidName}
+                    <div className="flex items-center gap-2.5">
+                      <CorporateAvatar name={cand.maidName} profession={cand.profession} isCandidate size="sm" />
+                      <span>{cand.maidName}</span>
+                    </div>
                   </td>
                   <td className="p-4 font-mono font-medium text-slate-700 dark:text-slate-300">
                     {cand.passportNumber}

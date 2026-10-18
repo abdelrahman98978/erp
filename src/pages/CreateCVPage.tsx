@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { FileText, FileSpreadsheet, ArrowRight, ArrowLeft, Check, Upload, User, Award, Paperclip, Printer, QrCode, X } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export const CreateCVPage: React.FC = () => {
   const { setActiveTab, addNotification } = useAppStore();
@@ -119,6 +121,7 @@ export const CreateCVPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3">
+          <BusinessIllustration type="ats-talent" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <FileText className="w-5 h-5" />
           </div>
@@ -172,6 +175,30 @@ export const CreateCVPage: React.FC = () => {
             إلغاء ورجوع
           </button>
         </div>
+      </div>
+
+      {/* Live Candidate Avatar Preview Banner */}
+      <div className="bg-white border border-zinc-200 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <CorporateAvatar
+            name={formData.full_name_ar || formData.full_name_en || 'مرشح جديد'}
+            profession={formData.job_title || 'عاملة منزلية'}
+            isCandidate
+            size="lg"
+            status="verified"
+          />
+          <div>
+            <div className="text-sm font-bold text-black">
+              {formData.full_name_ar || formData.full_name_en || 'معاينة الهوية الرقمية للمرشح'}
+            </div>
+            <div className="text-xs text-zinc-500">
+              {formData.job_title} • {formData.nationality_id} • {formData.office_id}
+            </div>
+          </div>
+        </div>
+        <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+          الراتب المقترح: {formData.monthly_salary} ر.س
+        </span>
       </div>
 
       {/* Step Indicators */}

@@ -18,6 +18,8 @@ import {
 } from '../services/employeeMonitoringService';
 import { DailyMoodCheckInModal } from '../components/monitoring/DailyMoodCheckInModal';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useAppStore } from '../stores/appStore';
 import { Badge } from '../components/ui/Badge';
 
@@ -169,7 +171,11 @@ export const EmployeeMonitoringPage: React.FC = () => {
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3.5">
+            <div className="hidden sm:block">
+              <BusinessIllustration type="attendance-monitoring" size="sm" showBackground={false} />
+            </div>
             <div 
+              className="sm:hidden"
               style={{
                 width: '52px',
                 height: '52px',
@@ -476,7 +482,10 @@ export const EmployeeMonitoringPage: React.FC = () => {
                 {filteredSummaries.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="p-8 text-center text-zinc-400">
-                      لا توجد سجلات موظفين تطابق معايير البحث المحددة.
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <BusinessIllustration type="empty-search" size="md" />
+                        <span>لا توجد سجلات موظفين تطابق معايير البحث المحددة.</span>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -489,9 +498,13 @@ export const EmployeeMonitoringPage: React.FC = () => {
                       <tr key={emp.user_id} className="hover:bg-zinc-50 dark:hover:bg-zinc-850/40 transition-colors">
                         <td className="p-3.5">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-zinc-700 to-zinc-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                              {emp.user_name.charAt(0)}
-                            </div>
+                            <CorporateAvatar
+                              name={emp.user_name}
+                              role={emp.role}
+                              departmentId="hr"
+                              size="sm"
+                              status={emp.burnout_risk === 'منخفض' ? 'online' : 'none'}
+                            />
                             <div>
                               <div className="font-bold text-zinc-900 dark:text-white">
                                 {emp.user_name}
@@ -647,12 +660,16 @@ export const EmployeeMonitoringPage: React.FC = () => {
 
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="text-3xl">
-                        {moodItem.emoji}
-                      </div>
+                      <CorporateAvatar
+                        name={log.user_name}
+                        role={log.role}
+                        departmentId="hr"
+                        size="sm"
+                      />
                       <div>
-                        <h4 className="text-sm font-bold text-zinc-900 dark:text-white">
-                          {log.user_name}
+                        <h4 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                          <span>{log.user_name}</span>
+                          <span>{moodItem.emoji}</span>
                         </h4>
                         <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
                           {log.role} — {log.branch}
@@ -741,6 +758,12 @@ export const EmployeeMonitoringPage: React.FC = () => {
 
                   <div>
                     <div className="flex items-center gap-2">
+                      <CorporateAvatar
+                        name={evt.user_name}
+                        role={evt.role}
+                        departmentId="hr"
+                        size="xs"
+                      />
                       <span className="font-bold text-xs text-zinc-900 dark:text-white">
                         {evt.user_name}
                       </span>

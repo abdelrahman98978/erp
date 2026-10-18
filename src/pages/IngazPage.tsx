@@ -5,6 +5,8 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Stamp, Plus, FileSpreadsheet, FileText, Search, Printer, RefreshCw, X, CheckCircle, QrCode, Award } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface IngazDelegation {
   id: string;
@@ -198,7 +200,8 @@ export const IngazPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <BusinessIllustration type="legal-compliance" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Stamp className="w-5 h-5" />
           </div>
@@ -411,12 +414,22 @@ export const IngazPage: React.FC = () => {
                   <tr key={row.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{row.delegation_number}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{row.client_name}</div>
-                      <div className="text-zinc-500 font-mono text-[11px]">هوية: {row.sponsor_id}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={row.client_name} isClient size="sm" />
+                        <div>
+                          <div className="font-bold text-black">{row.client_name}</div>
+                          <div className="text-zinc-500 font-mono text-[11px]">هوية: {row.sponsor_id}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-mono font-bold text-black">{row.visa_number}</div>
-                      <div className="text-zinc-500 text-[11px]">{row.profession} • {row.nationality}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={row.profession} profession={row.profession} isCandidate size="sm" />
+                        <div>
+                          <div className="font-mono font-bold text-black">{row.visa_number}</div>
+                          <div className="text-zinc-500 text-[11px]">{row.profession} • {row.nationality}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5 font-semibold text-zinc-700">{row.foreign_office}</td>
                     <td className="p-3.5 font-mono font-bold text-emerald-700">{(row.fee_amount ?? 0).toFixed(2)} ر.س</td>

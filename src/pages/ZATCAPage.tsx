@@ -9,6 +9,8 @@ import { generateZatcaQR } from '../services/zatcaPhase2Service';
 import { realZatcaEngine } from '../services/realZatcaEngine';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { QrCode, Plus, FileSpreadsheet, FileText, Search, Key, X, ShieldCheck, Download, Copy, Check, UploadCloud, Eye } from 'lucide-react';
 
 export interface ZatcaInvoiceRecord {
@@ -240,10 +242,13 @@ export const ZATCAPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <QrCode className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="zatca-einvoice"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>ZATCA PHASE 2 INTEGRATION</span>
@@ -413,9 +418,20 @@ export const ZATCAPage: React.FC = () => {
                   <tr key={inv.id} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5 font-mono font-bold text-black">{inv.invoice_number}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{inv.client_name}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono">
-                        {inv.client_vat_number ? `ضريبي: ${inv.client_vat_number}` : `هوية: ${inv.client_national_id || 'أفراد'}`}
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar
+                          name={inv.client_name}
+                          isClient={true}
+                          category={inv.invoice_type === 'STANDARD' ? 'شركات' : 'أفراد'}
+                          size="sm"
+                          status={inv.zatca_status === 'CLEARED' ? 'verified' : 'none'}
+                        />
+                        <div>
+                          <div className="font-bold text-black">{inv.client_name}</div>
+                          <div className="text-[11px] text-zinc-400 font-mono">
+                            {inv.client_vat_number ? `ضريبي: ${inv.client_vat_number}` : `هوية: ${inv.client_national_id || 'أفراد'}`}
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="p-3.5">

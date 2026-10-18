@@ -8,6 +8,8 @@ import { chartOfAccountsService, AccountItem } from '../services/accounting/char
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { BudgetVsActualWidget } from '../components/finance/BudgetVsActualWidget';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   Scale, Plus, FileSpreadsheet, FileText, Printer, FileCheck, 
   TrendingUp, TrendingDown, ShieldCheck, Lock, Unlock, Search, 
@@ -323,14 +325,21 @@ export const FinancePage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Scale className="w-5 h-5 text-emerald-400" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration
+              type="smacc-finance"
+              size="sm"
+              showBackground={false}
+              className="!w-16 !h-14 shrink-0"
+            />
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCIAL & ACCOUNTING SUITE</span>
                 <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>المعايير المحاسبية SOCPA / IFRS</span>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15">
+                  <CorporateAvatar name="إبراهيم الشمري" role="المدير المالي المعتمد" departmentId="finance" size="xs" status="verified" />
+                  <span className="text-[10.5px] font-bold text-[#F5EDDC]">الاعتماد المالي: إبراهيم الشمري</span>
+                </div>
               </div>
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 الإدارة المالية والقوائم الختامية
@@ -1282,7 +1291,12 @@ export const FinancePage: React.FC = () => {
                           />
                         </td>
                         <td className="p-3 text-zinc-500 font-mono">{v.date}</td>
-                        <td className="p-3 font-bold text-black">{v.payee_payer}</td>
+                        <td className="p-3 font-bold text-black">
+                          <div className="flex items-center gap-2">
+                            <CorporateAvatar name={v.payee_payer} isClient={v.type === 'قبض'} departmentId="finance" size="sm" status="verified" />
+                            <span>{v.payee_payer}</span>
+                          </div>
+                        </td>
                         <td className="p-3 text-zinc-600">{v.treasury}</td>
                         <td className="p-3 font-mono font-bold text-black">{v.amount.toLocaleString()} ر.س</td>
                         <td className="p-3">
@@ -1349,7 +1363,12 @@ export const FinancePage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {SUPPLIERS_ACCOUNTS.map((s) => (
                   <tr key={s.id} className="hover:bg-zinc-50">
-                    <td className="p-3 font-bold text-black">{s.name}</td>
+                    <td className="p-3 font-bold text-black">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={s.name} role={s.country} departmentId="finance" size="sm" status="verified" />
+                        <span>{s.name}</span>
+                      </div>
+                    </td>
                     <td className="p-3 text-zinc-600">{s.country}</td>
                     <td className="p-3 font-bold text-black">{s.cv_count} سيرة ذاتية</td>
                     <td className="p-3 font-mono font-bold text-rose-700">${s.balance_usd.toLocaleString()}</td>

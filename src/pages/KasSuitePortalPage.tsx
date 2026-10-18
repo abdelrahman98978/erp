@@ -12,6 +12,7 @@ import {
 import { KasNavigationSidebar, KasDepartmentId, KAS_BRANCHES } from '../components/kas/KasNavigationSidebar';
 import { ExportDropdown } from '../components/common/ExportDropdown';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useCompany } from '../contexts/CompanyContext';
 import { useIamSession } from '../contexts/IamSessionContext';
 import { useAppStore } from '../stores/appStore';
@@ -287,6 +288,19 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
 
           {/* Left side: Export Dropdown, Quick Action, and Return Button */}
           <div className="flex items-center gap-2.5">
+            <div className="hidden lg:flex items-center gap-2 bg-white/5 border border-white/10 rounded-full py-1 px-2.5">
+              <CorporateAvatar
+                size="sm"
+                archetype="tenders-engineer"
+                status="verified"
+                name={currentUser?.fullName || 'م. أحمد البشير'}
+                role="مدير منافسات كاس"
+              />
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-white leading-tight">{currentUser?.fullName || 'م. أحمد البشير'}</div>
+                <div className="text-[10px] text-amber-400 leading-tight">مدير المنافسات والتسعير</div>
+              </div>
+            </div>
             <ExportDropdown
               sectionKey={`kas_${activeDept}`}
               data={getExportData()}

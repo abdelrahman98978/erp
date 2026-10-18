@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { ClipboardCheck, FileSpreadsheet, FileText, Upload, Plus, Search, X, Check, CloudUpload } from 'lucide-react';
 
@@ -101,8 +103,11 @@ export const AttendancesPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div className="flex items-center gap-3.5">
+          <div className="hidden sm:block">
+            <BusinessIllustration type="attendance-monitoring" size="sm" showBackground={false} />
+          </div>
+          <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <ClipboardCheck className="w-5 h-5" />
           </div>
           <div>
@@ -197,19 +202,41 @@ export const AttendancesPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {filteredAttendances.map((row) => (
-                <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
-                  <td className="p-3.5 font-bold text-black">{row.emp_name}</td>
-                  <td className="p-3.5"><Badge text={row.department} type="purple" /></td>
-                  <td className="p-3.5 font-mono text-zinc-500">{row.date}</td>
-                  <td className="p-3.5 font-mono font-bold text-champagne-dark">{row.check_in}</td>
-                  <td className="p-3.5 font-mono font-bold text-zinc-800">{row.check_out}</td>
-                  <td className="p-3.5 font-mono font-bold text-black">{row.work_hours} س</td>
-                  <td className="p-3.5">
-                    <Badge text={row.status} type={row.status === 'حاضر' ? 'success' : row.status === 'متأخر' ? 'warning' : 'danger'} />
+              {filteredAttendances.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="p-8 text-center text-zinc-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <BusinessIllustration type="empty-search" size="md" />
+                      <span className="font-bold text-black">لا توجد سجلات حضور مطابقة للبحث</span>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredAttendances.map((row) => (
+                  <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                    <td className="p-3.5 font-bold text-black">
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar
+                          name={row.emp_name}
+                          role={row.department}
+                          departmentId="hr"
+                          size="sm"
+                          status={row.status === 'حاضر' ? 'online' : 'none'}
+                        />
+                        <span>{row.emp_name}</span>
+                      </div>
+                    </td>
+                    <td className="p-3.5"><Badge text={row.department} type="purple" /></td>
+                    <td className="p-3.5 font-mono text-zinc-500">{row.date}</td>
+                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{row.check_in}</td>
+                    <td className="p-3.5 font-mono font-bold text-zinc-800">{row.check_out}</td>
+                    <td className="p-3.5 font-mono font-bold text-black">{row.work_hours} س</td>
+                    <td className="p-3.5">
+                      <Badge text={row.status} type={row.status === 'حاضر' ? 'success' : row.status === 'متأخر' ? 'warning' : 'danger'} />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

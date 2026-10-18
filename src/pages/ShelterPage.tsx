@@ -7,6 +7,8 @@ import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { Hotel, Plus, FileSpreadsheet, FileText, Search, Utensils, X, Trash2, Bed, CheckCircle2 } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface ShelterRecordItem {
   id: string;
@@ -374,6 +376,7 @@ export const ShelterPage: React.FC = () => {
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
+            <BusinessIllustration type="shelter-care" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
               <Hotel className="w-5 h-5 text-champagne-light" />
             </div>
@@ -694,8 +697,13 @@ export const ShelterPage: React.FC = () => {
                         <div className="text-[11px] font-mono text-zinc-400">{item.passport}</div>
                       </td>
                       <td className="p-3.5">
-                        <div className="font-bold text-black">{item.maid_name}</div>
-                        <div className="text-zinc-500">{item.nationality}</div>
+                        <div className="flex items-center gap-2.5">
+                          <CorporateAvatar name={item.maid_name} profession="عاملة منزلية" isCandidate size="sm" />
+                          <div>
+                            <div className="font-bold text-black">{item.maid_name}</div>
+                            <div className="text-zinc-500">{item.nationality}</div>
+                          </div>
+                        </div>
                       </td>
                       <td className="p-3.5 text-xs">
                         <div className="font-bold text-black">{item.client_name || 'تسكين عام'}</div>

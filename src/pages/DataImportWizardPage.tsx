@@ -1,6 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import {
   IMPORT_TEMPLATES,
@@ -183,10 +185,13 @@ export const DataImportWizardPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Database className="w-5 h-5 text-emerald-400" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration
+              type="ocr-extractor"
+              size="sm"
+              showBackground={false}
+              className="!w-16 !h-14 shrink-0"
+            />
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>DATA IMPORT WIZARD</span>
@@ -202,6 +207,15 @@ export const DataImportWizardPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15">
+              <CorporateAvatar
+                archetype="ai-faris"
+                name="فارس - مطابقة الحقول الذكية"
+                size="xs"
+                status="online"
+              />
+              <span className="text-[11px] font-bold text-white/90">مطابقة ذكية للأعمدة</span>
+            </div>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
               className="button-outline-on-dark"

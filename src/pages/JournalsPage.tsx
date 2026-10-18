@@ -6,6 +6,8 @@ import { useJournals, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { chartOfAccountsService } from '../services/accounting/chartOfAccountsService';
 import { useAppStore } from '../stores/appStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   BookOpen, Plus, FileSpreadsheet, FileText, Search, Upload, Eye, 
   X, Check, AlertTriangle, Trash2, Printer, ShieldCheck, RefreshCw 
@@ -256,10 +258,13 @@ export const JournalsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <BookOpen className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="smacc-finance"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>JOURNAL ENTRIES LEDGER</span>
@@ -415,7 +420,17 @@ export const JournalsPage: React.FC = () => {
                         <span className="text-[10px] text-zinc-400 font-mono">[{j.cost_center_code}]</span>
                       )}
                     </td>
-                    <td className="p-3.5 text-zinc-600">{j.created_by}</td>
+                    <td className="p-3.5 text-zinc-600">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar
+                          name={j.created_by}
+                          departmentId="finance"
+                          size="xs"
+                          status={j.status === 'POSTED' ? 'verified' : 'none'}
+                        />
+                        <span>{j.created_by}</span>
+                      </div>
+                    </td>
                     <td className="p-3.5">
                       <Badge
                         text={j.status === 'POSTED' ? 'مرحّل ومعتمد' : 'مسودة'}

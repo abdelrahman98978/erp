@@ -4,6 +4,8 @@ import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { exportData } from '../services/exportService';
 import { Package, Calculator, FileText, Plus, Check, PenSquare, FileSignature, FileSpreadsheet, X } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface RentPackage {
   id: string;
@@ -245,6 +247,7 @@ export const RentPackagesPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3">
+          <BusinessIllustration type="rent-packages" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Package className="w-5 h-5" />
           </div>
@@ -323,8 +326,13 @@ export const RentPackagesPage: React.FC = () => {
                     <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{activeCount} عقد نشط</span>
                   </div>
 
-                  <h3 className="text-base font-bold text-black mb-1">{pkg.name}</h3>
-                  <p className="text-xs text-zinc-500 mb-4">{pkg.terms_summary || ''}</p>
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <CorporateAvatar name={pkg.name} category={pkg.category} profession="عاملة منزلية" isCandidate size="sm" />
+                    <div>
+                      <h3 className="text-base font-bold text-black">{pkg.name}</h3>
+                      <p className="text-xs text-zinc-500">{pkg.terms_summary || ''}</p>
+                    </div>
+                  </div>
 
                   <div className="py-3 px-4 bg-zinc-50 rounded-2xl mb-4 border border-zinc-100 flex justify-between items-baseline">
                     <div>

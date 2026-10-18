@@ -7,6 +7,8 @@ import {
   UploadCloud, Download, FileSpreadsheet, Check, Search, Plus, 
   Eye, X, Trash2, Globe, Building2, FileText, CheckCircle2, UserCheck
 } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface ImportBatch {
   id: string;
@@ -214,6 +216,7 @@ export const AgentImportsPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3">
+          <BusinessIllustration type="foreign-agencies" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <UploadCloud className="w-5 h-5" />
           </div>
@@ -297,8 +300,13 @@ export const AgentImportsPage: React.FC = () => {
                 <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
                   <td className="p-3.5 font-mono font-bold text-black">{row.batch_code}</td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{row.office_name}</div>
-                    <div className="text-zinc-500 text-[11px]">{row.country}</div>
+                    <div className="flex items-center gap-2.5">
+                      <CorporateAvatar name={row.office_name} role={row.country} size="sm" status="verified" />
+                      <div>
+                        <div className="font-bold text-black">{row.office_name}</div>
+                        <div className="text-zinc-500 text-[11px]">{row.country}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="p-3.5">
                     <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>
@@ -489,7 +497,12 @@ export const AgentImportsPage: React.FC = () => {
                 <tbody className="divide-y divide-zinc-100">
                   {(selectedBatch.candidates || []).map((c) => (
                     <tr key={c.id} className="hover:bg-zinc-50">
-                      <td className="p-3 font-bold text-slate-900">{c.name}</td>
+                      <td className="p-3 font-bold text-slate-900">
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={c.name} profession={c.profession} isCandidate size="sm" />
+                          <span>{c.name}</span>
+                        </div>
+                      </td>
                       <td className="p-3 font-mono text-zinc-700">{c.passport}</td>
                       <td className="p-3 text-zinc-600">{c.profession} ({c.age} سنة)</td>
                       <td className="p-3 text-zinc-600">{c.experience}</td>

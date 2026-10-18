@@ -8,6 +8,8 @@ import {
 import { Badge } from '../components/ui/Badge';
 import { useAppStore } from '../stores/appStore';
 import { exportData } from '../services/exportService';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export const MusanedIntegrationPlanPage: React.FC = () => {
   const { addNotification } = useAppStore();
@@ -87,6 +89,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
       >
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
+            <BusinessIllustration type="musaned-recruitment" size="sm" />
             <div
               style={{
                 width: '50px',
@@ -130,6 +133,19 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2.5 bg-white/10 border border-white/15 rounded-full py-1.5 px-3">
+              <CorporateAvatar
+                name="م. طارق السليم"
+                role="مهندس تكامل مساند"
+                departmentId="recruitment"
+                size="sm"
+                status="verified"
+              />
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-white leading-tight">م. طارق السليم</div>
+                <div className="text-[10px] text-emerald-400">مسؤول الربط الحكومي المعتمد</div>
+              </div>
+            </div>
             <button
               onClick={() => window.print()}
               className="button-white-pill"

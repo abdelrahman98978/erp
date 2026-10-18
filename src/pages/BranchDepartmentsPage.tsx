@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   Network, Plus, FileSpreadsheet, FileText, Building2, Users, 
   Check, X, Shield, Plane, Globe, Handshake, DollarSign, 
@@ -491,8 +493,11 @@ export const BranchDepartmentsPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+          <div className="flex items-center gap-3.5">
+            <div className="hidden sm:block">
+              <BusinessIllustration type="branch-network" size="sm" showBackground={false} />
+            </div>
+            <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
               <Network className="w-5 h-5 text-champagne-light" />
             </div>
             <div>
@@ -675,7 +680,10 @@ export const BranchDepartmentsPage: React.FC = () => {
               <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
                 isSelected ? 'text-champagne-light/70' : 'text-zinc-500 dark:text-zinc-400'
               }`}>
-                <span className="truncate max-w-[140px]">{e.manager}</span>
+                <div className="flex items-center gap-1.5 truncate max-w-[160px]">
+                  <CorporateAvatar name={e.manager} role={e.name} size="xs" />
+                  <span className="truncate">{e.manager}</span>
+                </div>
                 <span className="font-bold text-[11px] shrink-0 font-mono">{(e.departments || []).length} أقسام • {e.staff_count || 0} موظف</span>
               </div>
             </div>
@@ -703,9 +711,12 @@ export const BranchDepartmentsPage: React.FC = () => {
                 <span>{selectedEntity.name}</span>
                 <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 font-medium">({selectedEntity.location})</span>
               </h3>
-              <p className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">
-                المشرف / المدير المسؤول: <strong className="text-champagne-dark dark:text-champagne-light">{selectedEntity.manager}</strong>
-              </p>
+              <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300 font-medium pt-0.5">
+                <CorporateAvatar name={selectedEntity.manager} role={selectedEntity.name} size="sm" status="verified" />
+                <span>
+                  المشرف / المدير المسؤول: <strong className="text-champagne-dark dark:text-champagne-light">{selectedEntity.manager}</strong>
+                </span>
+              </div>
             </div>
 
             <button
@@ -758,9 +769,12 @@ export const BranchDepartmentsPage: React.FC = () => {
                 </div>
 
                 <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center text-xs">
-                  <div className="text-zinc-500 dark:text-zinc-400">
-                    <span>رئيس القسم: </span>
-                    <strong className="text-slate-900 dark:text-white font-bold">{dept.head}</strong>
+                  <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+                    <CorporateAvatar name={dept.head} role={dept.name} size="sm" />
+                    <div>
+                      <span>رئيس القسم: </span>
+                      <strong className="text-slate-900 dark:text-white font-bold">{dept.head}</strong>
+                    </div>
                   </div>
                   <span className="pill-tag-shade text-xs font-mono">
                     {dept.staff_count} كوادر

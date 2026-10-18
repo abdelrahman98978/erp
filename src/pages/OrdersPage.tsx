@@ -11,6 +11,8 @@ import {
   Sparkles, Filter, Check, MessageCircle
 } from 'lucide-react';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface OrderRecord {
   id: string;
@@ -348,7 +350,8 @@ export const OrdersPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+          <BusinessIllustration type="musaned-recruitment" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <ShoppingBag className="w-5 h-5" />
           </div>
@@ -514,12 +517,22 @@ export const OrdersPage: React.FC = () => {
                   <tr key={ord.id} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5 font-mono font-bold text-black">#{ord.id}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{ord.client_name}</div>
-                      <div className="text-zinc-500 font-mono">{ord.client_phone}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={ord.client_name} isClient size="sm" />
+                        <div>
+                          <div className="font-bold text-black">{ord.client_name}</div>
+                          <div className="text-zinc-500 font-mono">{ord.client_phone}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{ord.maid_name}</div>
-                      <div className="text-zinc-500">{ord.nationality}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={ord.maid_name} profession={ord.request_type || 'عاملة منزلية'} isCandidate size="sm" />
+                        <div>
+                          <div className="font-bold text-black">{ord.maid_name}</div>
+                          <div className="text-zinc-500">{ord.nationality}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5 text-zinc-600 font-semibold">{ord.office_name || 'مكتب مانيلا'}</td>
                     <td className="p-3.5">

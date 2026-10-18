@@ -3,6 +3,8 @@ import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { Mail, Plus, FileSpreadsheet, FileText, Inbox, PenSquare, Eye, Paperclip, Printer, Check, ShieldCheck } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface UnifiedCorrespondence {
   id: string;
@@ -149,10 +151,8 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Mail className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-4">
+          <BusinessIllustration type="unified-comm" size="sm" showBackground={false} />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>INTER-COMPANY CORRESPONDENCE</span>
@@ -272,58 +272,68 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredList.map(memo => (
-              <div
-                key={memo.id}
-                className="card-pricing flex flex-col justify-between"
-                style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}
-              >
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-mono font-bold text-xs text-black">{memo.memo_no}</span>
-                    <Badge
-                      text={memo.priority}
-                      type={memo.priority === 'عاجل جداً' ? 'danger' : memo.priority === 'سري وهام' ? 'warning' : 'info'}
-                    />
-                  </div>
-
-                  <h3 className="text-sm font-bold text-black mb-2">{memo.subject}</h3>
-
-                  <div className="bg-zinc-50 p-2.5 rounded-xl text-xs text-zinc-600 mb-3 space-y-0.5">
-                    <div><strong>الجهة المصدرة:</strong> {memo.sender_entity}</div>
-                    <div><strong>الجهة المستلمة:</strong> {memo.recipient_entity}</div>
-                  </div>
-
-                  <p className="text-xs text-zinc-700 leading-relaxed mb-3">
-                    {memo.body}
-                  </p>
-
-                  {memo.attachment_name && (
-                    <div className="flex items-center gap-1 text-xs text-black font-semibold mb-3">
-                      <Paperclip className="w-3.5 h-3.5 text-zinc-500" />
-                      <span>مرفق: {memo.attachment_name}</span>
+          {filteredList.length === 0 ? (
+            <div className="card-pricing flex flex-col items-center justify-center py-12 text-center" style={{ borderRadius: '16px', background: '#ffffff' }}>
+              <BusinessIllustration type="empty-search" size="md" />
+              <div className="text-sm font-bold text-zinc-600 mt-3">لا توجد مراسلات أو خطابات مطابقة للتصنيف</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredList.map(memo => (
+                <div
+                  key={memo.id}
+                  className="card-pricing flex flex-col justify-between"
+                  style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}
+                >
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-mono font-bold text-xs text-black">{memo.memo_no}</span>
+                      <Badge
+                        text={memo.priority}
+                        type={memo.priority === 'عاجل جداً' ? 'danger' : memo.priority === 'سري وهام' ? 'warning' : 'info'}
+                      />
                     </div>
-                  )}
-                </div>
 
-                <div className="flex justify-between items-center pt-3 border-t border-zinc-100 text-xs">
-                  <span className="text-zinc-400 font-mono">{memo.created_at}</span>
-                  <button
-                    className="button-outline-on-light"
-                    style={{ padding: '3px 12px', fontSize: '11.5px', minHeight: '26px' }}
-                    onClick={() => {
-                      setSelectedMemo(memo);
-                      setActiveTab('letterhead-preview');
-                    }}
-                  >
-                    <Eye className="w-3 h-3 ml-1" />
-                    <span>فتح الخطاب الرسمي</span>
-                  </button>
+                    <h3 className="text-sm font-bold text-black mb-2">{memo.subject}</h3>
+
+                    <div className="bg-zinc-50 p-2.5 rounded-xl text-xs text-zinc-600 mb-3 flex items-center gap-2.5">
+                      <CorporateAvatar name={memo.sender_entity} role={memo.recipient_entity} size="sm" status="verified" />
+                      <div className="space-y-0.5">
+                        <div><strong>الجهة المصدرة:</strong> {memo.sender_entity}</div>
+                        <div><strong>الجهة المستلمة:</strong> {memo.recipient_entity}</div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-zinc-700 leading-relaxed mb-3">
+                      {memo.body}
+                    </p>
+
+                    {memo.attachment_name && (
+                      <div className="flex items-center gap-1 text-xs text-black font-semibold mb-3">
+                        <Paperclip className="w-3.5 h-3.5 text-zinc-500" />
+                        <span>مرفق: {memo.attachment_name}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3 border-t border-zinc-100 text-xs">
+                    <span className="text-zinc-400 font-mono">{memo.created_at}</span>
+                    <button
+                      className="button-outline-on-light"
+                      style={{ padding: '3px 12px', fontSize: '11.5px', minHeight: '26px' }}
+                      onClick={() => {
+                        setSelectedMemo(memo);
+                        setActiveTab('letterhead-preview');
+                      }}
+                    >
+                      <Eye className="w-3 h-3 ml-1" />
+                      <span>فتح الخطاب الرسمي</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -491,9 +501,12 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-center">
-              <div className="text-xs text-zinc-500">المعتمد:</div>
-              <div className="text-sm font-black text-black mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
+            <div className="flex items-center gap-2.5">
+              <CorporateAvatar name={selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'} size="sm" status="verified" />
+              <div className="text-right">
+                <div className="text-xs text-zinc-500">المعتمد:</div>
+                <div className="text-sm font-black text-black mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
+              </div>
             </div>
           </div>
 

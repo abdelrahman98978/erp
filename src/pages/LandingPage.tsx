@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { CompanyLogo } from '../components/common/CompanyLogo';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { resolveIllustrationForPortal } from '../services/visualAssetsRegistry';
 import { CompanyId } from '../types';
 import { useCompany } from '../contexts/CompanyContext';
@@ -434,11 +435,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               <div className="pt-4 border-t border-[#E4E4E7] space-y-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-11 h-11 rounded-2xl bg-[#FBFBF5] border border-[#CFA64A] p-0.5 flex items-center justify-center shrink-0">
-                      <img
-                        src={persona === 'noura' ? '/noura.png' : '/mascot.png'}
-                        alt={persona === 'noura' ? 'نُورة' : 'فارس'}
-                        className="w-full h-full object-contain"
+                    <div className="flex items-center -space-x-2 rtl:space-x-reverse">
+                      <CorporateAvatar
+                        archetype="ai-faris"
+                        name="فارس"
+                        role="المستشار التنفيذي"
+                        size="md"
+                        status={persona === 'faris' ? 'speaking' : 'online'}
+                        className={persona === 'faris' ? 'ring-2 ring-[#CFA64A] z-10' : 'opacity-75'}
+                      />
+                      <CorporateAvatar
+                        archetype="ai-noura"
+                        name="نُورة"
+                        role="المستشارة المؤسسية"
+                        size="md"
+                        status={persona === 'noura' ? 'speaking' : 'online'}
+                        className={persona === 'noura' ? 'ring-2 ring-[#CFA64A] z-10' : 'opacity-75'}
                       />
                     </div>
                     <div>

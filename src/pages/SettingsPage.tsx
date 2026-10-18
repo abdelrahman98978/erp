@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
@@ -439,9 +441,9 @@ export const SettingsPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Sliders className="w-5 h-5 text-champagne-light" />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block shrink-0">
+              <BusinessIllustration type="master-constants" size="sm" showBackground={true} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -457,14 +459,29 @@ export const SettingsPage: React.FC = () => {
             </div>
           </div>
 
-          <button
-            className="button-white-pill"
-            onClick={handleSaveSettings}
-            style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
-          >
-            <Save className="w-3.5 h-3.5 ml-1 text-black" />
-            <span>حفظ جميع التعديلات</span>
-          </button>
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-2.5 bg-white/10 border border-white/15 rounded-full px-3 py-1.5">
+              <CorporateAvatar
+                archetype="saudi-executive"
+                name="مشرف admin (خالد السليم)"
+                role="Super Admin"
+                size="md"
+                status="verified"
+              />
+              <div className="text-right">
+                <div className="text-xs font-bold text-white">خالد السليم</div>
+                <div className="text-[10px] text-emerald-400">مشرف عام المنظومة</div>
+              </div>
+            </div>
+            <button
+              className="button-white-pill"
+              onClick={handleSaveSettings}
+              style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
+            >
+              <Save className="w-3.5 h-3.5 ml-1 text-black" />
+              <span>حفظ جميع التعديلات</span>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -19,6 +19,8 @@ const KasEtimadCloudPage = React.lazy(() =>
 import { KasTenderItem } from '../types/kasMonafasat';
 import { BOQItem, TenderRecord, SupplierRecord } from '../types/tenders';
 import { KasKpiCard, KasTenderCard, KasSupplierCard } from '../components/kas/KasCards';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   Building2, Plus, FileSpreadsheet, FileText, Search, Printer, 
   Trash2, Edit3, CheckCircle2, AlertCircle, TrendingUp, DollarSign,
@@ -990,12 +992,10 @@ export const TendersBOQPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Building2 className="w-5 h-5 text-emerald-400" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration type="kas-tenders" size="sm" />
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                   KAS TRADING & TENDERS
                 </span>
@@ -1013,6 +1013,19 @@ export const TendersBOQPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-1 px-3 ml-1">
+              <CorporateAvatar
+                size="sm"
+                archetype="tenders-engineer"
+                status="verified"
+                name="م. أحمد البشير"
+                role="مهندس تسعير المنافسات والمشاريع"
+              />
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-white leading-tight">م. أحمد البشير</div>
+                <div className="text-[10px] text-emerald-300 leading-tight">مهندس تسعير معتمد</div>
+              </div>
+            </div>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
               className="button-outline-on-dark"

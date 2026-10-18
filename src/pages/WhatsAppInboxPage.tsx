@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
@@ -152,8 +154,11 @@ export const WhatsAppInboxPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div className="flex items-center gap-3.5">
+          <div className="hidden sm:block">
+            <BusinessIllustration type="whatsapp-chat" size="sm" showBackground={false} />
+          </div>
+          <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <PhoneCall className="w-5 h-5 text-champagne-light" />
           </div>
           <div>
@@ -275,31 +280,46 @@ export const WhatsAppInboxPage: React.FC = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto divide-y divide-zinc-100">
-            {filteredChats.map((chat) => (
-              <div
-                key={chat.id}
-                onClick={() => setActiveChat(chat)}
-                className={`p-3.5 transition-all cursor-pointer ${
-                  activeChat.id === chat.id
-                    ? 'bg-zinc-100 border-r-4 border-black'
-                    : 'hover:bg-zinc-100/50'
-                }`}
-              >
-                <div className="flex justify-between items-start mb-1">
-                  <span className="font-bold text-xs text-black">{chat.client_name}</span>
-                  <span className="text-[10px] font-mono text-zinc-400">{chat.time}</span>
-                </div>
-                <div className="text-xs text-zinc-500 truncate">{chat.last_message}</div>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-[11px] font-mono text-champagne-dark font-bold">{chat.phone}</span>
-                  {chat.unread_count > 0 && (
-                    <span className="bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                      {chat.unread_count}
-                    </span>
-                  )}
-                </div>
+            {filteredChats.length === 0 ? (
+              <div className="p-6 text-center text-zinc-400 text-xs flex flex-col items-center justify-center gap-2">
+                <BusinessIllustration type="empty-search" size="sm" />
+                <span>لا توجد محادثات مطابقة للبحث</span>
               </div>
-            ))}
+            ) : (
+              filteredChats.map((chat) => (
+                <div
+                  key={chat.id}
+                  onClick={() => setActiveChat(chat)}
+                  className={`p-3.5 transition-all cursor-pointer flex items-start gap-2.5 ${
+                    activeChat.id === chat.id
+                      ? 'bg-zinc-100 border-r-4 border-black'
+                      : 'hover:bg-zinc-100/50'
+                  }`}
+                >
+                  <CorporateAvatar
+                    name={chat.client_name}
+                    departmentId="crm"
+                    size="sm"
+                    status={chat.status === 'نشط' ? 'online' : 'none'}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-bold text-xs text-black truncate">{chat.client_name}</span>
+                      <span className="text-[10px] font-mono text-zinc-400 shrink-0">{chat.time}</span>
+                    </div>
+                    <div className="text-xs text-zinc-500 truncate">{chat.last_message}</div>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-[11px] font-mono text-champagne-dark font-bold">{chat.phone}</span>
+                      {chat.unread_count > 0 && (
+                        <span className="bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                          {chat.unread_count}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -308,9 +328,12 @@ export const WhatsAppInboxPage: React.FC = () => {
           {/* Chat Header */}
           <div className="p-3.5 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-black text-white font-bold flex items-center justify-center text-xs shadow-sm">
-                <PhoneCall className="w-4 h-4 text-champagne-light" />
-              </div>
+              <CorporateAvatar
+                name={activeChat.client_name}
+                departmentId="crm"
+                size="sm"
+                status="online"
+              />
               <div>
                 <h3 className="font-bold text-xs text-black">{activeChat.client_name}</h3>
                 <span className="text-[11px] font-mono text-champagne-dark font-bold">{activeChat.phone}</span>

@@ -24,6 +24,8 @@ import {
   X
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { EcommerceStore, EcommerceStoreOrder } from '../types';
 
 export interface SmaccFixedAsset {
@@ -598,10 +600,13 @@ export const SmaccModulesPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Building2 className="w-5 h-5 text-champagne-light" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration
+              type="smacc-finance"
+              size="sm"
+              showBackground={false}
+              className="!w-16 !h-14 shrink-0"
+            />
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SMACC EXTENDED SUITE</span>
@@ -782,7 +787,12 @@ export const SmaccModulesPage: React.FC = () => {
                     <tr key={order.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono font-bold text-black">{order.externalOrderNo}</td>
                       <td className="p-3.5 font-bold text-black">{order.platform}</td>
-                      <td className="p-3.5 font-bold text-black">{order.customerName}</td>
+                      <td className="p-3.5 font-bold text-black">
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={order.customerName} isClient={true} size="sm" status="verified" />
+                          <span>{order.customerName}</span>
+                        </div>
+                      </td>
                       <td className="p-3.5 font-mono text-zinc-600">{order.customerPhone}</td>
                       <td className="p-3.5 text-zinc-700">{order.serviceType}</td>
                       <td className="p-3.5 font-mono font-bold text-champagne-dark">{order.totalAmount.toLocaleString()} ر.س</td>
@@ -1057,7 +1067,12 @@ export const SmaccModulesPage: React.FC = () => {
                   {salesReps.map(rep => (
                     <tr key={rep.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono text-black font-bold">{rep.id}</td>
-                      <td className="p-3.5 font-bold text-black">{rep.name}</td>
+                      <td className="p-3.5 font-bold text-black">
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={rep.name} role={rep.role} departmentId="finance" size="sm" status="verified" />
+                          <span>{rep.name}</span>
+                        </div>
+                      </td>
                       <td className="p-3.5 text-zinc-600">{rep.role}</td>
                       <td className="p-3.5 text-zinc-500 font-mono">{rep.phone}</td>
                       <td className="p-3.5 font-bold font-mono text-black">{rep.totalSales.toLocaleString()} ر.س</td>

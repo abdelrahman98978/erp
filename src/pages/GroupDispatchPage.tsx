@@ -9,6 +9,8 @@ import {
   Send, Plus, FileSpreadsheet, FileText, Eye, Printer, X, Check, 
   Building2, Plane, Globe, Award, ShieldAlert, Sparkles
 } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface GroupDispatchMemo {
   id: string;
@@ -176,6 +178,7 @@ export const GroupDispatchPage: React.FC = () => {
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
+            <BusinessIllustration type="travel-logistics" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
               <Send className="w-5 h-5 text-champagne-light" />
             </div>
@@ -330,7 +333,10 @@ export const GroupDispatchPage: React.FC = () => {
                     >
                       {row.status}
                     </span>
-                    <div className="text-[10px] text-zinc-400 mt-0.5">المسؤول: {row.assigned_officer}</div>
+                    <div className="flex items-center gap-1.5 mt-1.5">
+                      <CorporateAvatar name={row.assigned_officer} profession="سائق خاص" size="sm" />
+                      <span className="text-[10px] text-zinc-500 font-medium">المسؤول: {row.assigned_officer}</span>
+                    </div>
                   </td>
                   <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{row.created_at}</td>
                   <td className="p-3.5 text-center">

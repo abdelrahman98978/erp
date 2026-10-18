@@ -5,6 +5,8 @@ import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Users, UserPlus, Calendar, ArrowRight, ArrowLeft, Video, X } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 const INITIAL_CANDIDATES: Candidate[] = [
   {
@@ -191,6 +193,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3">
+          <BusinessIllustration type="ats-talent" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Users className="w-5 h-5" />
           </div>
@@ -321,9 +324,12 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
           >
             <div>
               <div className="flex justify-between items-start mb-3">
-                <div>
-                  <span className="text-xs text-zinc-400 font-mono font-bold">{cnd.candidateCode}</span>
-                  <h3 className="text-base font-bold text-black mt-0.5">{cnd.name}</h3>
+                <div className="flex items-center gap-2.5">
+                  <CorporateAvatar name={cnd.name} profession={cnd.appliedPosition} isCandidate size="md" status="verified" />
+                  <div>
+                    <span className="text-xs text-zinc-400 font-mono font-bold">{cnd.candidateCode}</span>
+                    <h3 className="text-base font-bold text-black mt-0.5">{cnd.name}</h3>
+                  </div>
                 </div>
 
                 {/* AI Score Badge */}

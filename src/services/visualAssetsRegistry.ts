@@ -44,7 +44,14 @@ export type IllustrationKey =
   | 'reports-bi'
   | 'foreign-agencies'
   | 'client-portal'
-  | 'travel-logistics';
+  | 'travel-logistics'
+  | 'branch-network'
+  | 'unified-comm'
+  | 'sent-messages'
+  | 'rent-packages'
+  | 'sponsorship-transfer'
+  | 'master-constants'
+  | 'group-command';
 
 export interface IllustrationMetadata {
   key: IllustrationKey;
@@ -273,6 +280,69 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/travel-logistics.svg',
   },
+  'branch-network': {
+    key: 'branch-network',
+    titleAr: 'الهيكل التنظيمي والفروع وشبكة التراسل الداخلي',
+    subtitleAr: 'إدارة فروع الشركات الـ 5، توزيع الإدارات الفرعية، وقنوات التواصل المباشر بين الفروع',
+    badgeAr: 'شبكة الفروع والهيكل التنظيمي',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/branch-network.svg',
+  },
+  'unified-comm': {
+    key: 'unified-comm',
+    titleAr: 'منصة التواصل الموحد متعدد القنوات (Omnichannel Hub)',
+    subtitleAr: 'ربط مكالمات السنترال، الواتساب، البريد، والتذاكر الفورية في شاشة موحدة لخدمة العملاء',
+    badgeAr: 'مركز الاتصال الموحد',
+    accentHex: '#047857',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/unified-comm.svg',
+  },
+  'sent-messages': {
+    key: 'sent-messages',
+    titleAr: 'سجل الرسائل المرسلة والحملات الإشعارية',
+    subtitleAr: 'أرشفة وتتبع رسائل SMS والواتساب والبريد المرسلة للعملاء والكوادر مع تقارير التسليم',
+    badgeAr: 'الإشعارات والرسائل الصادرة',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/sent-messages.svg',
+  },
+  'rent-packages': {
+    key: 'rent-packages',
+    titleAr: 'باقات وعروض التأجير والتسعير المرن',
+    subtitleAr: 'تصميم باقات الساعات والأشهر والمواسم، العروض الترويجية، وحاسبة التسعير التلقائي',
+    badgeAr: 'هندسة الباقات والعروض',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/rent-packages.svg',
+  },
+  'sponsorship-transfer': {
+    key: 'sponsorship-transfer',
+    titleAr: 'منظومة نقل الكفالة والخدمات وفترة التجربة',
+    subtitleAr: 'متابعة إجراءات نقل الخدمات في مساند وأبشر، تقييم فترة التجربة، والمقاصة المالية',
+    badgeAr: 'نقل الخدمات والكفالات',
+    accentHex: '#047857',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/sponsorship-transfer.svg',
+  },
+  'master-constants': {
+    key: 'master-constants',
+    titleAr: 'الثوابت العامة وإعدادات النظام والربط الحكومي',
+    subtitleAr: 'إدارة الجنسيات، المهن، البنوك، الضرائب، القوالب التعاقدية، ومفاتيح الربط السحابي',
+    badgeAr: 'مركز التهيئة والثوابت',
+    accentHex: '#8C681E',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/master-constants.svg',
+  },
+  'group-command': {
+    key: 'group-command',
+    titleAr: 'مركز القيادة الموحد للمجموعة القابضة (5 كيانات)',
+    subtitleAr: 'لوحة السيطرة الاستراتيجية لمتابعة أداء الشركات الخمس، التدفقات النقدية، ومؤشرات النمو',
+    badgeAr: 'القيادة الاستراتيجية للمجموعة',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/group-command.svg',
+  },
 };
 
 export const BUSINESS_ILLUSTRATION_METADATA = ILLUSTRATION_METADATA;
@@ -489,10 +559,23 @@ export function resolveIllustrationForTab(
   if (t.includes('office') || t.includes('agency') || t.includes('agent')) {
     return 'foreign-agencies';
   }
-  if (t.includes('shelter') || t.includes('sponsorship') || t.includes('deportation') || t.includes('room') || t.includes('catering')) {
+  if (t.includes('sponsorship') || t.includes('trial-period') || t.includes('transferred-done') || t.includes('transfer-contract')) {
+    return 'sponsorship-transfer';
+  }
+  if (t.includes('shelter') || t.includes('deportation') || t.includes('room') || t.includes('catering') || t.includes('available-transfer')) {
     return 'shelter-care';
   }
+  if (t.includes('rent-packages') || t.includes('packages')) return 'rent-packages';
   if (t.includes('rent')) return 'flexible-rental';
+  if (t.includes('branch-departments') || t.includes('branches') || t.includes('branch-communication')) {
+    return 'branch-network';
+  }
+  if (t.includes('unified-communication')) {
+    return 'unified-comm';
+  }
+  if (t.includes('sent-messages') || t.includes('sms-gateway')) {
+    return 'sent-messages';
+  }
   if (t.includes('whatsapp') || t.includes('message') || t.includes('sms') || t.includes('communication')) {
     return 'whatsapp-chat';
   }
@@ -519,10 +602,19 @@ export function resolveIllustrationForTab(
   ) {
     return 'attendance-monitoring';
   }
-  if (t.includes('hr') || t.includes('employee') || t.includes('payroll') || t.includes('wps') || t.includes('salary') || t.includes('gosi') || t.includes('branch-departments') || t.includes('branches')) {
+  if (t.includes('hr') || t.includes('employee') || t.includes('payroll') || t.includes('wps') || t.includes('salary') || t.includes('gosi')) {
     return 'hr-wps';
   }
-  if (t.includes('iam') || t.includes('users') || t.includes('access') || t.includes('roles') || t.includes('settings') || t.includes('microsoft') || t.includes('master-constants')) {
+  if (t.includes('microsoft') || t.includes('ai-copilot')) {
+    return 'ai-copilot';
+  }
+  if (t.includes('master-constants') || t.includes('settings')) {
+    return 'master-constants';
+  }
+  if (t.includes('group-command') || t.includes('admin-dashboard')) {
+    return 'group-command';
+  }
+  if (t.includes('iam') || t.includes('users') || t.includes('access') || t.includes('roles')) {
     return 'iam-security';
   }
   if (t.includes('client') || t.includes('crm') || t.includes('black-list')) {

@@ -9,6 +9,8 @@ import {
   DollarSign, ArrowDownRight, CheckCircle2 
 } from 'lucide-react';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface CostCenterRecord {
   id: string;
@@ -194,10 +196,13 @@ export const CostCentersPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <PieChart className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="inventory-custody"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>ANALYTICAL ACCOUNTING</span>
@@ -309,7 +314,17 @@ export const CostCentersPage: React.FC = () => {
                     <tr key={c.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono font-bold text-black">{c.code}</td>
                       <td className="p-3.5 font-bold text-black">{c.name}</td>
-                      <td className="p-3.5 text-zinc-600">{c.manager_name || 'غير محدد'}</td>
+                      <td className="p-3.5 text-zinc-600">
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar
+                            name={c.manager_name || 'مشرف القسم'}
+                            departmentId="finance"
+                            size="xs"
+                            status="verified"
+                          />
+                          <span>{c.manager_name || 'غير محدد'}</span>
+                        </div>
+                      </td>
                       <td className="p-3.5 font-mono font-bold text-black">{c.budget.toLocaleString()} ر.س</td>
                       <td className="p-3.5 font-mono font-bold text-rose-700">{c.actual_spent.toLocaleString()} ر.س</td>
                       <td className="p-3.5 font-mono font-bold text-emerald-700">{remaining.toLocaleString()} ر.س</td>

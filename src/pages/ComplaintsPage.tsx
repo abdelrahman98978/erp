@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useComplaints, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -325,8 +327,11 @@ export const ComplaintsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div className="flex items-center gap-3.5">
+          <div className="hidden sm:block">
+            <BusinessIllustration type="attendance-monitoring" size="sm" showBackground={false} />
+          </div>
+          <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Headphones className="w-5 h-5" />
           </div>
           <div>
@@ -462,7 +467,12 @@ export const ComplaintsPage: React.FC = () => {
                 {refundClaims.map((c) => (
                   <tr key={c.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{c.id}</td>
-                    <td className="p-3.5 font-bold text-black">{c.client}</td>
+                    <td className="p-3.5 font-bold text-black">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={c.client} departmentId="crm" size="sm" />
+                        <span>{c.client}</span>
+                      </div>
+                    </td>
                     <td className="p-3.5 font-mono text-zinc-600">{c.ref}</td>
                     <td className="p-3.5 text-zinc-700">{c.reason}</td>
                     <td className="p-3.5 font-mono font-bold text-emerald-700">{c.amount.toLocaleString()} ر.س</td>
@@ -664,60 +674,85 @@ export const ComplaintsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {filteredTickets.map(ticket => (
-                  <tr key={ticket.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">{ticket.ticket_no}</td>
-                    <td className="p-3.5">
-                      <div className="font-bold text-black">{ticket.client_name}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono">{ticket.client_phone}</div>
-                    </td>
-                    <td className="p-3.5">
-                      <div className="font-bold text-black">{ticket.category}</div>
-                      <div className="text-[11px] text-zinc-500 font-mono">{ticket.contract_ref}</div>
-                    </td>
-                    <td className="p-3.5">
-                      <Badge
-                        text={ticket.priority}
-                        type={ticket.priority === 'عاجل طارئ' ? 'danger' : ticket.priority === 'مهم' ? 'warning' : 'info'}
-                      />
-                    </td>
-                    <td className="p-3.5">
-                      {ticket.sla_hours_left > 0 ? (
-                        <span className={`font-mono font-bold text-xs flex items-center gap-1 ${ticket.sla_hours_left <= 4 ? 'text-rose-600' : 'text-amber-600'}`}>
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>متبقي {ticket.sla_hours_left} ساعة</span>
-                        </span>
-                      ) : (
-                        <span className="text-zinc-400">مكتملة</span>
-                      )}
-                    </td>
-                    <td className="p-3.5 text-zinc-600">{ticket.assigned_agent}</td>
-                    <td className="p-3.5">
-                      <Badge
-                        text={ticket.status}
-                        type={ticket.status === 'تم الحل وإغلاق الشكوى' ? 'success' : ticket.status === 'مرفوعة للمشرف' ? 'danger' : 'warning'}
-                      />
-                    </td>
-                    <td className="p-3.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <button
-                          className="button-outline-on-light"
-                          style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
-                          onClick={() => setSelectedTicket(ticket)}
-                        >
-                          معاينة ومعالجة
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTicket(ticket)}
-                          className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
-                          title="حذف الشكوى"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                {filteredTickets.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="p-8 text-center text-zinc-400">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <BusinessIllustration type="empty-search" size="md" />
+                        <span className="font-bold text-black">لا توجد تذاكر أو شكاوى مطابقة للبحث</span>
                       </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  filteredTickets.map(ticket => (
+                    <tr key={ticket.id} className="hover:bg-zinc-50 transition-colors">
+                      <td className="p-3.5 font-mono font-bold text-black">{ticket.ticket_no}</td>
+                      <td className="p-3.5">
+                        <div className="flex items-center gap-2.5">
+                          <CorporateAvatar
+                            name={ticket.client_name}
+                            departmentId="crm"
+                            size="sm"
+                          />
+                          <div>
+                            <div className="font-bold text-black">{ticket.client_name}</div>
+                            <div className="text-[11px] text-zinc-400 font-mono">{ticket.client_phone}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3.5">
+                        <div className="font-bold text-black">{ticket.category}</div>
+                        <div className="text-[11px] text-zinc-500 font-mono">{ticket.contract_ref}</div>
+                      </td>
+                      <td className="p-3.5">
+                        <Badge
+                          text={ticket.priority}
+                          type={ticket.priority === 'عاجل طارئ' ? 'danger' : ticket.priority === 'مهم' ? 'warning' : 'info'}
+                        />
+                      </td>
+                      <td className="p-3.5">
+                        {ticket.sla_hours_left > 0 ? (
+                          <span className={`font-mono font-bold text-xs flex items-center gap-1 ${ticket.sla_hours_left <= 4 ? 'text-rose-600' : 'text-amber-600'}`}>
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>متبقي {ticket.sla_hours_left} ساعة</span>
+                          </span>
+                        ) : (
+                          <span className="text-zinc-400">مكتملة</span>
+                        )}
+                      </td>
+                      <td className="p-3.5 text-zinc-600">
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={ticket.assigned_agent} departmentId="hr" size="xs" />
+                          <span>{ticket.assigned_agent}</span>
+                        </div>
+                      </td>
+                      <td className="p-3.5">
+                        <Badge
+                          text={ticket.status}
+                          type={ticket.status === 'تم الحل وإغلاق الشكوى' ? 'success' : ticket.status === 'مرفوعة للمشرف' ? 'danger' : 'warning'}
+                        />
+                      </td>
+                      <td className="p-3.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <button
+                            className="button-outline-on-light"
+                            style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
+                            onClick={() => setSelectedTicket(ticket)}
+                          >
+                            معاينة ومعالجة
+                          </button>
+                          <button
+                            onClick={() => handleDeleteTicket(ticket)}
+                            className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                            title="حذف الشكوى"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -731,9 +766,12 @@ export const ComplaintsPage: React.FC = () => {
             <div className="bg-zinc-50 rounded-2xl p-3 border border-zinc-200">
               <h4 className="text-xs font-bold text-black mb-3">محادثات الدعم النشطة</h4>
               {complaints.map(c => (
-                <div key={c.id} className="p-2.5 rounded-xl bg-white border border-zinc-200 mb-2 cursor-pointer hover:border-black transition-colors">
-                  <div className="font-bold text-xs text-black">{c.client_name}</div>
-                  <div className="text-[11px] text-zinc-400 font-mono">{c.client_phone} • {c.ticket_no}</div>
+                <div key={c.id} className="p-2.5 rounded-xl bg-white border border-zinc-200 mb-2 cursor-pointer hover:border-black transition-colors flex items-center gap-2.5">
+                  <CorporateAvatar name={c.client_name} departmentId="crm" size="sm" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-xs text-black truncate">{c.client_name}</div>
+                    <div className="text-[11px] text-zinc-400 font-mono truncate">{c.client_phone} • {c.ticket_no}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -741,9 +779,12 @@ export const ComplaintsPage: React.FC = () => {
             <div className="md:col-span-2 bg-white rounded-2xl p-4 border border-zinc-200 flex flex-col justify-between">
               <div>
                 <div className="border-b border-zinc-100 pb-3 mb-3 flex justify-between items-center">
-                  <div>
-                    <h4 className="text-xs font-bold text-black">بندر صالح الهويريني (+966555774494)</h4>
-                    <span className="text-[11px] text-zinc-400 font-mono">تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
+                  <div className="flex items-center gap-2.5">
+                    <CorporateAvatar name="بندر صالح الهويريني" departmentId="crm" size="sm" status="online" />
+                    <div>
+                      <h4 className="text-xs font-bold text-black">بندر صالح الهويريني (+966555774494)</h4>
+                      <span className="text-[11px] text-zinc-400 font-mono">تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
+                    </div>
                   </div>
                   <Badge text="مرفوعة للمشرف" type="danger" />
                 </div>

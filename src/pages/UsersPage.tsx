@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
@@ -459,9 +461,9 @@ export const UsersPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <ShieldCheck className="w-5 h-5" />
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:block shrink-0">
+            <BusinessIllustration type="iam-security" size="sm" showBackground={true} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -563,8 +565,19 @@ export const UsersPage: React.FC = () => {
               {filteredUsers.map((u) => (
                 <tr key={u.id} className="hover:bg-zinc-50 transition-colors">
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{u.name}</div>
-                    <div className="text-[11px] text-zinc-400 font-mono">@{u.username} • {u.email}</div>
+                    <div className="flex items-center gap-3">
+                      <CorporateAvatar
+                        name={u.name}
+                        role={u.role}
+                        email={u.email}
+                        size="sm"
+                        status={u.status === 'نشط' ? 'online' : 'none'}
+                      />
+                      <div>
+                        <div className="font-bold text-black">{u.name}</div>
+                        <div className="text-[11px] text-zinc-400 font-mono">@{u.username} • {u.email}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="p-3.5">
                     <Badge text={u.role} type="purple" />

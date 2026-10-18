@@ -5,6 +5,8 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { useCompany } from '../contexts/CompanyContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { FileText, Plus, FileSpreadsheet, Search, X, Check, CheckCircle2, Trash2 } from 'lucide-react';
 
 export interface FinancialReq {
@@ -240,10 +242,13 @@ export const FinancialRequestsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <FileText className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="treasury-vouchers"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCIAL OPERATIONAL REQUESTS</span>
@@ -369,7 +374,17 @@ export const FinancialRequestsPage: React.FC = () => {
                   <td className="p-3.5 text-zinc-600">{r.payment_method}</td>
                   <td className="p-3.5"><Badge text={r.escalation} type={r.escalation === 'شديد الأهمية' ? 'danger' : 'warning'} /></td>
                   <td className="p-3.5"><Badge text={r.status} type={r.status === 'تم السداد' ? 'success' : 'warning'} /></td>
-                  <td className="p-3.5 font-semibold text-black">{r.applicant}</td>
+                  <td className="p-3.5 font-semibold text-black">
+                    <div className="flex items-center gap-2">
+                      <CorporateAvatar
+                        name={r.applicant}
+                        departmentId="finance"
+                        size="sm"
+                        status={r.status === 'تم السداد' ? 'verified' : 'none'}
+                      />
+                      <span>{r.applicant}</span>
+                    </div>
+                  </td>
                   <td className="p-3.5 text-center">
                     <div className="flex items-center justify-center gap-1.5">
                       {r.status !== 'تم السداد' && (

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { 
@@ -160,9 +162,9 @@ export const ActivityLogPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <ShieldCheck className="w-5 h-5 text-champagne-light" />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block shrink-0">
+              <BusinessIllustration type="attendance-monitoring" size="sm" showBackground={true} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -332,8 +334,18 @@ export const ActivityLogPage: React.FC = () => {
                 <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
                   <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{row.user_name}</div>
-                    <div className="text-[10px] text-zinc-400">{row.role}</div>
+                    <div className="flex items-center gap-2.5">
+                      <CorporateAvatar
+                        name={row.user_name}
+                        role={row.role}
+                        size="xs"
+                        status="online"
+                      />
+                      <div>
+                        <div className="font-bold text-black">{row.user_name}</div>
+                        <div className="text-[10px] text-zinc-400">{row.role}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="p-3.5">
                     <span

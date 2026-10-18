@@ -4,6 +4,8 @@ import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { Vault, Plus, FileSpreadsheet, FileText, Search, Printer, RotateCcw, X, ShieldCheck, Trash2 } from 'lucide-react';
 
 interface Custody {
@@ -119,10 +121,13 @@ export const CustodiesPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Vault className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="inventory-custody"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>HR ASSETS & CUSTODIES</span>
@@ -186,7 +191,18 @@ export const CustodiesPage: React.FC = () => {
                     <div className="font-bold text-black">{row.item_name}</div>
                     <div className="text-[11px] text-zinc-500 font-mono">S/N: {row.serial_number}</div>
                   </td>
-                  <td className="p-3.5 font-semibold text-black">{row.employee_name}</td>
+                  <td className="p-3.5 font-semibold text-black">
+                    <div className="flex items-center gap-2">
+                      <CorporateAvatar
+                        name={row.employee_name}
+                        role={row.location}
+                        departmentId="hr"
+                        size="sm"
+                        status={row.status === 'في حوزة الموظف' ? 'verified' : 'none'}
+                      />
+                      <span>{row.employee_name}</span>
+                    </div>
+                  </td>
                   <td className="p-3.5">
                     <Badge text={row.location} type="purple" />
                   </td>

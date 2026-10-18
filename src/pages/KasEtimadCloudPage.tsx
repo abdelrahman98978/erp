@@ -25,6 +25,8 @@ import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard, KasInvoiceCard } from '../components/kas/KasCards';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { tafqeet } from '../services/tafqeetService';
 
 export const KasEtimadCloudPage: React.FC = () => {
@@ -830,12 +832,10 @@ export const KasEtimadCloudPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Building2 className="w-5 h-5 text-emerald-400" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration type="kas-tenders" size="sm" />
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                   KAS ETMAD CLOUD & MONAFASAT
                 </span>
@@ -853,6 +853,20 @@ export const KasEtimadCloudPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Etimad Engineering Lead Badge */}
+            <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-1 px-3">
+              <CorporateAvatar
+                size="sm"
+                archetype="tenders-engineer"
+                status="verified"
+                name="م. أحمد البشير"
+                role="رئيس قسم المنافسات واعتماد"
+              />
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-white leading-tight">م. أحمد البشير</div>
+                <div className="text-[10px] text-emerald-300 leading-tight">مسؤول سحابة اعتماد</div>
+              </div>
+            </div>
             {/* Live Task Timer */}
             <div className="flex items-center bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs">
               <button

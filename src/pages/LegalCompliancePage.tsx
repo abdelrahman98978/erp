@@ -5,6 +5,8 @@ import {
   Building2, Users, Calendar, Award, RefreshCw, X, Check, FileSpreadsheet
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { exportData } from '../services/exportService';
 import { useAppStore } from '../stores/appStore';
@@ -164,9 +166,9 @@ export const LegalCompliancePage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Scale className="w-5 h-5" />
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:block shrink-0">
+            <BusinessIllustration type="legal-compliance" size="sm" showBackground={true} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -317,8 +319,19 @@ export const LegalCompliancePage: React.FC = () => {
                       </span>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{item.employee_name}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono">هوية: {item.national_id} • @{item.username}</div>
+                      <div className="flex items-center gap-3">
+                        <CorporateAvatar
+                          name={item.employee_name}
+                          role={item.job_title}
+                          departmentId="executive"
+                          size="sm"
+                          status="verified"
+                        />
+                        <div>
+                          <div className="font-bold text-black">{item.employee_name}</div>
+                          <div className="text-[11px] text-zinc-400 font-mono">هوية: {item.national_id} • @{item.username}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5">
                       <div className="font-bold text-zinc-800">{item.department}</div>

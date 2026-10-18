@@ -34,6 +34,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
@@ -1141,7 +1142,17 @@ export const SmaccAccountingPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="p-3 font-mono text-zinc-500">{v.date}</td>
-                    <td className="p-3 font-semibold text-black">{v.payee}</td>
+                    <td className="p-3 font-semibold text-black">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar
+                          name={v.payee}
+                          departmentId="finance"
+                          size="xs"
+                          status="verified"
+                        />
+                        <span>{v.payee}</span>
+                      </div>
+                    </td>
                     <td className="p-3 text-zinc-700">{v.treasury}</td>
                     <td className="p-3 font-mono font-bold text-emerald-700">{v.amount.toLocaleString()} ر.س</td>
                     <td className="p-3 text-zinc-600 max-w-xs truncate">{v.notes}</td>

@@ -16,6 +16,8 @@ import { ShelterIntakeModal } from '../components/shelter/ShelterIntakeModal';
 import { WorkerProfileDetailModal } from '../components/shelter/WorkerProfileDetailModal';
 import { ShelterNotificationDrawer } from '../components/shelter/ShelterNotificationDrawer';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useAppStore } from '../stores/appStore';
 import { 
   Building2, 
@@ -151,35 +153,38 @@ export const SponsorshipTransferPage: React.FC = () => {
       {/* 1. Master Cinematic Hero Header - KAS Suite Luxury Design */}
       <div className="rounded-2xl p-6 bg-[#000000] bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] text-white border border-amber-500/20 shadow-xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 font-mono tracking-wider">
-                SHELTER & SPONSORSHIP TRANSFER PLATFORM
-              </span>
-              <span className="text-xs text-zinc-400 font-mono">
-                نطاق موحد ومحمي — 4 مكاتب معتمدة • عزل الكفيل الأول • متابعة يومية
-              </span>
-            </div>
+          <div className="flex items-start gap-4">
+            <BusinessIllustration type="sponsorship-transfer" size="sm" />
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 font-mono tracking-wider">
+                  SHELTER & SPONSORSHIP TRANSFER PLATFORM
+                </span>
+                <span className="text-xs text-zinc-400 font-mono">
+                  نطاق موحد ومحمي — 4 مكاتب معتمدة • عزل الكفيل الأول • متابعة يومية
+                </span>
+              </div>
 
-            <h1 className="text-2xl font-bold text-white m-0 tracking-tight font-display">
-              لوحة قيادة التنازل ونقل الخدمات وإدارة السكن الموحدة
-            </h1>
-            <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
-              الفصل المحكم بين مكتب العاملة الأصلي والمكتب المنفذ لنقل الخدمات، ملف موحد دائم للعاملة، قسم مستقل لتوثيق الكفيل الأول ومطالباته، ومتابعة رقمية استباقية لفترة تجربة العملاء.
-            </p>
+              <h1 className="text-2xl font-bold text-white m-0 tracking-tight font-display">
+                لوحة قيادة التنازل ونقل الخدمات وإدارة السكن الموحدة
+              </h1>
+              <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
+                الفصل المحكم بين مكتب العاملة الأصلي والمكتب المنفذ لنقل الخدمات، ملف موحد دائم للعاملة، قسم مستقل لتوثيق الكفيل الأول ومطالباته، ومتابعة رقمية استباقية لفترة تجربة العملاء.
+              </p>
 
-            {/* The 4 Group Offices Badges */}
-            <div className="pt-1 flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] text-zinc-400 font-bold ml-1">المكاتب والشركات المعتمدة:</span>
-              {GROUP_COMPANIES.map((comp: any) => (
-                <div 
-                  key={comp.id}
-                  className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-black/40 text-zinc-200 border border-white/10 flex items-center gap-1.5"
-                >
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: comp.brandColor }} />
-                  <span>{comp.name}</span>
-                </div>
-              ))}
+              {/* The 4 Group Offices Badges */}
+              <div className="pt-1 flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] text-zinc-400 font-bold ml-1">المكاتب والشركات المعتمدة:</span>
+                {GROUP_COMPANIES.map((comp: any) => (
+                  <div 
+                    key={comp.id}
+                    className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-black/40 text-zinc-200 border border-white/10 flex items-center gap-1.5"
+                  >
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: comp.brandColor }} />
+                    <span>{comp.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -507,17 +512,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                     <tr key={acc.id} className="hover:bg-white/5 transition-colors">
                       <td className="p-3">
                         <div className="flex items-center gap-2.5">
-                          {worker.photoUrl ? (
-                            <img 
-                              src={worker.photoUrl} 
-                              alt={worker.fullNameAr} 
-                              className="w-9 h-9 rounded-xl object-cover border border-white/10"
-                            />
-                          ) : (
-                            <div className="w-9 h-9 rounded-xl bg-black/60 border border-white/10 text-amber-300 flex items-center justify-center font-bold text-xs">
-                              {(worker.fullNameAr || 'ع').slice(0, 2)}
-                            </div>
-                          )}
+                          <CorporateAvatar name={worker.fullNameAr} profession="عاملة منزلية" isCandidate size="sm" />
                           <div>
                             <div className="font-bold text-white">{worker.fullNameAr}</div>
                             <div className="text-[10.5px] text-zinc-400 font-mono">{acc.caseCode}</div>
@@ -654,8 +649,13 @@ export const SponsorshipTransferPage: React.FC = () => {
                       </td>
 
                       <td className="p-3">
-                        <div className="font-bold text-white">{worker?.fullNameAr || 'عاملة'}</div>
-                        <div className="text-[10.5px] text-zinc-400 font-mono">جواز: {worker?.passportNumber || '-'}</div>
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={worker?.fullNameAr || 'عاملة'} profession="عاملة منزلية" isCandidate size="sm" />
+                          <div>
+                            <div className="font-bold text-white">{worker?.fullNameAr || 'عاملة'}</div>
+                            <div className="text-[10.5px] text-zinc-400 font-mono">جواز: {worker?.passportNumber || '-'}</div>
+                          </div>
+                        </div>
                       </td>
 
                       {/* Decoupled Office 1: Original */}
@@ -677,8 +677,13 @@ export const SponsorshipTransferPage: React.FC = () => {
                       </td>
 
                       <td className="p-3">
-                        <div className="font-bold text-white">{transfer.newClientName}</div>
-                        <div className="text-[10.5px] font-mono text-zinc-400">{transfer.newClientPhone}</div>
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={transfer.newClientName} isClient size="sm" />
+                          <div>
+                            <div className="font-bold text-white">{transfer.newClientName}</div>
+                            <div className="text-[10.5px] font-mono text-zinc-400">{transfer.newClientPhone}</div>
+                          </div>
+                        </div>
                       </td>
 
                       <td className="p-3">

@@ -4,10 +4,10 @@
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="500px" height="500px"
 	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#FBFBF5;}
-	.st1{fill:#1D2428;}
-	.st2{fill:#E6D3A7;}
-	.st3{fill:#CFA64A;}
+	.st0{fill:#FFFFFF;}
+	.st1{fill:#005596;}
+	.st2{fill:#FFB0CC;}
+	.st3{fill:#FFDC32;}
 </style>
 <g id="brain">
 	<path id="color" class="st0" d="M236.54,87.17c1.78-0.6,3.7-0.56,5.58-0.51c4.73,0.12,9.45,0.25,14.18,0.37
@@ -344,4 +344,3 @@
 	</g>
 </g>
 </svg>
-

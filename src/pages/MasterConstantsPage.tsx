@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
@@ -227,9 +229,9 @@ export const MasterConstantsPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Sliders className="w-5 h-5 text-champagne-light" />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block shrink-0">
+              <BusinessIllustration type="master-constants" size="sm" showBackground={true} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -245,7 +247,20 @@ export const MasterConstantsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3 py-1">
+              <CorporateAvatar
+                departmentId="executive"
+                name="أمين حوكمة الثوابت"
+                role="Data Governance Lead"
+                size="sm"
+                status="verified"
+              />
+              <div className="text-right">
+                <div className="text-[11px] font-bold text-white">حوكمة القاموس الموحد</div>
+                <div className="text-[9.5px] text-emerald-400">معتمد عبر الشركات الخمس</div>
+              </div>
+            </div>
             <button
               onClick={() => setShowAddModal(true)}
               className="button-white-pill"

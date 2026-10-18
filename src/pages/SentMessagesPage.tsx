@@ -4,6 +4,8 @@ import { exportData } from '../services/exportService';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { MessageSquare, Plus, FileSpreadsheet, FileText, Send, RotateCw, CheckCircle2, Clock, Layers, Server, Search, PhoneCall } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 interface MessageLog {
   id: string;
@@ -226,10 +228,8 @@ export const SentMessagesPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <MessageSquare className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-4">
+          <BusinessIllustration type="sent-messages" size="sm" showBackground={false} />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>COMMUNICATION HUB</span>
@@ -386,12 +386,26 @@ export const SentMessagesPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
-                {filteredMessages.map(row => (
+                {filteredMessages.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="py-12 text-center">
+                      <div className="flex flex-col items-center justify-center">
+                        <BusinessIllustration type="empty-search" size="md" />
+                        <div className="text-sm font-bold text-zinc-600 mt-3">لا توجد رسائل مطابقة للبحث</div>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredMessages.map(row => (
                   <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{row.recipient_name}</div>
-                      <div className="text-[11px] text-zinc-400 font-mono">{row.phone}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={row.recipient_name} size="xs" departmentId="crm" />
+                        <div>
+                          <div className="font-bold text-black">{row.recipient_name}</div>
+                          <div className="text-[11px] text-zinc-400 font-mono">{row.phone}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5">
                       <Badge

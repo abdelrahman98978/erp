@@ -12,6 +12,8 @@ import { useIamSession } from '../contexts/IamSessionContext';
 import { iamPolicyEngine } from '../services/iamPolicyEngine';
 import { RolesPermissionsMatrixWidget } from '../components/iam/RolesPermissionsMatrixWidget';
 import { UserScopeEditModal } from '../components/iam/UserScopeEditModal';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   IamUser, IamCompany, IamBranch, IamDepartment, IamMembership, 
   IamRole, IamPermission, IamDelegation, IamSoDRule, IamAccessRequest, 
@@ -294,18 +296,21 @@ export const IdentityAccessManagementPage: React.FC = () => {
       <div className="bg-[#000000] bg-gradient-to-l from-zinc-900 via-slate-900 to-black border border-white/10 rounded-3xl p-6 lg:p-8 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-96 h-96 bg-champagne/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs font-black tracking-wider text-champagne-light uppercase bg-black/80 px-3 py-1 rounded-full w-max border border-champagne/40">
-              <ShieldCheck className="w-4 h-4 text-champagne-light" />
-              <span>نظام الأمان والرقابة المركزية (IAM & Multi-Company Governance)</span>
+          <div className="flex items-start gap-4">
+            <BusinessIllustration type="iam-security" size="sm" />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs font-black tracking-wider text-champagne-light uppercase bg-black/80 px-3 py-1 rounded-full w-max border border-champagne/40">
+                <ShieldCheck className="w-4 h-4 text-champagne-light" />
+                <span>نظام الأمان والرقابة المركزية (IAM & Multi-Company Governance)</span>
+              </div>
+              <h1 className="text-2xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-3">
+                إدارة الهوية والصلاحيات متعددة الشركات والأقسام
+              </h1>
+              <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
+                تطبيق بنية العزل الهرمي الصارم (Multi-Tenant)، مبدأ أقل الصلاحيات (Least Privilege)، 
+                وفصل المهام الرقابي (Separation of Duties - SoD) لمجموعة خالد السليم.
+              </p>
             </div>
-            <h1 className="text-2xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-3">
-              إدارة الهوية والصلاحيات متعددة الشركات والأقسام
-            </h1>
-            <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
-              تطبيق بنية العزل الهرمي الصارم (Multi-Tenant)، مبدأ أقل الصلاحيات (Least Privilege)، 
-              وفصل المهام الرقابي (Separation of Duties - SoD) لمجموعة خالد السليم.
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -444,9 +449,13 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     <tr key={u.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition">
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-2xl bg-champagne-pale text-champagne-dark font-black flex items-center justify-center text-sm shadow-inner">
-                            {u.fullName.slice(0, 1)}
-                          </div>
+                          <CorporateAvatar
+                            size="sm"
+                            name={u.fullName}
+                            role={u.jobTitle}
+                            email={u.email}
+                            status={u.status === 'نشط' ? 'verified' : 'none'}
+                          />
                           <div>
                             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                               {u.fullName}
@@ -612,7 +621,18 @@ export const IdentityAccessManagementPage: React.FC = () => {
               <tbody className="divide-y divide-slate-100">
                 {users.map((u) => (
                   <tr key={u.id} className="hover:bg-slate-50/80 transition">
-                    <td className="py-3 px-4 font-bold text-slate-900">{u.fullName}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900">
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar
+                          name={u.fullName}
+                          role={u.jobTitle}
+                          email={u.email}
+                          size="sm"
+                          status={u.status === 'نشط' ? 'online' : 'none'}
+                        />
+                        <span>{u.fullName}</span>
+                      </div>
+                    </td>
                     <td className="py-3 px-4 text-slate-700">{u.accountType}</td>
                     <td className="py-3 px-4">
                       <span className="px-2.5 py-1 bg-champagne-pale text-champagne-dark rounded-full font-bold text-[10.5px]">
@@ -671,7 +691,16 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 {accessRequests.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-50/80 transition">
                     <td className="py-3 px-4 font-mono font-bold text-slate-800">{req.requestNumber}</td>
-                    <td className="py-3 px-4 font-bold text-slate-900">{req.userName || req.userId}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar
+                          name={req.userName || req.userId}
+                          size="xs"
+                          status="online"
+                        />
+                        <span>{req.userName || req.userId}</span>
+                      </div>
+                    </td>
                     <td className="py-3 px-4 font-mono text-slate-600">{req.requestedRoles.join(', ')}</td>
                     <td className="py-3 px-4 text-slate-700">{req.justification}</td>
                     <td className="py-3 px-4 text-center">
@@ -738,8 +767,13 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     </span>
                     <span className="text-[10px] text-slate-400">{d.validFrom} إلى {d.validTo}</span>
                   </div>
-                  <div className="text-xs space-y-1">
-                    {d.fromUserName && <div><span className="font-bold text-slate-700">من:</span> {d.fromUserName} ← <span className="font-bold">{d.toUserName}</span></div>}
+                  <div className="text-xs space-y-2">
+                    {d.fromUserName && (
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={d.fromUserName} size="xs" status="verified" />
+                        <span className="font-bold text-slate-700">من:</span> {d.fromUserName} ← <span className="font-bold">{d.toUserName}</span>
+                      </div>
+                    )}
                     <div><span className="font-bold text-slate-700 dark:text-slate-300">السبب:</span> {d.reason}</div>
                   </div>
                 </div>
@@ -864,7 +898,16 @@ export const IdentityAccessManagementPage: React.FC = () => {
               <tbody className="divide-y divide-slate-100">
                 {sessions.map((sess) => (
                   <tr key={sess.id} className="hover:bg-slate-50/80 transition">
-                    <td className="py-3 px-4 font-bold text-slate-900">{sess.userName || sess.userId}</td>
+                    <td className="py-3 px-4 font-bold text-slate-900">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar
+                          name={sess.userName || sess.userId}
+                          size="xs"
+                          status={sess.status === 'نشطة' ? 'online' : 'none'}
+                        />
+                        <span>{sess.userName || sess.userId}</span>
+                      </div>
+                    </td>
                     <td className="py-3 px-4 font-mono font-bold text-champagne-dark">{sess.companyCode || sess.activeCompanyId}</td>
                     <td className="py-3 px-4 text-slate-600">{sess.userAgent}</td>
                     <td className="py-3 px-4 font-mono text-slate-600">{sess.ipAddress}</td>

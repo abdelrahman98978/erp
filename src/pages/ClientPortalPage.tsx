@@ -9,6 +9,8 @@ import { useCompany } from '../contexts/CompanyContext';
 import { KasKpiCard } from '../components/kas/KasCards';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 interface ClientContract {
   id: string;
@@ -220,10 +222,8 @@ export const ClientPortalPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <ShieldCheck className="w-5 h-5 text-champagne-light" />
-            </div>
+          <div className="flex items-center gap-4">
+            <BusinessIllustration type="client-portal" size="sm" showBackground={false} />
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
@@ -267,9 +267,7 @@ export const ClientPortalPage: React.FC = () => {
 
       {/* Contract Quick Lookup Search Bar */}
       <div className="card-pricing p-4 rounded-2xl bg-white border border-zinc-200 shadow-sm flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 shrink-0">
-          <Search className="w-5 h-5" />
-        </div>
+        <CorporateAvatar name={nationalIdOrPhone || 'عميل البوابة الموثق'} archetype="client-vip" size="sm" status="verified" />
         <div className="flex-1">
           <label className="block text-[11px] font-bold text-zinc-500 mb-0.5">البحث الفوري عن العقود ومراحل العمالة</label>
           <input
@@ -342,6 +340,12 @@ export const ClientPortalPage: React.FC = () => {
           <span className="pill-tag-mint text-xs">محدث لحظياً عبر مساند</span>
         </div>
 
+        {filteredContracts.length === 0 ? (
+          <div className="card-pricing border border-zinc-200 rounded-3xl p-10 text-center flex flex-col items-center justify-center bg-white">
+            <BusinessIllustration type="empty-search" size="md" />
+            <div className="text-sm font-bold text-zinc-600 mt-3">لا توجد عقود مطابقة لرقم الهوية أو البحث المدخل</div>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 gap-4">
           {filteredContracts.map((contract) => (
             <div 
@@ -350,9 +354,7 @@ export const ClientPortalPage: React.FC = () => {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-black text-sm border border-emerald-300/40">
-                    {contract.nationality === 'إثيوبيا' ? '🇪🇹' : '🇵🇭'}
-                  </div>
+                  <CorporateAvatar name={contract.workerName} profession={contract.profession} size="md" status="verified" />
                   <div>
                     <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
                       {contract.workerName}
@@ -445,6 +447,7 @@ export const ClientPortalPage: React.FC = () => {
             </div>
           ))}
         </div>
+        )}
       </div>
 
       {/* Contract Detail Modal */}

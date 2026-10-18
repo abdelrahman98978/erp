@@ -11,6 +11,8 @@ import {
   AlertCircle, Users, Award, TrendingUp, Phone, Mail, FileCheck
 } from 'lucide-react';
 import { KasKpiCard, KasSupplierCard } from '../components/kas/KasCards';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface ForeignOffice {
   id: string;
@@ -247,6 +249,7 @@ export const OfficesPage: React.FC = () => {
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
+            <BusinessIllustration type="foreign-agencies" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
               <Globe className="w-5 h-5 text-champagne-light" />
             </div>
@@ -464,8 +467,13 @@ export const OfficesPage: React.FC = () => {
                   <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td className="p-3.5 font-mono font-bold text-slate-900 dark:text-white">{row.id}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-slate-900 dark:text-white">{row.name}</div>
-                      <div className="text-[11px] text-slate-500">المدير: {row.manager} | ترخيص: {row.license_no}</div>
+                      <div className="flex items-center gap-2.5">
+                        <CorporateAvatar name={row.manager} role={row.name} size="sm" status="verified" />
+                        <div>
+                          <div className="font-bold text-slate-900 dark:text-white">{row.name}</div>
+                          <div className="text-[11px] text-slate-500">المدير: {row.manager} | ترخيص: {row.license_no}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5">
                       <Badge text={row.nationality} type="info" />

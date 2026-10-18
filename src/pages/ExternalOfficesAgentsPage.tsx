@@ -21,6 +21,8 @@ import {
   UploadCloud,
   FileText
 } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface OfficeUser {
   id: string;
@@ -332,6 +334,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3">
+          <BusinessIllustration type="foreign-agencies" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Globe className="w-5 h-5" />
           </div>
@@ -452,7 +455,10 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-bold text-black text-base">{office.officeName}</h3>
+                    <div className="flex items-center gap-2.5">
+                      <CorporateAvatar name={office.managerName} role={office.officeName} size="sm" status="verified" />
+                      <h3 className="font-bold text-black text-base">{office.officeName}</h3>
+                    </div>
                     <Badge text={office.country} type="purple" />
                   </div>
 
@@ -515,7 +521,12 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 {officeUsers.map((u, idx) => (
                   <tr key={u.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-bold font-mono text-black">{idx + 1}</td>
-                    <td className="p-3.5 font-bold text-black">{u.name}</td>
+                    <td className="p-3.5 font-bold text-black">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={u.name} role={u.linked_office} size="sm" />
+                        <span>{u.name}</span>
+                      </div>
+                    </td>
                     <td className="p-3.5">
                       <div className="font-mono">{u.phone}</div>
                       <div className="text-[11px] text-zinc-400">{u.email}</div>

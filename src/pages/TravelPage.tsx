@@ -6,6 +6,8 @@ import { useCompany } from '../contexts/CompanyContext';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Plane, Plus, FileSpreadsheet, Search, X, Check, CheckCircle, Trash2, Printer, QrCode, Car } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface FlightRecord {
   id: string;
@@ -225,6 +227,7 @@ export const TravelPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-3">
+          <BusinessIllustration type="travel-logistics" size="sm" />
           <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Plane className="w-5 h-5" />
           </div>
@@ -326,10 +329,20 @@ export const TravelPage: React.FC = () => {
                 {airportReceptions.map((r) => (
                   <tr key={r.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono font-bold text-black">{r.id}</td>
-                    <td className="p-3.5 font-bold text-black">{r.maid} <span className="text-zinc-500 font-normal">({r.nat})</span></td>
+                    <td className="p-3.5 font-bold text-black">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={r.maid} profession="عاملة منزلية" isCandidate size="sm" />
+                        <span>{r.maid} <span className="text-zinc-500 font-normal">({r.nat})</span></span>
+                      </div>
+                    </td>
                     <td className="p-3.5 font-semibold text-black">{r.airport}</td>
                     <td className="p-3.5 font-mono text-black">{r.time}</td>
-                    <td className="p-3.5 text-zinc-700">{r.driver}</td>
+                    <td className="p-3.5 text-zinc-700">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={r.driver} profession="سائق خاص" size="sm" />
+                        <span>{r.driver}</span>
+                      </div>
+                    </td>
                     <td className="p-3.5 font-bold text-amber-700">{r.dest}</td>
                     <td className="p-3.5"><Badge text={r.status} type={r.status.includes('تم') ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
@@ -410,8 +423,13 @@ export const TravelPage: React.FC = () => {
                     <Badge text={f.travel_type} type={f.travel_type === 'وصول' ? 'success' : 'danger'} />
                   </td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{f.maid_name}</div>
-                    <div className="text-[11px] text-zinc-500 font-mono">{f.nationality} • {f.passport_number}</div>
+                    <div className="flex items-center gap-2">
+                      <CorporateAvatar name={f.maid_name} profession="عاملة منزلية" isCandidate size="sm" />
+                      <div>
+                        <div className="font-bold text-black">{f.maid_name}</div>
+                        <div className="text-[11px] text-zinc-500 font-mono">{f.nationality} • {f.passport_number}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="p-3.5 font-semibold text-black">{f.client_name}</td>
                   <td className="p-3.5">
@@ -423,7 +441,12 @@ export const TravelPage: React.FC = () => {
                     <div className="font-bold text-black">{f.flight_date}</div>
                     <div className="text-zinc-500">{f.flight_time}</div>
                   </td>
-                  <td className="p-3.5 font-semibold text-black">{f.driver_assigned || 'غير مسند'}</td>
+                  <td className="p-3.5 font-semibold text-black">
+                    <div className="flex items-center gap-2">
+                      <CorporateAvatar name={f.driver_assigned || 'سائق استقبال'} profession="سائق خاص" size="sm" />
+                      <span>{f.driver_assigned || 'غير مسند'}</span>
+                    </div>
+                  </td>
                   <td className="p-3.5">
                     <Badge text={f.status} type={f.status.includes('تم') ? 'success' : 'purple'} />
                   </td>

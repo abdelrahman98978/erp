@@ -3,6 +3,8 @@ import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
 import { MsProjectTask, PowerBiDashboardItem, CompanyId } from '../types';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { 
   Building2, 
   BarChart3, 
@@ -164,9 +166,9 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
         }}
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Network className="w-5 h-5 text-emerald-400" />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block shrink-0">
+              <BusinessIllustration type="ai-copilot" size="sm" showBackground={true} />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -267,7 +269,16 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">
                       {t.taskName} {t.milestone && <span className="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold ml-1">Milestone</span>}
                     </td>
-                    <td className="p-3.5 text-zinc-600">{t.assignedResource}</td>
+                    <td className="p-3.5 text-zinc-600">
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar
+                          name={t.assignedResource}
+                          size="sm"
+                          status="verified"
+                        />
+                        <span>{t.assignedResource}</span>
+                      </div>
+                    </td>
                     <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{t.startDate} إلى {t.endDate}</td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
@@ -349,9 +360,18 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
           {/* Org Chart Visualization Tree */}
           <div className="flex flex-col items-center gap-4 py-4">
-            <div className="bg-black text-white p-4 rounded-2xl text-center border-2 border-emerald-400 shadow-lg min-w-[240px]">
-              <div className="text-sm font-black">خالد السليم للاستقدام والتشغيل</div>
-              <div className="text-[11px] text-emerald-400 font-semibold mt-0.5">مجلس الإدارة والمدير التنفيذي للمجموعة</div>
+            <div className="bg-black text-white p-4 rounded-2xl text-center border-2 border-emerald-400 shadow-lg min-w-[260px] flex items-center gap-3">
+              <CorporateAvatar
+                archetype="saudi-executive"
+                name="خالد السليم"
+                role="رئيس مجلس الإدارة"
+                size="md"
+                status="verified"
+              />
+              <div className="text-right">
+                <div className="text-sm font-black">خالد السليم للاستقدام والتشغيل</div>
+                <div className="text-[11px] text-emerald-400 font-semibold mt-0.5">مجلس الإدارة والمدير التنفيذي للمجموعة</div>
+              </div>
             </div>
 
             <div className="w-0.5 h-6 bg-zinc-300" />

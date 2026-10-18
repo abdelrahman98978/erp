@@ -5,6 +5,8 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { useAppStore } from '../stores/appStore';
 import { Globe, FileSpreadsheet, FileText, Smartphone, Laptop, Radio, Flame, PieChart, Search, PhoneCall, RefreshCw, Users, UserX, UserPlus, CheckCircle2 } from 'lucide-react';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 export interface Visitor {
   id: string;
@@ -385,10 +387,8 @@ export const WebsiteVisitorsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Globe className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-4">
+          <BusinessIllustration type="client-portal" size="sm" showBackground={false} />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>REALTIME WEB TRAFFIC</span>
@@ -588,8 +588,8 @@ export const WebsiteVisitorsPage: React.FC = () => {
           ) : filteredVisitors.length === 0 ? (
             /* Empty State */
             <div className="flex flex-col items-center justify-center py-16">
-              <Globe className="w-10 h-10 text-zinc-200 mb-3" />
-              <div className="text-sm font-bold text-zinc-500 mb-1">لا توجد زيارات مطابقة</div>
+              <BusinessIllustration type="empty-search" size="md" />
+              <div className="text-sm font-bold text-zinc-500 mb-1 mt-3">لا توجد زيارات مطابقة</div>
               <div className="text-xs text-zinc-400">حاول تغيير كلمة البحث أو إزالة الفلتر</div>
               {searchQuery && (
                 <button
@@ -621,8 +621,13 @@ export const WebsiteVisitorsPage: React.FC = () => {
                   {filteredVisitors.map((row) => (
                     <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5">
-                        <div className="font-mono font-bold text-black">{row.ip_address || '-'}</div>
-                        {row.phone && <div className="text-[11px] text-zinc-500 font-mono font-bold">{row.phone}</div>}
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={row.phone || row.city || row.ip_address} size="xs" departmentId="crm" />
+                          <div>
+                            <div className="font-mono font-bold text-black">{row.ip_address || '-'}</div>
+                            {row.phone && <div className="text-[11px] text-zinc-500 font-mono font-bold">{row.phone}</div>}
+                          </div>
+                        </div>
                       </td>
                       <td className="p-3.5 font-semibold text-black">{row.city || '-'}</td>
                       <td className="p-3.5">
@@ -688,8 +693,13 @@ export const WebsiteVisitorsPage: React.FC = () => {
                 #{idx + 1}
               </span>
 
-              <Badge text={cv.nationality} type="info" />
-              <h3 className="text-base font-bold text-black mt-2 mb-0.5">{cv.name}</h3>
+              <div className="flex items-center gap-3 mb-3">
+                <CorporateAvatar name={cv.name} profession={cv.profession} size="md" status="verified" />
+                <div>
+                  <Badge text={cv.nationality} type="info" />
+                  <h3 className="text-base font-bold text-black mt-1 mb-0">{cv.name}</h3>
+                </div>
+              </div>
               <div className="text-xs text-zinc-500 mb-4">كود السيرة: <strong className="font-mono text-black">{cv.cv_code}</strong> | {cv.profession}</div>
 
               <div className="bg-zinc-50 p-3 rounded-2xl grid grid-cols-3 gap-2 text-center border border-zinc-100">
