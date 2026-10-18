@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useRecruitmentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
@@ -786,15 +788,12 @@ export const RecruitmentContractsPage: React.FC = () => {
         }}
       >
         <div className="flex items-center gap-4">
-          <div 
-            className="w-13 h-13 rounded-2xl flex items-center justify-center text-amber-300 shrink-0 shadow-inner"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(207, 166, 74, 0.25) 0%, rgba(207, 166, 74, 0.08) 100%)',
-              border: '1px solid rgba(207, 166, 74, 0.4)'
-            }}
-          >
-            <FileSignature className="w-6 h-6" />
-          </div>
+          <BusinessIllustration
+            type="musaned-recruitment"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40">
@@ -1382,12 +1381,22 @@ export const RecruitmentContractsPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="p-3.5">
-                        <div className="font-bold text-black">{c.client_name}</div>
-                        <div className="text-zinc-500 font-mono">{c.client_phone}</div>
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={c.client_name} category={c.client_type || 'أفراد'} isClient size="xs" />
+                          <div>
+                            <div className="font-bold text-black">{c.client_name}</div>
+                            <div className="text-zinc-500 font-mono">{c.client_phone}</div>
+                          </div>
+                        </div>
                       </td>
                       <td className="p-3.5">
-                        <div className="font-bold text-black">{c.maid_name}</div>
-                        <div className="text-zinc-500 font-mono">{c.maid_passport}</div>
+                        <div className="flex items-center gap-2">
+                          <CorporateAvatar name={c.maid_name} role="عاملة منزلية" isCandidate size="xs" />
+                          <div>
+                            <div className="font-bold text-black">{c.maid_name}</div>
+                            <div className="text-zinc-500 font-mono">{c.maid_passport}</div>
+                          </div>
+                        </div>
                       </td>
                       <td className="p-3.5">
                         <div className="font-bold text-black">{c.nationality}</div>

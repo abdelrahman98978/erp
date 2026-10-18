@@ -33,6 +33,7 @@ import { useAppStore } from '../stores/appStore';
 import { useCompany } from '../contexts/CompanyContext';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { realErpDataStore } from '../services/realErpDataStore';
 
@@ -747,10 +748,13 @@ export const SmaccAccountingPage: React.FC = () => {
         }}
       >
         <div className="flex flex-row items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <DollarSign className="w-5 h-5" />
-            </div>
+          <div className="flex items-center gap-3.5">
+            <BusinessIllustration
+              type="smacc-finance"
+              size="sm"
+              showBackground={false}
+              className="!w-16 !h-14 shrink-0"
+            />
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint text-[11px]">SMACC FINANCIAL ERP V2</span>

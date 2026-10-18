@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { KasNavigationSidebar, KasDepartmentId, KAS_BRANCHES } from '../components/kas/KasNavigationSidebar';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { useCompany } from '../contexts/CompanyContext';
 import { useIamSession } from '../contexts/IamSessionContext';
 import { useAppStore } from '../stores/appStore';
@@ -255,9 +256,12 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
         <header className="h-16 border-b border-white/10 bg-[#14181c] px-6 flex items-center justify-between shrink-0 shadow-md">
           {/* Right side: Department Title & Active Badge */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-400 border border-amber-400/30 flex items-center justify-center font-bold">
-              <Briefcase className="w-5 h-5" />
-            </div>
+            <BusinessIllustration
+              type="kas-tenders"
+              size="sm"
+              showBackground={false}
+              className="!w-12 !h-11 shrink-0"
+            />
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-sm font-bold text-white m-0">

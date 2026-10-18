@@ -54,7 +54,7 @@ describe('visualAssetsRegistry — Corporate Avatars & Business Illustrations En
     expect(resolveAvatarArchetype({ name: 'Maria', role: 'عاملة منزلية شاملة' })).toBe('candidate-maid');
   });
 
-  it('resolves IconScout business illustrations by department and tab', () => {
+  it('resolves Funkyways business illustrations by department and tab across all 24 modules', () => {
     expect(resolveIllustrationForTab('dashboard', 'executive')).toBe('exec-command');
     expect(resolveIllustrationForTab('smacc-accounting', 'finance')).toBe('smacc-finance');
     expect(resolveIllustrationForTab('zatca', 'finance')).toBe('zatca-einvoice');
@@ -66,6 +66,16 @@ describe('visualAssetsRegistry — Corporate Avatars & Business Illustrations En
     expect(resolveIllustrationForTab('clients', 'crm')).toBe('crm-customer');
     expect(resolveIllustrationForTab('shelter-workers', 'shelter')).toBe('shelter-care');
     expect(resolveIllustrationForTab('kas-tenders', 'tenders')).toBe('kas-tenders');
+    expect(resolveIllustrationForTab('vouchers', 'finance')).toBe('treasury-vouchers');
+    expect(resolveIllustrationForTab('whatsapp-inbox', 'crm')).toBe('whatsapp-chat');
+    expect(resolveIllustrationForTab('legal-compliance', 'executive')).toBe('legal-compliance');
+    expect(resolveIllustrationForTab('iam', 'executive')).toBe('iam-security');
+    expect(resolveIllustrationForTab('attendances', 'hr')).toBe('attendance-monitoring');
+    expect(resolveIllustrationForTab('custodies', 'hr')).toBe('inventory-custody');
+    expect(resolveIllustrationForTab('reports', 'executive')).toBe('reports-bi');
+    expect(resolveIllustrationForTab('offices', 'ats')).toBe('foreign-agencies');
+    expect(resolveIllustrationForTab('client-portal', 'crm')).toBe('client-portal');
+    expect(resolveIllustrationForTab('travel', 'recruitment')).toBe('travel-logistics');
   });
 
   it('resolves company portal illustrations and metadata', () => {
@@ -79,6 +89,6 @@ describe('visualAssetsRegistry — Corporate Avatars & Business Illustrations En
     const meta = getIllustrationMetadata('smacc-finance');
     expect(meta.titleAr).toContain('سماك');
     expect(meta.funkywaysSvgUrl).toBe('/illustrations/funkyways/smacc-finance.svg');
-    expect(Object.keys(BUSINESS_ILLUSTRATION_METADATA).length).toBe(14);
+    expect(Object.keys(BUSINESS_ILLUSTRATION_METADATA).length).toBe(24);
   });
 });

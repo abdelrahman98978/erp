@@ -34,7 +34,17 @@ export type IllustrationKey =
   | 'kas-tenders'
   | 'empty-search'
   | 'ai-copilot'
-  | 'innovation';
+  | 'innovation'
+  | 'treasury-vouchers'
+  | 'whatsapp-chat'
+  | 'legal-compliance'
+  | 'iam-security'
+  | 'attendance-monitoring'
+  | 'inventory-custody'
+  | 'reports-bi'
+  | 'foreign-agencies'
+  | 'client-portal'
+  | 'travel-logistics';
 
 export interface IllustrationMetadata {
   key: IllustrationKey;
@@ -52,7 +62,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'مركز القيادة التنفيذية والتحليلات الحية',
     subtitleAr: 'مراقبة الأداء المالي والتشغيلي الموحد عبر الشركات الـ 5 والأقسام الـ 9 لحظياً',
     badgeAr: 'حوكمة المجموعة 360°',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/exec-command.svg',
   },
@@ -61,8 +71,8 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'منظومة سماك المحاسبية السحابية (SMACC 6-Divisions)',
     subtitleAr: 'دفتر الأستاذ العام، القيود المزدوجة المتوازنة، سندات القبض والصرف، ومراكز التكلفة',
     badgeAr: 'توازن محاسبي 100%',
-    accentHex: '#B8924A',
-    secondaryHex: '#0F172A',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/smacc-finance.svg',
   },
   'zatca-einvoice': {
@@ -70,7 +80,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'الفوترة الإلكترونية المشفرة (ZATCA المرحلة الثانية)',
     subtitleAr: 'ربط وتوقيع الفواتير الضريبية والمبسطة بصيغة XML UBL 2.1 وختم QR التشفيري',
     badgeAr: 'معتمد في منصة فاتورة',
-    accentHex: '#059669',
+    accentHex: '#047857',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/zatca-einvoice.svg',
   },
@@ -79,7 +89,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'محرك الاستخلاص الذكي (100+ فاتورة وأي مستند)',
     subtitleAr: 'قراءة آلية لملفات PDF وExcel وWord وصور الفواتير وترحيلها مباشرة لدفتر سماك',
     badgeAr: 'ماسح OCR الذكي',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/ocr-extractor.svg',
   },
@@ -97,7 +107,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'عقود التأجير والتشغيل المرن (شركة الياقوت)',
     subtitleAr: 'إدارة الباقات الشهرية والموسمية، جدولة الكوادر، والتحصيل التلقائي للدفعات',
     badgeAr: 'تشغيل مرن بالساعة والشهر',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/flexible-rental.svg',
   },
@@ -115,16 +125,16 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'إدارة رأس المال البشري وحماية الأجور (WPS)',
     subtitleAr: 'الملف الرقمي للموظف 360°، مسيرات الرواتب، الحضور الذكي، وحاسبة نهاية الخدمة',
     badgeAr: 'متوافق مع نظام العمل السعودي',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/hr-wps.svg',
   },
   'crm-customer': {
     key: 'crm-customer',
-    titleAr: 'منظومة علاقات العملاء والشكاوى والتواصل الموحد',
-    subtitleAr: 'إدارة ملفات العملاء VIP والشركات، معالجة المطالبات، والتراسل عبر الواتساب والفروع',
+    titleAr: 'منظومة علاقات العملاء والمبيعات (CRM)',
+    subtitleAr: 'إدارة ملفات العملاء VIP والشركات، تصنيف الفئات، ومتابعة العقود والطلبات',
     badgeAr: 'مركز إسعاد العملاء',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/crm-customer.svg',
   },
@@ -133,7 +143,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'بوابة دار الرواد لمراكز الإيواء والتسكين والرعاية',
     subtitleAr: 'متابعة إشغال الغرف، الإعاشة اليومية، الرعاية الطبية، وتسويات نقل الخدمات والترحيل',
     badgeAr: 'معايير الإيواء HRSD',
-    accentHex: '#0D9488',
+    accentHex: '#047857',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/shelter-care.svg',
   },
@@ -142,7 +152,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'منظومة كاس للمنافسات الحكومية وجداول الكميات (BOQ)',
     subtitleAr: 'رصد منافسات منصة اعتماد، التسعير الهندسي الدقيق، الضمانات البنكية، وأوامر التوريد',
     badgeAr: 'سحابة اعتماد كاس',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/kas-tenders.svg',
   },
@@ -151,7 +161,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'لا توجد سجلات مطابقة لمعايير البحث الحالية',
     subtitleAr: 'جرب تعديل كلمات البحث أو إعادة ضبط الفلاتر أو إضافة سجل جديد مباشرة',
     badgeAr: 'البحث والتصفية الذكية',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#64748B',
     funkywaysSvgUrl: '/illustrations/funkyways/empty-search.svg',
   },
@@ -160,7 +170,7 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'المساعد الذكي التنفيذي والمؤسسي (فارس ونُورة)',
     subtitleAr: 'تنفيذ آلي لـ 22 أداة محاسبية وتشغيلية وتوجيه فوري بالصوت والنص لكل موظف',
     badgeAr: 'ذكاء اصطناعي مؤسسي',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/ai-copilot.svg',
   },
@@ -169,9 +179,99 @@ export const ILLUSTRATION_METADATA: Record<IllustrationKey, IllustrationMetadata
     titleAr: 'الابتكار والتحول الرقمي المؤسسي',
     subtitleAr: 'بنية سحابية موحدة تربط القطاعات التشغيلية والمالية برؤية المملكة 2030',
     badgeAr: 'تقنية Funkyways',
-    accentHex: '#B8924A',
+    accentHex: '#CFA64A',
     secondaryHex: '#1D2428',
     funkywaysSvgUrl: '/illustrations/funkyways/innovation.svg',
+  },
+  'treasury-vouchers': {
+    key: 'treasury-vouchers',
+    titleAr: 'إدارة الخزينة والبنوك وسندات القبض والصرف والعهد',
+    subtitleAr: 'متابعة السيولة النقدية، التسويات البنكية، العهد النقدية، وطلبات الصرف المعتمدة',
+    badgeAr: 'الخزينة والسندات المالية',
+    accentHex: '#8C681E',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/treasury-vouchers.svg',
+  },
+  'whatsapp-chat': {
+    key: 'whatsapp-chat',
+    titleAr: 'مركز التواصل الموحد وصندوق رسائل واتساب والأفرع',
+    subtitleAr: 'إدارة محادثات العملاء الفورية، إرسال الإشعارات الجماعية، والتنسيق اللحظي بين الفروع',
+    badgeAr: 'تواصل موحد فوري',
+    accentHex: '#047857',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/whatsapp-chat.svg',
+  },
+  'legal-compliance': {
+    key: 'legal-compliance',
+    titleAr: 'الحوكمة القانونية والامتثال والتفاويض الرسمية',
+    subtitleAr: 'توثيق الإقرارات القانونية، تفاويض منصة إنجاز، تصديق الغرف التجارية، وحماية البيانات',
+    badgeAr: 'امتثال نظامي وتوثيق',
+    accentHex: '#047857',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/legal-compliance.svg',
+  },
+  'iam-security': {
+    key: 'iam-security',
+    titleAr: 'إدارة الهوية والصلاحيات والأمن السيبراني (IAM & RBAC)',
+    subtitleAr: 'عزل صارم للصلاحيات حسب الشركة والقسم، التوثيق الثنائي FIDO2، وسجل التدقيق الأمني',
+    badgeAr: 'حوكمة النفاذ والأمان',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/iam-security.svg',
+  },
+  'attendance-monitoring': {
+    key: 'attendance-monitoring',
+    titleAr: 'متابعة الحضور والأداء ومؤشرSLA ومعالجة الشكاوى',
+    subtitleAr: 'رصد البصمة الجغرافية، مؤشرات الإنجاز اليومي للموظفين، ومعالجة بلاغات العملاء ضمن SLA',
+    badgeAr: 'رقابة الأداء والانضباط',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/attendance-monitoring.svg',
+  },
+  'inventory-custody': {
+    key: 'inventory-custody',
+    titleAr: 'إدارة المخزون والأصول الثابتة والعهد ومراكز التكلفة',
+    subtitleAr: 'جرد المستودعات، إهلاك الأصول الثابتة، تسليم واستلام العهد العينية، وتوزيع التكاليف',
+    badgeAr: 'الأصول والعهد والمخزون',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/inventory-custody.svg',
+  },
+  'reports-bi': {
+    key: 'reports-bi',
+    titleAr: 'مركز التقارير التحليلية والقوائم المالية الختامية (BI)',
+    subtitleAr: 'تقارير الميزانية العمومية، قائمة الدخل، التدفقات النقدية، ومؤشرات ربحية كل شركة',
+    badgeAr: 'ذكاء الأعمال والتقارير',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/reports-bi.svg',
+  },
+  'foreign-agencies': {
+    key: 'foreign-agencies',
+    titleAr: 'إدارة المكاتب والوكالات الخارجية وشركاء الاستقدام',
+    subtitleAr: 'متابعة حصص الوكلاء في 14 دولة، عمولات المكاتب الخارجية، واستيراد السير بالدفعة',
+    badgeAr: 'شبكة الوكلاء الدوليين',
+    accentHex: '#8C681E',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/foreign-agencies.svg',
+  },
+  'client-portal': {
+    key: 'client-portal',
+    titleAr: 'البوابة الرقمية للعملاء ومنصة التطبيقات الذكية',
+    subtitleAr: 'متابعة العقود والطلبات إلكترونياً، تحليلات زوار الموقع، والوصول السريع لتطبيقات المجموعة',
+    badgeAr: 'الخدمات الرقمية الذكية',
+    accentHex: '#CFA64A',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/client-portal.svg',
+  },
+  'travel-logistics': {
+    key: 'travel-logistics',
+    titleAr: 'إدارة الحركة والرحلات الجوية والاستقبال بالمطار',
+    subtitleAr: 'جدولة رحلات الوصول والترحيل، تفويج العمالة، واستقبال المطار والتوصيل للفروع',
+    badgeAr: 'الحركة والرحلات الجوية',
+    accentHex: '#8C681E',
+    secondaryHex: '#1D2428',
+    funkywaysSvgUrl: '/illustrations/funkyways/travel-logistics.svg',
   },
 };
 
@@ -346,26 +446,89 @@ export function resolveIllustrationForTab(
   const t = (tabKey || '').toLowerCase();
   const d = (departmentId || '').toLowerCase();
 
-  if (t.includes('zatca') || t.includes('invoices')) return 'zatca-einvoice';
-  if (t.includes('extractor') || t.includes('import')) return 'ocr-extractor';
-  if (t.includes('smacc') || t.includes('journal') || t.includes('voucher') || t.includes('finance') || t.includes('cost')) {
+  if (t.includes('zatca') || t.includes('invoices') || t.includes('vat') || t.includes('tax')) {
+    return 'zatca-einvoice';
+  }
+  if (t.includes('extractor') || t.includes('data-import') || t.includes('import-wizard')) {
+    return 'ocr-extractor';
+  }
+  if (
+    t.includes('voucher') ||
+    t.includes('receipt') ||
+    t.includes('banks') ||
+    t.includes('reconciliation') ||
+    t.includes('financial-requests') ||
+    t.includes('petty-cash') ||
+    t.includes('cash-custody') ||
+    t.includes('fin-request')
+  ) {
+    return 'treasury-vouchers';
+  }
+  if (
+    t.includes('inventory') ||
+    t.includes('custodies') ||
+    t.includes('cost-centers')
+  ) {
+    return 'inventory-custody';
+  }
+  if (t.includes('report') || t.includes('trial-balance') || t.includes('income-statement') || t.includes('balance-sheet')) {
+    return 'reports-bi';
+  }
+  if (t.includes('smacc') || t.includes('journal') || t.includes('finance') || t.includes('ledger') || t.includes('chart-accounts')) {
     return 'smacc-finance';
   }
   if (t.includes('kas') || t.includes('tender') || t.includes('boq') || t.includes('etmad')) {
     return 'kas-tenders';
   }
-  if (t.includes('shelter') || t.includes('sponsorship') || t.includes('deportation')) {
+  if (t.includes('travel') || t.includes('flight') || t.includes('airport') || t.includes('logistics') || t.includes('group-dispatch')) {
+    return 'travel-logistics';
+  }
+  if (t.includes('legal') || t.includes('ingaz') || t.includes('visa') || t.includes('chamber')) {
+    return 'legal-compliance';
+  }
+  if (t.includes('office') || t.includes('agency') || t.includes('agent')) {
+    return 'foreign-agencies';
+  }
+  if (t.includes('shelter') || t.includes('sponsorship') || t.includes('deportation') || t.includes('room') || t.includes('catering')) {
     return 'shelter-care';
   }
   if (t.includes('rent')) return 'flexible-rental';
-  if (t.includes('cv') || t.includes('ats') || t.includes('talent')) return 'ats-talent';
-  if (t.includes('hr') || t.includes('attendance') || t.includes('wps') || t.includes('monitoring')) {
+  if (t.includes('whatsapp') || t.includes('message') || t.includes('sms') || t.includes('communication')) {
+    return 'whatsapp-chat';
+  }
+  if (t.includes('client-portal') || t.includes('clients-portal') || t.includes('visitor') || t.includes('launcher')) {
+    return 'client-portal';
+  }
+  if (
+    t.includes('cv') ||
+    t === 'ats' ||
+    t.startsWith('ats-') ||
+    t.endsWith('-ats') ||
+    t.includes('enterprise-ats') ||
+    t.includes('talent')
+  ) {
+    return 'ats-talent';
+  }
+  if (
+    t.includes('attendance') ||
+    t.includes('monitoring') ||
+    t.includes('telemetry') ||
+    t.includes('pulse') ||
+    t.includes('complaint') ||
+    t.includes('activity-log')
+  ) {
+    return 'attendance-monitoring';
+  }
+  if (t.includes('hr') || t.includes('employee') || t.includes('payroll') || t.includes('wps') || t.includes('salary') || t.includes('gosi') || t.includes('branch-departments') || t.includes('branches')) {
     return 'hr-wps';
   }
-  if (t.includes('client') || t.includes('complaint') || t.includes('whatsapp') || t.includes('communication')) {
+  if (t.includes('iam') || t.includes('users') || t.includes('access') || t.includes('roles') || t.includes('settings') || t.includes('microsoft') || t.includes('master-constants')) {
+    return 'iam-security';
+  }
+  if (t.includes('client') || t.includes('crm') || t.includes('black-list')) {
     return 'crm-customer';
   }
-  if (t.includes('recruitment') || t.includes('musaned') || t.includes('order') || t.includes('office') || t.includes('ingaz')) {
+  if (t.includes('recruitment') || t.includes('musaned') || t.includes('order') || t.includes('contract')) {
     return 'musaned-recruitment';
   }
 

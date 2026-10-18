@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useRentContracts, useTableMutation } from '../hooks/queries/useErpQueries';
 import { useCompany } from '../contexts/CompanyContext';
 import { DualBrandingDocumentGenerator } from '../components/common/DualBrandingDocumentGenerator';
@@ -575,10 +577,13 @@ export const RentContractsPage: React.FC = () => {
           gap: '16px',
         }}
       >
-        <div className="flex items-center gap-3">
-          <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <Handshake className="w-5 h-5" />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BusinessIllustration
+            type="flexible-rental"
+            size="sm"
+            showBackground={false}
+            className="!w-16 !h-14 shrink-0"
+          />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>RENTAL CONTRACTS SUITE</span>
@@ -1161,12 +1166,22 @@ export const RentContractsPage: React.FC = () => {
                   <tr key={c.id} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-mono text-black font-bold">{c.contract_number}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{c.client_name}</div>
-                      <div className="text-zinc-500 font-mono">{c.client_phone}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={c.client_name} isClient size="xs" />
+                        <div>
+                          <div className="font-bold text-black">{c.client_name}</div>
+                          <div className="text-zinc-500 font-mono">{c.client_phone}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{c.maid_name}</div>
-                      <div className="text-zinc-500">{c.nationality}</div>
+                      <div className="flex items-center gap-2">
+                        <CorporateAvatar name={c.maid_name} role="عاملة منزلية" isCandidate size="xs" />
+                        <div>
+                          <div className="font-bold text-black">{c.maid_name}</div>
+                          <div className="text-zinc-500">{c.nationality}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="p-3.5 font-bold text-black">{c.duration_months} شهر</td>
                     <td className="p-3.5 text-zinc-500 font-mono">

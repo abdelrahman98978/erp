@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileBottomNav } from './MobileBottomNav';
+import { DepartmentModuleBanner } from '../common/DepartmentModuleBanner';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface AppShellProps {
@@ -182,7 +183,14 @@ export const AppShell: React.FC<AppShellProps> = ({
         />
 
         {/* Content Body */}
-        <main className="content-body">{children}</main>
+        <main className="content-body">
+          <DepartmentModuleBanner
+            activeTab={activeTab}
+            activeTabTitle={activeTabTitle}
+            onSelectTab={handleSelectTab}
+          />
+          {children}
+        </main>
 
         {/* Native-Feel Mobile Bottom Navigation Bar (< 1024px) */}
         <MobileBottomNav

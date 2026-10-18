@@ -19,6 +19,8 @@ import {
   DepartmentId,
 } from '../services/authService';
 import { useCompany } from '../contexts/CompanyContext';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 
 interface AppTile {
   id: string;
@@ -887,9 +889,14 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
       {/* Top Institutional Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-zinc-200 px-4 sm:px-8 lg:px-12 py-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-2xl bg-black text-[#CFA64A] border border-[#CFA64A]/40 flex items-center justify-center text-lg shadow-xs shrink-0">
-            {currentDeptMeta.emoji}
-          </div>
+          <CorporateAvatar
+            name={currentUser?.full_name || 'موظف معتمد'}
+            role={currentUser?.role || currentDeptMeta.nameAr}
+            email={currentUser?.email}
+            departmentId={currentDeptMeta.id}
+            size="md"
+            status="verified"
+          />
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-black text-sm sm:text-base text-black font-display leading-tight">
@@ -944,16 +951,27 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
       </header>
 
       {/* Department Isolation Banner */}
-      <div className="bg-black text-white border-b border-zinc-800 px-4 sm:px-8 lg:px-12 py-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-[#CFA64A] shrink-0" />
-            <span className="font-bold text-[#CFA64A]">
-              بوابة القسم المعزولة (تقسيمات نظام سماك SMACC المعتمدة):
-            </span>
-            <span className="text-zinc-300">
-              يتم عرض الوحدات المصرحة فقط لقسم ({currentDeptMeta.nameAr}) داخل ({activeCompany.name}).
-            </span>
+      <div className="bg-black text-white border-b border-zinc-800 px-4 sm:px-8 lg:px-12 py-3.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-3">
+            <BusinessIllustration
+              tabKey={currentDeptMeta.defaultTab}
+              departmentId={currentDeptMeta.id}
+              size="sm"
+              showBackground={false}
+              className="!w-12 !h-12 shrink-0"
+            />
+            <div>
+              <div className="flex items-center gap-2">
+                <Lock className="w-3.5 h-3.5 text-[#CFA64A] shrink-0" />
+                <span className="font-bold text-[#CFA64A]">
+                  بوابة القسم المعزولة (تقسيمات نظام سماك SMACC المعتمدة):
+                </span>
+              </div>
+              <span className="text-zinc-300 block mt-0.5">
+                يتم عرض الوحدات المصرحة فقط لقسم ({currentDeptMeta.nameAr}) داخل ({activeCompany.name}).
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
             <span>DEPT: {currentDeptMeta.id.toUpperCase()}</span>
@@ -1019,15 +1037,17 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                 className={`p-5 sm:p-6 flex flex-col justify-between cursor-pointer transition-all duration-200 group relative min-h-[220px] ${style.cellBg} ${style.cellHover}`}
               >
                 <div className="space-y-3">
-                  {/* Top Badges & Metric Row */}
-                  <div className="flex items-center justify-between gap-1">
-                    <div
-                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-xs group-hover:scale-105 ${style.iconBg} ${style.iconColor}`}
-                    >
-                      <span className="text-base leading-none">{app.emoji}</span>
-                    </div>
+                  {/* Top Badges & Funkyways Illustration Row */}
+                  <div className="flex items-center justify-between gap-2">
+                    <BusinessIllustration
+                      tabKey={app.href}
+                      departmentId={currentDeptMeta.id}
+                      size="sm"
+                      showBackground={false}
+                      className="!w-12 !h-12 shrink-0"
+                    />
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap justify-end">
                       <span className="text-[9.5px] px-2 py-0.5 rounded-md font-mono font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">
                         {app.smaccCode}
                       </span>
@@ -1080,8 +1100,8 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
         </div>
 
         {filteredApps.length === 0 && (
-          <div className="bg-white border border-zinc-200 rounded-3xl p-12 text-center text-zinc-500">
-            <Search className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
+          <div className="bg-white border border-zinc-200 rounded-3xl p-12 text-center text-zinc-500 flex flex-col items-center">
+            <BusinessIllustration type="empty-search" size="md" className="mb-3" />
             <p className="font-bold text-black text-sm">لم يتم العثور على أي وحدة تطابق بحثك في قسمك</p>
             <p className="text-xs text-zinc-400 mt-1">
               جرب البحث بكلمات أخرى أو اختر "كافة الوحدات المصرحة للقسم"

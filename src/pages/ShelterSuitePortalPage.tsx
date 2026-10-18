@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { ExportDropdown } from '../components/common/ExportDropdown';
+import { BusinessIllustration } from '../components/common/BusinessIllustration';
+import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
@@ -481,19 +483,27 @@ export const ShelterSuitePortalPage: React.FC = () => {
               {/* Grand Hero Platform Banner */}
               <div className="bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] border border-amber-500/20 rounded-2xl p-6 shadow-xl relative overflow-hidden">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase font-bold">
-                        SHELTER & CARE ENTERPRISE SUITE
-                      </span>
-                      <span className="text-[11px] text-zinc-400 font-mono">نظام التسكين والإعاشة المركزي — اعتماد 100%</span>
+                  <div className="flex items-center gap-4">
+                    <BusinessIllustration
+                      type="shelter-care"
+                      size="sm"
+                      showBackground={false}
+                      className="!w-16 !h-14 shrink-0"
+                    />
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono tracking-wider px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase font-bold">
+                          SHELTER & CARE ENTERPRISE SUITE
+                        </span>
+                        <span className="text-[11px] text-zinc-400 font-mono">نظام التسكين والإعاشة المركزي — اعتماد 100%</span>
+                      </div>
+                      <h2 className="text-xl font-display font-black text-white m-0 tracking-tight flex items-center gap-2">
+                        مركز العمليات والمؤشرات التنفيذية — مراكز الإيواء والتسكين
+                      </h2>
+                      <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed m-0">
+                        إدارة الطاقة الاستيعابية للأجنحة، الرعاية الصحية اليومية، جداول الإعاشة، وفرز النزيلات للتنازل أو الترحيل بموجب اشتراطات وزارة الموارد البشرية.
+                      </p>
                     </div>
-                    <h2 className="text-xl font-display font-black text-white m-0 tracking-tight flex items-center gap-2">
-                      مركز العمليات والمؤشرات التنفيذية — مراكز الإيواء والتسكين
-                    </h2>
-                    <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed m-0">
-                      إدارة الطاقة الاستيعابية للأجنحة، الرعاية الصحية اليومية، جداول الإعاشة، وفرز النزيلات للتنازل أو الترحيل بموجب اشتراطات وزارة الموارد البشرية.
-                    </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <button
@@ -704,7 +714,12 @@ export const ShelterSuitePortalPage: React.FC = () => {
                       {filteredInmates.slice(0, 5).map((item) => (
                         <tr key={item.id} className="hover:bg-white/5">
                           <td className="p-3 font-mono font-bold text-amber-400">{item.id}</td>
-                          <td className="p-3 font-bold text-white">{item.maid_name}</td>
+                          <td className="p-3 font-bold text-white">
+                            <div className="flex items-center gap-2">
+                              <CorporateAvatar name={item.maid_name} role="عاملة منزلية" isCandidate size="xs" />
+                              <span>{item.maid_name}</span>
+                            </div>
+                          </td>
                           <td className="p-3 text-zinc-300">{item.nationality}</td>
                           <td className="p-3 font-mono text-zinc-400">{item.passport}</td>
                           <td className="p-3 text-zinc-300">{item.shelter_location}</td>
