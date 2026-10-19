@@ -68,6 +68,9 @@ self.addEventListener('fetch', (event) => {
 
   if (
     url.pathname.startsWith('/api') ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/@') ||
+    url.pathname.startsWith('/node_modules/') ||
     url.protocol.startsWith('chrome-extension') ||
     url.origin !== self.location.origin ||
     event.request.headers.get('Purpose') === 'prefetch' ||

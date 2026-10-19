@@ -43,40 +43,57 @@ const SLIM_BANNER_STORAGE_KEY = 'alsulaim_banner_slim_mode_v1';
 const DEPARTMENT_QUICK_TABS: Record<DepartmentId, Array<{ key: string; label: string }>> = {
   finance: [
     { key: 'smacc-accounting', label: 'محاسبة سماك SMACC' },
-    { key: 'finance-home', label: 'الإدارة المالية والقوائم' },
+    { key: 'smacc-gl-tree', label: 'شجرة الحسابات (GL)' },
+    { key: 'smacc-vouchers', label: 'سندات القبض والصرف' },
+    { key: 'finance-home', label: 'القوائم المالية' },
+    { key: 'trial-balance', label: 'ميزان المراجعة' },
+    { key: 'income-statement', label: 'قائمة الدخل' },
     { key: 'zatca', label: 'الفوترة الإلكترونية ZATCA' },
+    { key: 'invoices', label: 'فواتير المبيعات والعقود' },
     { key: 'journals', label: 'قيود اليومية' },
     { key: 'financial-requests', label: 'العهد وطلبات الصرف' },
     { key: 'cost-centers', label: 'مراكز التكلفة' },
     { key: 'smacc-inventory', label: 'المخزون والأصول' },
-    { key: 'data-import', label: 'مستخرج الـ 100 فاتورة' },
+    { key: 'smacc-modules', label: 'الأقسام الـ 6 لسماك' },
+    { key: 'universal-extractor', label: 'مستخرج الـ 100 فاتورة' },
   ],
   recruitment: [
     { key: 'recruitment-contracts', label: 'عقود الاستقدام (مساند)' },
+    { key: 'new-recruitment-contract', label: '+ عقد استقدام جديد' },
     { key: 'orders', label: 'طلبات الاستقدام والحجوزات' },
+    { key: 'pending-orders', label: 'طلبات قيد الإجراء' },
     { key: 'ingaz', label: 'تفاويض إنجاز والتأشيرات' },
     { key: 'sponsorship-transfer', label: 'نقل الخدمات والكفالة' },
+    { key: 'probation-transfer', label: 'فترة التجربة (90 يوم)' },
     { key: 'travel', label: 'الرحلات واستقبال المطار' },
+    { key: 'group-dispatch', label: 'تفويج العاملات الجماعي' },
     { key: 'musaned-master-plan', label: 'الربط المباشر مع مساند' },
   ],
   rental: [
     { key: 'rent-contracts', label: 'عقود التأجير المرن' },
+    { key: 'new-rent-contract', label: '+ عقد تأجير جديد' },
     { key: 'rent-packages', label: 'باقات وأسعار التأجير' },
     { key: 'rental-drivers', label: 'تشغيل السائقين' },
     { key: 'rental-domestic', label: 'تشغيل العمالة المنزلية' },
     { key: 'cvs-rental', label: 'سير التأجير الجاهزة' },
+    { key: 'returned-rent', label: 'عقود التأجير المرتجعة' },
   ],
   ats: [
     { key: 'cvs-recruitment', label: 'بنك السير الذاتية' },
     { key: 'ats-pipeline', label: 'مسار الفرز الذكي ATS' },
-    { key: 'create-cv', label: 'إضافة سيرة ذاتية' },
+    { key: 'create-cv', label: '+ إضافة سيرة ذاتية' },
     { key: 'offices', label: 'المكاتب والوكالات الخارجية' },
+    { key: 'agent-accounts', label: 'كشوف حسابات الوكلاء' },
+    { key: 'office-transfers', label: 'حوالات المكاتب الخارجية' },
     { key: 'external-offices', label: 'عقود وحصص الوكلاء' },
     { key: 'foreign-agency-portal', label: 'بوابة الوكيل الخارجي' },
     { key: 'agent-imports', label: 'استيراد دفعات السير' },
   ],
   hr: [
     { key: 'employees', label: 'شؤون الموظفين والرواتب' },
+    { key: 'employee-salaries', label: 'مسيرات الرواتب WPS' },
+    { key: 'employee-contracts', label: 'عقود قوى والتأمينات' },
+    { key: 'employee-leaves', label: 'الإجازات والاستحقاقات' },
     { key: 'attendances', label: 'الحضور والانصراف الذكي' },
     { key: 'employee-monitoring', label: 'مراقبة الأداء والإنتاجية' },
     { key: 'custodies', label: 'العهد العينية للموظفين' },
@@ -85,6 +102,8 @@ const DEPARTMENT_QUICK_TABS: Record<DepartmentId, Array<{ key: string; label: st
   ],
   crm: [
     { key: 'clients', label: 'سجل العملاء والمبيعات' },
+    { key: 'vip-clients', label: 'كبار العملاء VIP' },
+    { key: 'corporate-clients', label: 'عملاء الشركات B2B' },
     { key: 'complaints', label: 'الشكاوى ومؤشر SLA' },
     { key: 'whatsapp-inbox', label: 'صندوق واتساب الموحد' },
     { key: 'unified-communication', label: 'مركز الاتصال الموحد' },
@@ -97,20 +116,26 @@ const DEPARTMENT_QUICK_TABS: Record<DepartmentId, Array<{ key: string; label: st
     { key: 'inside-shelter', label: 'العاملات داخل الإيواء' },
     { key: 'room-management', label: 'إدارة الغرف والأسرة' },
     { key: 'food-catering', label: 'الإعاشة والرعاية الصحية' },
+    { key: 'available-transfer', label: 'جاهزات لنقل الكفالة' },
     { key: 'deportation-stage', label: 'إجراءات الترحيل النظامي' },
+    { key: 'shelter-archive', label: 'أرشيف الخروج النهائي' },
   ],
   tenders: [
     { key: 'kas-suite', label: 'بوابة شركة كاس المستقلة' },
     { key: 'tenders-boq', label: 'منافسات اعتماد وجداول BOQ' },
     { key: 'kas-etmad-cloud', label: 'سحابة اعتماد (2,650+ منافسة)' },
+    { key: 'purchase-orders', label: 'أوامر الشراء والتوريد' },
+    { key: 'project-guarantees', label: 'الضمانات البنكية للمشاريع' },
   ],
   executive: [
     { key: 'dashboard', label: 'لوحة القيادة التنفيذية' },
-    { key: 'group-command-center', label: 'مركز قيادة المجموعة' },
+    { key: 'group-command-center', label: 'مركز قيادة المجموعة (5 شركات)' },
     { key: 'admin-dashboard', label: 'لوحة الرقابة العليا' },
     { key: 'reports', label: 'التقارير التحليلية BI' },
     { key: 'iam', label: 'الهوية والصلاحيات IAM' },
+    { key: 'users', label: 'إدارة المستخدمين' },
     { key: 'legal-compliance', label: 'الحوكمة والامتثال القانوني' },
+    { key: 'master-constants', label: 'ثوابت النظام المرجعية' },
     { key: 'activity-logs', label: 'سجل التدقيق والعمليات' },
     { key: 'settings', label: 'إعدادات النظام والربط' },
   ],
@@ -452,12 +477,37 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
     setPinnedTabs(next);
   };
 
-  if (TABS_WITH_INTERNAL_HERO.has(activeTab)) {
-    return null;
-  }
+  const isInternalHeroTab = TABS_WITH_INTERNAL_HERO.has(activeTab);
 
   return (
     <div className="mb-5 rounded-2xl bg-gradient-to-l from-[#1D2428] via-[#232B30] to-[#161B1E] text-white border border-[#CFA64A]/35 shadow-md overflow-hidden transition-all">
+      {/* 1-Click 9-Departments Switcher Strip (الأقسام الإدارية الـ 9) */}
+      <div className="px-3.5 py-2 bg-[#14181B] border-b border-[#CFA64A]/25 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <span className="text-[10.5px] font-black text-[#CFA64A] shrink-0 pl-2 border-l border-white/15">
+          الأقسام الـ 9:
+        </span>
+        {(Object.values(CORPORATE_DEPARTMENTS) as Array<(typeof CORPORATE_DEPARTMENTS)[DepartmentId]>).map(
+          (dept) => {
+            const isActiveDept = resolvedDeptId === dept.id;
+            return (
+              <button
+                key={dept.id}
+                type="button"
+                onClick={() => onSelectTab(dept.defaultTab, dept.nameAr)}
+                className={`px-2.5 py-1 rounded-lg text-[10.5px] font-extrabold inline-flex items-center gap-1 shrink-0 transition-all cursor-pointer ${
+                  isActiveDept
+                    ? 'bg-[#CFA64A] text-[#1D2428] font-black shadow-2xs'
+                    : 'bg-white/5 hover:bg-white/15 text-zinc-300 border border-white/10'
+                }`}
+              >
+                <span>{dept.emoji}</span>
+                <span>{dept.nameAr}</span>
+              </button>
+            );
+          }
+        )}
+      </div>
+
       {/* Top Interactive Breadcrumb & Workspace Ergonomics Strip */}
       <div className="px-4 py-2 bg-black/30 border-b border-white/10 flex flex-wrap items-center justify-between gap-2 text-[11px]">
         {/* Right: Interactive Breadcrumb Trail */}
@@ -612,8 +662,8 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
         </div>
       )}
 
-      {/* Main Banner Body (Hidden when Slim / Zen Mode is active) */}
-      {!isSlimMode && (
+      {/* Main Banner Body (Hidden when Slim / Zen Mode is active or when page has internal hero) */}
+      {!isSlimMode && !isInternalHeroTab && (
         <div className="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Right: Funkyways Brand-Recolored Illustration + Module Context */}
           <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">

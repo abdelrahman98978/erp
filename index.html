@@ -31,12 +31,13 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Purge all legacy caches (v1..v7) from previous deployments to prevent stale bundle mismatch
-      var CURRENT_SW_CACHE = 'khalid-erp-pwa-v8-20261019';
+      // Purge all legacy caches from previous deployments to prevent stale bundle mismatch
+      var CURRENT_SW_CACHE = 'khalid-erp-pwa-v10-20261019';
+      var isLocalDevHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       if ('caches' in window) {
         caches.keys().then(function(keys) {
           keys.forEach(function(key) {
-            if (key !== CURRENT_SW_CACHE) {
+            if (isLocalDevHost || key !== CURRENT_SW_CACHE) {
               caches.delete(key);
             }
           });
@@ -44,34 +45,40 @@
       }
 
       if ('serviceWorker' in navigator) {
-        var triggerOneTimeReload = function() {
-          try {
-            if (sessionStorage.getItem('alsulaim_sw_v8_reloaded') !== 'true') {
-              sessionStorage.setItem('alsulaim_sw_v8_reloaded', 'true');
-              window.location.reload();
-            }
-          } catch (_) {}
-        };
+        if (isLocalDevHost) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            regs.forEach(function(reg) { reg.unregister(); });
+          }).catch(function() {});
+        } else {
+          var triggerOneTimeReload = function() {
+            try {
+              if (sessionStorage.getItem('alsulaim_sw_v10_reloaded') !== 'true') {
+                sessionStorage.setItem('alsulaim_sw_v10_reloaded', 'true');
+                window.location.reload();
+              }
+            } catch (_) {}
+          };
 
-        navigator.serviceWorker.addEventListener('message', function(event) {
-          if (event.data && event.data.type === 'FORCE_RELOAD_AFTER_SW_UPDATE') {
-            triggerOneTimeReload();
-          }
-        });
-
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
-            reg.update();
-            if ('periodicSync' in reg) {
-              reg.periodicSync.register('alsulaim-erp-periodic-check', {
-                minInterval: 15 * 60 * 1000
-              }).catch(function() {});
+          navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'FORCE_RELOAD_AFTER_SW_UPDATE') {
+              triggerOneTimeReload();
             }
-            console.log('[PWA] ServiceWorker v8 registered successfully:', reg.scope);
-          }).catch(function(err) {
-            console.warn('[PWA] ServiceWorker registration error:', err);
           });
-        });
+
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function(reg) {
+              reg.update();
+              if ('periodicSync' in reg) {
+                reg.periodicSync.register('alsulaim-erp-periodic-check', {
+                  minInterval: 15 * 60 * 1000
+                }).catch(function() {});
+              }
+              console.log('[PWA] ServiceWorker v10 registered successfully:', reg.scope);
+            }).catch(function(err) {
+              console.warn('[PWA] ServiceWorker registration error:', err);
+            });
+          });
+        }
       }
     </script>
   </body>

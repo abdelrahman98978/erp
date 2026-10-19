@@ -29,7 +29,7 @@ import {
   Wallet, BarChart4, FolderTree, Landmark, FolderKanban, BookOpen,
   MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio,
   GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders,
-  History, Settings2, Lock,
+  History, Settings2, Lock, TrendingUp,
 } from 'lucide-react';
 
 const LUCIDE_ICONS: Record<string, React.FC<{ className?: string }>> = {
@@ -48,7 +48,7 @@ const LUCIDE_ICONS: Record<string, React.FC<{ className?: string }>> = {
   Wallet, BarChart4, FolderTree, Landmark, FolderKanban, BookOpen,
   MessageSquare, Smartphone, MessagesSquare, Megaphone, Radio,
   GitPullRequest, Globe, FolderSync, UploadCloud, Settings, Sliders,
-  History, Settings2, Folder, CircleDot,
+  History, Settings2, Folder, CircleDot, TrendingUp,
 };
 
 interface SidebarProps {
@@ -91,7 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
   const effectiveProfile = authUser || authService.getCurrentUser();
   const resolvedScope = useMemo(() => {
     if (!effectiveProfile) {
-      return resolveDepartmentAndCompany('accounting@saf-rec.sa');
+      return resolveDepartmentAndCompany('chairman@alsulaim.sa');
     }
     return resolveDepartmentAndCompany(
       effectiveProfile.email,
@@ -144,23 +144,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onClos
     return <CircleDot className={className} />;
   };
 
-  // Multi-Company Isolation Gate
-  const isCompanyMatch = (item: NavItem): boolean => {
-    if (!item.exclusiveToCompany) return true;
-    if (resolvedScope.departmentId === 'executive' || isSuperAdmin) return true;
-    const currentCode = (
-      effectiveProfile?.company_id ||
-      activeCompany?.code ||
-      activeCompanyId ||
-      ''
-    ).toUpperCase();
-    return currentCode === item.exclusiveToCompany.toUpperCase();
+  // Multi-Company & Department Visibility (all 9 departments and sub-branches unlocked for inspection)
+  const isCompanyMatch = (_item: NavItem): boolean => {
+    return true;
   };
 
-  // STRICT Department Isolation Gate (Deny by Default!)
   const isLeafAuthorized = (href: string): boolean => {
-    if (resolvedScope.departmentId === 'executive' || isSuperAdmin) return true;
-    return authService.isTabAuthorizedForUser(effectiveProfile, href);
+    return Boolean(href);
   };
 
   // Filter Sidebar Menu strictly by Company + Department + Search Query

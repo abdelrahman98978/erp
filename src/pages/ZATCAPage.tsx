@@ -81,7 +81,7 @@ const DEFAULT_MOCK_INVOICES: ZatcaInvoiceRecord[] = [
 ];
 
 export const ZATCAPage: React.FC = () => {
-  const { addNotification, activeTab: storeActiveTab } = useAppStore();
+  const { addNotification, activeTab: storeActiveTab, setActiveTab } = useAppStore();
   const { activeCompanyId, activeCompany } = useCompany();
   const { data: rawInvoices = [], isLoading, refetch } = useZatcaInvoices();
   const { createItem } = useTableMutation('zatca_invoices');
@@ -93,6 +93,8 @@ export const ZATCAPage: React.FC = () => {
   useEffect(() => {
     if (storeActiveTab === 'universal-extractor') {
       setShowBatchExtractor(true);
+    } else if (storeActiveTab === 'invoices' || storeActiveTab === 'zatca') {
+      setShowBatchExtractor(false);
     }
   }, [storeActiveTab]);
 
@@ -295,6 +297,47 @@ export const ZATCAPage: React.FC = () => {
             buttonLabel="تصدير الفواتير (10 صيغ)"
           />
         </div>
+      </div>
+
+      {/* Sub-Branch Navigation Tabs inside ZATCAPage */}
+      <div className="p-3 rounded-2xl bg-[#1D2428] border border-[#CFA64A]/35 flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {[
+            { id: 'zatca', label: '🏛️ الفوترة الإلكترونية ZATCA المرحلة 2 (UBL 2.1 & CSID)' },
+            { id: 'invoices', label: '🧾 فواتير المبيعات والعقود الضريبية (B2B / B2C)' },
+            { id: 'universal-extractor', label: '🤖 استخلاص 100+ فاتورة وأي مستند آلياً (AI OCR)' },
+          ].map((sub) => {
+            const isActive = storeActiveTab === sub.id;
+            return (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => {
+                  setActiveTab(sub.id, sub.label);
+                  if (sub.id === 'universal-extractor') {
+                    setShowBatchExtractor(true);
+                  } else {
+                    setShowBatchExtractor(false);
+                  }
+                }}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#CFA64A] text-[#1D2428] shadow-sm'
+                    : 'bg-white/10 hover:bg-white/20 text-zinc-200 border border-white/10'
+                }`}
+              >
+                {sub.label}
+              </button>
+            );
+          })}
+        </div>
+        <span className="text-[11px] font-bold text-[#E6D3A7] px-2">
+          {storeActiveTab === 'invoices'
+            ? 'عرض سجل فواتير المبيعات والعقود الضريبية'
+            : storeActiveTab === 'universal-extractor'
+              ? 'وضع الاستخلاص الآلي لدفعات الفواتير'
+              : 'وضع الربط المباشر والاعتماد التشفيري ZATCA Phase 2'}
+        </span>
       </div>
 
       {/* ZATCA Clearance Status Card */}

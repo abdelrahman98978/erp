@@ -58,7 +58,7 @@ export function togglePinnedTab(item: PinnedTabItem): PinnedTabItem[] {
     : [item, ...current].slice(0, 8);
   try {
     localStorage.setItem(PINNED_TABS_KEY, JSON.stringify(next));
-    window.dispatchEvent(new CustomEvent('alsulaim-Favorites-updated', { detail: next }));
+    window.dispatchEvent(new CustomEvent('alsulaim-favorites-updated', { detail: next }));
   } catch {
     // ignore storage errors
   }

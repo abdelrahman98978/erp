@@ -131,7 +131,7 @@ const MOCK_OFFICES: ForeignOffice[] = [
 ];
 
 export const OfficesPage: React.FC = () => {
-  const { activeTab: storeActiveTab, addNotification } = useAppStore();
+  const { activeTab: storeActiveTab, setActiveTab, addNotification } = useAppStore();
   const [offices, setOffices] = useState<ForeignOffice[]>([]);
   const [countryFilter, setCountryFilter] = useState<string>('الكل');
   const [searchQuery, setSearchQuery] = useState('');
@@ -163,6 +163,8 @@ export const OfficesPage: React.FC = () => {
       setShowAddModal(true);
     } else if (storeActiveTab === 'agent-accounts' || storeActiveTab === 'office-transfers') {
       setViewMode('table');
+    } else if (storeActiveTab === 'offices') {
+      setViewMode('cards');
     }
   }, [storeActiveTab]);
 
@@ -288,6 +290,39 @@ export const OfficesPage: React.FC = () => {
               customTitle="سجل المكاتب والوكالات الخارجية المعتمدة" 
             />
           </div>
+        </div>
+
+        {/* Sub-Branch Navigation Tabs inside OfficesPage */}
+        <div className="mt-5 pt-4 border-t border-white/15 flex items-center gap-2 flex-wrap">
+          {[
+            { id: 'offices', label: '🌐 دليل الوكالات الدولية (كروت)', mode: 'cards' as const },
+            { id: 'agent-accounts', label: '📊 كشوف حسابات وأرصدة الوكلاء', mode: 'table' as const },
+            { id: 'office-transfers', label: '💸 حوالات وتسويات المكاتب الخارجية', mode: 'table' as const },
+            { id: 'add-office', label: '➕ تسجيل وكالة خارجية جديدة', mode: 'cards' as const },
+          ].map((sub) => {
+            const isActive = storeActiveTab === sub.id;
+            return (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => {
+                  setActiveTab(sub.id, sub.label);
+                  if (sub.id === 'add-office') {
+                    setShowAddModal(true);
+                  } else {
+                    setViewMode(sub.mode);
+                  }
+                }}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-[#CFA64A] text-[#1D2428] shadow-sm'
+                    : 'bg-white/10 hover:bg-white/20 text-zinc-200 border border-white/15'
+                }`}
+              >
+                {sub.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
