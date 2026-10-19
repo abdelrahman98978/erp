@@ -158,14 +158,14 @@ export const realErpDataStore = {
 
     const isTestOrDemo = import.meta.env.MODE === 'test' || getDataMode() === 'demo_preview';
 
-    if (!isDummySupabase && !isTestOrDemo) {
+    if (!isDummySupabase && !isTestOrDemo && entityKey !== 'employee_executed_ops') {
       try {
         let query = supabase.from(entityKey).select('*').order('created_at', { ascending: false });
         if (activeCompany && activeCompany !== 'all') {
           query = query.eq('company_id', activeCompany);
         }
         const { data, error } = await query;
-        if (!error && data) {
+        if (!error && Array.isArray(data) && data.length > 0) {
           saveLocalStore(entityKey, data as unknown as T[]);
           return data as unknown as T[];
         }

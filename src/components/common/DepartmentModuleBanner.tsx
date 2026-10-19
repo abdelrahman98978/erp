@@ -14,6 +14,10 @@ import {
   UploadCloud,
   CheckCircle2,
   X,
+  Users,
+  Zap,
+  MapPin,
+  Play,
 } from 'lucide-react';
 import { BusinessIllustration } from './BusinessIllustration';
 import { CorporateAvatar } from './CorporateAvatar';
@@ -27,7 +31,13 @@ import {
   CORPORATE_DEPARTMENTS,
   DepartmentId,
   resolveDepartmentAndCompany,
+  getFullStaffDirectory,
+  COMPANY_AUTH_METADATA,
 } from '../../services/authService';
+import {
+  employeeOperationsEngine,
+  ExecutedEmployeeOperation,
+} from '../../services/employeeOperationsEngine';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useAppStore } from '../../stores/appStore';
 import { getPinnedTabs, togglePinnedTab, PinnedTabItem } from './QuickSearchModal';
@@ -389,8 +399,8 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
   activeTabTitle,
   onSelectTab,
 }) => {
-  const { activeCompany } = useCompany();
-  const { setQuickSearchOpen } = useAppStore();
+  const { activeCompany, activeCompanyId, setActiveCompanyId } = useCompany();
+  const { setQuickSearchOpen, addNotification } = useAppStore();
   const currentUser = authService.getCurrentUser();
   const scope = resolveDepartmentAndCompany(
     currentUser?.email || currentUser?.username || '',
@@ -408,8 +418,19 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
   });
   const [pinnedTabs, setPinnedTabs] = useState<PinnedTabItem[]>(() => getPinnedTabs());
   const [showPlaybook, setShowPlaybook] = useState<boolean>(false);
+  const [showStaffOpsDrawer, setShowStaffOpsDrawer] = useState<boolean>(false);
+  const [staffScopeFilter, setStaffScopeFilter] = useState<'all' | 'dept'>('all');
+  const [executedOps, setExecutedOps] = useState<ExecutedEmployeeOperation[]>([]);
+  const [runningStaffId, setRunningStaffId] = useState<string | null>(null);
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
+
+  const loadExecutedOps = async () => {
+    const ops = await employeeOperationsEngine.getExecutedOperations();
+    setExecutedOps(ops);
+  };
 
   useEffect(() => {
+    void loadExecutedOps();
     const handleToggleSlim = () => {
       setIsSlimMode((prev) => {
         const next = !prev;
@@ -429,11 +450,18 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
         setPinnedTabs(getPinnedTabs());
       }
     };
+    const handleOpsUpdated = () => {
+      void loadExecutedOps();
+    };
     window.addEventListener('alsulaim-toggle-slim-banner', handleToggleSlim);
     window.addEventListener('alsulaim-favorites-updated', handleFavoritesUpdated);
+    window.addEventListener('employee-operations-updated', handleOpsUpdated);
+    window.addEventListener('erp-data-updated', handleOpsUpdated);
     return () => {
       window.removeEventListener('alsulaim-toggle-slim-banner', handleToggleSlim);
       window.removeEventListener('alsulaim-favorites-updated', handleFavoritesUpdated);
+      window.removeEventListener('employee-operations-updated', handleOpsUpdated);
+      window.removeEventListener('erp-data-updated', handleOpsUpdated);
     };
   }, []);
 
@@ -465,6 +493,43 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
   const playbookItems =
     DEPARTMENT_GUIDED_PLAYBOOKS[resolvedDeptId] || DEPARTMENT_GUIDED_PLAYBOOKS.executive;
 
+  const allStaff = React.useMemo(() => getFullStaffDirectory(), []);
+  const filteredStaff = React.useMemo(() => {
+    if (staffScopeFilter === 'dept') {
+      return allStaff.filter((s) => s.department_id === resolvedDeptId);
+    }
+    return allStaff;
+  }, [allStaff, staffScopeFilter, resolvedDeptId]);
+
+  const handleRunSingleEmployeeOp = async (staffId: string) => {
+    setRunningStaffId(staffId);
+    const op = await employeeOperationsEngine.executeOperationForEmployee(staffId);
+    await loadExecutedOps();
+    addNotification({
+      title: `✅ تمت العملية للموظف: ${op.staff_name}`,
+      message: `${op.operation_title} — (${op.branch}) برقم مرجعي #${op.reference_no}`,
+      type: 'success',
+    });
+    setTimeout(() => setRunningStaffId(null), 500);
+  };
+
+  const handleRunAllEmployeesBatch = async () => {
+    if (batchProgress) return;
+    setBatchProgress({ current: 0, total: allStaff.length });
+    const results = await employeeOperationsEngine.executeOperationsForAllEmployees(
+      (_op, idx, total) => {
+        setBatchProgress({ current: idx, total });
+      }
+    );
+    await loadExecutedOps();
+    addNotification({
+      title: `⚡ اكتمل تنفيذ عمليات جميع الموظفين (${results.length} موظفاً)`,
+      message: `تم إجراء وتوثيق ${results.length} عملية حية عبر الأقسام الـ 9 وكافة الفروع والشركات في السجل المحاسبي وسجل التدقيق.`,
+      type: 'success',
+    });
+    setTimeout(() => setBatchProgress(null), 900);
+  };
+
   const currentTitle = activeTabTitle || meta.titleAr;
   const isPinned = pinnedTabs.some((t) => t.href === activeTab);
 
@@ -482,30 +547,64 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
   return (
     <div className="mb-5 rounded-2xl bg-gradient-to-l from-[#1D2428] via-[#232B30] to-[#161B1E] text-white border border-[#CFA64A]/35 shadow-md overflow-hidden transition-all">
       {/* 1-Click 9-Departments Switcher Strip (الأقسام الإدارية الـ 9) */}
-      <div className="px-3.5 py-2 bg-[#14181B] border-b border-[#CFA64A]/25 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-        <span className="text-[10.5px] font-black text-[#CFA64A] shrink-0 pl-2 border-l border-white/15">
-          الأقسام الـ 9:
-        </span>
-        {(Object.values(CORPORATE_DEPARTMENTS) as Array<(typeof CORPORATE_DEPARTMENTS)[DepartmentId]>).map(
-          (dept) => {
-            const isActiveDept = resolvedDeptId === dept.id;
+      <div className="px-3.5 py-2 bg-[#14181B] border-b border-[#CFA64A]/25 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="text-[10.5px] font-black text-[#CFA64A] shrink-0 pl-2 border-l border-white/15">
+            الأقسام الـ 9:
+          </span>
+          {(Object.values(CORPORATE_DEPARTMENTS) as Array<(typeof CORPORATE_DEPARTMENTS)[DepartmentId]>).map(
+            (dept) => {
+              const isActiveDept = resolvedDeptId === dept.id;
+              return (
+                <button
+                  key={dept.id}
+                  type="button"
+                  onClick={() => onSelectTab(dept.defaultTab, dept.nameAr)}
+                  className={`px-2.5 py-1 rounded-lg text-[10.5px] font-extrabold inline-flex items-center gap-1 shrink-0 transition-all cursor-pointer ${
+                    isActiveDept
+                      ? 'bg-[#CFA64A] text-[#1D2428] font-black shadow-2xs'
+                      : 'bg-white/5 hover:bg-white/15 text-zinc-300 border border-white/10'
+                  }`}
+                >
+                  <span>{dept.emoji}</span>
+                  <span>{dept.nameAr}</span>
+                </button>
+              );
+            }
+          )}
+        </div>
+
+        {/* Company & Branch Quick Switcher Pills */}
+        <div className="flex items-center gap-1 shrink-0 pr-2 border-r border-white/15">
+          <span className="text-[10px] font-black text-emerald-300 inline-flex items-center gap-1 ml-1">
+            <MapPin className="w-3 h-3" />
+            <span>الكيان والفرع:</span>
+          </span>
+          {[
+            { id: 'all', label: '🛡️ المجموعة (الرياض)' },
+            { id: 'SAF', label: '📑 السفير الماسي (الرياض)' },
+            { id: 'YAQ', label: '🏢 الياقوت (الدمام/الخبر)' },
+            { id: 'TOP', label: '🗂️ توب تالنت (الرياض)' },
+            { id: 'KAS', label: '⚖️ كاس (الرياض)' },
+            { id: 'DAR', label: '🏨 دار الرواد (الرياض)' },
+          ].map((comp) => {
+            const isSelected = (activeCompanyId || 'all').toUpperCase() === comp.id.toUpperCase();
             return (
               <button
-                key={dept.id}
+                key={comp.id}
                 type="button"
-                onClick={() => onSelectTab(dept.defaultTab, dept.nameAr)}
-                className={`px-2.5 py-1 rounded-lg text-[10.5px] font-extrabold inline-flex items-center gap-1 shrink-0 transition-all cursor-pointer ${
-                  isActiveDept
-                    ? 'bg-[#CFA64A] text-[#1D2428] font-black shadow-2xs'
-                    : 'bg-white/5 hover:bg-white/15 text-zinc-300 border border-white/10'
+                onClick={() => setActiveCompanyId(comp.id as any)}
+                className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer shrink-0 ${
+                  isSelected
+                    ? 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/60 font-black'
+                    : 'bg-white/5 hover:bg-white/15 text-zinc-400 border border-white/10'
                 }`}
               >
-                <span>{dept.emoji}</span>
-                <span>{dept.nameAr}</span>
+                {comp.label}
               </button>
             );
-          }
-        )}
+          })}
+        </div>
       </div>
 
       {/* Top Interactive Breadcrumb & Workspace Ergonomics Strip */}
@@ -535,8 +634,25 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
           <span className="text-white font-black truncate max-w-[240px]">{currentTitle}</span>
         </div>
 
-        {/* Left: Quick Ergonomic Controls (Pin, Playbook, Command Palette, Slim Mode) */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        {/* Left: Quick Ergonomic Controls (Employee Operations, Pin, Playbook, Command Palette, Slim Mode) */}
+        <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setShowStaffOpsDrawer((prev) => !prev)}
+            className={`px-2.5 py-1 rounded-lg text-[10.5px] font-black inline-flex items-center gap-1 transition-all cursor-pointer border ${
+              showStaffOpsDrawer
+                ? 'bg-emerald-600 text-white border-emerald-400 shadow-xs'
+                : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border-emerald-400/40'
+            }`}
+            title="فتح مركز إجراء عمليات الموظفين الـ 28 عبر الأقسام والفروع"
+          >
+            <Users className="w-3 h-3 text-[#CFA64A]" />
+            <span>عمليات الموظفين ({allStaff.length})</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-black/40 text-[#E6D3A7] font-mono text-[9.5px]">
+              {executedOps.length} عملية
+            </span>
+          </button>
+
           <button
             type="button"
             onClick={handleTogglePin}
@@ -597,6 +713,149 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Interactive 28-Employee Operations Execution & Branch Switcher Drawer */}
+      {showStaffOpsDrawer && (
+        <div className="p-4 bg-[#14191D] border-b border-[#CFA64A]/40 space-y-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center">
+                <Zap className="w-4 h-4 text-emerald-300" />
+              </span>
+              <div>
+                <h3 className="text-xs sm:text-sm font-black text-white">
+                  محرك تنفيذ العمليات الحية للموظفين عبر الأقسام الـ 9 والفروع ({allStaff.length} موظفاً)
+                </h3>
+                <p className="text-[11px] text-zinc-400">
+                  نفّذ عمليات محاسبية وتشغيلية حقيقية لكل موظف في قسمه وفرعه، أو انتقل فوراً لحساب أي موظف
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center bg-black/40 p-0.5 rounded-lg border border-white/10 text-[10.5px]">
+                <button
+                  type="button"
+                  onClick={() => setStaffScopeFilter('all')}
+                  className={`px-2.5 py-1 rounded-md font-extrabold cursor-pointer ${
+                    staffScopeFilter === 'all'
+                      ? 'bg-[#CFA64A] text-[#1D2428]'
+                      : 'text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  جميع موظفي المجموعة ({allStaff.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStaffScopeFilter('dept')}
+                  className={`px-2.5 py-1 rounded-md font-extrabold cursor-pointer ${
+                    staffScopeFilter === 'dept'
+                      ? 'bg-[#CFA64A] text-[#1D2428]'
+                      : 'text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  موظفو هذا القسم فقط
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleRunAllEmployeesBatch}
+                disabled={Boolean(batchProgress)}
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs inline-flex items-center gap-1.5 shadow-sm transition-all cursor-pointer border border-emerald-400/50"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>
+                  {batchProgress
+                    ? `جاري التنفيذ (${batchProgress.current}/${batchProgress.total})...`
+                    : `⚡ تنفيذ عملية حية لكل موظف (${allStaff.length} موظفاً)`}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowStaffOpsDrawer(false)}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-zinc-300 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5 max-h-[340px] overflow-y-auto pr-1">
+            {filteredStaff.map((staff) => {
+              const staffOps = executedOps.filter((o) => o.staff_id === staff.id);
+              const latestOp = staffOps[0];
+              const isRunning = runningStaffId === staff.id;
+              const compKey = staff.company_id === 'all' ? 'ALL' : staff.company_id.toUpperCase();
+              const compMeta = COMPANY_AUTH_METADATA[compKey] || COMPANY_AUTH_METADATA.SAF;
+
+              return (
+                <div
+                  key={staff.id}
+                  className="p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#CFA64A]/50 transition-all flex flex-col justify-between gap-2.5"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <CorporateAvatar
+                        name={staff.full_name}
+                        role={staff.role}
+                        email={staff.email}
+                        departmentId={staff.department_id}
+                        size="sm"
+                        status="verified"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-xs font-black text-white truncate">{staff.full_name}</div>
+                        <div className="text-[10px] text-[#E6D3A7] truncate">{staff.role}</div>
+                        <div className="text-[10px] text-zinc-400 truncate">
+                          {compMeta.emoji} {staff.branch}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 shrink-0">
+                      {staffOps.length} عملية
+                    </span>
+                  </div>
+
+                  {latestOp && (
+                    <div className="p-2 rounded-lg bg-black/35 border border-white/5 text-[10px] text-zinc-300 space-y-0.5">
+                      <div className="flex items-center justify-between text-[#CFA64A] font-bold">
+                        <span className="truncate">{latestOp.button_label}</span>
+                        <span className="font-mono text-[9.5px]">#{latestOp.reference_no.slice(-4)}</span>
+                      </div>
+                      <div className="text-zinc-400 line-clamp-1">{latestOp.operation_title}</div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-1.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleRunSingleEmployeeOp(staff.id)}
+                      disabled={isRunning}
+                      className="flex-1 px-2.5 py-1.5 rounded-lg bg-[#CFA64A] hover:bg-[#d8b159] text-[#1D2428] font-black text-[10.5px] inline-flex items-center justify-center gap-1 cursor-pointer transition-all"
+                    >
+                      <Zap className="w-3 h-3" />
+                      <span>{isRunning ? 'جاري التنفيذ...' : 'إجراء عملية الآن'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        employeeOperationsEngine.switchToEmployeeSession(staff, onSelectTab);
+                        setShowStaffOpsDrawer(false);
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[10.5px] cursor-pointer transition-all"
+                      title="التبديل لحساب الموظف وفتح قسمه وفرعه"
+                    >
+                      فتح قسمه
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Interactive Departmental Guided Playbook Drawer (when toggled) */}
       {showPlaybook && (

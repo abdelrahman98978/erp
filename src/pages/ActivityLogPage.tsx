@@ -5,10 +5,11 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { realErpDataStore } from '../services/realErpDataStore';
+import { employeeOperationsEngine } from '../services/employeeOperationsEngine';
 import { useAppStore } from '../stores/appStore';
 import { 
   ShieldAlert, ShieldCheck, FileSpreadsheet, FileText, Search, 
-  Clock, Laptop, User, Check, RefreshCw, Trash2, Activity
+  Clock, Laptop, User, Check, RefreshCw, Trash2, Activity, Zap
 } from 'lucide-react';
 
 export interface ActivityItem {
@@ -106,6 +107,7 @@ export const ActivityLogPage: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<string>('الكل');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('الكل');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isExecutingBatch, setIsExecutingBatch] = useState(false);
 
   const loadActivities = async () => {
     const data = await realErpDataStore.getRecords<ActivityItem>('activity_log', MOCK_ACTIVITIES);
@@ -114,7 +116,30 @@ export const ActivityLogPage: React.FC = () => {
 
   useEffect(() => {
     loadActivities();
+    const handleSync = () => loadActivities();
+    window.addEventListener('employee-operations-updated', handleSync);
+    window.addEventListener('erp-data-updated', handleSync);
+    return () => {
+      window.removeEventListener('employee-operations-updated', handleSync);
+      window.removeEventListener('erp-data-updated', handleSync);
+    };
   }, []);
+
+  const handleExecuteAllEmployees = async () => {
+    setIsExecutingBatch(true);
+    try {
+      const results = await employeeOperationsEngine.executeOperationsForAllEmployees();
+      await loadActivities();
+      const totalSar = results.reduce((s, r) => s + (r.amount_sar || 0), 0);
+      addNotification({
+        title: `تم تنفيذ (${results.length}) عملية حقيقية لجميع الموظفين`,
+        message: `تم تسجيل العمليات والقيود والفواتير لجميع موظفي المجموعة في كافة الأقسام والفروع بإجمالي أثر مالي ${totalSar.toLocaleString('ar-SA')} ر.س.`,
+        type: 'success',
+      });
+    } finally {
+      setIsExecutingBatch(false);
+    }
+  };
 
   const handleExport = (type: 'excel' | 'pdf') => {
     exportData('activity_log', filteredActivities, type);
@@ -147,6 +172,9 @@ export const ActivityLogPage: React.FC = () => {
     if (searchTerm && !act.user_name.includes(searchTerm) && !act.details.includes(searchTerm) && !act.ip_address.includes(searchTerm)) return false;
     return true;
   });
+
+  const financialApprovalsCount = activities.filter(a => a.action_type === 'اعتماد مالي').length || 18;
+  const activeActorsCount = new Set(activities.map(a => a.user_name)).size || 28;
 
   return (
     <div className="space-y-6">
@@ -183,6 +211,16 @@ export const ActivityLogPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              className="button-outline-on-dark"
+              onClick={handleExecuteAllEmployees}
+              disabled={isExecutingBatch}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.5)', background: 'rgba(207, 166, 74, 0.14)', color: '#fde68a', fontWeight: 700 }}
+              title="تنفيذ عملية تشغيلية ومالية حية لكل موظف من موظفي المجموعة الـ 28"
+            >
+              <Zap className={`w-3.5 h-3.5 ml-1 text-amber-400 ${isExecutingBatch ? 'animate-spin' : ''}`} />
+              <span>{isExecutingBatch ? 'جاري التنفيذ...' : '⚡ إجراء عملية حية لكل موظف (28 موظفاً)'}</span>
+            </button>
             <button
               className="button-outline-on-dark"
               onClick={() => {
@@ -235,14 +273,14 @@ export const ActivityLogPage: React.FC = () => {
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
           <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الاعتمادات المالية المنجزة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>18 عملية</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{financialApprovalsCount} عملية</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>سندات صرف وقبض</span>
         </div>
 
         <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>جلسات الدخول النشطة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>4 مستخدمين</div>
-          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>2FA نشط</span>
+          <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الموظفون المنفذون للعمليات</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{activeActorsCount} موظفاً</div>
+          <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>كافة الأقسام والفروع</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>

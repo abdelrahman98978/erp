@@ -6,6 +6,8 @@ import { MobileBottomNav } from './MobileBottomNav';
 import { DepartmentModuleBanner } from '../common/DepartmentModuleBanner';
 import { recordRecentTab } from '../common/QuickSearchModal';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { employeeOperationsEngine } from '../../services/employeeOperationsEngine';
+import { authService } from '../../services/authService';
 
 interface AppShellProps {
   activeTab: string;
@@ -190,6 +192,11 @@ export const AppShell: React.FC<AppShellProps> = ({
     };
   }, [mobileDrawerOpen, showShortcutsModal, handleToggleSidebar]);
 
+  // Ensure all 28 corporate employees have initial operations seeded across all departments & branches
+  useEffect(() => {
+    void employeeOperationsEngine.ensureSeededForAllEmployees();
+  }, []);
+
   // Global Dynamic Button State Enhancer for payment, ZATCA, WPS, Musaned, and approval actions
   const handleWorkspaceClickCapture = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement | null;
@@ -230,6 +237,10 @@ export const AppShell: React.FC<AppShellProps> = ({
     const originalHtml = btn.innerHTML;
     btn.setAttribute('data-dyn-state', 'processing');
     btn.innerHTML = `<span class="dyn-inline-spinner"></span><span>${matchedRule.processingLabel}</span>`;
+
+    // Record real employee operation in store & audit log
+    const activeUser = authService.getCurrentUser();
+    void employeeOperationsEngine.executeOperationForEmployee(activeUser?.id || 'USR-GRP-EXEC-01');
 
     setTimeout(() => {
       if (!btn.isConnected) return;

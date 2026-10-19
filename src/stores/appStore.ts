@@ -151,6 +151,15 @@ function resolveInitialRouteFromUrl(): {
   const queryPortal = normalizePortalRouteCode(
     searchParams.get('company') || searchParams.get('system') || searchParams.get('portal')
   );
+  const queryFlow = searchParams.get('flow');
+  const queryTab = searchParams.get('tab');
+
+  if (queryFlow === 'workspace' || queryTab) {
+    return { flowState: 'workspace', activeTab: queryTab || 'dashboard', loginPortalCode: null };
+  }
+  if (queryFlow === 'launcher') {
+    return { flowState: 'launcher', activeTab: 'dashboard', loginPortalCode: null };
+  }
 
   if (!path || path === 'landing') {
     return { flowState: 'landing', activeTab: 'dashboard', loginPortalCode: null };

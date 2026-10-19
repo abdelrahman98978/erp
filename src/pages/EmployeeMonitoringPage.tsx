@@ -17,6 +17,7 @@ import {
   MoodType 
 } from '../services/employeeMonitoringService';
 import { DailyMoodCheckInModal } from '../components/monitoring/DailyMoodCheckInModal';
+import { employeeOperationsEngine } from '../services/employeeOperationsEngine';
 import { ExportDropdown } from '../components/common/ExportDropdown';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
@@ -53,7 +54,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
     activeRatio: 88,
     totalRageClicks: 3,
     securityAlertsCount: 2,
-    activeEmployeesCount: 7
+    activeEmployeesCount: 28
   });
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,6 +62,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
   const [selectedMoodFilter, setSelectedMoodFilter] = useState('الكل');
   const [isMoodModalOpen, setIsMoodModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExecutingBatch, setIsExecutingBatch] = useState(false);
 
   // Settings State for Rules Tab
   const [rulesConfig, setRulesConfig] = useState(() => {
@@ -102,17 +104,36 @@ export const EmployeeMonitoringPage: React.FC = () => {
     loadData();
 
     // الاستماع لأي تحديثات حية
-    const handleMoodUpdate = () => loadData();
-    const handleTelemetryUpdate = () => loadData();
+    const handleSync = () => loadData();
 
-    window.addEventListener('employee-mood-updated', handleMoodUpdate);
-    window.addEventListener('telemetry-event-added', handleTelemetryUpdate);
+    window.addEventListener('employee-mood-updated', handleSync);
+    window.addEventListener('telemetry-event-added', handleSync);
+    window.addEventListener('employee-operations-updated', handleSync);
+    window.addEventListener('erp-data-updated', handleSync);
 
     return () => {
-      window.removeEventListener('employee-mood-updated', handleMoodUpdate);
-      window.removeEventListener('telemetry-event-added', handleTelemetryUpdate);
+      window.removeEventListener('employee-mood-updated', handleSync);
+      window.removeEventListener('telemetry-event-added', handleSync);
+      window.removeEventListener('employee-operations-updated', handleSync);
+      window.removeEventListener('erp-data-updated', handleSync);
     };
   }, []);
+
+  const handleExecuteAllOperations = async () => {
+    setIsExecutingBatch(true);
+    try {
+      const results = await employeeOperationsEngine.executeOperationsForAllEmployees();
+      await loadData();
+      const totalSar = results.reduce((s, r) => s + (r.amount_sar || 0), 0);
+      addNotification({
+        title: `تم تنفيذ (${results.length}) عملية حية لجميع الموظفين`,
+        message: `تم تحديث عدادات النقرات والمعاملات المنجزة لجميع الـ 28 موظفاً في كافة الأقسام والفروع بإجمالي أثر مالي ${totalSar.toLocaleString('ar-SA')} ر.س.`,
+        type: 'success',
+      });
+    } finally {
+      setIsExecutingBatch(false);
+    }
+  };
 
   const handleSimulateRageClick = async () => {
     await employeeMonitoringService.recordTelemetryEvent({
@@ -153,7 +174,13 @@ export const EmployeeMonitoringPage: React.FC = () => {
     });
   }, [moodLogs, searchQuery, selectedBranch, selectedMoodFilter]);
 
-  const branches = ['الكل', 'المقر الرئيسي', 'فرع الرياض الرئيسي', 'فرع الرياض', 'فرع جدة', 'فرع الدمام', 'فرع الخبر', 'مركز إيواء الرياض الرئيسي'];
+  const branches = useMemo(() => {
+    const base = ['الكل', 'الفرع الرئيسي - الرياض', 'فرع الرياض (التخصصي)', 'فرع الدمام', 'فرع الخبر', 'المقر الرئيسي للمجموعة - الرياض'];
+    summaries.forEach(s => {
+      if (s.branch && !base.includes(s.branch)) base.push(s.branch);
+    });
+    return base;
+  }, [summaries]);
 
   return (
     <div className="space-y-6">
@@ -209,6 +236,15 @@ export const EmployeeMonitoringPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={handleExecuteAllOperations}
+              disabled={isExecutingBatch}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-amber-200 bg-amber-950/70 hover:bg-amber-900/80 border border-amber-500/50 rounded-xl shadow-lg transition-all transform active:scale-95"
+              title="إجراء عمليات حية لجميع الـ 28 موظفاً في كافة الأقسام والفروع"
+            >
+              <Zap className={`w-4 h-4 text-amber-400 ${isExecutingBatch ? 'animate-spin' : ''}`} />
+              <span>{isExecutingBatch ? 'جاري التنفيذ...' : '⚡ تنفيذ عمليات لجميع الموظفين (28 موظفاً)'}</span>
+            </button>
             <button
               onClick={() => setIsMoodModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-black bg-emerald-400 bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 rounded-xl shadow-lg transition-all transform active:scale-95"
@@ -600,37 +636,54 @@ export const EmployeeMonitoringPage: React.FC = () => {
                         </td>
 
                         <td className="p-3.5 text-center">
-                          <button
-                            onClick={async () => {
-                              setSummaries(prev =>
-                                prev.map(item =>
-                                  item.user_id === emp.user_id
-                                    ? { ...item, burnout_risk: 'منخفض', latest_mood: 'happy' as MoodType }
-                                    : item
-                                )
-                              );
-                              await employeeMonitoringService.recordTelemetryEvent({
-                                user_id: emp.user_id,
-                                user_name: emp.user_name,
-                                role: emp.role,
-                                branch: emp.branch,
-                                event_type: 'navigation' as any,
-                                target_element: 'button#1on1-support-session',
-                                target_label: 'عقد جلسة مساندة 1-on-1',
-                                module: 'رادار الموارد البشرية',
-                                details: `تم عقد وتوثيق جلسة استماع ومساندة إدارية مع (${emp.user_name}) وتخفيض مؤشر الاحتراق الوظيفي إلى مستقر.`,
-                                severity: 'info',
-                              });
-                              addNotification({
-                                title: `جلسة استماع 1-on-1 مع ${emp.user_name}`,
-                                message: `تم توثيق جلسة المساندة الإدارية مع الموظف في ${emp.branch} وتحديث حالته إلى مستقر.`,
-                                type: 'success',
-                              });
-                            }}
-                            className="px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-lg border border-emerald-500/30 transition-colors"
-                          >
-                            جلسة مساندة
-                          </button>
+                          <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                            <button
+                              onClick={async () => {
+                                const op = await employeeOperationsEngine.executeOperationForEmployee(emp.user_id);
+                                await loadData();
+                                addNotification({
+                                  title: `تم تنفيذ عملية لـ ${emp.user_name}`,
+                                  message: `${op.operation_title} — المرجع: ${op.reference_no}`,
+                                  type: 'success',
+                                });
+                              }}
+                              className="px-2.5 py-1 text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 rounded-lg border border-amber-500/30 transition-colors"
+                              title={`تنفيذ عملية حية باسم ${emp.user_name}`}
+                            >
+                              ⚡ إجراء عملية
+                            </button>
+                            <button
+                              onClick={async () => {
+                                setSummaries(prev =>
+                                  prev.map(item =>
+                                    item.user_id === emp.user_id
+                                      ? { ...item, burnout_risk: 'منخفض', latest_mood: 'happy' as MoodType }
+                                      : item
+                                  )
+                                );
+                                await employeeMonitoringService.recordTelemetryEvent({
+                                  user_id: emp.user_id,
+                                  user_name: emp.user_name,
+                                  role: emp.role,
+                                  branch: emp.branch,
+                                  event_type: 'navigation' as any,
+                                  target_element: 'button#1on1-support-session',
+                                  target_label: 'عقد جلسة مساندة 1-on-1',
+                                  module: 'رادار الموارد البشرية',
+                                  details: `تم عقد وتوثيق جلسة استماع ومساندة إدارية مع (${emp.user_name}) وتخفيض مؤشر الاحتراق الوظيفي إلى مستقر.`,
+                                  severity: 'info',
+                                });
+                                addNotification({
+                                  title: `جلسة استماع 1-on-1 مع ${emp.user_name}`,
+                                  message: `تم توثيق جلسة المساندة الإدارية مع الموظف في ${emp.branch} وتحديث حالته إلى مستقر.`,
+                                  type: 'success',
+                                });
+                              }}
+                              className="px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-lg border border-emerald-500/30 transition-colors"
+                            >
+                              جلسة مساندة
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
