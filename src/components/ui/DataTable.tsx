@@ -40,6 +40,9 @@ interface DataTableProps<T> {
   importConfig?: TableImportConfig;
 }
 
+type TableDensity = 'comfortable' | 'standard' | 'compact';
+const TABLE_DENSITY_KEY = 'alsulaim_table_density_v1';
+
 export function DataTable<T extends { id: string | number }>({
   columns,
   data,
@@ -56,11 +59,40 @@ export function DataTable<T extends { id: string | number }>({
   const [selectedIds, setSelectedIds] = useState<Set<string | number>>(new Set());
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [showImportMenu, setShowImportMenu] = useState(false);
+  const [density, setDensity] = useState<TableDensity>(() => {
+    try {
+      const saved = localStorage.getItem(TABLE_DENSITY_KEY) as TableDensity | null;
+      if (saved === 'comfortable' || saved === 'standard' || saved === 'compact') {
+        return saved;
+      }
+      return 'standard';
+    } catch {
+      return 'standard';
+    }
+  });
+
+  const handleDensityChange = (next: TableDensity) => {
+    setDensity(next);
+    try {
+      localStorage.setItem(TABLE_DENSITY_KEY, next);
+    } catch {
+      // ignore
+    }
+  };
+
+  const cellPadding =
+    density === 'compact' ? '8px 12px' : density === 'comfortable' ? '16px 18px' : '12px 16px';
+  const cellFontSize =
+    density === 'compact' ? '12.5px' : density === 'comfortable' ? '14px' : '13.5px';
 
   // Find matching import template if entityKey provided or derived from exportConfig
   const effectiveEntityKey = importConfig?.entityKey || exportConfig?.sectionKey;
   const matchingTemplate = effectiveEntityKey
-    ? IMPORT_TEMPLATES.find(t => t.entityKey === effectiveEntityKey || t.entityKey === effectiveEntityKey.replace(/-/g, '_'))
+    ? IMPORT_TEMPLATES.find(
+        (t) =>
+          t.entityKey === effectiveEntityKey ||
+          t.entityKey === effectiveEntityKey.replace(/-/g, '_')
+      )
     : undefined;
 
   const filteredData = data.filter((row) => {
@@ -86,8 +118,11 @@ export function DataTable<T extends { id: string | number }>({
     setSelectedIds(next);
   };
 
-  /** Get data for export: use filtered data or raw data */
+  /** Get data for export: use selected rows if any, otherwise filtered data or raw data */
   const getExportData = (): any[] => {
+    if (selectedIds.size > 0) {
+      return filteredData.filter((r) => selectedIds.has(r.id)) as any[];
+    }
     if (exportConfig) {
       return searchQuery ? (filteredData as any[]) : exportConfig.rawData;
     }
@@ -102,12 +137,35 @@ export function DataTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className="card-pricing" style={{ padding: 0, overflow: 'hidden', borderRadius: '16px', border: '1px solid #e4e4e7', background: '#ffffff' }}>
+    <div
+      className="card-pricing"
+      style={{
+        padding: 0,
+        overflow: 'hidden',
+        borderRadius: '16px',
+        border: '1px solid #e4e4e7',
+        background: '#ffffff',
+        position: 'relative',
+      }}
+    >
       {/* Table Toolbar Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #e4e4e7', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '14px 20px',
+          borderBottom: '1px solid #e4e4e7',
+          flexWrap: 'wrap',
+          gap: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <i className="fa-solid fa-magnifying-glass" style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}></i>
+            <i
+              className="fa-solid fa-magnifying-glass"
+              style={{ position: 'absolute', right: '14px', color: '#71717a', fontSize: '13px' }}
+            ></i>
             <input
               type="text"
               className="text-input"
@@ -118,7 +176,7 @@ export function DataTable<T extends { id: string | number }>({
                 height: '38px',
                 minHeight: '38px',
                 width: '260px',
-                fontSize: '13px'
+                fontSize: '13px',
               }}
               placeholder={searchPlaceholder}
               value={searchQuery}
@@ -127,7 +185,13 @@ export function DataTable<T extends { id: string | number }>({
             {searchQuery && (
               <i
                 className="fa-solid fa-xmark"
-                style={{ position: 'absolute', left: '12px', color: '#71717a', cursor: 'pointer', fontSize: '13px' }}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  color: '#71717a',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                }}
                 onClick={() => setSearchQuery('')}
               ></i>
             )}
@@ -135,22 +199,75 @@ export function DataTable<T extends { id: string | number }>({
 
           {filterContent && (
             <button
-              className={showFilters ? "button-primary-pill" : "button-outline-on-light"}
+              className={showFilters ? 'button-primary-pill' : 'button-outline-on-light'}
               style={{ fontSize: '13px', padding: '6px 14px', minHeight: '38px' }}
               onClick={() => setShowFilters(!showFilters)}
             >
               <i className="fa-solid fa-filter"></i>
               <span>تصفية مفرزة</span>
-              {showFilters ? <i className="fa-solid fa-chevron-up"></i> : <i className="fa-solid fa-chevron-down"></i>}
+              {showFilters ? (
+                <i className="fa-solid fa-chevron-up"></i>
+              ) : (
+                <i className="fa-solid fa-chevron-down"></i>
+              )}
             </button>
           )}
+
+          {/* Row Density Switcher */}
+          <div
+            className="hidden md:inline-flex items-center rounded-full bg-zinc-100 p-0.5 border border-zinc-200"
+            title="التحكم في كثافة صفوف الجدول"
+          >
+            {(
+              [
+                { id: 'comfortable', label: 'مريح' },
+                { id: 'standard', label: 'قياسي' },
+                { id: 'compact', label: 'مضغوط' },
+              ] as const
+            ).map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => handleDensityChange(opt.id)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
+                  density === opt.id
+                    ? 'bg-[#1D2428] text-[#CFA64A] shadow-2xs'
+                    : 'text-zinc-600 hover:text-black'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {selectedIds.size > 0 && (
-            <span className="pill-tag-mint" style={{ marginLeft: '4px', fontSize: '12px' }}>
-              تم تحديد {selectedIds.size} عنصر
-            </span>
+            <div className="inline-flex items-center gap-1.5 bg-[#1D2428] text-white px-3 py-1.5 rounded-full text-xs font-bold border border-[#CFA64A]/50">
+              <span className="text-[#CFA64A] font-black">محدد ({selectedIds.size})</span>
+              <button
+                type="button"
+                onClick={() => handleExport('excel')}
+                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer"
+              >
+                Excel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExport('pdf')}
+                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer"
+              >
+                PDF
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedIds(new Set())}
+                className="px-1.5 py-0.5 rounded-full text-zinc-300 hover:text-rose-300 text-[11px] cursor-pointer"
+                title="إلغاء التحديد"
+              >
+                ✕
+              </button>
+            </div>
           )}
 
           {/* Import Dropdown */}
@@ -158,7 +275,7 @@ export function DataTable<T extends { id: string | number }>({
             <button
               className="button-outline-on-light"
               style={{ fontSize: '13px', padding: '6px 14px', minHeight: '38px' }}
-              title="استيراد البيانات من Excel / CSV"
+              title="استيراد البيانات من Excel / CSV / PDF"
               onClick={() => {
                 setShowImportMenu(!showImportMenu);
                 setShowExportMenu(false);
@@ -166,7 +283,10 @@ export function DataTable<T extends { id: string | number }>({
             >
               <i className="fa-solid fa-file-import"></i>
               <span>استيراد</span>
-              <i className={`fa-solid fa-chevron-${showImportMenu ? 'up' : 'down'}`} style={{ fontSize: '9px', opacity: 0.7 }}></i>
+              <i
+                className={`fa-solid fa-chevron-${showImportMenu ? 'up' : 'down'}`}
+                style={{ fontSize: '9px', opacity: 0.7 }}
+              ></i>
             </button>
 
             {showImportMenu && (
@@ -180,12 +300,39 @@ export function DataTable<T extends { id: string | number }>({
                   borderRadius: '12px',
                   boxShadow: '0 8px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)',
                   zIndex: 50,
-                  minWidth: '230px',
+                  minWidth: '240px',
                   overflow: 'hidden',
                   fontFamily: 'var(--font-family-ui)',
-                  padding: '6px'
+                  padding: '6px',
                 }}
               >
+                <button
+                  onClick={() => {
+                    setShowImportMenu(false);
+                    window.dispatchEvent(new CustomEvent('open-universal-extractor'));
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    textAlign: 'right',
+                    border: 'none',
+                    borderRadius: '8px',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#1D2428',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <i className="fa-solid fa-wand-magic-sparkles" style={{ fontSize: '14px', color: '#CFA64A' }}></i>
+                  <span>استخلاص ذكي (PDF / صور / Excel)</span>
+                </button>
+
                 <button
                   onClick={() => {
                     setShowImportMenu(false);
@@ -259,7 +406,11 @@ export function DataTable<T extends { id: string | number }>({
           />
 
           {onAddClick && (
-            <button className="button-primary-pill" style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }} onClick={onAddClick}>
+            <button
+              className="button-primary-pill"
+              style={{ fontSize: '13px', padding: '6px 18px', minHeight: '38px' }}
+              onClick={onAddClick}
+            >
               <i className="fa-solid fa-plus"></i>
               <span>{addLabel}</span>
             </button>
@@ -269,26 +420,51 @@ export function DataTable<T extends { id: string | number }>({
 
       {/* Advanced Filter Content */}
       {showFilters && filterContent && (
-        <div style={{ padding: '16px 20px', background: '#fafafa', borderBottom: '1px solid #e4e4e7' }}>
+        <div
+          style={{
+            padding: '16px 20px',
+            background: '#fafafa',
+            borderBottom: '1px solid #e4e4e7',
+          }}
+        >
           {filterContent}
         </div>
       )}
 
       {/* Main Table */}
-      <div style={{ overflowX: 'auto', width: '100%' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontFamily: 'var(--font-family-ui)' }}>
-          <thead>
+      <div style={{ overflowX: 'auto', width: '100%', maxHeight: '72vh' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            textAlign: 'right',
+            fontFamily: 'var(--font-family-ui)',
+          }}
+        >
+          <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
             <tr style={{ background: '#fafafa', borderBottom: '1px solid #e4e4e7' }}>
-              <th style={{ width: '44px', textAlign: 'center', padding: '12px 14px' }}>
+              <th style={{ width: '44px', textAlign: 'center', padding: cellPadding }}>
                 <input
                   type="checkbox"
                   checked={filteredData.length > 0 && selectedIds.size === filteredData.length}
                   onChange={toggleSelectAll}
-                  style={{ cursor: 'pointer', accentColor: '#000000' }}
+                  style={{ cursor: 'pointer', accentColor: '#1D2428' }}
                 />
               </th>
               {columns.map((col, index) => (
-                <th key={index} style={{ width: col.width, padding: '12px 16px', fontSize: '12px', fontWeight: 550, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.2px' }}>
+                <th
+                  key={index}
+                  style={{
+                    width: col.width,
+                    padding: cellPadding,
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: '#52525b',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.2px',
+                    background: '#fafafa',
+                  }}
+                >
                   {col.header}
                 </th>
               ))}
@@ -297,7 +473,10 @@ export function DataTable<T extends { id: string | number }>({
           <tbody>
             {filteredData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '40px 16px', color: '#71717a' }}>
+                <td
+                  colSpan={columns.length + 1}
+                  style={{ textAlign: 'center', padding: '40px 16px', color: '#71717a' }}
+                >
                   <div className="flex flex-col items-center justify-center gap-3">
                     <BusinessIllustration type="empty-search" size="md" />
                     <div className="space-y-1">
@@ -308,15 +487,35 @@ export function DataTable<T extends { id: string | number }>({
                         يمكنك تعديل كلمات البحث أو استخدام مستخرج المستندات الذكي لإضافة سجلات جديدة
                       </div>
                     </div>
-                    {searchQuery && (
+                    <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#FBFBF5] text-[#1D2428] border border-[#B8924A]/50 hover:bg-[#F5EDDC] transition-colors cursor-pointer"
+                        >
+                          إعادة ضبط البحث
+                        </button>
+                      )}
+                      {onAddClick && (
+                        <button
+                          type="button"
+                          onClick={onAddClick}
+                          className="px-4 py-1.5 rounded-full text-xs font-black bg-[#1D2428] text-[#CFA64A] hover:bg-black transition-colors cursor-pointer"
+                        >
+                          + {addLabel}
+                        </button>
+                      )}
                       <button
                         type="button"
-                        onClick={() => setSearchQuery('')}
-                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#FBFBF5] text-[#1D2428] border border-[#B8924A]/50 hover:bg-[#F5EDDC] transition-colors cursor-pointer"
+                        onClick={() =>
+                          window.dispatchEvent(new CustomEvent('open-universal-extractor'))
+                        }
+                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#1D2428] border border-zinc-300 hover:bg-zinc-50 transition-colors cursor-pointer"
                       >
-                        إعادة ضبط البحث
+                        استخلاص من ملف (OCR)
                       </button>
-                    )}
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -326,8 +525,8 @@ export function DataTable<T extends { id: string | number }>({
                   key={row.id}
                   style={{
                     borderBottom: '1px solid #e4e4e7',
-                    backgroundColor: selectedIds.has(row.id) ? 'rgba(0,0,0,0.03)' : '#ffffff',
-                    transition: 'background-color 0.15s ease'
+                    backgroundColor: selectedIds.has(row.id) ? '#FBFBF5' : '#ffffff',
+                    transition: 'background-color 0.15s ease',
                   }}
                   onMouseEnter={(e) => {
                     if (!selectedIds.has(row.id)) e.currentTarget.style.backgroundColor = '#f4f4f5';
@@ -336,16 +535,24 @@ export function DataTable<T extends { id: string | number }>({
                     if (!selectedIds.has(row.id)) e.currentTarget.style.backgroundColor = '#ffffff';
                   }}
                 >
-                  <td style={{ textAlign: 'center', padding: '14px' }}>
+                  <td style={{ textAlign: 'center', padding: cellPadding }}>
                     <input
                       type="checkbox"
                       checked={selectedIds.has(row.id)}
                       onChange={() => toggleSelectRow(row.id)}
-                      style={{ cursor: 'pointer', accentColor: '#000000' }}
+                      style={{ cursor: 'pointer', accentColor: '#1D2428' }}
                     />
                   </td>
                   {columns.map((col, colIdx) => (
-                    <td key={colIdx} style={{ padding: '14px 16px', fontSize: '13.5px', fontWeight: 420, color: '#000000' }}>
+                    <td
+                      key={colIdx}
+                      style={{
+                        padding: cellPadding,
+                        fontSize: cellFontSize,
+                        fontWeight: 420,
+                        color: '#000000',
+                      }}
+                    >
                       {typeof col.accessor === 'function'
                         ? col.accessor(row)
                         : (row[col.accessor] as React.ReactNode)}
@@ -359,13 +566,32 @@ export function DataTable<T extends { id: string | number }>({
       </div>
 
       {/* Table Footer Stats */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: '#fafafa', borderTop: '1px solid #e4e4e7', fontSize: '12.5px', color: '#71717a' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '12px 20px',
+          background: '#fafafa',
+          borderTop: '1px solid #e4e4e7',
+          fontSize: '12.5px',
+          color: '#71717a',
+          flexWrap: 'wrap',
+          gap: '8px',
+        }}
+      >
         <div>
-          إجمالي العناصر المعروضة: <strong style={{ color: '#000000' }}>{filteredData.length}</strong> من أصل <strong style={{ color: '#000000' }}>{data.length}</strong>
+          إجمالي العناصر المعروضة:{' '}
+          <strong style={{ color: '#000000' }}>{filteredData.length}</strong> من أصل{' '}
+          <strong style={{ color: '#000000' }}>{data.length}</strong>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {searchQuery && <span className="pill-tag-mint" style={{ fontSize: '11px' }}>نتائج مصفاة</span>}
-          <span>مجموعة خالد السليم • ERP</span>
+          {searchQuery && (
+            <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
+              نتائج مصفاة
+            </span>
+          )}
+          <span>مجموعة خالد السليم • ERP UX 3.0</span>
         </div>
       </div>
     </div>

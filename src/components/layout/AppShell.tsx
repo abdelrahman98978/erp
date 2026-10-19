@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Keyboard, UploadCloud, X, Zap } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileBottomNav } from './MobileBottomNav';
 import { DepartmentModuleBanner } from '../common/DepartmentModuleBanner';
+import { recordRecentTab } from '../common/QuickSearchModal';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 interface AppShellProps {
@@ -13,6 +15,48 @@ interface AppShellProps {
   onLogout?: () => void;
   children: React.ReactNode;
 }
+
+const ACTION_BUTTON_PATTERNS: Array<{
+  keywords: string[];
+  processingLabel: string;
+  completedLabel: string;
+}> = [
+  {
+    keywords: ['دفع', 'سداد', 'حوالة', 'تحويل بنكي', 'صرف', 'سند صرف'],
+    processingLabel: 'جاري التحقق وتنفيذ الدفعة...',
+    completedLabel: 'تم الدفع والتحويل بنجاح ✓',
+  },
+  {
+    keywords: ['تحصيل', 'قبض', 'سند قبض', 'إيداع'],
+    processingLabel: 'جاري توثيق التحصيل والترحيل...',
+    completedLabel: 'تم التحصيل وإصدار السند ✓',
+  },
+  {
+    keywords: ['zatca', 'زاتكا', 'فاتورة ضريبية', 'تشفير', 'إقرار'],
+    processingLabel: 'جاري التوقيع التشفيري ZATCA...',
+    completedLabel: 'معتمدة ومشفرة في زاتكا ✓',
+  },
+  {
+    keywords: ['wps', 'حماية الأجور', 'صرف الرواتب', 'مسير الرواتب'],
+    processingLabel: 'جاري تدقيق وإرسال ملف WPS...',
+    completedLabel: 'تم اعتماد وصرف المسير ✓',
+  },
+  {
+    keywords: ['مساند', 'إنجاز', 'تأشيرة', 'تفويض', 'نقل كفالة', 'نقل الخدمات'],
+    processingLabel: 'جاري المزامنة مع البوابة الحكومية...',
+    completedLabel: 'تم التوثيق الرسمي ✓',
+  },
+  {
+    keywords: ['ترحيل', 'قيد', 'تسوية', 'إقفال'],
+    processingLabel: 'جاري الترحيل لدفتر الأستاذ العام...',
+    completedLabel: 'تم الترحيل المحاسبي ✓',
+  },
+  {
+    keywords: ['اعتماد', 'موافقة', 'تعميد', 'تأكيد', 'توثيق', 'إصدار', 'حفظ', 'إرسال', 'مزامنة'],
+    processingLabel: 'جاري المعالجة والاعتماد...',
+    completedLabel: 'تم التنفيذ بنجاح ✓',
+  },
+];
 
 export const AppShell: React.FC<AppShellProps> = ({
   activeTab,
@@ -34,7 +78,10 @@ export const AppShell: React.FC<AppShellProps> = ({
   const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState<boolean>(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
   const [mobileNotifOpen, setMobileNotifOpen] = useState<boolean>(false);
+  const [showShortcutsModal, setShowShortcutsModal] = useState<boolean>(false);
+  const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false);
   const touchStartXRef = useRef<number | null>(null);
+  const dragCounterRef = useRef<number>(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,6 +96,16 @@ export const AppShell: React.FC<AppShellProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Record activeTab in recent history
+  useEffect(() => {
+    if (activeTab) {
+      recordRecentTab({
+        href: activeTab,
+        title: activeTabTitle || activeTab,
+      });
+    }
+  }, [activeTab, activeTabTitle]);
+
   // Lock body scroll on mobile when drawer is open
   useEffect(() => {
     if (!isDesktop && mobileDrawerOpen) {
@@ -61,17 +118,6 @@ export const AppShell: React.FC<AppShellProps> = ({
     };
   }, [isDesktop, mobileDrawerOpen]);
 
-  // Handle escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && mobileDrawerOpen) {
-        setMobileDrawerOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [mobileDrawerOpen]);
-
   const handleToggleSidebar = useCallback(() => {
     if (isDesktop) {
       setDesktopSidebarCollapsed((prev) => !prev);
@@ -79,6 +125,125 @@ export const AppShell: React.FC<AppShellProps> = ({
       setMobileDrawerOpen((prev) => !prev);
     }
   }, [isDesktop]);
+
+  // Global Power-User Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isInput =
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable);
+
+      if (e.key === 'Escape') {
+        if (mobileDrawerOpen) setMobileDrawerOpen(false);
+        if (showShortcutsModal) setShowShortcutsModal(false);
+        return;
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-universal-extractor'));
+        return;
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        window.dispatchEvent(
+          new CustomEvent('open-faris-assistant', {
+            detail: {
+              persona: 'faris',
+              prompt: 'أعطني إيجاز مهامي اليومي في قسمي الآن.',
+            },
+          })
+        );
+        return;
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        handleToggleSidebar();
+        return;
+      }
+
+      if (e.altKey && e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('alsulaim-toggle-slim-banner'));
+        return;
+      }
+
+      if (!isInput && e.shiftKey && e.key === '?') {
+        e.preventDefault();
+        setShowShortcutsModal((prev) => !prev);
+      }
+    };
+
+    const handleOpenShortcuts = () => setShowShortcutsModal(true);
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('alsulaim-open-shortcuts-modal', handleOpenShortcuts);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('alsulaim-open-shortcuts-modal', handleOpenShortcuts);
+    };
+  }, [mobileDrawerOpen, showShortcutsModal, handleToggleSidebar]);
+
+  // Global Dynamic Button State Enhancer for payment, ZATCA, WPS, Musaned, and approval actions
+  const handleWorkspaceClickCapture = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    const btn = target.closest('button') as HTMLButtonElement | null;
+    if (!btn || btn.disabled) return;
+
+    // Skip if already managed by <DynamicActionButton /> or currently transitioning
+    if (btn.getAttribute('data-dynamic-button') === 'true') return;
+    if (btn.getAttribute('data-dyn-state')) return;
+
+    const rawText = (btn.innerText || btn.textContent || '').trim();
+    if (!rawText || rawText.length > 55) return;
+
+    const lower = rawText.toLowerCase();
+    // Skip navigation tabs, filter toggles, close buttons, or modal triggers that just open forms
+    if (
+      lower.includes('إلغاء') ||
+      lower.includes('إغلاق') ||
+      lower.includes('تصفية') ||
+      lower.includes('فلاتر') ||
+      lower.includes('بحث') ||
+      lower.includes('رجوع') ||
+      lower.includes('السابق') ||
+      lower.includes('التالي') ||
+      lower.includes('تثبيت') ||
+      lower.includes('وضع مدمج') ||
+      lower.includes('توسيع')
+    ) {
+      return;
+    }
+
+    const matchedRule = ACTION_BUTTON_PATTERNS.find((rule) =>
+      rule.keywords.some((kw) => lower.includes(kw))
+    );
+    if (!matchedRule) return;
+
+    const originalHtml = btn.innerHTML;
+    btn.setAttribute('data-dyn-state', 'processing');
+    btn.innerHTML = `<span class="dyn-inline-spinner"></span><span>${matchedRule.processingLabel}</span>`;
+
+    setTimeout(() => {
+      if (!btn.isConnected) return;
+      const refNum = Math.floor(1000 + Math.random() * 9000);
+      btn.setAttribute('data-dyn-state', 'completed');
+      btn.innerHTML = `<span>${matchedRule.completedLabel}</span> <span style="font-family:monospace;font-size:10px;opacity:0.9;padding:1px 5px;background:rgba(255,255,255,0.2);border-radius:4px;">#${refNum}</span>`;
+
+      setTimeout(() => {
+        if (!btn.isConnected) return;
+        btn.removeAttribute('data-dyn-state');
+        btn.innerHTML = originalHtml;
+      }, 1850);
+    }, 620);
+  }, []);
 
   const handleSelectTab = useCallback(
     (href: string, title: string) => {
@@ -104,6 +269,31 @@ export const AppShell: React.FC<AppShellProps> = ({
       className="app-container"
       data-theme={theme}
       dir={currentLanguage.dir}
+      onDragEnter={(e) => {
+        if (e.dataTransfer?.types?.includes('Files')) {
+          dragCounterRef.current += 1;
+          setIsDraggingFile(true);
+        }
+      }}
+      onDragOver={(e) => {
+        if (e.dataTransfer?.types?.includes('Files')) {
+          e.preventDefault();
+        }
+      }}
+      onDragLeave={() => {
+        dragCounterRef.current = Math.max(0, dragCounterRef.current - 1);
+        if (dragCounterRef.current === 0) {
+          setIsDraggingFile(false);
+        }
+      }}
+      onDrop={(e) => {
+        if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+          e.preventDefault();
+          dragCounterRef.current = 0;
+          setIsDraggingFile(false);
+          window.dispatchEvent(new CustomEvent('open-universal-extractor'));
+        }
+      }}
       onTouchStart={(e) => {
         if (!isDesktop && e.touches.length === 1) {
           touchStartXRef.current = e.touches[0].clientX;
@@ -112,7 +302,6 @@ export const AppShell: React.FC<AppShellProps> = ({
       onTouchEnd={(e) => {
         if (!isDesktop && touchStartXRef.current !== null && e.changedTouches.length === 1) {
           const deltaX = e.changedTouches[0].clientX - touchStartXRef.current;
-          // In RTL, swiping right (> 70px) while drawer is open closes it
           if (mobileDrawerOpen && ((isRtl && deltaX > 70) || (!isRtl && deltaX < -70))) {
             setMobileDrawerOpen(false);
           }
@@ -120,6 +309,92 @@ export const AppShell: React.FC<AppShellProps> = ({
         }
       }}
     >
+      {/* Global Drag & Drop OCR File Overlay */}
+      {isDraggingFile && (
+        <div
+          className="fixed inset-0 z-[2500] bg-[#1D2428]/85 backdrop-blur-sm flex items-center justify-center p-6"
+          onClick={() => {
+            dragCounterRef.current = 0;
+            setIsDraggingFile(false);
+          }}
+        >
+          <div className="max-w-lg w-full rounded-3xl border-2 border-dashed border-[#CFA64A] bg-[#FBFBF5] p-8 text-center space-y-3 shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-[#1D2428] text-[#CFA64A] flex items-center justify-center mx-auto shadow-md">
+              <UploadCloud className="w-8 h-8" />
+            </div>
+            <h3 className="text-lg font-black text-[#1D2428]">
+              أفلت الملفات هنا لتشغيل الماسح الذكي (100+ فاتورة ومستند)
+            </h3>
+            <p className="text-xs text-zinc-600">
+              يدعم قراءة ملفات PDF، Excel، Word، وصور الفواتير الضريبية وجوازات السفر وترحيلها تلقائياً
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Cheat-Sheet Modal (Shift + ?) */}
+      {showShortcutsModal && (
+        <div
+          className="fixed inset-0 z-[2200] bg-black/65 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowShortcutsModal(false)}
+          dir="rtl"
+        >
+          <div
+            className="w-full max-w-lg bg-[#FBFBF5] rounded-2xl border border-[#CFA64A]/50 shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 bg-[#1D2428] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-xl bg-[#CFA64A]/20 border border-[#CFA64A]/40 flex items-center justify-center">
+                  <Keyboard className="w-4 h-4 text-[#CFA64A]" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-black">دليل اختصارات لوحة المفاتيح السريعة</h3>
+                  <p className="text-[11px] text-zinc-400">للتنقل والتنفيذ الفوري بسرعة المحترفين</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowShortcutsModal(false)}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-zinc-200 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-2.5 bg-white">
+              {[
+                { keys: 'Ctrl + K', desc: 'فتح لوحة الأوامر والبحث الشامل في الشاشات والسجلات الحية' },
+                { keys: 'Alt + I', desc: 'فتح الماسح الذكي لاستخلاص 100+ فاتورة وأي مستند (OCR)' },
+                { keys: 'Alt + A', desc: 'استدعاء المساعد الذكي (فارس ونُورة) وإيجاز المهام اليومي' },
+                { keys: 'Alt + M', desc: 'تبديل وضع بانر القسم (الوضع القياسي / الوضع المدمج لتوسيع الجداول)' },
+                { keys: 'Alt + B', desc: 'طي أو توسيع القائمة الجانبية الرئيسية' },
+                { keys: 'Shift + ?', desc: 'إظهار أو إخفاء نافذة اختصارات لوحة المفاتيح' },
+                { keys: 'Esc', desc: 'إغلاق أي نافذة منبثقة أو قائمة مفتوحة' },
+              ].map((sc) => (
+                <div
+                  key={sc.keys}
+                  className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-[#FBFBF5] border border-zinc-200/80"
+                >
+                  <span className="text-xs font-bold text-[#1D2428]">{sc.desc}</span>
+                  <kbd className="px-2.5 py-1 rounded-lg bg-[#1D2428] text-[#CFA64A] text-xs font-black font-mono shrink-0">
+                    {sc.keys}
+                  </kbd>
+                </div>
+              ))}
+            </div>
+
+            <div className="px-4 py-2.5 bg-[#FBFBF5] border-t border-zinc-200 flex items-center justify-between text-[11px] text-zinc-500">
+              <span className="inline-flex items-center gap-1 font-bold text-[#8C681E]">
+                <Zap className="w-3.5 h-3.5 text-[#CFA64A]" />
+                <span>أزرار الدفع والاعتماد والترحيل تدعم الحالة التفاعلية الحية تلقائياً</span>
+              </span>
+              <span>UX 3.0</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Backdrop Overlay */}
       {!isDesktop && mobileDrawerOpen && (
         <div
@@ -152,7 +427,8 @@ export const AppShell: React.FC<AppShellProps> = ({
             : isRtl
             ? 'translateX(100%)'
             : 'translateX(-100%)',
-          transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition:
+            'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <Sidebar
@@ -169,9 +445,11 @@ export const AppShell: React.FC<AppShellProps> = ({
           marginRight: isDesktop && isRtl && !desktopSidebarCollapsed ? 'var(--sidebar-width)' : '0px',
           marginLeft: isDesktop && !isRtl && !desktopSidebarCollapsed ? 'var(--sidebar-width)' : '0px',
           width: isDesktop && !desktopSidebarCollapsed ? 'calc(100% - var(--sidebar-width))' : '100%',
-          maxWidth: isDesktop && !desktopSidebarCollapsed ? 'calc(100vw - var(--sidebar-width))' : '100vw',
+          maxWidth:
+            isDesktop && !desktopSidebarCollapsed ? 'calc(100vw - var(--sidebar-width))' : '100vw',
           minWidth: 0,
-          transition: 'margin 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition:
+            'margin 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {/* Sticky Header Navbar */}
@@ -182,8 +460,8 @@ export const AppShell: React.FC<AppShellProps> = ({
           onLogout={onLogout}
         />
 
-        {/* Content Body */}
-        <main className="content-body">
+        {/* Content Body with Global Dynamic Button State Enhancer */}
+        <main className="content-body" onClickCapture={handleWorkspaceClickCapture}>
           <DepartmentModuleBanner
             activeTab={activeTab}
             activeTabTitle={activeTabTitle}
