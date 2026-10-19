@@ -104,28 +104,28 @@ export const ReportsPage: React.FC = () => {
           sectionKey: 'sales-reports',
           data: salesReportData,
           title: 'تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة',
-          label: 'تصدير تقرير المبيعات (10 صيغ)',
+          label: 'تصدير تقرير المبيعات (12 صيغة)',
         };
       case 'recruitment':
         return {
           sectionKey: 'recruitment-reports',
           data: recruitmentReportData,
           title: 'تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب الخارجية',
-          label: 'تصدير تقرير الاستقدام (10 صيغ)',
+          label: 'تصدير تقرير الاستقدام (12 صيغة)',
         };
       case 'financial':
         return {
           sectionKey: 'financial-reports',
           data: financialReportData,
           title: 'التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح للمجموعة',
-          label: 'تصدير التقرير المالي (10 صيغ)',
+          label: 'تصدير التقرير المالي (12 صيغة)',
         };
       default:
         return {
           sectionKey: 'executive-reports',
           data: reportData,
           title: 'تقرير الأداء المالي والتشغيلي المقارن لشركات المجموعة الموحدة',
-          label: 'تصدير التقرير التنفيذي الموحد (10 صيغ)',
+          label: 'تصدير التقرير التنفيذي الموحد (12 صيغة)',
         };
     }
   };

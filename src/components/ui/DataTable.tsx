@@ -261,6 +261,27 @@ export function DataTable<T extends { id: string | number }>({
               </button>
               <button
                 type="button"
+                onClick={() => handleExport('word')}
+                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer"
+              >
+                Word
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExport('wps')}
+                className="px-2 py-0.5 rounded-full bg-emerald-500/30 hover:bg-emerald-500/50 text-[11px] text-emerald-200 cursor-pointer"
+              >
+                WPS
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExport('print')}
+                className="px-2 py-0.5 rounded-full bg-[#CFA64A]/30 hover:bg-[#CFA64A]/50 text-[11px] text-[#E6D3A7] cursor-pointer"
+              >
+                طباعة
+              </button>
+              <button
+                type="button"
                 onClick={() => setSelectedIds(new Set())}
                 className="px-1.5 py-0.5 rounded-full text-zinc-300 hover:text-rose-300 text-[11px] cursor-pointer"
                 title="إلغاء التحديد"

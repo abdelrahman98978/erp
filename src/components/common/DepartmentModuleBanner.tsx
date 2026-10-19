@@ -38,6 +38,8 @@ import {
   employeeOperationsEngine,
   ExecutedEmployeeOperation,
 } from '../../services/employeeOperationsEngine';
+import { realErpDataStore } from '../../services/realErpDataStore';
+import { ExportDropdown } from './ExportDropdown';
 import { useCompany } from '../../contexts/CompanyContext';
 import { useAppStore } from '../../stores/appStore';
 import { getPinnedTabs, togglePinnedTab, PinnedTabItem } from './QuickSearchModal';
@@ -421,13 +423,145 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
   const [showStaffOpsDrawer, setShowStaffOpsDrawer] = useState<boolean>(false);
   const [staffScopeFilter, setStaffScopeFilter] = useState<'all' | 'dept'>('all');
   const [executedOps, setExecutedOps] = useState<ExecutedEmployeeOperation[]>([]);
+  const [activeSectionRows, setActiveSectionRows] = useState<any[]>([]);
   const [runningStaffId, setRunningStaffId] = useState<string | null>(null);
   const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
+
+  const tabExportTarget = React.useMemo(() => {
+    const t = (activeTab || '').toLowerCase();
+    if (t.includes('zatca')) return { sectionKey: 'zatca_invoices', storeTable: 'zatca_invoices' };
+    if (t.includes('journal')) return { sectionKey: 'journals', storeTable: 'journal_entries' };
+    if (t.includes('financial-request'))
+      return { sectionKey: 'financial_requests', storeTable: 'financial_requests' };
+    if (t.includes('cost-center')) return { sectionKey: 'cost_centers', storeTable: 'cost_centers' };
+    if (t.includes('custod') || t.includes('inventory'))
+      return { sectionKey: 'custodies', storeTable: 'custodies' };
+    if (
+      t.includes('invoice') ||
+      t.includes('finance') ||
+      t.includes('smacc') ||
+      t.includes('trial-balance') ||
+      t.includes('income-statement')
+    )
+      return { sectionKey: 'invoices', storeTable: 'invoices' };
+    if (t.includes('recruitment-contract') || t.includes('musaned'))
+      return { sectionKey: 'recruitment_contracts', storeTable: 'recruitment_contracts' };
+    if (t.includes('rent') || t.includes('rental'))
+      return { sectionKey: 'rent_contracts', storeTable: 'rent_contracts' };
+    if (t.includes('order')) return { sectionKey: 'orders', storeTable: 'orders' };
+    if (t.includes('ingaz')) return { sectionKey: 'ingaz', storeTable: 'ingaz_records' };
+    if (t.includes('travel') || t.includes('dispatch'))
+      return { sectionKey: 'travel', storeTable: 'travel_flights' };
+    if (t.includes('transfer') || t.includes('probation'))
+      return { sectionKey: 'sponsorship_transfer', storeTable: 'sponsorship_transfers' };
+    if (t.includes('cv') || t.includes('ats') || t.includes('agent-import') || t.includes('foreign'))
+      return { sectionKey: 'cvs_recruitment', storeTable: 'cvs' };
+    if (t.includes('office') || t.includes('agent-account'))
+      return { sectionKey: 'offices', storeTable: 'offices' };
+    if (t.includes('attendance')) return { sectionKey: 'attendances', storeTable: 'attendances' };
+    if (t.includes('monitoring'))
+      return { sectionKey: 'employee_monitoring', storeTable: 'attendances' };
+    if (t.includes('employee') || t.includes('branch-department'))
+      return { sectionKey: 'employees', storeTable: 'employees' };
+    if (t.includes('complaint')) return { sectionKey: 'complaints', storeTable: 'complaints' };
+    if (
+      t.includes('client') ||
+      t.includes('visitor') ||
+      t.includes('whatsapp') ||
+      t.includes('communication') ||
+      t.includes('message')
+    )
+      return { sectionKey: 'clients', storeTable: 'clients' };
+    if (
+      t.includes('shelter') ||
+      t.includes('room-management') ||
+      t.includes('catering') ||
+      t.includes('deportation')
+    )
+      return { sectionKey: 'shelter_workers', storeTable: 'shelter_workers' };
+    if (
+      t.includes('kas') ||
+      t.includes('tender') ||
+      t.includes('purchase-order') ||
+      t.includes('guarantee')
+    )
+      return { sectionKey: 'tenders_boq', storeTable: 'tenders' };
+    if (t.includes('user') || t.includes('iam')) return { sectionKey: 'users', storeTable: 'users' };
+    if (t.includes('activity-log'))
+      return { sectionKey: 'activity_logs', storeTable: 'activity_log' };
+    return { sectionKey: 'employee_executed_ops', storeTable: '' };
+  }, [activeTab]);
 
   const loadExecutedOps = async () => {
     const ops = await employeeOperationsEngine.getExecutedOperations();
     setExecutedOps(ops);
   };
+
+  const loadActiveSectionStoreData = React.useCallback(async () => {
+    if (!tabExportTarget.storeTable) {
+      setActiveSectionRows([]);
+      return;
+    }
+    try {
+      const res = await realErpDataStore.getRecords<any>(tabExportTarget.storeTable, []);
+      if (Array.isArray(res) && res.length > 0) {
+        setActiveSectionRows(res);
+      } else {
+        setActiveSectionRows([]);
+      }
+    } catch {
+      setActiveSectionRows([]);
+    }
+  }, [tabExportTarget.storeTable]);
+
+  useEffect(() => {
+    void loadActiveSectionStoreData();
+  }, [loadActiveSectionStoreData]);
+
+  const resolveWorkspaceExportData = React.useCallback((): any[] => {
+    // 1. Try harvesting visible HTML table rows on the active page if user filtered or is on a custom table
+    if (typeof document !== 'undefined') {
+      const tables = Array.from(document.querySelectorAll('main table, .page-content table, table'));
+      for (const tbl of tables) {
+        const headers = Array.from(tbl.querySelectorAll('thead th'))
+          .map((th) => (th.textContent || '').trim())
+          .filter((h) => h && h !== 'إجراءات' && h !== 'الإجراءات' && h !== 'التحكم');
+        const bodyRows = Array.from(tbl.querySelectorAll('tbody tr'));
+        if (headers.length >= 2 && bodyRows.length >= 1) {
+          const extracted: Record<string, any>[] = [];
+          for (const tr of bodyRows) {
+            const cells = Array.from(tr.querySelectorAll('td'));
+            if (cells.length < 2) continue;
+            // Skip if first cell is a checkbox column
+            const hasLeadingCheckbox = Boolean(cells[0]?.querySelector('input[type="checkbox"]'));
+            const offset = hasLeadingCheckbox ? 1 : 0;
+            const rowObj: Record<string, any> = {};
+            let nonEmptyCount = 0;
+            headers.forEach((h, idx) => {
+              const cell = cells[idx + offset];
+              if (cell) {
+                const text = (cell.textContent || '').replace(/\s+/g, ' ').trim();
+                rowObj[h] = text;
+                if (text) nonEmptyCount++;
+              }
+            });
+            if (nonEmptyCount >= 2) {
+              extracted.push(rowObj);
+            }
+          }
+          if (extracted.length > 0 && activeSectionRows.length === 0) {
+            return extracted;
+          }
+        }
+      }
+    }
+    // 2. Use preloaded store records for the active tab
+    if (activeSectionRows.length > 0) {
+      return activeSectionRows;
+    }
+    // 3. Fallback to executed employee operations across the 9 departments
+    return executedOps;
+  }, [activeSectionRows, executedOps]);
 
   useEffect(() => {
     void loadExecutedOps();
@@ -452,6 +586,7 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
     };
     const handleOpsUpdated = () => {
       void loadExecutedOps();
+      void loadActiveSectionStoreData();
     };
     window.addEventListener('alsulaim-toggle-slim-banner', handleToggleSlim);
     window.addEventListener('alsulaim-favorites-updated', handleFavoritesUpdated);
@@ -463,7 +598,7 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
       window.removeEventListener('employee-operations-updated', handleOpsUpdated);
       window.removeEventListener('erp-data-updated', handleOpsUpdated);
     };
-  }, []);
+  }, [loadActiveSectionStoreData]);
 
   const toggleSlim = () => {
     const next = !isSlimMode;
@@ -634,7 +769,7 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
           <span className="text-white font-black truncate max-w-[240px]">{currentTitle}</span>
         </div>
 
-        {/* Left: Quick Ergonomic Controls (Employee Operations, Pin, Playbook, Command Palette, Slim Mode) */}
+        {/* Left: Quick Ergonomic Controls (Employee Operations, Export 12 Formats, Pin, Playbook, Command Palette, Slim Mode) */}
         <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
           <button
             type="button"
@@ -652,6 +787,17 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
               {executedOps.length} عملية
             </span>
           </button>
+
+          <ExportDropdown
+            sectionKey={tabExportTarget.sectionKey}
+            data={activeSectionRows.length > 0 ? activeSectionRows : executedOps}
+            dataProvider={resolveWorkspaceExportData}
+            customTitle={`كشف وتقرير ${currentTitle} — ${deptDef.nameAr}`}
+            buttonLabel="تصدير ومعاينة (12 صيغة)"
+            variant="outline-dark"
+            showCountBadge={true}
+            className="!text-[10.5px]"
+          />
 
           <button
             type="button"
@@ -771,6 +917,15 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
                     : `⚡ تنفيذ عملية حية لكل موظف (${allStaff.length} موظفاً)`}
                 </span>
               </button>
+
+              <ExportDropdown
+                sectionKey="employee_executed_ops"
+                data={executedOps}
+                customTitle="السجل التنفيذي لعمليات موظفي المجموعة عبر الأقسام الـ 9 والفروع"
+                buttonLabel="تصدير سجل العمليات"
+                variant="outline-dark"
+                showCountBadge={true}
+              />
 
               <button
                 type="button"
