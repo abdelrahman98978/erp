@@ -1,13 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
-import { 
-  exportData, 
-  sanitizeCSVField, 
-  getActiveCompanyInfo, 
+import { describe, it, expect } from 'vitest';
+import {
+  exportData,
+  sanitizeCSVField,
+  getActiveCompanyInfo,
   generateExecutiveReportHtml,
-  SECTION_CONFIGS 
+  numberToArabicTafqeet,
+  SECTION_CONFIGS,
 } from './exportService';
 
-describe('Executive Export Suite & Security Standards', () => {
+describe('Executive Export Suite 4.0 & Security Standards', () => {
   it('should sanitize CSV fields to prevent formula injection attacks (=, +, -, @)', () => {
     expect(sanitizeCSVField('=SUM(A1:A10)')).toBe("'=SUM(A1:A10)");
     expect(sanitizeCSVField('+cmd|/c calc.exe')).toBe("'+cmd|/c calc.exe");
@@ -31,7 +32,15 @@ describe('Executive Export Suite & Security Standards', () => {
     expect(company.taxNumber).toBeDefined();
   });
 
-  it('should generate executive HTML with ZATCA QR, KPIs, and official tripartite signatures', () => {
+  it('should convert financial amounts into official Saudi Arabic Tafqeet', () => {
+    const tafqeet = numberToArabicTafqeet(14500.5);
+    expect(tafqeet).toContain('فقط وقدره');
+    expect(tafqeet).toContain('أربعة عشر ألفاً وخمسمائة');
+    expect(tafqeet).toContain('ريال سعودي');
+    expect(tafqeet).toContain('لا غير');
+  });
+
+  it('should generate executive HTML with ZATCA QR, KPIs, Arabic Tafqeet, and official tripartite signatures', () => {
     const sampleContracts = [
       {
         contract_number: 'SAF-RC-2026-0001',
@@ -43,12 +52,23 @@ describe('Executive Export Suite & Security Standards', () => {
         external_office: 'Manila Recruitment Agency',
         stage: 'سداد الرسوم وتفويض إنجاز',
         amount: 14500,
-        branch: 'الفرع الرئيسي - الرياض'
-      }
+        branch: 'الفرع الرئيسي - الرياض',
+      },
     ];
 
-    const html = generateExecutiveReportHtml('contracts', sampleContracts, 'كشف عقود الاستقدام المعتمدة', true);
-    
+    const html = generateExecutiveReportHtml(
+      'contracts',
+      sampleContracts,
+      'كشف عقود الاستقدام المعتمدة',
+      true,
+      {
+        executiveNote: 'معتمد للصرف والمطابقة الربعية',
+        showTafqeet: true,
+        showSignatures: true,
+        showQrCode: true,
+      }
+    );
+
     // Validate core components
     expect(html).toContain('<!DOCTYPE html>');
     expect(html).toContain('dir="rtl"');
@@ -58,6 +78,8 @@ describe('Executive Export Suite & Security Standards', () => {
     expect(html).toContain('إجمالي السجلات');
     expect(html).toContain('SAF-RC-2026-0001');
     expect(html).toContain('أحمد محمد السديري');
+    expect(html).toContain('فقط وقدره');
+    expect(html).toContain('معتمد للصرف والمطابقة الربعية');
     expect(html).toContain('إعداد الموظف المختص');
     expect(html).toContain('تدقيق الإدارة المالية');
     expect(html).toContain('اعتماد الإدارة والختم الرسمي');
@@ -73,20 +95,31 @@ describe('Executive Export Suite & Security Standards', () => {
     expect(SECTION_CONFIGS['contracts']).toBeDefined();
   });
 
-  it('should support and safely execute all 10 export formats (Word, XML, HTML, TSV, Markdown, Excel, PDF, CSV, Print, JSON)', () => {
+  it('should support and safely execute all 12 enterprise export formats (Excel, PDF, Word, Print, HTML, PNG, WPS, XML, CSV, TSV, JSON, Markdown)', () => {
     const sampleData = [
       { id: '1', name: 'فرع الرياض', city: 'الرياض', budget: 50000 },
-      { id: '2', name: 'فرع الدمام', city: 'الدمام', budget: 35000 }
+      { id: '2', name: 'فرع الدمام', city: 'الدمام', budget: 35000 },
     ];
 
-    const allFormats = ['excel', 'pdf', 'csv', 'print', 'json', 'word', 'xml', 'html', 'tsv', 'markdown'] as const;
+    const allFormats = [
+      'excel',
+      'pdf',
+      'csv',
+      'print',
+      'json',
+      'word',
+      'xml',
+      'html',
+      'tsv',
+      'markdown',
+      'png',
+      'wps',
+    ] as const;
 
-    allFormats.forEach(fmt => {
+    allFormats.forEach((fmt) => {
       expect(() => {
         exportData('branches', sampleData, fmt, 'تقرير الفروع الإقليمية');
       }).not.toThrow();
     });
   });
 });
-
-

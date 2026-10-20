@@ -70,6 +70,14 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
     return data || [];
   }, [data, dataProvider]);
 
+  useEffect(() => {
+    const syncRows = () => {
+      setResolvedRows(getEffectiveData());
+    };
+    window.addEventListener('erp-data-updated', syncRows);
+    return () => window.removeEventListener('erp-data-updated', syncRows);
+  }, [getEffectiveData]);
+
   const updatePosition = useCallback(() => {
     if (buttonRef.current && typeof window !== 'undefined') {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -110,8 +118,8 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
       setResolvedRows(getEffectiveData());
       updatePosition();
       const handleReposition = () => updatePosition();
-      window.addEventListener('resize', handleReposition);
-      window.addEventListener('scroll', handleReposition, true);
+      window.addEventListener('resize', handleReposition, { passive: true });
+      window.addEventListener('scroll', handleReposition, { capture: true, passive: true });
       return () => {
         window.removeEventListener('resize', handleReposition);
         window.removeEventListener('scroll', handleReposition, true);
@@ -306,7 +314,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
   const badgeCount = dataProvider ? resolvedRows.length || data?.length || 0 : data?.length || 0;
 
   return (
-    <div className={`relative inline-block text-right ${className}`}>
+    <div className={`relative inline-block text-right ${className}`} data-no-dyn-enhancer="true">
       <button
         ref={buttonRef}
         onClick={() => !isExporting && setIsOpen(!isOpen)}
@@ -317,7 +325,9 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
         type="button"
         title="تصدير ومعاينة الكشوفات الرسمية بـ 12 صيغة مؤسسية"
       >
-        <Download className={`w-4 h-4 text-emerald-500 shrink-0 ${isExporting ? 'animate-bounce' : ''}`} />
+        <span className={`inline-flex shrink-0 ${isExporting ? 'animate-bounce' : ''}`}>
+          <Download className="w-4 h-4 text-emerald-500 shrink-0" />
+        </span>
         <span>{isExporting ? 'جاري التجهيز...' : buttonLabel}</span>
         {showCountBadge && badgeCount > 0 && !isExporting && (
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-black">
@@ -346,6 +356,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 
             <div
               ref={dropdownRef}
+              data-no-dyn-enhancer="true"
               style={{
                 position: 'fixed',
                 top: `${menuPosition?.top ?? 80}px`,

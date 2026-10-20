@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Sentry from '@sentry/react';
+import { AlertTriangle, RotateCcw, RefreshCw } from 'lucide-react';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -11,12 +12,13 @@ interface ErrorBoundaryState {
   hasError: boolean;
   error?: Error;
   errorInfo?: React.ErrorInfo;
+  domRetryCount: number;
 }
 
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, domRetryCount: 0 };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
@@ -25,15 +27,36 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   componentDidUpdate(prevProps: ErrorBoundaryProps): void {
     if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
-      this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+      this.setState({
+        hasError: false,
+        error: undefined,
+        errorInfo: undefined,
+        domRetryCount: 0,
+      });
     }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    // Self-heal once from transient DOM reconciliation errors (e.g. browser extensions or external DOM mutations)
+    const isTransientDomError =
+      error.name === 'NotFoundError' ||
+      error.message?.includes('removeChild') ||
+      error.message?.includes('insertBefore');
+
+    if (isTransientDomError && this.state.domRetryCount < 2) {
+      this.setState((prev) => ({
+        hasError: false,
+        error: undefined,
+        errorInfo: undefined,
+        domRetryCount: prev.domRetryCount + 1,
+      }));
+      return;
+    }
+
     this.setState({ errorInfo });
     console.error('ErrorBoundary caught an error:', error, errorInfo);
 
-    // Auto-recover from stale chunks after a new Vercel deployment
+    // Auto-recover from stale chunks after a new deployment
     const isChunkError =
       error.message?.includes('dynamically imported module') ||
       error.message?.includes('Expected a JavaScript-or-Wasm module script') ||
@@ -62,7 +85,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   handleReset = (): void => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    this.setState({
+      hasError: false,
+      error: undefined,
+      errorInfo: undefined,
+      domRetryCount: 0,
+    });
   };
 
   handleReload = (): void => {
@@ -77,74 +105,28 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         <div
           role="alert"
           aria-live="assertive"
-          style={{
-            minHeight: '100vh',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-            background: '#fbfbf5',
-            fontFamily: 'Inter, system-ui, sans-serif',
-          }}
+          dir="rtl"
+          className="min-h-[70vh] flex items-center justify-center p-6 bg-[#FBFBF5] font-sans"
         >
-          <div style={{
-            maxWidth: '520px',
-            width: '100%',
-            background: '#ffffff',
-            borderRadius: '20px',
-            padding: '40px 32px',
-            boxShadow: '0 16px 32px rgba(0, 0, 0, 0.08)',
-            border: '1px solid #e4e4e7',
-            textAlign: 'center',
-          }}>
-            <div style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '16px',
-              background: '#fef2f2',
-              color: '#ba1a1a',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 20px auto',
-              fontSize: '28px',
-            }}>
-              <i className="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          <div className="max-w-lg w-full bg-white rounded-3xl p-8 shadow-2xl border-2 border-[#CFA64A]/60 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#1D2428] border border-[#CFA64A] text-[#CFA64A] flex items-center justify-center mx-auto mb-5 shadow-md">
+              <AlertTriangle className="w-8 h-8" />
             </div>
 
-            <h2 style={{
-              fontSize: '22px',
-              fontWeight: 600,
-              color: '#000000',
-              margin: '0 0 12px 0',
-            }}>
-              حدث خطأ غير متوقع
+            <h2 className="text-xl font-black text-[#1D2428] mb-2">
+              تنبيه استعادة جلسة العرض المؤسسية
             </h2>
 
-            <p style={{
-              fontSize: '14.5px',
-              color: '#3f4849',
-              margin: '0 0 24px 0',
-              lineHeight: 1.7,
-            }}>
-              نأسف للإزعاج. حدث خطأ أثناء تحميل هذه الصفحة. يمكنك محاولة استعادة الصفحة أو إعادة تحميل التطبيق بالكامل.
+            <p className="text-sm text-zinc-600 mb-6 leading-relaxed">
+              حدث تحديث طارئ أثناء عرض هذا القسم. يمكنك استعادة الشاشة فوراً بنقرة واحدة مع الاحتفاظ بكافة بياناتك وسجلاتك المحفوظة.
             </p>
 
             {import.meta.env.DEV && this.state.error && (
-              <details style={{
-                textAlign: 'start',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                background: '#f1f4f3',
-                marginBottom: '20px',
-                fontSize: '12.5px',
-                fontFamily: 'monospace',
-                color: '#3f4849',
-              }}>
-                <summary style={{ cursor: 'pointer', fontWeight: 700, marginBottom: '8px' }}>
-                  تفاصيل الخطأ (وضع التطوير)
+              <details className="text-right p-3.5 rounded-xl bg-zinc-100 border border-zinc-200 mb-5 text-xs font-mono text-zinc-700">
+                <summary className="cursor-pointer font-bold mb-2">
+                  تفاصيل الخطأ التشخيصية (وضع التطوير)
                 </summary>
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                <pre className="m-0 whitespace-pre-wrap overflow-x-auto text-left" dir="ltr">
                   {this.state.error.toString()}
                   {'\n\n'}
                   {this.state.errorInfo?.componentStack ?? ''}
@@ -152,36 +134,22 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               </details>
             )}
 
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <div className="flex flex-wrap gap-3 justify-center">
               <button
                 type="button"
                 onClick={this.handleReset}
-                style={{
-                  height: '44px',
-                  padding: '0 24px',
-                  borderRadius: '12px',
-                  border: '1px solid #bec9c8',
-                  background: '#ffffff',
-                  color: '#181c1c',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
+                className="h-11 px-6 rounded-xl border border-[#CFA64A] bg-[#1D2428] hover:bg-[#273136] text-[#CFA64A] text-sm font-black inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm"
               >
-                حاول مرة أخرى
+                <RotateCcw className="w-4 h-4" />
+                <span>استعادة الشاشة فوراً</span>
               </button>
               <button
                 type="button"
-                className="button-primary-pill"
                 onClick={this.handleReload}
-                style={{
-                  height: '44px',
-                  padding: '0 24px',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                }}
+                className="h-11 px-6 rounded-xl border border-zinc-300 bg-white hover:bg-zinc-50 text-[#1D2428] text-sm font-bold inline-flex items-center gap-2 cursor-pointer transition-all"
               >
-                إعادة تحميل الصفحة
+                <RefreshCw className="w-4 h-4" />
+                <span>تحديث الصفحة بالكامل</span>
               </button>
             </div>
           </div>
@@ -189,7 +157,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       );
     }
 
-    return this.props.children;
+    return <React.Fragment key={this.state.domRetryCount}>{this.props.children}</React.Fragment>;
   }
 }
 

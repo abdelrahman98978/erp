@@ -248,6 +248,7 @@ export const ExportPreviewModal: React.FC<ExportPreviewModalProps> = ({
 
   return createPortal(
     <div
+      data-no-dyn-enhancer="true"
       className="fixed inset-0 z-[100000] bg-black/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 font-sans"
       dir="rtl"
       onClick={onClose}
@@ -570,7 +571,9 @@ export const ExportPreviewModal: React.FC<ExportPreviewModalProps> = ({
                     activeExportingFormat && !isBusy ? 'opacity-60' : ''
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isBusy ? 'animate-spin' : ''}`} />
+                  <span className={`inline-flex shrink-0 ${isBusy ? 'animate-spin' : ''}`}>
+                    <Icon className="w-4 h-4 shrink-0" />
+                  </span>
                   <div className="min-w-0 flex-1">
                     <div className="text-xs font-black truncate">{fmt.label}</div>
                     <div className="text-[9.5px] opacity-85 truncate">{fmt.sub}</div>
@@ -597,7 +600,9 @@ export const ExportPreviewModal: React.FC<ExportPreviewModalProps> = ({
                     onClick={() => handleRunExport(fmt.id)}
                     className="px-2.5 py-1 rounded-lg bg-zinc-100 hover:bg-[#1D2428] text-slate-800 hover:text-[#CFA64A] border border-zinc-200 text-[11px] font-extrabold inline-flex items-center gap-1.5 transition-all cursor-pointer"
                   >
-                    <Icon className={`w-3 h-3 ${isBusy ? 'animate-spin' : ''}`} />
+                    <span className={`inline-flex shrink-0 ${isBusy ? 'animate-spin' : ''}`}>
+                      <Icon className="w-3 h-3" />
+                    </span>
                     <span>{fmt.label}</span>
                   </button>
                 );

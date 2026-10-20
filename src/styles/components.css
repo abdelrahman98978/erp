@@ -1107,7 +1107,11 @@ a svg,
   }
 }
 
-button[data-dyn-state="processing"] {
+button[data-dyn-state="processing"] { position: relative !important; overflow: hidden !important; background-color: #1D2428 !important; color: transparent !important; border-color: #CFA64A !important; box-shadow: 0 6px 18px rgba(29, 36, 40, 0.22) !important; transition: all 0.2s ease !important; }
+button[data-dyn-state="processing"] > *, button[data-dyn-state="completed"] > * { opacity: 0 !important; pointer-events: none !important; }
+button[data-dyn-state="processing"]::before { content: attr(data-dyn-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 10px; color: #CFA64A !important; font-weight: 800; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 2; }
+button[data-dyn-state="completed"]::before { content: attr(data-dyn-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 10px; color: #ffffff !important; font-weight: 800; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 2; }
+button[data-dyn-state="processing-legacy"] {
   position: relative !important;
   overflow: hidden !important;
   background-color: #1D2428 !important;
@@ -1127,7 +1131,8 @@ button[data-dyn-state="processing"]::after {
   animation: dynProgressFill 0.65s ease-out forwards;
 }
 
-button[data-dyn-state="completed"] {
+button[data-dyn-state="completed"] { position: relative !important; overflow: hidden !important; background-color: #047857 !important; color: transparent !important; border-color: #10b981 !important; box-shadow: 0 6px 18px rgba(4, 120, 87, 0.28) !important; animation: dynSuccessPop 0.28s ease-out forwards; }
+button[data-dyn-state="completed-legacy"] {
   background-color: #047857 !important;
   color: #ffffff !important;
   border-color: #10b981 !important;

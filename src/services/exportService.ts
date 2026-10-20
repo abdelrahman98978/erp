@@ -4,8 +4,6 @@
  * with full Arabic Unicode support and dual company branding.
  */
 import * as XLSX from 'xlsx';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import { useAppStore } from '../stores/appStore';
 import { COMPANIES_LIST } from '../contexts/CompanyContext';
 
@@ -2116,7 +2114,7 @@ export function generateExecutiveReportHtml(
         </div>
 
         <div class="center-meta">
-          <div class="official-tag">وثيقة رسمية معتمدة • ZATCA &amp; SAMA COMPLIANT</div>
+          <div class="official-tag">وثيقة رسمية معتمدة • ZATCA & ERP COMPLIANT • SAMA WPS</div>
           <h2 class="report-title-text">${title}</h2>
           <div class="report-subtitle">تاريخ الاستخراج: <strong>${dateAr}</strong> — الساعة <strong>${timeStr}</strong></div>
           <div class="exporter-pill">
@@ -2206,7 +2204,7 @@ export function generateExecutiveReportHtml(
       <!-- 4. Signatures & Approvals Matrix (Attributed to Real Employee & Branch) -->
       <div class="signatures-grid">
         <div class="sig-box">
-          <div class="sig-title">إعداد واستخراج الموظف المختص</div>
+          <div class="sig-title">إعداد الموظف المختص (استخراج وتوثيق)</div>
           <div class="sig-role">${exporter.role}</div>
           <div class="sig-line"></div>
           <div class="sig-meta">الاسم: ${exporter.name}</div>
@@ -2224,7 +2222,7 @@ export function generateExecutiveReportHtml(
         </div>
 
         <div class="sig-box">
-          <div class="sig-title">اعتماد القيادة التنفيذية والختم الرسمي</div>
+          <div class="sig-title">اعتماد الإدارة والختم الرسمي (القيادة التنفيذية)</div>
           <div class="sig-role">رئيس مجلس الإدارة / المفوض العام</div>
           <div class="seal-stamp">
             <div>${company.nameAr.slice(0, 18)}</div>
@@ -2446,7 +2444,7 @@ export function exportToExcel(
 
 // ─── Export to CSV (UTF-8 BOM + Institutional Summary Footer) ────────
 function triggerBlobDownload(blob: Blob, filename: string): void {
-  if (typeof document === 'undefined' || typeof window === 'undefined') return;
+  if (typeof document === 'undefined' || typeof window === 'undefined' || isRunningInTest()) return;
   try {
     if (window.URL && typeof window.URL.createObjectURL === 'function') {
       const url = URL.createObjectURL(blob);
@@ -2554,6 +2552,10 @@ export async function exportToPDF(
   document.body.appendChild(container);
 
   try {
+    const [{ jsPDF }, { default: html2canvas }] = await Promise.all([
+      import('jspdf'),
+      import('html2canvas'),
+    ]);
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
@@ -2636,6 +2638,7 @@ export async function exportToPNG(
   document.body.appendChild(container);
 
   try {
+    const { default: html2canvas } = await import('html2canvas');
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,

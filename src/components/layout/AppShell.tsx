@@ -94,7 +94,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -198,21 +198,23 @@ export const AppShell: React.FC<AppShellProps> = ({
   }, []);
 
   // Global Dynamic Button State Enhancer for payment, ZATCA, WPS, Musaned, and approval actions
+  // Uses pure CSS data-attributes (data-dyn-state & data-dyn-label) without mutating React DOM children
   const handleWorkspaceClickCapture = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement | null;
     if (!target) return;
     const btn = target.closest('button') as HTMLButtonElement | null;
     if (!btn || btn.disabled) return;
 
-    // Skip if already managed by <DynamicActionButton /> or currently transitioning
+    // Skip if already managed by <DynamicActionButton />, excluded via data-no-dyn-enhancer, or currently transitioning
     if (btn.getAttribute('data-dynamic-button') === 'true') return;
+    if (btn.closest('[data-no-dyn-enhancer="true"]')) return;
     if (btn.getAttribute('data-dyn-state')) return;
 
     const rawText = (btn.innerText || btn.textContent || '').trim();
     if (!rawText || rawText.length > 55) return;
 
     const lower = rawText.toLowerCase();
-    // Skip navigation tabs, filter toggles, close buttons, or modal triggers that just open forms
+    // Skip navigation tabs, filter toggles, close buttons, export format buttons, or modal triggers
     if (
       lower.includes('إلغاء') ||
       lower.includes('إغلاق') ||
@@ -224,7 +226,20 @@ export const AppShell: React.FC<AppShellProps> = ({
       lower.includes('التالي') ||
       lower.includes('تثبيت') ||
       lower.includes('وضع مدمج') ||
-      lower.includes('توسيع')
+      lower.includes('توسيع') ||
+      lower.includes('تصدير') ||
+      lower.includes('معاينة') ||
+      lower.includes('.xlsx') ||
+      lower.includes('.pdf') ||
+      lower.includes('.doc') ||
+      lower.includes('.sif') ||
+      lower.includes('.xml') ||
+      lower.includes('.csv') ||
+      lower.includes('.tsv') ||
+      lower.includes('.json') ||
+      lower.includes('.md') ||
+      lower.includes('.html') ||
+      lower.includes('.png')
     ) {
       return;
     }
@@ -234,9 +249,8 @@ export const AppShell: React.FC<AppShellProps> = ({
     );
     if (!matchedRule) return;
 
-    const originalHtml = btn.innerHTML;
     btn.setAttribute('data-dyn-state', 'processing');
-    btn.innerHTML = `<span class="dyn-inline-spinner"></span><span>${matchedRule.processingLabel}</span>`;
+    btn.setAttribute('data-dyn-label', `⟳ ${matchedRule.processingLabel}`);
 
     // Record real employee operation in store & audit log
     const activeUser = authService.getCurrentUser();
@@ -246,12 +260,12 @@ export const AppShell: React.FC<AppShellProps> = ({
       if (!btn.isConnected) return;
       const refNum = Math.floor(1000 + Math.random() * 9000);
       btn.setAttribute('data-dyn-state', 'completed');
-      btn.innerHTML = `<span>${matchedRule.completedLabel}</span> <span style="font-family:monospace;font-size:10px;opacity:0.9;padding:1px 5px;background:rgba(255,255,255,0.2);border-radius:4px;">#${refNum}</span>`;
+      btn.setAttribute('data-dyn-label', `${matchedRule.completedLabel} #${refNum}`);
 
       setTimeout(() => {
         if (!btn.isConnected) return;
         btn.removeAttribute('data-dyn-state');
-        btn.innerHTML = originalHtml;
+        btn.removeAttribute('data-dyn-label');
       }, 1850);
     }, 620);
   }, []);
