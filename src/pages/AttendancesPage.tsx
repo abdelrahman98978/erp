@@ -26,6 +26,19 @@ const INITIAL_ATTENDANCES: AttendanceRecord[] = [
   { id: '5', emp_name: 'سارة خالد', department: 'خدمة العملاء CRM', date: '2026-08-12', check_in: '09:30 ص', check_out: '04:30 م', status: 'متأخر', work_hours: 7.0 }
 ];
 
+const normalizeAttendanceRecord = (raw: any, idx: number): AttendanceRecord => ({
+  id: String(raw?.id || raw?.attendance_id || `att-${idx + 1}`),
+  emp_name: String(raw?.emp_name || raw?.employee_name || raw?.name || 'موظف مسجل'),
+  department: String(raw?.department || raw?.branch || 'الموارد البشرية'),
+  date: String(raw?.date || raw?.attendance_date || (raw?.created_at ? String(raw.created_at).slice(0, 10) : '2026-08-12')),
+  check_in: String(raw?.check_in || raw?.checkIn || '08:00 ص'),
+  check_out: String(raw?.check_out || raw?.checkOut || '04:30 م'),
+  status: (raw?.status === 'حاضر' || raw?.status === 'متأخر' || raw?.status === 'غياب' || raw?.status === 'إجازة')
+    ? raw.status
+    : 'حاضر',
+  work_hours: Number(raw?.work_hours ?? raw?.hours_worked ?? 8.5),
+});
+
 export const AttendancesPage: React.FC = () => {
   const [attendances, setAttendances] = useState<AttendanceRecord[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -33,7 +46,12 @@ export const AttendancesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    realErpDataStore.getRecords<AttendanceRecord>('attendances', INITIAL_ATTENDANCES).then(data => setAttendances(data));
+    realErpDataStore
+      .getRecords<AttendanceRecord>('attendances', INITIAL_ATTENDANCES)
+      .then((data) => {
+        const list = Array.isArray(data) && data.length > 0 ? data : INITIAL_ATTENDANCES;
+        setAttendances(list.map((item, idx) => normalizeAttendanceRecord(item, idx)));
+      });
   }, []);
 
   const [manualForm, setManualForm] = useState({
@@ -61,7 +79,7 @@ export const AttendancesPage: React.FC = () => {
     };
 
     const updated = await realErpDataStore.addRecord('attendances', newRec, INITIAL_ATTENDANCES);
-    setAttendances(updated);
+    setAttendances(updated.map((item, idx) => normalizeAttendanceRecord(item, idx)));
     setShowManualModal(false);
     setManualForm({ emp_name: '', department: 'الموارد البشرية', date: new Date().toISOString().slice(0, 10), check_in: '08:00', check_out: '16:30', status: 'حاضر' });
   };
@@ -75,10 +93,11 @@ export const AttendancesPage: React.FC = () => {
     setShowUploadModal(false);
   };
 
-  const filteredAttendances = attendances.filter(a =>
-    a.emp_name.includes(searchQuery) ||
-    a.department.includes(searchQuery) ||
-    a.date.includes(searchQuery)
+  const q = searchQuery.toLowerCase();
+  const filteredAttendances = attendances.filter((a) =>
+    (a.emp_name || '').toLowerCase().includes(q) ||
+    (a.department || '').toLowerCase().includes(q) ||
+    (a.date || '').toLowerCase().includes(q)
   );
 
   const totalPresent = attendances.filter(a => a.status === 'حاضر').length;
@@ -212,8 +231,8 @@ export const AttendancesPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                filteredAttendances.map((row) => (
-                  <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
+                filteredAttendances.map((row, idx) => (
+                  <tr key={`${row.id}-${idx}`} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5 font-bold text-black">
                       <div className="flex items-center gap-2.5">
                         <CorporateAvatar

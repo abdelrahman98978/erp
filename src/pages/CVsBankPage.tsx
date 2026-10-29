@@ -531,12 +531,12 @@ export const CVsBankPage: React.FC = () => {
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const match =
-          cv.cv_code.toLowerCase().includes(q) ||
-          cv.maid_name.toLowerCase().includes(q) ||
-          cv.maid_name_ar.includes(q) ||
-          cv.passport_number.toLowerCase().includes(q) ||
-          cv.job.toLowerCase().includes(q) ||
-          cv.external_office.toLowerCase().includes(q);
+          (cv.cv_code || '').toLowerCase().includes(q) ||
+          (cv.maid_name || '').toLowerCase().includes(q) ||
+          (cv.maid_name_ar || '').includes(q) ||
+          (cv.passport_number || '').toLowerCase().includes(q) ||
+          (cv.job || '').toLowerCase().includes(q) ||
+          (cv.external_office || '').toLowerCase().includes(q);
         if (!match) return false;
       }
 

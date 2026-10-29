@@ -191,10 +191,10 @@ export const AgentImportsPage: React.FC = () => {
     }
   };
 
-  const filteredBatches = (batches.length > 0 ? batches : MOCK_BATCHES).filter(b =>
-    b.batch_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.office_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    b.country.includes(searchQuery)
+  const filteredBatches = (batches.length > 0 ? batches : MOCK_BATCHES).filter((b) =>
+    (b.batch_code || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (b.office_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (b.country || '').includes(searchQuery)
   );
 
   return (

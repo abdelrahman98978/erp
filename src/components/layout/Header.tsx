@@ -15,6 +15,8 @@ import { ProductionDataHubModal } from '../database/ProductionDataHubModal';
 import { UniversalDocumentExtractorModal } from '../common/UniversalDocumentExtractorModal';
 import { CorporateAvatar } from '../common/CorporateAvatar';
 import { BusinessIllustration } from '../common/BusinessIllustration';
+import { EnterpriseErrorMonitorPanel } from '../monitoring/EnterpriseErrorMonitorPanel';
+import { errorMonitorService } from '../../services/errorMonitorService';
 import { SIDEBAR_MENU } from '../../data/sidebarMenu';
 import {
   Menu,
@@ -35,6 +37,7 @@ import {
   User,
   Lock,
   UploadCloud,
+  Activity,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -118,6 +121,10 @@ export const Header: React.FC<HeaderProps> = ({
   const [showUserDropdown, setShowUserDropdown] = useState<boolean>(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState<boolean>(false);
   const [showDataHubModal, setShowDataHubModal] = useState<boolean>(false);
+  const [showErrorMonitorModal, setShowErrorMonitorModal] = useState<boolean>(false);
+  const [openErrorCount, setOpenErrorCount] = useState<number>(
+    () => errorMonitorService.getSystemHealthSummary().openIncidents
+  );
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
   const [showUniversalExtractor, setShowUniversalExtractor] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -138,11 +145,21 @@ export const Header: React.FC<HeaderProps> = ({
     const handleOpenDocExtractor = () => {
       setShowUniversalExtractor(true);
     };
+    const handleSyncErrorMonitor = () => {
+      setOpenErrorCount(errorMonitorService.getSystemHealthSummary().openIncidents);
+    };
+    const handleOpenErrorMonitor = () => {
+      setShowErrorMonitorModal(true);
+    };
     window.addEventListener('toggle-mobile-notifications', handleToggleMobileNotifs);
     window.addEventListener('open-document-extractor', handleOpenDocExtractor);
+    window.addEventListener('erp-error-monitor-updated', handleSyncErrorMonitor);
+    window.addEventListener('open-error-monitor', handleOpenErrorMonitor);
     return () => {
       window.removeEventListener('toggle-mobile-notifications', handleToggleMobileNotifs);
       window.removeEventListener('open-document-extractor', handleOpenDocExtractor);
+      window.removeEventListener('erp-error-monitor-updated', handleSyncErrorMonitor);
+      window.removeEventListener('open-error-monitor', handleOpenErrorMonitor);
     };
   }, []);
 
@@ -375,6 +392,26 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="font-bold text-[10.5px]">قاعدة البيانات</span>
             </button>
           )}
+
+          {/* Live Enterprise Error Monitor & Self-Healing Trigger */}
+          <button
+            type="button"
+            onClick={() => setShowErrorMonitorModal(true)}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#FBFBF5] hover:bg-[#F5EDDC] text-[#1D2428] border border-[#CFA64A]/60 rounded-full text-xs font-black transition-all shrink-0 cursor-pointer shadow-xs min-h-[34px]"
+            title="رادار مراقبة وتشخيص الأخطاء المباشر ومحرك الإصلاح الذاتي"
+          >
+            <Activity className="w-3.5 h-3.5 text-[#8C681E] shrink-0" />
+            <span className="hidden lg:inline text-[11px]">رادار الأخطاء</span>
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black ${
+                openErrorCount > 0
+                  ? 'bg-amber-500 text-white'
+                  : 'bg-emerald-600 text-white'
+              }`}
+            >
+              {openErrorCount > 0 ? openErrorCount : '100%'}
+            </span>
+          </button>
 
           {/* Universal Document & 100-Invoice Auto-Extractor Button */}
           <button
@@ -668,6 +705,44 @@ export const Header: React.FC<HeaderProps> = ({
         isOpen={showDataHubModal}
         onClose={() => setShowDataHubModal(false)}
       />
+
+      {/* Enterprise Live Error Monitor Global Modal */}
+      {showErrorMonitorModal && (
+        <div
+          className="fixed inset-0 z-[2300] bg-black/65 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+          onClick={() => setShowErrorMonitorModal(false)}
+          dir="rtl"
+        >
+          <div
+            className="w-full max-w-6xl bg-[#FBFBF5] rounded-3xl border-2 border-[#CFA64A]/60 shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="px-5 py-3.5 bg-[#1D2428] text-white flex items-center justify-between border-b border-[#CFA64A]/30 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <Activity className="w-5 h-5 text-[#CFA64A]" />
+                <span className="text-sm font-black text-white">
+                  مركز مراقبة وتشخيص الأخطاء المباشر والإصلاح الذاتي (Enterprise Error Monitor)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowErrorMonitorModal(false)}
+                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-zinc-200 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+              <EnterpriseErrorMonitorPanel
+                onNavigate={(href, title) => {
+                  setShowErrorMonitorModal(false);
+                  navigateGuarded(href, title);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Employee Profile & Locked Department Modal */}
       {showProfileModal && (

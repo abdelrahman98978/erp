@@ -225,9 +225,9 @@ export const OfficesPage: React.FC = () => {
     return offices.filter(o => {
       const matchesCountry = countryFilter === 'الكل' || o.nationality === countryFilter;
       const matchesSearch =
-        o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.manager.includes(searchQuery) ||
-        o.account_code.includes(searchQuery);
+        (o.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (o.manager || '').includes(searchQuery) ||
+        (o.account_code || '').includes(searchQuery);
       return matchesCountry && matchesSearch;
     });
   }, [offices, countryFilter, searchQuery]);

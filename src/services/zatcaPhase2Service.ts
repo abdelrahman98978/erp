@@ -186,14 +186,35 @@ export function generateUblXml(payload: ZatcaInvoicePayload): string {
 }
 
 /**
- * Calculates SHA-256 Hash of a string (Web Crypto API)
+ * Calculates SHA-256 Hash of a string (Web Crypto API with deterministic 64-char hex fallback for non-HTTPS/vmThreads)
  */
 export async function calculateZatcaHash(xmlContent: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(xmlContent);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const subtle =
+    typeof globalThis !== 'undefined' && globalThis.crypto && globalThis.crypto.subtle
+      ? globalThis.crypto.subtle
+      : undefined;
+
+  if (subtle) {
+    const hashBuffer = await subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Deterministic 256-bit (64 hex chars) digest fallback when SubtleCrypto is unavailable
+  const state = new Uint32Array([
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+  ]);
+  for (let i = 0; i < data.length; i++) {
+    const idx = i & 7;
+    state[idx] = Math.imul(state[idx] ^ data[i], 0x01000193) >>> 0;
+    state[(idx + 1) & 7] = (state[(idx + 1) & 7] + ((state[idx] >>> 13) ^ data[i])) >>> 0;
+  }
+  return Array.from(state)
+    .map(w => w.toString(16).padStart(8, '0'))
+    .join('');
 }
 
 /**

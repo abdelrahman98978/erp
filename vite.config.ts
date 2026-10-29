@@ -40,7 +40,7 @@ const ttsPlugin = () => ({
               persona = json.persona || 'noura';
             } catch (_) {}
           } else {
-            const parsedUrl = new URL(req.url, 'http://localhost:3000');
+            const parsedUrl = new URL(req.url, 'http://127.0.0.1:5180');
             rawText = parsedUrl.searchParams.get('text') || '';
             persona = parsedUrl.searchParams.get('persona') || 'noura';
           }
@@ -112,8 +112,10 @@ export default defineConfig({
     include: ['react', 'react-dom', 'react/jsx-runtime', '@tanstack/react-query']
   },
   server: {
-    port: 3000,
-    host: true,
+    port: 5180,
+    strictPort: false,
+    host: '0.0.0.0',
+    open: true,
     watch: {
       usePolling: true,
       interval: 1000,

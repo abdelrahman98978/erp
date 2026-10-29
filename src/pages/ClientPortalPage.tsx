@@ -200,9 +200,9 @@ export const ClientPortalPage: React.FC = () => {
   const filteredContracts = contractsList.filter(c => {
     if (!nationalIdOrPhone.trim()) return true;
     const q = nationalIdOrPhone.toLowerCase();
-    return c.contractNumber.toLowerCase().includes(q) ||
-           c.workerName.includes(q) ||
-           c.passportNumber.toLowerCase().includes(q);
+    return (c.contractNumber || '').toLowerCase().includes(q) ||
+           (c.workerName || '').toLowerCase().includes(q) ||
+           (c.passportNumber || '').toLowerCase().includes(q);
   });
 
   const activeContracts = filteredContracts.filter(c => c.status !== 'مكتمل ومسلم');

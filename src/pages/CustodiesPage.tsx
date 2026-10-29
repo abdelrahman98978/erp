@@ -26,6 +26,19 @@ const INITIAL_CUSTODIES: Custody[] = [
   { id: 'CUST-04', item_name: 'طابعة ملونة ليزر HP Enterprise', employee_name: 'فهد العتيبي', location: 'فرع جدة', received_date: '2024-11-20', serial_number: 'HP-ENT-44102', estimated_value: 4100, status: 'صيانة' }
 ];
 
+const normalizeCustodyRecord = (raw: any, idx: number): Custody => ({
+  id: String(raw?.id || raw?.custody_code || raw?.custody_number || `CUST-0${idx + 1}`),
+  item_name: String(raw?.item_name || raw?.asset_name || raw?.itemName || 'أصل مؤسسي مسجل'),
+  employee_name: String(raw?.employee_name || raw?.emp_name || raw?.employeeName || 'موظف مستلم'),
+  location: String(raw?.location || raw?.branch || 'فرع الرياض الرئيسي'),
+  received_date: String(raw?.received_date || raw?.handover_date || (raw?.created_at ? String(raw.created_at).slice(0, 10) : '2025-01-15')),
+  serial_number: String(raw?.serial_number || raw?.serialNumber || `SN-${1000 + idx}`),
+  estimated_value: Number(raw?.estimated_value ?? raw?.value ?? 0),
+  status: (raw?.status === 'في حوزة الموظف' || raw?.status === 'تم الاسترجاع' || raw?.status === 'صيانة')
+    ? raw.status
+    : 'في حوزة الموظف',
+});
+
 export const CustodiesPage: React.FC = () => {
   const { addNotification } = useAppStore();
   const [custodies, setCustodies] = useState<Custody[]>([]);
@@ -34,7 +47,10 @@ export const CustodiesPage: React.FC = () => {
   const [selectedCustodyForDoc, setSelectedCustodyForDoc] = useState<Custody | null>(null);
 
   useEffect(() => {
-    realErpDataStore.getRecords<Custody>('custodies', INITIAL_CUSTODIES).then(data => setCustodies(data));
+    realErpDataStore.getRecords<Custody>('custodies', INITIAL_CUSTODIES).then((data) => {
+      const list = Array.isArray(data) && data.length > 0 ? data : INITIAL_CUSTODIES;
+      setCustodies(list.map((item, idx) => normalizeCustodyRecord(item, idx)));
+    });
   }, []);
 
   const [addForm, setAddForm] = useState({
@@ -96,10 +112,11 @@ export const CustodiesPage: React.FC = () => {
     }
   };
 
-  const filteredCustodies = custodies.filter(c =>
-    c.item_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.employee_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.serial_number.toLowerCase().includes(searchQuery.toLowerCase())
+  const q = searchQuery.toLowerCase();
+  const filteredCustodies = custodies.filter((c) =>
+    (c.item_name || '').toLowerCase().includes(q) ||
+    (c.employee_name || '').toLowerCase().includes(q) ||
+    (c.serial_number || '').toLowerCase().includes(q)
   );
 
   return (
@@ -184,8 +201,8 @@ export const CustodiesPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {filteredCustodies.map((row) => (
-                <tr key={row.id} className="hover:bg-zinc-50">
+              {filteredCustodies.map((row, idx) => (
+                <tr key={`${row.id}-${idx}`} className="hover:bg-zinc-50">
                   <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
                   <td className="p-3.5">
                     <div className="font-bold text-black">{row.item_name}</div>

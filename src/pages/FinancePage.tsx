@@ -309,7 +309,7 @@ export const FinancePage: React.FC = () => {
     setJournalForm({ description: '', amount: '', branch: 'فرع الرياض الرئيسي' });
   };
 
-  const filteredJournals = selectedBranch === 'ALL' ? journals : journals.filter(j => j.branch.includes(selectedBranch));
+  const filteredJournals = selectedBranch === 'ALL' ? journals : journals.filter(j => (j.branch || '').includes(selectedBranch));
 
   return (
     <div className="space-y-6">
@@ -1030,11 +1030,11 @@ export const FinancePage: React.FC = () => {
           if (voucherSearchQuery.trim()) {
             const q = voucherSearchQuery.toLowerCase();
             return (
-              v.voucher_no.toLowerCase().includes(q) ||
-              v.payee_payer.toLowerCase().includes(q) ||
-              v.treasury.toLowerCase().includes(q) ||
-              v.amount.toString().includes(q) ||
-              v.date.includes(q)
+              (v.voucher_no || '').toLowerCase().includes(q) ||
+              (v.payee_payer || '').toLowerCase().includes(q) ||
+              (v.treasury || '').toLowerCase().includes(q) ||
+              String(v.amount ?? '').includes(q) ||
+              (v.date || '').includes(q)
             );
           }
           return true;

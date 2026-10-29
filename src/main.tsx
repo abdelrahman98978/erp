@@ -5,7 +5,11 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { errorMonitorService } from './services/errorMonitorService';
 import './styles/index.css';
+
+// Initialize Enterprise Live Error Monitor & Self-Healing Listeners
+errorMonitorService.initGlobalListeners();
 
 // Auto-recover from stale chunks after new deployments
 if (typeof window !== 'undefined') {

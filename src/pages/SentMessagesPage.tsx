@@ -201,10 +201,10 @@ export const SentMessagesPage: React.FC = () => {
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       return (
-        m.id.toLowerCase().includes(q) ||
-        m.recipient_name.toLowerCase().includes(q) ||
-        m.phone.includes(q) ||
-        m.content.toLowerCase().includes(q)
+        String(m.id || '').toLowerCase().includes(q) ||
+        (m.recipient_name || '').toLowerCase().includes(q) ||
+        (m.phone || '').includes(q) ||
+        (m.content || '').toLowerCase().includes(q)
       );
     }
     return true;

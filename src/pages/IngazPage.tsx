@@ -170,10 +170,10 @@ export const IngazPage: React.FC = () => {
 
   const filteredDelegations = delegations.filter(d => {
     const matchesSearch =
-      d.delegation_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      d.client_name.includes(searchQuery) ||
-      d.visa_number.includes(searchQuery) ||
-      d.foreign_office.includes(searchQuery);
+      (d.delegation_number || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (d.client_name || '').includes(searchQuery) ||
+      (d.visa_number || '').includes(searchQuery) ||
+      (d.foreign_office || '').includes(searchQuery);
 
     if (!matchesSearch) return false;
     if (activeTab === 'verified') return d.status === 'تم التوثيق';

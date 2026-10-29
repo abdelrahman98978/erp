@@ -1,6 +1,7 @@
 import React from 'react';
 import * as Sentry from '@sentry/react';
-import { AlertTriangle, RotateCcw, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RotateCcw, RefreshCw, ShieldCheck } from 'lucide-react';
+import { errorMonitorService, MonitoredErrorIncident } from '../services/errorMonitorService';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface ErrorBoundaryState {
   error?: Error;
   errorInfo?: React.ErrorInfo;
   domRetryCount: number;
+  lastIncident?: MonitoredErrorIncident;
 }
 
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -25,6 +27,18 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return { hasError: true, error };
   }
 
+  componentDidMount(): void {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('erp-error-boundary-reset', this.handleReset);
+    }
+  }
+
+  componentWillUnmount(): void {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('erp-error-boundary-reset', this.handleReset);
+    }
+  }
+
   componentDidUpdate(prevProps: ErrorBoundaryProps): void {
     if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
       this.setState({
@@ -32,11 +46,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         error: undefined,
         errorInfo: undefined,
         domRetryCount: 0,
+        lastIncident: undefined,
       });
     }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    // Record in Enterprise Live Error Monitor immediately
+    const incident = errorMonitorService.captureReactError(error, errorInfo, 'ErrorBoundary');
+
     // Self-heal once from transient DOM reconciliation errors (e.g. browser extensions or external DOM mutations)
     const isTransientDomError =
       error.name === 'NotFoundError' ||
@@ -49,11 +67,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         error: undefined,
         errorInfo: undefined,
         domRetryCount: prev.domRetryCount + 1,
+        lastIncident: incident,
       }));
       return;
     }
 
-    this.setState({ errorInfo });
+    this.setState({ errorInfo, lastIncident: incident });
     console.error('ErrorBoundary caught an error:', error, errorInfo);
 
     // Auto-recover from stale chunks after a new deployment
@@ -85,11 +104,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   handleReset = (): void => {
+    if (this.state.lastIncident?.id) {
+      errorMonitorService.healIncident(this.state.lastIncident.id);
+    }
     this.setState({
       hasError: false,
       error: undefined,
       errorInfo: undefined,
       domRetryCount: 0,
+      lastIncident: undefined,
     });
   };
 
@@ -113,12 +136,20 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <AlertTriangle className="w-8 h-8" />
             </div>
 
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-black mb-3">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>
+                رادار مراقبة الأخطاء نشط {this.state.lastIncident ? `• ${this.state.lastIncident.id}` : ''}
+              </span>
+            </div>
+
             <h2 className="text-xl font-black text-[#1D2428] mb-2">
               تنبيه استعادة جلسة العرض المؤسسية
             </h2>
 
-            <p className="text-sm text-zinc-600 mb-6 leading-relaxed">
-              حدث تحديث طارئ أثناء عرض هذا القسم. يمكنك استعادة الشاشة فوراً بنقرة واحدة مع الاحتفاظ بكافة بياناتك وسجلاتك المحفوظة.
+            <p className="text-sm text-zinc-600 mb-4 leading-relaxed">
+              {this.state.lastIncident?.diagnosisAr ||
+                'حدث تحديث طارئ أثناء عرض هذا القسم. يمكنك استعادة الشاشة فوراً بنقرة واحدة مع الاحتفاظ بكافة بياناتك وسجلاتك المحفوظة.'}
             </p>
 
             {import.meta.env.DEV && this.state.error && (

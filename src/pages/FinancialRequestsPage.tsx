@@ -208,9 +208,9 @@ export const FinancialRequestsPage: React.FC = () => {
   const getFilteredRequests = () => {
     return requests.filter((r) => {
       const matchesSearch =
-        r.request_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.paid_to.includes(searchQuery) ||
-        r.description.includes(searchQuery);
+        (r.request_number || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (r.paid_to || '').includes(searchQuery) ||
+        (r.description || '').includes(searchQuery);
 
       if (!matchesSearch) return false;
 

@@ -206,19 +206,20 @@ export const ShelterSuitePortalPage: React.FC = () => {
   // Filter inmates by selectedBranch & Search
   const filteredInmates = useMemo(() => {
     return inmates.filter((item) => {
+      const loc = item.shelter_location || '';
       if (selectedBranch !== 'ALL') {
-        if (selectedBranch === 'RUH-MAIN' && !item.shelter_location.includes('الرياض')) return false;
-        if (selectedBranch === 'JED-AIRPORT' && !item.shelter_location.includes('جدة')) return false;
-        if (selectedBranch === 'DMM-EAST' && !item.shelter_location.includes('الخبر') && !item.shelter_location.includes('الدمام')) return false;
-        if (selectedBranch === 'MAJ-SUD' && !item.shelter_location.includes('المجمعه') && !item.shelter_location.includes('المجمعة')) return false;
+        if (selectedBranch === 'RUH-MAIN' && !loc.includes('الرياض')) return false;
+        if (selectedBranch === 'JED-AIRPORT' && !loc.includes('جدة')) return false;
+        if (selectedBranch === 'DMM-EAST' && !loc.includes('الخبر') && !loc.includes('الدمام')) return false;
+        if (selectedBranch === 'MAJ-SUD' && !loc.includes('المجمعه') && !loc.includes('المجمعة')) return false;
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         return (
-          item.maid_name.toLowerCase().includes(q) ||
-          item.passport.toLowerCase().includes(q) ||
+          (item.maid_name || '').toLowerCase().includes(q) ||
+          (item.passport || '').toLowerCase().includes(q) ||
           (item.client_name && item.client_name.toLowerCase().includes(q)) ||
-          item.shelter_location.toLowerCase().includes(q)
+          loc.toLowerCase().includes(q)
         );
       }
       return true;

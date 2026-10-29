@@ -7,6 +7,7 @@ import { IPWhitelistManager } from '../components/security/IPWhitelistManager';
 import { generateSecurityReport, detectAnomalies, SecurityEvent } from '../services/securityAuditService';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { EnterpriseErrorMonitorPanel } from '../components/monitoring/EnterpriseErrorMonitorPanel';
 import { 
   Shield, ShieldAlert, Database, Radio, Server, Lock, Key, 
   Sparkles, Download, Check, X, AlertTriangle, UserX, Cpu, Network,
@@ -82,7 +83,7 @@ const MODULE_PERMISSIONS = [
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigate }) => {
   const { addNotification } = useAppStore();
   const [currentUserRole, setCurrentUserRole] = useState<'Administrator' | 'BranchSpecialist'>('Administrator');
-  const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'security' | 'devops' | 'rbac' | 'gateways' | 'ai-insights'>('overview');
+  const [activeAdminTab, setActiveAdminTab] = useState<'overview' | 'error-monitor' | 'security' | 'devops' | 'rbac' | 'gateways' | 'ai-insights'>('error-monitor');
   const [sessions, setSessions] = useState<UserSession[]>([]);
 
   useEffect(() => {
@@ -218,6 +219,14 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             </div>
             <button
               className="button-white-pill"
+              onClick={() => setActiveAdminTab('error-monitor')}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', background: '#CFA64A', color: '#1D2428', fontWeight: 800 }}
+            >
+              <Activity className="w-3.5 h-3.5 ml-1 text-[#1D2428]" />
+              <span>رادار الأخطاء (Error Monitor)</span>
+            </button>
+            <button
+              className="button-white-pill"
               onClick={() => setShowBroadcastModal(true)}
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
@@ -274,6 +283,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       {/* Main Admin Navigation Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
         {[
+          { id: 'error-monitor', label: 'رادار مراقبة الأخطاء والإصلاح الذاتي (Error Monitor)', icon: Activity },
           { id: 'overview', label: 'دليل الـ 30 ميزة والرقابة', icon: Shield },
           { id: 'security', label: 'الأمان وحظر الـ IP (1-6)', icon: Lock },
           { id: 'devops', label: 'الخوادم والنسخ الاحتياطي (7-12)', icon: Server },
@@ -310,6 +320,11 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           );
         })}
       </div>
+
+      {/* Tab 0: Enterprise Live Error Monitor & Self-Healing */}
+      {activeAdminTab === 'error-monitor' && (
+        <EnterpriseErrorMonitorPanel onNavigate={onNavigate} />
+      )}
 
       {/* Tab 1: 30 Features Master Grid Overview */}
       {activeAdminTab === 'overview' && (

@@ -111,7 +111,19 @@ export const ActivityLogPage: React.FC = () => {
 
   const loadActivities = async () => {
     const data = await realErpDataStore.getRecords<ActivityItem>('activity_log', MOCK_ACTIVITIES);
-    setActivities(data);
+    const normalized: ActivityItem[] = (Array.isArray(data) ? data : MOCK_ACTIVITIES).map((raw: any, idx: number) => ({
+      id: String(raw?.id || `LOG-${9000 + idx}`),
+      user_name: String(raw?.user_name || raw?.actor || 'مستخدم النظام'),
+      role: String(raw?.role || 'موظف معتمد'),
+      action_type: raw?.action_type || 'إنشاء',
+      module: raw?.module || raw?.entity_name || 'عقود الاستقدام',
+      details: String(raw?.details || raw?.action || 'عملية نظام مسجلة'),
+      severity: raw?.severity || 'عادي',
+      ip_address: String(raw?.ip_address || '127.0.0.1'),
+      device: String(raw?.device || 'Browser Session'),
+      created_at: String(raw?.created_at || raw?.timestamp || '2026-08-17 12:00'),
+    }));
+    setActivities(normalized);
   };
 
   useEffect(() => {
@@ -169,7 +181,13 @@ export const ActivityLogPage: React.FC = () => {
     if (selectedModule !== 'الكل' && act.module !== selectedModule) return false;
     if (selectedAction !== 'الكل' && act.action_type !== selectedAction) return false;
     if (selectedSeverity !== 'الكل' && act.severity !== selectedSeverity) return false;
-    if (searchTerm && !act.user_name.includes(searchTerm) && !act.details.includes(searchTerm) && !act.ip_address.includes(searchTerm)) return false;
+    if (
+      searchTerm &&
+      !(act.user_name || '').includes(searchTerm) &&
+      !(act.details || '').includes(searchTerm) &&
+      !(act.ip_address || '').includes(searchTerm)
+    )
+      return false;
     return true;
   });
 

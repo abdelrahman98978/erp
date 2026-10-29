@@ -540,9 +540,9 @@ export const RentContractsPage: React.FC = () => {
   const getFilteredContracts = () => {
     return rentContracts.filter((c) => {
       const matchesSearch =
-        c.contract_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.client_name.includes(searchQuery) ||
-        c.maid_name.includes(searchQuery);
+        (c.contract_number || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (c.client_name || '').includes(searchQuery) ||
+        (c.maid_name || '').includes(searchQuery);
 
       if (!matchesSearch) return false;
 

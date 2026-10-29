@@ -119,13 +119,13 @@ export const LegalCompliancePage: React.FC = () => {
 
   const filteredUndertakings = undertakings.filter(item => {
     const matchesQuery = 
-      item.employee_name.includes(searchQuery) ||
-      item.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.national_id.includes(searchQuery) ||
-      item.compliance_hash.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.department.includes(searchQuery);
+      (item.employee_name || '').includes(searchQuery) ||
+      (item.username || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.national_id || '').includes(searchQuery) ||
+      (item.compliance_hash || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.department || '').includes(searchQuery);
 
-    const matchesDept = selectedDeptFilter === 'all' || item.department.includes(selectedDeptFilter);
+    const matchesDept = selectedDeptFilter === 'all' || (item.department || '').includes(selectedDeptFilter);
     return matchesQuery && matchesDept;
   });
 
