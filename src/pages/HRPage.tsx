@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { WpsPayrollEngine, EmployeePayrollRecord, WpsSifHeader, DocumentExpiryAlert } from '../services/wpsPayrollEngine';
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
+import { EmployeePhotoAvatar } from '../components/auth/EmployeePhotoAvatar';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import {
   EmployeePayslipModal,
@@ -1205,211 +1206,355 @@ export const HRPage: React.FC = () => {
     }
   };
 
-  const filteredEmployees = employeesList.filter(
-    (e) =>
+  const [deptFilter, setDeptFilter] = useState<string>('ALL');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+
+  const uniqueDepartments = React.useMemo(
+    () => Array.from(new Set(employeesList.map((e) => e.department).filter(Boolean))),
+    [employeesList]
+  );
+
+  const filteredEmployees = employeesList.filter((e) => {
+    const matchesSearch =
       e.name.includes(searchQuery) ||
       e.employee_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       e.national_id.includes(searchQuery) ||
       e.job_title.includes(searchQuery) ||
-      (e.system_role && e.system_role.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+      (e.system_role && e.system_role.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesDept = deptFilter === 'ALL' || e.department === deptFilter;
+    const matchesStatus = statusFilter === 'ALL' || e.status === statusFilter;
+    return matchesSearch && matchesDept && matchesStatus;
+  });
+
+  // 5 Organized HR Tracks (Information Architecture)
+  const hrTracks = [
+    {
+      id: 'track-staff',
+      label: '1. شؤون الموظفين والعقود',
+      icon: Users,
+      defaultTab: 'employees',
+      tabs: [
+        { id: 'employees', label: `سجل الموظفين (${employeesList.length})`, icon: Users },
+        { id: 'promotions', label: `الترقيات والدرجات (${promotions.length})`, icon: TrendingUp },
+        { id: 'signatures', label: `حافظة التواقيع (${employeesList.length})`, icon: FileSignature },
+        { id: 'maids-hr', label: 'أسطول العمالة والتشغيل', icon: Users },
+      ],
+    },
+    {
+      id: 'track-payroll',
+      label: '2. الرواتب والمستحقات',
+      icon: ShieldCheck,
+      defaultTab: 'payroll',
+      tabs: [
+        { id: 'payroll', label: 'مسير الرواتب (WPS)', icon: ShieldCheck },
+        { id: 'gosi', label: 'التأمينات الاجتماعية (GOSI)', icon: ShieldCheck },
+        { id: 'end-of-service', label: 'حاسبة نهاية الخدمة والمخالصة', icon: Calculator },
+      ],
+    },
+    {
+      id: 'track-requests',
+      label: '3. الطلبات والجزاءات',
+      icon: CalendarMinus,
+      defaultTab: 'vacations',
+      tabs: [
+        { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: CalendarMinus },
+        { id: 'advances', label: `طلبات السلف (${advances.length})`, icon: DollarSign },
+        { id: 'rewards', label: `طلبات المكافآت (${rewards.length})`, icon: Award },
+        { id: 'permissions', label: `طلبات الأذونات (${permissions.length})`, icon: Clock },
+        { id: 'sanctions', label: `جزاءات الموظف (${sanctions.length})`, icon: AlertCircle },
+      ],
+    },
+    {
+      id: 'track-performance',
+      label: '4. هيكلة الأجور والأداء (Odoo & HR-Pro)',
+      icon: Sparkles,
+      defaultTab: 'hr-pro-hub',
+      tabs: [
+        { id: 'hr-pro-hub', label: 'هيكلة الأجور والأداء (Odoo & HR-Pro)', icon: Sparkles },
+      ],
+    },
+    {
+      id: 'track-compliance',
+      label: '5. الامتثال ورادار الوثائق',
+      icon: Scale,
+      defaultTab: 'compliance-radar',
+      tabs: [
+        { id: 'compliance-radar', label: 'نطاقات ورادار الوثائق', icon: Scale },
+      ],
+    },
+  ];
+
+  const activeTrack =
+    hrTracks.find((tr) => tr.tabs.some((t) => t.id === activeTab)) || hrTracks[0];
+
+  const totalMonthlyPayroll = employeesList.reduce((sum, emp) => sum + (emp.salary || 0), 0);
+  const activeRequestsCount =
+    vacations.length + advances.length + permissions.length + rewards.length;
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner */}
-      <div
-        className="card-feature-cinematic"
-        style={{
-          background: '#000000',
-          borderRadius: '16px',
-          padding: '28px',
-          color: '#FFFFFF',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div className="flex items-center gap-3.5">
-          <div className="hidden sm:block">
-            <BusinessIllustration
-              type="hr-wps"
-              size="sm"
-              showBackground={false}
-            />
+    <div className="space-y-4 pb-16">
+      {/* 1. Compact Monochrome Header Bar + Quick Actions */}
+      <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-[24px] p-4 sm:px-5 sm:py-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-[280px]">
+          <div className="hidden sm:flex w-10 h-10 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] items-center justify-center shrink-0">
+            <Users className="w-5 h-5 text-[#141414]" />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>HR & PAYROLL SUITE</span>
-              <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>إدراج وترقية وتواقيع رقمية</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-base sm:text-lg font-black text-[#141414] m-0 tracking-tight whitespace-nowrap">
+                إدارة الموارد البشرية ومسيرات الرواتب (WPS)
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[10px] font-bold whitespace-nowrap">
+                {activeCompany.name}
+              </span>
             </div>
-            <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
-              إدارة الموارد البشرية وحافظة التواقيع والترقيات
-            </h1>
-            <p style={{ fontSize: '13px', color: '#a1a1aa', margin: '4px 0 0 0', fontWeight: 420 }}>
-              شؤون الموظفين، حافظة التواقيع والاتفاقيات، الترقيات، ومسير الرواتب WPS لـ {activeCompany.name}
+            <p className="text-xs text-[#707070] m-0 mt-0.5">
+              شؤون الموظفين، حافظة التواقيع، مسير الرواتب وحماية الأجور، وتقييم الأداء
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap" data-no-dyn-enhancer="true">
           <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-[#CFA64A]" />
-            <span>استخلاص ملفات موظفين / مسيرات (PDF / Word / Excel)</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('signatures')}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(52, 211, 153, 0.5)', color: '#34d399' }}
-          >
-            <FileSignature className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>حافظة التواقيع والاتفاقيات</span>
-          </button>
-
-          <button
-            onClick={() => handleOpenPromotionModal()}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
-          >
-            <TrendingUp className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>+ ترقية موظف وتعديل درجة</span>
-          </button>
-
-          <button
+            type="button"
             onClick={() => setShowAddEmpModal(true)}
-            className="button-white-pill"
-            style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold transition-colors cursor-pointer"
           >
-            <Plus className="w-4 h-4 ml-1" />
+            <Plus className="w-3.5 h-3.5" />
             <span>+ إدراج موظف جديد</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleOpenPromotionModal()}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-xs font-bold transition-colors cursor-pointer"
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>ترقية وتعديل درجة</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleExportWPS('SIF')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-xs font-bold transition-colors cursor-pointer"
+            title="توليد ملف حماية الأجور القياسي المعتمد للبنوك السعودية"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>ملف حماية الأجور (.SIF)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-xs font-bold transition-colors cursor-pointer"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>استخلاص ملفات</span>
           </button>
 
           <ExportDropdown
             sectionKey="employees"
             data={filteredEmployees}
             customTitle={`سجل الموظفين والكادر الوظيفي - ${activeCompany.name}`}
-            variant="outline-dark"
-            buttonLabel="تصدير كشوفات الموظفين (10 صيغ)"
+            variant="outline-light"
+            buttonLabel="تصدير (10 صيغ)"
           />
-
-          <button
-            onClick={() => handleExportWPS('SIF')}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
-            title="توليد ملف حماية الأجور القياسي المعتمد للبنوك السعودية"
-          >
-            <ShieldCheck className="w-4 h-4 ml-1 text-emerald-400" />
-            <span>ملف حماية الأجور (.SIF)</span>
-          </button>
-
-          <button
-            onClick={() => handleExportWPS('CSV')}
-            className="button-outline-on-dark"
-            style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
-            title="تصدير شيت مسير الرواتب بصيغة CSV"
-          >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-teal-400" />
-            <span>تصدير CSV</span>
-          </button>
         </div>
       </div>
 
-      {/* Sub Tabs Navigation — Pattern: filter-bar */}
+      {/* 2. Unified 4-Card Monochrome KPI Strip */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-[20px] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#707070]">
+            <span>إجمالي الكادر الوظيفي</span>
+            <Users className="w-4 h-4 text-[#141414]" />
+          </div>
+          <div className="mt-2 flex items-baseline justify-between gap-2">
+            <span className="text-2xl font-black text-[#141414] font-mono tabular-nums">
+              {employeesList.length}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] text-[10px] font-bold">
+              {employeesList.filter((e) => e.status === 'نشط').length} نشط
+            </span>
+          </div>
+        </div>
+
+        <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-[20px] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#707070]">
+            <span>إجمالي المسير الشهري</span>
+            <ShieldCheck className="w-4 h-4 text-[#141414]" />
+          </div>
+          <div className="mt-2 flex items-baseline justify-between gap-2">
+            <span className="text-xl sm:text-2xl font-black text-[#141414] font-mono tabular-nums">
+              {totalMonthlyPayroll.toLocaleString('en-US')} ⃁
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070] text-[10px] font-semibold">
+              شامل البدلات
+            </span>
+          </div>
+        </div>
+
+        <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-[20px] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#707070]">
+            <span>الطلبات والإجراءات</span>
+            <CalendarMinus className="w-4 h-4 text-[#141414]" />
+          </div>
+          <div className="mt-2 flex items-baseline justify-between gap-2">
+            <span className="text-2xl font-black text-[#141414] font-mono tabular-nums">
+              {activeRequestsCount}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070] text-[10px] font-semibold">
+              إجازات ({vacations.length}) • سلف ({advances.length})
+            </span>
+          </div>
+        </div>
+
+        <div className="bg-[#141414] text-[#ffffff] rounded-[20px] p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#adadad]">
+            <span>التوثيق والامتثال (WPS)</span>
+            <Fingerprint className="w-4 h-4 text-[#ffffff]" />
+          </div>
+          <div className="mt-2 flex items-baseline justify-between gap-2">
+            <span className="text-2xl font-black text-[#ffffff] font-mono tabular-nums">
+              100%
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-[#262626] text-[#ffffff] text-[10px] font-semibold">
+              مطابق لمدد وGOSI
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Grouped 5-Track Navigation + Contextual Sub-Tabs Bar */}
       <div
         data-slot="filter-bar"
         data-no-dyn-enhancer="true"
         role="tablist"
         aria-label="تبويبات قسم الموارد البشرية والرواتب"
-        className="flex flex-wrap gap-2 border-b border-zinc-200 pb-3"
+        className="bg-[#ffffff] border border-[#e0e0e0] rounded-[24px] p-2.5 space-y-2"
       >
-        {[
-          { id: 'employees', label: `الموظفون (${employeesList.length})`, icon: Users },
-          { id: 'signatures', label: `حافظة التواقيع والاتفاقيات (${employeesList.length})`, icon: FileSignature },
-          { id: 'promotions', label: `الترقيات والدرجات (${promotions.length})`, icon: TrendingUp },
-          { id: 'vacations', label: `طلبات الإجازات (${vacations.length})`, icon: CalendarMinus },
-          { id: 'advances', label: `طلبات السلف (${advances.length})`, icon: DollarSign },
-          { id: 'sanctions', label: `جزاءات الموظف (${sanctions.length})`, icon: AlertCircle },
-          { id: 'permissions', label: `طلبات الأذونات (${permissions.length})`, icon: Clock },
-          { id: 'rewards', label: `طلبات المكافآت (${rewards.length})`, icon: Award },
-          { id: 'payroll', label: 'مسير الرواتب (WPS)', icon: ShieldCheck },
-          { id: 'end-of-service', label: 'حاسبة نهاية الخدمة والمخالصة', icon: Calculator },
-          { id: 'gosi', label: 'التأمينات الاجتماعية (GOSI)', icon: ShieldCheck },
-          { id: 'compliance-radar', label: 'نطاقات ورادار الوثائق', icon: Scale },
-          { id: 'hr-pro-hub', label: 'هيكلة الأجور والأداء (Odoo & HR-Pro)', icon: Sparkles },
-          { id: 'maids-hr', label: 'أسطول العمالة والتشغيل', icon: Users },
-        ].map((tab) => {
-          const isActive = activeTab === tab.id;
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActiveTab(tab.id as any)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 16px',
-                borderRadius: '9999px',
-                border: '1px solid',
-                borderColor: isActive ? '#141414' : '#e0e0e0',
-                backgroundColor: isActive ? '#141414' : '#ffffff',
-                color: isActive ? '#ffffff' : '#141414',
-                fontWeight: isActive ? 600 : 456,
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
+        {/* Primary 5 Tracks */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {hrTracks.map((track) => {
+            const isTrackActive = activeTrack.id === track.id;
+            const TrackIcon = track.icon;
+            return (
+              <button
+                key={track.id}
+                type="button"
+                role="tab"
+                aria-selected={isTrackActive}
+                onClick={() => setActiveTab(track.defaultTab as any)}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  isTrackActive
+                    ? 'bg-[#141414] text-[#ffffff]'
+                    : 'bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414]'
+                }`}
+              >
+                <TrackIcon className="w-3.5 h-3.5" />
+                <span>{track.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Contextual Sub-Tabs for the Active Track (plus compact access to all tabs) */}
+        {activeTrack.tabs.length > 1 && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-[#f0f0f0]">
+            <span className="text-[11px] font-bold text-[#707070] px-2">الأقسام الفرعية:</span>
+            {activeTrack.tabs.map((sub) => {
+              const isSubActive = activeTab === sub.id;
+              const SubIcon = sub.icon;
+              return (
+                <button
+                  key={sub.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSubActive}
+                  onClick={() => setActiveTab(sub.id as any)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
+                    isSubActive
+                      ? 'bg-[#141414] text-[#ffffff] border-[#141414]'
+                      : 'bg-[#ffffff] hover:bg-[#f3f3f3] text-[#141414] border-[#e0e0e0]'
+                  }`}
+                >
+                  <SubIcon className="w-3.5 h-3.5" />
+                  <span>{sub.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Tab 1: Employees List */}
       {activeTab === 'employees' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
-            <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
-              <input
-                type="text"
-                placeholder="البحث بالاسم، كود الموظف، الهوية، أو الوظيفة..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="text-input"
-                style={{ width: '100%', height: '36px', minHeight: '36px', borderRadius: '9999px', paddingRight: '36px', fontSize: '12px' }}
-              />
+        <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-[24px] overflow-hidden">
+          {/* Unified Smart Search & Filter Strip */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] gap-3">
+            <div className="flex flex-wrap items-center gap-2 flex-1">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 absolute right-3.5 top-2.5 text-[#707070]" />
+                <input
+                  type="text"
+                  placeholder="بحث بالاسم، الكود، الهوية، أو المسمى..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-9 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] pr-9 pl-3 text-xs text-[#141414] placeholder-[#707070] focus:outline-none focus:border-[#141414]"
+                />
+              </div>
+
+              {/* Department Filter Pills */}
+              <div className="flex items-center gap-1 flex-wrap" data-no-dyn-enhancer="true">
+                <button
+                  type="button"
+                  onClick={() => setDeptFilter('ALL')}
+                  className={`px-3 py-1.5 rounded-full text-[11px] font-bold transition-colors cursor-pointer ${
+                    deptFilter === 'ALL'
+                      ? 'bg-[#141414] text-[#ffffff]'
+                      : 'bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#707070]'
+                  }`}
+                >
+                  جميع الأقسام ({employeesList.length})
+                </button>
+                {uniqueDepartments.map((dept) => (
+                  <button
+                    key={dept}
+                    type="button"
+                    onClick={() => setDeptFilter(dept)}
+                    className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
+                      deptFilter === dept
+                        ? 'bg-[#141414] text-[#ffffff]'
+                        : 'bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414]'
+                    }`}
+                  >
+                    {dept}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setActiveTab('signatures')} 
-                className="button-outline-on-light text-xs flex items-center gap-1 py-1 px-3"
+
+            <div className="flex items-center gap-2 shrink-0" data-no-dyn-enhancer="true">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                aria-label="تصفية حسب الحالة"
+                className="h-9 px-3 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:outline-none"
               >
-                <FileSignature className="w-3.5 h-3.5 text-emerald-600" />
-                <span>حافظة التواقيع</span>
-              </button>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                إجمالي الموظفين: {filteredEmployees.length}
+                <option value="ALL">جميع الحالات</option>
+                <option value="نشط">على رأس العمل (نشط)</option>
+                <option value="إجازة">في إجازة</option>
+              </select>
+
+              <span className="px-3 py-1.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs font-bold font-mono tabular-nums">
+                النتائج: {filteredEmployees.length}
               </span>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            <table className="w-full text-right text-xs text-[#141414]">
+              <thead className="bg-[#f8f8f8] text-[#707070] font-bold border-b border-[#f0f0f0]">
                 <tr>
                   <th className="p-3.5">كود الموظف</th>
                   <th className="p-3.5">اسم الموظف</th>
@@ -1419,91 +1564,105 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5">الراتب الإجمالي</th>
                   <th className="p-3.5">التوقيع القانوني</th>
                   <th className="p-3.5">الحالة</th>
-                  <th className="p-3.5 text-center">الإجراءات والاتفاقية</th>
+                  <th className="p-3.5 text-center">الإجراءات والملف الشامل</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-[#f0f0f0]">
                 {filteredEmployees.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">{emp.employee_code}</td>
+                  <tr key={emp.id} className="hover:bg-[#f8f8f8] transition-colors">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{emp.employee_code}</td>
                     <td className="p-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <CorporateAvatar
+                      <button
+                        type="button"
+                        onClick={() => setSelectedEmpFor360(emp)}
+                        className="flex items-center gap-2.5 text-right group cursor-pointer"
+                        title="اضغط لفتح ملف الموظف الشامل 360°"
+                      >
+                        <EmployeePhotoAvatar
                           name={emp.name}
                           role={emp.job_title}
                           departmentId={emp.department}
                           size="sm"
-                          status={emp.status === 'نشط' ? 'online' : undefined}
+                          status={emp.status === 'نشط' ? 'online' : 'none'}
                         />
                         <div>
-                          <div className="font-bold text-black">{emp.name}</div>
-                          <div className="text-[11px] text-zinc-400 font-mono">تاريخ التعيين: {emp.hire_date}</div>
+                          <div className="font-bold text-[#141414] group-hover:underline">{emp.name}</div>
+                          <div className="text-[11px] text-[#707070] font-mono">تاريخ التعيين: {emp.hire_date}</div>
                         </div>
-                      </div>
+                      </button>
                     </td>
-                    <td className="p-3.5 font-mono text-zinc-500">{emp.national_id}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{emp.national_id}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{emp.job_title}</div>
-                      <div className="text-[11px] text-emerald-800 font-medium">{emp.grade || 'الدرجة الثالثة'}</div>
+                      <div className="font-bold text-[#141414]">{emp.job_title}</div>
+                      <div className="text-[11px] text-[#707070] font-medium">{emp.grade || 'الدرجة الثالثة'}</div>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-semibold text-zinc-800">{emp.department}</div>
-                      <div className="text-[11px] text-zinc-400">{emp.branch}</div>
+                      <div className="font-semibold text-[#141414]">{emp.department}</div>
+                      <div className="text-[11px] text-[#707070]">{emp.branch}</div>
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{(emp.salary ?? 0).toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414] tabular-nums">{(emp.salary ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold">
-                        <Fingerprint className="w-3 h-3 text-emerald-600" />
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[11px] font-bold">
+                        <Fingerprint className="w-3 h-3 text-[#141414]" />
                         <span>موقّع ومعتمد</span>
                       </span>
                     </td>
-                    <td className="p-3.5"><Badge text={emp.status} type={emp.status === 'نشط' ? 'success' : 'warning'} /></td>
+                    <td className="p-3.5">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                        emp.status === 'نشط'
+                          ? 'bg-[#141414] text-[#ffffff]'
+                          : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                      }`}>
+                        {emp.status}
+                      </span>
+                    </td>
                     <td className="p-3.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                      <div className="flex items-center justify-center gap-1.5 flex-wrap" data-no-dyn-enhancer="true">
                         <button
+                          type="button"
+                          onClick={() => setSelectedEmpFor360(emp)}
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-[11px] font-bold cursor-pointer transition-colors"
+                          title="فتح ملف الموظف الشامل 360°"
+                        >
+                          <UserCheck className="w-3 h-3" />
+                          <span>ملف 360°</span>
+                        </button>
+                        <button
+                          type="button"
                           onClick={() =>
                             setSelectedLetterModal({
                               employee: emp,
                               letterType: 'SALARY_CERTIFICATE',
                             })
                           }
-                          className="button-outline-on-light"
-                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer transition-colors"
                           title="إصدار وطباعة خطاب تعريف بالراتب"
                         >
-                          <FileText className="w-3 h-3 ml-1 text-emerald-700" />
+                          <FileText className="w-3 h-3" />
                           <span>تعريف راتب</span>
                         </button>
                         <button
+                          type="button"
                           onClick={() => setSelectedEmpForAgreement(emp)}
-                          className="button-outline-on-light"
-                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer transition-colors"
                           title="عرض وطباعة التوقيع والاتفاقية القانونية"
                         >
-                          <FileSignature className="w-3 h-3 ml-1 text-emerald-600" />
+                          <FileSignature className="w-3 h-3" />
                           <span>الاتفاقية</span>
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleOpenPromotionModal(emp)}
-                          className="button-outline-on-light"
-                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-[11px] font-semibold cursor-pointer transition-colors"
                           title="ترقية الموظف"
                         >
-                          <TrendingUp className="w-3 h-3 ml-1 text-amber-600" />
+                          <TrendingUp className="w-3 h-3" />
                           <span>ترقية</span>
                         </button>
                         <button
-                          onClick={() => setSelectedEmpFor360(emp)}
-                          className="button-outline-on-light"
-                          style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
-                          title="الملف الرقمي 360"
-                        >
-                          <UserCheck className="w-3 h-3 ml-1" />
-                          <span>الملف</span>
-                        </button>
-                        <button
+                          type="button"
                           onClick={() => handleDeleteEmployee(emp)}
-                          className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                          className="p-1.5 rounded-full hover:bg-[#f3f3f3] text-[#707070] hover:text-[#141414] transition-colors cursor-pointer"
                           title="حذف ملف الموظف"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

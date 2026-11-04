@@ -1008,10 +1008,10 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
 
   return (
     <>
-      {/* 1. Docked Edge Pill Tab (When minimized/docked on desktop, or compact floating orb on mobile) */}
+      {/* 1. Docked Edge Orb (Compact circular icon in corner — expands on hover so it never overlaps card buttons) */}
       {!isOpen && (
         <div
-          className={`dock-pill-slide-in fixed bottom-[calc(74px+env(safe-area-inset-bottom,0px))] lg:bottom-6 left-3 lg:left-6 z-[9990] ${
+          className={`dock-pill-slide-in fixed bottom-[calc(74px+env(safe-area-inset-bottom,0px))] lg:bottom-3 left-3 z-[9990] ${
             isDocked ? 'block' : 'block lg:hidden'
           }`}
           style={{ direction: 'rtl' }}
@@ -1022,23 +1022,21 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
               setIsOpen(true);
               setShowTooltip(false);
             }}
-            className="group flex items-center gap-2 px-3.5 py-2 bg-[#ffffff] border border-[#e0e0e0] rounded-full hover:bg-[#f3f3f3] hover:border-[#141414] shadow-md transition-all cursor-pointer"
-            title={`التحدث مع ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
+            className="group flex items-center gap-0 hover:gap-2 p-1.5 hover:px-3 hover:py-1.5 bg-[#ffffff]/95 backdrop-blur-xs border border-[#e0e0e0] rounded-full hover:bg-[#f3f3f3] hover:border-[#141414] shadow-sm transition-all cursor-pointer"
+            title={`التحدث مع ${persona === 'noura' ? 'نُورة' : 'فارس'} (Alt + A)`}
           >
             <div className="relative w-7 h-7 flex-shrink-0 rounded-full bg-[#141414] text-[#ffffff] flex items-center justify-center">
               <Sparkles className="w-3.5 h-3.5" />
-              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#0066ff] border-2 border-[#ffffff]" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#141414] border border-[#ffffff]" />
             </div>
 
-            <div className="flex flex-col text-right">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-[#141414]">
-                  {persona === 'noura' ? 'نُورة' : 'فارس'}
-                </span>
-                <span className="text-[10px] text-[#141414] font-semibold bg-[#f3f3f3] border border-[#e0e0e0] px-2 py-0.5 rounded-full">
-                  AI
-                </span>
-              </div>
+            <div className="max-w-0 overflow-hidden group-hover:max-w-[110px] transition-all duration-200 flex items-center gap-1 whitespace-nowrap">
+              <span className="text-xs font-bold text-[#141414]">
+                {persona === 'noura' ? 'نُورة' : 'فارس'}
+              </span>
+              <span className="text-[10px] text-[#141414] font-semibold bg-[#f3f3f3] border border-[#e0e0e0] px-1.5 py-0.5 rounded-full">
+                AI
+              </span>
             </div>
           </button>
         </div>
