@@ -295,12 +295,26 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
   // 9. مسير الرواتب المعتمد لحماية الأجور WPS
   payroll: {
     sectionTitle: 'مسير الرواتب المعتمد لحماية الأجور (WPS Payroll)',
-    headers: ['رقم الهوية / الإقامة', 'اسم الموظف', 'اسم البنك', 'رقم الآيبان (IBAN)', 'الراتب الأساسي', 'بدل السكن', 'بدل النقل', 'استقطاع التأمينات (GOSI 9.75%)', 'صافي الراتب المحول (⃁)', 'حالة الصرف'],
+    headers: ['رقم الهوية / الإقامة', 'اسم الموظف', 'اسم البنك', 'رقم الآيبان (IBAN)', 'الراتب الأساسي', 'بدل السكن', 'بدل النقل', 'استقطاع التأمينات (GOSI)', 'صافي الراتب المحول (⃁)', 'حالة الصرف'],
     dataMapper: (r: any) => {
+      if (r.employeeName !== undefined && r.netSalary !== undefined) {
+        return [
+          r.nationalIdOrIqama || '',
+          r.employeeName || '',
+          r.bankCode || 'مصرف الراجحي',
+          r.iban || '',
+          Number(r.basicSalary || 0).toFixed(2),
+          Number(r.housingAllowance || 0).toFixed(2),
+          Number(r.transportAllowance || 0).toFixed(2),
+          Number(r.gosiDeduction || 0).toFixed(2),
+          Number(r.netSalary || 0).toFixed(2),
+          r.status === 'READY' ? 'جاهز للصرف' : r.status || 'معتمد'
+        ];
+      }
       const sal = r.salary || 0;
-      const basic = sal * 0.7;
-      const housing = sal * 0.2;
-      const transport = sal * 0.1;
+      const basic = r.basic_salary || sal * 0.7;
+      const housing = r.housing_allowance || sal * 0.2;
+      const transport = r.transport_allowance || sal * 0.1;
       const gosi = (basic + housing) * 0.0975;
       const net = basic + housing + transport - gosi;
       return [
@@ -316,6 +330,199 @@ export const SECTION_CONFIGS: Record<string, SectionExportConfig> = {
         'جاهز للصرف'
       ];
     }
+  },
+
+  // 9.1 سجل الترقيات والعلاوات وتعديل العقود
+  hr_promotions: {
+    sectionTitle: 'سجل القرارات الإدارية للترقيات والعلاوات وتعديل العقود',
+    headers: ['رقم القرار', 'كود الموظف', 'اسم الموظف', 'نوع القرار', 'المسمى السابق', 'المسمى الجديد', 'الراتب السابق (⃁)', 'الراتب الجديد (⃁)', 'قيمة الزيادة (⃁)', 'تاريخ السريان', 'الحالة'],
+    dataMapper: (r: any) => {
+      const prev = Number(r.previous_salary || 0);
+      const next = Number(r.new_salary || 0);
+      return [
+        r.id || '',
+        r.employee_code || '',
+        r.employee_name || '',
+        r.decision_type || 'ترقية استحقاقية',
+        r.previous_job_title || '',
+        r.new_job_title || '',
+        prev,
+        next,
+        next - prev,
+        r.effective_date || '',
+        r.status || 'معتمد'
+      ];
+    }
+  },
+
+  // 9.2 سجل التوقيعات الإلكترونية وإقرارات السرية
+  hr_signatures: {
+    sectionTitle: 'سجل التوقيعات الإلكترونية وإقرارات عدم الإفشاء والائتمان الوظيفي',
+    headers: ['الرقم الوظيفي', 'اسم الموظف', 'رقم الهوية / الإقامة', 'المسمى الوظيفي', 'القسم / الإدارة', 'حالة التوقيع الرقمي', 'تاريخ الاعتماد', 'البصمة الرقمية للوثيقة'],
+    dataMapper: (r: any) => [
+      r.employee_code || '',
+      r.name || '',
+      r.national_id || '',
+      r.job_title || '',
+      r.department || '',
+      r.agreement_signed ? 'موقع وموثق إلكترونياً' : 'بانتظار التوقيع',
+      r.agreement_date || '—',
+      r.signature_hash || (r.agreement_signed ? `SIG-SHA256-${r.employee_code}` : 'غير موقع')
+    ]
+  },
+
+  // 9.3 الكوادر التشغيلية والعمالة المنزلية على الكفالة
+  hr_maids_fleet: {
+    sectionTitle: 'سجل الكوادر التشغيلية والعمالة المنزلية على كفالة الشركة',
+    headers: ['كود العاملة', 'اسم الكادر التشغيلي', 'الجنسية', 'المهنة المعتمدة', 'رقم الجواز / الحدود', 'الفرع التشغيلي', 'الراتب الشهري (⃁)', 'الحالة التشغيلية'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.name || '',
+      r.nationality || '',
+      r.profession || r.role || 'عاملة خدمات منزلية',
+      r.passport || '',
+      r.branch || 'المقر الرئيسي',
+      r.salary || 1500,
+      r.status || 'متاحة للتشغيل'
+    ]
+  },
+
+  // 9.4 سجل الإجازات السنوية والمرضية
+  hr_vacations: {
+    sectionTitle: 'سجل طلبات وأرصدة الإجازات السنوية والمرضية والاستثنائية',
+    headers: ['رقم الطلب', 'اسم الموظف', 'نوع الإجازة', 'تاريخ البداية', 'تاريخ النهاية', 'عدد الأيام', 'الرصيد المتبقي', 'حالة الطلب'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.employee_name || '',
+      r.type || 'إجازة سنوية',
+      r.start_date || '',
+      r.end_date || '',
+      r.days || 0,
+      r.remaining_balance ?? 21,
+      r.status || 'معتمدة'
+    ]
+  },
+
+  // 9.5 سجل السلف والقروض المالية للموظفين
+  hr_advances: {
+    sectionTitle: 'سجل السلف المالية وجدولة الأقساط الشهرية للموظفين',
+    headers: ['رقم السلفة', 'اسم الموظف', 'إجمالي مبلغ السلفة (⃁)', 'القسط الشهري (⃁)', 'المسدد حتى تاريخه (⃁)', 'الرصيد المتبقي (⃁)', 'تاريخ الصرف', 'الحالة'],
+    dataMapper: (r: any) => {
+      const amt = Number(r.amount || 0);
+      const rem = Number(r.remaining_amount ?? amt);
+      return [
+        r.id || '',
+        r.employee_name || '',
+        amt,
+        r.monthly_installment || 0,
+        amt - rem,
+        rem,
+        r.date || '',
+        r.status || 'سارية'
+      ];
+    }
+  },
+
+  // 9.6 سجل الجزاءات واللوائح التأديبية
+  hr_sanctions: {
+    sectionTitle: 'سجل الجزاءات والمخالفات التأديبية (لائحة تنظيم العمل السعودي)',
+    headers: ['رقم القرار', 'اسم الموظف', 'نوع المخالفة / الجزاء', 'قيمة الحسم المالي (⃁)', 'تاريخ الواقعة', 'البيان والسند النظامي', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.employee_name || '',
+      r.type || '',
+      r.deduction_amount || 0,
+      r.date || '',
+      r.reason || '',
+      r.status || 'معتمد'
+    ]
+  },
+
+  // 9.7 سجل الاستئذانات والمغادرات الساعية
+  hr_permissions: {
+    sectionTitle: 'سجل طلبات الاستئذان والمغادرات الساعية للموظفين',
+    headers: ['رقم الطلب', 'اسم الموظف', 'تاريخ الاستئذان', 'من الساعة', 'إلى الساعة', 'عدد الساعات', 'سبب الاستئذان', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.employee_name || '',
+      r.date || '',
+      r.from_time || '',
+      r.to_time || '',
+      r.hours || 0,
+      r.reason || '',
+      r.status || 'معتمد'
+    ]
+  },
+
+  // 9.8 سجل المكافآت والحوافز التشجيعية
+  hr_rewards: {
+    sectionTitle: 'سجل المكافآت والحوافز التشجيعية ومكافآت التميز',
+    headers: ['رقم القرار', 'اسم الموظف', 'نوع المكافأة', 'قيمة المكافأة (⃁)', 'تاريخ الاستحقاق', 'مبررات الصرف', 'الحالة'],
+    dataMapper: (r: any) => [
+      r.id || '',
+      r.employee_name || '',
+      r.type || 'مكافأة تميز',
+      r.amount || 0,
+      r.date || '',
+      r.reason || '',
+      r.status || 'معتمدة'
+    ]
+  },
+
+  // 9.9 كشف التأمينات الاجتماعية GOSI
+  hr_gosi: {
+    sectionTitle: 'كشف اشتراكات المؤسسة العامة للتأمينات الاجتماعية (GOSI)',
+    headers: ['الرقم الوظيفي', 'اسم المشترك', 'رقم الهوية / الإقامة', 'الجنسية', 'الأجر الخاضع للاشتراك (⃁)', 'حصة الموظف (9.75%)', 'حصة المنشأة (11.75% / 2%)', 'إجمالي الاشتراك الشهري (⃁)'],
+    dataMapper: (r: any) => {
+      const sal = Number(r.salary || 0);
+      const basic = Number(r.basic_salary || Math.round(sal * 0.7));
+      const housing = Number(r.housing_allowance || Math.round(sal * 0.2));
+      const wage = Math.min(basic + housing, 45000);
+      const isSaudi = String(r.national_id || '').startsWith('1');
+      const empShare = isSaudi ? +(wage * 0.0975).toFixed(2) : 0;
+      const compShare = isSaudi ? +(wage * 0.1175).toFixed(2) : +(wage * 0.02).toFixed(2);
+      return [
+        r.employee_code || '',
+        r.name || '',
+        r.national_id || '',
+        isSaudi ? 'سعودي (معاشات + ساند + أخطار)' : 'غير سعودي (أخطار مهنية 2%)',
+        wage,
+        empShare,
+        compShare,
+        +(empShare + compShare).toFixed(2)
+      ];
+    }
+  },
+
+  // 9.10 كشف تصفية نهاية الخدمة والمخالصات (EOS)
+  hr_eos: {
+    sectionTitle: 'كشف مخصصات وتصفية مستحقات نهاية الخدمة (المادة 84 و85 من نظام العمل)',
+    headers: ['الرقم الوظيفي', 'اسم الموظف', 'تاريخ المباشرة', 'سنوات الخدمة', 'إجمالي الراتب الفعلي (⃁)', 'مكافأة المادة 84 الكاملة (⃁)', 'استحقاق الاستقالة م85 (⃁)', 'رصيد السلف المخصوم (⃁)', 'صافي المستحق التقديري (⃁)'],
+    dataMapper: (r: any) => [
+      r.employee_code || '',
+      r.name || '',
+      r.hire_date || '',
+      r.years_of_service || '2.5 سنة',
+      r.salary || 0,
+      r.full_eos_84 || 0,
+      r.resignation_eos_85 || 0,
+      r.advance_deduction || 0,
+      r.net_payable || 0
+    ]
+  },
+
+  // 9.11 رادار الامتثال وانتهاء الوثائق الحكومية
+  hr_compliance: {
+    sectionTitle: 'تقرير رادار الامتثال وصلاحية الوثائق الحكومية وعقود قوى',
+    headers: ['كود الموظف', 'اسم الموظف', 'نوع الوثيقة الرسمية', 'تاريخ الانتهاء', 'الأيام المتبقية', 'حالة الصلاحية'],
+    dataMapper: (r: any) => [
+      r.employeeCode || r.employee_code || '',
+      r.employeeName || r.name || '',
+      r.documentLabelAr || 'الهوية / الإقامة',
+      r.expiryDate || '',
+      r.daysRemaining ?? 0,
+      r.statusLabelAr || 'ساري المفعول'
+    ]
   },
 
   // 10. القيود اليومية المحاسبية
@@ -1848,7 +2055,7 @@ export function generateExecutiveReportHtml(
           body {
             padding: 0;
             margin: 0;
-            background: #FFFFFF;
+            background: #ffffff;
           }
           .no-print {
             display: none !important;
@@ -2441,8 +2648,8 @@ export function generateExecutiveReportHtml(
           rows.sort(function(a, b) {
             var cellA = a.children[colIdx] ? a.children[colIdx].innerText.trim() : '';
             var cellB = b.children[colIdx] ? b.children[colIdx].innerText.trim() : '';
-            var numA = parseFloat(cellA.replace(/[,⃁\u20C1\u200E\s]/g, ''));
-            var numB = parseFloat(cellB.replace(/[,⃁\u20C1\u200E\s]/g, ''));
+            var numA = parseFloat(cellA.replace(/[,⃁\u20C1\u200Es]/g, ''));
+            var numB = parseFloat(cellB.replace(/[,⃁\u20C1\u200Es]/g, ''));
             if (!isNaN(numA) && !isNaN(numB)) return (numA - numB) * dir;
             return cellA.localeCompare(cellB, 'ar') * dir;
           });
@@ -2500,7 +2707,7 @@ function applyEnterpriseOpenXmlExcelStyles(
       const enterpriseStylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
   <numFmts count="2">
-    <numFmt numFmtId="164" formatCode="#,##0.00\ &quot;\u20C1&quot;;(#,##0.00\ &quot;\u20C1&quot;);&quot;0.00 \u20C1&quot;"/>
+    <numFmt numFmtId="164" formatCode="#,##0.00 &quot;\u20C1&quot;;(#,##0.00 &quot;\u20C1&quot;);&quot;0.00 \u20C1&quot;"/>
     <numFmt numFmtId="165" formatCode="#,##0"/>
   </numFmts>
   <fonts count="6">

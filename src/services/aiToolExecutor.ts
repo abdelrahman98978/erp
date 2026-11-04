@@ -162,7 +162,7 @@ export function inferToolCallFromArabicPrompt(
 
   // 1. Create Invoice ("أنشئ فاتورة" / "اصدر فاتورة")
   if (/(?:انشئ|أنشئ|اصدر|أصدر|سجل|عمل|اضف|أضف).*(?:فاتور[ةه])/i.test(clean)) {
-    const customerMatch = clean.match(/(?:للعميل|لشركة|لـ|باسم)\s+([^\d،,\.]+?)(?:\s+بمبلغ|\s+بقيمة|\s*$)/i);
+    const customerMatch = clean.match(/(?:للعميل|لشركة|لـ|باسم)\s+([^\d،,.]+?)(?:\s+بمبلغ|\s+بقيمة|\s*$)/i);
     const req: ToolCallRequest = {
       id: 'create_invoice',
       params: {
@@ -192,7 +192,7 @@ export function inferToolCallFromArabicPrompt(
   // 3. Create Receipt or Payment Voucher ("اصدر سند قبض" / "اصدر سند صرف")
   if (/(?:انشئ|أنشئ|اصدر|أصدر|سجل).*(?:سند\s*قبض|سند\s*صرف)/i.test(clean)) {
     const isPayment = clean.includes('صرف');
-    const partyMatch = clean.match(/(?:من|لـ|لصالح|للعميل|للمورد)\s+([^\d،,\.]+?)(?:\s+بمبلغ|\s+بقيمة|\s*$)/i);
+    const partyMatch = clean.match(/(?:من|لـ|لصالح|للعميل|للمورد)\s+([^\d،,.]+?)(?:\s+بمبلغ|\s+بقيمة|\s*$)/i);
     const req: ToolCallRequest = {
       id: 'create_receipt_or_payment_voucher',
       params: {
@@ -207,7 +207,7 @@ export function inferToolCallFromArabicPrompt(
 
   // 4. Create Musaned Recruitment Contract ("سجل عقد استقدام" / "انشئ عقد مساند")
   if (/(?:انشئ|أنشئ|سجل|اضف|أضف|توثيق).*(?:عقد\s*استقدام|عقد\s*مساند)/i.test(clean)) {
-    const clientMatch = clean.match(/(?:للعميل|باسم|لـ)\s+([^\d،,\.]+?)(?:\s+بمبلغ|\s+من|\s*$)/i);
+    const clientMatch = clean.match(/(?:للعميل|باسم|لـ)\s+([^\d،,.]+?)(?:\s+بمبلغ|\s+من|\s*$)/i);
     const nat =
       clean.includes('فلبين') ? 'الفلبين' :
       clean.includes('اندونيس') || clean.includes('إندونيس') ? 'إندونيسيا' :
@@ -227,7 +227,7 @@ export function inferToolCallFromArabicPrompt(
 
   // 5. Create Rent Contract ("سجل عقد تأجير" / "انشئ عقد ايجار")
   if (/(?:انشئ|أنشئ|سجل|اضف|أضف).*(?:عقد\s*تأجير|عقد\s*تاجير|عقد\s*إيجار|عقد\s*ايجار)/i.test(clean)) {
-    const clientMatch = clean.match(/(?:للعميل|باسم|لـ)\s+([^\d،,\.]+?)(?:\s+بمبلغ|\s*$)/i);
+    const clientMatch = clean.match(/(?:للعميل|باسم|لـ)\s+([^\d،,.]+?)(?:\s+بمبلغ|\s*$)/i);
     const req: ToolCallRequest = {
       id: 'create_rent_contract',
       params: {
@@ -271,7 +271,7 @@ export function inferToolCallFromArabicPrompt(
   // 8. Create Client Record ("سجل عميل جديد" / "اضف عميل")
   if (/(?:انشئ|أنشئ|سجل|اضف|أضف).*(?:عميل\s*جديد|ملف\s*عميل)/i.test(clean)) {
     const phoneMatch = normalizedDigits.match(/05\d{8}/);
-    const nameMatch = clean.match(/(?:باسم|العميل)\s+([^\d،,\.]+?)(?:\s+جوال|\s+هاتف|\s*$)/i);
+    const nameMatch = clean.match(/(?:باسم|العميل)\s+([^\d،,.]+?)(?:\s+جوال|\s+هاتف|\s*$)/i);
     const req: ToolCallRequest = {
       id: 'create_client_record',
       params: {
@@ -286,7 +286,7 @@ export function inferToolCallFromArabicPrompt(
 
   // 9. Create Complaint Ticket ("افتح شكوى" / "سجل شكوى" / "تذكرة شكوى")
   if (/(?:افتح|سجل|انشئ|أنشئ|اضف|أضف).*(?:شكو[ىي]|تذكر[ةه]\s*شكو|مطالب[ةه])/i.test(clean)) {
-    const clientMatch = clean.match(/(?:للعميل|باسم)\s+([^\d،,\.]+?)(?:\s+بخصوص|\s*$)/i);
+    const clientMatch = clean.match(/(?:للعميل|باسم)\s+([^\d،,.]+?)(?:\s+بخصوص|\s*$)/i);
     const req: ToolCallRequest = {
       id: 'create_complaint_ticket',
       params: {

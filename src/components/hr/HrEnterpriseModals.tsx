@@ -4,14 +4,8 @@ import {
   Printer,
   ShieldCheck,
   FileText,
-  Award,
   AlertTriangle,
-  CheckCircle2,
   RefreshCw,
-  Building2,
-  Calendar,
-  CreditCard,
-  Scale,
 } from 'lucide-react';
 import {
   EmployeePayrollRecord,
@@ -23,6 +17,7 @@ import {
   generateRealQrSvg,
   generateRealCode128BarcodeSvg,
 } from '../../utils/realBarcodeGenerator';
+import { ExportDropdown } from '../common/ExportDropdown';
 
 export interface PayslipModalProps {
   record: EmployeePayrollRecord;
@@ -53,49 +48,59 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
   const totalDeductions = (record.gosiDeduction || 0) + (record.deductions || 0);
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2300] flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden max-h-[92vh] flex flex-col">
-        <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <h3 className="font-bold text-sm text-white">
+    <div
+      className="fixed inset-0 bg-[#141414]/60 backdrop-blur-sm z-[2300] flex items-center justify-center p-4 font-sans"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-2xl bg-[#ffffff] rounded-[24px] shadow-2xl border border-[#e0e0e0] overflow-hidden max-h-[92vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-5 py-4 bg-[#141414] text-[#ffffff] flex items-center justify-between print:hidden">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-[#ffffff]" />
+            <h3 className="font-extrabold text-sm text-[#ffffff] m-0">
               قسيمة راتب إلكترونية معتمدة (WPS Payslip) — {payrollMonth}
             </h3>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 text-zinc-400 hover:text-white rounded-full"
+            className="p-1.5 text-[#a3a3a3] hover:text-[#ffffff] hover:bg-[#262626] rounded-full transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-5 bg-white text-black">
+        <div className="p-6 overflow-y-auto space-y-5 bg-[#ffffff] text-[#141414]">
           {/* Header */}
-          <div className="flex items-center justify-between border-b-2 border-black pb-4 flex-wrap gap-3">
+          <div className="flex items-center justify-between border-b-2 border-[#141414] pb-4 flex-wrap gap-3">
             <div>
-              <div className="text-[11px] font-bold text-zinc-500">
+              <div className="text-[11px] font-bold text-[#707070]">
                 المملكة العربية السعودية — نظام حماية الأجور (مدد)
               </div>
-              <div className="text-base font-extrabold text-black mt-0.5">
+              <div className="text-base font-extrabold text-[#141414] mt-0.5">
                 {companyName}
               </div>
-              <div className="text-xs font-bold text-emerald-800">
+              <div className="text-xs font-bold text-[#141414] mt-0.5">
                 إشعار استحقاق وصرف راتب شهري ({payrollMonth})
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="text-left font-mono text-xs bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-xl flex flex-col items-end gap-1">
-                <div className="font-bold text-black">#{record.employeeNumber}</div>
-                <div className="text-[11px] text-zinc-500">
+              <div className="text-left font-mono text-xs bg-[#f3f3f3] border border-[#e0e0e0] px-3 py-2 rounded-2xl flex flex-col items-end gap-1">
+                <div className="font-bold text-[#141414]">#{record.employeeNumber}</div>
+                <div className="text-[11px] text-[#707070]">
                   أيام العمل: {record.workingDays} يوماً
                 </div>
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: generateRealCode128BarcodeSvg(`WPS-${payrollMonth}-${record.employeeNumber}`, {
-                      widthPx: 112,
-                      heightPx: 22,
-                    }),
+                    __html: generateRealCode128BarcodeSvg(
+                      `WPS-${payrollMonth}-${record.employeeNumber}`,
+                      {
+                        widthPx: 112,
+                        heightPx: 22,
+                      }
+                    ),
                   }}
                 />
               </div>
@@ -118,68 +123,68 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
           </div>
 
           {/* Employee Summary */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 bg-[#f3f3f3] rounded-[20px] border border-[#e0e0e0] text-xs">
             <div>
-              <span className="text-zinc-500 block text-[11px]">اسم الموظف</span>
-              <strong className="text-black">{record.employeeName}</strong>
+              <span className="text-[#707070] block text-[11px]">اسم الموظف</span>
+              <strong className="text-[#141414]">{record.employeeName}</strong>
             </div>
             <div>
-              <span className="text-zinc-500 block text-[11px]">رقم الهوية / الإقامة</span>
-              <strong className="font-mono text-black">{record.nationalIdOrIqama}</strong>
+              <span className="text-[#707070] block text-[11px]">رقم الهوية / الإقامة</span>
+              <strong className="font-mono text-[#141414]">{record.nationalIdOrIqama}</strong>
             </div>
             <div>
-              <span className="text-zinc-500 block text-[11px]">المسمى والقسم</span>
-              <strong className="text-black">
+              <span className="text-[#707070] block text-[11px]">المسمى والقسم</span>
+              <strong className="text-[#141414]">
                 {jobTitle} • {department}
               </strong>
             </div>
             <div>
-              <span className="text-zinc-500 block text-[11px]">البنك المحول إليه</span>
-              <strong className="text-black">{record.bankCode}</strong>
+              <span className="text-[#707070] block text-[11px]">البنك المحول إليه</span>
+              <strong className="text-[#141414]">{record.bankCode}</strong>
             </div>
             <div className="col-span-2">
-              <span className="text-zinc-500 block text-[11px]">رقم الآيبان (IBAN)</span>
-              <strong className="font-mono text-black">{record.iban}</strong>
+              <span className="text-[#707070] block text-[11px]">رقم الآيبان (IBAN)</span>
+              <strong className="font-mono text-[#141414]">{record.iban}</strong>
             </div>
           </div>
 
-          {/* Earnings & Deductions Columns */}
+          {/* Earnings & Deductions Columns — Pure Mobbin Monochrome */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Earnings */}
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/30 p-4 space-y-2.5">
-              <div className="font-bold text-xs text-emerald-950 border-b border-emerald-200 pb-2 flex justify-between">
+            <div className="rounded-[20px] border border-[#e0e0e0] bg-[#ffffff] p-4 space-y-2.5">
+              <div className="font-extrabold text-xs text-[#141414] border-b border-[#e5e5e5] pb-2 flex justify-between">
                 <span>1. الاستحقاقات والبدلات</span>
-                <span className="font-mono text-emerald-800">+{gross.toFixed(2)} ⃁</span>
+                <span className="font-mono text-[#141414]">+{gross.toFixed(2)} ⃁</span>
               </div>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-zinc-700">الراتب الأساسي</span>
-                  <span className="font-mono font-bold text-black">
+                  <span className="text-[#707070]">الراتب الأساسي</span>
+                  <span className="font-mono font-bold text-[#141414]">
                     {record.basicSalary.toFixed(2)} ⃁
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-700">بدل السكن</span>
-                  <span className="font-mono font-bold text-black">
+                  <span className="text-[#707070]">بدل السكن</span>
+                  <span className="font-mono font-bold text-[#141414]">
                     {record.housingAllowance.toFixed(2)} ⃁
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-700">بدل النقل والمواصلات</span>
-                  <span className="font-mono font-bold text-black">
+                  <span className="text-[#707070]">بدل النقل والمواصلات</span>
+                  <span className="font-mono font-bold text-[#141414]">
                     {record.transportAllowance.toFixed(2)} ⃁
                   </span>
                 </div>
                 {(record.otherAllowances || 0) > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-zinc-700">بدلات أخرى</span>
-                    <span className="font-mono font-bold text-black">
+                    <span className="text-[#707070]">بدلات أخرى</span>
+                    <span className="font-mono font-bold text-[#141414]">
                       {record.otherAllowances.toFixed(2)} ⃁
                     </span>
                   </div>
                 )}
                 {(record.overtimePay || 0) > 0 && (
-                  <div className="flex justify-between text-emerald-800">
+                  <div className="flex justify-between text-[#141414]">
                     <span>أجر العمل الإضافي (المادة 107)</span>
                     <span className="font-mono font-bold">
                       +{(record.overtimePay || 0).toFixed(2)} ⃁
@@ -187,7 +192,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                   </div>
                 )}
                 {(record.rewardsAmount || 0) > 0 && (
-                  <div className="flex justify-between text-emerald-800">
+                  <div className="flex justify-between text-[#141414]">
                     <span>مكافآت وحوافز معتمدة</span>
                     <span className="font-mono font-bold">
                       +{(record.rewardsAmount || 0).toFixed(2)} ⃁
@@ -198,31 +203,31 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
             </div>
 
             {/* Deductions */}
-            <div className="rounded-2xl border border-rose-200 bg-rose-50/30 p-4 space-y-2.5">
-              <div className="font-bold text-xs text-rose-950 border-b border-rose-200 pb-2 flex justify-between">
+            <div className="rounded-[20px] border border-[#e0e0e0] bg-[#f3f3f3]/60 p-4 space-y-2.5">
+              <div className="font-extrabold text-xs text-[#141414] border-b border-[#e0e0e0] pb-2 flex justify-between">
                 <span>2. الاستقطاعات النظامية</span>
-                <span className="font-mono text-rose-800">
+                <span className="font-mono text-[#141414]">
                   -{totalDeductions.toFixed(2)} ⃁
                 </span>
               </div>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-zinc-700">
+                  <span className="text-[#707070]">
                     حصة الموظف بالتأمينات (GOSI {record.isSaudi ? '9.75%' : '0%'})
                   </span>
-                  <span className="font-mono font-bold text-rose-700">
+                  <span className="font-mono font-bold text-[#141414]">
                     -{record.gosiDeduction.toFixed(2)} ⃁
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-700">استقطاع قسط السلفة الشهرية</span>
-                  <span className="font-mono font-bold text-rose-700">
+                  <span className="text-[#707070]">استقطاع قسط السلفة الشهرية</span>
+                  <span className="font-mono font-bold text-[#141414]">
                     -{(record.advanceDeduction || 0).toFixed(2)} ⃁
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-700">الجزاءات الإدارية والغياب</span>
-                  <span className="font-mono font-bold text-rose-700">
+                  <span className="text-[#707070]">الجزاءات الإدارية والغياب</span>
+                  <span className="font-mono font-bold text-[#141414]">
                     -(
                     {(
                       (record.sanctionDeduction || 0) + (record.absenceDeduction || 0)
@@ -231,7 +236,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                   </span>
                 </div>
                 {record.deductionCapApplied && (
-                  <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 mt-1">
+                  <div className="p-2.5 rounded-xl bg-[#ffffff] border border-[#e0e0e0] text-[11px] text-[#141414] mt-1 font-semibold">
                     {record.deductionCapNote}
                   </div>
                 )}
@@ -240,17 +245,17 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
           </div>
 
           {/* Net Payable Banner */}
-          <div className="p-4 rounded-2xl bg-black text-white flex items-center justify-between flex-wrap gap-3">
+          <div className="p-4 rounded-[20px] bg-[#141414] text-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <span className="text-xs text-zinc-400 block">
+              <span className="text-xs text-[#a3a3a3] block">
                 صافي الراتب المستحق للتحويل البنكي (WPS Net Salary)
               </span>
-              <span className="text-[11px] text-emerald-400">
+              <span className="text-[11px] text-[#ffffff] font-semibold">
                 شامل مساهمة المنشأة في التأمينات الاجتماعية (
                 {(record.gosiEmployerShare || 0).toFixed(2)} ⃁)
               </span>
             </div>
-            <div className="text-2xl font-extrabold font-mono text-emerald-400">
+            <div className="text-2xl font-extrabold font-mono text-[#ffffff]">
               {record.netSalary.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -260,16 +265,18 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
           </div>
         </div>
 
-        <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2 print:hidden">
+        <div className="px-5 py-3.5 bg-[#f3f3f3] border-t border-[#e0e0e0] flex justify-end gap-2 print:hidden">
           <button
+            type="button"
             onClick={onClose}
-            className="button-outline-on-light text-xs py-2 px-4"
+            className="px-4 py-2 rounded-full bg-[#ffffff] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-xs font-bold text-[#141414] cursor-pointer"
           >
             إغلاق
           </button>
           <button
+            type="button"
             onClick={() => window.print()}
-            className="button-primary-pill text-xs py-2 px-5 flex items-center gap-1.5"
+            className="px-5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-xs font-bold text-[#ffffff] flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>طباعة قسيمة الراتب PDF</span>
@@ -315,58 +322,74 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
   clearanceSummary,
   onClose,
 }) => {
-  const [recipientEntity, setRecipientEntity] = useState('إلى من يهمه الأمر / الجهات التمويلية والبنوك المعتمدة');
+  const [recipientEntity, setRecipientEntity] = useState(
+    'إلى من يهمه الأمر / الجهات التمويلية والبنوك المعتمدة'
+  );
   const basic = employee.basic_salary || Math.round(employee.salary * 0.7);
   const housing = employee.housing_allowance || Math.round(employee.salary * 0.2);
   const transport = employee.transport_allowance || Math.round(employee.salary * 0.1);
   const refNo = `HR-CERT-${new Date().getFullYear()}-${employee.employee_code.slice(-3)}`;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2300] flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden max-h-[92vh] flex flex-col">
-        <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
-          <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-emerald-400" />
-            <h3 className="font-bold text-sm text-white">
+    <div
+      className="fixed inset-0 bg-[#141414]/60 backdrop-blur-sm z-[2300] flex items-center justify-center p-4 font-sans"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-2xl bg-[#ffffff] rounded-[24px] shadow-2xl border border-[#e0e0e0] overflow-hidden max-h-[92vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-5 py-4 bg-[#141414] text-[#ffffff] flex items-center justify-between print:hidden">
+          <div className="flex items-center gap-2.5">
+            <FileText className="w-4 h-4 text-[#ffffff]" />
+            <h3 className="font-extrabold text-sm text-[#ffffff] m-0">
               {letterType === 'SALARY_CERTIFICATE'
                 ? 'إصدار خطاب تعريف بالراتب مصدق إلكترونياً'
                 : 'شهادة مخالصة نهائية وإبراء ذمة وشهادة خبرة'}
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 text-zinc-400 hover:text-white">
-            <X className="w-5 h-5" />
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 text-[#a3a3a3] hover:text-[#ffffff] hover:bg-[#262626] rounded-full transition-colors cursor-pointer"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-4 bg-white text-black">
+        <div className="p-6 overflow-y-auto space-y-4 bg-[#ffffff] text-[#141414]">
           {letterType === 'SALARY_CERTIFICATE' && (
-            <div className="print:hidden bg-zinc-50 p-3 rounded-2xl border border-zinc-200">
-              <label className="block text-xs font-bold text-zinc-700 mb-1">
+            <div className="print:hidden bg-[#f3f3f3] p-3.5 rounded-[20px] border border-[#e0e0e0]">
+              <label className="block text-xs font-bold text-[#141414] mb-1.5">
                 الجهة الموجه إليها الخطاب:
               </label>
               <input
                 type="text"
                 value={recipientEntity}
                 onChange={(e) => setRecipientEntity(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-xl py-1.5 px-3 text-xs text-black font-semibold"
+                className="w-full bg-[#ffffff] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414] font-semibold focus:outline-none focus:border-[#141414]"
               />
             </div>
           )}
 
           {/* Printable Certificate Frame */}
-          <div className="border-4 border-double border-zinc-300 rounded-2xl p-6 space-y-5">
-            <div className="flex items-center justify-between border-b-2 border-black pb-4">
+          <div className="border-2 border-[#141414] rounded-[20px] p-6 space-y-5">
+            <div className="flex items-center justify-between border-b-2 border-[#141414] pb-4 flex-wrap gap-3">
               <div>
-                <div className="text-xs font-bold text-zinc-500">المملكة العربية السعودية</div>
-                <div className="text-base font-extrabold text-black mt-0.5">{companyName}</div>
-                <div className="text-xs font-bold text-emerald-800">
+                <div className="text-xs font-bold text-[#707070]">المملكة العربية السعودية</div>
+                <div className="text-base font-extrabold text-[#141414] mt-0.5">
+                  {companyName}
+                </div>
+                <div className="text-xs font-bold text-[#141414] mt-0.5">
                   إدارة الموارد البشرية والشؤون الإدارية
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-left font-mono text-xs flex flex-col items-end gap-1">
-                  <div>الرقم المرجعي: {refNo}</div>
-                  <div>التاريخ: {new Date().toISOString().slice(0, 10)}</div>
+                  <div className="font-bold text-[#141414]">الرقم المرجعي: {refNo}</div>
+                  <div className="text-[#707070]">
+                    التاريخ: {new Date().toISOString().slice(0, 10)}
+                  </div>
                   <div
                     dangerouslySetInnerHTML={{
                       __html: generateRealCode128BarcodeSvg(refNo, {
@@ -395,7 +418,7 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
             </div>
 
             <div className="text-center">
-              <h2 className="text-base font-extrabold text-black underline underline-offset-8">
+              <h2 className="text-base font-extrabold text-[#141414] underline underline-offset-8">
                 {letterType === 'SALARY_CERTIFICATE'
                   ? 'شهادة تعريف بالراتب والبيانات الوظيفية'
                   : 'سند مخالصة نهائية وإخلاء طرف وشهادة خبرة'}
@@ -404,16 +427,17 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
 
             {letterType === 'SALARY_CERTIFICATE' ? (
               <>
-                <div className="text-xs font-bold text-zinc-800">
-                  السادة / {recipientEntity} <span className="float-left">المحترمين</span>
+                <div className="text-xs font-bold text-[#141414] flex items-center justify-between">
+                  <span>السادة / {recipientEntity}</span>
+                  <span>المحترمين</span>
                 </div>
-                <p className="text-xs text-zinc-800 leading-relaxed text-justify">
+                <p className="text-xs text-[#141414] leading-relaxed text-justify">
                   تشهد إدارة الموارد البشرية في <strong>{companyName}</strong> بأن الموظف الموضحة
                   بياناته أدناه يعمل لدينا على رأس العمل حتى تاريخه، وفيما يلي تفاصيل بياناته
                   الوظيفية ومفردات راتبه الشهري المسجل في التأمينات الاجتماعية ونظام حماية الأجور:
                 </p>
 
-                <div className="grid grid-cols-2 gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-200 text-xs">
+                <div className="grid grid-cols-2 gap-3 p-4 bg-[#f3f3f3] rounded-[16px] border border-[#e0e0e0] text-xs">
                   <div>
                     <strong>اسم الموظف:</strong> {employee.name}
                   </div>
@@ -437,8 +461,8 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                   </div>
                 </div>
 
-                <table className="w-full text-right text-xs border border-zinc-200 rounded-xl overflow-hidden">
-                  <thead className="bg-zinc-100 font-bold">
+                <table className="w-full text-right text-xs border border-[#e0e0e0] rounded-xl overflow-hidden">
+                  <thead className="bg-[#141414] text-[#ffffff] font-bold">
                     <tr>
                       <th className="p-2.5">الراتب الأساسي</th>
                       <th className="p-2.5">بدل السكن</th>
@@ -446,24 +470,24 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                       <th className="p-2.5">إجمالي الراتب الشهري</th>
                     </tr>
                   </thead>
-                  <tbody className="font-mono font-bold">
-                    <tr className="border-t border-zinc-200">
+                  <tbody className="font-mono font-bold bg-[#ffffff] text-[#141414]">
+                    <tr className="border-t border-[#e0e0e0]">
                       <td className="p-2.5">{basic.toLocaleString()} ⃁</td>
                       <td className="p-2.5">{housing.toLocaleString()} ⃁</td>
                       <td className="p-2.5">{transport.toLocaleString()} ⃁</td>
-                      <td className="p-2.5 text-emerald-800">{employee.salary.toLocaleString()} ⃁</td>
+                      <td className="p-2.5 font-extrabold">{employee.salary.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>
                 </table>
 
-                <p className="text-xs text-zinc-600 leading-relaxed">
+                <p className="text-xs text-[#707070] leading-relaxed">
                   وقد أُعطي للموظف هذا الخطاب بناءً على طلبه لتقديمه إلى من يهمه الأمر دون أدنى
                   مسؤولية مالية أو التزام قانوني على الشركة تجاه حقوق الغير.
                 </p>
               </>
             ) : (
               <>
-                <p className="text-xs text-zinc-800 leading-relaxed text-justify">
+                <p className="text-xs text-[#141414] leading-relaxed text-justify">
                   تشهد <strong>{companyName}</strong> بأن الموظف / <strong>{employee.name}</strong>{' '}
                   (هوية/إقامة رقم: <span className="font-mono">{employee.national_id}</span>) قد عمل
                   لدينا بوظيفة (<strong>{employee.job_title}</strong>) من تاريخ{' '}
@@ -471,32 +495,36 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                   <span className="font-mono">
                     {clearanceSummary?.endDate || new Date().toISOString().slice(0, 10)}
                   </span>
-                  ، وقد انتهت علاقته العمالية بسبب ({clearanceSummary?.separationReasonLabel || 'انتهاء العقد'}).
+                  ، وقد انتهت علاقته العمالية بسبب (
+                  {clearanceSummary?.separationReasonLabel || 'انتهاء العقد'}).
                 </p>
 
                 {clearanceSummary && (
-                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-200 space-y-2 text-xs">
-                    <div className="font-bold text-black border-b border-zinc-200 pb-1.5">
+                  <div className="p-4 bg-[#f3f3f3] rounded-[16px] border border-[#e0e0e0] space-y-2 text-xs">
+                    <div className="font-bold text-[#141414] border-b border-[#e0e0e0] pb-1.5">
                       بيان تصفية المستحقات النهائية (وفق المواد 84 و85 و88 من نظام العمل):
                     </div>
-                    <div className="grid grid-cols-2 gap-2 font-mono">
+                    <div className="grid grid-cols-2 gap-2 font-mono text-[#141414]">
                       <div>
                         مكافأة نهاية الخدمة: <strong>{clearanceSummary.eosAward.toFixed(2)} ⃁</strong>
                       </div>
                       <div>
-                        بدل رصيد الإجازات: <strong>{clearanceSummary.leaveCompensation.toFixed(2)} ⃁</strong>
+                        بدل رصيد الإجازات:{' '}
+                        <strong>{clearanceSummary.leaveCompensation.toFixed(2)} ⃁</strong>
                       </div>
-                      <div className="text-rose-700">
-                        خصم السلف المتبقية: <strong>-{clearanceSummary.advanceDeduction.toFixed(2)} ⃁</strong>
+                      <div>
+                        خصم السلف المتبقية:{' '}
+                        <strong>-{clearanceSummary.advanceDeduction.toFixed(2)} ⃁</strong>
                       </div>
-                      <div className="text-emerald-800 font-bold">
-                        صافي المخالصة المستحق: <strong>{clearanceSummary.netFinalPayable.toFixed(2)} ⃁</strong>
+                      <div className="font-extrabold">
+                        صافي المخالصة المستحق:{' '}
+                        <strong>{clearanceSummary.netFinalPayable.toFixed(2)} ⃁</strong>
                       </div>
                     </div>
                   </div>
                 )}
 
-                <p className="text-xs text-zinc-800 leading-relaxed text-justify">
+                <p className="text-xs text-[#141414] leading-relaxed text-justify">
                   <strong>إقرار إبراء الذمة الشامل:</strong> يقر الموظف باستلامه كافة حقوقه النظامية
                   من رواتب وبدلات وأجور إجازات ومكافأة نهاية الخدمة، وتعتبر هذه الوثيقة مخالصة
                   نهائية شاملة ومبرئة لذمة الشركة إبراءً عاماً مطلقاً لا رجعة فيه.
@@ -504,30 +532,35 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
               </>
             )}
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-zinc-200 text-xs">
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#e0e0e0] text-xs">
               <div>
-                <div className="text-zinc-500">اعتماد إدارة الموارد البشرية:</div>
-                <div className="font-bold text-black mt-1">مجموعة خالد السليم التجارية</div>
-                <div className="font-mono text-[10px] text-emerald-700 mt-0.5">
+                <div className="text-[#707070]">اعتماد إدارة الموارد البشرية:</div>
+                <div className="font-bold text-[#141414] mt-1">مجموعة خالد السليم التجارية</div>
+                <div className="font-mono text-[10px] text-[#141414] mt-0.5">
                   ختم إلكتروني موثق • {refNo}
                 </div>
               </div>
               <div className="text-left">
-                <div className="text-zinc-500">توقيع الموظف / المستفيد:</div>
-                <div className="font-bold text-black mt-1">{employee.name}</div>
-                <div className="font-mono text-[10px] text-zinc-500">موثق عبر البوابة الذاتية</div>
+                <div className="text-[#707070]">توقيع الموظف / المستفيد:</div>
+                <div className="font-bold text-[#141414] mt-1">{employee.name}</div>
+                <div className="font-mono text-[10px] text-[#707070]">موثق عبر البوابة الذاتية</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex justify-end gap-2 print:hidden">
-          <button onClick={onClose} className="button-outline-on-light text-xs py-2 px-4">
+        <div className="px-5 py-3.5 bg-[#f3f3f3] border-t border-[#e0e0e0] flex justify-end gap-2 print:hidden">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-full bg-[#ffffff] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-xs font-bold text-[#141414] cursor-pointer"
+          >
             إغلاق
           </button>
           <button
+            type="button"
             onClick={() => window.print()}
-            className="button-primary-pill text-xs py-2 px-5 flex items-center gap-1.5"
+            className="px-5 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-xs font-bold text-[#ffffff] flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>طباعة الوثيقة الرسمية</span>
@@ -583,7 +616,9 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
           <span className="stat-title">الكوادر الوطنية السعودية (GOSI)</span>
           <div className="stat-value text-2xl mt-2">{nitaqat.saudiCount} موظف سعودي</div>
           <div className="stat-footer">
-            <span className="stat-badge up">الوزن المحتسب في نطاقات: {nitaqat.effectiveSaudiWeight}</span>
+            <span className="stat-badge up">
+              الوزن المحتسب في نطاقات: {nitaqat.effectiveSaudiWeight}
+            </span>
           </div>
         </div>
 
@@ -599,7 +634,7 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
 
         <div className="stat-card">
           <span className="stat-title">تنبيهات انتهاء الوثائق (مقيم / قوى / الضمان)</span>
-          <div className={`stat-value text-2xl mt-2 ${urgentCount > 0 ? 'text-[#ba1a1a]' : 'text-[#141414]'}`}>
+          <div className="stat-value text-2xl mt-2 text-[#141414]">
             {urgentCount} تنبيهات نشطة
           </div>
           <div className="stat-footer">
@@ -610,7 +645,7 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
 
       {/* Pattern: data-table — Document Expiry Radar Table */}
       <div data-slot="data-table" className="table-card mb-0">
-        <div className="table-card-header">
+        <div className="table-card-header flex-wrap gap-3">
           <div>
             <h3 className="table-card-title text-base">
               <AlertTriangle className="size-4 text-[#141414]" />
@@ -620,35 +655,42 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
               متابعة آلية لصلاحية الهويات/الإقامات، عقود قوى، جوازات السفر، والتأمين الطبي لمنع إيقاف الخدمات
             </p>
           </div>
-          <div
-            data-slot="filter-bar"
-            data-no-dyn-enhancer="true"
-            role="tablist"
-            className="flex items-center gap-1.5"
-          >
-            {[
-              { id: 'ALL', label: `الكل (${alerts.length})` },
-              { id: 'URGENT', label: `تحتاج تجديد (${urgentCount})` },
-              { id: 'VALID', label: 'سارية المفعول' },
-            ].map((btn) => {
-              const isActive = filterSeverity === btn.id;
-              return (
-                <button
-                  key={btn.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => setFilterSeverity(btn.id as any)}
-                  className={`min-h-[36px] px-3.5 py-1 rounded-full text-xs font-semibold border transition-colors ${
-                    isActive
-                      ? 'bg-[#141414] text-white border-[#141414]'
-                      : 'bg-white text-[#141414] border-[#e0e0e0] hover:bg-[#f3f3f3]'
-                  }`}
-                >
-                  {btn.label}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div
+              data-slot="filter-bar"
+              data-no-dyn-enhancer="true"
+              role="tablist"
+              className="flex items-center gap-1.5"
+            >
+              {[
+                { id: 'ALL', label: `الكل (${alerts.length})` },
+                { id: 'URGENT', label: `تحتاج تجديد (${urgentCount})` },
+                { id: 'VALID', label: 'سارية المفعول' },
+              ].map((btn) => {
+                const isActive = filterSeverity === btn.id;
+                return (
+                  <button
+                    key={btn.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setFilterSeverity(btn.id as any)}
+                    className={`min-h-[36px] px-3.5 py-1 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+                      isActive
+                        ? 'bg-[#141414] text-white border-[#141414]'
+                        : 'bg-white text-[#141414] border-[#e0e0e0] hover:bg-[#f3f3f3]'
+                    }`}
+                  >
+                    {btn.label}
+                  </button>
+                );
+              })}
+            </div>
+            <ExportDropdown
+              sectionKey="hr_compliance"
+              data={filteredAlerts}
+              label="تصدير الرادار (12 صيغة)"
+            />
           </div>
         </div>
 
@@ -667,13 +709,12 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
             </thead>
             <tbody>
               {filteredAlerts.map((alert, idx) => {
-                // Status color = severity, not decoration (UI Review §8): normal/valid is neutral monochrome
                 const badgeStyle =
                   alert.severity === 'EXPIRED' || alert.severity === 'CRITICAL_7D'
-                    ? 'bg-[#ffdad6] text-[#ba1a1a]'
+                    ? 'bg-[#141414] text-[#ffffff]'
                     : alert.severity === 'WARNING_30D' || alert.severity === 'UPCOMING_60D'
-                    ? 'bg-[#262626] text-white'
-                    : 'bg-[#f3f3f3] text-[#141414]';
+                    ? 'bg-[#262626] text-[#ffffff]'
+                    : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]';
 
                 return (
                   <tr key={`${alert.employeeId}-${alert.documentType}-${idx}`}>
@@ -697,10 +738,10 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
                       <button
                         type="button"
                         onClick={() => onRenewDocument(alert.employeeId, alert.documentType)}
-                        className="btn-odoo btn-odoo-secondary text-xs py-1 px-3 min-h-[34px]"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold transition-colors cursor-pointer"
                         title="تحديث وتمديد صلاحية الوثيقة لمدة سنة إضافية"
                       >
-                        <RefreshCw className="size-3 text-[#141414]" />
+                        <RefreshCw className="size-3 text-[#ffffff]" />
                         <span>تجديد (+1 سنة)</span>
                       </button>
                     </td>

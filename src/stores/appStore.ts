@@ -6,14 +6,16 @@ export interface AppNotification {
   title: string;
   message: string;
   type: 'info' | 'success' | 'warning' | 'error';
-  category?: 'zatca' | 'etimad' | 'musaned' | 'shelter' | 'system';
+  priority?: 'critical' | 'actionable' | 'micro';
+  category?: 'zatca' | 'etimad' | 'musaned' | 'shelter' | 'hr' | 'finance' | 'system';
   companyId?: string;
   timestamp: string;
   read: boolean;
   link?: string;
+  actionLabel?: string;
 }
 
-const NOTIFICATIONS_STORAGE_KEY = 'ALSULAIM_ERP_NOTIFICATIONS_V2';
+const NOTIFICATIONS_STORAGE_KEY = 'ALSULAIM_ERP_NOTIFICATIONS_V3';
 
 export function syncAppBadgeCount(count: number): void {
   try {
@@ -41,37 +43,69 @@ export function syncAppBadgeCount(count: number): void {
 
 const DEFAULT_NOTIFICATIONS: AppNotification[] = [
   {
-    id: 'n-1',
-    title: 'وصول رحلة استقدام جديدة',
-    message: 'وصلت العاملة KIMBERLY (الفلبين) إلى مطار الملك خالد الدولي بنجاح.',
-    type: 'success',
-    category: 'musaned',
+    id: 'n-hr-radar',
+    title: 'تنبيه رادار الوثائق والعقود (HR & WPS)',
+    message: 'توجد وثيقة فحص طبي وإقامة تقترب من الانتهاء خلال أقل من 30 يوماً؛ يرجى التجديد لتفادي إيقاف الخدمات.',
+    type: 'warning',
+    priority: 'critical',
+    category: 'hr',
     companyId: 'SAF',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
     read: false,
-    link: 'travel',
+    link: 'hr',
+    actionLabel: 'فتح رادار الوثائق',
   },
   {
-    id: 'n-2',
-    title: 'تنبيه SLA عقد إيجار',
-    message: 'عقد التأجير #RENT-2026-0016 بحاجة إلى توقيع العميل قبل نهاية اليوم.',
+    id: 'n-sla-rent',
+    title: 'تنبيه مهلة عقد تأجير وتشغيل (SLA)',
+    message: 'عقد التأجير #RENT-2026-0016 بحاجة إلى اعتماد وتوقيع العميل قبل نهاية اليوم.',
     type: 'warning',
-    category: 'system',
+    priority: 'critical',
+    category: 'musaned',
     companyId: 'YAQ',
-    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    timestamp: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
     read: false,
     link: 'rent-contracts',
+    actionLabel: 'مراجعة العقد',
   },
   {
-    id: 'n-3',
-    title: 'فاتورة ZATCA معتمدة',
-    message: 'تمت مصادقة الفاتورة الضريبية المبسطة بنجاح مع منصة فاتورة (ZATCA Phase 2).',
+    id: 'n-hr-requests',
+    title: 'طلبات موظفين بانتظار الاعتماد',
+    message: 'يوجد طلبان إجازة وطلب سلفة مالية في قسم الموارد البشرية بانتظار قرار الإدارة.',
     type: 'info',
-    category: 'zatca',
+    priority: 'actionable',
+    category: 'hr',
     companyId: 'SAF',
-    timestamp: new Date(Date.now() - 1000 * 60 * 360).toISOString(),
+    timestamp: new Date(Date.now() - 1000 * 60 * 75).toISOString(),
+    read: false,
+    link: 'hr',
+    actionLabel: 'مراجعة الطلبات',
+  },
+  {
+    id: 'n-wps-zatca',
+    title: 'مطابقة مسير رواتب WPS وفواتير ZATCA',
+    message: 'تمت مطابقة مسير رواتب الشهر الحالي (23,500 ⃁) واعتماد فواتير المرحلة الثانية ZATCA بنجاح.',
+    type: 'success',
+    priority: 'actionable',
+    category: 'finance',
+    companyId: 'SAF',
+    timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
     read: true,
-    link: 'zatca',
+    link: 'hr',
+    actionLabel: 'عرض المسير',
+  },
+  {
+    id: 'n-travel-arr',
+    title: 'وصول رحلة استقدام جديدة',
+    message: 'وصلت العاملة KIMBERLY (الفلبين) إلى مطار الملك خالد الدولي وتم تسكينها بنجاح.',
+    type: 'success',
+    priority: 'actionable',
+    category: 'musaned',
+    companyId: 'SAF',
+    timestamp: new Date(Date.now() - 1000 * 60 * 320).toISOString(),
+    read: true,
+    link: 'travel',
+    actionLabel: 'سجل الوصول',
   },
 ];
 
@@ -304,10 +338,22 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   addNotification: (notification) =>
     set((state) => {
+      // Prevent duplicate spam if an identical title+message was added in the last 10 seconds
+      const nowMs = Date.now();
+      const duplicate = state.notifications.find(
+        (existing) =>
+          existing.title === notification.title &&
+          existing.message === notification.message &&
+          nowMs - new Date(existing.timestamp).getTime() < 10000
+      );
+      if (duplicate) {
+        return state;
+      }
+
       const newNotif: AppNotification = {
         ...notification,
-        id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        timestamp: new Date().toISOString(),
+        id: `notif-${nowMs}-${Math.random().toString(36).slice(2, 6)}`,
+        timestamp: new Date(nowMs).toISOString(),
         read: false,
       };
       const updated = [newNotif, ...state.notifications].slice(0, 50);

@@ -36,7 +36,7 @@ export function normalizeArabicSpeech(text: string): string {
     .replace(/[أإآ]/g, 'ا')
     .replace(/ة/g, 'ه')
     .replace(/ى/g, 'ي')
-    .replace(/[،,\.\?!]/g, ' ')
+    .replace(/[،,.?!]/g, ' ')
     .replace(/\s+/g, ' ');
 }
 

@@ -46,7 +46,7 @@ export function tafqeet(amount: number, currency: string = 'ريالاً سعو�
   const integerPart = Math.floor(absAmount);
   const decimalPart = Math.round((absAmount - integerPart) * 100);
 
-  let parts: string[] = [];
+  const parts: string[] = [];
 
   const billions = Math.floor(integerPart / 1_000_000_000);
   const millions = Math.floor((integerPart % 1_000_000_000) / 1_000_000);

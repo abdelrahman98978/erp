@@ -18,9 +18,9 @@ export function validateSaudiId(id: string): boolean {
   // Luhn-like checksum algorithm used for Saudi IDs
   let sum = 0;
   for (let i = 0; i < 10; i++) {
-    let digit = parseInt(cleanId.charAt(i), 10);
+    const digit = parseInt(cleanId.charAt(i), 10);
     if (i % 2 === 0) {
-      let doubled = digit * 2;
+      const doubled = digit * 2;
       sum += doubled > 9 ? doubled - 9 : doubled;
     } else {
       sum += digit;
@@ -32,7 +32,7 @@ export function validateSaudiId(id: string): boolean {
 // Saudi Mobile Number Validator (05XXXXXXXX or +9665XXXXXXXX)
 export function validateSaudiMobile(mobile: string): boolean {
   if (!mobile) return false;
-  const clean = mobile.replace(/[\s\-]/g, '');
+  const clean = mobile.replace(/[\s-]/g, '');
   return /^(05\d{8}|(\+966|966)5\d{8})$/.test(clean);
 }
 

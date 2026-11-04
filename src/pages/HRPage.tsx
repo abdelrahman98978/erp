@@ -20,6 +20,11 @@ import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { EmployeePhotoAvatar } from '../components/auth/EmployeePhotoAvatar';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import {
+  encodeZatcaTlvBase64,
+  generateRealQrSvg,
+  generateRealCode128BarcodeSvg,
+} from '../utils/realBarcodeGenerator';
+import {
   EmployeePayslipModal,
   HrOfficialLetterModal,
   HrComplianceRadarPanel,
@@ -1679,57 +1684,65 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Signatures & Legal Agreements Vault */}
       {activeTab === 'signatures' && (
-        <div className="space-y-6">
-          {/* KPI Stats */}
-          <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-            <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-              <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي التواقيع والاتفاقيات المعتمدة</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{employeesList.length} توقيعاً</div>
-              <span className="pill-tag-mint text-[11px] mt-2">100% نسبة التوثيق</span>
+        <div className="space-y-6 font-sans">
+          {/* KPI Stats — Mobbin Monochrome */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
+              <span className="text-[11.5px] font-bold text-[#707070] block">إجمالي التواقيع والاتفاقيات المعتمدة</span>
+              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{employeesList.length} توقيعاً</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">100% نسبة التوثيق</span>
             </div>
 
-            <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-              <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>اتفاقيات عدم الإفشاء (NDA) ومواثيق الأقسام</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{employeesList.length} وثيقة</div>
-              <span className="pill-tag-mint text-[11px] mt-2">سارية ومطابقة لنظام PDPL</span>
+            <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
+              <span className="text-[11.5px] font-bold text-[#707070] block">اتفاقيات عدم الإفشاء (NDA) ومواثيق الأقسام</span>
+              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{employeesList.length} وثيقة</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">سارية ومطابقة لنظام PDPL</span>
             </div>
 
-            <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-              <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>التفويض البيومتري E-Sign</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px' }}>{employeesList.length} مفوض</div>
-              <span className="pill-tag-mint text-[11px] mt-2">مرسوم ملكي م/18</span>
+            <div className="bg-[#141414] text-[#ffffff] rounded-[20px] p-4 border border-[#141414]">
+              <span className="text-[11.5px] font-bold text-[#a3a3a3] block">التفويض البيومتري E-Sign</span>
+              <div className="text-2xl font-extrabold font-mono text-[#ffffff] mt-1">{employeesList.length} مفوض</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#262626] text-[#ffffff] border border-[#3d3d3d]">مرسوم ملكي م/18</span>
             </div>
 
-            <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-              <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>الأقسام المغطاة بمواثيق مخصصة</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>6 أقسام</div>
-              <span className="pill-tag-shade text-[11px] mt-2">سياسات محددة لكل إدارة</span>
+            <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
+              <span className="text-[11.5px] font-bold text-[#707070] block">الأقسام المغطاة بمواثيق مخصصة</span>
+              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">6 أقسام</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">سياسات محددة لكل إدارة</span>
             </div>
           </div>
 
           {/* Signatures Vault Table */}
-          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-            <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
+            <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
               <div>
-                <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                  <FileSignature className="w-4 h-4 text-emerald-600" />
+                <h3 className="text-sm font-extrabold text-[#141414] m-0 flex items-center gap-2">
+                  <FileSignature className="w-4 h-4 text-[#141414]" />
                   <span>حافظة التواقيع والاتفاقيات ومستندات إبراء الذمة لكل موظف</span>
                 </h3>
-                <p className="text-xs text-zinc-500 mt-0.5">تتبع التواقيع الإلكترونية، الاتفاقيات القانونية المعتمدة، وأرقام الاعتماد التشفيري</p>
+                <p className="text-xs text-[#707070] mt-0.5">تتبع التواقيع الإلكترونية، الاتفاقيات القانونية المعتمدة، وأرقام الاعتماد التشفيري</p>
               </div>
 
-              <button
-                onClick={() => window.dispatchEvent(new CustomEvent('alsulaim_navigate', { detail: { tab: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية' } }))}
-                className="button-primary-pill text-xs py-1.5 px-4 flex items-center gap-1.5"
-              >
-                <Scale className="w-3.5 h-3.5" />
-                <span>مركز الامتثال واللوائح السعودية</span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <ExportDropdown
+                  sectionKey="hr_signatures"
+                  data={employeesList}
+                  label="تصدير التواقيع (12 صيغة)"
+                />
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent('alsulaim_navigate', { detail: { tab: 'legal-compliance', title: 'الامتثال القانوني والتبرئة والتواقيع الرقمية' } }))}
+                  className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Scale className="w-3.5 h-3.5" />
+                  <span>مركز الامتثال واللوائح السعودية</span>
+                </button>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs text-zinc-700">
-                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <table className="w-full text-right text-xs text-[#141414]">
+                <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                   <tr>
                     <th className="p-3.5">كود الموظف</th>
                     <th className="p-3.5">اسم الموظف والهوية</th>
@@ -1741,32 +1754,32 @@ export const HRPage: React.FC = () => {
                     <th className="p-3.5 text-center">المعاينة والطباعة</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-100">
+                <tbody className="divide-y divide-[#f0f0f0]">
                   {employeesList.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
-                      <td className="p-3.5 font-mono font-bold text-black">{emp.employee_code}</td>
+                    <tr key={emp.id} className="hover:bg-[#f3f3f3]/50 transition-colors">
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{emp.employee_code}</td>
                       <td className="p-3.5">
-                        <div className="font-bold text-black">{emp.name}</div>
-                        <div className="text-[11px] text-zinc-400 font-mono">هوية: {emp.national_id}</div>
+                        <div className="font-bold text-[#141414]">{emp.name}</div>
+                        <div className="text-[11px] text-[#707070] font-mono">هوية: {emp.national_id}</div>
                       </td>
                       <td className="p-3.5">
-                        <div className="font-bold text-zinc-800">{emp.department}</div>
-                        <div className="text-[11px] text-zinc-400">{emp.branch} • {emp.job_title}</div>
+                        <div className="font-bold text-[#141414]">{emp.department}</div>
+                        <div className="text-[11px] text-[#707070]">{emp.branch} • {emp.job_title}</div>
                       </td>
                       <td className="p-3.5">
-                        <span className="font-semibold text-zinc-900 block">
+                        <span className="font-semibold text-[#141414] block">
                           ميثاق {emp.department}
                         </span>
-                        <span className="text-[10px] text-emerald-800 font-mono">نظام التعاملات م/18 وPDPL</span>
+                        <span className="text-[10px] text-[#707070] font-mono">نظام التعاملات م/18 وPDPL</span>
                       </td>
                       <td className="p-3.5 font-mono">
-                        <span className="bg-zinc-100 px-2 py-0.5 rounded text-[11px] font-mono text-black border border-zinc-200">
+                        <span className="bg-[#f3f3f3] px-2.5 py-0.5 rounded-full text-[11px] font-mono text-[#141414] border border-[#e0e0e0]">
                           {emp.compliance_hash || `SA-COMPLIANCE-${emp.employee_code}`}
                         </span>
                       </td>
                       <td className="p-3.5">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
-                          <Fingerprint className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] text-[11px] font-bold border border-[#e0e0e0]">
+                          <Fingerprint className="w-3.5 h-3.5 text-[#141414]" />
                           <span>توقيع بيومتري معتمد</span>
                         </span>
                       </td>
@@ -1774,33 +1787,33 @@ export const HRPage: React.FC = () => {
                       <td className="p-3.5 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           <button
+                            type="button"
                             onClick={() => setSelectedEmpForAgreement(emp)}
-                            className="button-outline-on-light"
-                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] border border-[#e0e0e0] text-[11px] font-bold text-[#141414] cursor-pointer"
                             title="معاينة التوقيع والاتفاقية"
                           >
-                            <Eye className="w-3 h-3 ml-1 text-emerald-600" />
+                            <Eye className="w-3 h-3 text-[#141414]" />
                             <span>معاينة</span>
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
                               setSelectedEmpForAgreement(emp);
                               setTimeout(() => window.print(), 400);
                             }}
-                            className="button-outline-on-light"
-                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#ffffff] hover:bg-[#f3f3f3] border border-[#e0e0e0] text-[11px] font-bold text-[#141414] cursor-pointer"
                             title="طباعة وثيقة التعهد المعتمدة"
                           >
-                            <Printer className="w-3 h-3 ml-1 text-black" />
+                            <Printer className="w-3 h-3 text-[#141414]" />
                             <span>طباعة</span>
                           </button>
                           <button
+                            type="button"
                             onClick={() => setSelectedEmpFor360(emp)}
-                            className="button-outline-on-light"
-                            style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#141414] hover:bg-[#262626] text-[11px] font-bold text-[#ffffff] cursor-pointer"
                             title="الملف الرقمي 360"
                           >
-                            <UserCheck className="w-3 h-3 ml-1" />
+                            <UserCheck className="w-3 h-3 text-[#ffffff]" />
                             <span>الملف 360</span>
                           </button>
                         </div>
@@ -1816,58 +1829,66 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Promotions */}
       {activeTab === 'promotions' && (
-        <div className="space-y-6">
-          {/* Promotions KPI Cards */}
-          <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-            <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-              <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي القرارات الصادرة</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{promotions.length} ترقية</div>
-              <span className="pill-tag-mint text-[11px] mt-2">قرارات إدارية نافذة</span>
+        <div className="space-y-6 font-sans">
+          {/* Promotions KPI Cards — Mobbin Monochrome */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
+              <span className="text-[11.5px] font-bold text-[#707070] block">إجمالي القرارات الصادرة</span>
+              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{promotions.length} ترقية</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">قرارات إدارية نافذة</span>
             </div>
 
-            <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-              <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>متوسط نسبة الزيادة</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>+22.3%</div>
-              <span className="pill-tag-mint text-[11px] mt-2">حوافز الجدارة والأداء</span>
+            <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
+              <span className="text-[11.5px] font-bold text-[#707070] block">متوسط نسبة الزيادة</span>
+              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">+22.3%</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">حوافز الجدارة والأداء</span>
             </div>
 
-            <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
-              <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>الترقيات الإشرافية والإدارية</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px' }}>{promotions.filter(p => p.new_grade.includes('مدير') || p.new_grade.includes('قائد')).length} موظف</div>
-              <span className="pill-tag-mint text-[11px] mt-2">ترقية قيادية</span>
+            <div className="bg-[#141414] text-[#ffffff] rounded-[20px] p-4 border border-[#141414]">
+              <span className="text-[11.5px] font-bold text-[#a3a3a3] block">الترقيات الإشرافية والإدارية</span>
+              <div className="text-2xl font-extrabold font-mono text-[#ffffff] mt-1">{promotions.filter(p => p.new_grade.includes('مدير') || p.new_grade.includes('قائد')).length} موظف</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#262626] text-[#ffffff] border border-[#3d3d3d]">ترقية قيادية</span>
             </div>
 
-            <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
-              <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>المؤهلون للترقية الدورية</span>
-              <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{employeesList.length} مرشح</div>
-              <span className="pill-tag-shade text-[11px] mt-2">تقييم ممتاز 2026</span>
+            <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
+              <span className="text-[11.5px] font-bold text-[#707070] block">المؤهلون للترقية الدورية</span>
+              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{employeesList.length} مرشح</div>
+              <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">تقييم ممتاز 2026</span>
             </div>
           </div>
 
           {/* Promotions Table */}
-          <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-            <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+          <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
+            <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
               <div>
-                <h3 className="text-sm font-bold text-black m-0">سجل الترقيات وتعديل الدرجات والصلاحيات الإدارية</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">تتبع تاريخي لقرارات الترقية وتعديل الرواتب والأدوار الوظيفية في منظومة الـ ERP</p>
+                <h3 className="text-sm font-extrabold text-[#141414] m-0">سجل الترقيات وتعديل الدرجات والصلاحيات الإدارية</h3>
+                <p className="text-xs text-[#707070] mt-0.5">تتبع تاريخي لقرارات الترقية وتعديل الرواتب والأدوار الوظيفية في منظومة الـ ERP</p>
               </div>
-              <button
-                onClick={() => handleOpenPromotionModal()}
-                className="button-primary-pill text-xs flex items-center gap-1.5 py-1.5 px-4"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>إصدار قرار ترقية جديد</span>
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                <ExportDropdown
+                  sectionKey="hr_promotions"
+                  data={promotions}
+                  label="تصدير الترقيات (12 صيغة)"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleOpenPromotionModal()}
+                  className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>إصدار قرار ترقية جديد</span>
+                </button>
+              </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-right text-xs text-zinc-700">
-                <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+              <table className="w-full text-right text-xs text-[#141414]">
+                <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                   <tr>
                     <th className="p-3.5">رقم القرار</th>
                     <th className="p-3.5">الموظف</th>
-                    <th className="p-3.5">المسمى والدرجة السابقة الجديدة</th>
-                    <th className="p-3.5">الراتب السابق الجديد</th>
+                    <th className="p-3.5">المسمى والدرجة السابقة / الجديدة</th>
+                    <th className="p-3.5">الراتب السابق / الجديد</th>
                     <th className="p-3.5">مبلغ ونسبة الزيادة</th>
                     <th className="p-3.5">الصلاحية في المنظومة</th>
                     <th className="p-3.5">تقييم الأداء</th>
@@ -1875,44 +1896,44 @@ export const HRPage: React.FC = () => {
                     <th className="p-3.5 text-center">الحالة</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-100">
+                <tbody className="divide-y divide-[#f0f0f0]">
                   {promotions.map((promo) => (
-                    <tr key={promo.id} className="hover:bg-zinc-50 transition-colors">
-                      <td className="p-3.5 font-mono font-bold text-black">{promo.id}</td>
+                    <tr key={promo.id} className="hover:bg-[#f3f3f3]/50 transition-colors">
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{promo.id}</td>
                       <td className="p-3.5">
-                        <div className="font-bold text-black">{promo.employee_name}</div>
-                        <div className="text-[10px] text-zinc-400 font-mono">#{promo.employee_code}</div>
+                        <div className="font-bold text-[#141414]">{promo.employee_name}</div>
+                        <div className="text-[10px] text-[#707070] font-mono">#{promo.employee_code}</div>
                       </td>
                       <td className="p-3.5">
-                        <div className="text-zinc-500 line-through text-[11px]">{promo.previous_job_title} ({promo.previous_grade})</div>
-                        <div className="font-bold text-emerald-900 flex items-center gap-1 mt-0.5">
-                          <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                        <div className="text-[#707070] line-through text-[11px]">{promo.previous_job_title} ({promo.previous_grade})</div>
+                        <div className="font-bold text-[#141414] flex items-center gap-1 mt-0.5">
+                          <TrendingUp className="w-3.5 h-3.5 text-[#141414]" />
                           <span>{promo.new_job_title}</span>
-                          <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-medium">{promo.new_grade}</span>
+                          <span className="text-[10px] bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] px-2 py-0.5 rounded-full font-semibold">{promo.new_grade}</span>
                         </div>
                       </td>
                       <td className="p-3.5 font-mono">
-                        <span className="text-zinc-400 line-through">{promo.previous_salary.toLocaleString()}</span>
-                        <span className="text-black font-bold mx-1"></span>
-                        <span className="text-emerald-700 font-bold">{promo.new_salary.toLocaleString()} ⃁</span>
+                        <span className="text-[#707070] line-through">{promo.previous_salary.toLocaleString()}</span>
+                        <span className="text-[#141414] font-bold mx-1">←</span>
+                        <span className="text-[#141414] font-extrabold">{promo.new_salary.toLocaleString()} ⃁</span>
                       </td>
                       <td className="p-3.5 font-mono">
-                        <div className="font-bold text-emerald-700">+{promo.increment_amount.toLocaleString()} ⃁</div>
-                        <span className="pill-tag-mint text-[10px]">{promo.increment_percentage}</span>
+                        <div className="font-extrabold text-[#141414]">+{promo.increment_amount.toLocaleString()} ⃁</div>
+                        <span className="inline-block px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[10px] font-bold">{promo.increment_percentage}</span>
                       </td>
                       <td className="p-3.5">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-[11px] font-bold">
-                          <ShieldCheck className="w-3 h-3 text-amber-600" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[11px] font-bold">
+                          <ShieldCheck className="w-3 h-3 text-[#141414]" />
                           <span>{promo.system_role_updated || 'Administrator'}</span>
                         </span>
                       </td>
                       <td className="p-3.5">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                          <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#141414] bg-[#f3f3f3] px-2.5 py-0.5 rounded-full border border-[#e0e0e0]">
+                          <Star className="w-3 h-3 fill-[#141414] text-[#141414]" />
                           <span>{promo.performance_rating}</span>
                         </span>
                       </td>
-                      <td className="p-3.5 font-mono text-[11px] text-zinc-600">{promo.effective_date}</td>
+                      <td className="p-3.5 font-mono text-[11px] text-[#707070]">{promo.effective_date}</td>
                       <td className="p-3.5 text-center"><Badge text={promo.status} type="success" /></td>
                     </tr>
                   ))}
@@ -1925,23 +1946,31 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Vacations Requests */}
       {activeTab === 'vacations' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
+          <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black">طلبات الإجازات والأرصدة السنوية (المادة 109 و117)</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">احتساب استحقاق 21/30 يوماً سنوياً، وشرائح الإجازة المرضية والاضطرارية مع خصم الرصيد آلياً عند الاعتماد</p>
+              <h3 className="text-sm font-extrabold text-[#141414]">طلبات الإجازات والأرصدة السنوية (المادة 109 و117)</h3>
+              <p className="text-xs text-[#707070] mt-0.5">احتساب استحقاق 21/30 يوماً سنوياً، وشرائح الإجازة المرضية والاضطرارية مع خصم الرصيد آلياً عند الاعتماد</p>
             </div>
-            <button
-              onClick={() => setShowVacModal(true)}
-              className="button-primary-pill text-xs flex items-center gap-1.5 py-1.5 px-4"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ تقديم طلب إجازة</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <ExportDropdown
+                sectionKey="hr_vacations"
+                data={vacations}
+                label="تصدير الإجازات (12 صيغة)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowVacModal(true)}
+                className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ تقديم طلب إجازة</span>
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            <table className="w-full text-right text-xs text-[#141414]">
+              <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3.5">التسلسل</th>
                   <th className="p-3.5">الموظف</th>
@@ -1955,17 +1984,17 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5 text-center">إجراء الاعتماد</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-[#f0f0f0]">
                 {vacations.map((vac) => (
-                  <tr key={vac.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{vac.id}</td>
-                    <td className="p-3.5 font-bold text-black">{vac.employee_name}</td>
+                  <tr key={vac.id} className="hover:bg-[#f3f3f3]/50">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{vac.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{vac.employee_name}</td>
                     <td className="p-3.5">{vac.vacation_type}</td>
-                    <td className="p-3.5 font-mono font-bold text-black">{vac.balance} يوم</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{vac.from_date}</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{vac.to_date}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{vac.days_count} أيام</td>
-                    <td className="p-3.5 text-zinc-600">{vac.notes}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{vac.balance} يوم</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{vac.from_date}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{vac.to_date}</td>
+                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">{vac.days_count} أيام</td>
+                    <td className="p-3.5 text-[#707070]">{vac.notes}</td>
                     <td className="p-3.5">
                       <Badge
                         text={vac.status}
@@ -1976,20 +2005,22 @@ export const HRPage: React.FC = () => {
                       {vac.status === 'بانتظار الموافقة' ? (
                         <div className="flex items-center justify-center gap-1">
                           <button
+                            type="button"
                             onClick={() => handleUpdateVacationStatus(vac, 'معتمد')}
-                            className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-700"
+                            className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold hover:bg-[#262626] cursor-pointer"
                           >
                             اعتماد
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleUpdateVacationStatus(vac, 'مرفوض')}
-                            className="px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold hover:bg-rose-100"
+                            className="px-2.5 py-1 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[11px] font-bold hover:bg-[#e5e5e5] cursor-pointer"
                           >
                             رفض
                           </button>
                         </div>
                       ) : (
-                        <span className="text-[11px] text-zinc-400">مكتمل</span>
+                        <span className="text-[11px] text-[#707070] font-semibold">مكتمل</span>
                       )}
                     </td>
                   </tr>
@@ -2002,23 +2033,31 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Advances */}
       {activeTab === 'advances' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
+          <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black">طلبات السلف وجدولة الأقساط الشهرية (المادة 92)</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">استقطاع آلي للأقساط من مسير الرواتب الشهري مع مراعاة عدم تجاوز سقف 50% من الأجر</p>
+              <h3 className="text-sm font-extrabold text-[#141414]">طلبات السلف وجدولة الأقساط الشهرية (المادة 92)</h3>
+              <p className="text-xs text-[#707070] mt-0.5">استقطاع آلي للأقساط من مسير الرواتب الشهري مع مراعاة عدم تجاوز سقف 50% من الأجر</p>
             </div>
-            <button
-              onClick={() => setShowAdvModal(true)}
-              className="button-primary-pill text-xs flex items-center gap-1.5 py-1.5 px-4"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ طلب سلفة جديدة</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <ExportDropdown
+                sectionKey="hr_advances"
+                data={advances}
+                label="تصدير السلف (12 صيغة)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowAdvModal(true)}
+                className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ طلب سلفة جديدة</span>
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            <table className="w-full text-right text-xs text-[#141414]">
+              <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3.5">كود السلفة</th>
                   <th className="p-3.5">اسم الموظف</th>
@@ -2032,31 +2071,32 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5 text-center">الإجراء</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-[#f0f0f0]">
                 {advances.map((adv) => {
                   const monthly = adv.monthly_installment ?? Math.round(adv.amount / Math.max(1, adv.installments_count));
                   const rem = adv.remaining_amount ?? adv.amount;
                   return (
-                    <tr key={adv.id} className="hover:bg-zinc-50">
-                      <td className="p-3.5 font-mono font-bold text-black">{adv.id}</td>
-                      <td className="p-3.5 font-bold text-black">{adv.employee_name}</td>
+                    <tr key={adv.id} className="hover:bg-[#f3f3f3]/50">
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{adv.id}</td>
+                      <td className="p-3.5 font-bold text-[#141414]">{adv.employee_name}</td>
                       <td className="p-3.5">{adv.payment_method}</td>
-                      <td className="p-3.5 font-mono font-bold text-emerald-700">{adv.amount.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 font-mono font-bold text-black">{monthly.toLocaleString()} ⃁/شهر</td>
-                      <td className="p-3.5 font-mono text-rose-700 font-bold">{rem.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 font-mono text-zinc-500">{adv.date}</td>
+                      <td className="p-3.5 font-mono font-extrabold text-[#141414]">{adv.amount.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{monthly.toLocaleString()} ⃁/شهر</td>
+                      <td className="p-3.5 font-mono text-[#141414] font-bold">{rem.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-mono text-[#707070]">{adv.date}</td>
                       <td className="p-3.5 font-mono">{adv.installments_count} أشهر</td>
                       <td className="p-3.5"><Badge text={adv.status} type={adv.status === 'معتمد' ? 'success' : 'warning'} /></td>
                       <td className="p-3.5 text-center">
                         {adv.status === 'بانتظار الصرف' ? (
                           <button
+                            type="button"
                             onClick={() => handleApproveAdvance(adv)}
-                            className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-700"
+                            className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold hover:bg-[#262626] cursor-pointer"
                           >
                             اعتماد وصرف
                           </button>
                         ) : (
-                          <span className="text-[11px] text-emerald-700 font-semibold">مجدول بالمسير</span>
+                          <span className="text-[11px] text-[#141414] font-semibold">مجدول بالمسير ✓</span>
                         )}
                       </td>
                     </tr>
@@ -2070,23 +2110,31 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Sanctions */}
       {activeTab === 'sanctions' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
+          <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black">سجل الجزاءات والخصومات الإدارية (لائحة تنظيم العمل)</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">تطبيق جدول المخالفات والجزاءات التأديبية وربطها بالاستقطاع الشهري في مسير الرواتب</p>
+              <h3 className="text-sm font-extrabold text-[#141414]">سجل الجزاءات والخصومات الإدارية (لائحة تنظيم العمل)</h3>
+              <p className="text-xs text-[#707070] mt-0.5">تطبيق جدول المخالفات والجزاءات التأديبية وربطها بالاستقطاع الشهري في مسير الرواتب</p>
             </div>
-            <button
-              onClick={() => setShowSancModal(true)}
-              className="button-primary-pill text-xs flex items-center gap-1.5 py-1.5 px-4"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ قيد جزاء إداري</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <ExportDropdown
+                sectionKey="hr_sanctions"
+                data={sanctions}
+                label="تصدير الجزاءات (12 صيغة)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSancModal(true)}
+                className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ قيد جزاء إداري</span>
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            <table className="w-full text-right text-xs text-[#141414]">
+              <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3.5">الرمز</th>
                   <th className="p-3.5">الموظف</th>
@@ -2098,16 +2146,16 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5">الحالة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-[#f0f0f0]">
                 {sanctions.map((sanc) => (
-                  <tr key={sanc.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{sanc.id}</td>
-                    <td className="p-3.5 font-bold text-black">{sanc.employee_name}</td>
-                    <td className="p-3.5 font-semibold text-rose-700">{sanc.sanction_type}</td>
-                    <td className="p-3.5 font-mono font-bold text-rose-700">{sanc.amount.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{sanc.date}</td>
+                  <tr key={sanc.id} className="hover:bg-[#f3f3f3]/50">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{sanc.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{sanc.employee_name}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{sanc.sanction_type}</td>
+                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">{sanc.amount.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{sanc.date}</td>
                     <td className="p-3.5"><Badge text={sanc.deduct_from_salary ? 'نعم - آلي' : 'إنذار فقط'} type={sanc.deduct_from_salary ? 'danger' : 'shade'} /></td>
-                    <td className="p-3.5 text-zinc-600 max-w-xs leading-relaxed">{sanc.reason}</td>
+                    <td className="p-3.5 text-[#707070] max-w-xs leading-relaxed">{sanc.reason}</td>
                     <td className="p-3.5"><Badge text={sanc.status} type="danger" /></td>
                   </tr>
                 ))}
@@ -2119,23 +2167,31 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Permissions */}
       {activeTab === 'permissions' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
+          <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black">طلبات الاستئذان والخروج أثناء الدوام</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">توثيق ساعات الاستئذان الشخصي والرسمي ومتابعة رصيد الساعات الشهرية</p>
+              <h3 className="text-sm font-extrabold text-[#141414]">طلبات الاستئذان والخروج أثناء الدوام</h3>
+              <p className="text-xs text-[#707070] mt-0.5">توثيق ساعات الاستئذان الشخصي والرسمي ومتابعة رصيد الساعات الشهرية</p>
             </div>
-            <button
-              onClick={() => setShowPermModal(true)}
-              className="button-primary-pill text-xs flex items-center gap-1.5 py-1.5 px-4"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ تسجيل إذن خروج</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <ExportDropdown
+                sectionKey="hr_permissions"
+                data={permissions}
+                label="تصدير الاستئذان (12 صيغة)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPermModal(true)}
+                className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ تسجيل إذن خروج</span>
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            <table className="w-full text-right text-xs text-[#141414]">
+              <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3.5">الرمز</th>
                   <th className="p-3.5">الموظف</th>
@@ -2146,15 +2202,15 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5">الحالة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-[#f0f0f0]">
                 {permissions.map((perm) => (
-                  <tr key={perm.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{perm.id}</td>
-                    <td className="p-3.5 font-bold text-black">{perm.employee_name}</td>
-                    <td className="p-3.5 font-semibold text-black">{perm.permission_type}</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{perm.date}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{perm.time}</td>
-                    <td className="p-3.5 text-zinc-600">{perm.reason}</td>
+                  <tr key={perm.id} className="hover:bg-[#f3f3f3]/50">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{perm.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{perm.employee_name}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{perm.permission_type}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{perm.date}</td>
+                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">{perm.time}</td>
+                    <td className="p-3.5 text-[#707070]">{perm.reason}</td>
                     <td className="p-3.5"><Badge text={perm.status} type="success" /></td>
                   </tr>
                 ))}
@@ -2166,23 +2222,31 @@ export const HRPage: React.FC = () => {
 
       {/* Tab: Rewards */}
       {activeTab === 'rewards' && (
-        <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-          <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
+        <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
+          <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black">سجل المكافآت والحوافز والعمولات الاستثنائية</h3>
-              <p className="text-xs text-zinc-500 mt-0.5">تُدرج المكافآت المعتمدة تلقائياً ضمن مسير الرواتب الشهري (WPS) وقيد الاستحقاق المحاسبي</p>
+              <h3 className="text-sm font-extrabold text-[#141414]">سجل المكافآت والحوافز والعمولات الاستثنائية</h3>
+              <p className="text-xs text-[#707070] mt-0.5">تُدرج المكافآت المعتمدة تلقائياً ضمن مسير الرواتب الشهري (WPS) وقيد الاستحقاق المحاسبي</p>
             </div>
-            <button
-              onClick={() => setShowRewModal(true)}
-              className="button-primary-pill text-xs flex items-center gap-1.5 py-1.5 px-4"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ اعتماد مكافأة جديدة</span>
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <ExportDropdown
+                sectionKey="hr_rewards"
+                data={rewards}
+                label="تصدير المكافآت (12 صيغة)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowRewModal(true)}
+                className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ اعتماد مكافأة جديدة</span>
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-xs text-zinc-700">
-              <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+            <table className="w-full text-right text-xs text-[#141414]">
+              <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3.5">الرمز</th>
                   <th className="p-3.5">الموظف</th>
@@ -2193,15 +2257,15 @@ export const HRPage: React.FC = () => {
                   <th className="p-3.5">الحالة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100">
+              <tbody className="divide-y divide-[#f0f0f0]">
                 {rewards.map((rew) => (
-                  <tr key={rew.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{rew.id}</td>
-                    <td className="p-3.5 font-bold text-black">{rew.employee_name}</td>
-                    <td className="p-3.5 font-semibold text-emerald-800">{rew.reward_type}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">+{rew.net_reward.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 text-zinc-600">{rew.payout_timing}</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{rew.date}</td>
+                  <tr key={rew.id} className="hover:bg-[#f3f3f3]/50">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{rew.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{rew.employee_name}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{rew.reward_type}</td>
+                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">+{rew.net_reward.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 text-[#707070]">{rew.payout_timing}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{rew.date}</td>
                     <td className="p-3.5"><Badge text={rew.status} type="success" /></td>
                   </tr>
                 ))}
@@ -2228,7 +2292,7 @@ export const HRPage: React.FC = () => {
         ];
 
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 font-sans">
             {/* Payroll Run Lifecycle State Bar */}
             <div
               data-slot="filter-bar"
@@ -2246,7 +2310,7 @@ export const HRPage: React.FC = () => {
                       role="tab"
                       aria-selected={isCurrent}
                       onClick={() => setPayrollRunStatus(st.id)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                         isCurrent
                           ? 'bg-[#141414] text-white border-[#141414]'
                           : 'bg-white text-[#707070] border-[#e0e0e0] hover:bg-[#f3f3f3] hover:text-[#141414]'
@@ -2268,7 +2332,7 @@ export const HRPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handlePostPayrollToGL}
-                  className="btn-odoo btn-odoo-secondary text-xs py-1.5 px-3.5"
+                  className="btn-odoo btn-odoo-secondary text-xs py-1.5 px-3.5 cursor-pointer"
                 >
                   <Scale className="size-3.5 text-[#141414]" />
                   <span>ترحيل القيد المحاسبي المزدوج (GL)</span>
@@ -2296,44 +2360,49 @@ export const HRPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
-              <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
+            <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
+              <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-black">
+                  <h3 className="text-sm font-extrabold text-[#141414]">
                     مسير الرواتب المعتمد وحماية الأجور (WPS) — مطابق لسقف المادة (92)
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-0.5">
+                  <p className="text-xs text-[#707070] mt-0.5">
                     احتساب آلي للبدلات، المكافآت، التأمينات (GOSI)، وأقساط السلف والجزاءات مع إصدار قسيمة راتب لكل موظف
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <ExportDropdown
+                    sectionKey="payroll"
+                    data={computedPayrollRecords}
+                    label="تصدير المسير (12 صيغة)"
+                  />
                   <button
+                    type="button"
                     onClick={() => {
                       handleExportWPS('SIF');
                       setPayrollRunStatus('PAID_WPS');
                     }}
-                    className="button-primary-pill bg-emerald-700 hover:bg-emerald-800 text-white"
-                    style={{ fontSize: '12px', padding: '6px 16px', minHeight: '34px' }}
+                    className="px-4 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                     title="توليد ملف حماية الأجور القياسي المعتمد للبنوك السعودية"
                   >
-                    <ShieldCheck className="w-4 h-4 ml-1" />
+                    <ShieldCheck className="w-3.5 h-3.5" />
                     <span>توليد ملف حماية الأجور (.SIF)</span>
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleExportWPS('CSV')}
-                    className="button-outline-on-dark text-slate-800 border-slate-300 hover:bg-slate-100"
-                    style={{ fontSize: '12px', padding: '6px 14px', minHeight: '34px' }}
+                    className="px-3.5 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[#141414] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                     title="تصدير شيت الرواتب بصيغة إكسيل/CSV"
                   >
-                    <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-[#141414]" />
                     <span>تصدير CSV</span>
                   </button>
                 </div>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-right text-xs text-zinc-700">
-                  <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
+                <table className="w-full text-right text-xs text-[#141414]">
+                  <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
                     <tr>
                       <th className="p-3.5">الموظف</th>
                       <th className="p-3.5">الراتب الأساسي (70%)</th>
@@ -2345,30 +2414,31 @@ export const HRPage: React.FC = () => {
                       <th className="p-3.5 text-center">قسيمة الراتب</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-100">
+                  <tbody className="divide-y divide-[#f0f0f0]">
                     {computedPayrollRecords.map((rec, idx) => {
                       const empObj = employeesList[idx];
                       return (
-                        <tr key={rec.employeeId} className="hover:bg-zinc-50">
+                        <tr key={rec.employeeId} className="hover:bg-[#f3f3f3]/50">
                           <td className="p-3.5">
-                            <div className="font-bold text-black">{rec.employeeName}</div>
-                            <div className="text-[11px] text-zinc-400 font-mono">{rec.iban}</div>
+                            <div className="font-bold text-[#141414]">{rec.employeeName}</div>
+                            <div className="text-[11px] text-[#707070] font-mono">{rec.iban}</div>
                           </td>
                           <td className="p-3.5 font-mono">{rec.basicSalary.toLocaleString()} ⃁</td>
                           <td className="p-3.5 font-mono">{(rec.housingAllowance + rec.transportAllowance).toLocaleString()} ⃁</td>
-                          <td className="p-3.5 font-mono text-emerald-700 font-bold">
+                          <td className="p-3.5 font-mono text-[#141414] font-bold">
                             +{((rec.rewardsAmount || 0) + (rec.overtimePay || 0)).toLocaleString()} ⃁
                           </td>
-                          <td className="p-3.5 font-mono text-rose-700">-{rec.gosiDeduction.toFixed(2)} ⃁</td>
-                          <td className="p-3.5 font-mono text-rose-700">
+                          <td className="p-3.5 font-mono text-[#707070]">-{rec.gosiDeduction.toFixed(2)} ⃁</td>
+                          <td className="p-3.5 font-mono text-[#707070]">
                             -{(rec.deductions || 0).toFixed(2)} ⃁
                             {rec.deductionCapApplied && (
-                              <span className="block text-[10px] text-amber-700 font-sans">سقف 50% (م92)</span>
+                              <span className="block text-[10px] text-[#141414] font-bold font-sans">سقف 50% (م92)</span>
                             )}
                           </td>
-                          <td className="p-3.5 font-mono font-bold text-emerald-700">{rec.netSalary.toFixed(2)} ⃁</td>
+                          <td className="p-3.5 font-mono font-extrabold text-[#141414]">{rec.netSalary.toFixed(2)} ⃁</td>
                           <td className="p-3.5 text-center">
                             <button
+                              type="button"
                               onClick={() =>
                                 setSelectedPayslipRecord({
                                   record: rec,
@@ -2376,9 +2446,9 @@ export const HRPage: React.FC = () => {
                                   jobTitle: empObj?.job_title || 'موظف',
                                 })
                               }
-                              className="button-outline-on-light text-[11px] py-1 px-2.5 inline-flex items-center gap-1"
+                              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-[11px] font-bold cursor-pointer"
                             >
-                              <Printer className="w-3 h-3 text-emerald-700" />
+                              <Printer className="w-3 h-3 text-[#ffffff]" />
                               <span>قسيمة PDF</span>
                             </button>
                           </td>

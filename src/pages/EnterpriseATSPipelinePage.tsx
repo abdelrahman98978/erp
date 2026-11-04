@@ -136,7 +136,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
     const currentIdx = stagesList.indexOf(candidate.stage);
     if (currentIdx === -1) return;
 
-    let targetIdx = direction === 'next' ? currentIdx + 1 : currentIdx - 1;
+    const targetIdx = direction === 'next' ? currentIdx + 1 : currentIdx - 1;
     if (targetIdx < 0 || targetIdx >= stagesList.length) return;
 
     const newStage = stagesList[targetIdx];

@@ -11,6 +11,7 @@ export interface PopupNotification {
   title: string;
   message: string;
   type: 'success' | 'warning' | 'error' | 'info' | 'zatca' | 'etimad' | 'musaned' | 'shelter' | 'system' | 'sponsorship';
+  priority?: 'critical' | 'actionable' | 'micro';
   companyId?: string;
   companyName?: string;
   timestamp: string;
@@ -29,15 +30,18 @@ class NotificationPopupEngine {
   private listeners: Set<NotificationListener> = new Set();
   private timers: Map<string, ReturnType<typeof setTimeout>> = new Map();
   private isAudioMuted = false;
+  private isFocusMode = false;
   private swListenerAttached = false;
 
   constructor() {
     try {
       if (typeof localStorage !== 'undefined') {
         this.isAudioMuted = localStorage.getItem('khalid_popups_muted') === 'true';
+        this.isFocusMode = localStorage.getItem('khalid_focus_mode') === 'true';
       }
     } catch {
       this.isAudioMuted = false;
+      this.isFocusMode = false;
     }
     this.initServiceWorkerBridge();
   }
@@ -164,20 +168,29 @@ class NotificationPopupEngine {
    */
   public show(params: Omit<PopupNotification, 'id' | 'timestamp'>): string {
     const id = `popup-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const durationMs = params.durationMs ?? 6500;
+    const resolvedPriority: 'critical' | 'actionable' | 'micro' =
+      params.priority ||
+      (params.type === 'error'
+        ? 'critical'
+        : params.type === 'warning' || params.action
+        ? 'actionable'
+        : 'micro');
+
+    const defaultDuration =
+      resolvedPriority === 'micro'
+        ? 2600
+        : resolvedPriority === 'actionable'
+        ? 4500
+        : 6500;
+    const durationMs = params.durationMs ?? defaultDuration;
 
     const notif: PopupNotification = {
       ...params,
       id,
+      priority: resolvedPriority,
       timestamp: new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
       durationMs,
     };
-
-    // Keep max 4 active floating popups on screen at once (cleaner on mobile)
-    this.notifications = [notif, ...this.notifications.slice(0, 3)];
-    this.notifyListeners();
-    this.playPopupChime(params.type);
-    this.triggerMobileHaptics(params.type);
 
     // Record in persistent Notification Center (AppStore) so bell badge & history stay synchronized
     if (!params.skipHistory) {
@@ -190,7 +203,7 @@ class NotificationPopupEngine {
           ? 'success'
           : 'info';
 
-      const storeCategory: 'zatca' | 'etimad' | 'musaned' | 'shelter' | 'system' =
+      const storeCategory: 'zatca' | 'etimad' | 'musaned' | 'shelter' | 'hr' | 'finance' | 'system' =
         params.type === 'zatca' || params.type === 'etimad' || params.type === 'musaned' || params.type === 'shelter'
           ? params.type
           : 'system';
@@ -199,14 +212,28 @@ class NotificationPopupEngine {
         title: notif.title,
         message: notif.message,
         type: storeType,
+        priority: resolvedPriority,
         category: storeCategory,
         companyId: notif.companyId || useAppStore.getState().activeCompanyId,
         link: notif.action?.tabKey,
+        actionLabel: notif.action?.label,
       });
     }
 
-    // Trigger Native Mobile / OS Notification via ServiceWorkerRegistration (works on Android Chrome & iOS PWA)
-    void this.sendNativeBrowserNotification(notif);
+    // Focus Mode: suppress non-critical floating popups so user isn't interrupted
+    if (this.isFocusMode && resolvedPriority !== 'critical') {
+      return id;
+    }
+
+    // Keep max 2 active floating popups on screen at once for clean Mobbin UX
+    this.notifications = [notif, ...this.notifications.slice(0, 1)];
+    this.notifyListeners();
+
+    if (resolvedPriority !== 'micro') {
+      this.playPopupChime(params.type);
+      this.triggerMobileHaptics(params.type);
+      void this.sendNativeBrowserNotification(notif);
+    }
 
     // Auto dismiss after durationMs
     if (durationMs > 0) {
@@ -250,6 +277,25 @@ class NotificationPopupEngine {
 
   public getIsMuted(): boolean {
     return this.isAudioMuted;
+  }
+
+  public toggleFocusMode(): boolean {
+    this.isFocusMode = !this.isFocusMode;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('khalid_focus_mode', String(this.isFocusMode));
+      }
+    } catch {
+      // ignore
+    }
+    if (this.isFocusMode) {
+      this.clearAll();
+    }
+    return this.isFocusMode;
+  }
+
+  public getIsFocusMode(): boolean {
+    return this.isFocusMode;
   }
 
   public getPermissionStatus(): NotificationPermission | 'unsupported' {

@@ -43,4 +43,20 @@ describe('EnterpriseErrorMonitorService', () => {
     expect(summaryAfter.openIncidents).toBe(0);
     expect(summaryAfter.healthScore).toBe(100);
   });
+
+  it('provides the complete 3,000 ERP famous programming errors catalog across 10 domains', () => {
+    const catalog = errorMonitorService.getKnownErpErrorCatalog();
+    const stats = errorMonitorService.getKnownErpCatalogStats();
+
+    expect(catalog).toHaveLength(3000);
+    expect(stats.totalErrors).toBe(3000);
+    expect(stats.domainCount).toBe(10);
+    expect(stats.subModuleCount).toBe(300);
+    expect(stats.patternCount).toBe(10);
+    expect(catalog[0].code).toBe('ERP-ERR-0001');
+    expect(catalog[2999].code).toBe('ERP-ERR-3000');
+
+    const simulatedFromCatalog = errorMonitorService.simulateCatalogError(catalog[0]);
+    expect(simulatedFromCatalog.title).toContain('ERP-ERR-0001');
+  });
 });

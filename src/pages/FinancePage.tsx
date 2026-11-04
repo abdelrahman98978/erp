@@ -246,7 +246,7 @@ export const FinancePage: React.FC = () => {
   const calculateEOSBResult = () => {
     const sal = parseFloat(eosbCalc.salary) || 0;
     const yrs = parseFloat(eosbCalc.years) || 0;
-    let base = yrs <= 5 ? yrs * (sal / 2) : 5 * (sal / 2) + (yrs - 5) * sal;
+    const base = yrs <= 5 ? yrs * (sal / 2) : 5 * (sal / 2) + (yrs - 5) * sal;
     if (eosbCalc.reason === 'resignation') {
       if (yrs < 2) return 0;
       if (yrs >= 2 && yrs < 5) return base * (1 / 3);

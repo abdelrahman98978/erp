@@ -78,15 +78,15 @@ export function detectWakeCall(rawText: string, defaultPersona: AssistantPersona
 
   // Noura summon patterns:
   // "نوره", "نورة", "نورا", "يا نوره", "يا نورة", "يا نورا", "ام خالد", "يا ام خالد"
-  const nouraRegex = /(?:^|\s|يا\s*|يا)(نور[هها]|ام\s*خالد)(?:$|\s|[،,\.?!])/i;
+  const nouraRegex = /(?:^|\s|يا\s*|يا)(نور[هها]|ام\s*خالد)(?:$|\s|[،,.?!])/i;
 
   // Faris summon patterns:
   // "فارس", "يا فارس", "يافارس", "فارسنا", "ابو فهد", "يا ابو فهد"
-  const farisRegex = /(?:^|\s|يا\s*|يا)(فارس(?:نا)?|ابو\s*فهد)(?:$|\s|[،,\.?!])/i;
+  const farisRegex = /(?:^|\s|يا\s*|يا)(فارس(?:نا)?|ابو\s*فهد)(?:$|\s|[،,.?!])/i;
 
   // General assistant call:
   // "يا مرشد", "يا مرشده", "يا مساعد", "يا مساعدنا", "يا ذكاء", "يا كوبايلوت"
-  const generalRegex = /(?:^|\s|يا\s*|يا)(مرشد[هه]?|مساعد(?:نا)?|ذكاء|كوبايلوت)(?:$|\s|[،,\.?!])/i;
+  const generalRegex = /(?:^|\s|يا\s*|يا)(مرشد[هه]?|مساعد(?:نا)?|ذكاء|كوبايلوت)(?:$|\s|[،,.?!])/i;
 
   const matchNoura = nouraRegex.test(norm);
   const matchFaris = farisRegex.test(norm);
@@ -101,7 +101,7 @@ export function detectWakeCall(rawText: string, defaultPersona: AssistantPersona
   // Extract direct query if user spoke a command after calling the name:
   // e.g. "يا فارس اعطني تقرير العقود" -> "اعطني تقرير العقود"
   const cleaned = rawText
-    .replace(/^(?:مرحبا|اهلا|أهلاً|أهلا|الو|ألو|هلا|يا|يا\s*)*(?:فارس(?:نا)?|نور[ةه]|نورا|مرشد[ةه]?|مساعد(?:نا)?|ابو\s*فهد|ام\s*خالد)[\s،,:\-]*/i, '')
+    .replace(/^(?:مرحبا|اهلا|أهلاً|أهلا|الو|ألو|هلا|يا|يا\s*)*(?:فارس(?:نا)?|نور[ةه]|نورا|مرشد[ةه]?|مساعد(?:نا)?|ابو\s*فهد|ام\s*خالد)[\s،,:-]*/i, '')
     .trim();
 
   return {
@@ -1481,7 +1481,7 @@ export const AICopilotWidget: React.FC<AICopilotWidgetProps> = ({ onNavigate }) 
                         {msg.text.split('\n').map((line, lIdx) => {
                           const trimmed = line.trim();
                           if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')) {
-                            const content = trimmed.replace(/^[•\-\*]\s*/, '');
+                            const content = trimmed.replace(/^[•\-*]\s*/, '');
                             return (
                               <div key={lIdx} className="flex items-start gap-2 my-0.5 pr-0.5">
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#141414] mt-2 shrink-0" />

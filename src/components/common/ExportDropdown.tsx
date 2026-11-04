@@ -30,6 +30,7 @@ export interface ExportDropdownProps {
   dataProvider?: () => any[];
   customTitle?: string;
   buttonLabel?: string;
+  label?: string;
   variant?: 'outline-dark' | 'outline-light' | 'primary-pill' | 'compact';
   showCountBadge?: boolean;
   className?: string;
@@ -40,11 +41,13 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
   data,
   dataProvider,
   customTitle,
-  buttonLabel = 'تصدير الكشوفات',
+  buttonLabel,
+  label,
   variant = 'outline-light',
   showCountBadge = true,
   className = '',
 }) => {
+  const resolvedButtonLabel = buttonLabel || label || 'تصدير الكشوفات';
   const [isOpen, setIsOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -304,7 +307,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
         <span className={`inline-flex shrink-0 ${isExporting ? 'animate-bounce' : ''}`}>
           <Download className="w-4 h-4 text-[#141414] shrink-0" />
         </span>
-        <span>{isExporting ? 'جاري التجهيز...' : buttonLabel}</span>
+        <span>{isExporting ? 'جاري التجهيز...' : resolvedButtonLabel}</span>
         {showCountBadge && badgeCount > 0 && !isExporting && (
           <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#e0e0e0] text-[#141414] font-bold">
             {badgeCount}

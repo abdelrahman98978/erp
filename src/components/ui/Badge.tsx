@@ -8,29 +8,21 @@ interface BadgeProps {
 }
 
 export const Badge: React.FC<BadgeProps> = ({ text, type = 'shade', icon, className = '' }) => {
-  if (type === 'mint' || type === 'success' || type === 'gold' || type === 'champagne') {
-    return (
-      <span className={`pill-tag-mint ${className}`}>
-        {icon && <i className={icon} style={{ fontSize: '10px' }}></i>}
-        <span>{text}</span>
-      </span>
-    );
-  }
+  const isFilled = type === 'danger' || type === 'primary';
+  const isOutlineDark = type === 'warning';
 
-  if (type === 'shade') {
-    return (
-      <span className={`pill-tag-shade ${className}`}>
-        {icon && <i className={icon} style={{ fontSize: '10px' }}></i>}
-        <span>{text}</span>
-      </span>
-    );
-  }
+  const baseStyle = isFilled
+    ? 'bg-[#141414] text-[#ffffff] border border-[#141414]'
+    : isOutlineDark
+    ? 'bg-[#ffffff] text-[#141414] border border-[#141414]'
+    : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]';
 
   return (
-    <span className={`badge-pill ${type} ${className}`} style={{ borderRadius: '9999px', fontFeatureSettings: '"ss03" 1' }}>
-      {icon && <i className={icon}></i>}
-      {text}
+    <span
+      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${baseStyle} ${className}`}
+    >
+      {icon && <i className={icon} style={{ fontSize: '10px' }} />}
+      <span>{text}</span>
     </span>
   );
 };
-

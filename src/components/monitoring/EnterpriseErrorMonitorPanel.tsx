@@ -18,6 +18,10 @@ import {
   Cpu,
   Bug,
   Sparkles,
+  BookOpen,
+  Layers,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import {
   errorMonitorService,
@@ -26,7 +30,12 @@ import {
   ErrorSeverity,
   ErrorStatus,
   ErrorCategory,
+  ErpCatalogErrorItem,
 } from '../../services/errorMonitorService';
+import {
+  ERP_DOMAINS_10,
+  ERP_FAILURE_PATTERNS_10,
+} from '../../services/erp3000ErrorCatalog';
 import { ExportDropdown } from '../common/ExportDropdown';
 import { useAppStore } from '../../stores/appStore';
 
@@ -45,6 +54,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
   const [summary, setSummary] = useState<SystemHealthSummary>(() =>
     errorMonitorService.getSystemHealthSummary()
   );
+  const [activeView, setActiveView] = useState<'live_monitor' | 'catalog_3000'>('live_monitor');
   const [searchQuery, setSearchQuery] = useState('');
   const [severityFilter, setSeverityFilter] = useState<'all' | ErrorSeverity>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | ErrorStatus>('all');
@@ -53,6 +63,17 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
   const [isScanning, setIsScanning] = useState(false);
   const [isHealingAll, setIsHealingAll] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // 3,000 Famous ERP Errors Encyclopedia State
+  const catalog3000 = useMemo(() => errorMonitorService.getKnownErpErrorCatalog(), []);
+  const catalogStats = useMemo(() => errorMonitorService.getKnownErpCatalogStats(), []);
+  const [catalogSearch, setCatalogSearch] = useState('');
+  const [catalogDomainFilter, setCatalogDomainFilter] = useState<string>('all');
+  const [catalogPatternFilter, setCatalogPatternFilter] = useState<string>('all');
+  const [catalogSeverityFilter, setCatalogSeverityFilter] = useState<'all' | ErrorSeverity>('all');
+  const [catalogPage, setCatalogPage] = useState<number>(1);
+  const [selectedCatalogItem, setSelectedCatalogItem] = useState<ErpCatalogErrorItem | null>(null);
+  const CATALOG_PAGE_SIZE = 50;
 
   const refreshMonitor = () => {
     setIncidents(errorMonitorService.getIncidents());
@@ -89,6 +110,40 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
   }, [incidents, severityFilter, statusFilter, categoryFilter, searchQuery]);
 
   const exportRows = useMemo(() => {
+    if (activeView === 'catalog_3000') {
+      return catalog3000
+        .filter((item) => {
+          if (catalogDomainFilter !== 'all' && item.domainCode !== catalogDomainFilter) return false;
+          if (catalogPatternFilter !== 'all' && item.patternCode !== catalogPatternFilter) return false;
+          if (catalogSeverityFilter !== 'all' && item.severity !== catalogSeverityFilter) return false;
+          if (catalogSearch.trim()) {
+            const q = catalogSearch.toLowerCase();
+            return (
+              item.code.toLowerCase().includes(q) ||
+              item.titleAr.toLowerCase().includes(q) ||
+              item.subModuleAr.toLowerCase().includes(q) ||
+              item.domainNameAr.toLowerCase().includes(q) ||
+              item.patternNameAr.toLowerCase().includes(q) ||
+              item.technicalSignature.toLowerCase().includes(q) ||
+              item.guardianModule.toLowerCase().includes(q)
+            );
+          }
+          return true;
+        })
+        .slice(0, 500)
+        .map((item) => ({
+          'التسلسل': item.seq,
+          'الكود القياسي': item.code,
+          'المجال المؤسسي': item.domainNameAr,
+          'الوحدة الفرعية': item.subModuleAr,
+          'نمط الخلل البرمجي': item.patternNameAr,
+          'وصف الخطأ البرمجي': item.titleAr,
+          'التشخيص الجذري': item.rootCauseAr,
+          'الحل الهندسي والوقاية': item.remediationAr,
+          'المحرك الحارس': item.guardianModule,
+          'الخطورة': item.severity.toUpperCase(),
+        }));
+    }
     return filteredIncidents.map((inc) => ({
       'رقم البلاغ': inc.id,
       'الكود التشخيصي': inc.code,
@@ -102,7 +157,55 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
       'التكرار': inc.occurrences,
       'وقت الرصد': inc.lastSeenAt,
     }));
-  }, [filteredIncidents]);
+  }, [
+    activeView,
+    catalog3000,
+    catalogDomainFilter,
+    catalogPatternFilter,
+    catalogSeverityFilter,
+    catalogSearch,
+    filteredIncidents,
+  ]);
+
+  const filteredCatalogItems = useMemo(() => {
+    return catalog3000.filter((item) => {
+      if (catalogDomainFilter !== 'all' && item.domainCode !== catalogDomainFilter) return false;
+      if (catalogPatternFilter !== 'all' && item.patternCode !== catalogPatternFilter) return false;
+      if (catalogSeverityFilter !== 'all' && item.severity !== catalogSeverityFilter) return false;
+      if (catalogSearch.trim()) {
+        const q = catalogSearch.toLowerCase();
+        return (
+          item.code.toLowerCase().includes(q) ||
+          item.titleAr.toLowerCase().includes(q) ||
+          item.subModuleAr.toLowerCase().includes(q) ||
+          item.domainNameAr.toLowerCase().includes(q) ||
+          item.patternNameAr.toLowerCase().includes(q) ||
+          item.technicalSignature.toLowerCase().includes(q) ||
+          item.rootCauseAr.toLowerCase().includes(q) ||
+          item.remediationAr.toLowerCase().includes(q) ||
+          item.guardianModule.toLowerCase().includes(q)
+        );
+      }
+      return true;
+    });
+  }, [catalog3000, catalogDomainFilter, catalogPatternFilter, catalogSeverityFilter, catalogSearch]);
+
+  const totalCatalogPages = Math.max(1, Math.ceil(filteredCatalogItems.length / CATALOG_PAGE_SIZE));
+  const safeCatalogPage = Math.min(catalogPage, totalCatalogPages);
+  const paginatedCatalogItems = useMemo(() => {
+    const start = (safeCatalogPage - 1) * CATALOG_PAGE_SIZE;
+    return filteredCatalogItems.slice(start, start + CATALOG_PAGE_SIZE);
+  }, [filteredCatalogItems, safeCatalogPage]);
+
+  const handleSimulateFromCatalog = (item: ErpCatalogErrorItem) => {
+    const inc = errorMonitorService.simulateCatalogError(item);
+    setActiveView('live_monitor');
+    addNotification({
+      title: `محاكاة خطأ قياسي (${item.code})`,
+      message: `تم إرسال "${item.titleAr}" إلى السجل المباشر (${inc.id}) لفحص الاستشفاء الذاتي.`,
+      type: 'warning',
+    });
+  };
 
   const handleHealSingle = (incident: MonitoredErrorIncident) => {
     const healed = errorMonitorService.healIncident(incident.id);
@@ -325,8 +428,319 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
         </div>
       </div>
 
+      {/* View Mode Switcher: Live Runtime Monitor vs 3,000 Famous ERP Programming Errors Encyclopedia */}
+      <div className="p-3 rounded-[20px] bg-[#ffffff] border border-[#e0e0e0] flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveView('live_monitor')}
+            className={`px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-2 cursor-pointer transition-all ${
+              activeView === 'live_monitor'
+                ? 'bg-[#141414] text-[#ffffff]'
+                : 'bg-[#f3f3f3] text-[#141414] hover:bg-[#e5e5e5] border border-[#e0e0e0]'
+            }`}
+          >
+            <Activity className="w-4 h-4" />
+            <span>السجل التشغيلي المباشر ({incidents.length} بلاغ)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveView('catalog_3000')}
+            className={`px-4 py-2 rounded-full text-xs font-bold inline-flex items-center gap-2 cursor-pointer transition-all ${
+              activeView === 'catalog_3000'
+                ? 'bg-[#141414] text-[#ffffff]'
+                : 'bg-[#f3f3f3] text-[#141414] hover:bg-[#e5e5e5] border border-[#e0e0e0]'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>
+              موسوعة الأخطاء البرمجية المشهورة في أنظمة ERP ({catalogStats.totalErrors.toLocaleString('en-US')} خطأ مصنّف)
+            </span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 text-[11px] text-[#707070] font-semibold">
+          <Layers className="w-3.5 h-3.5 text-[#141414]" />
+          <span>
+            {catalogStats.domainCount} مجالات رئيسية × {catalogStats.subModuleCount} وحدة فرعية ={' '}
+            <strong className="text-[#141414] font-mono">3,000</strong> قاعدة فحص وحماية
+          </span>
+        </div>
+      </div>
+
+      {/* 3,000 ERP Programming Errors Encyclopedia View */}
+      {activeView === 'catalog_3000' && (
+        <div className="space-y-4">
+          {/* 10 Core ERP Domains Overview Grid */}
+          <div className="p-4 rounded-[24px] bg-[#ffffff] border border-[#e0e0e0] space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-[#141414]" />
+                <span className="text-xs sm:text-sm font-bold text-[#141414]">
+                  تصفح الأخطاء الـ 3,000 حسب المجالات العشرة الكبرى لأنظمة ERP (300 خطأ لكل مجال):
+                </span>
+              </div>
+              {catalogDomainFilter !== 'all' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCatalogDomainFilter('all');
+                    setCatalogPage(1);
+                  }}
+                  className="px-3 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[11px] font-semibold cursor-pointer"
+                >
+                  عرض جميع المجالات (3,000)
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+              {catalogStats.byDomain.map((dom) => {
+                const isSelected = catalogDomainFilter === dom.code;
+                return (
+                  <button
+                    key={dom.code}
+                    type="button"
+                    onClick={() => {
+                      setCatalogDomainFilter(isSelected ? 'all' : dom.code);
+                      setCatalogPage(1);
+                    }}
+                    className={`p-3 rounded-[16px] border text-right transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                      isSelected
+                        ? 'bg-[#141414] text-[#ffffff] border-[#141414]'
+                        : 'bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] border-[#e0e0e0]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="font-mono text-[10px] font-bold opacity-80">{dom.code}</span>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                          isSelected
+                            ? 'bg-[#ffffff] text-[#141414]'
+                            : 'bg-[#ffffff] text-[#141414] border border-[#e0e0e0]'
+                        }`}
+                      >
+                        {dom.count} خطأ
+                      </span>
+                    </div>
+                    <div className="text-[11.5px] font-bold leading-snug line-clamp-2">
+                      {dom.nameAr}
+                    </div>
+                    <div className="text-[10px] font-mono opacity-75 truncate" dir="ltr">
+                      {dom.rangeLabel}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Catalog Search & Pattern Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-2 border-t border-[#f0f0f0]">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-[#707070] absolute right-3 top-2.5" />
+                <input
+                  type="text"
+                  value={catalogSearch}
+                  onChange={(e) => {
+                    setCatalogSearch(e.target.value);
+                    setCatalogPage(1);
+                  }}
+                  placeholder="ابحث في 3,000 خطأ (مثلاً: ERP-ERR-0450، ZATCA، قيد، RLS)..."
+                  className="w-full h-9 pr-8 pl-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"
+                />
+              </div>
+
+              <select
+                value={catalogDomainFilter}
+                onChange={(e) => {
+                  setCatalogDomainFilter(e.target.value);
+                  setCatalogPage(1);
+                }}
+                className="h-9 px-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"
+              >
+                <option value="all">جميع المجالات العشرة (3,000 خطأ)</option>
+                {ERP_DOMAINS_10.map((d) => (
+                  <option key={d.code} value={d.code}>
+                    {d.nameAr} (300)
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={catalogPatternFilter}
+                onChange={(e) => {
+                  setCatalogPatternFilter(e.target.value);
+                  setCatalogPage(1);
+                }}
+                className="h-9 px-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"
+              >
+                <option value="all">جميع أنماط الخلل البرمجي (10 أنماط)</option>
+                {ERP_FAILURE_PATTERNS_10.map((p) => (
+                  <option key={p.code} value={p.code}>
+                    {p.nameAr} (300)
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={catalogSeverityFilter}
+                onChange={(e) => {
+                  setCatalogSeverityFilter(e.target.value as any);
+                  setCatalogPage(1);
+                }}
+                className="h-9 px-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"
+              >
+                <option value="all">جميع مستويات الخطورة</option>
+                <option value="critical">حرج جداً ({catalogStats.criticalCount})</option>
+                <option value="high">مرتفع ({catalogStats.highCount})</option>
+                <option value="medium">متوسط ({catalogStats.mediumCount})</option>
+              </select>
+            </div>
+          </div>
+
+          {/* 3,000 Catalog Paginated Table */}
+          <div className="rounded-[24px] bg-[#ffffff] border border-[#e0e0e0] overflow-hidden">
+            <div className="px-5 py-3.5 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-[#141414]" />
+                <h3 className="text-xs sm:text-sm font-bold text-[#141414] m-0">
+                  سجل الأخطاء البرمجية المشهورة في أنظمة ERP ({filteredCatalogItems.length.toLocaleString('en-US')} خطأ مطابق)
+                </h3>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={safeCatalogPage <= 1}
+                  onClick={() => setCatalogPage((p) => Math.max(1, p - 1))}
+                  className="px-2.5 py-1 rounded-full bg-[#ffffff] border border-[#e0e0e0] text-[#141414] disabled:opacity-40 text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                  <span>السابق</span>
+                </button>
+                <span className="text-xs font-mono font-bold text-[#141414]">
+                  صفحة {safeCatalogPage} من {totalCatalogPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={safeCatalogPage >= totalCatalogPages}
+                  onClick={() => setCatalogPage((p) => Math.min(totalCatalogPages, p + 1))}
+                  className="px-2.5 py-1 rounded-full bg-[#ffffff] border border-[#e0e0e0] text-[#141414] disabled:opacity-40 text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>التالي</span>
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs">
+                <thead className="bg-[#f3f3f3] text-[#707070] font-semibold border-b border-[#e0e0e0]">
+                  <tr>
+                    <th className="p-3.5"># / الكود</th>
+                    <th className="p-3.5">المجال والوحدة الفرعية</th>
+                    <th className="p-3.5">الخطأ البرمجي المشهور والأثر التقني</th>
+                    <th className="p-3.5">التشخيص الجذري والوقاية</th>
+                    <th className="p-3.5">الخطورة</th>
+                    <th className="p-3.5 text-center">إجراءات الفحص</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#f0f0f0]">
+                  {paginatedCatalogItems.map((item) => (
+                    <tr key={item.code} className="hover:bg-[#f3f3f3] transition-colors">
+                      <td className="p-3.5 align-top whitespace-nowrap">
+                        <div className="font-mono font-bold text-[#141414] text-xs">
+                          {item.code}
+                        </div>
+                        <div className="font-mono text-[10px] text-[#707070] mt-0.5">
+                          #{item.seq} • {item.standardRef}
+                        </div>
+                      </td>
+
+                      <td className="p-3.5 align-top max-w-[220px]">
+                        <div className="font-bold text-[#141414] leading-snug">
+                          {item.subModuleAr}
+                        </div>
+                        <div className="text-[10.5px] text-[#707070] mt-0.5">
+                          {item.domainNameAr}
+                        </div>
+                        <div
+                          className="font-mono text-[10px] text-[#141414] mt-1 truncate"
+                          dir="ltr"
+                        >
+                          {item.guardianModule}
+                        </div>
+                      </td>
+
+                      <td className="p-3.5 align-top max-w-xs">
+                        <div className="font-bold text-[#141414] leading-snug">
+                          {item.titleAr}
+                        </div>
+                        <div className="text-[10.5px] text-[#707070] font-semibold mt-0.5">
+                          النمط: {item.patternNameAr}
+                        </div>
+                        <div
+                          className="font-mono text-[10px] text-[#707070] mt-1 line-clamp-2 bg-[#f3f3f3] p-1.5 rounded-[10px] border border-[#e0e0e0]"
+                          dir="ltr"
+                        >
+                          {item.technicalSignature}
+                        </div>
+                      </td>
+
+                      <td className="p-3.5 align-top max-w-sm">
+                        <div className="text-[#707070] leading-relaxed">
+                          <strong className="text-[#141414]">السبب: </strong>
+                          {item.rootCauseAr}
+                        </div>
+                        <div className="mt-1.5 p-2 rounded-[12px] bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[11px] font-semibold">
+                          <strong>الحل الهندسي: </strong>
+                          {item.remediationAr}
+                        </div>
+                      </td>
+
+                      <td className="p-3.5 align-top whitespace-nowrap">
+                        <span
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold border ${getSeverityBadgeStyle(
+                            item.severity
+                          )}`}
+                        >
+                          {item.severity.toUpperCase()}
+                        </span>
+                      </td>
+
+                      <td className="p-3.5 align-top text-center whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCatalogItem(item)}
+                            className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414] border border-[#e0e0e0] text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>تفاصيل</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSimulateFromCatalog(item)}
+                            className="px-3 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-[11px] font-semibold inline-flex items-center gap-1 cursor-pointer"
+                            title="محاكاة هذا الخطأ في الرادار المباشر واختبار الاستشفاء الذاتي"
+                          >
+                            <Zap className="w-3 h-3" />
+                            <span>اختبار الدرع</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 4-Point Live Subsystem Health Checks */}
-      {!compact && (
+      {activeView === 'live_monitor' && !compact && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {summary.checks.map((chk) => (
             <div
@@ -357,6 +771,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
       )}
 
       {/* Simulation & Chaos Testing Bar + Filters */}
+      {activeView === 'live_monitor' && (
       <div className="p-4 rounded-[24px] bg-[#ffffff] border border-[#e0e0e0] space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#f0f0f0]">
           <div className="flex items-center gap-2">
@@ -456,8 +871,10 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
           </select>
         </div>
       </div>
+      )}
 
       {/* Incidents Table */}
+      {activeView === 'live_monitor' && (
       <div className="rounded-[24px] bg-[#ffffff] border border-[#e0e0e0] overflow-hidden">
         <div className="px-5 py-3.5 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
@@ -604,6 +1021,120 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
           </table>
         </div>
       </div>
+      )}
+
+      {/* Catalog 3,000 Item Inspector Modal */}
+      {selectedCatalogItem && (
+        <div
+          className="fixed inset-0 z-[2400] bg-[#141414]/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setSelectedCatalogItem(null)}
+        >
+          <div
+            className="w-full max-w-2xl bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            dir="rtl"
+          >
+            <div className="p-5 bg-[#ffffff] text-[#141414] border-b border-[#e5e5e5] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-[12px] bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold text-[#141414]">
+                      {selectedCatalogItem.code}
+                    </span>
+                    <span className="font-mono text-[11px] px-2 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#707070]">
+                      #{selectedCatalogItem.seq} / 3000 • {selectedCatalogItem.standardRef}
+                    </span>
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-[#141414] m-0 mt-0.5">
+                    {selectedCatalogItem.titleAr}
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedCatalogItem(null)}
+                className="p-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414] cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 bg-[#ffffff] max-h-[75vh] overflow-y-auto text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div className="p-2.5 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0]">
+                  <span className="text-[10.5px] text-[#707070] block">المجال المؤسسي</span>
+                  <span className="font-bold text-[#141414] mt-0.5 block">
+                    {selectedCatalogItem.domainNameAr}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0]">
+                  <span className="text-[10.5px] text-[#707070] block">الوحدة الفرعية</span>
+                  <span className="font-bold text-[#141414] mt-0.5 block">
+                    {selectedCatalogItem.subModuleAr}
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0]">
+                  <span className="text-[10.5px] text-[#707070] block">المحرك الحارس في المنظومة</span>
+                  <span className="font-mono font-bold text-[#141414] mt-0.5 block" dir="ltr">
+                    {selectedCatalogItem.guardianModule}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-[18px] bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
+                <div className="font-bold text-[#141414]">
+                  نمط الخلل البرمجي ({selectedCatalogItem.patternCode}):
+                </div>
+                <p className="text-[#141414] font-semibold m-0">{selectedCatalogItem.patternNameAr}</p>
+                <div className="font-bold text-[#141414] pt-1">التشخيص الجذري (لماذا يقع المبرمجون في هذا الخطأ؟):</div>
+                <p className="text-[#707070] m-0 leading-relaxed">{selectedCatalogItem.rootCauseAr}</p>
+                <div className="font-bold text-[#141414] pt-1">الحل الهندسي والوقاية في المنظومة:</div>
+                <p className="text-[#141414] font-semibold m-0 leading-relaxed">
+                  {selectedCatalogItem.remediationAr}
+                </p>
+              </div>
+
+              <div>
+                <div className="font-bold text-[#141414] mb-1.5">
+                  البصمة التقنية للاستثناء (Technical Exception Signature):
+                </div>
+                <pre
+                  dir="ltr"
+                  className="p-3.5 rounded-[16px] bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] font-mono text-[11px] overflow-x-auto whitespace-pre-wrap leading-relaxed m-0"
+                >
+                  {selectedCatalogItem.technicalSignature}
+                </pre>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-[#ffffff] border-t border-[#e5e5e5] flex items-center justify-between flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const item = selectedCatalogItem;
+                  setSelectedCatalogItem(null);
+                  handleSimulateFromCatalog(item);
+                }}
+                className="px-4 py-2 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>محاكاة هذا الخطأ في الرادار واختبار الإصلاح الذاتي</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedCatalogItem(null)}
+                className="px-4 py-2 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414] border border-[#e0e0e0] text-xs font-semibold cursor-pointer"
+              >
+                إغلاق النافذة
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Deep Diagnostic & Stack Trace Inspector Modal */}
       {selectedIncident && (

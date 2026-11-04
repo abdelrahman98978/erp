@@ -1,6 +1,12 @@
 import * as Sentry from '@sentry/react';
 import { realErpDataStore } from './realErpDataStore';
 import { notificationPopupEngine } from './notificationPopupEngine';
+import {
+  getErp3000ErrorCatalog,
+  getErp3000CatalogStats,
+  type ErpCatalogErrorItem,
+  type ErpCatalogStats,
+} from './erp3000ErrorCatalog';
 
 export type ErrorCategory =
   | 'react_render'
@@ -814,7 +820,28 @@ class EnterpriseErrorMonitorService {
       checks,
     };
   }
+
+  public getKnownErpErrorCatalog(): ErpCatalogErrorItem[] {
+    return getErp3000ErrorCatalog();
+  }
+
+  public getKnownErpCatalogStats(): ErpCatalogStats {
+    return getErp3000CatalogStats();
+  }
+
+  public simulateCatalogError(item: ErpCatalogErrorItem): MonitoredErrorIncident {
+    return this.recordIncident({
+      title: `[${item.code}] ${item.titleAr}`,
+      message: item.technicalSignature,
+      category: item.category,
+      severity: item.severity,
+      moduleName: `${item.subModuleAr} (${item.guardianModule})`,
+      stack: `${item.technicalSignature}\n  Standard: ${item.standardRef} | Pattern: ${item.patternCode}\n  Guardian: ${item.guardianModule}`,
+      autoHealImmediately: false,
+    });
+  }
 }
 
+export type { ErpCatalogErrorItem, ErpCatalogStats };
 export const errorMonitorService = new EnterpriseErrorMonitorService();
 export default errorMonitorService;
