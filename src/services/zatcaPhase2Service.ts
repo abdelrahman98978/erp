@@ -110,22 +110,42 @@ export function generateZatcaQR(
   return uint8ArrayToBase64(combined);
 }
 
+function escapeXml(raw: string): string {
+  return String(raw || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function normalizeIsoTime(issueTime: string): string {
+  const clean = (issueTime || '00:00:00').trim().replace(/Z$/i, '');
+  const parts = clean.split(':');
+  if (parts.length === 2) return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:00`;
+  if (parts.length >= 3) {
+    return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:${parts[2].slice(0, 2).padStart(2, '0')}`;
+  }
+  return '00:00:00';
+}
+
 /**
  * Generates UBL 2.1 XML structure compliant with ZATCA Phase 2
  */
 export function generateUblXml(payload: ZatcaInvoicePayload): string {
-  const pih = payload.previousInvoiceHash || ZATCA_GENESIS_PIH;
-  const crNumber = payload.sellerCrNumber || '1010892345';
+  const pih = escapeXml(payload.previousInvoiceHash || ZATCA_GENESIS_PIH);
+  const crNumber = escapeXml(payload.sellerCrNumber || '1010892345');
+  const normTime = normalizeIsoTime(payload.issueTime);
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
          xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
          xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
   <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
-  <cbc:ID>${payload.invoiceNumber}</cbc:ID>
-  <cbc:UUID>${payload.uuid}</cbc:UUID>
-  <cbc:IssueDate>${payload.issueDate}</cbc:IssueDate>
-  <cbc:IssueTime>${payload.issueTime}</cbc:IssueTime>
+  <cbc:ID>${escapeXml(payload.invoiceNumber)}</cbc:ID>
+  <cbc:UUID>${escapeXml(payload.uuid)}</cbc:UUID>
+  <cbc:IssueDate>${escapeXml(payload.issueDate)}</cbc:IssueDate>
+  <cbc:IssueTime>${normTime}</cbc:IssueTime>
   <cbc:InvoiceTypeCode name="0111010">388</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
@@ -143,10 +163,10 @@ export function generateUblXml(payload: ZatcaInvoicePayload): string {
         <cbc:ID schemeID="CRN">${crNumber}</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyLegalEntity>
-        <cbc:RegistrationName>${payload.sellerName}</cbc:RegistrationName>
+        <cbc:RegistrationName>${escapeXml(payload.sellerName)}</cbc:RegistrationName>
       </cac:PartyLegalEntity>
       <cac:PartyTaxScheme>
-        <cbc:CompanyID>${payload.sellerVatNumber}</cbc:CompanyID>
+        <cbc:CompanyID>${escapeXml(payload.sellerVatNumber)}</cbc:CompanyID>
         <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
@@ -167,9 +187,9 @@ export function generateUblXml(payload: ZatcaInvoicePayload): string {
   <cac:InvoiceLine>
     <cbc:ID>${index + 1}</cbc:ID>
     <cbc:InvoicedQuantity unitCode="PCE">${item.quantity}</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="SAR">${(item.quantity * item.unitPrice).toFixed(2)}</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="SAR">${(Math.round(item.quantity * item.unitPrice * 100) / 100).toFixed(2)}</cbc:LineExtensionAmount>
     <cac:Item>
-      <cbc:Name>${item.name}</cbc:Name>
+      <cbc:Name>${escapeXml(item.name)}</cbc:Name>
       <cac:ClassifiedTaxCategory>
         <cbc:ID>S</cbc:ID>
         <cbc:Percent>${(item.vatRate * 100).toFixed(2)}</cbc:Percent>
@@ -221,9 +241,23 @@ export async function calculateZatcaHash(xmlContent: string): Promise<string> {
  * Full ZATCA Phase 2 Processor
  */
 export async function processZatcaInvoice(payload: ZatcaInvoicePayload): Promise<ZatcaComplianceResult> {
+  const errors: string[] = [];
+
+  if (!/^3\d{13}3$/.test((payload.sellerVatNumber || '').trim())) {
+    errors.push('BR-KSA-39: الرقم الضريبي للمورد يجب أن يتكون من 15 رقماً ويبدأ وينتهي بالرقم 3.');
+  }
+
+  const subtotalHalalas = Math.round((payload.subtotal || 0) * 100);
+  const vatHalalas = Math.round((payload.vatAmount || 0) * 100);
+  const grandTotalHalalas = Math.round((payload.grandTotal || 0) * 100);
+  if (Math.abs(subtotalHalalas + vatHalalas - grandTotalHalalas) > 1) {
+    errors.push('BR-CO-15: إجمالي الفاتورة شامل الضريبة لا يطابق مجموع الصافي وضريبة القيمة المضافة بالهللات.');
+  }
+
   const xml = generateUblXml(payload);
   const hash = await calculateZatcaHash(xml);
-  const timestamp = `${payload.issueDate}T${payload.issueTime}:00Z`;
+  const normTime = normalizeIsoTime(payload.issueTime);
+  const timestamp = `${payload.issueDate}T${normTime}Z`;
   const qr = generateZatcaQR(
     payload.sellerName,
     payload.sellerVatNumber,
@@ -237,9 +271,9 @@ export async function processZatcaInvoice(payload: ZatcaInvoicePayload): Promise
     qrCodeBase64: qr,
     xmlUbl21: xml,
     invoiceHash: hash,
-    phase2Status: 'COMPLIANT',
+    phase2Status: errors.length > 0 ? 'WARNING' : 'COMPLIANT',
     clearanceStatus: 'REPORTED',
-    errors: []
+    errors,
   };
 }
 

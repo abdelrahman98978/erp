@@ -1402,6 +1402,9 @@ export const authService = {
     try {
       sessionStorage.setItem('ALSULAIM_EXPLICIT_LOGOUT', 'true');
       sessionStorage.removeItem('ALSULAIM_SESSION_AUTHENTICATED_V2');
+      localStorage.removeItem('ALSULAIM_ACTIVE_COMPANY');
+      localStorage.removeItem('alsulaim_active_company');
+      localStorage.removeItem('ALSULAIM_TARGET_SYSTEM');
     } catch {
       // ignore
     }

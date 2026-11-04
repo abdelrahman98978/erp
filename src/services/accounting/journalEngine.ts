@@ -98,17 +98,26 @@ const INITIAL_JOURNALS_MAP: Record<string, JournalEntry[]> = {
     },
   ],
   TOP: [],
+  KAS: [],
   DAR: [],
 };
 
 const STORAGE_KEY = 'ALSULAIM_ERP_DB_V1_company_journal_entries';
+
+function roundCurrencySar(value: number): number {
+  return Math.round((Number(value) || 0) * 100) / 100;
+}
+
+function toHalalas(value: number): number {
+  return Math.round((Number(value) || 0) * 100);
+}
 
 function loadPersistedJournals(): Record<string, JournalEntry[]> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed: JournalEntry[] = JSON.parse(raw);
-      const map: Record<string, JournalEntry[]> = { SAF: [], YAQ: [], TOP: [], DAR: [] };
+      const map: Record<string, JournalEntry[]> = { SAF: [], YAQ: [], TOP: [], KAS: [], DAR: [] };
       parsed.forEach(j => {
         const c = j.companyId || 'SAF';
         if (!map[c]) map[c] = [];
@@ -181,12 +190,14 @@ export const journalEngine = {
     const norm = normalizeCompanyId(companyId);
     const targetCompany = norm === 'all' ? 'SAF' : norm;
 
-    // Calculate totals
-    const totalDebit = params.lines.reduce((sum, l) => sum + (l.debit || 0), 0);
-    const totalCredit = params.lines.reduce((sum, l) => sum + (l.credit || 0), 0);
+    // Calculate totals in exact integer halalas to prevent IEEE-754 floating-point drift
+    const totalDebitHalalas = params.lines.reduce((sum, l) => sum + toHalalas(l.debit || 0), 0);
+    const totalCreditHalalas = params.lines.reduce((sum, l) => sum + toHalalas(l.credit || 0), 0);
+    const totalDebit = totalDebitHalalas / 100;
+    const totalCredit = totalCreditHalalas / 100;
 
     // Double Entry Golden Rule Validation
-    if (Math.abs(totalDebit - totalCredit) > 0.001) {
+    if (totalDebitHalalas !== totalCreditHalalas) {
       return {
         entry: null,
         error: `[Double Entry Error] القيد المحاسبي غير متوازن! إجمالي المدين (${totalDebit.toFixed(2)}) لا يساوي إجمالي الدائن (${totalCredit.toFixed(2)}).`,
@@ -223,6 +234,8 @@ export const journalEngine = {
       createdAt: new Date().toISOString(),
       lines: params.lines.map((l, index) => ({
         ...l,
+        debit: roundCurrencySar(l.debit),
+        credit: roundCurrencySar(l.credit),
         id: `jl-${index}-${Date.now()}`,
       })),
     };
@@ -318,6 +331,30 @@ export const journalEngine = {
     }
 
     if (updates.description) entry.description = updates.description;
+    if (updates.lines) {
+      if (updates.lines.length < 2) {
+        return {
+          entry: null,
+          error: '[Double Entry Error] يجب أن يحتوي القيد على طرفين على الأقل (طرف مدين وطرف دائن).',
+        };
+      }
+      const debitHalalas = updates.lines.reduce((s, l) => s + toHalalas(l.debit || 0), 0);
+      const creditHalalas = updates.lines.reduce((s, l) => s + toHalalas(l.credit || 0), 0);
+      if (debitHalalas !== creditHalalas) {
+        return {
+          entry: null,
+          error: `[Double Entry Error] تعديل القيد غير متوازن! إجمالي المدين (${(debitHalalas / 100).toFixed(2)}) لا يساوي إجمالي الدائن (${(creditHalalas / 100).toFixed(2)}).`,
+        };
+      }
+      entry.lines = updates.lines.map((l, idx) => ({
+        ...l,
+        id: l.id || `jl-${idx}-${Date.now()}`,
+        debit: roundCurrencySar(l.debit),
+        credit: roundCurrencySar(l.credit),
+      }));
+      entry.totalDebit = debitHalalas / 100;
+      entry.totalCredit = creditHalalas / 100;
+    }
     savePersistedJournals(CURRENT_MAP);
     return { entry, error: null };
   },

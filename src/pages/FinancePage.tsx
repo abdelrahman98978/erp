@@ -247,13 +247,13 @@ export const FinancePage: React.FC = () => {
     const sal = parseFloat(eosbCalc.salary) || 0;
     const yrs = parseFloat(eosbCalc.years) || 0;
     const base = yrs <= 5 ? yrs * (sal / 2) : 5 * (sal / 2) + (yrs - 5) * sal;
+    let rawBenefit = base;
     if (eosbCalc.reason === 'resignation') {
-      if (yrs < 2) return 0;
-      if (yrs >= 2 && yrs < 5) return base * (1 / 3);
-      if (yrs >= 5 && yrs < 10) return base * (2 / 3);
-      return base;
+      if (yrs < 2) rawBenefit = 0;
+      else if (yrs >= 2 && yrs < 5) rawBenefit = base * (1 / 3);
+      else if (yrs >= 5 && yrs < 10) rawBenefit = base * (2 / 3);
     }
-    return base;
+    return Math.round(rawBenefit * 100) / 100;
   };
 
   const handleCreateVoucher = async (e: React.FormEvent) => {
