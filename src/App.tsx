@@ -740,6 +740,7 @@ const MainContent: React.FC = () => {
                 activeTabTitle: targetTitle || targetTab,
               });
             }
+            void import('./pages/AppLauncherPage');
             setFlowState('welcome');
           }} />
         </Suspense>
@@ -747,7 +748,7 @@ const MainContent: React.FC = () => {
 
       {flowState === 'welcome' && (
         <ExecutiveWelcomeScreen
-          durationMs={3000}
+          durationMs={2200}
           onComplete={() => {
             setFlowState('launcher');
           }}

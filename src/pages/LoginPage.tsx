@@ -829,25 +829,39 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 </button>
               </div>
 
-              {/* 2. Large Prominent Avatar & Welcome Identity Header */}
-              <div className="flex flex-col items-center text-center pt-1 space-y-2">
-                <EmployeePhotoAvatar
-                  name={detectedRouting.account?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
-                  email={identifier}
-                  role={detectedRouting.account?.role || detectedRouting.departmentDef.nameAr}
-                  departmentId={detectedRouting.departmentId}
-                  size="2xl"
-                  showStatusDot={true}
-                />
+              {/* 2. Simple, Professional Animated Avatar & Welcome Identity Header */}
+              <div
+                key={detectedRouting.account?.email || identifier || 'default'}
+                className="flex flex-col items-center text-center pt-1.5 pb-1 space-y-2.5 animate-in fade-in zoom-in-95 duration-300"
+              >
+                <div className="relative flex items-center justify-center">
+                  <span
+                    aria-hidden="true"
+                    className="absolute -inset-2 rounded-full border border-[#141414]/15 animate-pulse"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute -inset-1 rounded-full border border-[#141414]/25"
+                  />
+                  <EmployeePhotoAvatar
+                    name={detectedRouting.account?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
+                    email={identifier}
+                    role={detectedRouting.account?.role || detectedRouting.departmentDef.nameAr}
+                    departmentId={detectedRouting.departmentId}
+                    size="2xl"
+                    showStatusDot={true}
+                    showOnlinePulse={true}
+                  />
+                </div>
 
-                <div className="space-y-0.5">
-                  <h2 className="text-xl sm:text-2xl font-black text-[#141414] m-0">
+                <div className="space-y-0.5 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                  <span className="text-[11px] font-semibold text-[#707070] block">
                     مرحباً بعودتك
-                  </h2>
-                  <div className="text-xs font-extrabold text-[#141414]">
+                  </span>
+                  <h2 className="text-lg sm:text-xl font-black text-[#141414] m-0 tracking-tight">
                     {detectedRouting.account?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
-                  </div>
-                  <p className="text-[11px] text-[#707070] m-0">
+                  </h2>
+                  <p className="text-[11px] font-medium text-[#707070] m-0">
                     {detectedRouting.account?.role || detectedRouting.departmentDef.nameAr}
                   </p>
                 </div>

@@ -950,46 +950,38 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
         </div>
       </header>
 
-      {/* Employee Welcome & Authorized Cards Banner */}
-      <div className="bg-[#FBFBF5] text-[#141414] border-b border-[#e5e5df] px-4 sm:px-8 lg:px-12 py-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-4">
-            <EmployeePhotoAvatar
-              name={currentUser?.full_name || 'موظف معتمد'}
-              role={currentUser?.role || currentDeptMeta.nameAr}
-              email={currentUser?.email}
-              departmentId={currentDeptMeta.id}
-              size="lg"
-              status="verified"
-            />
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Lock className="w-3.5 h-3.5 text-[#CFA64A] shrink-0" />
-                <span className="font-black text-sm text-[#141414]">
-                  مرحباً بك، {currentUser?.full_name || 'موظف معتمد'} — بطاقات الصلاحيات والوحدات المصرحة لك
-                </span>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#141414] text-[#ffffff]">
-                  {isGroupAdmin ? 'صلاحية الإدارة العليا الشاملة' : currentDeptMeta.badgeText}
-                </span>
+      {/* Simple Professional Animated Welcome Header */}
+      <div className="bg-[#ffffff] text-[#141414] border-b border-[#f0f0f0] px-4 sm:px-8 lg:px-12 py-4">
+        <div className="flex items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="flex items-center gap-3.5">
+            <div className="relative flex items-center justify-center">
+              <span
+                aria-hidden="true"
+                className="absolute -inset-1 rounded-full border border-[#141414]/15 animate-pulse"
+              />
+              <EmployeePhotoAvatar
+                name={currentUser?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
+                role={currentUser?.role || currentDeptMeta.nameAr}
+                email={currentUser?.email}
+                departmentId={currentDeptMeta.id}
+                size="lg"
+                status="verified"
+              />
+            </div>
+            <div className="space-y-0.5">
+              <div className="text-xs font-semibold text-[#707070]">مرحباً بعودتك</div>
+              <div className="font-black text-base sm:text-lg text-[#141414] leading-tight">
+                {currentUser?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
               </div>
-              <span className="text-[#707070] block mt-1">
-                يتم عرض البطاقات والأنظمة المخصصة لصلاحياتك في ({currentDeptMeta.nameAr}) داخل ({activeCompany.name}) مع عزل مؤسسي كامل.
-              </span>
+              <div className="text-xs font-medium text-[#707070]">
+                {currentUser?.role || currentDeptMeta.nameAr}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-4 shrink-0">
-            <BusinessIllustration
-              departmentId={currentDeptMeta.id}
-              size="md"
-              showBackground={false}
-              className="hidden md:flex"
-            />
-            <div className="flex items-center gap-2 text-[11px] font-mono text-[#707070]">
-              <span>DEPT: {currentDeptMeta.id.toUpperCase()}</span>
-              <span>•</span>
-              <span>ENTITY: {String(resolvedScope.companyId).toUpperCase()}</span>
-            </div>
-          </div>
+
+          <span className="hidden sm:inline-flex text-xs font-bold px-3.5 py-1.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]">
+            {isGroupAdmin ? 'الإدارة العليا الشاملة' : currentDeptMeta.nameAr}
+          </span>
         </div>
       </div>
 

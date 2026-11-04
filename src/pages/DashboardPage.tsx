@@ -175,36 +175,30 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       >
         <div className="flex flex-wrap items-center justify-between gap-5">
           {/* Right Header Title & Greeting */}
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block">
-              <BusinessIllustration
-                type="exec-command"
-                size="sm"
-                showBackground={false}
+          <div className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="relative flex items-center justify-center">
+              <span
+                aria-hidden="true"
+                className="absolute -inset-1 rounded-full border border-white/25 animate-pulse"
+              />
+              <CorporateAvatar
+                name={currentUser?.fullName || 'الشيخ خالد بن عبدالعزيز السليم'}
+                email={currentUser?.email}
+                role="executive"
+                departmentId="executive"
+                size="lg"
+                status="verified"
               />
             </div>
-            <CorporateAvatar
-              name={currentUser?.fullName || 'خالد السليم'}
-              email={currentUser?.email}
-              role="executive"
-              departmentId="executive"
-              size="lg"
-              status="verified"
-            />
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                  مؤشرات فورية
-                </span>
-                <span className="text-xs text-zinc-400 flex items-center gap-1.5 font-sans">
-                  <span className="w-1.5 h-1.5 rounded-full bg-champagne inline-block shadow-xs"></span>
-                  محدث الآن - آخر تحديث اليوم
-                </span>
+              <div className="text-xs font-semibold text-zinc-400 mb-0.5">
+                مرحباً بعودتك
               </div>
-              <h2 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: 0, letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
-                مرحباً مجموعة خالد السليم </h2>
-              <p className="text-xs text-zinc-400 mt-1 max-w-xl font-sans leading-relaxed">
-                تابع أداء العقود والطلبات والإيرادات لحظة بلحظة مع إمكانية التحكم الكامل في الأقسام والعمليات التشغيلية.
+              <h2 className="display-sm" style={{ fontSize: '22px', fontWeight: 700, margin: 0, letterSpacing: '-0.01em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
+                {currentUser?.fullName || 'الشيخ خالد بن عبدالعزيز السليم'}
+              </h2>
+              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                {(currentUser as any)?.jobTitle || (currentUser as any)?.role || 'رئيس مجلس الإدارة — الإدارة العليا'}
               </p>
             </div>
           </div>
