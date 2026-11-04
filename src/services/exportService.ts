@@ -6,6 +6,11 @@
 import * as XLSX from 'xlsx';
 import { useAppStore } from '../stores/appStore';
 import { COMPANIES_LIST } from '../contexts/CompanyContext';
+import {
+  encodeZatcaTlvBase64,
+  generateRealQrSvg,
+  generateRealCode128BarcodeSvg,
+} from '../utils/realBarcodeGenerator';
 
 export interface SectionExportConfig {
   sectionTitle: string;
@@ -1601,84 +1606,23 @@ export function resolveConfig(
   return baseConfig;
 }
 
-// ─── Standalone ZATCA-Style Vector QR SVG Generator (Mobbin Light Mode) ──
-function generateZatcaQrSvg(): string {
-  return `
-    <svg width="86" height="86" viewBox="0 0 100 100" style="background:#ffffff; padding:5px; border:1px solid #e0e0e0; border-radius:12px;">
-      <!-- Corner Position Squares -->
-      <rect x="5" y="5" width="26" height="26" rx="4" fill="#141414" />
-      <rect x="9" y="9" width="18" height="18" rx="2" fill="#FFFFFF" />
-      <rect x="13" y="13" width="10" height="10" rx="1.5" fill="#141414" />
-
-      <rect x="69" y="5" width="26" height="26" rx="4" fill="#141414" />
-      <rect x="73" y="9" width="18" height="18" rx="2" fill="#FFFFFF" />
-      <rect x="77" y="13" width="10" height="10" rx="1.5" fill="#141414" />
-
-      <rect x="5" y="69" width="26" height="26" rx="4" fill="#141414" />
-      <rect x="9" y="73" width="18" height="18" rx="2" fill="#FFFFFF" />
-      <rect x="13" y="77" width="10" height="10" rx="1.5" fill="#141414" />
-
-      <!-- Data Dots Matrix Pattern -->
-      <rect x="36" y="8" width="5" height="5" fill="#141414" />
-      <rect x="46" y="8" width="5" height="5" fill="#141414" />
-      <rect x="56" y="8" width="5" height="5" fill="#141414" />
-
-      <rect x="36" y="18" width="5" height="5" fill="#262626" />
-      <rect x="46" y="18" width="5" height="5" fill="#141414" />
-      <rect x="56" y="18" width="5" height="5" fill="#262626" />
-
-      <rect x="36" y="28" width="5" height="5" fill="#141414" />
-      <rect x="46" y="28" width="5" height="5" fill="#0066ff" />
-      <rect x="56" y="28" width="5" height="5" fill="#141414" />
-
-      <rect x="8" y="36" width="5" height="5" fill="#141414" />
-      <rect x="18" y="36" width="5" height="5" fill="#262626" />
-      <rect x="28" y="36" width="5" height="5" fill="#141414" />
-      <rect x="68" y="36" width="5" height="5" fill="#141414" />
-      <rect x="78" y="36" width="5" height="5" fill="#262626" />
-      <rect x="88" y="36" width="5" height="5" fill="#141414" />
-
-      <rect x="8" y="46" width="5" height="5" fill="#262626" />
-      <rect x="18" y="46" width="5" height="5" fill="#141414" />
-      <rect x="28" y="46" width="5" height="5" fill="#262626" />
-      <rect x="68" y="46" width="5" height="5" fill="#262626" />
-      <rect x="78" y="46" width="5" height="5" fill="#141414" />
-      <rect x="88" y="46" width="5" height="5" fill="#262626" />
-
-      <rect x="8" y="56" width="5" height="5" fill="#141414" />
-      <rect x="18" y="56" width="5" height="5" fill="#141414" />
-      <rect x="28" y="56" width="5" height="5" fill="#141414" />
-      <rect x="68" y="56" width="5" height="5" fill="#141414" />
-      <rect x="78" y="56" width="5" height="5" fill="#141414" />
-      <rect x="88" y="56" width="5" height="5" fill="#141414" />
-
-      <rect x="36" y="68" width="5" height="5" fill="#141414" />
-      <rect x="46" y="68" width="5" height="5" fill="#262626" />
-      <rect x="56" y="68" width="5" height="5" fill="#141414" />
-      <rect x="68" y="68" width="5" height="5" fill="#141414" />
-      <rect x="78" y="68" width="5" height="5" fill="#141414" />
-      <rect x="88" y="68" width="5" height="5" fill="#262626" />
-
-      <rect x="36" y="78" width="5" height="5" fill="#262626" />
-      <rect x="46" y="78" width="5" height="5" fill="#141414" />
-      <rect x="56" y="78" width="5" height="5" fill="#262626" />
-      <rect x="68" y="78" width="5" height="5" fill="#262626" />
-      <rect x="78" y="78" width="5" height="5" fill="#141414" />
-      <rect x="88" y="78" width="5" height="5" fill="#141414" />
-
-      <rect x="36" y="88" width="5" height="5" fill="#141414" />
-      <rect x="46" y="88" width="5" height="5" fill="#141414" />
-      <rect x="56" y="88" width="5" height="5" fill="#141414" />
-      <rect x="68" y="88" width="5" height="5" fill="#141414" />
-      <rect x="78" y="88" width="5" height="5" fill="#262626" />
-      <rect x="88" y="88" width="5" height="5" fill="#141414" />
-
-      <!-- Center Verified Shield Emblem -->
-      <circle cx="50" cy="50" r="13" fill="#FFFFFF" stroke="#141414" stroke-width="1.75" />
-      <path d="M50 42 L56 45 L56 51 C56 55 50 58 50 58 C50 58 44 55 44 51 L44 45 Z" fill="#141414" />
-      <path d="M48 50 L50 52 L53 47" stroke="#FFFFFF" stroke-width="1.4" fill="none" stroke-linecap="round" />
-    </svg>
-  `;
+// ─── Real ISO/IEC 18004 ZATCA QR SVG Generator (Mobbin Light Mode) ──
+function generateZatcaQrSvg(payload?: string, sizePx: number = 86): string {
+  const effectivePayload =
+    payload ||
+    encodeZatcaTlvBase64({
+      sellerName: GROUP_COMPANY_INFO.nameAr,
+      vatNumber: GROUP_COMPANY_INFO.taxNumber,
+      timestampIso: new Date().toISOString(),
+      totalWithVat: 0,
+      vatAmount: 0,
+    });
+  return generateRealQrSvg(effectivePayload, {
+    sizePx,
+    darkColor: '#141414',
+    lightColor: '#FFFFFF',
+    borderStyle: true,
+  });
 }
 
 // ─── Report KPI Metrics Calculator ──────────────────────────────────
@@ -1852,7 +1796,20 @@ export function generateExecutiveReportHtml(
     `;
   }
 
-  const qrSvg = generateZatcaQrSvg();
+  const zatcaTlv = encodeZatcaTlvBase64({
+    sellerName: company.nameAr,
+    vatNumber: company.taxNumber,
+    timestampIso: now.toISOString(),
+    totalWithVat: kpis.totalAmount,
+    vatAmount: kpis.totalVat,
+    serialNumber,
+  });
+  const qrSvg = generateZatcaQrSvg(zatcaTlv, 82);
+  const barcodeSvg = generateRealCode128BarcodeSvg(serialNumber, {
+    widthPx: 124,
+    heightPx: 26,
+    showText: false,
+  });
 
   return `
     <!DOCTYPE html>
@@ -2345,8 +2302,9 @@ export function generateExecutiveReportHtml(
         ${showQr ? `
         <div class="qr-section">
           ${qrSvg}
+          <div style="margin-top: 4px;">${barcodeSvg}</div>
           <div class="serial-pill">${serialNumber}</div>
-          <div class="verified-stamp">✓ موثق بختم التشفير الرقمي</div>
+          <div class="verified-stamp">✓ باركود ورمز ZATCA QR حقيقي وموثق</div>
         </div>
         ` : ''}
       </div>

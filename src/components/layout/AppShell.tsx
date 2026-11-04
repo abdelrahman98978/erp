@@ -3,7 +3,6 @@ import { Keyboard, UploadCloud, X, Zap } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileBottomNav } from './MobileBottomNav';
-import { DepartmentModuleBanner } from '../common/DepartmentModuleBanner';
 import { recordRecentTab } from '../../utils/pinnedTabs';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { employeeOperationsEngine } from '../../services/employeeOperationsEngine';
@@ -490,13 +489,6 @@ export const AppShell: React.FC<AppShellProps> = ({
 
         {/* Content Body with Global Dynamic Button State Enhancer */}
         <main className="content-body" onClickCapture={handleWorkspaceClickCapture}>
-          {!isPartHidden('part:department-banner') && (
-            <DepartmentModuleBanner
-              activeTab={activeTab}
-              activeTabTitle={activeTabTitle}
-              onSelectTab={handleSelectTab}
-            />
-          )}
           {children}
         </main>
 

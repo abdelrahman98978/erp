@@ -1,6 +1,11 @@
 import React from 'react';
 import { useCompany } from '../../contexts/CompanyContext';
 import { CompanyLogo } from './CompanyLogo';
+import {
+  encodeZatcaTlvBase64,
+  generateRealQrSvg,
+  generateRealCode128BarcodeSvg,
+} from '../../utils/realBarcodeGenerator';
 
 interface DualBrandingDocumentGeneratorProps {
   documentTitle: string;
@@ -47,15 +52,42 @@ export const DualBrandingDocumentGenerator: React.FC<DualBrandingDocumentGenerat
           </div>
         </div>
 
-        {/* Right Side: Document Title & QR Code */}
-        <div style={{ textAlign: 'left' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#141414', margin: 0 }}>
-            {documentTitle}
-          </h3>
-          <div style={{ fontSize: '12px', color: '#141414', fontWeight: '700', marginTop: '4px', fontFamily: 'monospace' }}>
-            رقم المستند: {documentNumber}
+        {/* Right Side: Document Title, Real QR Code & Barcode */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', textAlign: 'left' }}>
+          <div>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#141414', margin: 0 }}>
+              {documentTitle}
+            </h3>
+            <div style={{ fontSize: '12px', color: '#141414', fontWeight: '700', marginTop: '4px', fontFamily: 'monospace' }}>
+              رقم المستند: {documentNumber}
+            </div>
+            <div style={{ fontSize: '11px', color: '#707070' }}>التاريخ: {date}</div>
+            <div
+              style={{ marginTop: '4px' }}
+              dangerouslySetInnerHTML={{
+                __html: generateRealCode128BarcodeSvg(documentNumber, {
+                  widthPx: 120,
+                  heightPx: 24,
+                  showText: false,
+                }),
+              }}
+            />
           </div>
-          <div style={{ fontSize: '11px', color: '#707070' }}>التاريخ: {date}</div>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: generateRealQrSvg(
+                encodeZatcaTlvBase64({
+                  sellerName: activeCompany.name,
+                  vatNumber: activeCompany.taxNumber,
+                  timestampIso: date || new Date().toISOString(),
+                  totalWithVat: 0,
+                  vatAmount: 0,
+                  serialNumber: documentNumber,
+                }),
+                { sizePx: 72 }
+              ),
+            }}
+          />
         </div>
       </div>
 

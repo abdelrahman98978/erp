@@ -18,6 +18,11 @@ import {
   DocumentExpiryAlert,
   NitaqatComplianceSummary,
 } from '../../services/wpsPayrollEngine';
+import {
+  encodeZatcaTlvBase64,
+  generateRealQrSvg,
+  generateRealCode128BarcodeSvg,
+} from '../../utils/realBarcodeGenerator';
 
 export interface PayslipModalProps {
   record: EmployeePayrollRecord;
@@ -79,11 +84,36 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                 إشعار استحقاق وصرف راتب شهري ({payrollMonth})
               </div>
             </div>
-            <div className="text-left font-mono text-xs bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-xl">
-              <div className="font-bold text-black">#{record.employeeNumber}</div>
-              <div className="text-[11px] text-zinc-500">
-                أيام العمل: {record.workingDays} يوماً
+            <div className="flex items-center gap-3">
+              <div className="text-left font-mono text-xs bg-zinc-50 border border-zinc-200 px-3 py-2 rounded-xl flex flex-col items-end gap-1">
+                <div className="font-bold text-black">#{record.employeeNumber}</div>
+                <div className="text-[11px] text-zinc-500">
+                  أيام العمل: {record.workingDays} يوماً
+                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: generateRealCode128BarcodeSvg(`WPS-${payrollMonth}-${record.employeeNumber}`, {
+                      widthPx: 112,
+                      heightPx: 22,
+                    }),
+                  }}
+                />
               </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: generateRealQrSvg(
+                    encodeZatcaTlvBase64({
+                      sellerName: companyName,
+                      vatNumber: '310928374100003',
+                      timestampIso: new Date().toISOString(),
+                      totalWithVat: record.netSalary,
+                      vatAmount: 0,
+                      serialNumber: `WPS-${payrollMonth}-${record.employeeNumber}`,
+                    }),
+                    { sizePx: 68 }
+                  ),
+                }}
+              />
             </div>
           </div>
 
@@ -333,9 +363,34 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                   إدارة الموارد البشرية والشؤون الإدارية
                 </div>
               </div>
-              <div className="text-left font-mono text-xs">
-                <div>الرقم المرجعي: {refNo}</div>
-                <div>التاريخ: {new Date().toISOString().slice(0, 10)}</div>
+              <div className="flex items-center gap-3">
+                <div className="text-left font-mono text-xs flex flex-col items-end gap-1">
+                  <div>الرقم المرجعي: {refNo}</div>
+                  <div>التاريخ: {new Date().toISOString().slice(0, 10)}</div>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: generateRealCode128BarcodeSvg(refNo, {
+                        widthPx: 116,
+                        heightPx: 22,
+                      }),
+                    }}
+                  />
+                </div>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: generateRealQrSvg(
+                      encodeZatcaTlvBase64({
+                        sellerName: companyName,
+                        vatNumber: '310928374100003',
+                        timestampIso: new Date().toISOString(),
+                        totalWithVat: employee.salary,
+                        vatAmount: 0,
+                        serialNumber: refNo,
+                      }),
+                      { sizePx: 68 }
+                    ),
+                  }}
+                />
               </div>
             </div>
 

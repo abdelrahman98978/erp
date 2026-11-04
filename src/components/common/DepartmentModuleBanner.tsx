@@ -708,6 +708,10 @@ export const DepartmentModuleBanner: React.FC<DepartmentModuleBannerProps> = ({
   };
 
   const isInternalHeroTab = TABS_WITH_INTERNAL_HERO.has(activeTab);
+  const hideBannerCard = Boolean(activeTab || true);
+  if (hideBannerCard) {
+    return null;
+  }
 
   return (
     <div className="mb-4 rounded-[24px] bg-[#ffffff] text-[#141414] border border-[#e0e0e0] overflow-hidden transition-all">
