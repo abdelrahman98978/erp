@@ -667,10 +667,10 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
       <div data-slot="data-table" className="table-card mb-0">
         <div className="table-card-header flex-wrap gap-3">
           <div>
-            <h3 className="table-card-title text-base">
+            <h2 className="table-card-title text-base">
               <AlertTriangle className="size-4 text-[#141414]" />
               <span>رادار انتهاء الوثائق الحكومية والعقود والتأمين الطبي</span>
-            </h3>
+            </h2>
             <p className="text-xs text-[#707070] mt-1">
               متابعة آلية لصلاحية الهويات/الإقامات، عقود قوى، جوازات السفر، والتأمين الطبي لمنع إيقاف الخدمات
             </p>
@@ -728,46 +728,54 @@ export const HrComplianceRadarPanel: React.FC<HrComplianceRadarPanelProps> = ({
               </tr>
             </thead>
             <tbody>
-              {filteredAlerts.map((alert, idx) => {
-                const badgeStyle =
-                  alert.severity === 'EXPIRED' || alert.severity === 'CRITICAL_7D'
-                    ? 'bg-[#141414] text-[#ffffff]'
-                    : alert.severity === 'WARNING_30D' || alert.severity === 'UPCOMING_60D'
-                    ? 'bg-[#262626] text-[#ffffff]'
-                    : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]';
+              {filteredAlerts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-6 text-[#707070] font-semibold">
+                    جميع الوثائق الحكومية وعقود قوى والتأمين الطبي سارية المفعول ولا توجد تنبيهات معلقة
+                  </td>
+                </tr>
+              ) : (
+                filteredAlerts.map((alert, idx) => {
+                  const badgeStyle =
+                    alert.severity === 'EXPIRED' || alert.severity === 'CRITICAL_7D'
+                      ? 'bg-[#141414] text-[#ffffff]'
+                      : alert.severity === 'WARNING_30D' || alert.severity === 'UPCOMING_60D'
+                      ? 'bg-[#262626] text-[#ffffff]'
+                      : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]';
 
-                return (
-                  <tr key={`${alert.employeeId}-${alert.documentType}-${idx}`}>
-                    <td className="font-mono font-bold text-[#141414]">{alert.employeeCode}</td>
-                    <td className="font-bold text-[#141414]">{alert.employeeName}</td>
-                    <td className="font-semibold text-[#141414]">{alert.documentLabelAr}</td>
-                    <td className="font-mono text-[#707070]">{alert.expiryDate}</td>
-                    <td className="font-mono font-bold text-[#141414]">
-                      {alert.daysRemaining >= 0
-                        ? `${alert.daysRemaining} يوم`
-                        : `منتهي (${Math.abs(alert.daysRemaining)} يوم)`}
-                    </td>
-                    <td>
-                      <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold ${badgeStyle}`}
-                      >
-                        {alert.statusLabelAr}
-                      </span>
-                    </td>
-                    <td className="text-center">
-                      <button
-                        type="button"
-                        onClick={() => onRenewDocument(alert.employeeId, alert.documentType)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold transition-colors cursor-pointer"
-                        title="تحديث وتمديد صلاحية الوثيقة لمدة سنة إضافية"
-                      >
-                        <RefreshCw className="size-3 text-[#ffffff]" />
-                        <span>تجديد (+1 سنة)</span>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={`${alert.employeeId}-${alert.documentType}-${idx}`}>
+                      <td className="font-mono font-bold text-[#141414]">{alert.employeeCode}</td>
+                      <td className="font-bold text-[#141414]">{alert.employeeName}</td>
+                      <td className="font-semibold text-[#141414]">{alert.documentLabelAr}</td>
+                      <td className="font-mono text-[#707070]">{alert.expiryDate}</td>
+                      <td className="font-mono font-bold text-[#141414]">
+                        {alert.daysRemaining >= 0
+                          ? `${alert.daysRemaining} يوم`
+                          : `منتهي (${Math.abs(alert.daysRemaining)} يوم)`}
+                      </td>
+                      <td>
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold ${badgeStyle}`}
+                        >
+                          {alert.statusLabelAr}
+                        </span>
+                      </td>
+                      <td className="text-center">
+                        <button
+                          type="button"
+                          onClick={() => onRenewDocument(alert.employeeId, alert.documentType)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141414] hover:bg-[#262626] text-[#ffffff] text-xs font-bold transition-colors cursor-pointer"
+                          title="تحديث وتمديد صلاحية الوثيقة لمدة سنة إضافية"
+                        >
+                          <RefreshCw className="size-3 text-[#ffffff]" />
+                          <span>تجديد (+1 سنة)</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

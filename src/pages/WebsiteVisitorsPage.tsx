@@ -543,6 +543,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
                 <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
                 <input
                   type="text"
+                  aria-label="ابحث بالمدينة، IP، المصدر"
                   placeholder="ابحث بالمدينة، IP، المصدر..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}

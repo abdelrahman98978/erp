@@ -392,6 +392,7 @@ export const OfficesPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث بالاسم، الحساب، أو المدير"
               placeholder="ابحث بالاسم، الحساب، أو المدير..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}

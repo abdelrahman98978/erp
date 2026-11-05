@@ -339,6 +339,7 @@ export const ActivityLogPage: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <select
+            aria-label="تصفية حسب مستوى الخطورة"
             value={selectedSeverity}
             onChange={(e) => setSelectedSeverity(e.target.value)}
             className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -350,6 +351,7 @@ export const ActivityLogPage: React.FC = () => {
           </select>
 
           <select
+            aria-label="تصفية حسب نوع الإجراء"
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
             className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -361,6 +363,7 @@ export const ActivityLogPage: React.FC = () => {
 
           <input
             type="text"
+            aria-label="بحث في السجلات"
             placeholder="بحث في السجلات..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}

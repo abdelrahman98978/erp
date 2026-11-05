@@ -620,6 +620,7 @@ export const ComplaintsPage: React.FC = () => {
               <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
+                aria-label="ابحث برقم التذكرة، اسم العميل، أو الجوال"
                 placeholder="ابحث برقم التذكرة، اسم العميل، أو الجوال..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -630,6 +631,7 @@ export const ComplaintsPage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <select
+                aria-label="تصفية حسب حالة التذكرة"
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value)}
                 className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -642,6 +644,7 @@ export const ComplaintsPage: React.FC = () => {
               </select>
 
               <select
+                aria-label="تصفية حسب الأولوية"
                 value={priorityFilter}
                 onChange={e => setPriorityFilter(e.target.value)}
                 className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"

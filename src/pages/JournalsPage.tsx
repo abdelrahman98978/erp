@@ -353,6 +353,7 @@ export const JournalsPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث برقم القيد، البيان، أو اسم المحاسب"
               placeholder="ابحث برقم القيد، البيان، أو اسم المحاسب..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -363,6 +364,7 @@ export const JournalsPage: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <select
+              aria-label="تصفية حسب نوع القيد"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs font-bold text-black focus:border-black focus:outline-none"

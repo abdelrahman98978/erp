@@ -368,6 +368,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
           <Search className="w-4 h-4 text-zinc-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            aria-label="بحث باسم العاملة أو رقم الجواز"
             placeholder="بحث باسم العاملة أو رقم الجواز..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

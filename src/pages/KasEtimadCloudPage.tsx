@@ -1211,10 +1211,10 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="lg:col-span-2 card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3 mb-3">
                 <div>
-                  <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  <h2 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                     <Activity className="w-4 h-4 text-emerald-600" />
                     <span>حركة المبيعات والتحصيلات الشهرية (2026)</span>
-                  </h3>
+                  </h2>
                   <p className="text-xs text-zinc-400 mt-1 font-sans">مقارنة الفواتير الصادرة والمبالغ المحصلة عبر منصة اعتماد</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs font-semibold">

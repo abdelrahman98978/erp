@@ -822,6 +822,7 @@ export const CVsBankPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3.5 top-3 text-zinc-400" />
             <input
               type="text"
+              aria-label="البحث برقم الكود، اسم العاملة، رقم الجواز، أو المكتب الخارجي"
               placeholder="البحث برقم الكود، اسم العاملة، رقم الجواز، أو المكتب الخارجي..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -830,6 +831,7 @@ export const CVsBankPage: React.FC = () => {
           </div>
 
           <select
+            aria-label="تصفية حسب الجنسية"
             value={nationalityFilter}
             onChange={e => setNationalityFilter(e.target.value)}
             className="bg-zinc-50 border border-zinc-200 rounded-full py-2 px-3 text-xs text-black focus:outline-none focus:border-black"

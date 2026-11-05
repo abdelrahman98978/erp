@@ -536,9 +536,9 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-5">
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                 <div>
-                  <h3 className="text-sm font-bold text-black m-0">
+                  <h2 className="text-sm font-bold text-black m-0">
                     إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
-                  </h3>
+                  </h2>
                   <p className="text-xs text-zinc-500 mt-1">
                     تعديل وتحديد سياسات الأمان والحماية لحسابات مديري النظام والموظفين بالفروع.
                   </p>
@@ -621,6 +621,7 @@ export const SettingsPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">صلاحية رمز التحقق OTP بالدقائق</label>
                   <select 
+                    aria-label="صلاحية رمز التحقق OTP بالدقائق"
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
                     value={otpExpiryMinutes} 
                     onChange={e => setOtpExpiryMinutes(Number(e.target.value))}
@@ -634,6 +635,7 @@ export const SettingsPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">وسيلة الإرسال الافتراضية للرموز</label>
                   <select 
+                    aria-label="وسيلة الإرسال الافتراضية للرموز"
                     className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
                     value={defaultOtpChannel}
                     onChange={e => setDefaultOtpChannel(e.target.value)}
@@ -653,9 +655,9 @@ export const SettingsPage: React.FC = () => {
                       <Fingerprint className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-xs text-charcoal m-0">
+                      <h3 className="font-bold text-xs text-charcoal m-0">
                         إدارة وتفويض بصمة هذا الجهاز لحسابك (This Device WebAuthn)
-                      </h4>
+                      </h3>
                       <p className="text-[11px] text-zinc-600 m-0 font-sans">
                         تسجيل مستشعر البصمة البيومترية لجهازك الحالي للتمكن من الدخول المباشر الموثق.
                       </p>

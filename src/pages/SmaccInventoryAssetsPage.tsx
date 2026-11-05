@@ -447,7 +447,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="flex items-center gap-3">
-              <h3 className="text-sm font-bold text-black m-0">سجل الأصول الثابتة المعتمدة بالمجموعة</h3>
+              <h2 className="text-sm font-bold text-black m-0">سجل الأصول الثابتة المعتمدة بالمجموعة</h2>
               <span className="pill-tag-mint text-[11px]">{assets.length} أصل مسجل</span>
             </div>
             <div className="flex gap-2">

@@ -271,6 +271,7 @@ export const AgentImportsPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث بكود الدفعة، المكتب، أو الدولة"
               placeholder="ابحث بكود الدفعة، المكتب، أو الدولة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

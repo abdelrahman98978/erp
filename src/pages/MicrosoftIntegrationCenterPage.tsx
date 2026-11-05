@@ -235,10 +235,10 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
       {activeTab === 'project' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
-            <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+            <h2 className="text-sm font-bold text-black flex items-center gap-2 m-0">
               <Clock className="w-4 h-4 text-black" />
               <span>مزامنة مشاريع الاستقدام والتوسع اللوجستي (Project Timeline)</span>
-            </h3>
+            </h2>
             <button
               type="button"
               onClick={() => setShowAddProjectModal(true)}

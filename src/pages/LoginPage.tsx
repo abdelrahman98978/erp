@@ -878,7 +878,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   className={`h-10 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     loginMethodTab === 'password'
                       ? 'bg-[#ffffff] text-[#141414] shadow-xs'
-                      : 'text-[#707070] hover:text-[#141414]'
+                      : 'text-[#141414] hover:text-[#141414]'
                   }`}
                 >
                   تسجيل الدخول
@@ -889,7 +889,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                     setDirectoryTab('register');
                     setShowDirectoryModal(true);
                   }}
-                  className="h-10 rounded-xl text-xs font-bold text-[#707070] hover:text-[#141414] transition-all cursor-pointer"
+                  className="h-10 rounded-xl text-xs font-bold text-[#141414] hover:text-[#141414] transition-all cursor-pointer"
                 >
                   تفعيل حساب
                 </button>
@@ -959,7 +959,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               {/* 5. Horizontal Divider: أو بالبريد الإلكتروني */}
               <div className="relative flex items-center justify-center py-1">
                 <div className="border-t border-[#ececec] w-full" />
-                <span className="bg-[#ffffff] px-3 text-[11px] font-semibold text-[#999999] whitespace-nowrap">
+                <span className="bg-[#ffffff] px-3 text-[11px] font-semibold text-[#707070] whitespace-nowrap">
                   أو بالبريد الإلكتروني
                 </span>
                 <div className="border-t border-[#ececec] w-full" />

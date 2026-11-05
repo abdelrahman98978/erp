@@ -1343,6 +1343,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
               <input
                 type="text"
+                aria-label="البحث برقم العقد، اسم العميل، اسم العاملة، أو الجواز"
                 placeholder="البحث برقم العقد، اسم العميل، اسم العاملة، أو الجواز..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

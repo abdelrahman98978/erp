@@ -342,7 +342,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Home className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-black m-0">إدارة الإيواء</h4>
+              <h3 className="text-xs font-bold text-black m-0">إدارة الإيواء</h3>
               <p className="text-[11px] text-zinc-500 m-0">الداخل والخارج والجاهز للنقل ومرحلة الترحيل</p>
             </div>
           </div>
@@ -359,7 +359,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <DollarSign className="w-5 h-5 text-emerald-700" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-black m-0">لوحة التحكم المالية</h4>
+              <h3 className="text-xs font-bold text-black m-0">لوحة التحكم المالية</h3>
               <p className="text-[11px] text-zinc-500 m-0">ملخص الحسابات والفواتير والحركات المالية</p>
             </div>
           </div>
@@ -376,7 +376,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <PieChart className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-black m-0">مركز التقارير</h4>
+              <h3 className="text-xs font-bold text-black m-0">مركز التقارير</h3>
               <p className="text-[11px] text-zinc-500 m-0">تقارير العقود والطلبات والإيواء والتصدير</p>
             </div>
           </div>

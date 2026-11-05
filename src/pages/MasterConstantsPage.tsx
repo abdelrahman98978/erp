@@ -323,6 +323,7 @@ export const MasterConstantsPage: React.FC = () => {
       <div className="max-w-xs">
         <input
           type="text"
+          aria-label="بحث سريع في القائمة الحالية"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder="بحث سريع في القائمة الحالية..."
@@ -346,7 +347,7 @@ export const MasterConstantsPage: React.FC = () => {
                 </div>
               )}
               <div>
-                <h4 className="text-xs font-bold text-black m-0">{item.title}</h4>
+                <h2 className="text-xs font-bold text-black m-0">{item.title}</h2>
                 {item.subtext && <p className="text-[11px] text-zinc-500 m-0 mt-0.5">{item.subtext}</p>}
                 {item.code && (
                   <span className="text-[10px] text-zinc-400 font-mono block mt-0.5">

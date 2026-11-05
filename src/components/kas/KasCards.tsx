@@ -346,9 +346,9 @@ export const KasSupplierCard: React.FC<KasSupplierCardProps> = ({
           <span className="pill-tag-mint text-[10px] font-bold">
             {supplier.category}
           </span>
-          <h4 className="text-base font-black text-slate-900 dark:text-white mt-1.5 group-hover:text-emerald-600 transition-colors">
+          <h2 className="text-base font-black text-slate-900 dark:text-white mt-1.5 group-hover:text-emerald-600 transition-colors">
             {supplier.name}
-          </h4>
+          </h2>
           <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
             <MapPin className="w-3.5 h-3.5" />
             <span>{supplier.city}</span>

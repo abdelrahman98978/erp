@@ -1208,7 +1208,7 @@ export const TendersBOQPage: React.FC = () => {
           <div className="flex items-center gap-1 bg-zinc-50 py-1 px-2.5 rounded-full border border-zinc-200">
             <span className="text-[11px] text-zinc-500 font-semibold px-1">الحالة:</span>
             <select
-              value={selectedTender.status}
+              aria-label="حالة المنافسة" value={selectedTender.status}
               onChange={(e) => handleStatusChange(e.target.value as any)}
               className="text-xs font-bold bg-transparent border-none focus:outline-none text-zinc-800 cursor-pointer"
             >

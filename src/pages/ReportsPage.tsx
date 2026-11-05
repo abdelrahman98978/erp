@@ -284,6 +284,7 @@ export const ReportsPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-zinc-700">الشركة:</span>
           <select
+            aria-label="تصفية حسب الشركة"
             value={selectedCompany}
             onChange={(e) => setSelectedCompany(e.target.value)}
             className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -454,7 +455,7 @@ export const ReportsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 className="text-sm font-bold text-black m-0">التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح</h3>
+              <h2 className="text-sm font-bold text-black m-0">التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح</h2>
               <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>صافي الأرباح: 340,400 ⃁</span>
             </div>
             <ExportDropdown

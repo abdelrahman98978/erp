@@ -220,10 +220,10 @@ export const BranchCommunicationPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Channel Selector */}
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
-          <h3 className="text-sm font-bold text-black mb-3 flex items-center gap-2">
+          <h2 className="text-sm font-bold text-black mb-3 flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-black" />
             <span>قنوات التواصل الرسمية</span>
-          </h3>
+          </h2>
 
           <div className="space-y-2">
             {[
@@ -284,7 +284,7 @@ export const BranchCommunicationPage: React.FC = () => {
           <div>
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
               <div>
-                <h3 className="text-sm font-bold text-black m-0">{activeChannel}</h3>
+                <h2 className="text-sm font-bold text-black m-0">{activeChannel}</h2>
                 <span className="text-[11px] text-zinc-400">سجل الرسائل الحية المحفوظ في قاعدة البيانات</span>
               </div>
               <span className="pill-tag-mint" style={{ fontSize: '10px' }}>مباشر Live</span>
@@ -329,6 +329,7 @@ export const BranchCommunicationPage: React.FC = () => {
           <form onSubmit={handleSendMessage} className="mt-4 pt-3 border-t border-zinc-100 flex gap-2">
             <input
               type="text"
+              aria-label={`أرسل رسالة فورية إلى ${activeChannel}`}
               placeholder={`أرسل رسالة فورية إلى (${activeChannel})...`}
               value={newMessageText}
               onChange={e => setNewMessageText(e.target.value)}

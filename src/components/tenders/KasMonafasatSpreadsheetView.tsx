@@ -595,6 +595,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
+              aria-label="ابحث برقم المنافسة، الرقم المرجعي، اسم المنافسة، الجهة الحكومية، المسؤول، المدينة"
               placeholder="ابحث برقم المنافسة، الرقم المرجعي، اسم المنافسة، الجهة الحكومية، المسؤول، المدينة..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -602,6 +603,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             />
             {searchQuery && (
               <button
+                aria-label="مسح البحث"
                 onClick={() => setSearchQuery('')}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 dark:hover:text-white"
               >
@@ -613,6 +615,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
           {/* Quick Dropdown Filters & View Switcher */}
           <div className="flex flex-wrap items-center gap-2">
             <select
+              aria-label="تصفية حسب حالة المنافسة"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
               className="px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -624,6 +627,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             </select>
 
             <select
+              aria-label="تصفية حسب أسباب الترسية أو الاستبعاد"
               value={reasonFilter}
               onChange={e => setReasonFilter(e.target.value)}
               className="px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -636,6 +640,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             {filterOptions.cities.length > 0 && (
               <select
+                aria-label="تصفية حسب المدينة"
                 value={cityFilter}
                 onChange={e => setCityFilter(e.target.value)}
                 className="px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -989,6 +994,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
         <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
           <span>عرض</span>
           <select
+            aria-label="عدد السجلات لكل صفحة"
             value={pageSize}
             onChange={e => {
               setPageSize(Number(e.target.value));
@@ -1009,6 +1015,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
         <div className="flex items-center gap-1.5">
           <button
+            aria-label="الصفحة الأولى"
             onClick={() => setCurrentPage(1)}
             disabled={currentPage === 1}
             className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-700 font-mono font-bold"
@@ -1016,6 +1023,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             «
           </button>
           <button
+            aria-label="الصفحة السابقة"
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
             className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-700 font-mono flex items-center"
@@ -1028,6 +1036,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
           </span>
 
           <button
+            aria-label="الصفحة التالية"
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
             className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-700 font-mono flex items-center"
@@ -1035,6 +1044,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
+            aria-label="الصفحة الأخيرة"
             onClick={() => setCurrentPage(totalPages)}
             disabled={currentPage === totalPages}
             className="px-3 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-700 font-mono font-bold"

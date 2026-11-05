@@ -344,6 +344,7 @@ const MainContent: React.FC = () => {
         return <DashboardPage onNavigate={handleSelectTab} />;
 
       case 'group-command-center':
+      case 'group-command':
         return <GroupCommandCenterPage />;
 
       case 'company-selector':
@@ -363,18 +364,22 @@ const MainContent: React.FC = () => {
         return <EnterpriseATSPipelinePage />;
 
       case 'external-offices':
+      case 'offices-agents':
         return <ExternalOfficesAgentsPage />;
 
       case 'unified-communication':
+      case 'unified-comm':
         return <UnifiedCommunicationCenterPage />;
 
       case 'microsoft-center':
+      case 'm365-center':
         return <MicrosoftIntegrationCenterPage />;
 
       case 'admin-dashboard':
         return <AdminDashboardPage onNavigate={handleSelectTab} />;
 
       case 'branch-communication':
+      case 'branch-comm':
         return <BranchCommunicationPage />;
 
       case 'group-dispatch':
@@ -420,6 +425,7 @@ const MainContent: React.FC = () => {
       case 'create-cv':
         return <CreateCVPage />;
 
+      case 'cvs-bank':
       case 'cvs-recruitment':
       case 'cvs-rental':
       case 'rental-cvs':
@@ -434,6 +440,8 @@ const MainContent: React.FC = () => {
       case 'all-orders':
       case 'new-orders':
       case 'in-progress-orders':
+      case 'completed-orders':
+      case 'cancelled-orders':
       case 'contracted-orders':
       case 'incomplete-orders':
       case 'urgent-orders':
@@ -684,6 +692,7 @@ const MainContent: React.FC = () => {
       case 'tenders':
       case 'boq':
       case 'kas-tenders':
+      case 'kas-spreadsheet':
       case 'boq-analytics':
         return <TendersBOQPage />;
 
@@ -698,6 +707,7 @@ const MainContent: React.FC = () => {
         );
 
       case 'kas-etmad':
+      case 'kas-etimad':
       case 'kas-etmad-cloud':
       case 'etmad-cloud':
       case 'etmad':

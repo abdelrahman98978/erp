@@ -826,6 +826,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
             <Search className="w-3.5 h-3.5 text-[#707070] absolute right-3 top-2.5" />
             <input
               type="text"
+              aria-label="بحث برقم البلاغ، الكود، المكون، أو الرسالة"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="بحث برقم البلاغ، الكود، المكون، أو الرسالة..."
@@ -834,6 +835,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
           </div>
 
           <select
+            aria-label="تصفية حسب حالة البلاغ"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
             className="h-9 px-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"
@@ -845,6 +847,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
           </select>
 
           <select
+            aria-label="تصفية حسب مستوى الخطورة"
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value as any)}
             className="h-9 px-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"
@@ -857,6 +860,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
           </select>
 
           <select
+            aria-label="تصفية حسب التصنيف التقني"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value as any)}
             className="h-9 px-3 rounded-[14px] bg-[#f3f3f3] border border-[#e0e0e0] text-xs font-semibold text-[#141414] focus:border-[#141414] focus:bg-[#ffffff] focus:outline-none"

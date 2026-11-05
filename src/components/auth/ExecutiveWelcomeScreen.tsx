@@ -74,38 +74,31 @@ export const ExecutiveWelcomeScreen: React.FC<ExecutiveWelcomeScreenProps> = ({
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div
+    <main
       dir="rtl"
       onClick={onComplete}
-      role="status"
       aria-live="polite"
+      aria-label="شاشة الترحيب التنفيذية"
       title="اضغط للمتابعة الفورية"
-      className={`fixed inset-0 z-[3000] min-h-screen w-full bg-[#ffffff] text-[#141414] flex flex-col items-center justify-center p-6 overflow-hidden select-none cursor-pointer transition-opacity duration-300 ${
-        isExiting ? 'opacity-0' : 'opacity-100'
-      }`}
+      className="fixed inset-0 z-[3000] min-h-screen w-full bg-[#ffffff] text-[#141414] flex flex-col items-center justify-center p-6 overflow-hidden select-none cursor-pointer"
     >
       <style>{`
         @keyframes welcomeAvatarPop {
           0% {
-            opacity: 0;
-            transform: scale(0.78) translateY(14px);
+            transform: scale(0.92) translateY(8px);
           }
           65% {
-            opacity: 1;
-            transform: scale(1.03) translateY(0);
+            transform: scale(1.02) translateY(0);
           }
           100% {
-            opacity: 1;
             transform: scale(1) translateY(0);
           }
         }
         @keyframes welcomeTextReveal {
           0% {
-            opacity: 0;
-            transform: translateY(12px);
+            transform: translateY(8px);
           }
           100% {
-            opacity: 1;
             transform: translateY(0);
           }
         }
@@ -126,16 +119,13 @@ export const ExecutiveWelcomeScreen: React.FC<ExecutiveWelcomeScreenProps> = ({
           animation: welcomeHaloBreathe 2.2s ease-in-out infinite;
         }
         .welcome-reveal-1 {
-          opacity: 0;
-          animation: welcomeTextReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards;
+          animation: welcomeTextReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .welcome-reveal-2 {
-          opacity: 0;
-          animation: welcomeTextReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards;
+          animation: welcomeTextReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .welcome-reveal-3 {
-          opacity: 0;
-          animation: welcomeTextReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.32s forwards;
+          animation: welcomeTextReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
       `}</style>
 
@@ -191,7 +181,7 @@ export const ExecutiveWelcomeScreen: React.FC<ExecutiveWelcomeScreenProps> = ({
 
         {/* Staggered Name & Role Typography */}
         <div className="space-y-1.5">
-          <p className="welcome-reveal-1 text-xs sm:text-sm font-semibold text-[#707070] m-0">
+          <p className="welcome-reveal-1 text-xs sm:text-sm font-semibold text-[#141414] m-0">
             {greetingText}
           </p>
 
@@ -199,7 +189,7 @@ export const ExecutiveWelcomeScreen: React.FC<ExecutiveWelcomeScreenProps> = ({
             {displayName}
           </h1>
 
-          <p className="welcome-reveal-3 text-xs sm:text-sm font-medium text-[#707070] m-0 pt-0.5">
+          <p className="welcome-reveal-3 text-xs sm:text-sm font-medium text-[#141414] m-0 pt-0.5">
             {displayRole}
           </p>
         </div>
@@ -212,7 +202,7 @@ export const ExecutiveWelcomeScreen: React.FC<ExecutiveWelcomeScreenProps> = ({
           />
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

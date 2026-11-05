@@ -215,10 +215,10 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
       <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
-            <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
+            <h2 className="text-base font-bold text-black m-0 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-emerald-600" />
               <span>مصفوفة تكامل مساند للشركات الأربع (4-Company Multi-Tenancy Matrix)</span>
-            </h3>
+            </h2>
             <p className="text-xs text-zinc-500 m-0 mt-1">
               عزل تام للمفاتيح والاتصالات ودفاتر الأستاذ المحاسبية وقنوات الـ Webhooks لكل شركة ومكتب مرخص
             </p>
@@ -234,7 +234,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold font-mono text-[10px]">RC01: SAF</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             </div>
-            <h4 className="font-bold text-black text-xs m-0">شركة السفير الماسي للاستقدام</h4>
+            <h3 className="font-bold text-black text-xs m-0">شركة السفير الماسي للاستقدام</h3>
             <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
               <div>Estab ID: <strong className="text-black">EST-SAF-001</strong></div>
               <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
@@ -250,7 +250,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold font-mono text-[10px]">RC02: YAQ</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             </div>
-            <h4 className="font-bold text-black text-xs m-0">شركة ياقوت نجد للاستقدام</h4>
+            <h3 className="font-bold text-black text-xs m-0">شركة ياقوت نجد للاستقدام</h3>
             <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
               <div>Estab ID: <strong className="text-black">EST-YAQ-002</strong></div>
               <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
@@ -266,7 +266,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold font-mono text-[10px]">RC03: TOP</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             </div>
-            <h4 className="font-bold text-black text-xs m-0">شركة توباز للاستقدام والتشغيل</h4>
+            <h3 className="font-bold text-black text-xs m-0">شركة توباز للاستقدام والتشغيل</h3>
             <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
               <div>Estab ID: <strong className="text-black">EST-TOP-003</strong></div>
               <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
@@ -282,7 +282,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold font-mono text-[10px]">RC04: DAR</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             </div>
-            <h4 className="font-bold text-black text-xs m-0">شركة دار الرواد / كاس</h4>
+            <h3 className="font-bold text-black text-xs m-0">شركة دار الرواد / كاس</h3>
             <div className="text-[11px] text-zinc-500 space-y-1 pt-1 font-mono">
               <div>Estab ID: <strong className="text-black">EST-DAR-004</strong></div>
               <div>Connection: <strong className="text-emerald-700">Active (TLS 1.3)</strong></div>
@@ -300,6 +300,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           <Search className="w-4 h-4 absolute right-3.5 top-3 text-zinc-400" />
           <input
             type="text"
+            aria-label="البحث في أقسام ومحتويات خطة مساند"
             placeholder="البحث في أقسام ومحتويات خطة مساند (مثال: تسويات، تأشيرات، MDM، أمن...)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -370,40 +371,40 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h4 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
               <Lock className="w-4 h-4 text-emerald-600" />
               <span>الأمن السيبراني ونظام حماية البيانات (PDPL)</span>
-            </h4>
+            </h3>
             <p className="text-zinc-600 leading-relaxed m-0">
               تشفير البيانات الحساسة عبر TLS 1.3 أثناء النقل و AES-256 أثناء التخزين، حفظ الأسرار في Secrets Vault، وإخفاء أرقام الهويات وجوازات السفر (Masking) في الواجهات التشغيلية.
             </p>
           </div>
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h4 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
               <DollarSign className="w-4 h-4 text-emerald-600" />
               <span>محرك التسويات والمطابقة المالية (Reconciliation Engine)</span>
-            </h4>
+            </h3>
             <p className="text-zinc-600 leading-relaxed m-0">
               إنشاء قيود المقاصة الوسيطة (Clearing Accounts) فور سداد العقد بمساند، ومطابقة الدفعات اليومية مع الحسابات البنكية مع كشف تلقائي لأي فروقات مالية (Zero Mismatch Policy).
             </p>
           </div>
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h4 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-amber-600" />
               <span>التأمين الإلزامي 24 شهراً ومطالبات التعويض</span>
-            </h4>
+            </h3>
             <p className="text-zinc-600 leading-relaxed m-0">
               ربط وثائق التأمين الإلزامية الصادرة من شركات التأمين المعتمدة (تكافل الراجحي، التعاونية، سلامة) مع عقود العمالة المنزلية لتغطية حالات الهروب، رفض العمل، وإعادة الاستقدام.
             </p>
           </div>
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h4 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
               <Activity className="w-4 h-4 text-blue-600" />
               <span>محرك الأحداث والـ Webhooks ورسائل DLQ</span>
-            </h4>
+            </h3>
             <p className="text-zinc-600 leading-relaxed m-0">
               استقبال فوري للأحداث مع التوقيع المشفر HMAC، ومنع تكرار الرسائل (Replay Protection)، وإيداع الإخفاقات غير المعالجة في طابور الرسائل المعزولة (Dead Letter Queue).
             </p>

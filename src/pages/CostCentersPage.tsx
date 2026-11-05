@@ -62,7 +62,15 @@ export const CostCentersPage: React.FC = () => {
   const { createItem, updateItem, deleteItem } = useTableMutation('cost_centers');
   const { addNotification } = useAppStore();
 
-  const costCenters: CostCenterRecord[] = rawCostCenters.length > 0 ? rawCostCenters : DEFAULT_MOCK_COST_CENTERS;
+  const costCenters: CostCenterRecord[] = (
+    rawCostCenters.length > 0 ? rawCostCenters : DEFAULT_MOCK_COST_CENTERS
+  ).map((c: any) => ({
+    ...c,
+    code: String(c.code || c.id || 'CC-00'),
+    name: String(c.name || c.name_ar || 'مركز تكلفة'),
+    budget: Number(c.budget ?? c.annual_budget ?? 0),
+    actual_spent: Number(c.actual_spent ?? c.spent ?? 0),
+  }));
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -266,6 +274,7 @@ export const CostCentersPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث بكود المركز، الاسم، أو المسؤول"
               placeholder="ابحث بكود المركز، الاسم، أو المسؤول..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -358,6 +367,7 @@ export const CostCentersPage: React.FC = () => {
                                 deleteItem.mutate(c.id);
                               }
                             }}
+                            aria-label="حذف المركز"
                             className="p-1 text-zinc-400 hover:text-rose-600 transition-colors"
                             title="حذف المركز"
                           >

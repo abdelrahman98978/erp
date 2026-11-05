@@ -256,9 +256,9 @@ export const SponsorshipTransferPage: React.FC = () => {
                   تجاوز مدة التجربة أو انتهاء اليوم
                 </span>
               </div>
-              <h3 className="text-sm font-bold text-[#141414] mt-0.5">
+              <h2 className="text-sm font-bold text-[#141414] mt-0.5">
                 يوجد {criticalAlertsCount} حالة تجربة تجاوزت الموعد أو تنتهي اليوم وتتطلب حسم القرار فوراً!
-              </h3>
+              </h2>
             </div>
           </div>
 

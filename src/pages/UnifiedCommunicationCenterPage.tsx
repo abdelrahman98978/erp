@@ -294,7 +294,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                       />
                     </div>
 
-                    <h3 className="text-sm font-bold text-black mb-2">{memo.subject}</h3>
+                    <h2 className="text-sm font-bold text-black mb-2">{memo.subject}</h2>
 
                     <div className="bg-zinc-50 p-2.5 rounded-xl text-xs text-zinc-600 mb-3 flex items-center gap-2.5">
                       <CorporateAvatar name={memo.sender_entity} role={memo.recipient_entity} size="sm" status="verified" />

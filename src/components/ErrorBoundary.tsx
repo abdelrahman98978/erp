@@ -157,7 +157,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 <summary className="cursor-pointer font-bold mb-2">
                   تفاصيل الخطأ التشخيصية (وضع التطوير)
                 </summary>
-                <pre className="m-0 whitespace-pre-wrap overflow-x-auto text-left" dir="ltr">
+                <pre tabIndex={0} className="m-0 whitespace-pre-wrap overflow-x-auto text-left" dir="ltr">
                   {this.state.error.toString()}
                   {'\n\n'}
                   {this.state.errorInfo?.componentStack ?? ''}

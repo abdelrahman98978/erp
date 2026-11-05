@@ -287,6 +287,7 @@ export const ClientsPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث برقم العميل، الاسم، الجوال"
               placeholder="ابحث برقم العميل، الاسم، الجوال..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}

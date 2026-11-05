@@ -332,6 +332,7 @@ export const FinancialRequestsPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
+              aria-label="البحث بالرقم، المدفوع له، أو الوصف"
               placeholder="البحث بالرقم، المدفوع له، أو الوصف..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

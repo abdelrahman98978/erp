@@ -710,7 +710,7 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     categoryTagBg: 'bg-[#f3f3f3]',
     categoryTagColor: 'text-[#141414]',
     metricTagBg: 'bg-[#f3f3f3]',
-    metricTagColor: 'text-[#707070]',
+    metricTagColor: 'text-[#141414]',
     footerBorder: 'border-[#f0f0f0]',
     actionColor: 'text-[#141414]',
     activePillBg: 'bg-[#141414] border-[#141414]',
@@ -729,7 +729,7 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     categoryTagBg: 'bg-[#f3f3f3]',
     categoryTagColor: 'text-[#141414]',
     metricTagBg: 'bg-[#f3f3f3]',
-    metricTagColor: 'text-[#707070]',
+    metricTagColor: 'text-[#141414]',
     footerBorder: 'border-[#f0f0f0]',
     actionColor: 'text-[#141414]',
     activePillBg: 'bg-[#141414] border-[#141414]',
@@ -748,7 +748,7 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     categoryTagBg: 'bg-[#f3f3f3]',
     categoryTagColor: 'text-[#141414]',
     metricTagBg: 'bg-[#f3f3f3]',
-    metricTagColor: 'text-[#707070]',
+    metricTagColor: 'text-[#141414]',
     footerBorder: 'border-[#f0f0f0]',
     actionColor: 'text-[#141414]',
     activePillBg: 'bg-[#141414] border-[#141414]',
@@ -767,7 +767,7 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     categoryTagBg: 'bg-[#f3f3f3]',
     categoryTagColor: 'text-[#141414]',
     metricTagBg: 'bg-[#f3f3f3]',
-    metricTagColor: 'text-[#707070]',
+    metricTagColor: 'text-[#141414]',
     footerBorder: 'border-[#f0f0f0]',
     actionColor: 'text-[#141414]',
     activePillBg: 'bg-[#141414] border-[#141414]',
@@ -786,7 +786,7 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     categoryTagBg: 'bg-[#f3f3f3]',
     categoryTagColor: 'text-[#141414]',
     metricTagBg: 'bg-[#f3f3f3]',
-    metricTagColor: 'text-[#707070]',
+    metricTagColor: 'text-[#141414]',
     footerBorder: 'border-[#f0f0f0]',
     actionColor: 'text-[#141414]',
     activePillBg: 'bg-[#141414] border-[#141414]',
@@ -805,7 +805,7 @@ const CATEGORY_STYLES: Record<string, CategoryMeta> = {
     categoryTagBg: 'bg-[#f3f3f3]',
     categoryTagColor: 'text-[#141414]',
     metricTagBg: 'bg-[#f3f3f3]',
-    metricTagColor: 'text-[#707070]',
+    metricTagColor: 'text-[#141414]',
     footerBorder: 'border-[#f0f0f0]',
     actionColor: 'text-[#141414]',
     activePillBg: 'bg-[#141414] border-[#141414]',
@@ -919,6 +919,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
             <Search className="w-4 h-4 text-[#707070] absolute right-3 pointer-events-none" />
             <input
               type="text"
+              aria-label="ابحث في بطاقات صلاحياتك"
               placeholder={t('searchAppPlaceholder', 'ابحث في بطاقات صلاحياتك...')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -970,9 +971,9 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
             </div>
             <div className="space-y-0.5">
               <div className="text-xs font-semibold text-[#707070]">مرحباً بعودتك</div>
-              <div className="font-black text-base sm:text-lg text-[#141414] leading-tight">
+              <h1 className="font-black text-base sm:text-lg text-[#141414] leading-tight m-0">
                 {currentUser?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
-              </div>
+              </h1>
               <div className="text-xs font-medium text-[#707070]">
                 {currentUser?.role || currentDeptMeta.nameAr}
               </div>
@@ -988,7 +989,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
       {/* Explorer Content Container */}
       <div className="w-full px-4 sm:px-8 lg:px-12 py-6 sm:py-8 flex-1 space-y-6">
         {/* Category Filter Pills */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin" tabIndex={0} role="region" aria-label="تصنيفات الوحدات">
           {visibleCategories.map((cat) => {
             const isActive = selectedCategory === cat.id;
             const count = countsByCategory[cat.id] || 0;
@@ -1007,7 +1008,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                 <span>{cat.label}</span>
                 <span
                   className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                    isActive ? 'bg-[#ffffff]/20 text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070]'
+                    isActive ? 'bg-[#ffffff]/20 text-[#ffffff]' : 'bg-[#f3f3f3] text-[#141414]'
                   }`}
                 >
                   {count}
@@ -1039,7 +1040,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                     </div>
 
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                      <span className="text-[10px] px-2 py-0.5 rounded-md font-mono font-bold bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-md font-mono font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                         {app.smaccCode}
                       </span>
                       {app.metricBadge && (
@@ -1061,11 +1062,11 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                         {app.categoryLabel}
                       </span>
                     </div>
-                    <h3
+                    <h2
                       className={`text-sm sm:text-base font-extrabold font-display mb-1.5 leading-snug line-clamp-1 ${style.titleColor}`}
                     >
                       {title}
-                    </h3>
+                    </h2>
                     <p className={`text-xs leading-relaxed line-clamp-2 ${style.subColor}`}>
                       {subtitle}
                     </p>
@@ -1113,7 +1114,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
           <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-bold text-[10px]">
             عزل صارم للأقسام والشركات
           </span>
-          <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0] font-bold text-[10px]">
+          <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-bold text-[10px]">
             ZATCA المرحلة الثانية
           </span>
         </div>

@@ -25,7 +25,7 @@ export const SmaccDashboardWidget: React.FC = () => {
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#141414', margin: 0 }}>لوحة التحكم الهيكلية للنظام المالي والمحاسبي</h3>
+              <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#141414', margin: 0 }}>لوحة التحكم الهيكلية للنظام المالي والمحاسبي</h2>
               <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>
                 مطابق 100%
               </span>
@@ -37,6 +37,7 @@ export const SmaccDashboardWidget: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '12px', color: '#71717a' }}>الفترة الزمنية:</span>
           <select
+            aria-label="الفترة الزمنية"
             value={periodFilter}
             onChange={(e) => setPeriodFilter(e.target.value)}
             className="text-input"
@@ -93,7 +94,7 @@ export const SmaccDashboardWidget: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#000000' }} />
-              <h4 style={{ fontSize: '14px', fontWeight: 550, color: '#000000', margin: 0 }}>مدفوعات (Payment Summary)</h4>
+              <h3 style={{ fontSize: '14px', fontWeight: 550, color: '#000000', margin: 0 }}>مدفوعات (Payment Summary)</h3>
             </div>
             <span className="pill-tag-shade" style={{ fontSize: '11px' }}>
               {periodFilter}
@@ -129,7 +130,7 @@ export const SmaccDashboardWidget: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '12px', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#000000' }} />
-              <h4 style={{ fontSize: '14px', fontWeight: 550, color: '#000000', margin: 0 }}>ايصالات استلام (Receipt Vouchers)</h4>
+              <h3 style={{ fontSize: '14px', fontWeight: 550, color: '#000000', margin: 0 }}>ايصالات استلام (Receipt Vouchers)</h3>
             </div>
             <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
               {periodFilter}
@@ -166,7 +167,7 @@ export const SmaccDashboardWidget: React.FC = () => {
         {/* Box 3: عرض اسعار المشتروات */}
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px', marginBottom: '14px' }}>
-            <h4 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>عرض اسعار المشتروات</h4>
+            <h3 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>عرض اسعار المشتروات</h3>
             <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{periodFilter}</span>
           </div>
 
@@ -197,7 +198,7 @@ export const SmaccDashboardWidget: React.FC = () => {
         {/* Box 4: فاتورة الشراء */}
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px', marginBottom: '14px' }}>
-            <h4 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>فاتورة الشراء</h4>
+            <h3 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>فاتورة الشراء</h3>
             <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{periodFilter}</span>
           </div>
 
@@ -214,7 +215,7 @@ export const SmaccDashboardWidget: React.FC = () => {
         {/* Box 5: أمر الشراء */}
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e4e4e7', paddingBottom: '10px', marginBottom: '14px' }}>
-            <h4 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>أمر الشراء</h4>
+            <h3 style={{ fontSize: '13px', fontWeight: 550, color: '#000000', margin: 0 }}>أمر الشراء</h3>
             <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>{periodFilter}</span>
           </div>
 

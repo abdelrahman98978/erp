@@ -385,6 +385,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 <Search className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5" />
                 <input
                   type="text"
+                  aria-label="البحث بالاسم، البريد، الرقم الوظيفي، أو المسمى"
                   placeholder="البحث بالاسم، البريد، الرقم الوظيفي، أو المسمى..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -393,6 +394,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
               </div>
 
               <select
+                aria-label="تصفية حسب نوع الحساب"
                 value={filterAccountType}
                 onChange={(e) => setFilterAccountType(e.target.value)}
                 className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-3 py-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none"
@@ -409,6 +411,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
               </select>
 
               <select
+                aria-label="تصفية حسب حالة الحساب"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-3 py-2.5 text-xs text-slate-700 dark:text-slate-200 focus:outline-none"

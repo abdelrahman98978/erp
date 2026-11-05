@@ -645,7 +645,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               </span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="جدول الإيواء ومتابعة المعاملة">
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#f8f8f8] text-[#707070] font-bold border-b border-[#e0e0e0] whitespace-nowrap">
                   <tr>
@@ -868,6 +868,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 <input
                   type="text"
                   required
+                  aria-label="اسم العاملة"
                   value={workerName}
                   onChange={(e) => setWorkerName(e.target.value)}
                   placeholder="الاسم الكامل..."
@@ -879,6 +880,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 <input
                   type="text"
                   required
+                  aria-label="رقم الجواز"
                   value={passportNo}
                   onChange={(e) => setPassportNo(e.target.value)}
                   placeholder="مثال: PH928172..."
@@ -888,6 +890,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">الجنسية</label>
                 <select
+                  aria-label="الجنسية"
                   value={nationality}
                   onChange={(e) => setNationality(e.target.value)}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs text-[#141414]"
@@ -903,6 +906,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">جهة الاستلام (Source)</label>
                 <select
+                  aria-label="جهة الاستلام"
                   value={obsForm.source}
                   onChange={(e) => setObsForm({ ...obsForm, source: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs text-[#141414]"
@@ -936,6 +940,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <input
                       type="text"
+                      aria-label="اسم المستلم رباعياً"
                       placeholder="اسم المستلم رباعياً *"
                       value={obsForm.handover_recipient_name || ''}
                       onChange={(e) =>
@@ -945,6 +950,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                     />
                     <input
                       type="text"
+                      aria-label="رقم هوية المستلم"
                       placeholder="رقم هوية المستلم *"
                       value={obsForm.handover_recipient_id || ''}
                       onChange={(e) =>
@@ -954,6 +960,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                     />
                     <input
                       type="text"
+                      aria-label="رقم محضر التسليم بالمطار"
                       placeholder="رقم محضر التسليم بالمطار"
                       value={obsForm.handover_receipt_ref || ''}
                       onChange={(e) =>
@@ -976,6 +983,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">رغبة العاملة المصرّح بها</label>
                 <select
+                  aria-label="رغبة العاملة المصرح بها"
                   value={obsForm.worker_intent}
                   onChange={(e) => setObsForm({ ...obsForm, worker_intent: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -989,6 +997,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">رغبة صاحب العمل</label>
                 <select
+                  aria-label="رغبة صاحب العمل"
                   value={obsForm.employer_intent}
                   onChange={(e) => setObsForm({ ...obsForm, employer_intent: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1002,6 +1011,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">توفر أصل الجواز</label>
                 <select
+                  aria-label="توفر أصل الجواز"
                   value={obsForm.passport_available}
                   onChange={(e) => setObsForm({ ...obsForm, passport_available: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1014,6 +1024,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">بلاغ التغيب (الهروب)</label>
                 <select
+                  aria-label="بلاغ التغيب"
                   value={obsForm.absconding_status}
                   onChange={(e) => setObsForm({ ...obsForm, absconding_status: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1026,6 +1037,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">رواتب متأخرة غير مستلمة؟</label>
                 <select
+                  aria-label="رواتب متأخرة غير مستلمة"
                   value={obsForm.unpaid_wages}
                   onChange={(e) => setObsForm({ ...obsForm, unpaid_wages: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1040,6 +1052,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                   <label className="block text-[11px] font-bold text-[#707070] mb-1">إجمالي الرواتب المطالب بها (⃁)</label>
                   <input
                     type="number"
+                    aria-label="إجمالي الرواتب المطالب بها"
                     value={String(obsForm.salary_amount || '')}
                     onChange={(e) => setObsForm({ ...obsForm, salary_amount: e.target.value })}
                     placeholder="مثال: 4500"
@@ -1050,6 +1063,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">إفادة رفض العمل</label>
                 <select
+                  aria-label="إفادة رفض العمل"
                   value={obsForm.reported_refusal}
                   onChange={(e) => setObsForm({ ...obsForm, reported_refusal: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1062,6 +1076,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">مخاوف حماية وسلامة عاجلة؟</label>
                 <select
+                  aria-label="مخاوف حماية وسلامة عاجلة"
                   value={obsForm.safety_concern}
                   onChange={(e) => setObsForm({ ...obsForm, safety_concern: e.target.value })}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1087,6 +1102,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 {!obsForm.refusal_document_available && (
                   <input
                     type="text"
+                    aria-label="سبب استثناء المشرف"
                     placeholder="أو اكتب سبب استثناء المشرف (8 أحرف على الأقل)..."
                     value={obsForm.refusal_exemption_reason || ''}
                     onChange={(e) =>
@@ -1111,6 +1127,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                   <div key={item.item_key} className="p-3 rounded-xl bg-white border border-[#e0e0e0] space-y-2">
                     <div className="text-xs font-bold text-[#141414]">{kindMeta?.ar}</div>
                     <select
+                      aria-label={`عهدة ${kindMeta?.ar || item.item_key}`}
                       value={item.custody}
                       onChange={(e) => {
                         const nextCustody = e.target.value;
@@ -1136,6 +1153,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                     {item.item_key === 'cash' && item.custody === 'with_worker' && (
                         <input
                           type="number"
+                          aria-label="المبلغ النقدي الإلزامي"
                           placeholder="المبلغ النقدي الإلزامي (⃁) *"
                           value={item.amount ?? ''}
                           onChange={(e) => {
@@ -1243,6 +1261,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">إجمالي المطالبة (إن لم يسجل سابقاً)</label>
                 <input
                   type="number"
+                  aria-label="إجمالي المطالبة"
                   value={claimTotalInput}
                   onChange={(e) => setClaimTotalInput(e.target.value)}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs font-mono"
@@ -1253,6 +1272,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 <input
                   type="number"
                   required
+                  aria-label="مبلغ الدفعة الجديدة"
                   value={paymentAmount}
                   onChange={(e) => setPaymentAmount(e.target.value)}
                   placeholder="مثال: 1500"
@@ -1262,6 +1282,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div>
                 <label className="block text-[11px] font-bold text-[#707070] mb-1">نوع التوثيق (قاعدة Ewaa)</label>
                 <select
+                  aria-label="نوع التوثيق"
                   value={paymentStatus}
                   onChange={(e) => setPaymentStatus(e.target.value as any)}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"
@@ -1276,6 +1297,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 </label>
                 <input
                   type="text"
+                  aria-label="رقم مرجع الحوالة أو الإيصال"
                   value={paymentEvidenceRef}
                   onChange={(e) => setPaymentEvidenceRef(e.target.value)}
                   placeholder="مثال: STCPAY-882716..."
@@ -1319,6 +1341,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 <input
                   type="text"
                   required
+                  aria-label="رقم مرجع صعود الطائرة أو ختم المغادرة"
                   value={departureEvidenceRef}
                   onChange={(e) => setDepartureEvidenceRef(e.target.value)}
                   placeholder="مثال: BOARDING-SV890-OK"
@@ -1330,6 +1353,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 <input
                   type="text"
                   required
+                  aria-label="الموظف المتحقق من الإقلاع"
                   value={departureVerifier}
                   onChange={(e) => setDepartureVerifier(e.target.value)}
                   className="w-full bg-white border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs"

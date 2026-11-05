@@ -271,6 +271,7 @@ export const WhatsAppInboxPage: React.FC = () => {
               <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
               <input
                 type="text"
+                aria-label="ابحث بالاسم أو الرقم"
                 placeholder="ابحث بالاسم أو الرقم..."
                 value={searchFilter}
                 onChange={e => setSearchFilter(e.target.value)}
@@ -335,7 +336,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 status="online"
               />
               <div>
-                <h3 className="font-bold text-xs text-black">{activeChat.client_name}</h3>
+                <h2 className="font-bold text-xs text-black">{activeChat.client_name}</h2>
                 <span className="text-[11px] font-mono text-champagne-dark font-bold">{activeChat.phone}</span>
               </div>
             </div>
@@ -380,6 +381,7 @@ export const WhatsAppInboxPage: React.FC = () => {
           <form onSubmit={handleSendMessage} className="p-3 border-t border-zinc-200 bg-white flex items-center gap-2">
             <input
               type="text"
+              aria-label="اكتب ردك للعميل أو اختر قالباً جاهزاً من الأعلى"
               placeholder="اكتب ردك للعميل أو اختر قالباً جاهزاً من الأعلى..."
               value={replyText}
               onChange={e => setReplyText(e.target.value)}

@@ -432,6 +432,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" />
             <input
               type="text"
+              aria-label="بحث بالموظف، الدور، أو الفرع"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="بحث بالموظف، الدور، أو الفرع..."
@@ -440,6 +441,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
           </div>
 
           <select
+            aria-label="تصفية حسب الفرع"
             value={selectedBranch}
             onChange={e => setSelectedBranch(e.target.value)}
             className="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none"
@@ -450,6 +452,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
           </select>
 
           <select
+            aria-label="تصفية حسب الحالة المزاجية"
             value={selectedMoodFilter}
             onChange={e => setSelectedMoodFilter(e.target.value)}
             className="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none"
@@ -469,9 +472,9 @@ export const EmployeeMonitoringPage: React.FC = () => {
         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
           <div className="p-4 border-b border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+              <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
                 مصفوفة إنتاجية الموظفين ورصد الاحتراق الوظيفي
-              </h3>
+              </h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 مقارنة دقيقة تجمع بين زمن النشاط الفعلي، النقرات العصبية، ومعدل إنجاز المعاملات.
               </p>

@@ -633,6 +633,7 @@ export const BranchDepartmentsPage: React.FC = () => {
           <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
+            aria-label="بحث بالاسم، الكود، المدير أو القسم"
             placeholder="بحث بالاسم، الكود، المدير أو القسم..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
@@ -640,6 +641,7 @@ export const BranchDepartmentsPage: React.FC = () => {
           />
           {searchQuery && (
             <button
+              aria-label="مسح البحث"
               onClick={() => setSearchQuery('')}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
             >
@@ -676,7 +678,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 </span>
               </div>
 
-              <h4 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h4>
+              <h2 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h2>
               <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
                 isSelected ? 'text-champagne-light/70' : 'text-zinc-500 dark:text-zinc-400'
               }`}>

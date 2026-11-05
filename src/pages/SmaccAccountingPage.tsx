@@ -662,6 +662,7 @@ export const SmaccAccountingPage: React.FC = () => {
               {hasChildren ? (
                 <button
                   type="button"
+                  aria-label={isExpanded ? `طي حساب ${node.name}` : `توسيع حساب ${node.name}`}
                   onClick={() => toggleNode(node.code)}
                   className="p-1 text-zinc-400 hover:text-black rounded"
                 >
@@ -923,6 +924,7 @@ export const SmaccAccountingPage: React.FC = () => {
               <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
               <input
                 type="text"
+                aria-label="البحث بالرمز أو اسم الحساب"
                 placeholder="البحث بالرمز أو اسم الحساب..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}

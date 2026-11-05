@@ -104,6 +104,64 @@ const DEFAULT_MEDICAL_CHECKS: ShelterMedicalCheck[] = [
   }
 ];
 
+const DEFAULT_ROOMS: ShelterRoom[] = [
+  {
+    id: 'RM-101',
+    room: 'جناح أ - غرفة 101 (الفلبين)',
+    beds: '6 أسرة',
+    totalBeds: 6,
+    occupied: 4,
+    status: 'متاح سريران',
+    type: 'نزيلات الفلبين',
+    clean: 'تم التعقيم اليوم 08:00 ص',
+  },
+  {
+    id: 'RM-102',
+    room: 'جناح ب - غرفة 102 (إندونيسيا)',
+    beds: '6 أسرة',
+    totalBeds: 6,
+    occupied: 3,
+    status: 'متاح 3 أسرة',
+    type: 'نزيلات إندونيسيا',
+    clean: 'تم التعقيم اليوم 08:30 ص',
+  },
+  {
+    id: 'RM-201',
+    room: 'جناح ج - غرفة 201 (أوغندا وكينيا)',
+    beds: '8 أسرة',
+    totalBeds: 8,
+    occupied: 5,
+    status: 'متاح 3 أسرة',
+    type: 'نزيلات أفريقيا',
+    clean: 'تم التعقيم اليوم 09:00 ص',
+  },
+];
+
+const DEFAULT_CATERING_MEALS: ShelterCateringMeal[] = [
+  {
+    id: 'CAT-01',
+    date: '2026-11-05',
+    place: 'الرياض - المقر الرئيسي',
+    meal: 'وجبة إفطار',
+    count: 18,
+    vendor: 'مخابز وحلويات الريان',
+    cost: 270,
+    sup: 'أميرة الشمري',
+    status: 'تم الاستلام والتوزيع',
+  },
+  {
+    id: 'CAT-02',
+    date: '2026-11-05',
+    place: 'الرياض - المقر الرئيسي',
+    meal: 'وجبة غداء',
+    count: 18,
+    vendor: 'مطابخ ومطاعم السليم للإعاشة',
+    cost: 450,
+    sup: 'أميرة الشمري',
+    status: 'تم الاستلام والتوزيع',
+  },
+];
+
 export const ShelterSuitePortalPage: React.FC = () => {
   const { activeCompanyId, activeCompany } = useCompany();
   const { activeTab: storeActiveTab, setActiveTab: setGlobalActiveTab, addNotification } = useAppStore();
@@ -121,8 +179,8 @@ export const ShelterSuitePortalPage: React.FC = () => {
       case 'food-catering':
         return 'catering';
       case 'available-transfer':
-        return 'welfare';
       case 'outside-shelter':
+        return 'welfare';
       case 'deportation-stage':
         return 'deportation';
       case 'shelter-places':
@@ -197,9 +255,15 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
   // Load persistent records
   useEffect(() => {
-    realErpDataStore.getRecords<ShelterRoom>('shelter_rooms', []).then(setRooms);
-    realErpDataStore.getRecords<ShelterCateringMeal>('shelter_catering_logs', []).then(setCateringMeals);
-    realErpDataStore.getRecords<ShelterMedicalCheck>('shelter_medical_checks', DEFAULT_MEDICAL_CHECKS).then(setMedicalChecks);
+    realErpDataStore.getRecords<ShelterRoom>('shelter_rooms', DEFAULT_ROOMS).then((r) =>
+      setRooms(r.length > 0 ? r : DEFAULT_ROOMS)
+    );
+    realErpDataStore.getRecords<ShelterCateringMeal>('shelter_catering_logs', DEFAULT_CATERING_MEALS).then((m) =>
+      setCateringMeals(m.length > 0 ? m : DEFAULT_CATERING_MEALS)
+    );
+    realErpDataStore.getRecords<ShelterMedicalCheck>('shelter_medical_checks', DEFAULT_MEDICAL_CHECKS).then((c) =>
+      setMedicalChecks(c.length > 0 ? c : DEFAULT_MEDICAL_CHECKS)
+    );
   }, []);
 
   const inmates: ShelterRecordItem[] = rawShelter.length > 0 ? (rawShelter as ShelterRecordItem[]) : [];
@@ -561,9 +625,6 @@ export const ShelterSuitePortalPage: React.FC = () => {
         })}
       </div>
 
-      {/* 3.5 Ewaa Fact & Evidence-Gated Housing Operations Engine */}
-      <EwaaOperationsCenterPanel />
-
       {/* 4. Dynamic Department Content Body */}
       <div className="space-y-6">
         {/* =========================================================================
@@ -571,6 +632,8 @@ export const ShelterSuitePortalPage: React.FC = () => {
            ========================================================================= */}
         {activeDepartment === 'dashboard' && (
           <div className="space-y-6">
+            {/* 3.5 Ewaa Fact & Evidence-Gated Housing Operations Engine */}
+            <EwaaOperationsCenterPanel />
 
               {/* Quick Status Bar & Distribution */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -683,9 +746,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-[#e0e0e0]">
+                <div className="overflow-x-auto rounded-xl border border-[#e0e0e0]" tabIndex={0} role="region" aria-label="النزيلات المتواجدات حالياً">
                   <table className="w-full text-right text-xs text-[#141414]">
-                    <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3">رقم السجل</th>
                         <th className="p-3">اسم النزيلة</th>
@@ -771,6 +834,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-[#707070]" />
                 <input
                   type="text"
+                  aria-label="بحث برقم الجواز، اسم النزيلة، أو العميل"
                   placeholder="بحث برقم الجواز، اسم النزيلة، أو العميل..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -780,9 +844,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
               {/* Inmates Table */}
               <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="كشف النزيلات المباشر">
                   <table className="w-full text-right text-xs text-[#141414]">
-                    <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3">رقم النزيلة</th>
                         <th className="p-3">اسم النزيلة</th>
@@ -1009,9 +1073,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
 
               {/* Catering Table */}
               <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="سجل وجبات الإعاشة والتغذية">
                   <table className="w-full text-right text-xs text-[#141414]">
-                    <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3">التاريخ</th>
                         <th className="p-3">مقر الإيواء</th>
@@ -1244,9 +1308,9 @@ export const ShelterSuitePortalPage: React.FC = () => {
               </div>
 
               <div className="bg-white rounded-2xl border border-[#e0e0e0] overflow-hidden">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="سجل حالات الترحيل والخروج النهائي">
                   <table className="w-full text-right text-xs text-[#141414]">
-                    <thead className="bg-[#f3f3f3] text-[#707070] font-bold border-b border-[#e0e0e0]">
+                    <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3">رقم السجل</th>
                         <th className="p-3">اسم النزيلة</th>
@@ -1260,31 +1324,40 @@ export const ShelterSuitePortalPage: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#f0f0f0]">
-                      {filteredInmates
-                        .filter((i) => i.status === 'مرحلة الترحيل')
-                        .map((item) => (
-                          <tr key={item.id} className="hover:bg-[#fafafa]">
-                            <td className="p-3 font-mono font-bold text-[#141414]">{item.id}</td>
-                            <td className="p-3 font-bold text-[#141414]">{item.maid_name}</td>
-                            <td className="p-3 text-[#141414]">{item.nationality}</td>
-                            <td className="p-3 font-mono text-[#707070]">{item.passport}</td>
-                            <td className="p-3 text-[#141414] font-bold">صادرة ومسددة (أبشر)</td>
-                            <td className="p-3 font-mono text-[#141414]">SV-824 (مؤكد)</td>
-                            <td className="p-3 text-[#141414]">مطار الملك خالد الدولي (الرياض)</td>
-                            <td className="p-3">
-                              <Badge text="مرحلة الترحيل" type="danger" />
-                            </td>
-                            <td className="p-3 text-center">
-                              <button
-                                type="button"
-                                onClick={() => handleUpdateStatus(item, 'تم الترحيل')}
-                                className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] hover:text-white text-[11px] font-bold transition-all cursor-pointer"
-                              >
-                                تأكيد المغادرة والترحيل
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                      {filteredInmates.filter((i) => i.status === 'مرحلة الترحيل' || i.work_willingness === 'لا ترغب بالعمل')
+                        .length === 0 ? (
+                        <tr>
+                          <td colSpan={9} className="p-4 text-center text-[#707070]">
+                            لا توجد حالات في مرحلة الترحيل حالياً ضمن التصفية المحددة.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredInmates
+                          .filter((i) => i.status === 'مرحلة الترحيل' || i.work_willingness === 'لا ترغب بالعمل')
+                          .map((item) => (
+                            <tr key={item.id} className="hover:bg-[#fafafa]">
+                              <td className="p-3 font-mono font-bold text-[#141414]">{item.id}</td>
+                              <td className="p-3 font-bold text-[#141414]">{item.maid_name}</td>
+                              <td className="p-3 text-[#141414]">{item.nationality}</td>
+                              <td className="p-3 font-mono text-[#707070]">{item.passport}</td>
+                              <td className="p-3 text-[#141414] font-bold">صادرة ومسددة (أبشر)</td>
+                              <td className="p-3 font-mono text-[#141414]">SV-824 (مؤكد)</td>
+                              <td className="p-3 text-[#141414]">مطار الملك خالد الدولي (الرياض)</td>
+                              <td className="p-3">
+                                <Badge text="مرحلة الترحيل" type="danger" />
+                              </td>
+                              <td className="p-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateStatus(item, 'تم الترحيل')}
+                                  className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] hover:text-white text-[11px] font-bold transition-all cursor-pointer"
+                                >
+                                  تأكيد المغادرة والترحيل
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1473,7 +1546,12 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <Hotel className="w-4 h-4 text-[#141414]" />
                 <h3 className="font-bold text-sm text-[#141414] m-0">تسكين نزيلة جديدة بمركز الإيواء</h3>
               </div>
-              <button onClick={() => setShowCheckinModal(false)} className="text-[#707070] hover:text-[#141414] cursor-pointer">
+              <button
+                type="button"
+                aria-label="إغلاق نافذة تسكين نزيلة جديدة"
+                onClick={() => setShowCheckinModal(false)}
+                className="text-[#707070] hover:text-[#141414] cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1484,6 +1562,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <input
                   type="text"
                   required
+                  aria-label="اسم العاملة أو النزيلة"
                   placeholder="الاسم الرباعي للعاملة..."
                   value={checkinForm.maid_name}
                   onChange={(e) => setCheckinForm({ ...checkinForm, maid_name: e.target.value })}
@@ -1495,6 +1574,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-[#707070] mb-1">الجنسية *</label>
                   <select
+                    aria-label="الجنسية"
                     value={checkinForm.nationality}
                     onChange={(e) => setCheckinForm({ ...checkinForm, nationality: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1512,6 +1592,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <input
                     type="text"
                     required
+                    aria-label="رقم الجواز"
                     placeholder="مثال: PH982341..."
                     value={checkinForm.passport}
                     onChange={(e) => setCheckinForm({ ...checkinForm, passport: e.target.value })}
@@ -1523,6 +1604,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
               <div>
                 <label className="block text-xs font-bold text-[#707070] mb-1">مركز / فرع الإيواء المحدد *</label>
                 <select
+                  aria-label="مركز أو فرع الإيواء المحدد"
                   value={checkinForm.shelter_location}
                   onChange={(e) => setCheckinForm({ ...checkinForm, shelter_location: e.target.value })}
                   className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1538,6 +1620,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-[#707070] mb-1">الرغبة في العمل</label>
                   <select
+                    aria-label="الرغبة في العمل"
                     value={checkinForm.work_willingness}
                     onChange={(e) => setCheckinForm({ ...checkinForm, work_willingness: e.target.value as any })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1551,6 +1634,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">اسم العميل / المستفيد</label>
                   <input
                     type="text"
+                    aria-label="اسم العميل أو المستفيد"
                     placeholder="اختياري..."
                     value={checkinForm.client_name}
                     onChange={(e) => setCheckinForm({ ...checkinForm, client_name: e.target.value })}
@@ -1585,7 +1669,12 @@ export const ShelterSuitePortalPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#e0e0e0] overflow-hidden text-[#141414]">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
               <h3 className="font-bold text-sm text-[#141414] m-0">إضافة غرفة / مهجع إيواء جديد</h3>
-              <button onClick={() => setShowRoomModal(false)} className="text-[#707070] hover:text-[#141414] cursor-pointer">
+              <button
+                type="button"
+                aria-label="إغلاق نافذة إضافة غرفة"
+                onClick={() => setShowRoomModal(false)}
+                className="text-[#707070] hover:text-[#141414] cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1596,6 +1685,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <input
                   type="text"
                   required
+                  aria-label="اسم الغرفة أو المهجع"
                   placeholder="مثال: جناح د - غرفة 401"
                   value={roomForm.room}
                   onChange={(e) => setRoomForm({ ...roomForm, room: e.target.value })}
@@ -1607,6 +1697,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-[#707070] mb-1">عدد الأسرة *</label>
                   <select
+                    aria-label="عدد الأسرة"
                     value={roomForm.totalBeds}
                     onChange={(e) => setRoomForm({ ...roomForm, totalBeds: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1621,6 +1712,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">تخصيص النزيلات</label>
                   <input
                     type="text"
+                    aria-label="تخصيص النزيلات"
                     value={roomForm.type}
                     onChange={(e) => setRoomForm({ ...roomForm, type: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1654,7 +1746,12 @@ export const ShelterSuitePortalPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#e0e0e0] overflow-hidden text-[#141414]">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
               <h3 className="font-bold text-sm text-[#141414] m-0">تسجيل وجبة جماعية وإعاشة</h3>
-              <button onClick={() => setShowMealModal(false)} className="text-[#707070] hover:text-[#141414] cursor-pointer">
+              <button
+                type="button"
+                aria-label="إغلاق نافذة تسجيل وجبة"
+                onClick={() => setShowMealModal(false)}
+                className="text-[#707070] hover:text-[#141414] cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1664,6 +1761,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-[#707070] mb-1">نوع الوجبة</label>
                   <select
+                    aria-label="نوع الوجبة"
                     value={mealForm.meal}
                     onChange={(e) => setMealForm({ ...mealForm, meal: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1678,6 +1776,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">عدد الوجبات</label>
                   <input
                     type="number"
+                    aria-label="عدد الوجبات"
                     value={mealForm.count}
                     onChange={(e) => setMealForm({ ...mealForm, count: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414] font-mono"
@@ -1689,6 +1788,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <label className="block text-xs font-bold text-[#707070] mb-1">المطعم / متعهد الإعاشة</label>
                 <input
                   type="text"
+                  aria-label="المطعم أو متعهد الإعاشة"
                   value={mealForm.vendor}
                   onChange={(e) => setMealForm({ ...mealForm, vendor: e.target.value })}
                   className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1700,6 +1800,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">التكلفة (⃁)</label>
                   <input
                     type="number"
+                    aria-label="التكلفة بالريال"
                     value={mealForm.cost}
                     onChange={(e) => setMealForm({ ...mealForm, cost: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414] font-mono"
@@ -1709,6 +1810,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">المشرف المستلم</label>
                   <input
                     type="text"
+                    aria-label="المشرف المستلم"
                     value={mealForm.sup}
                     onChange={(e) => setMealForm({ ...mealForm, sup: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1742,7 +1844,12 @@ export const ShelterSuitePortalPage: React.FC = () => {
           <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#e0e0e0] overflow-hidden text-[#141414]">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
               <h3 className="font-bold text-sm text-[#141414] m-0">تسجيل فحص طبي وكشف صحي</h3>
-              <button onClick={() => setShowClinicModal(false)} className="text-[#707070] hover:text-[#141414] cursor-pointer">
+              <button
+                type="button"
+                aria-label="إغلاق نافذة تسجيل الفحص الطبي"
+                onClick={() => setShowClinicModal(false)}
+                className="text-[#707070] hover:text-[#141414] cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1753,6 +1860,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <input
                   type="text"
                   required
+                  aria-label="اسم النزيلة"
                   placeholder="اسم العاملة..."
                   value={clinicForm.inmate_name}
                   onChange={(e) => setClinicForm({ ...clinicForm, inmate_name: e.target.value })}
@@ -1764,6 +1872,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-[#707070] mb-1">نوع الكشف</label>
                   <select
+                    aria-label="نوع الكشف الطبي"
                     value={clinicForm.check_type}
                     onChange={(e) => setClinicForm({ ...clinicForm, check_type: e.target.value as any })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1777,6 +1886,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-[#707070] mb-1">النتيجة الطبية</label>
                   <select
+                    aria-label="النتيجة الطبية"
                     value={clinicForm.result}
                     onChange={(e) => setClinicForm({ ...clinicForm, result: e.target.value as any })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414]"
@@ -1794,6 +1904,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">الحرارة</label>
                   <input
                     type="text"
+                    aria-label="درجة الحرارة"
                     value={clinicForm.temperature}
                     onChange={(e) => setClinicForm({ ...clinicForm, temperature: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414] font-mono"
@@ -1803,6 +1914,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                   <label className="block text-xs font-bold text-[#707070] mb-1">ضغط الدم</label>
                   <input
                     type="text"
+                    aria-label="ضغط الدم"
                     value={clinicForm.blood_pressure}
                     onChange={(e) => setClinicForm({ ...clinicForm, blood_pressure: e.target.value })}
                     className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl py-2 px-3 text-xs text-[#141414] font-mono"
@@ -1814,6 +1926,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                 <label className="block text-xs font-bold text-[#707070] mb-1">ملاحظات الطبيب / الممرضة</label>
                 <textarea
                   rows={2}
+                  aria-label="ملاحظات الطبيب أو الممرضة"
                   value={clinicForm.notes}
                   onChange={(e) => setClinicForm({ ...clinicForm, notes: e.target.value })}
                   className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-[#141414]"

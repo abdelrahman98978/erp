@@ -135,6 +135,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
             <Search className="w-4 h-4 text-zinc-400 absolute right-3 top-3" />
             <input
               type="text"
+              aria-label="بحث بالاسم، الجواز، المهارة"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="بحث بالاسم، الجواز، المهارة..."
@@ -145,6 +146,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
           {/* Original Office Filter */}
           <div>
             <select
+              aria-label="تصفية حسب المكتب الأصلي"
               value={selectedOffice}
               onChange={(e) => setSelectedOffice(e.target.value)}
               className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-medium cursor-pointer"
@@ -161,6 +163,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
           {/* Nationality Filter */}
           <div>
             <select
+              aria-label="تصفية حسب الجنسية"
               value={selectedNationality}
               onChange={(e) => setSelectedNationality(e.target.value)}
               className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-medium cursor-pointer"
@@ -175,6 +178,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
           {/* Skill / Experience Filter */}
           <div>
             <select
+              aria-label="تصفية حسب التخصص أو المهارة"
               value={selectedSkill}
               onChange={(e) => setSelectedSkill(e.target.value)}
               className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-medium cursor-pointer"

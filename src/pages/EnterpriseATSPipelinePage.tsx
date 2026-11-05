@@ -325,7 +325,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                   <CorporateAvatar name={cnd.name} profession={cnd.appliedPosition} isCandidate size="md" status="verified" />
                   <div>
                     <span className="text-xs text-zinc-400 font-mono font-bold">{cnd.candidateCode}</span>
-                    <h3 className="text-base font-bold text-black mt-0.5">{cnd.name}</h3>
+                    <h2 className="text-base font-bold text-black mt-0.5">{cnd.name}</h2>
                   </div>
                 </div>
 

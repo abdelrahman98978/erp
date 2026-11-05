@@ -327,9 +327,9 @@ export const RentPackagesPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-2.5 mb-2">
-                    <CorporateAvatar name={pkg.name} category={pkg.category} profession="عاملة منزلية" isCandidate size="sm" />
+                    <CorporateAvatar name={pkg.name || (pkg as any).package_name || 'باقة تأجير'} category={pkg.category} profession="عاملة منزلية" isCandidate size="sm" />
                     <div>
-                      <h3 className="text-base font-bold text-black">{pkg.name}</h3>
+                      <h2 className="text-base font-bold text-black">{pkg.name || (pkg as any).package_name || (pkg as any).title || 'باقة تأجير مرنة'}</h2>
                       <p className="text-xs text-zinc-500">{pkg.terms_summary || ''}</p>
                     </div>
                   </div>

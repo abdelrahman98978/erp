@@ -272,6 +272,7 @@ export const ClientPortalPage: React.FC = () => {
           <label className="block text-[11px] font-bold text-zinc-500 mb-0.5">البحث الفوري عن العقود ومراحل العمالة</label>
           <input
             type="text"
+            aria-label="البحث الفوري عن العقود ومراحل العمالة"
             value={nationalIdOrPhone}
             onChange={e => setNationalIdOrPhone(e.target.value)}
             placeholder="أدخل رقم العقد (MSN-...)، أو اسم العاملة، أو رقم الجواز للتحقق والتتبع المباشر..."

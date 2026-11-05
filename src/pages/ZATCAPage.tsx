@@ -344,9 +344,9 @@ export const ZATCAPage: React.FC = () => {
       <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginBottom: '6px' }}>ZATCA PHASE 2 CLEARANCE</span>
-          <h3 className="display-sm" style={{ fontSize: '18px', fontWeight: 550, color: '#000000', margin: '4px 0 0 0' }}>
+          <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 550, color: '#000000', margin: '4px 0 0 0' }}>
             الرقم الضريبي: {activeCompany.taxNumber} • شهادة الاعتماد (CSID) نشطة
-          </h3>
+          </h2>
           <p style={{ fontSize: '12.5px', color: '#27272a', margin: '4px 0 0 0' }}>
             توليد كود الاستجابة السريع QR Code متطابق 100% مع مواصفة ZATCA UBL 2.1 والختم التشفيري ECDSA
           </p>
@@ -397,6 +397,7 @@ export const ZATCAPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث برقم الفاتورة، اسم العميل، أو مرجع العقد"
               placeholder="ابحث برقم الفاتورة، اسم العميل، أو مرجع العقد..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -415,6 +416,7 @@ export const ZATCAPage: React.FC = () => {
               <span>إضافة صور / مستندات فواتير للجدول</span>
             </button>
             <select
+              aria-label="تصفية حسب نوع الفاتورة"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs font-bold text-black focus:border-black focus:outline-none"

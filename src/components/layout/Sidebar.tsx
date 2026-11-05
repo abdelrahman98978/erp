@@ -251,7 +251,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       case 'danger':
         return 'bg-[#141414] text-[#ffffff] font-semibold';
       default:
-        return 'bg-[#f3f3f3] text-[#707070]';
+        return 'bg-[#f3f3f3] text-[#141414] font-medium';
     }
   };
 
@@ -291,7 +291,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-[#f3f3f3] text-[#707070]">
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-[#f3f3f3] text-[#141414]">
                 {childCount}
               </span>
               <ChevronDown
@@ -459,7 +459,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-full text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 effectiveMode === 'tree'
                   ? 'bg-[#ffffff] text-[#141414] border border-[#e0e0e0]'
-                  : 'text-[#707070] hover:text-[#141414]'
+                  : 'text-[#141414] hover:text-[#141414]'
               }`}
               title="عرض شجري للأقسام الـ 9"
             >
@@ -473,7 +473,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className={`flex items-center justify-center gap-1 py-1.5 px-2 rounded-full text-[11px] font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 effectiveMode === 'cards'
                   ? 'bg-[#ffffff] text-[#141414] border border-[#e0e0e0]'
-                  : 'text-[#707070] hover:text-[#141414]'
+                  : 'text-[#141414] hover:text-[#141414]'
               }`}
               title="عرض بطاقات"
             >
@@ -484,7 +484,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               type="button"
               onClick={() => handleModeSwitch('compact')}
-              className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-full text-[11px] font-semibold text-[#707070] hover:text-[#141414] transition-all cursor-pointer whitespace-nowrap"
+              className="flex items-center justify-center gap-1 py-1.5 px-2 rounded-full text-[11px] font-semibold text-[#141414] hover:text-[#141414] transition-all cursor-pointer whitespace-nowrap"
               title="طي القائمة الجانبية"
             >
               <Columns className="w-3.5 h-3.5 shrink-0" />
@@ -500,6 +500,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Search className="w-3.5 h-3.5 text-[#707070] shrink-0" />
               <input
                 type="text"
+                aria-label="بحث في الأقسام الـ 9"
                 placeholder="بحث في الأقسام الـ 9..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

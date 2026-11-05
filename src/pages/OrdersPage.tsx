@@ -91,6 +91,24 @@ const DEFAULT_MOCK_ORDERS: OrderRecord[] = [
     office_name: 'JAKARTA GLOBAL AGENCY',
     created_at: new Date().toISOString(),
   },
+  {
+    id: 'ORD-2026-004',
+    company_id: 'SAF',
+    client_name: 'نورة سعد القحطاني',
+    client_phone: '+966504433221',
+    maid_name: 'طلب ملغي بناءً على رغبة العميل',
+    nationality: 'الفلبين',
+    passport_number: 'CANCELLED',
+    request_type: 'حسب المواصفات',
+    status: 'ملغي',
+    timer_status: 'منتهي',
+    deadline: 'ملغي',
+    contract_status: 'بدون عقد',
+    responsible_employee: 'فهد العتيبي (مسوق)',
+    branch: 'فرع الرياض الرئيسي',
+    office_name: "PLATINUM BROTHERS INT'L",
+    created_at: new Date().toISOString(),
+  },
 ];
 
 export const OrdersPage: React.FC = () => {
@@ -106,7 +124,9 @@ export const OrdersPage: React.FC = () => {
   const getMappedFilter = (tabKey: string) => {
     switch (tabKey) {
       case 'new-orders': return 'new';
+      case 'completed-orders':
       case 'contracted-orders': return 'contracted';
+      case 'cancelled-orders': return 'cancelled';
       case 'incomplete-orders': return 'incomplete';
       case 'urgent-orders': return 'urgent';
       case 'professional-requests': return 'professional';
@@ -320,7 +340,8 @@ export const OrdersPage: React.FC = () => {
     const matchesFilter =
       activeFilter === 'all' ||
       (activeFilter === 'new' && ord.status === 'جديد') ||
-      (activeFilter === 'contracted' && ord.contract_status === 'تم التعاقد') ||
+      (activeFilter === 'contracted' && (ord.contract_status === 'تم التعاقد' || ord.status === 'تم التعاقد')) ||
+      (activeFilter === 'cancelled' && ord.status === 'ملغي') ||
       (activeFilter === 'incomplete' && (ord.timer_status === 'حرج' || ord.status === 'تحت الإجراء')) ||
       (activeFilter === 'urgent' && ord.timer_status === 'حرج') ||
       (activeFilter === 'renew' && (ord.request_type?.includes('تجديد') || ord.notes?.includes('تجديد') || ord.status === 'تحت الإجراء')) ||
@@ -407,10 +428,10 @@ export const OrdersPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>طلبات حرجة (مهلة قريبة)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#e11d48', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {orders.filter(o => o.timer_status === 'حرج').length} طلب
           </div>
-          <span className="pill-tag-shade text-rose-700" style={{ fontSize: '11px', marginTop: '10px' }}>تنبيه SLA</span>
+          <span className="pill-tag-shade text-[#141414]" style={{ fontSize: '11px', marginTop: '10px' }}>تنبيه SLA</span>
         </div>
       </div>
 
@@ -421,7 +442,7 @@ export const OrdersPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('all')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'all' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'all' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               جميع الطلبات ({orders.length})
@@ -430,7 +451,7 @@ export const OrdersPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('new')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'new' ? 'bg-emerald-600 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'new' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               طلبات جديدة ({orders.filter(o => o.status === 'جديد').length})
@@ -439,7 +460,7 @@ export const OrdersPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('urgent')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'urgent' ? 'bg-rose-600 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'urgent' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               طلبات عاجلة SLA ({orders.filter(o => o.timer_status === 'حرج').length})
@@ -448,10 +469,19 @@ export const OrdersPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('contracted')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'contracted' ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'contracted' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
-              تم التعاقد ({orders.filter(o => o.contract_status === 'تم التعاقد').length})
+              الطلبات المكتملة ({orders.filter(o => o.contract_status === 'تم التعاقد' || o.status === 'تم التعاقد').length})
+            </button>
+
+            <button
+              onClick={() => setActiveFilter('cancelled')}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                activeFilter === 'cancelled' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+              }`}
+            >
+              الطلبات الملغاة ({orders.filter(o => o.status === 'ملغي').length})
             </button>
 
             <button
@@ -477,6 +507,7 @@ export const OrdersPage: React.FC = () => {
             <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
             <input
               type="text"
+              aria-label="ابحث برقم الطلب، العميل، العاملة"
               placeholder="ابحث برقم الطلب، العميل، العاملة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

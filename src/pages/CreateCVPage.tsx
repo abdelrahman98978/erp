@@ -245,12 +245,13 @@ export const CreateCVPage: React.FC = () => {
         {/* Step 1: Agency & Type */}
         {activeStep === 1 && (
           <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
-            <h3 className="text-base font-bold text-black mb-4">القسم 1: نوع السيرة والوكالة الخارجية</h3>
+            <h2 className="text-base font-bold text-black mb-4">القسم 1: نوع السيرة والوكالة الخارجية</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="text-xs text-zinc-700 block mb-1 font-semibold">نوع السيرة الذاتية *</label>
                 <select
+                  aria-label="نوع السيرة الذاتية"
                   value={formData.type_id}
                   onChange={(e) => setFormData({ ...formData, type_id: e.target.value })}
                   className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -264,6 +265,7 @@ export const CreateCVPage: React.FC = () => {
               <div>
                 <label className="text-xs text-zinc-700 block mb-1 font-semibold">الجنسية *</label>
                 <select
+                  aria-label="الجنسية"
                   value={formData.nationality_id}
                   onChange={(e) => setFormData({ ...formData, nationality_id: e.target.value })}
                   className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -284,6 +286,7 @@ export const CreateCVPage: React.FC = () => {
                 <label className="text-xs text-zinc-700 block mb-1 font-semibold">المكتب / الوكالة المصدرة *</label>
                 <input
                   type="text"
+                  aria-label="المكتب / الوكالة المصدرة"
                   value={formData.office_id}
                   onChange={(e) => setFormData({ ...formData, office_id: e.target.value })}
                   className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"
@@ -294,6 +297,7 @@ export const CreateCVPage: React.FC = () => {
                 <label className="text-xs text-zinc-700 block mb-1 font-semibold">المهنة المصرحة *</label>
                 <input
                   type="text"
+                  aria-label="المهنة المصرحة"
                   value={formData.job_title}
                   onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
                   className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2.5 px-3 text-xs text-black focus:border-black focus:outline-none"

@@ -1746,6 +1746,7 @@ export const HRPage: React.FC = () => {
                 <Search className="w-4 h-4 absolute right-3.5 top-2.5 text-[#707070]" />
                 <input
                   type="text"
+                  aria-label="بحث بالاسم، الكود، الهوية، أو المسمى"
                   placeholder="بحث بالاسم، الكود، الهوية، أو المسمى..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -2105,7 +2106,7 @@ export const HRPage: React.FC = () => {
           <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
             <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
               <div>
-                <h3 className="text-sm font-extrabold text-[#141414] m-0">سجل الترقيات وتعديل الدرجات والصلاحيات الإدارية</h3>
+                <h2 className="text-sm font-extrabold text-[#141414] m-0">سجل الترقيات وتعديل الدرجات والصلاحيات الإدارية</h2>
                 <p className="text-xs text-[#707070] mt-0.5">تتبع تاريخي لقرارات الترقية وتعديل الرواتب والأدوار الوظيفية في منظومة الـ ERP</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -2193,7 +2194,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-extrabold text-[#141414]">طلبات الإجازات والأرصدة السنوية (المادة 109 و117)</h3>
+              <h2 className="text-sm font-extrabold text-[#141414]">طلبات الإجازات والأرصدة السنوية (المادة 109 و117)</h2>
               <p className="text-xs text-[#707070] mt-0.5">احتساب استحقاق 21/30 يوماً سنوياً، وشرائح الإجازة المرضية والاضطرارية مع خصم الرصيد آلياً عند الاعتماد</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2280,7 +2281,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-extrabold text-[#141414]">طلبات السلف وجدولة الأقساط الشهرية (المادة 92)</h3>
+              <h2 className="text-sm font-extrabold text-[#141414]">طلبات السلف وجدولة الأقساط الشهرية (المادة 92)</h2>
               <p className="text-xs text-[#707070] mt-0.5">استقطاع آلي للأقساط من مسير الرواتب الشهري مع مراعاة عدم تجاوز سقف 50% من الأجر</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2357,7 +2358,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-extrabold text-[#141414]">سجل الجزاءات والخصومات الإدارية (لائحة تنظيم العمل)</h3>
+              <h2 className="text-sm font-extrabold text-[#141414]">سجل الجزاءات والخصومات الإدارية (لائحة تنظيم العمل)</h2>
               <p className="text-xs text-[#707070] mt-0.5">تطبيق جدول المخالفات والجزاءات التأديبية وربطها بالاستقطاع الشهري في مسير الرواتب</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2414,7 +2415,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-extrabold text-[#141414]">طلبات الاستئذان والخروج أثناء الدوام</h3>
+              <h2 className="text-sm font-extrabold text-[#141414]">طلبات الاستئذان والخروج أثناء الدوام</h2>
               <p className="text-xs text-[#707070] mt-0.5">توثيق ساعات الاستئذان الشخصي والرسمي ومتابعة رصيد الساعات الشهرية</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2469,7 +2470,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-extrabold text-[#141414]">سجل المكافآت والحوافز والعمولات الاستثنائية</h3>
+              <h2 className="text-sm font-extrabold text-[#141414]">سجل المكافآت والحوافز والعمولات الاستثنائية</h2>
               <p className="text-xs text-[#707070] mt-0.5">تُدرج المكافآت المعتمدة تلقائياً ضمن مسير الرواتب الشهري (WPS) وقيد الاستحقاق المحاسبي</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2607,9 +2608,9 @@ export const HRPage: React.FC = () => {
             <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
               <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
                 <div>
-                  <h3 className="text-sm font-extrabold text-[#141414]">
+                  <h2 className="text-sm font-extrabold text-[#141414]">
                     مسير الرواتب المعتمد وحماية الأجور (WPS) — مطابق لسقف المادة (92)
-                  </h3>
+                  </h2>
                   <p className="text-xs text-[#707070] mt-0.5">
                     احتساب آلي للبدلات، المكافآت، التأمينات (GOSI)، وأقساط السلف والجزاءات مع إصدار قسيمة راتب لكل موظف
                   </p>
@@ -2748,14 +2749,14 @@ export const HRPage: React.FC = () => {
             <div className="card-pricing p-6 rounded-3xl bg-white border border-zinc-200 shadow-sm">
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-100 flex-wrap gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center">
-                    <Calculator className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] flex items-center justify-center">
+                    <Calculator className="w-5 h-5 text-[#141414]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-black">
+                    <h2 className="font-bold text-base text-[#141414] m-0">
                       حاسبة مكافأة نهاية الخدمة والمخالصة النهائية الشاملة (المواد 84، 85، 88)
-                    </h3>
-                    <p className="text-xs text-zinc-500">
+                    </h2>
+                    <p className="text-xs text-[#707070]">
                       احتساب آلي لمكافأة نهاية الخدمة + تعويض رصيد الإجازات − السلف المتبقية مع إصدار شهادة إخلاء الطرف
                     </p>
                   </div>
@@ -2796,11 +2797,12 @@ export const HRPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Inputs Column */}
                 <div className="space-y-3.5 md:col-span-1 p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
-                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-2">بيانات الموظف واحتساب التصفية</h4>
+                  <h3 className="font-bold text-xs text-black border-b border-zinc-200 pb-2 m-0">بيانات الموظف واحتساب التصفية</h3>
 
                   <div>
                     <label className="block text-xs font-bold text-zinc-700 mb-1">اختيار موظف لتصفية مستحقاته تلقائياً</label>
                     <select
+                      aria-label="اختيار موظف لتصفية مستحقاته تلقائياً"
                       value={selectedEosEmpId}
                       onChange={(e) => handleSelectEosEmployee(e.target.value)}
                       className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
@@ -2818,6 +2820,7 @@ export const HRPage: React.FC = () => {
                     <div className="relative">
                       <input
                         type="number"
+                        aria-label="الأجر الفعلي الأخير شامل البدلات"
                         value={eosSalary}
                         onChange={e => setEosSalary(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
@@ -2831,6 +2834,7 @@ export const HRPage: React.FC = () => {
                       <label className="block text-xs font-bold text-zinc-700 mb-1">سنوات الخدمة</label>
                       <input
                         type="number"
+                        aria-label="سنوات الخدمة"
                         min="0"
                         value={eosYears}
                         onChange={e => setEosYears(Math.max(0, Number(e.target.value)))}
@@ -2841,6 +2845,7 @@ export const HRPage: React.FC = () => {
                       <label className="block text-xs font-bold text-zinc-700 mb-1">الأشهر الإضافية</label>
                       <input
                         type="number"
+                        aria-label="الأشهر الإضافية"
                         min="0"
                         max="11"
                         value={eosMonths}
@@ -2855,6 +2860,7 @@ export const HRPage: React.FC = () => {
                       <label className="block text-xs font-bold text-zinc-700 mb-1">رصيد الإجازات (أيام)</label>
                       <input
                         type="number"
+                        aria-label="رصيد الإجازات بالأيام"
                         min="0"
                         value={eosUnusedLeaveDays}
                         onChange={(e) => setEosUnusedLeaveDays(Math.max(0, Number(e.target.value)))}
@@ -2865,10 +2871,11 @@ export const HRPage: React.FC = () => {
                       <label className="block text-xs font-bold text-zinc-700 mb-1">سلف متبقية للخصم (⃁)</label>
                       <input
                         type="number"
+                        aria-label="سلف متبقية للخصم"
                         min="0"
                         value={eosRemainingAdvance}
                         onChange={(e) => setEosRemainingAdvance(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-rose-700"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414]"
                       />
                     </div>
                   </div>
@@ -2876,6 +2883,7 @@ export const HRPage: React.FC = () => {
                   <div>
                     <label className="block text-xs font-bold text-zinc-700 mb-1">سبب انتهاء العلاقة العمالية *</label>
                     <select
+                      aria-label="سبب انتهاء العلاقة العمالية"
                       value={eosReason}
                       onChange={e => setEosReason(e.target.value as any)}
                       className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-semibold focus:border-black focus:outline-none"
@@ -3101,14 +3109,14 @@ export const HRPage: React.FC = () => {
             <div className="card-pricing p-6 rounded-3xl bg-white border border-zinc-200 shadow-sm">
               <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-100 flex-wrap gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center">
-                    <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-[#141414]" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-black">
+                    <h2 className="font-bold text-base text-[#141414] m-0">
                       حاسبة اشتراكات التأمينات الاجتماعية (GOSI) ونظام ساند
-                    </h3>
-                    <p className="text-xs text-zinc-500">
+                    </h2>
+                    <p className="text-xs text-[#707070]">
                       حساب حصة المنشأة والاستقطاع الشهري للموظف وفق أحدث نسب المؤسسة العامة للتأمينات الاجتماعية (شامل التدرج للمشتركين الجدد بعد يوليو 2024)
                     </p>
                   </div>
@@ -3119,7 +3127,7 @@ export const HRPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Inputs */}
                 <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-4">
-                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-2">بيانات الاشتراك الخاضع للتقاعد</h4>
+                  <h3 className="font-bold text-xs text-black border-b border-zinc-200 pb-2 m-0">بيانات الاشتراك الخاضع للتقاعد</h3>
 
                   <div>
                     <label className="block text-xs font-bold text-zinc-700 mb-1">فئة المشترك *</label>
@@ -3177,6 +3185,7 @@ export const HRPage: React.FC = () => {
                     <div className="relative">
                       <input
                         type="number"
+                        aria-label="الراتب الأساسي للتأمينات"
                         value={gosiBasic}
                         onChange={e => setGosiBasic(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
@@ -3190,6 +3199,7 @@ export const HRPage: React.FC = () => {
                     <div className="relative">
                       <input
                         type="number"
+                        aria-label="بدل السكن الخاضع للتأمينات"
                         value={gosiHousing}
                         onChange={e => setGosiHousing(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
@@ -3206,28 +3216,28 @@ export const HRPage: React.FC = () => {
                 {/* Contribution Breakdown */}
                 <div className="md:col-span-2 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
-                      <span className="text-[11px] text-emerald-800 font-bold block">تحمل المنشأة الشهري ({gosiCalc.employerRatePercent}%)</span>
-                      <div className="text-xl font-extrabold font-mono text-emerald-900 mt-1">
+                    <div className="p-4 bg-white rounded-2xl border border-[#e0e0e0]">
+                      <span className="text-[11px] text-[#707070] font-bold block">تحمل المنشأة الشهري ({gosiCalc.employerRatePercent}%)</span>
+                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
                         ⃁ {totalEmployer.toFixed(2)}
                       </div>
-                      <span className="text-[10px] text-emerald-700">تتحمله الشركة كمصروف تشغيلي</span>
+                      <span className="text-[10px] text-[#707070]">تتحمله الشركة كمصروف تشغيلي</span>
                     </div>
 
-                    <div className="p-4 bg-rose-50 rounded-2xl border border-rose-200">
-                      <span className="text-[11px] text-rose-800 font-bold block">استقطاع الموظف ({gosiCalc.employeeRatePercent}%)</span>
-                      <div className="text-xl font-extrabold font-mono text-rose-900 mt-1">
+                    <div className="p-4 bg-white rounded-2xl border border-[#e0e0e0]">
+                      <span className="text-[11px] text-[#707070] font-bold block">استقطاع الموظف ({gosiCalc.employeeRatePercent}%)</span>
+                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
                         ⃁ {totalEmployee.toFixed(2)}
                       </div>
-                      <span className="text-[10px] text-rose-700">يخصم شهرياً من مسير الرواتب</span>
+                      <span className="text-[10px] text-[#707070]">يخصم شهرياً من مسير الرواتب</span>
                     </div>
 
-                    <div className="p-4 bg-zinc-900 text-white rounded-2xl">
-                      <span className="text-[11px] text-zinc-400 font-bold block">إجمالي سداد الفاتورة لـ GOSI</span>
-                      <div className="text-xl font-extrabold font-mono text-emerald-400 mt-1">
+                    <div className="p-4 bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] rounded-2xl">
+                      <span className="text-[11px] text-[#707070] font-bold block">إجمالي سداد الفاتورة لـ GOSI</span>
+                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
                         ⃁ {grandTotal.toFixed(2)}
                       </div>
-                      <span className="text-[10px] text-zinc-400">سداد الفاتورة الموحدة للفرع</span>
+                      <span className="text-[10px] text-[#707070]">سداد الفاتورة الموحدة للفرع</span>
                     </div>
                   </div>
 
@@ -3246,20 +3256,20 @@ export const HRPage: React.FC = () => {
                         <tr>
                           <td className="p-3 font-sans font-medium text-black">فرع المعاشات (التقاعد)</td>
                           <td className="p-3 text-center font-bold">{isSaudi ? `${(annuitiesRatePct * 2).toFixed(1)}%` : 'غير منطبق'}</td>
-                          <td className="p-3 text-center text-emerald-700">⃁ {annuitiesEmployer.toFixed(2)} ({annuitiesRatePct}%)</td>
-                          <td className="p-3 text-left text-rose-700">⃁ {annuitiesEmployee.toFixed(2)} ({annuitiesRatePct}%)</td>
+                          <td className="p-3 text-center text-[#141414] font-bold">⃁ {annuitiesEmployer.toFixed(2)} ({annuitiesRatePct}%)</td>
+                          <td className="p-3 text-left text-[#141414] font-bold">⃁ {annuitiesEmployee.toFixed(2)} ({annuitiesRatePct}%)</td>
                         </tr>
                         <tr>
                           <td className="p-3 font-sans font-medium text-black">فرع الأخطار المهنية</td>
                           <td className="p-3 text-center font-bold">2%</td>
-                          <td className="p-3 text-center text-emerald-700">⃁ {hazardEmployer.toFixed(2)} (2%)</td>
-                          <td className="p-3 text-left text-zinc-400">⃁ 0.00 (0%)</td>
+                          <td className="p-3 text-center text-[#141414] font-bold">⃁ {hazardEmployer.toFixed(2)} (2%)</td>
+                          <td className="p-3 text-left text-[#707070]">⃁ 0.00 (0%)</td>
                         </tr>
                         <tr>
                           <td className="p-3 font-sans font-medium text-black">نظام التعطل عن العمل (ساند)</td>
                           <td className="p-3 text-center font-bold">{isSaudi ? '1.5%' : 'غير منطبق'}</td>
-                          <td className="p-3 text-center text-emerald-700">⃁ {sanedEmployer.toFixed(2)} (0.75%)</td>
-                          <td className="p-3 text-left text-rose-700">⃁ {sanedEmployee.toFixed(2)} (0.75%)</td>
+                          <td className="p-3 text-center text-[#141414] font-bold">⃁ {sanedEmployer.toFixed(2)} (0.75%)</td>
+                          <td className="p-3 text-left text-[#141414] font-bold">⃁ {sanedEmployee.toFixed(2)} (0.75%)</td>
                         </tr>
                       </tbody>
                     </table>
@@ -3276,8 +3286,8 @@ export const HRPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
             <div>
-              <h3 className="text-base font-bold text-black">سجل أسطول العمالة المنزلية والتشغيل المعتمد</h3>
-              <p className="text-xs text-zinc-500">إدارة العاملات على كفالة المنشأة، الإقامات، والتأمين الصحي</p>
+              <h2 className="text-base font-bold text-[#141414] m-0">سجل أسطول العمالة المنزلية والتشغيل المعتمد</h2>
+              <p className="text-xs text-[#707070]">إدارة العاملات على كفالة المنشأة، الإقامات، والتأمين الصحي</p>
             </div>
             <div className="flex items-center gap-2">
               <ExportDropdown

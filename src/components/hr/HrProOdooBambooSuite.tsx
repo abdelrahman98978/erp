@@ -406,9 +406,9 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
       >
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h3 className="text-[18px] font-bold text-[#141414] leading-snug">
+            <h2 className="text-[18px] font-bold text-[#141414] leading-snug m-0">
               منظومة هيكلة الأجور (Odoo Rules) وحوكمة الأداء (HR-Pro) والمزامنة المؤتمتة (BambooHR Sync)
-            </h3>
+            </h2>
             <p className="text-xs text-[#707070] mt-1">
               محرك القواعد الحسابية للرواتب والقيود، خطط التأهيل 30/60/90، مصفوفة الجدارات وخطط تحسين الأداء (PIP)، وسجل التابعين والتأمين الطبي.
             </p>
@@ -468,12 +468,12 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
           <div data-slot="data-table" className="lg:col-span-7 table-card mb-0">
             <div className="table-card-header">
               <div>
-                <h4 className="table-card-title text-base">
+                <h3 className="table-card-title text-base">
                   <span>هيكل الرواتب المعتمد:</span>
                   <span className="font-mono text-sm bg-[#f3f3f3] px-3 py-1 rounded-full">
                     KSA_WPS_MONTHLY
                   </span>
-                </h4>
+                </h3>
                 <p className="text-xs text-[#707070] mt-1">
                   يتم تنفيذ القواعد تسلسلياً من الأعلى للأسفل (Top-to-Bottom Execution) مع ربط مباشر بحسابات الأستاذ العام GL
                 </p>
@@ -647,9 +647,9 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
             {/* Pattern: form-section */}
             <div data-slot="form-section" className="mobbin-card p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-[#f0f0f0] pb-3">
-                <h4 className="text-sm font-bold text-[#141414]">
+                <h3 className="text-sm font-bold text-[#141414]">
                   محاكي ومختبر قواعد الرواتب (Salary Rule Inputs)
-                </h4>
+                </h3>
                 <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[11px] font-mono text-[#707070]">
                   Odoo Inputs
                 </span>
@@ -781,9 +781,9 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
             {/* Resulting GL Double-Entry Journal Entry Preview */}
             <div data-slot="data-table" className="table-card mb-0">
               <div className="table-card-header">
-                <h5 className="text-sm font-bold text-[#141414]">
+                <h3 className="text-sm font-bold text-[#141414]">
                   معاينة قيد اليومية المحاسبي الآلي (Payroll GL Entry)
-                </h5>
+                </h3>
                 <span className="px-3 py-1 rounded-full bg-[#141414] text-white text-[11px] font-semibold">
                   {simulatedPayslip.glEntry.isBalanced ? 'متوازن (Balanced)' : 'غير متوازن'}
                 </span>

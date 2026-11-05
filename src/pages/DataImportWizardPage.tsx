@@ -317,6 +317,7 @@ export const DataImportWizardPage: React.FC = () => {
             <div className="w-full md:w-64">
               <input
                 type="text"
+                aria-label="ابحث باسم القسم أو الحقول"
                 placeholder="ابحث باسم القسم أو الحقول..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
@@ -340,7 +341,7 @@ export const DataImportWizardPage: React.FC = () => {
                       <Layers className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-black m-0">{tmpl.displayName}</h4>
+                      <h2 className="text-xs font-bold text-black m-0">{tmpl.displayName}</h2>
                       <span className="text-[10px] text-zinc-400">
                         {tmpl.fields.filter(f => f.required).length} حقول مطلوبة
                       </span>

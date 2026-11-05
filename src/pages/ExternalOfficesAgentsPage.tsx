@@ -457,7 +457,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2.5">
                       <CorporateAvatar name={office.managerName} role={office.officeName} size="sm" status="verified" />
-                      <h3 className="font-bold text-black text-base">{office.officeName}</h3>
+                      <h2 className="font-bold text-black text-base">{office.officeName}</h2>
                     </div>
                     <Badge text={office.country} type="purple" />
                   </div>

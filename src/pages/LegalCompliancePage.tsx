@@ -268,6 +268,7 @@ export const LegalCompliancePage: React.FC = () => {
                 <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
                 <input
                   type="text"
+                  aria-label="البحث باسم الموظف، الهوية، رقم التوثيق، أو القسم"
                   placeholder="البحث باسم الموظف، الهوية، رقم التوثيق، أو القسم..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -277,6 +278,7 @@ export const LegalCompliancePage: React.FC = () => {
               </div>
 
               <select
+                aria-label="تصفية حسب القسم أو الإدارة"
                 value={selectedDeptFilter}
                 onChange={(e) => setSelectedDeptFilter(e.target.value)}
                 className="bg-zinc-50 border border-zinc-200 rounded-full px-3 py-1.5 text-xs text-black focus:outline-none"
