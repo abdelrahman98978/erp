@@ -262,11 +262,11 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
 
             <div className="flex gap-2">
               <button className="button-outline-on-light" onClick={() => exportData('unified_correspondence', filteredList, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('unified_correspondence', filteredList, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>PDF</span>
               </button>
             </div>
@@ -310,14 +310,14 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
 
                     {memo.attachment_name && (
                       <div className="flex items-center gap-1 text-xs text-black font-semibold mb-3">
-                        <Paperclip className="w-3.5 h-3.5 text-zinc-500" />
+                        <Paperclip className="w-3.5 h-3.5 text-[#707070]" />
                         <span>مرفق: {memo.attachment_name}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="flex justify-between items-center pt-3 border-t border-zinc-100 text-xs">
-                    <span className="text-zinc-400 font-mono">{memo.created_at}</span>
+                    <span className="text-[#707070] font-mono">{memo.created_at}</span>
                     <button
                       className="button-outline-on-light"
                       style={{ padding: '3px 12px', fontSize: '11.5px', minHeight: '26px' }}
@@ -463,7 +463,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
           <div className="flex justify-between items-center border-b-2 border-black pb-4 mb-6">
             <div>
               <h2 className="text-base font-black text-black m-0">مجموعة شركات خالد السليم للاستقدام والتشغيل</h2>
-              <div className="text-xs text-zinc-500 mt-0.5">المملكة العربية السعودية | المركز الرئيسي - الرياض</div>
+              <div className="text-xs text-[#707070] mt-0.5">المملكة العربية السعودية | المركز الرئيسي - الرياض</div>
             </div>
             <div className="text-left font-mono text-xs text-zinc-600">
               <div><strong>الرقم الإشاري:</strong> {selectedMemo.memo_no}</div>
@@ -477,7 +477,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
             <div className="text-sm font-bold text-black">
               السادة / {selectedMemo.recipient_entity} المحترمون
             </div>
-            <div className="text-xs text-zinc-500 mt-1">
+            <div className="text-xs text-[#707070] mt-1">
               السلام عليكم ورحمة الله وبركاته،،
             </div>
           </div>
@@ -494,9 +494,9 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
           {/* Signatures & Seal */}
           <div className="flex justify-between items-end mt-10 border-t border-zinc-200 pt-5">
             <div>
-              <div className="text-xs text-zinc-500">الختم والتصديق الرقمي:</div>
-              <div className="inline-flex items-center gap-1.5 bg-champagne-pale text-champagne-dark px-3 py-1 rounded-full text-xs font-bold mt-1 border border-champagne/30">
-                <ShieldCheck className="w-3.5 h-3.5 text-champagne-dark" />
+              <div className="text-xs text-[#707070]">الختم والتصديق الرقمي:</div>
+              <div className="inline-flex items-center gap-1.5 bg-[#f3f3f3] text-[#141414] px-3 py-1 rounded-full text-xs font-bold mt-1 border border-[#e0e0e0]">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#141414]" />
                 <span>موثق إلكترونياً (ALSULAIM VERIFIED)</span>
               </div>
             </div>
@@ -504,7 +504,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <CorporateAvatar name={selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'} size="sm" status="verified" />
               <div className="text-right">
-                <div className="text-xs text-zinc-500">المعتمد:</div>
+                <div className="text-xs text-[#707070]">المعتمد:</div>
                 <div className="text-sm font-black text-black mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
               </div>
             </div>

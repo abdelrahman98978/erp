@@ -27,7 +27,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           gap: '12px',
         }}
       >
-        <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-[#141414]" />
         <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>جاري التحقق من الجلسة...</span>
       </div>
     );
@@ -54,13 +54,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
             width: '80px',
             height: '80px',
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #fee2e2, #fecaca)',
+            background: '#f3f3f3',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Lock style={{ width: '36px', height: '36px', color: '#dc2626' }} />
+          <Lock style={{ width: '36px', height: '36px', color: '#141414' }} />
         </div>
         <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: 0 }}>
           غير مصرح بالوصول
@@ -95,13 +95,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
               width: '80px',
               height: '80px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
+              background: '#f3f3f3',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <ShieldAlert style={{ width: '36px', height: '36px', color: '#d97706' }} />
+            <ShieldAlert style={{ width: '36px', height: '36px', color: '#141414' }} />
           </div>
           <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: 0 }}>
             صلاحيات غير كافية

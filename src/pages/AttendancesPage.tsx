@@ -192,7 +192,7 @@ export const AttendancesPage: React.FC = () => {
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
             <input
               type="text"
               aria-label="ابحث باسم الموظف، القسم، أو التاريخ"
@@ -224,7 +224,7 @@ export const AttendancesPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {filteredAttendances.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-zinc-400">
+                  <td colSpan={7} className="p-8 text-center text-[#707070]">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <BusinessIllustration type="empty-search" size="md" />
                       <span className="font-bold text-black">لا توجد سجلات حضور مطابقة للبحث</span>
@@ -247,8 +247,8 @@ export const AttendancesPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="p-3.5"><Badge text={row.department} type="purple" /></td>
-                    <td className="p-3.5 font-mono text-zinc-500">{row.date}</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{row.check_in}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{row.date}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{row.check_in}</td>
                     <td className="p-3.5 font-mono font-bold text-zinc-800">{row.check_out}</td>
                     <td className="p-3.5 font-mono font-bold text-black">{row.work_hours} س</td>
                     <td className="p-3.5">
@@ -266,12 +266,12 @@ export const AttendancesPage: React.FC = () => {
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileSpreadsheet className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <FileSpreadsheet className="w-4 h-4 text-[#141414]" />
                 <span>استيراد شيت البصمة الجماعي</span>
               </h3>
-              <button onClick={() => setShowUploadModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowUploadModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -284,7 +284,7 @@ export const AttendancesPage: React.FC = () => {
               <div className="border border-dashed border-zinc-300 p-8 text-center rounded-2xl bg-zinc-50 flex flex-col items-center justify-center">
                 <CloudUpload className="w-10 h-10 text-black mb-2" />
                 <div className="text-xs font-bold text-black">اسحب وأسقط ملف البصمة هنا</div>
-                <span className="text-[11px] text-zinc-500 mt-1">أو قم باختيار الملف من جهازك</span>
+                <span className="text-[11px] text-[#707070] mt-1">أو قم باختيار الملف من جهازك</span>
               </div>
 
               <div className="flex gap-2 justify-end pt-3 border-t border-zinc-100">
@@ -304,12 +304,12 @@ export const AttendancesPage: React.FC = () => {
       {showManualModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <ClipboardCheck className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <ClipboardCheck className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل حضور وانصراف يدوي</span>
               </h3>
-              <button onClick={() => setShowManualModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowManualModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

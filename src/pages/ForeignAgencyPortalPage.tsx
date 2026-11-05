@@ -280,7 +280,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <BusinessIllustration type="foreign-agencies" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Globe2 className="w-5 h-5 text-emerald-400" />
+              <Globe2 className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -301,18 +301,18 @@ export const ForeignAgencyPortalPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0]">
               <CorporateAvatar name={activeAgency} role="وكيل دولي معتمد" size="sm" status="verified" />
               <div className="text-right">
-                <div className="text-xs font-bold text-white">{activeAgency}</div>
-                <div className="text-[10px] text-zinc-400">وكالة دولية معتمدة</div>
+                <div className="text-xs font-bold text-[#141414]">{activeAgency}</div>
+                <div className="text-[10px] text-[#707070]">وكالة دولية معتمدة</div>
               </div>
             </div>
             {totalUsdBalance > 0 && (
               <button
                 onClick={() => setShowBatchPayoutModal(true)}
                 className="button-white-pill flex items-center gap-1.5"
-                style={{ fontSize: '12px', padding: '8px 18px', minHeight: '38px', background: '#10b981', color: '#ffffff' }}
+                style={{ fontSize: '12px', padding: '8px 18px', minHeight: '38px', background: '#141414', color: '#ffffff' }}
               >
                 <DollarSign className="w-4 h-4" />
                 <span>سداد مجمع للعمولات (${totalUsdBalance.toLocaleString()})</span>
@@ -363,16 +363,16 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       </div>
 
       {/* Search & Actions Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-zinc-900 p-4 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-3xl border border-zinc-200 shadow-sm">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-zinc-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#707070] absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             aria-label="بحث باسم العاملة أو رقم الجواز"
             placeholder="بحث باسم العاملة أو رقم الجواز..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-3 pr-10 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-800 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-3 pr-10 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#141414]/20"
           />
         </div>
 
@@ -388,10 +388,10 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       </div>
 
       {/* Candidates Table */}
-      <div className="table-card bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden p-0">
+      <div className="table-card bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs">
-            <thead className="bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 font-bold border-b border-zinc-200 dark:border-zinc-700">
+            <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
               <tr>
                 <th className="p-4">المرشح / العاملة</th>
                 <th className="p-4">رقم الجواز</th>
@@ -404,19 +404,19 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                 <th className="p-4 text-center">الإجراءات والعمليات</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+            <tbody className="divide-y divide-zinc-100">
               {filteredCandidates.map((cand) => (
-                <tr key={cand.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors">
-                  <td className="p-4 font-bold text-slate-900 dark:text-white">
+                <tr key={cand.id} className="hover:bg-zinc-50/80 transition-colors">
+                  <td className="p-4 font-bold text-slate-900">
                     <div className="flex items-center gap-2.5">
                       <CorporateAvatar name={cand.maidName} profession={cand.profession} isCandidate size="sm" />
                       <span>{cand.maidName}</span>
                     </div>
                   </td>
-                  <td className="p-4 font-mono font-medium text-slate-700 dark:text-slate-300">
+                  <td className="p-4 font-mono font-medium text-slate-700">
                     {cand.passportNumber}
                   </td>
-                  <td className="p-4 text-zinc-600 dark:text-zinc-400">
+                  <td className="p-4 text-zinc-600">
                     {cand.profession} ({cand.nationality})
                   </td>
                   <td className="p-4">
@@ -434,7 +434,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                       {cand.ticketStatus === 'BOOKED' ? 'مؤكد الحجز' : 'بانتظار الحجز'}
                     </span>
                   </td>
-                  <td className="p-4 font-bold font-mono text-slate-900 dark:text-white text-sm">
+                  <td className="p-4 font-bold font-mono text-slate-900 text-sm">
                     ${cand.commissionUsd.toLocaleString()}
                   </td>
                   <td className="p-4">
@@ -447,7 +447,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                       {cand.paymentStatus === 'UNPAID' && (
                         <button
                           onClick={() => handleSettleCommission(cand)}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] inline-flex items-center gap-1 transition-all"
+                          className="px-2.5 py-1 rounded-lg bg-[#141414] hover:bg-[#262626] text-white font-bold text-[11px] inline-flex items-center gap-1 transition-all"
                           title="سداد عمولة العاملة وإصدار سند صرف"
                         >
                           <DollarSign className="w-3 h-3" />
@@ -456,15 +456,15 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleAdvanceStatus(cand)}
-                        className="px-2 py-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-[11px] font-bold inline-flex items-center gap-1 transition-all"
+                        className="px-2 py-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-800 text-[11px] font-bold inline-flex items-center gap-1 transition-all"
                         title="ترقية مرحلة التأشيرة أو حجز الطيران"
                       >
-                        <Plane className="w-3 h-3 text-cyan-600" />
+                        <Plane className="w-3 h-3 text-[#141414]" />
                         <span>ترقية المسار</span>
                       </button>
                       <button
                         onClick={() => handleDeleteCandidate(cand)}
-                        className="p-1 rounded-lg hover:bg-red-50 text-zinc-400 hover:text-red-600 transition-colors"
+                        className="p-1 rounded-lg hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                         title="حذف السيرة"
                       >
                         <X className="w-3.5 h-3.5" />
@@ -481,42 +481,42 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       {/* Batch Payout Modal */}
       {showBatchPayoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-md w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="card-pricing bg-white rounded-3xl p-6 max-w-md w-full border border-zinc-200 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                <DollarSign className="w-5 h-5 text-[#141414]" />
+                <h3 className="font-extrabold text-slate-900 text-base">
                   سداد مجمع لعمولات الوكالة
                 </h3>
               </div>
               <button 
                 onClick={() => setShowBatchPayoutModal(false)}
-                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
                 ✕
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 space-y-2">
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-600 dark:text-zinc-400">الوكالة المستفيدة:</span>
-                <span className="font-bold text-slate-900 dark:text-white">{activeAgency}</span>
+                <span className="text-zinc-600">الوكالة المستفيدة:</span>
+                <span className="font-bold text-slate-900">{activeAgency}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-600 dark:text-zinc-400">عدد المرشحات المستحقات:</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-400">{candidates.filter(c => c.paymentStatus === 'UNPAID').length} عاملة</span>
+                <span className="text-zinc-600">عدد المرشحات المستحقات:</span>
+                <span className="font-bold text-[#141414]">{candidates.filter(c => c.paymentStatus === 'UNPAID').length} عاملة</span>
               </div>
-              <div className="flex justify-between text-xs pt-2 border-t border-emerald-200 dark:border-emerald-800">
-                <span className="text-zinc-600 dark:text-zinc-400">إجمالي المبلغ بالدولار:</span>
-                <span className="font-extrabold text-sm text-slate-900 dark:text-white">${totalUsdBalance.toLocaleString()} USD</span>
+              <div className="flex justify-between text-xs pt-2 border-t border-[#e0e0e0]">
+                <span className="text-zinc-600">إجمالي المبلغ بالدولار:</span>
+                <span className="font-extrabold text-sm text-slate-900">${totalUsdBalance.toLocaleString()} USD</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-zinc-600 dark:text-zinc-400">المعادل بالريال السعودي (3.75):</span>
-                <span className="font-extrabold text-sm text-emerald-600">{(totalUsdBalance * 3.75).toLocaleString()} ⃁</span>
+                <span className="text-zinc-600">المعادل بالريال السعودي (3.75):</span>
+                <span className="font-extrabold text-sm text-[#141414]">{(totalUsdBalance * 3.75).toLocaleString()} ⃁</span>
               </div>
             </div>
 
-            <p className="text-[11px] text-zinc-500">
+            <p className="text-[11px] text-[#707070]">
               * سيقوم النظام تلقائياً بتوليد سند صرف مالي رسمي وتحديث حالة جميع المرشحات إلى "مسدد" في قاعدة البيانات.
             </p>
 
@@ -533,7 +533,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                 type="button"
                 onClick={handleBatchPayout}
                 className="button-primary-pill text-xs font-bold"
-                style={{ padding: '8px 22px', background: '#10b981' }}
+                style={{ padding: '8px 22px', background: '#141414', color: '#ffffff' }}
               >
                 تأكيد السداد المجمع وإصدار السند
               </button>
@@ -545,18 +545,18 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       {/* Upload & Add Candidate Modal */}
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="card-pricing bg-white rounded-3xl p-6 max-w-lg w-full border border-zinc-200 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <UploadCloud className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                <UploadCloud className="w-5 h-5 text-[#141414]" />
+                <h3 className="font-extrabold text-slate-900 text-base">
                   إضافة مرشحة جديدة / رفع سيرة
                 </h3>
               </div>
               <button 
                 type="button"
                 onClick={() => setShowUploadModal(false)}
-                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
                 ✕
               </button>
@@ -565,36 +565,36 @@ export const ForeignAgencyPortalPage: React.FC = () => {
             <form onSubmit={handleManualAddCandidate} className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">اسم المرشحة بالكامل</label>
+                  <label className="block text-[11px] font-bold text-zinc-600 mb-1">اسم المرشحة بالكامل</label>
                   <input
                     type="text"
                     required
                     placeholder="مثال: مريم أديس تسفاي"
                     value={newCandForm.maidName}
                     onChange={(e) => setNewCandForm({ ...newCandForm, maidName: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white"
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-50 text-xs text-slate-900"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">رقم جواز السفر</label>
+                  <label className="block text-[11px] font-bold text-zinc-600 mb-1">رقم جواز السفر</label>
                   <input
                     type="text"
                     required
                     placeholder="مثال: EP8891234"
                     value={newCandForm.passportNumber}
                     onChange={(e) => setNewCandForm({ ...newCandForm, passportNumber: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white font-mono"
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-50 text-xs text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">الجنسية</label>
+                  <label className="block text-[11px] font-bold text-zinc-600 mb-1">الجنسية</label>
                   <select
                     value={newCandForm.nationality}
                     onChange={(e) => setNewCandForm({ ...newCandForm, nationality: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white"
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-50 text-xs text-slate-900"
                   >
                     <option value="إثيوبيا">إثيوبيا</option>
                     <option value="الفلبين">الفلبين</option>
@@ -605,11 +605,11 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">المهنة</label>
+                  <label className="block text-[11px] font-bold text-zinc-600 mb-1">المهنة</label>
                   <select
                     value={newCandForm.profession}
                     onChange={(e) => setNewCandForm({ ...newCandForm, profession: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white"
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-50 text-xs text-slate-900"
                   >
                     <option value="عاملة منزلية">عاملة منزلية</option>
                     <option value="طباخة منزلية">طباخة منزلية</option>
@@ -618,17 +618,17 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-300 mb-1">العمولة ($ USD)</label>
+                  <label className="block text-[11px] font-bold text-zinc-600 mb-1">العمولة ($ USD)</label>
                   <input
                     type="number"
                     value={newCandForm.commissionUsd}
                     onChange={(e) => setNewCandForm({ ...newCandForm, commissionUsd: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-xs text-slate-900 dark:text-white font-mono"
+                    className="w-full px-3 py-2 rounded-xl border border-zinc-200 bg-zinc-50 text-xs text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowUploadModal(false)}

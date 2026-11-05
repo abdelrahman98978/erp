@@ -200,28 +200,28 @@ export const DataImportWizardPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 معالج استيراد البيانات المؤسسي
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 استيراد بيانات من ملفات Excel أو CSV أو JSON إلى أقسام النظام بشكل آمن ومحقق
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0]">
               <CorporateAvatar
                 archetype="ai-faris"
                 name="فارس - مطابقة الحقول الذكية"
                 size="xs"
                 status="online"
               />
-              <span className="text-[11px] font-bold text-white/90">مطابقة ذكية للأعمدة</span>
+              <span className="text-[11px] font-bold text-[#141414]">مطابقة ذكية للأعمدة</span>
             </div>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
               className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: '#e0e0e0', background: '#ffffff', color: '#141414', fontWeight: 700 }}
             >
-              <Database className="w-4 h-4 ml-1 text-[#CFA64A]" />
+              <Database className="w-4 h-4 ml-1 text-[#141414]" />
               <span>بوابة استخلاص 100+ فاتورة وأي مستند (PDF / Word / Excel / صور)</span>
             </button>
             <button
@@ -265,12 +265,12 @@ export const DataImportWizardPage: React.FC = () => {
                   >
                     {isCompleted ? <Check className="w-4 h-4" /> : idx + 1}
                   </div>
-                  <span className={`text-xs font-semibold ${isCurrent ? 'text-black font-bold' : 'text-zinc-500'}`}>
+                  <span className={`text-xs font-semibold ${isCurrent ? 'text-black font-bold' : 'text-[#707070]'}`}>
                     {s.label}
                   </span>
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-3 min-w-[20px] ${idx < currentStepIndex ? 'bg-black' : 'bg-zinc-200'}`} />
+                  <div className={`flex-1 h-0.5 mx-3 min-w-[20px] ${idx < currentStepIndex ? 'bg-[#f3f3f3] border-b border-[#e0e0e0]' : 'bg-zinc-200'}`} />
                 )}
               </React.Fragment>
             );
@@ -342,7 +342,7 @@ export const DataImportWizardPage: React.FC = () => {
                     </div>
                     <div>
                       <h2 className="text-xs font-bold text-black m-0">{tmpl.displayName}</h2>
-                      <span className="text-[10px] text-zinc-400">
+                      <span className="text-[10px] text-[#707070]">
                         {tmpl.fields.filter(f => f.required).length} حقول مطلوبة
                       </span>
                     </div>
@@ -367,10 +367,10 @@ export const DataImportWizardPage: React.FC = () => {
                       title="تحميل قالب الإدخال بالصيغ المعتمدة"
                     >
                       <span className="flex items-center gap-1">
-                        <Download className="w-3 h-3 text-emerald-600" />
+                        <Download className="w-3 h-3 text-[#141414]" />
                         <span>القالب</span>
                       </span>
-                      <ChevronDown className="w-2.5 h-2.5 text-zinc-400" />
+                      <ChevronDown className="w-2.5 h-2.5 text-[#707070]" />
                     </button>
 
                     {openFormatMenu === tmpl.entityKey && (
@@ -378,7 +378,7 @@ export const DataImportWizardPage: React.FC = () => {
                         className="absolute bottom-full mb-1 right-0 w-44 bg-white rounded-xl shadow-xl border border-zinc-200 py-1.5 z-30 font-sans text-right"
                         onClick={e => e.stopPropagation()}
                       >
-                        <div className="px-3 py-1 text-[10px] font-bold text-zinc-400 border-b border-zinc-100">
+                        <div className="px-3 py-1 text-[10px] font-bold text-[#707070] border-b border-zinc-100">
                           صيغ قوالب الإدخال
                         </div>
                         <button
@@ -387,7 +387,7 @@ export const DataImportWizardPage: React.FC = () => {
                           className="w-full text-right px-3 py-1.5 text-xs text-zinc-800 hover:bg-zinc-50 flex items-center justify-between"
                         >
                           <span className="text-zinc-700">مصنف إكسل</span>
-                          <span className="text-emerald-600 font-mono font-bold text-[10px]">.XLSX</span>
+                          <span className="text-[#141414] font-mono font-bold text-[10px]">.XLSX</span>
                         </button>
                         <button
                           type="button"
@@ -395,7 +395,7 @@ export const DataImportWizardPage: React.FC = () => {
                           className="w-full text-right px-3 py-1.5 text-xs text-zinc-800 hover:bg-zinc-50 flex items-center justify-between"
                         >
                           <span className="text-zinc-700">جدول نصي</span>
-                          <span className="text-blue-600 font-mono font-bold text-[10px]">.CSV</span>
+                          <span className="text-[#141414] font-mono font-bold text-[10px]">.CSV</span>
                         </button>
                         <button
                           type="button"
@@ -403,7 +403,7 @@ export const DataImportWizardPage: React.FC = () => {
                           className="w-full text-right px-3 py-1.5 text-xs text-zinc-800 hover:bg-zinc-50 flex items-center justify-between"
                         >
                           <span className="text-zinc-700">كائن برمجي</span>
-                          <span className="text-amber-600 font-mono font-bold text-[10px]">.JSON</span>
+                          <span className="text-[#141414] font-mono font-bold text-[10px]">.JSON</span>
                         </button>
                       </div>
                     )}
@@ -433,7 +433,7 @@ export const DataImportWizardPage: React.FC = () => {
             <h3 className="text-base font-bold text-black mb-1">
               رفع ملف استيراد {selectedTemplate.displayName}
             </h3>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-[#707070]">
               قم بسحب ملف Excel أو CSV هنا أو اضغط للاختيار من جهازك
             </p>
           </div>
@@ -447,11 +447,11 @@ export const DataImportWizardPage: React.FC = () => {
               isDragging ? 'border-black bg-zinc-50' : 'border-zinc-300 bg-zinc-50/50 hover:bg-zinc-50'
             }`}
           >
-            <UploadCloud className="w-12 h-12 text-zinc-400 mx-auto mb-3" />
+            <UploadCloud className="w-12 h-12 text-[#707070] mx-auto mb-3" />
             <p className="text-xs font-bold text-black mb-1">
               {isDragging ? 'أفلت الملف هنا' : 'اسحب الملف هنا أو اضغط للاختيار'}
             </p>
-            <p className="text-[11px] text-zinc-400 font-mono">
+            <p className="text-[11px] text-[#707070] font-mono">
               الصيغ المدعومة: .xlsx, .xls, .csv, .json
             </p>
             <input
@@ -467,18 +467,18 @@ export const DataImportWizardPage: React.FC = () => {
           </div>
 
           {uploadError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs font-bold flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-600" />
+            <div className="p-3 bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl text-[#141414] text-xs font-bold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-[#141414]" />
               <span>{uploadError}</span>
             </div>
           )}
 
           <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
-              <Info className="w-4 h-4 text-zinc-500" />
+              <Info className="w-4 h-4 text-[#707070]" />
               <div>
                 <div className="text-xs font-bold text-black">تحتاج قالب جاهز؟</div>
-                <div className="text-[11px] text-zinc-500">حمّل قالب Excel يحتوي على الأعمدة المطلوبة والبيانات النموذجية</div>
+                <div className="text-[11px] text-[#707070]">حمّل قالب Excel يحتوي على الأعمدة المطلوبة والبيانات النموذجية</div>
               </div>
             </div>
             <button
@@ -529,17 +529,17 @@ export const DataImportWizardPage: React.FC = () => {
                       <td className="p-3.5">
                         <div className="font-bold text-black flex items-center gap-1">
                           <span>{field.label}</span>
-                          {field.required && <span className="text-rose-600 font-bold">*</span>}
+                          {field.required && <span className="text-[#141414] font-bold">*</span>}
                         </div>
-                        <span className="text-[10px] text-zinc-400">
+                        <span className="text-[10px] text-[#707070]">
                           {field.type === 'number' ? 'رقم' : field.type === 'date' ? 'تاريخ' : 'نص'}
                         </span>
                       </td>
                       <td className="p-3.5 text-center">
                         {isMapped ? (
-                          <Link2 className="w-4 h-4 text-emerald-600 mx-auto" />
+                          <Link2 className="w-4 h-4 text-[#141414] mx-auto" />
                         ) : (
-                          <Unlink2 className="w-4 h-4 text-zinc-300 mx-auto" />
+                          <Unlink2 className="w-4 h-4 text-[#141414] mx-auto" />
                         )}
                       </td>
                       <td className="p-3.5">
@@ -593,17 +593,17 @@ export const DataImportWizardPage: React.FC = () => {
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
-              <div className="text-2xl font-black text-emerald-800 font-mono">{validationResult.valid.length}</div>
-              <div className="text-xs font-bold text-emerald-700 mt-1">سجل صالح للاستيراد</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-2xl font-black text-[#141414] font-mono">{validationResult.valid.length}</div>
+              <div className="text-xs font-bold text-[#141414] mt-1">سجل صالح للاستيراد</div>
             </div>
-            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-center">
-              <div className="text-2xl font-black text-amber-800 font-mono">{validationResult.warnings.length}</div>
-              <div className="text-xs font-bold text-amber-700 mt-1">تحذيرات (يمكن تجاوزها)</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-2xl font-black text-[#141414] font-mono">{validationResult.warnings.length}</div>
+              <div className="text-xs font-bold text-[#141414] mt-1">تحذيرات (يمكن تجاوزها)</div>
             </div>
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-center">
-              <div className="text-2xl font-black text-rose-800 font-mono">{validationResult.errors.length}</div>
-              <div className="text-xs font-bold text-rose-700 mt-1">أخطاء (لن تُستورد)</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-2xl font-black text-[#141414] font-mono">{validationResult.errors.length}</div>
+              <div className="text-xs font-bold text-[#141414] mt-1">أخطاء (لن تُستورد)</div>
             </div>
           </div>
 
@@ -654,7 +654,7 @@ export const DataImportWizardPage: React.FC = () => {
       {/* STEP 5: Results */}
       {step === 'results' && importResult && (
         <div className="card-pricing p-12 bg-white rounded-3xl border border-zinc-200 text-center space-y-6 max-w-lg mx-auto">
-          <div className="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-8 h-8" />
           </div>
 
@@ -662,8 +662,8 @@ export const DataImportWizardPage: React.FC = () => {
             <h3 className="text-lg font-black text-black mb-1">
               {importResult.failed === 0 ? 'تم الاستيراد بنجاح!' : 'اكتمل الاستيراد مع بعض الملاحظات'}
             </h3>
-            <p className="text-xs text-zinc-500">
-              تم استيراد <strong className="text-emerald-700">{importResult.imported}</strong> من أصل {importResult.total} سجل في {(importResult.duration / 1000).toFixed(1)} ثانية
+            <p className="text-xs text-[#707070]">
+              تم استيراد <strong className="text-[#141414]">{importResult.imported}</strong> من أصل {importResult.total} سجل في {(importResult.duration / 1000).toFixed(1)} ثانية
             </p>
           </div>
 
@@ -713,9 +713,9 @@ export const DataImportWizardPage: React.FC = () => {
                       {new Date(entry.timestamp).toLocaleDateString('ar-SA')}
                     </td>
                     <td className="p-3.5 font-bold text-black">{entry.templateName}</td>
-                    <td className="p-3.5 font-bold text-emerald-700 font-mono">{entry.imported}</td>
-                    <td className="p-3.5 font-bold text-rose-700 font-mono">{entry.failed}</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{(entry.duration / 1000).toFixed(1)}s</td>
+                    <td className="p-3.5 font-bold text-[#141414] font-mono">{entry.imported}</td>
+                    <td className="p-3.5 font-bold text-[#141414] font-mono">{entry.failed}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{(entry.duration / 1000).toFixed(1)}s</td>
                     <td className="p-3.5">
                       <Badge
                         text={entry.failed === 0 ? 'مكتمل' : 'مكتمل جزئياً'}

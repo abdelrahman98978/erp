@@ -614,7 +614,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
               {typeof tab.count === 'number' && (
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                    isActive ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                   }`}
                 >
                   {tab.count}
@@ -890,7 +890,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(item, 'متاح للنقل')}
-                                className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] hover:text-white text-[10.5px] font-bold transition-all cursor-pointer"
+                                className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#262626] hover:text-[#141414] text-[10.5px] font-bold transition-all cursor-pointer"
                                 title="تحويل لمتاح للنقل والتنازل"
                               >
                                 <span>نقل خدمات</span>
@@ -898,7 +898,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateStatus(item, 'مرحلة الترحيل')}
-                                className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-white text-[#141414] hover:bg-[#141414] hover:text-white text-[10.5px] font-bold transition-all cursor-pointer"
+                                className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-white text-[#141414] hover:bg-[#262626] hover:text-[#141414] text-[10.5px] font-bold transition-all cursor-pointer"
                                 title="تحويل لمرحلة الترحيل والسفر"
                               >
                                 <span>خروج نهائي</span>
@@ -906,7 +906,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setSelectedInmateForPrint(item)}
-                                className="p-1.5 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] hover:text-white transition-all cursor-pointer"
+                                className="p-1.5 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#262626] hover:text-[#141414] transition-all cursor-pointer"
                                 title="طباعة بطاقة نزيلة الإيواء المعتمدة"
                               >
                                 <Printer className="w-3 h-3" />
@@ -1001,7 +1001,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                             type: 'success',
                           });
                         }}
-                        className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] hover:text-white text-[11px] font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#262626] hover:text-[#141414] text-[11px] font-bold transition-all cursor-pointer"
                       >
                         + تسكين سريع
                       </button>
@@ -1350,7 +1350,7 @@ export const ShelterSuitePortalPage: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateStatus(item, 'تم الترحيل')}
-                                  className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] hover:text-white text-[11px] font-bold transition-all cursor-pointer"
+                                  className="px-2.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f3f3f3] text-[#141414] hover:bg-[#262626] hover:text-[#141414] text-[11px] font-bold transition-all cursor-pointer"
                                 >
                                   تأكيد المغادرة والترحيل
                                 </button>

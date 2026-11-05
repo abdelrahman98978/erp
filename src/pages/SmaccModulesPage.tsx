@@ -615,7 +615,7 @@ export const SmaccModulesPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 نظام الأقسام الداخلية والخارجية والمتاجر الرقمية
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 إدارة الأصول الثابتة، المخزون، البائعين والمحصلين، وربط قنوات المتاجر الإلكترونية Zid/Salla/Shopify بقاعدة البيانات الحقيقية
               </p>
             </div>
@@ -648,7 +648,7 @@ export const SmaccModulesPage: React.FC = () => {
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>تصدير إكسل</span>
             </button>
           </div>
@@ -703,7 +703,7 @@ export const SmaccModulesPage: React.FC = () => {
                   <ShoppingBag className="w-4 h-4 text-black" />
                   <span>المتاجر الإلكترونية المتصلة مباشرة بالمنظومة (API Live Sync)</span>
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1">مزامنة الكتالوج، باقات التأجير، والاستقدام وسحب المدفوعات والطلبات لحظياً</p>
+                <p className="text-xs text-[#707070] mt-1">مزامنة الكتالوج، باقات التأجير، والاستقدام وسحب المدفوعات والطلبات لحظياً</p>
               </div>
               <button
                 type="button"
@@ -725,24 +725,24 @@ export const SmaccModulesPage: React.FC = () => {
                       <span className="font-bold text-black text-xs">{store.name}</span>
                       <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>{store.status}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-500 mb-2">
-                      <Globe className="w-3.5 h-3.5 text-zinc-400" />
+                    <div className="flex items-center gap-1.5 text-xs text-[#707070] mb-2">
+                      <Globe className="w-3.5 h-3.5 text-[#707070]" />
                       <span className="font-mono text-[11px] truncate">{store.storeUrl}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 my-3 p-2 bg-white rounded-xl border border-zinc-200 text-center">
                       <div>
-                        <span className="text-[10px] text-zinc-400 block">الطلبات المسحوبة</span>
+                        <span className="text-[10px] text-[#707070] block">الطلبات المسحوبة</span>
                         <span className="font-mono font-bold text-xs text-black">{store.syncedOrdersCount}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-zinc-400 block">المنتجات المربوطة</span>
-                        <span className="font-mono font-bold text-xs text-champagne-dark">{store.syncedProductsCount}</span>
+                        <span className="text-[10px] text-[#707070] block">المنتجات المربوطة</span>
+                        <span className="font-mono font-bold text-xs text-[#141414]">{store.syncedProductsCount}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-zinc-200 text-[11px]">
-                    <span className="text-zinc-500">آخر فحص: {store.lastSyncTime}</span>
+                    <span className="text-[#707070]">آخر فحص: {store.lastSyncTime}</span>
                     <button
                       type="button"
                       disabled={syncingStoreId === store.id}
@@ -795,16 +795,16 @@ export const SmaccModulesPage: React.FC = () => {
                       </td>
                       <td className="p-3.5 font-mono text-zinc-600">{order.customerPhone}</td>
                       <td className="p-3.5 text-zinc-700">{order.serviceType}</td>
-                      <td className="p-3.5 font-mono font-bold text-champagne-dark">{order.totalAmount.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{order.totalAmount.toLocaleString()} ⃁</td>
                       <td className="p-3.5">
                         <span className="pill-tag-mint" style={{ fontSize: '10px' }}>✓ {order.paymentStatus}</span>
                       </td>
                       <td className="p-3.5">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${order.orderStatus.includes('توثيق') || order.orderStatus === 'مكتمل' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-zinc-100 text-zinc-700'}`}>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${order.orderStatus.includes('توثيق') || order.orderStatus === 'مكتمل' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-zinc-100 text-zinc-700'}`}>
                           {order.orderStatus}
                         </span>
                       </td>
-                      <td className="p-3.5 font-mono text-zinc-500">{order.createdAt}</td>
+                      <td className="p-3.5 font-mono text-[#707070]">{order.createdAt}</td>
                       <td className="p-3.5 text-center">
                         <button
                           type="button"
@@ -829,32 +829,32 @@ export const SmaccModulesPage: React.FC = () => {
         <div className="space-y-4">
           <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">إجمالي تكلفة الأصول</span>
+              <span className="text-xs text-[#707070] font-semibold">إجمالي تكلفة الأصول</span>
               <p className="text-xl font-mono font-bold text-black mt-1">
                 {fixedAssets.reduce((sum, a) => sum + a.cost, 0).toLocaleString()} ⃁
               </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">مجمع الإهلاك التراكمي</span>
+              <span className="text-xs text-[#707070] font-semibold">مجمع الإهلاك التراكمي</span>
               <p className="text-xl font-mono font-bold text-black mt-1">
                 {fixedAssets.reduce((sum, a) => sum + a.accumulatedDep, 0).toLocaleString()} ⃁
               </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">صافي القيمة الدفترية</span>
-              <p className="text-xl font-mono font-bold text-champagne-dark mt-1">
+              <span className="text-xs text-[#707070] font-semibold">صافي القيمة الدفترية</span>
+              <p className="text-xl font-mono font-bold text-[#141414] mt-1">
                 {fixedAssets.reduce((sum, a) => sum + a.netBookValue, 0).toLocaleString()} ⃁
               </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">عدد الأصول المسجلة</span>
+              <span className="text-xs text-[#707070] font-semibold">عدد الأصول المسجلة</span>
               <p className="text-xl font-bold text-black mt-1">{fixedAssets.length} أصل معتمد</p>
             </div>
           </div>
 
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
               <input
                 type="text"
                 placeholder="البحث في الأصول الثابتة..."
@@ -904,10 +904,10 @@ export const SmaccModulesPage: React.FC = () => {
                       <td className="p-3.5 font-mono text-black font-bold">{asset.id}</td>
                       <td className="p-3.5 font-bold text-black">{asset.name}</td>
                       <td className="p-3.5 text-zinc-600">{asset.category}</td>
-                      <td className="p-3.5 text-zinc-500 font-mono">{asset.purchaseDate}</td>
+                      <td className="p-3.5 text-[#707070] font-mono">{asset.purchaseDate}</td>
                       <td className="p-3.5 font-mono font-bold text-black">{asset.cost.toLocaleString()} ⃁</td>
                       <td className="p-3.5 font-mono text-zinc-600">{asset.accumulatedDep.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 font-bold font-mono text-champagne-dark">{asset.netBookValue.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-bold font-mono text-[#141414]">{asset.netBookValue.toLocaleString()} ⃁</td>
                       <td className="p-3.5">
                         <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>{asset.status}</span>
                       </td>
@@ -925,7 +925,7 @@ export const SmaccModulesPage: React.FC = () => {
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
               <input
                 type="text"
                 placeholder="البحث في المخزون والأصناف..."
@@ -955,7 +955,7 @@ export const SmaccModulesPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>تصدير الجرد</span>
               </button>
             </div>
@@ -982,8 +982,8 @@ export const SmaccModulesPage: React.FC = () => {
                       <td className="p-3.5 font-bold text-black">{item.name}</td>
                       <td className="p-3.5 text-zinc-600">{item.category}</td>
                       <td className="p-3.5 font-bold font-mono text-black">{item.qty}</td>
-                      <td className="p-3.5 font-bold font-mono text-champagne-dark">{item.unitPrice.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 text-zinc-500 font-mono">{item.reorderLevel}</td>
+                      <td className="p-3.5 font-bold font-mono text-[#141414]">{item.unitPrice.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 text-[#707070] font-mono">{item.reorderLevel}</td>
                       <td className="p-3.5">
                         <span className={item.status === 'متوفر' ? 'pill-tag-mint' : 'pill-tag-shade'} style={{ fontSize: '10.5px' }}>
                           {item.status}
@@ -1003,18 +1003,18 @@ export const SmaccModulesPage: React.FC = () => {
         <div className="space-y-4">
           <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">إجمالي البائعين والمحصلين</span>
+              <span className="text-xs text-[#707070] font-semibold">إجمالي البائعين والمحصلين</span>
               <p className="text-2xl font-bold text-black mt-1">{salesReps.length} أعضاء</p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">إجمالي المبيعات المحققة</span>
+              <span className="text-xs text-[#707070] font-semibold">إجمالي المبيعات المحققة</span>
               <p className="text-2xl font-bold text-black mt-1">
                 {salesReps.reduce((sum, r) => sum + r.totalSales, 0).toLocaleString()} ⃁
               </p>
             </div>
             <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
-              <span className="text-xs text-zinc-500 font-semibold">إجمالي المبالغ المحصلة</span>
-              <p className="text-2xl font-bold text-champagne-dark font-mono mt-1">
+              <span className="text-xs text-[#707070] font-semibold">إجمالي المبالغ المحصلة</span>
+              <p className="text-2xl font-bold text-[#141414] font-mono mt-1">
                 {salesReps.reduce((sum, r) => sum + r.collected, 0).toLocaleString()} ⃁
               </p>
             </div>
@@ -1033,7 +1033,7 @@ export const SmaccModulesPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px' }}
               >
-                <DollarSign className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+                <DollarSign className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>+ تسجيل تحصيل جديد</span>
               </button>
               <button
@@ -1074,10 +1074,10 @@ export const SmaccModulesPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-3.5 text-zinc-600">{rep.role}</td>
-                      <td className="p-3.5 text-zinc-500 font-mono">{rep.phone}</td>
+                      <td className="p-3.5 text-[#707070] font-mono">{rep.phone}</td>
                       <td className="p-3.5 font-bold font-mono text-black">{rep.totalSales.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 text-champagne-dark font-mono font-bold">{rep.collected.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 text-zinc-500 font-mono">{rep.pending.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 text-[#141414] font-mono font-bold">{rep.collected.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 text-[#707070] font-mono">{rep.pending.toLocaleString()} ⃁</td>
                       <td className="p-3.5 font-bold font-mono text-black">{rep.targetAchieved}</td>
                       <td className="p-3.5 text-center">
                         <button
@@ -1088,7 +1088,7 @@ export const SmaccModulesPage: React.FC = () => {
                           className="button-outline-on-light text-[11px] py-1 px-3"
                           style={{ minHeight: '26px' }}
                         >
-                          <DollarSign className="w-3 h-3 text-champagne-dark ml-1" />
+                          <DollarSign className="w-3 h-3 text-[#141414] ml-1" />
                           <span>تسجيل تحصيل</span>
                         </button>
                       </td>
@@ -1113,7 +1113,7 @@ export const SmaccModulesPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-black text-sm m-0">ربط الفواتير الإلكترونية ZATCA المرحلة الثانية</h3>
-                    <p className="text-xs text-zinc-500 m-0 mt-0.5">توليد ملفات XML، التوقيع الرقمي، ورمز الاستجابة السريع (QR)</p>
+                    <p className="text-xs text-[#707070] m-0 mt-0.5">توليد ملفات XML، التوقيع الرقمي، ورمز الاستجابة السريع (QR)</p>
                   </div>
                 </div>
                 <button
@@ -1151,7 +1151,7 @@ export const SmaccModulesPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-black text-sm m-0">الربط مع منصة مساند والمكاتب الخارجية</h3>
-                    <p className="text-xs text-zinc-500 m-0 mt-0.5">مزامنة العقود والتدفقات المالية مع الوكلاء</p>
+                    <p className="text-xs text-[#707070] m-0 mt-0.5">مزامنة العقود والتدفقات المالية مع الوكلاء</p>
                   </div>
                 </div>
                 <button
@@ -1186,7 +1186,7 @@ export const SmaccModulesPage: React.FC = () => {
           <div className="card-pricing" style={{ padding: '20px 24px', borderRadius: '24px', background: '#ffffff' }}>
             <div className="flex items-center justify-between mb-4 border-b border-zinc-100 pb-3">
               <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-champagne-dark" />
+                <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>سجل عمليات الامتثال والربط الحكومي المباشر (Compliance Audit Trail)</span>
               </h3>
               <span className="pill-tag-shade text-[11px]">{complianceLogs.length} عمليات مسجلة</span>
@@ -1204,7 +1204,7 @@ export const SmaccModulesPage: React.FC = () => {
                 <tbody className="divide-y divide-zinc-100">
                   {complianceLogs.map(log => (
                     <tr key={log.id} className="hover:bg-zinc-50">
-                      <td className="p-3 font-mono text-zinc-500">{log.timestamp}</td>
+                      <td className="p-3 font-mono text-[#707070]">{log.timestamp}</td>
                       <td className="p-3 font-bold text-black">{log.system}</td>
                       <td className="p-3 text-zinc-700">{log.event}</td>
                       <td className="p-3">
@@ -1225,7 +1225,7 @@ export const SmaccModulesPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">إضافة أصل ثابت جديد</h3>
-              <button onClick={() => setShowAssetModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowAssetModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1292,7 +1292,7 @@ export const SmaccModulesPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">إضافة صنف مخزني جديد</h3>
-              <button onClick={() => setShowItemModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowItemModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1349,7 +1349,7 @@ export const SmaccModulesPage: React.FC = () => {
                     required
                     value={newItem.unitPrice}
                     onChange={e => setNewItem({ ...newItem, unitPrice: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold text-champagne-dark focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold text-[#141414] focus:border-black focus:outline-none"
                   />
                 </div>
               </div>
@@ -1379,7 +1379,7 @@ export const SmaccModulesPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">إضافة ممثل مبيعات / محصل</h3>
-              <button onClick={() => setShowRepModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowRepModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1446,10 +1446,10 @@ export const SmaccModulesPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-champagne-dark" />
+                <DollarSign className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل عملية تحصيل لممثل المبيعات</span>
               </h3>
-              <button onClick={() => setShowCollectionModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowCollectionModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1519,7 +1519,7 @@ export const SmaccModulesPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3 bg-zinc-50 rounded-xl text-xs text-zinc-500 border border-zinc-200">
+              <div className="p-3 bg-zinc-50 rounded-xl text-xs text-[#707070] border border-zinc-200">
                 سيقوم النظام آلياً بترحيل قيد وسند قبض محاسبي إلى دفتر اليومية وتحديث رصيد المندوب المحصل.
               </div>
 

@@ -268,7 +268,7 @@ export const ZATCAPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowBatchExtractor(true)}
-            className="px-4 py-2 rounded-full bg-[#CFA64A] hover:bg-[#b88f38] text-black font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+            className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
           >
             <UploadCloud className="w-4 h-4" />
             <span>رفع دفعة فواتير (100 صورة / PDF / Word / Excel)</span>
@@ -286,7 +286,7 @@ export const ZATCAPage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <Key className="w-4 h-4 ml-1 text-amber-400" />
+            <Key className="w-4 h-4 ml-1 text-[#141414]" />
             <span>شهادة CSID والربط</span>
           </button>
           <ExportDropdown
@@ -300,7 +300,7 @@ export const ZATCAPage: React.FC = () => {
       </div>
 
       {/* Sub-Branch Navigation Tabs inside ZATCAPage */}
-      <div className="p-3 rounded-2xl bg-[#1D2428] border border-[#CFA64A]/35 flex items-center justify-between flex-wrap gap-2">
+      <div className="p-3 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           {[
             { id: 'zatca', label: 'الفوترة الإلكترونية ZATCA المرحلة 2 (UBL 2.1 & CSID)' },
@@ -322,8 +322,8 @@ export const ZATCAPage: React.FC = () => {
                 }}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#CFA64A] text-[#1D2428] shadow-sm'
-                    : 'bg-white/10 hover:bg-white/20 text-zinc-200 border border-white/10'
+                    ? 'bg-[#141414] text-[#ffffff] shadow-sm'
+                    : 'bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                 }`}
               >
                 {sub.label}
@@ -331,7 +331,7 @@ export const ZATCAPage: React.FC = () => {
             );
           })}
         </div>
-        <span className="text-[11px] font-bold text-[#E6D3A7] px-2">
+        <span className="text-[11px] font-bold text-[#141414] px-2">
           {storeActiveTab === 'invoices'
             ? 'عرض سجل فواتير المبيعات والعقود الضريبية'
             : storeActiveTab === 'universal-extractor'
@@ -352,7 +352,7 @@ export const ZATCAPage: React.FC = () => {
           </p>
         </div>
         <span className="pill-tag-mint" style={{ padding: '8px 16px', fontSize: '12px' }}>
-          <ShieldCheck className="w-4 h-4 ml-1 text-champagne-dark" />
+          <ShieldCheck className="w-4 h-4 ml-1 text-[#141414]" />
           <span>Clearing Engine: Active</span>
         </span>
       </div>
@@ -394,7 +394,7 @@ export const ZATCAPage: React.FC = () => {
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
             <input
               type="text"
               aria-label="ابحث برقم الفاتورة، اسم العميل، أو مرجع العقد"
@@ -410,7 +410,7 @@ export const ZATCAPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowBatchExtractor(true)}
-              className="px-3.5 py-1.5 rounded-full bg-black text-[#CFA64A] text-xs font-black flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-black text-[#ffffff] text-xs font-black flex items-center gap-1.5 cursor-pointer"
             >
               <UploadCloud className="w-3.5 h-3.5" />
               <span>إضافة صور / مستندات فواتير للجدول</span>
@@ -448,13 +448,13 @@ export const ZATCAPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-center text-zinc-400">
+                  <td colSpan={9} className="py-10 text-center text-[#707070]">
                     جاري تحميل فواتير ZATCA...
                   </td>
                 </tr>
               ) : filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-center text-zinc-400">
+                  <td colSpan={9} className="py-10 text-center text-[#707070]">
                     لا توجد فواتير مطابقة للبحث
                   </td>
                 </tr>
@@ -473,7 +473,7 @@ export const ZATCAPage: React.FC = () => {
                         />
                         <div>
                           <div className="font-bold text-black">{inv.client_name}</div>
-                          <div className="text-[11px] text-zinc-400 font-mono">
+                          <div className="text-[11px] text-[#707070] font-mono">
                             {inv.client_vat_number ? `ضريبي: ${inv.client_vat_number}` : `هوية: ${inv.client_national_id || 'أفراد'}`}
                           </div>
                         </div>
@@ -483,9 +483,9 @@ export const ZATCAPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setSelectedInvoiceAttachment(inv)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FBFBF5] hover:bg-[#FAEBD7] border border-zinc-200 text-[11px] font-bold text-black transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#f3f3f3] hover:bg-[#FAEBD7] border border-zinc-200 text-[11px] font-bold text-black transition-colors cursor-pointer"
                       >
-                        <Eye className="w-3.5 h-3.5 text-[#a98232]" />
+                        <Eye className="w-3.5 h-3.5 text-[#141414]" />
                         <span>{inv.file_format || 'صورة / PDF'}</span>
                       </button>
                     </td>
@@ -497,7 +497,7 @@ export const ZATCAPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-mono font-bold text-black">{(inv.subtotal ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono font-bold text-black">{(inv.vat_amount ?? 0).toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{(inv.total_amount ?? 0).toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{(inv.total_amount ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5">
                       <Badge
                         text={inv.zatca_status === 'CLEARED' ? 'تمت المصادقة (Clearance)' : 'تم الإبلاغ (Reported)'}
@@ -510,7 +510,7 @@ export const ZATCAPage: React.FC = () => {
                         className="button-outline-on-light"
                         style={{ padding: '3px 10px', fontSize: '11px', minHeight: '26px' }}
                       >
-                        <QrCode className="w-3 h-3 ml-1 text-champagne-dark" />
+                        <QrCode className="w-3 h-3 ml-1 text-[#141414]" />
                         <span>XML & QR</span>
                       </button>
                     </td>
@@ -526,12 +526,12 @@ export const ZATCAPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#141414]" />
                 <span>إصدار فاتورة ضريبية إلكترونية جديدة</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -609,11 +609,11 @@ export const ZATCAPage: React.FC = () => {
                   <span>المبلغ الخاضع للضريبة:</span>
                   <span className="font-bold font-mono">{subtotal.toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex justify-between text-amber-700 font-bold">
+                <div className="flex justify-between text-[#141414] font-bold">
                   <span>ضريبة القيمة المضافة (15%):</span>
                   <span className="font-mono">{vatAmount.toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex justify-between text-champagne-dark font-black text-sm border-t border-zinc-200 pt-2">
+                <div className="flex justify-between text-[#141414] font-black text-sm border-t border-zinc-200 pt-2">
                   <span>المجموع النهائي المستحق:</span>
                   <span className="font-mono">{totalAmount.toLocaleString()} ⃁</span>
                 </div>
@@ -646,12 +646,12 @@ export const ZATCAPage: React.FC = () => {
       {selectedInvoiceForXml && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <QrCode className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <QrCode className="w-4 h-4 text-[#141414]" />
                 <span>معاينة الفاتورة الإلكترونية - {selectedInvoiceForXml.invoice_number}</span>
               </h3>
-              <button onClick={() => setSelectedInvoiceForXml(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setSelectedInvoiceForXml(null)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -659,28 +659,28 @@ export const ZATCAPage: React.FC = () => {
             <div className="p-6 space-y-4 bg-white text-black">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center bg-zinc-50 p-4 rounded-2xl border border-zinc-100">
                 <div className="space-y-1 md:col-span-2 text-xs">
-                  <div className="font-bold text-zinc-400">بيانات الفاتورة المعتمدة</div>
+                  <div className="font-bold text-[#707070]">بيانات الفاتورة المعتمدة</div>
                   <div className="text-sm font-bold text-black">{selectedInvoiceForXml.client_name}</div>
-                  <div className="font-mono font-bold text-champagne-dark">
+                  <div className="font-mono font-bold text-[#141414]">
                     الإجمالي: {(selectedInvoiceForXml.total_amount ?? 0).toLocaleString()} ⃁ (شامل ضريبة {(selectedInvoiceForXml.vat_amount ?? 0).toLocaleString()} ⃁)
                   </div>
-                  <div className="text-[11px] text-zinc-500 font-mono truncate">
+                  <div className="text-[11px] text-[#707070] font-mono truncate">
                     Hash: {selectedInvoiceForXml.xml_hash}
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center justify-center p-3 bg-white rounded-2xl border border-zinc-200">
-                  <div className="w-20 h-20 bg-black text-white flex flex-col items-center justify-center rounded-xl p-2 text-center">
-                    <QrCode className="w-8 h-8 text-champagne-light" />
-                    <span className="text-[8px] font-mono mt-1 text-zinc-300">ZATCA TLV</span>
+                  <div className="w-20 h-20 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex flex-col items-center justify-center rounded-xl p-2 text-center">
+                    <QrCode className="w-8 h-8 text-[#141414]" />
+                    <span className="text-[8px] font-mono mt-1 text-[#141414]">ZATCA TLV</span>
                   </div>
-                  <span className="text-[10px] text-zinc-500 font-bold mt-1">رمز التحقق الفوري</span>
+                  <span className="text-[10px] text-[#707070] font-bold mt-1">رمز التحقق الفوري</span>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">محتوى ملف UBL 2.1 XML المعتمد:</label>
-                <pre className="p-3 bg-zinc-950 text-champagne-light rounded-2xl font-mono text-[11px] overflow-x-auto max-h-44 whitespace-pre-wrap">
+                <pre className="p-3 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] rounded-2xl font-mono text-[11px] overflow-x-auto max-h-44 whitespace-pre-wrap">
 {`<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
   <ID>${selectedInvoiceForXml.invoice_number}</ID>
@@ -760,12 +760,12 @@ export const ZATCAPage: React.FC = () => {
       {showCsidModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Key className="w-4 h-4 text-amber-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Key className="w-4 h-4 text-[#141414]" />
                 <span>إعدادات شهادة الختم CSID</span>
               </h3>
-              <button onClick={() => setShowCsidModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowCsidModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -800,8 +800,8 @@ export const ZATCAPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="p-3 bg-champagne-pale border border-champagne/30 text-champagne-dark rounded-2xl text-xs flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-champagne-dark" />
+              <div className="p-3 bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] rounded-2xl text-xs flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>شهادة الختم CSID نشطة وموثقة حتى 2028-12-31</span>
               </div>
 
@@ -827,26 +827,26 @@ export const ZATCAPage: React.FC = () => {
           onClick={() => setSelectedInvoiceAttachment(null)}
         >
           <div
-            className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-[#CFA64A] overflow-hidden"
+            className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-[#e0e0e0] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-[#000000] text-white px-5 py-3.5 flex items-center justify-between">
+            <div className="bg-[#000000] text-[#141414] px-5 py-3.5 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-black text-[#CFA64A]">
+                <h3 className="text-sm font-black text-[#141414]">
                   مرفق / صورة الفاتورة: {selectedInvoiceAttachment.invoice_number}
                 </h3>
-                <p className="text-[11px] text-zinc-300">
+                <p className="text-[11px] text-[#141414]">
                   {selectedInvoiceAttachment.client_name} • {selectedInvoiceAttachment.file_format || 'مستند مؤرشف'}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedInvoiceAttachment(null)}
-                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                className="w-8 h-8 rounded-lg bg-[#f3f3f3] hover:bg-[#f3f3f3] flex items-center justify-center text-[#141414]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="p-5 bg-[#FBFBF5] flex flex-col items-center">
+            <div className="p-5 bg-[#f3f3f3] flex flex-col items-center">
               {selectedInvoiceAttachment.attachment_url ? (
                 <img
                   src={selectedInvoiceAttachment.attachment_url}
@@ -855,7 +855,7 @@ export const ZATCAPage: React.FC = () => {
                 />
               ) : (
                 <div className="w-full p-6 rounded-xl bg-white border border-zinc-200 text-center space-y-2">
-                  <FileText className="w-10 h-10 text-[#CFA64A] mx-auto" />
+                  <FileText className="w-10 h-10 text-[#141414] mx-auto" />
                   <div className="text-sm font-black text-zinc-900">
                     فاتورة ضريبية إلكترونية معتمدة #{selectedInvoiceAttachment.invoice_number}
                   </div>

@@ -378,7 +378,7 @@ export const ShelterPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <BusinessIllustration type="shelter-care" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Hotel className="w-5 h-5 text-champagne-light" />
+              <Hotel className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -390,7 +390,7 @@ export const ShelterPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 إدارة مراكز الإيواء، التسكين والإعاشة
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 متابعة حركة النزيلات، توزيع الغرف والأسرة، توثيق الإعاشة، وحالات النقل والترحيل مربوطة بقاعدة البيانات
               </p>
             </div>
@@ -405,8 +405,8 @@ export const ShelterPage: React.FC = () => {
                 fontSize: '12px',
                 padding: '6px 16px',
                 minHeight: '38px',
-                background: '#10b981',
-                borderColor: '#10b981',
+                background: '#141414',
+                borderColor: '#141414',
                 color: '#ffffff',
               }}
               title="الانتقال إلى واجهة منظومة الإيواء والسكن المستقلة بكامل شاشتها"
@@ -489,7 +489,7 @@ export const ShelterPage: React.FC = () => {
                 <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                   إدارة غرف الإيواء وتوزيع الأسرة والمهاجع
                 </h2>
-                <p className="text-xs text-zinc-400 mt-1">تتبع الطاقة الاستيعابية، الأسرة المشغولة والشاغرة، ونظافة وتعقيم الغرف</p>
+                <p className="text-xs text-[#707070] mt-1">تتبع الطاقة الاستيعابية، الأسرة المشغولة والشاغرة، ونظافة وتعقيم الغرف</p>
               </div>
               <button
                 onClick={() => setShowAddRoomModal(true)}
@@ -508,11 +508,11 @@ export const ShelterPage: React.FC = () => {
                       <span className="font-bold text-black text-sm">{r.room}</span>
                       <Badge text={r.status} type={r.status.includes('شاغر') || r.status.includes('متاح') ? 'success' : 'danger'} />
                     </div>
-                    <p className="text-xs text-zinc-500 mb-1">{r.type}</p>
+                    <p className="text-xs text-[#707070] mb-1">{r.type}</p>
                     <div className="text-xs font-mono font-bold text-black mb-2">السعة: {r.beds} (مشغول {r.occupied})</div>
                   </div>
                   <div className="pt-2 border-t border-zinc-200 flex justify-between items-center text-[11px]">
-                    <span className="text-champagne-dark font-semibold">{r.clean}</span>
+                    <span className="text-[#141414] font-semibold">{r.clean}</span>
                     <button
                       onClick={() => {
                         setSelectedRoomForCheckin(r);
@@ -540,7 +540,7 @@ export const ShelterPage: React.FC = () => {
                 <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                   سجل التغذية والإعاشة والوجبات اليومية للنزيلات
                 </h2>
-                <p className="text-xs text-zinc-400 mt-1">سجل الوجبات الغذائية الثلاث (فطور، غداء، عشاء) ومراقبة المعايير الصحية</p>
+                <p className="text-xs text-[#707070] mt-1">سجل الوجبات الغذائية الثلاث (فطور، غداء، عشاء) ومراقبة المعايير الصحية</p>
               </div>
               <button
                 onClick={() => setShowAddMealModal(true)}
@@ -553,19 +553,19 @@ export const ShelterPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs text-zinc-500 font-semibold block">وجبة الإفطار (07:30 AM)</span>
-                <span className="text-sm font-bold text-champagne-dark block mt-1">تم التوزيع المعتمد</span>
-                <span className="text-[11px] text-zinc-400">فطور متكامل + حليب وعصائر</span>
+                <span className="text-xs text-[#707070] font-semibold block">وجبة الإفطار (07:30 AM)</span>
+                <span className="text-sm font-bold text-[#141414] block mt-1">تم التوزيع المعتمد</span>
+                <span className="text-[11px] text-[#707070]">فطور متكامل + حليب وعصائر</span>
               </div>
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs text-zinc-500 font-semibold block">وجبة الغداء (01:30 PM)</span>
-                <span className="text-sm font-bold text-champagne-dark block mt-1">تم التوزيع المعتمد</span>
-                <span className="text-[11px] text-zinc-400">أرز ولحوم وخضار طازجة</span>
+                <span className="text-xs text-[#707070] font-semibold block">وجبة الغداء (01:30 PM)</span>
+                <span className="text-sm font-bold text-[#141414] block mt-1">تم التوزيع المعتمد</span>
+                <span className="text-[11px] text-[#707070]">أرز ولحوم وخضار طازجة</span>
               </div>
               <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-                <span className="text-xs text-zinc-500 font-semibold block">وجبة العشاء (08:00 PM)</span>
+                <span className="text-xs text-[#707070] font-semibold block">وجبة العشاء (08:00 PM)</span>
                 <span className="text-sm font-bold text-black block mt-1">مجدولة وجاهزة للتوزيع</span>
-                <span className="text-[11px] text-zinc-400">وجبة خفيفة ومخبوزات وفاكهة</span>
+                <span className="text-[11px] text-[#707070]">وجبة خفيفة ومخبوزات وفاكهة</span>
               </div>
             </div>
 
@@ -591,7 +591,7 @@ export const ShelterPage: React.FC = () => {
                       <td className="p-3 font-semibold text-black">{row.meal}</td>
                       <td className="p-3 font-mono font-bold text-black">{row.count} وجبة</td>
                       <td className="p-3 text-zinc-600">{row.vendor}</td>
-                      <td className="p-3 font-mono font-bold text-champagne-dark">{row.cost.toLocaleString()} ⃁</td>
+                      <td className="p-3 font-mono font-bold text-[#141414]">{row.cost.toLocaleString()} ⃁</td>
                       <td className="p-3 text-zinc-700">{row.sup}</td>
                       <td className="p-3"><Badge text={row.status} type="success" /></td>
                     </tr>
@@ -611,7 +611,7 @@ export const ShelterPage: React.FC = () => {
               <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                 مقرات وفروع مراكز الإيواء المعتمدة للمجموعة
               </h2>
-              <p className="text-xs text-zinc-400 mt-1">المراكز المعتمدة والمرخصة من وزارة الموارد البشرية للتسكين والإعاشة</p>
+              <p className="text-xs text-[#707070] mt-1">المراكز المعتمدة والمرخصة من وزارة الموارد البشرية للتسكين والإعاشة</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -623,12 +623,12 @@ export const ShelterPage: React.FC = () => {
                 <div key={i} className="p-5 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-black text-sm mb-1">{p.name}</h3>
-                    <p className="text-xs text-zinc-500 mb-3">{p.city}</p>
+                    <p className="text-xs text-[#707070] mb-3">{p.city}</p>
                     <div className="space-y-1.5 text-xs">
-                      <div className="flex justify-between"><span className="text-zinc-500">الطاقة الاستيعابية:</span><span className="font-bold text-black">{p.cap}</span></div>
-                      <div className="flex justify-between"><span className="text-zinc-500">الإشغال الحالي:</span><span className="font-bold text-amber-700">{p.occ}</span></div>
-                      <div className="flex justify-between"><span className="text-zinc-500">المشرف:</span><span className="text-black font-semibold">{p.sup}</span></div>
-                      <div className="flex justify-between"><span className="text-zinc-500">الترخيص:</span><span className="font-mono text-zinc-600">{p.license}</span></div>
+                      <div className="flex justify-between"><span className="text-[#707070]">الطاقة الاستيعابية:</span><span className="font-bold text-black">{p.cap}</span></div>
+                      <div className="flex justify-between"><span className="text-[#707070]">الإشغال الحالي:</span><span className="font-bold text-[#141414]">{p.occ}</span></div>
+                      <div className="flex justify-between"><span className="text-[#707070]">المشرف:</span><span className="text-black font-semibold">{p.sup}</span></div>
+                      <div className="flex justify-between"><span className="text-[#707070]">الترخيص:</span><span className="font-mono text-zinc-600">{p.license}</span></div>
                     </div>
                   </div>
                   <div className="pt-3 border-t border-zinc-200 mt-4 flex justify-between items-center text-xs">
@@ -647,7 +647,7 @@ export const ShelterPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
               <input
                 type="text"
                 placeholder="ابحث باسم العاملة، رقم الجواز، أو اسم العميل..."
@@ -679,13 +679,13 @@ export const ShelterPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={8} className="py-10 text-center text-zinc-400">
+                    <td colSpan={8} className="py-10 text-center text-[#707070]">
                       جاري استرجاع سجلات الإيواء...
                     </td>
                   </tr>
                 ) : filteredItems.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-10 text-center text-zinc-400">
+                    <td colSpan={8} className="py-10 text-center text-[#707070]">
                       لا توجد سجلات مطابقة للبحث
                     </td>
                   </tr>
@@ -694,27 +694,27 @@ export const ShelterPage: React.FC = () => {
                     <tr key={item.id} className="hover:bg-zinc-50">
                       <td className="p-3.5">
                         <div className="font-mono font-bold text-black">{item.id}</div>
-                        <div className="text-[11px] font-mono text-zinc-400">{item.passport}</div>
+                        <div className="text-[11px] font-mono text-[#707070]">{item.passport}</div>
                       </td>
                       <td className="p-3.5">
                         <div className="flex items-center gap-2.5">
                           <CorporateAvatar name={item.maid_name} profession="عاملة منزلية" isCandidate size="sm" />
                           <div>
                             <div className="font-bold text-black">{item.maid_name}</div>
-                            <div className="text-zinc-500">{item.nationality}</div>
+                            <div className="text-[#707070]">{item.nationality}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-3.5 text-xs">
                         <div className="font-bold text-black">{item.client_name || 'تسكين عام'}</div>
-                        <div className="text-zinc-400">{item.contract_ref || 'بدون عقد'}</div>
+                        <div className="text-[#707070]">{item.contract_ref || 'بدون عقد'}</div>
                       </td>
                       <td className="p-3.5 font-bold text-zinc-700">
                         {item.shelter_location}
                       </td>
                       <td className="p-3.5 text-xs">
                         <div className="font-bold text-black">{item.days_in_shelter} يوم</div>
-                        <div className="text-champagne-dark font-bold flex items-center gap-1.5 mt-0.5">
+                        <div className="text-[#141414] font-bold flex items-center gap-1.5 mt-0.5">
                           <span>{item.catering_meals_count} وجبة</span>
                           <button
                             onClick={() => handleAddMeal(item)}
@@ -729,7 +729,7 @@ export const ShelterPage: React.FC = () => {
                       </td>
                       <td className="p-3.5">
                         <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                          item.work_willingness === 'ترغب بالعمل' ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-rose-50 text-rose-800 border border-rose-200'
+                          item.work_willingness === 'ترغب بالعمل' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                         }`}>
                           {item.work_willingness}
                         </span>
@@ -755,7 +755,7 @@ export const ShelterPage: React.FC = () => {
                           </select>
                           <button
                             onClick={() => handleDeleteShelter(item)}
-                            className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                            className="p-1 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                             title="حذف السجل"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -775,12 +775,12 @@ export const ShelterPage: React.FC = () => {
       {showAddRoomModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Bed className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Bed className="w-4 h-4 text-[#141414]" />
                 <span>إضافة غرفة / جناح إيواء جديد</span>
               </h3>
-              <button onClick={() => setShowAddRoomModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddRoomModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -859,21 +859,21 @@ export const ShelterPage: React.FC = () => {
       {showCheckinModal && selectedRoomForCheckin && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Hotel className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Hotel className="w-4 h-4 text-[#141414]" />
                 <span>تسكين في ({selectedRoomForCheckin.room})</span>
               </h3>
-              <button onClick={() => setShowCheckinModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowCheckinModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleConfirmCheckin} className="p-6 space-y-4 bg-white text-black">
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs">
-                <span className="text-zinc-500 block">الغرفة المختارة:</span>
+                <span className="text-[#707070] block">الغرفة المختارة:</span>
                 <span className="font-bold text-black block mt-0.5">{selectedRoomForCheckin.room} - {selectedRoomForCheckin.type}</span>
-                <span className="text-champagne-dark font-mono font-bold mt-1 block">
+                <span className="text-[#141414] font-mono font-bold mt-1 block">
                   السعة: {selectedRoomForCheckin.beds} (المشغول حالياً: {selectedRoomForCheckin.occupied})
                 </span>
               </div>
@@ -930,12 +930,12 @@ export const ShelterPage: React.FC = () => {
       {showAddMealModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Utensils className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Utensils className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل وجبة غذائية جماعية</span>
               </h3>
-              <button onClick={() => setShowAddMealModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddMealModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1037,12 +1037,12 @@ export const ShelterPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Hotel className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Hotel className="w-4 h-4 text-[#141414]" />
                 <span>تسكين عاملة جديدة بمركز الإيواء</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

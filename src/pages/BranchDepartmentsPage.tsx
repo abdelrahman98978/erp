@@ -498,7 +498,7 @@ export const BranchDepartmentsPage: React.FC = () => {
               <BusinessIllustration type="branch-network" size="sm" showBackground={false} />
             </div>
             <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Network className="w-5 h-5 text-champagne-light" />
+              <Network className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -512,7 +512,7 @@ export const BranchDepartmentsPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 دليل الهيكلية والأقسام التخصصية للشركات والفروع
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيام للسفر، كاس للتجارة والمعارض، الفروع الإقليمية، والوكالات الدولية
               </p>
             </div>
@@ -522,7 +522,7 @@ export const BranchDepartmentsPage: React.FC = () => {
             <button
               onClick={() => setShowAddEntityModal(true)}
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#10b981', color: '#ffffff', fontWeight: '700' }}
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#141414', color: '#ffffff', fontWeight: '700' }}
             >
               <Plus className="w-4 h-4 text-white" />
               <span>+ إضافة فرع / شركة جديدة</span>
@@ -530,10 +530,10 @@ export const BranchDepartmentsPage: React.FC = () => {
 
             <button
               onClick={() => setShowAddDeptModal(true)}
-              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-champagne"
+              className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-[#141414]"
               style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4 text-champagne-dark" />
+              <Plus className="w-4 h-4 text-[#141414]" />
               <span>+ إضافة قسم لـ ({selectedEntity?.code || 'الفرع'})</span>
             </button>
 
@@ -596,14 +596,14 @@ export const BranchDepartmentsPage: React.FC = () => {
             {stats.totalStaff}
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-full h-full bg-emerald-500 rounded-full" />
+            <div className="w-full h-full bg-[#141414] rounded-full" />
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>كوادر إدارية وميدانية</span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="p-4 rounded-3xl bg-white border border-zinc-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Category Filter Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
           {[
@@ -630,20 +630,20 @@ export const BranchDepartmentsPage: React.FC = () => {
 
         {/* Quick Search */}
         <div className="relative min-w-[260px]">
-          <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-[#707070]" />
           <input
             type="text"
             aria-label="بحث بالاسم، الكود، المدير أو القسم"
             placeholder="بحث بالاسم، الكود، المدير أو القسم..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-4 pr-10 py-2 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-semibold"
+            className="w-full pl-4 pr-10 py-2 rounded-full bg-zinc-50 border border-zinc-200 text-xs text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#141414]/20 font-semibold"
           />
           {searchQuery && (
             <button
               aria-label="مسح البحث"
               onClick={() => setSearchQuery('')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[#707070] hover:text-zinc-900"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -661,15 +661,15 @@ export const BranchDepartmentsPage: React.FC = () => {
               onClick={() => setSelectedEntityId(e.id)}
               className={`p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
                 isSelected
-                  ? 'bg-[#000000] bg-gradient-to-br from-[#1D2428] to-black text-white border-champagne shadow-xl scale-[1.02]'
-                  : 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-white border-zinc-200 dark:border-zinc-800 hover:border-champagne/40 hover:shadow-md'
+                  ? 'bg-[#000000] bg-gradient-to-br from-[#f3f3f3] to-black text-white border-[#e0e0e0] shadow-xl scale-[1.02]'
+                  : 'bg-white  text-slate-900  border-zinc-200  hover:border-[#141414] hover:shadow-md'
               }`}
             >
               <div className="flex justify-between items-center mb-3">
                 <span className={`px-2.5 py-1 rounded-full text-[10px] font-black font-mono border ${
                   isSelected
-                    ? 'bg-champagne-pale/20 text-champagne-light border-champagne/30'
-                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700'
+                    ? 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0]'
+                    : 'bg-zinc-100  text-zinc-600  border-zinc-200 '
                 }`}>
                   {e.code}
                 </span>
@@ -680,7 +680,7 @@ export const BranchDepartmentsPage: React.FC = () => {
 
               <h2 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h2>
               <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
-                isSelected ? 'text-champagne-light/70' : 'text-zinc-500 dark:text-zinc-400'
+                isSelected ? 'text-[#141414]' : 'text-[#707070] '
               }`}>
                 <div className="flex items-center gap-1.5 truncate max-w-[160px]">
                   <CorporateAvatar name={e.manager} role={e.name} size="xs" />
@@ -695,11 +695,11 @@ export const BranchDepartmentsPage: React.FC = () => {
 
       {/* Selected Entity Hero Overview Banner */}
       {selectedEntity && (
-        <div className="rounded-3xl bg-gradient-to-r from-champagne-pale/80 to-zinc-50 dark:from-zinc-900 dark:to-zinc-800 border border-champagne/30 p-6 shadow-sm">
+        <div className="rounded-3xl bg-gradient-to-r from-[#f3f3f3] to-zinc-50 border border-[#e0e0e0] p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-charcoal text-champagne-light font-mono font-black text-xs border border-champagne/30">
+                <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] font-mono font-black text-xs border border-[#e0e0e0]">
                   {selectedEntity.code}
                 </span>
                 <span className="pill-tag-mint text-xs">
@@ -709,14 +709,14 @@ export const BranchDepartmentsPage: React.FC = () => {
                   إجمالي الكادر: {selectedEntity.staff_count || 0} موظف
                 </span>
               </div>
-              <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
                 <span>{selectedEntity.name}</span>
-                <span className="text-xs font-normal text-zinc-500 dark:text-zinc-400 font-medium">({selectedEntity.location})</span>
+                <span className="text-xs font-normal text-[#707070] font-medium">({selectedEntity.location})</span>
               </h3>
-              <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-300 font-medium pt-0.5">
+              <div className="flex items-center gap-2 text-xs text-zinc-600 font-medium pt-0.5">
                 <CorporateAvatar name={selectedEntity.manager} role={selectedEntity.name} size="sm" status="verified" />
                 <span>
-                  المشرف / المدير المسؤول: <strong className="text-champagne-dark dark:text-champagne-light">{selectedEntity.manager}</strong>
+                  المشرف / المدير المسؤول: <strong className="text-[#141414]">{selectedEntity.manager}</strong>
                 </span>
               </div>
             </div>
@@ -737,8 +737,8 @@ export const BranchDepartmentsPage: React.FC = () => {
       {selectedEntity && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-champagne-dark" />
+            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-[#141414]" />
               <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
             </h3>
             <span className="pill-tag-mint text-xs font-mono">
@@ -750,11 +750,11 @@ export const BranchDepartmentsPage: React.FC = () => {
             {(selectedEntity.departments || []).map(dept => (
               <div 
                 key={dept.id} 
-                className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-champagne/40 transition-all flex flex-col justify-between group bg-white dark:bg-zinc-900"
+                className="card-pricing border border-zinc-200 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-[#141414] transition-all flex flex-col justify-between group bg-white"
               >
                 <div>
                   <div className="flex justify-between items-start mb-3">
-                    <div className="w-12 h-12 rounded-full bg-champagne-pale dark:bg-zinc-800 text-champagne-dark border border-champagne/30 flex items-center justify-center font-bold shadow-xs">
+                    <div className="w-12 h-12 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center justify-center font-bold shadow-xs">
                       <Building2 className="w-6 h-6" />
                     </div>
                     <span className="pill-tag-mint text-xs font-black">
@@ -762,20 +762,20 @@ export const BranchDepartmentsPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <h4 className="font-black text-base text-slate-900 dark:text-white mb-2 group-hover:text-champagne-dark transition-colors">
+                  <h4 className="font-black text-base text-slate-900 mb-2 group-hover:text-[#141414] transition-colors">
                     {dept.name}
                   </h4>
-                  <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium mb-4">
+                  <p className="text-xs text-zinc-600 leading-relaxed font-medium mb-4">
                     {dept.description}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex justify-between items-center text-xs">
-                  <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+                <div className="pt-4 border-t border-zinc-100 flex justify-between items-center text-xs">
+                  <div className="flex items-center gap-2 text-[#707070]">
                     <CorporateAvatar name={dept.head} role={dept.name} size="sm" />
                     <div>
                       <span>رئيس القسم: </span>
-                      <strong className="text-slate-900 dark:text-white font-bold">{dept.head}</strong>
+                      <strong className="text-slate-900 font-bold">{dept.head}</strong>
                     </div>
                   </div>
                   <span className="pill-tag-shade text-xs font-mono">
@@ -791,17 +791,17 @@ export const BranchDepartmentsPage: React.FC = () => {
       {/* Add Sub-Department Modal */}
       {showAddDeptModal && selectedEntity && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="card-pricing bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 text-slate-900 dark:text-white relative">
-            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-champagne via-champagne-light to-champagne-dark rounded-t-3xl" />
+          <div className="card-pricing bg-white border border-zinc-200 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 text-slate-900 relative">
+            <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-[#f3f3f3] via-[#f3f3f3] to-[#f3f3f3] rounded-t-3xl" />
 
-            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-champagne-dark" />
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-[#141414]" />
                 <span>إضافة قسم تخصصي لـ ({selectedEntity.name})</span>
               </h3>
               <button 
                 onClick={() => setShowAddDeptModal(false)} 
-                className="p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition"
+                className="p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-[#707070] hover:text-zinc-900 transition"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -809,52 +809,52 @@ export const BranchDepartmentsPage: React.FC = () => {
 
             <form onSubmit={handleAddSubDepartment} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">اسم القسم التخصصي *</label>
+                <label className="block font-bold text-slate-700 mb-1.5">اسم القسم التخصصي *</label>
                 <input
                   type="text"
                   placeholder="مثال: إدارة الرعاية الطبية والفحوصات..."
                   value={deptForm.name}
                   onChange={e => setDeptForm({ ...deptForm, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-[#141414]/20 font-semibold text-slate-900"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">رئيس / مشرف القسم *</label>
+                <label className="block font-bold text-slate-700 mb-1.5">رئيس / مشرف القسم *</label>
                 <input
                   type="text"
                   placeholder="اسم مسؤول القسم..."
                   value={deptForm.head}
                   onChange={e => setDeptForm({ ...deptForm, head: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-semibold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-[#141414]/20 font-semibold text-slate-900"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">الوصف المهني ومسؤوليات القسم *</label>
+                <label className="block font-bold text-slate-700 mb-1.5">الوصف المهني ومسؤوليات القسم *</label>
                 <textarea
                   rows={3}
                   placeholder="اكتب مهام وأهداف هذا القسم التخصصي..."
                   value={deptForm.description}
                   onChange={e => setDeptForm({ ...deptForm, description: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-medium text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-2xl bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-[#141414]/20 font-medium text-slate-900"
                   required
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1.5">مؤشر الأداء المستهدف KPI</label>
+                <label className="block font-bold text-slate-700 mb-1.5">مؤشر الأداء المستهدف KPI</label>
                 <input
                   type="text"
                   value={deptForm.kpi}
                   onChange={e => setDeptForm({ ...deptForm, kpi: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 focus:ring-2 focus:ring-champagne font-mono font-bold text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 focus:ring-2 focus:ring-[#141414]/20 font-mono font-bold text-slate-900"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
                 <button 
                   type="button" 
                   onClick={() => setShowAddDeptModal(false)} 
@@ -880,18 +880,18 @@ export const BranchDepartmentsPage: React.FC = () => {
       {/* Add New Entity / Branch Modal */}
       {showAddEntityModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="card-pricing bg-white rounded-3xl p-6 max-w-lg w-full border border-zinc-200 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                <Building2 className="w-5 h-5 text-[#141414]" />
+                <h3 className="font-extrabold text-slate-900 text-base">
                   إضافة فرع أو شركة مجموعة جديدة
                 </h3>
               </div>
               <button 
                 type="button" 
                 onClick={() => setShowAddEntityModal(false)} 
-                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
                 ✕
               </button>
@@ -899,35 +899,35 @@ export const BranchDepartmentsPage: React.FC = () => {
 
             <form onSubmit={handleCreateEntity} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">اسم الفرع / الكيان المؤسسي *</label>
+                <label className="block font-bold text-slate-700 mb-1">اسم الفرع / الكيان المؤسسي *</label>
                 <input
                   type="text"
                   placeholder="مثال: فرع مكة المكرمة أو شركة توباز للأعمال الذكية..."
                   value={entityForm.name}
                   onChange={e => setEntityForm({ ...entityForm, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 text-slate-900"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">كود الكيان المختصر (Code) *</label>
+                  <label className="block font-bold text-slate-700 mb-1">كود الكيان المختصر (Code) *</label>
                   <input
                     type="text"
                     placeholder="مثال: BR-MAK"
                     value={entityForm.code}
                     onChange={e => setEntityForm({ ...entityForm, code: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono text-slate-900 dark:text-white uppercase"
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 font-mono text-slate-900 uppercase"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">تصنيف الكيان *</label>
+                  <label className="block font-bold text-slate-700 mb-1">تصنيف الكيان *</label>
                   <select
                     value={entityForm.category}
                     onChange={e => setEntityForm({ ...entityForm, category: e.target.value as any })}
-                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 text-slate-900"
                   >
                     <option value="فرع منطقي">فرع منطقي وإقليمي</option>
                     <option value="شركة مجموعة">شركة شقيقة بالمجموعة</option>
@@ -938,38 +938,38 @@ export const BranchDepartmentsPage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">الموقع الجغرافي / المدينة</label>
+                  <label className="block font-bold text-slate-700 mb-1">الموقع الجغرافي / المدينة</label>
                   <input
                     type="text"
                     placeholder="مثال: مكة المكرمة - العزيزية"
                     value={entityForm.location}
                     onChange={e => setEntityForm({ ...entityForm, location: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 text-slate-900"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">المدير المسؤول</label>
+                  <label className="block font-bold text-slate-700 mb-1">المدير المسؤول</label>
                   <input
                     type="text"
                     placeholder="اسم مدير الفرع أو المسؤول"
                     value={entityForm.manager}
                     onChange={e => setEntityForm({ ...entityForm, manager: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 text-slate-900"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">عدد الموظفين المبدئي</label>
+                <label className="block font-bold text-slate-700 mb-1">عدد الموظفين المبدئي</label>
                 <input
                   type="number"
                   value={entityForm.staff_count}
                   onChange={e => setEntityForm({ ...entityForm, staff_count: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2.5 rounded-full bg-zinc-50 border border-zinc-200 font-mono text-slate-900"
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex gap-3 justify-end pt-3 border-t border-zinc-100">
                 <button 
                   type="button" 
                   onClick={() => setShowAddEntityModal(false)} 
@@ -981,7 +981,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 <button 
                   type="submit" 
                   className="button-primary-pill text-xs font-bold flex items-center gap-2"
-                  style={{ padding: '8px 22px', background: '#10b981' }}
+                  style={{ padding: '8px 22px', background: '#141414', color: '#ffffff' }}
                 >
                   <Check className="w-4 h-4" />
                   <span>حفظ وتفعيل الكيان بقاعدة البيانات</span>

@@ -306,7 +306,7 @@ export const TravelPage: React.FC = () => {
               <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                 سجل استقبال المطارات وتفويج ونقل العمالة
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5">جدول استقبال الصالات، السائقين المكلفين، وتأكيد البصمة والتسليم للإيواء</p>
+              <p className="text-xs text-[#707070] mt-0.5">جدول استقبال الصالات، السائقين المكلفين، وتأكيد البصمة والتسليم للإيواء</p>
             </div>
             <span className="pill-tag-mint" style={{ fontSize: '11px' }}>4 عمليات نقل اليوم</span>
           </div>
@@ -332,7 +332,7 @@ export const TravelPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={r.maid} profession="عاملة منزلية" isCandidate size="sm" />
-                        <span>{r.maid} <span className="text-zinc-500 font-normal">({r.nat})</span></span>
+                        <span>{r.maid} <span className="text-[#707070] font-normal">({r.nat})</span></span>
                       </div>
                     </td>
                     <td className="p-3.5 font-semibold text-black">{r.airport}</td>
@@ -343,7 +343,7 @@ export const TravelPage: React.FC = () => {
                         <span>{r.driver}</span>
                       </div>
                     </td>
-                    <td className="p-3.5 font-bold text-amber-700">{r.dest}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{r.dest}</td>
                     <td className="p-3.5"><Badge text={r.status} type={r.status.includes('تم') ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
                       <button
@@ -384,7 +384,7 @@ export const TravelPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
             <input
               type="text"
               aria-label="البحث برقم الرحلة، اسم العاملة، أو الجواز"
@@ -428,19 +428,19 @@ export const TravelPage: React.FC = () => {
                       <CorporateAvatar name={f.maid_name} profession="عاملة منزلية" isCandidate size="sm" />
                       <div>
                         <div className="font-bold text-black">{f.maid_name}</div>
-                        <div className="text-[11px] text-zinc-500 font-mono">{f.nationality} • {f.passport_number}</div>
+                        <div className="text-[11px] text-[#707070] font-mono">{f.nationality} • {f.passport_number}</div>
                       </div>
                     </div>
                   </td>
                   <td className="p-3.5 font-semibold text-black">{f.client_name}</td>
                   <td className="p-3.5">
                     <div className="font-bold text-black">{f.airline}</div>
-                    <div className="text-[11px] text-zinc-500 font-mono">{f.flight_number}</div>
+                    <div className="text-[11px] text-[#707070] font-mono">{f.flight_number}</div>
                   </td>
                   <td className="p-3.5 text-zinc-600">{f.arrival_airport}</td>
                   <td className="p-3.5 font-mono">
                     <div className="font-bold text-black">{f.flight_date}</div>
-                    <div className="text-zinc-500">{f.flight_time}</div>
+                    <div className="text-[#707070]">{f.flight_time}</div>
                   </td>
                   <td className="p-3.5 font-semibold text-black">
                     <div className="flex items-center gap-2">
@@ -474,7 +474,7 @@ export const TravelPage: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteFlight(f)}
-                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        className="p-1 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                         title="حذف الرحلة"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -493,14 +493,14 @@ export const TravelPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
           <div className="w-full max-w-xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Plane className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#141414] flex items-center gap-2">
+                <Plane className="w-4 h-4 text-[#141414]" />
                 <span>جدولة رحلة طيران جديدة (Logistics Form)</span>
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -626,12 +626,12 @@ export const TravelPage: React.FC = () => {
           <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2">
-                <Car className="w-5 h-5 text-emerald-600" />
+                <Car className="w-5 h-5 text-[#141414]" />
                 <h3 className="font-bold text-black text-base">أمر استقبال وتفويج سائق المطار الرسمي</h3>
               </div>
               <button
                 onClick={() => setSelectedFlightForPrint(null)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black"
+                className="p-1 rounded-full text-[#707070] hover:text-black"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -643,25 +643,25 @@ export const TravelPage: React.FC = () => {
               <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
                 <div>
                   <h2 className="text-base font-extrabold text-black">مجموعة السليم للاستقدام - إدارة الحركة والترحيل</h2>
-                  <div className="text-[11px] text-zinc-500">أمر تفويج واستقبال عمالة من صالة القدوم الدولية</div>
-                  <div className="text-[10px] text-amber-700 font-mono font-bold mt-0.5">ORDER ID: #{selectedFlightForPrint.id}-ARRIV</div>
+                  <div className="text-[11px] text-[#707070]">أمر تفويج واستقبال عمالة من صالة القدوم الدولية</div>
+                  <div className="text-[10px] text-[#141414] font-mono font-bold mt-0.5">ORDER ID: #{selectedFlightForPrint.id}-ARRIV</div>
                 </div>
-                <div className="w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center">
-                  <QrCode className="w-10 h-10 text-champagne-light" />
+                <div className="w-14 h-14 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] rounded-xl flex items-center justify-center">
+                  <QrCode className="w-10 h-10 text-[#141414]" />
                 </div>
               </div>
 
               {/* Grid: Driver & Flight Info */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
-                  <span className="text-[10px] text-zinc-400 font-bold block">السائق والمركبة المخصصة</span>
+                  <span className="text-[10px] text-[#707070] font-bold block">السائق والمركبة المخصصة</span>
                   <div className="font-bold text-sm text-black">{selectedFlightForPrint.driver_assigned || 'كابتن الحركة المناوب'}</div>
-                  <div className="text-zinc-500 text-[11px]">مكلف بالاستقبال والتوصيل المباشر</div>
+                  <div className="text-[#707070] text-[11px]">مكلف بالاستقبال والتوصيل المباشر</div>
                 </div>
-                <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 space-y-1">
-                  <span className="text-[10px] text-emerald-700 font-bold block">موعد ومطار الهبوط</span>
-                  <div className="font-bold text-sm text-emerald-900">{selectedFlightForPrint.flight_date} - الساعة {selectedFlightForPrint.flight_time}</div>
-                  <div className="text-emerald-800 text-[11px]">{selectedFlightForPrint.arrival_airport}</div>
+                <div className="p-3 bg-[#f3f3f3] rounded-xl border border-[#e0e0e0] space-y-1">
+                  <span className="text-[10px] text-[#141414] font-bold block">موعد ومطار الهبوط</span>
+                  <div className="font-bold text-sm text-[#141414]">{selectedFlightForPrint.flight_date} - الساعة {selectedFlightForPrint.flight_time}</div>
+                  <div className="text-[#141414] text-[11px]">{selectedFlightForPrint.arrival_airport}</div>
                 </div>
               </div>
 
@@ -669,19 +669,19 @@ export const TravelPage: React.FC = () => {
               <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
                 <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">تفاصيل الرحلة والعمالة القادمة</h4>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div><span className="text-zinc-500">اسم العامل/ة:</span> <strong className="text-black">{selectedFlightForPrint.maid_name}</strong></div>
-                  <div><span className="text-zinc-500">الجنسية:</span> <strong className="text-black">{selectedFlightForPrint.nationality}</strong></div>
-                  <div><span className="text-zinc-500">رقم الجواز:</span> <span className="font-mono font-bold text-black">{selectedFlightForPrint.passport_number}</span></div>
-                  <div><span className="text-zinc-500">شركة الطيران:</span> <strong className="text-black">{selectedFlightForPrint.airline}</strong></div>
-                  <div><span className="text-zinc-500">رقم الرحلة:</span> <span className="font-mono font-bold text-amber-700">{selectedFlightForPrint.flight_number}</span></div>
-                  <div><span className="text-zinc-500">رقم التذكرة:</span> <span className="font-mono text-black">{selectedFlightForPrint.ticket_number}</span></div>
-                  <div><span className="text-zinc-500">العميل الكفيل:</span> <strong className="text-black">{selectedFlightForPrint.client_name}</strong></div>
-                  <div><span className="text-zinc-500">الوجهة بعد الاستقبال:</span> <strong className="text-emerald-700 font-bold">مركز الإيواء والضيافة الرئيسي</strong></div>
+                  <div><span className="text-[#707070]">اسم العامل/ة:</span> <strong className="text-black">{selectedFlightForPrint.maid_name}</strong></div>
+                  <div><span className="text-[#707070]">الجنسية:</span> <strong className="text-black">{selectedFlightForPrint.nationality}</strong></div>
+                  <div><span className="text-[#707070]">رقم الجواز:</span> <span className="font-mono font-bold text-black">{selectedFlightForPrint.passport_number}</span></div>
+                  <div><span className="text-[#707070]">شركة الطيران:</span> <strong className="text-black">{selectedFlightForPrint.airline}</strong></div>
+                  <div><span className="text-[#707070]">رقم الرحلة:</span> <span className="font-mono font-bold text-[#141414]">{selectedFlightForPrint.flight_number}</span></div>
+                  <div><span className="text-[#707070]">رقم التذكرة:</span> <span className="font-mono text-black">{selectedFlightForPrint.ticket_number}</span></div>
+                  <div><span className="text-[#707070]">العميل الكفيل:</span> <strong className="text-black">{selectedFlightForPrint.client_name}</strong></div>
+                  <div><span className="text-[#707070]">الوجهة بعد الاستقبال:</span> <strong className="text-[#141414] font-bold">مركز الإيواء والضيافة الرئيسي</strong></div>
                 </div>
               </div>
 
               {/* Driver Instructions */}
-              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 space-y-1">
+              <div className="p-3 bg-[#f3f3f3] rounded-xl border border-[#e0e0e0] text-[11px] text-[#141414] space-y-1">
                 <span className="font-bold block">تعليمات السائق في المطار:</span>
                 <p>1. التواجد في صالة الوصول قبل موعد هبوط الطائرة بـ 45 دقيقة مع رفع لوحة باسم العاملة والمجموعة.</p>
                 <p>2. مطابقة رقم الجواز واسم العاملة والتحقق من الحقائب والأمتعة قبل مغادرة المطار.</p>

@@ -182,7 +182,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         style={{ borderRadius: '12px', ...style }}
       >
-        <rect width="200" height="200" rx="28" fill="#064E3B" stroke="#047857" strokeWidth="4" />
+        <rect width="200" height="200" rx="28" fill="#141414" stroke="#141414" strokeWidth="4" />
         <circle cx="100" cy="100" r="72" fill="none" stroke="#34D399" strokeWidth="4" strokeDasharray="6 4" />
         <polygon points="100,38 152,68 152,132 100,162 48,132 48,68" fill="none" stroke="#F59E0B" strokeWidth="5" />
         <text x="100" y="112" textAnchor="middle" fill="#FFFFFF" fontSize="38" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
@@ -206,7 +206,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
       style={{ borderRadius: '12px', ...style }}
     >
       <rect width="200" height="200" rx="28" fill="#FAF8F5" stroke="#E2D9C8" strokeWidth="4" />
-      <circle cx="100" cy="100" r="75" fill="none" stroke="#CFA64A" strokeWidth="5" />
+      <circle cx="100" cy="100" r="75" fill="none" stroke="#141414" strokeWidth="5" />
       <circle cx="100" cy="100" r="60" fill="none" stroke="#E5C77A" strokeWidth="2" strokeDasharray="4 3" />
       <text x="100" y="116" textAnchor="middle" fill="#091725" fontSize="48" fontWeight="900" fontFamily="sans-serif">
         KS

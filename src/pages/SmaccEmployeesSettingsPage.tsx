@@ -233,7 +233,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex flex-wrap items-center bg-white/10 p-1.5 rounded-full border border-white/15 gap-1 text-xs">
+        <div className="flex flex-wrap items-center bg-[#f3f3f3] p-1.5 rounded-full border border-[#e0e0e0] gap-1 text-xs">
           <button
             onClick={() => setActiveTab('employees')}
             style={{
@@ -287,7 +287,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
               <input
                 type="text"
                 placeholder="البحث في الموظفين..."
@@ -311,7 +311,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
               >
-                <Calculator className="w-4 h-4 ml-1 text-champagne-dark" />
+                <Calculator className="w-4 h-4 ml-1 text-[#141414]" />
                 <span>حاسبة مكافأة نهاية الخدمة</span>
               </button>
               <button
@@ -319,7 +319,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px' }}
               >
-                <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-dark" />
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
                 <span>تصدير إكسل</span>
               </button>
             </div>
@@ -343,26 +343,26 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100 font-sans">
                 {filteredEmployees.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="p-8 text-center text-zinc-400 text-xs">
+                    <td colSpan={9} className="p-8 text-center text-[#707070] text-xs">
                       لا يوجد موظفون مطابقون. اضغط على "+ إضافة موظف جديد" لتسجيل موظف.
                     </td>
                   </tr>
                 ) : (
                   filteredEmployees.map(emp => (
                     <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
-                      <td className="p-3.5 font-mono text-zinc-400 text-[11px]">{emp.id}</td>
+                      <td className="p-3.5 font-mono text-[#707070] text-[11px]">{emp.id}</td>
                       <td className="p-3.5 font-bold text-black">
                         <div className="flex items-center gap-2.5">
                           <CorporateAvatar name={emp.name} role={emp.jobTitle} departmentId="hr" size="sm" status="verified" />
                           <span>{emp.name}</span>
                         </div>
                       </td>
-                      <td className="p-3.5 font-mono text-zinc-500">{emp.nationalId}</td>
+                      <td className="p-3.5 font-mono text-[#707070]">{emp.nationalId}</td>
                       <td className="p-3.5 text-black font-semibold">{emp.jobTitle}</td>
                       <td className="p-3.5 text-zinc-600">{emp.department}</td>
                       <td className="p-3.5 font-bold font-mono text-black">{emp.basicSalary.toLocaleString()} ⃁</td>
-                      <td className="p-3.5 text-zinc-500 font-mono">{(emp.housingAllowance + emp.transportAllowance).toLocaleString()} ⃁</td>
-                      <td className="p-3.5 font-bold font-mono text-champagne-dark">{emp.totalSalary.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 text-[#707070] font-mono">{(emp.housingAllowance + emp.transportAllowance).toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-bold font-mono text-[#141414]">{emp.totalSalary.toLocaleString()} ⃁</td>
                       <td className="p-3.5">
                         <span className="pill-tag-mint" style={{ fontSize: '10px' }}>{emp.status}</span>
                       </td>
@@ -642,7 +642,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
           {eosbCalc.result > 0 && (
             <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-center mt-3">
               <span className="text-xs text-zinc-600 block">إجمالي المستحق لمكافأة نهاية الخدمة:</span>
-              <span className="text-2xl font-mono font-black text-champagne-dark mt-1 block">{eosbCalc.result.toLocaleString()} ⃁</span>
+              <span className="text-2xl font-mono font-black text-[#141414] mt-1 block">{eosbCalc.result.toLocaleString()} ⃁</span>
             </div>
           )}
         </div>

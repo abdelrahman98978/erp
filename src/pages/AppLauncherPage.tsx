@@ -693,8 +693,8 @@ interface CategoryMeta {
 
 /**
  * Strict Adherence to Original Institutional Theme:
- * Primary Ink (#000000), Warm Cream Canvas (#FBFBF5), Pure White Cards (#FFFFFF),
- * Champagne Gold Accents (#CFA64A / #FAEBD7), Hairline Borders (#E4E4E7).
+ * Primary Ink (#000000), Warm Cream Canvas (#f3f3f3), Pure White Cards (#FFFFFF),
+ * Champagne Gold Accents (#141414 / #FAEBD7), Hairline Borders (#E4E4E7).
  */
 const CATEGORY_STYLES: Record<string, CategoryMeta> = {
   finance: {
@@ -1035,7 +1035,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                 <div className="space-y-3.5">
                   {/* Top Badges & Crisp Module Squircle Icon Row */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="w-11 h-11 rounded-[14px] bg-[#f3f3f3] group-hover:bg-[#141414] text-[#141414] group-hover:text-[#ffffff] border border-[#e0e0e0] group-hover:border-[#141414] flex items-center justify-center transition-colors shrink-0">
+                    <div className="w-11 h-11 rounded-[14px] bg-[#f3f3f3] group-hover:bg-[#262626] text-[#141414] group-hover:text-[#ffffff] border border-[#e0e0e0] group-hover:border-[#141414] flex items-center justify-center transition-colors shrink-0">
                       <Icon className="w-5 h-5" strokeWidth={1.85} />
                     </div>
 
@@ -1092,10 +1092,10 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
         </div>
 
         {filteredApps.length === 0 && (
-          <div className="bg-white border border-zinc-200 rounded-3xl p-12 text-center text-zinc-500 flex flex-col items-center">
+          <div className="bg-white border border-zinc-200 rounded-3xl p-12 text-center text-[#707070] flex flex-col items-center">
             <BusinessIllustration type="empty-search" size="md" className="mb-3" />
             <p className="font-bold text-black text-sm">لم يتم العثور على أي وحدة تطابق بحثك في قسمك</p>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="text-xs text-[#707070] mt-1">
               جرب البحث بكلمات أخرى أو اختر "كافة الوحدات المصرحة للقسم"
             </p>
           </div>

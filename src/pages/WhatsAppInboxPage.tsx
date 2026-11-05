@@ -159,7 +159,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             <BusinessIllustration type="whatsapp-chat" size="sm" showBackground={false} />
           </div>
           <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <PhoneCall className="w-5 h-5 text-champagne-light" />
+            <PhoneCall className="w-5 h-5 text-[#141414]" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -180,7 +180,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             className="button-white-pill flex items-center gap-1.5 shadow-sm"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', color: '#000000', backgroundColor: '#ffffff', fontWeight: 'bold' }}
           >
-            <Plus className="w-4 h-4 text-emerald-600" />
+            <Plus className="w-4 h-4 text-[#141414]" />
             <span>+ محادثة جديدة مع عميل</span>
           </button>
           <button
@@ -188,7 +188,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
             <span>Excel</span>
           </button>
           <button
@@ -196,7 +196,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <FileText className="w-4 h-4 ml-1 text-rose-400" />
+            <FileText className="w-4 h-4 ml-1 text-[#141414]" />
             <span>PDF</span>
           </button>
         </div>
@@ -238,7 +238,7 @@ export const WhatsAppInboxPage: React.FC = () => {
             99.2%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-[99.2%] h-full bg-champagne rounded-full" />
+            <div className="w-[99.2%] h-full bg-[#141414] rounded-full" />
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تقييم ممتاز من العملاء</span>
         </div>
@@ -268,7 +268,7 @@ export const WhatsAppInboxPage: React.FC = () => {
         <div className="md:col-span-1 border-l border-zinc-200 flex flex-col h-full bg-zinc-50/50">
           <div className="p-3.5 border-b border-zinc-200 bg-white">
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
+              <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-[#707070]" />
               <input
                 type="text"
                 aria-label="ابحث بالاسم أو الرقم"
@@ -282,7 +282,7 @@ export const WhatsAppInboxPage: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto divide-y divide-zinc-100">
             {filteredChats.length === 0 ? (
-              <div className="p-6 text-center text-zinc-400 text-xs flex flex-col items-center justify-center gap-2">
+              <div className="p-6 text-center text-[#707070] text-xs flex flex-col items-center justify-center gap-2">
                 <BusinessIllustration type="empty-search" size="sm" />
                 <span>لا توجد محادثات مطابقة للبحث</span>
               </div>
@@ -306,11 +306,11 @@ export const WhatsAppInboxPage: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-1">
                       <span className="font-bold text-xs text-black truncate">{chat.client_name}</span>
-                      <span className="text-[10px] font-mono text-zinc-400 shrink-0">{chat.time}</span>
+                      <span className="text-[10px] font-mono text-[#707070] shrink-0">{chat.time}</span>
                     </div>
-                    <div className="text-xs text-zinc-500 truncate">{chat.last_message}</div>
+                    <div className="text-xs text-[#707070] truncate">{chat.last_message}</div>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-[11px] font-mono text-champagne-dark font-bold">{chat.phone}</span>
+                      <span className="text-[11px] font-mono text-[#141414] font-bold">{chat.phone}</span>
                       {chat.unread_count > 0 && (
                         <span className="bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                           {chat.unread_count}
@@ -337,7 +337,7 @@ export const WhatsAppInboxPage: React.FC = () => {
               />
               <div>
                 <h2 className="font-bold text-xs text-black">{activeChat.client_name}</h2>
-                <span className="text-[11px] font-mono text-champagne-dark font-bold">{activeChat.phone}</span>
+                <span className="text-[11px] font-mono text-[#141414] font-bold">{activeChat.phone}</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -349,7 +349,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 style={{ minHeight: '30px', padding: '4px 12px', fontSize: '11px' }}
                 title="فتح تطبيق WhatsApp Web المباشر"
               >
-                <PhoneCall className="w-3.5 h-3.5 text-emerald-600" />
+                <PhoneCall className="w-3.5 h-3.5 text-[#141414]" />
                 <span>فتح WhatsApp Web</span>
               </a>
               <Badge text="متصل بـ WhatsApp Cloud API" type="gold" />
@@ -372,7 +372,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 >
                   {msg.text}
                 </div>
-                <span className="text-[10px] text-zinc-400 mt-1 px-1 font-mono">{msg.time}</span>
+                <span className="text-[10px] text-[#707070] mt-1 px-1 font-mono">{msg.time}</span>
               </div>
             ))}
           </div>
@@ -403,14 +403,14 @@ export const WhatsAppInboxPage: React.FC = () => {
       {showNewChatModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                <PhoneCall className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414] flex items-center gap-2">
+                <PhoneCall className="w-4 h-4 text-[#141414]" />
                 <span>بدء محادثة واتساب جديدة مع عميل</span>
               </h3>
               <button
                 onClick={() => setShowNewChatModal(false)}
-                className="p-1 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -480,7 +480,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 <button
                   type="submit"
                   className="button-primary-pill text-xs font-bold"
-                  style={{ minHeight: '34px', padding: '6px 20px', background: '#10b981', borderColor: '#10b981' }}
+                  style={{ minHeight: '34px', padding: '6px 20px', background: '#141414', color: '#ffffff', borderColor: '#141414' }}
                 >
                   بدء المحادثة الآن
                 </button>

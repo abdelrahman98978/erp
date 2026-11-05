@@ -350,7 +350,7 @@ export const SentMessagesPage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <div className="relative w-64">
-                <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
+                <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-[#707070]" />
                 <input
                   type="text"
                   aria-label="ابحث بالاسم، الرقم، النص"
@@ -361,11 +361,11 @@ export const SentMessagesPage: React.FC = () => {
                 />
               </div>
               <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>PDF</span>
               </button>
             </div>
@@ -404,7 +404,7 @@ export const SentMessagesPage: React.FC = () => {
                         <CorporateAvatar name={row.recipient_name} size="xs" departmentId="crm" />
                         <div>
                           <div className="font-bold text-black">{row.recipient_name}</div>
-                          <div className="text-[11px] text-zinc-400 font-mono">{row.phone}</div>
+                          <div className="text-[11px] text-[#707070] font-mono">{row.phone}</div>
                         </div>
                       </div>
                     </td>
@@ -416,8 +416,8 @@ export const SentMessagesPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-semibold text-black">{row.template}</td>
                     <td className="p-3.5 max-w-xs truncate text-zinc-600" title={row.content}>{row.content}</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{(row.cost_sar ?? 0.12).toFixed(2)} ⃁</td>
-                    <td className="p-3.5 font-mono text-zinc-400 text-[11px]">{row.sent_at}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{(row.cost_sar ?? 0.12).toFixed(2)} ⃁</td>
+                    <td className="p-3.5 font-mono text-[#707070] text-[11px]">{row.sent_at}</td>
                     <td className="p-3.5">
                       <Badge
                         text={row.status}
@@ -457,8 +457,8 @@ export const SentMessagesPage: React.FC = () => {
           </h2>
 
           {sendSuccess && (
-            <div className="bg-champagne-pale border border-champagne/40 text-champagne-dark p-3 rounded-2xl mb-4 font-bold text-xs flex items-center gap-2 shadow-xs">
-              <CheckCircle2 className="w-4 h-4 text-champagne-dark" />
+            <div className="bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] p-3 rounded-2xl mb-4 font-bold text-xs flex items-center gap-2 shadow-xs">
+              <CheckCircle2 className="w-4 h-4 text-[#141414]" />
               <span>تم إرسال الرسالة بنجاح وتسجيلها في الأرشيف المعتمد!</span>
             </div>
           )}
@@ -539,7 +539,7 @@ export const SentMessagesPage: React.FC = () => {
                 className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
                 required
               />
-              <div className="flex justify-between text-[11px] text-zinc-400 mt-1">
+              <div className="flex justify-between text-[11px] text-[#707070] mt-1">
                 <span>عدد الحروف: {messageBody.length}</span>
                 <span>{composeChannel === 'SMS' ? `عدد أجزاء الرسالة: ${Math.ceil(messageBody.length / 70) || 1}` : 'رسالة واتساب مشفرة'}</span>
               </div>
@@ -573,7 +573,7 @@ export const SentMessagesPage: React.FC = () => {
             <div key={tmp.id} className="card-pricing flex flex-col justify-between" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-mono font-bold text-xs text-zinc-400">{tmp.id}</span>
+                  <span className="font-mono font-bold text-xs text-[#707070]">{tmp.id}</span>
                   <Badge text={tmp.category} type="info" />
                 </div>
                 <h3 className="text-sm font-bold text-black mb-2">{tmp.title}</h3>
@@ -629,7 +629,7 @@ export const SentMessagesPage: React.FC = () => {
           <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-sm font-bold text-black flex items-center gap-2">
-                <PhoneCall className="w-4 h-4 text-champagne-dark" />
+                <PhoneCall className="w-4 h-4 text-[#141414]" />
                 <span>واتساب للأعمال (Meta Cloud API)</span>
               </h3>
               <Badge text="توثيق معتمد" type="gold" />

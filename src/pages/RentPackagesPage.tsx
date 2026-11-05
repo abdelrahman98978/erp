@@ -330,14 +330,14 @@ export const RentPackagesPage: React.FC = () => {
                     <CorporateAvatar name={pkg.name || (pkg as any).package_name || 'باقة تأجير'} category={pkg.category} profession="عاملة منزلية" isCandidate size="sm" />
                     <div>
                       <h2 className="text-base font-bold text-black">{pkg.name || (pkg as any).package_name || (pkg as any).title || 'باقة تأجير مرنة'}</h2>
-                      <p className="text-xs text-zinc-500">{pkg.terms_summary || ''}</p>
+                      <p className="text-xs text-[#707070]">{pkg.terms_summary || ''}</p>
                     </div>
                   </div>
 
                   <div className="py-3 px-4 bg-zinc-50 rounded-2xl mb-4 border border-zinc-100 flex justify-between items-baseline">
                     <div>
                       <span className="text-2xl font-mono font-bold text-black">{monthlyRate.toLocaleString()}</span>
-                      <span className="text-xs text-zinc-500 mr-1">⃁ / شهر</span>
+                      <span className="text-xs text-[#707070] mr-1">⃁ / شهر</span>
                     </div>
                     {discountPct > 0 && (
                       <span className="pill-tag-mint" style={{ fontSize: '10.5px' }}>خصم {discountPct}%</span>
@@ -345,11 +345,11 @@ export const RentPackagesPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-2 mb-6">
-                    <span className="text-xs text-zinc-500 font-bold block mb-1">المزايا والضمانات المشمولة:</span>
+                    <span className="text-xs text-[#707070] font-bold block mb-1">المزايا والضمانات المشمولة:</span>
                     <ul className="space-y-1.5 text-xs text-zinc-700">
                       {featuresList.map((feat, idx) => (
                         <li key={idx} className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-champagne-dark shrink-0" />
+                          <Check className="w-3.5 h-3.5 text-[#141414] shrink-0" />
                           <span>{feat}</span>
                         </li>
                       ))}
@@ -440,7 +440,7 @@ export const RentPackagesPage: React.FC = () => {
                     <span>المبلغ الإجمالي الأساسي:</span>
                     <span className="font-mono font-bold text-black">{calcSubtotal.toLocaleString()} ⃁</span>
                   </div>
-                  <div className="flex justify-between text-champagne-dark font-bold">
+                  <div className="flex justify-between text-[#141414] font-bold">
                     <span>الخصم المطبق ({calcDuration >= 12 ? '20%' : calcDuration >= 3 ? '10%' : '0%'}):</span>
                     <span className="font-mono font-bold">‎- ⃁</span>
                   </div>
@@ -455,7 +455,7 @@ export const RentPackagesPage: React.FC = () => {
 
                   <div className="flex justify-between text-base py-3 font-bold text-black mt-2">
                     <span>الإجمالي النهائي شامل الضريبة:</span>
-                    <span className="font-mono text-champagne-dark text-lg font-black">{calcGrandTotal.toLocaleString()} ⃁</span>
+                    <span className="font-mono text-[#141414] text-lg font-black">{calcGrandTotal.toLocaleString()} ⃁</span>
                   </div>
                 </div>
 
@@ -529,14 +529,14 @@ export const RentPackagesPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
           <div className="w-full max-w-lg bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h2 className="text-base font-bold text-[#141414] flex items-center gap-2">
                 <Plus className="w-4 h-4 ml-1" />
                 <span>إضافة باقة تأجير جديدة</span>
               </h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -640,7 +640,7 @@ export const RentPackagesPage: React.FC = () => {
           <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in border border-zinc-200">
             <div className="p-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
               <h3 className="text-sm font-bold text-black m-0">إضافة بند شرطي جديد في عقد التأجير</h3>
-              <button onClick={() => setShowAddClauseModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowAddClauseModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>

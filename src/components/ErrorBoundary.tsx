@@ -129,21 +129,21 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
           role="alert"
           aria-live="assertive"
           dir="rtl"
-          className="min-h-[70vh] flex items-center justify-center p-6 bg-[#FBFBF5] font-sans"
+          className="min-h-[70vh] flex items-center justify-center p-6 bg-[#f3f3f3] font-sans"
         >
-          <div className="max-w-lg w-full bg-white rounded-3xl p-8 shadow-2xl border-2 border-[#CFA64A]/60 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-[#1D2428] border border-[#CFA64A] text-[#CFA64A] flex items-center justify-center mx-auto mb-5 shadow-md">
+          <div className="max-w-lg w-full bg-white rounded-3xl p-8 shadow-2xl border-2 border-[#e0e0e0] text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] flex items-center justify-center mx-auto mb-5 shadow-md">
               <AlertTriangle className="w-8 h-8" />
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-black mb-3">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[11px] font-black mb-3">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#141414]" />
               <span>
                 رادار مراقبة الأخطاء نشط {this.state.lastIncident ? `• ${this.state.lastIncident.id}` : ''}
               </span>
             </div>
 
-            <h2 className="text-xl font-black text-[#1D2428] mb-2">
+            <h2 className="text-xl font-black text-[#141414] mb-2">
               تنبيه استعادة جلسة العرض المؤسسية
             </h2>
 
@@ -169,7 +169,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <button
                 type="button"
                 onClick={this.handleReset}
-                className="h-11 px-6 rounded-xl border border-[#CFA64A] bg-[#1D2428] hover:bg-[#273136] text-[#CFA64A] text-sm font-black inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm"
+                className="h-11 px-6 rounded-xl border border-[#e0e0e0] bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] text-sm font-black inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>استعادة الشاشة فوراً</span>
@@ -177,7 +177,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="h-11 px-6 rounded-xl border border-zinc-300 bg-white hover:bg-zinc-50 text-[#1D2428] text-sm font-bold inline-flex items-center gap-2 cursor-pointer transition-all"
+                className="h-11 px-6 rounded-xl border border-zinc-300 bg-white hover:bg-zinc-50 text-[#141414] text-sm font-bold inline-flex items-center gap-2 cursor-pointer transition-all"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>تحديث الصفحة بالكامل</span>

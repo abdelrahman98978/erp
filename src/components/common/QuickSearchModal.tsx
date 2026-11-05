@@ -482,7 +482,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({ onNavigate }
                       onNavigate(pin.href, pin.title);
                       setQuickSearchOpen(false);
                     }}
-                    className="px-2.5 py-1 rounded-full bg-[#ffffff] hover:bg-[#141414] hover:text-[#ffffff] text-[#141414] border border-[#e0e0e0] text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
+                    className="px-2.5 py-1 rounded-full bg-[#ffffff] hover:bg-[#262626] hover:text-[#ffffff] border border-[#e0e0e0] text-[11px] font-semibold transition-all shrink-0 cursor-pointer"
                   >
                     {pin.title}
                   </button>

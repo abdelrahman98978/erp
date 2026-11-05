@@ -464,7 +464,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ fontSize: '12px', padding: '6px 14px', minHeight: '34px' }}
               >
-                <RefreshCw className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+                <RefreshCw className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>احتساب الإهلاك الدوري وترحيل القيد</span>
               </button>
             </div>
@@ -489,7 +489,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 <tbody className="divide-y divide-zinc-100">
                   {filteredAssets.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="p-8 text-center text-zinc-400 text-xs">
+                      <td colSpan={9} className="p-8 text-center text-[#707070] text-xs">
                         لا توجد أصول مسجلة مطابقة للبحث. اضغط على "+ تسجيل أصل جديد" لإضافة أصل.
                       </td>
                     </tr>
@@ -504,11 +504,11 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="p-3.5 text-zinc-600">{asset.category}</td>
-                        <td className="p-3.5 text-zinc-500 font-mono">{asset.purchaseDate}</td>
+                        <td className="p-3.5 text-[#707070] font-mono">{asset.purchaseDate}</td>
                         <td className="p-3.5 font-bold font-mono text-black">{asset.cost.toLocaleString()} ⃁</td>
                         <td className="p-3.5 text-black font-bold font-mono">{asset.depreciationRate}%</td>
                         <td className="p-3.5 text-zinc-600 font-mono">{asset.accumulatedDepreciation.toLocaleString()} ⃁</td>
-                        <td className="p-3.5 font-bold font-mono text-champagne-dark">{asset.bookValue.toLocaleString()} ⃁</td>
+                        <td className="p-3.5 font-bold font-mono text-[#141414]">{asset.bookValue.toLocaleString()} ⃁</td>
                         <td className="p-3.5 text-center">
                           <button
                             onClick={() => {
@@ -540,7 +540,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
               <input
                 type="text"
                 placeholder="البحث في أصناف المخزون..."
@@ -588,7 +588,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 <tbody className="divide-y divide-zinc-100">
                   {filteredItems.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="p-8 text-center text-zinc-400 text-xs">
+                      <td colSpan={8} className="p-8 text-center text-[#707070] text-xs">
                         لا توجد أصناف مسجلة مطابقة للبحث. اضغط على "إضافة صنف جديد" لإضافة صنف.
                       </td>
                     </tr>
@@ -599,11 +599,11 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                         <td className="p-3.5 font-bold text-black">{item.name}</td>
                         <td className="p-3.5 text-zinc-600">{item.category}</td>
                         <td className="p-3.5">{item.unit}</td>
-                        <td className="p-3.5 text-zinc-500 font-mono">{item.costPrice.toLocaleString()} ⃁</td>
-                        <td className="p-3.5 font-bold font-mono text-champagne-dark">{item.salePrice.toLocaleString()} ⃁</td>
+                        <td className="p-3.5 text-[#707070] font-mono">{item.costPrice.toLocaleString()} ⃁</td>
+                        <td className="p-3.5 font-bold font-mono text-[#141414]">{item.salePrice.toLocaleString()} ⃁</td>
                         <td className="p-3.5 font-bold text-black">{item.currentStock} {item.unit}</td>
                         <td className="p-3.5">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.currentStock > 0 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.currentStock > 0 ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'}`}>
                             {item.status}
                           </span>
                         </td>
@@ -651,7 +651,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 <tbody className="divide-y divide-zinc-100">
                   {filteredVouchers.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-zinc-400 text-xs">
+                      <td colSpan={6} className="p-8 text-center text-[#707070] text-xs">
                         لا توجد أذونات مخزنية مسجلة. اضغط على "+ إذن مخزني جديد" لإنشاء إذن.
                       </td>
                     </tr>
@@ -660,11 +660,11 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                       <tr key={v.id} className="hover:bg-zinc-50">
                         <td className="p-3.5 font-mono font-bold text-black">{v.voucherNo}</td>
                         <td className="p-3.5">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${v.type === 'إضافة' ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${v.type === 'إضافة' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'}`}>
                             {v.type === 'إضافة' ? 'إضافة (+)' : 'صرف (-)'}
                           </span>
                         </td>
-                        <td className="p-3.5 font-mono text-zinc-500">{v.date}</td>
+                        <td className="p-3.5 font-mono text-[#707070]">{v.date}</td>
                         <td className="p-3.5 font-bold text-black">{v.item}</td>
                         <td className="p-3.5 font-bold font-mono">{v.qty}</td>
                         <td className="p-3.5 text-zinc-600">{v.reason}</td>
@@ -823,7 +823,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="0.00"
               value={newItem.salePrice}
               onChange={e => setNewItem({ ...newItem, salePrice: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold text-champagne-dark focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold text-[#141414] focus:border-black focus:outline-none"
             />
           </div>
           <div>
@@ -926,28 +926,28 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
           <div className="space-y-4 text-xs">
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-zinc-500 block">التصنيف المحاسبي</span>
+                <span className="text-[#707070] block">التصنيف المحاسبي</span>
                 <strong className="text-black text-sm mt-0.5 block">{selectedAssetDetail.category}</strong>
               </div>
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-zinc-500 block">تاريخ الشراء والتشغيل</span>
+                <span className="text-[#707070] block">تاريخ الشراء والتشغيل</span>
                 <strong className="text-black font-mono text-sm mt-0.5 block">{selectedAssetDetail.purchaseDate}</strong>
               </div>
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-zinc-500 block">التكلفة الرأسمالية</span>
+                <span className="text-[#707070] block">التكلفة الرأسمالية</span>
                 <strong className="text-black font-mono text-sm mt-0.5 block">{selectedAssetDetail.cost.toLocaleString()} ⃁</strong>
               </div>
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <span className="text-zinc-500 block">مجمع الإهلاك ({selectedAssetDetail.depreciationRate}% سنوياً)</span>
-                <strong className="text-rose-700 font-mono text-sm mt-0.5 block">{selectedAssetDetail.accumulatedDepreciation.toLocaleString()} ⃁</strong>
+                <span className="text-[#707070] block">مجمع الإهلاك ({selectedAssetDetail.depreciationRate}% سنوياً)</span>
+                <strong className="text-[#141414] font-mono text-sm mt-0.5 block">{selectedAssetDetail.accumulatedDepreciation.toLocaleString()} ⃁</strong>
               </div>
             </div>
-            <div className="p-4 rounded-2xl bg-[#000000] text-white flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-[#000000] text-[#141414] flex items-center justify-between">
               <div>
-                <span className="text-zinc-400 block">صافي القيمة الدفترية الحالية (Net Book Value)</span>
-                <strong className="text-xl font-mono text-amber-400 mt-1 block">{selectedAssetDetail.bookValue.toLocaleString()} ⃁</strong>
+                <span className="text-[#707070] block">صافي القيمة الدفترية الحالية (Net Book Value)</span>
+                <strong className="text-xl font-mono text-[#141414] mt-1 block">{selectedAssetDetail.bookValue.toLocaleString()} ⃁</strong>
               </div>
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+              <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-bold">
                 {selectedAssetDetail.status}
               </span>
             </div>

@@ -180,7 +180,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 مركز تكامل ميكروسوفت المؤسسي (Project + Power BI + Visio)
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 ربط مباشر مع بيئة Microsoft 365 لإدارة المشاريع، التحليلات المتقدمة مع RLS، والهياكل التنظيمية الديناميكية بقاعدة البيانات
               </p>
             </div>
@@ -267,7 +267,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                   <tr key={t.id} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5 font-mono font-bold text-black">{t.id}</td>
                     <td className="p-3.5 font-bold text-black">
-                      {t.taskName} {t.milestone && <span className="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold ml-1">Milestone</span>}
+                      {t.taskName} {t.milestone && <span className="bg-[#f3f3f3] text-[#141414] text-[10px] px-2 py-0.5 rounded-full font-bold ml-1">Milestone</span>}
                     </td>
                     <td className="p-3.5 text-zinc-600">
                       <div className="flex items-center gap-2">
@@ -279,17 +279,17 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                         <span>{t.assignedResource}</span>
                       </div>
                     </td>
-                    <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{t.startDate} إلى {t.endDate}</td>
+                    <td className="p-3.5 text-[#707070] font-mono text-[11px]">{t.startDate} إلى {t.endDate}</td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
                         <div className="w-24 bg-zinc-100 h-2 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full ${t.progressPercent === 100 ? 'bg-emerald-600' : 'bg-black'}`} style={{ width: `${t.progressPercent}%` }} />
+                          <div className={`h-full rounded-full ${t.progressPercent === 100 ? 'bg-[#141414]' : 'bg-[#f3f3f3] border-b border-[#e0e0e0]'}`} style={{ width: `${t.progressPercent}%` }} />
                         </div>
                         <span className="font-mono font-bold text-[11px]">{t.progressPercent}%</span>
                       </div>
                     </td>
                     <td className="p-3.5">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${t.status === 'مكتمل' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-zinc-100 text-zinc-800'}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${t.status === 'مكتمل' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-zinc-100 text-zinc-800'}`}>
                         {t.status}
                       </span>
                     </td>
@@ -307,23 +307,23 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
           {powerbiDashboards.map((dash) => (
             <div key={dash.id} className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
               <div className="flex justify-between items-center mb-3">
-                <span className="bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                <span className="bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] px-2.5 py-0.5 rounded-full text-[10px] font-bold">
                   {dash.category}
                 </span>
-                <span className="text-[10px] text-zinc-400 font-medium">RLS: {dash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}</span>
+                <span className="text-[10px] text-[#707070] font-medium">RLS: {dash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}</span>
               </div>
               <h3 className="text-xs font-bold text-black mb-1">
                 {dash.title}
               </h3>
-              <div className="text-[11px] text-zinc-400 mb-4 font-mono">
+              <div className="text-[11px] text-[#707070] mb-4 font-mono">
                 مجموعة البيانات: {dash.datasetName}
               </div>
 
               {/* Power BI Embed Simulation Box */}
-              <div className="bg-black rounded-2xl p-6 text-center text-zinc-400 mb-4 flex flex-col items-center justify-center gap-2">
-                <BarChart3 className="w-8 h-8 text-amber-400" />
-                <span className="text-xs font-bold text-white">Power BI Embedded Service Ready</span>
-                <span className="text-[10px] text-zinc-400">التقرير مشفر ومربوط بنماذج Row-Level Security لقاعدتك.</span>
+              <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] rounded-2xl p-6 text-center text-[#141414] mb-4 flex flex-col items-center justify-center gap-2">
+                <BarChart3 className="w-8 h-8 text-[#141414]" />
+                <span className="text-xs font-bold text-[#141414]">Power BI Embedded Service Ready</span>
+                <span className="text-[10px] text-[#707070]">التقرير مشفر ومربوط بنماذج Row-Level Security لقاعدتك.</span>
               </div>
 
               <button
@@ -354,13 +354,13 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
             <GitFork className="w-4 h-4 text-black" />
             <span>الهيكل التنظيمي الخريطي الموحد (Visio Interactive Group Org Chart)</span>
           </h3>
-          <p className="text-xs text-zinc-500 mb-6">
+          <p className="text-xs text-[#707070] mb-6">
             توليد ديناميكي للهيكل التنظيمي لمجموعة خالد السليم والشركات الأربع المعتمدة بناءً على بيانات HRIS الفعلية.
           </p>
 
           {/* Org Chart Visualization Tree */}
           <div className="flex flex-col items-center gap-4 py-4">
-            <div className="bg-black text-white p-4 rounded-2xl text-center border-2 border-emerald-400 shadow-lg min-w-[260px] flex items-center gap-3">
+            <div className="bg-[#f3f3f3] text-[#141414] p-4 rounded-2xl text-center border-2 border-[#e0e0e0] shadow-lg min-w-[260px] flex items-center gap-3">
               <CorporateAvatar
                 archetype="saudi-executive"
                 name="خالد السليم"
@@ -370,7 +370,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               />
               <div className="text-right">
                 <div className="text-sm font-black">خالد السليم للاستقدام والتشغيل</div>
-                <div className="text-[11px] text-emerald-400 font-semibold mt-0.5">مجلس الإدارة والمدير التنفيذي للمجموعة</div>
+                <div className="text-[11px] text-[#141414] font-semibold mt-0.5">مجلس الإدارة والمدير التنفيذي للمجموعة</div>
               </div>
             </div>
 
@@ -379,22 +379,22 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-3xl">
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
                 <div className="text-xs font-bold text-black">شركة السفير الماسي</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">5 فروع | 120 موظف</div>
+                <div className="text-[10px] text-[#707070] mt-0.5">5 فروع | 120 موظف</div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
                 <div className="text-xs font-bold text-black">شركة ياقوت نجد</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">4 فروع | 95 موظف</div>
+                <div className="text-[10px] text-[#707070] mt-0.5">4 فروع | 95 موظف</div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
                 <div className="text-xs font-bold text-black">شركة توباز للاستقدام</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">6 فروع | 160 موظف</div>
+                <div className="text-[10px] text-[#707070] mt-0.5">6 فروع | 160 موظف</div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
                 <div className="text-xs font-bold text-black">دار الرواد</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">3 فروع | 75 موظف</div>
+                <div className="text-[10px] text-[#707070] mt-0.5">3 فروع | 75 موظف</div>
               </div>
             </div>
           </div>
@@ -407,7 +407,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">مزامنة مشروع جديد في Microsoft Project</h3>
-              <button onClick={() => setShowAddProjectModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowAddProjectModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -519,12 +519,12 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-zinc-200 space-y-5">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-black text-amber-400 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-black text-[#ffffff] flex items-center justify-center">
                   <BarChart3 className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-black m-0">{selectedPowerBiDash.title}</h3>
-                  <span className="text-[11px] text-zinc-500 font-mono">
+                  <span className="text-[11px] text-[#707070] font-mono">
                     Dataset: {selectedPowerBiDash.datasetName} • RLS: {selectedPowerBiDash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}
                   </span>
                 </div>
@@ -532,7 +532,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedPowerBiDash(null)}
-                className="p-1.5 rounded-full hover:bg-zinc-100 text-zinc-500"
+                className="p-1.5 rounded-full hover:bg-zinc-100 text-[#707070]"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -540,41 +540,41 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <div className="text-[11px] text-zinc-500">دقة مزامنة البيانات</div>
-                <div className="text-lg font-black text-emerald-600 font-mono mt-1">99.8%</div>
+                <div className="text-[11px] text-[#707070]">دقة مزامنة البيانات</div>
+                <div className="text-lg font-black text-[#141414] font-mono mt-1">99.8%</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <div className="text-[11px] text-zinc-500">حالة اتصال الـ Gateway</div>
+                <div className="text-[11px] text-[#707070]">حالة اتصال الـ Gateway</div>
                 <div className="text-lg font-black text-black mt-1">متصل حياً</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
-                <div className="text-[11px] text-zinc-500">الكيان النشط</div>
-                <div className="text-xs font-bold text-amber-700 mt-1.5">{activeCompany.name}</div>
+                <div className="text-[11px] text-[#707070]">الكيان النشط</div>
+                <div className="text-xs font-bold text-[#141414] mt-1.5">{activeCompany.name}</div>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#000000] text-white space-y-3">
+            <div className="p-5 rounded-2xl bg-[#000000] text-[#141414] space-y-3">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-amber-400 font-bold">مؤشرات الأداء المباشرة (Power BI Live Stream)</span>
-                <span className="font-mono text-[11px] text-zinc-400">{new Date().toISOString().slice(0, 10)}</span>
+                <span className="text-[#141414] font-bold">مؤشرات الأداء المباشرة (Power BI Live Stream)</span>
+                <span className="font-mono text-[11px] text-[#707070]">{new Date().toISOString().slice(0, 10)}</span>
               </div>
               <div className="space-y-2 text-xs">
                 <div>
                   <div className="flex justify-between mb-1">
                     <span>نسبة تحقيق المستهدف التشغيلي</span>
-                    <span className="font-mono text-emerald-400">94%</span>
+                    <span className="font-mono text-[#141414]">94%</span>
                   </div>
                   <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: '94%' }} />
+                    <div className="h-full bg-[#141414] rounded-full" style={{ width: '94%' }} />
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-1">
                     <span>كفاءة التحصيل المالي والالتزام الضريبي</span>
-                    <span className="font-mono text-amber-400">98%</span>
+                    <span className="font-mono text-[#141414]">98%</span>
                   </div>
                   <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-400 rounded-full" style={{ width: '98%' }} />
+                    <div className="h-full bg-[#141414] rounded-full" style={{ width: '98%' }} />
                   </div>
                 </div>
               </div>

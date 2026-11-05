@@ -456,14 +456,14 @@ export const SettingsPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 إعدادات النظام ومحتوى المنصة والأمان
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 ضبط سياسات أمان المصادقة الثنائية (2FA)، اسم المنصة، الروابط السريعة الحكومية، ونصوص البوابة
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2.5 bg-white/10 border border-white/15 rounded-full px-3 py-1.5">
+            <div className="flex items-center gap-2.5 bg-[#f3f3f3] border border-[#e0e0e0] rounded-full px-3 py-1.5">
               <CorporateAvatar
                 archetype="saudi-executive"
                 name="مشرف admin (خالد السليم)"
@@ -472,8 +472,8 @@ export const SettingsPage: React.FC = () => {
                 status="verified"
               />
               <div className="text-right">
-                <div className="text-xs font-bold text-white">خالد السليم</div>
-                <div className="text-[10px] text-emerald-400">مشرف عام المنظومة</div>
+                <div className="text-xs font-bold text-[#141414]">خالد السليم</div>
+                <div className="text-[10px] text-[#141414]">مشرف عام المنظومة</div>
               </div>
             </div>
             <button
@@ -539,7 +539,7 @@ export const SettingsPage: React.FC = () => {
                   <h2 className="text-sm font-bold text-black m-0">
                     إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
                   </h2>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-[#707070] mt-1">
                     تعديل وتحديد سياسات الأمان والحماية لحسابات مديري النظام والموظفين بالفروع.
                   </p>
                 </div>
@@ -558,7 +558,7 @@ export const SettingsPage: React.FC = () => {
                     <span className="font-bold text-xs text-black block">
                       إلزامية المصادقة الثنائية (2FA) لجميع المديرين والمشرفين (Admins Only)
                     </span>
-                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    <span className="text-[11px] text-[#707070] block mt-0.5">
                       منع تسجيل الدخول لأي حساب إداري ذو صلاحيات واسعة دون إدخال رمز التحقق الثنائي (TOTP / SMS).
                     </span>
                   </div>
@@ -575,22 +575,22 @@ export const SettingsPage: React.FC = () => {
                     <span className="font-bold text-xs text-black block">
                       السماح للموظفين بتفعيل الـ 2FA اختيارياً
                     </span>
-                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    <span className="text-[11px] text-[#707070] block mt-0.5">
                       تمكين موظفي الفروع والمكاتب من اختيار وتفعيل تطبيق المصادقة (Google Authenticator) للحفاظ على أمان حساباتهم.
                     </span>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-champagne-pale/40 border border-champagne/30 cursor-pointer hover:border-champagne transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={allowBiometrics}
                     onChange={e => setAllowBiometrics(e.target.checked)}
-                    className="rounded text-champagne-dark accent-[#CFA64A] focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] accent-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-champagne-dark block flex items-center gap-1">
-                      <Fingerprint className="w-3.5 h-3.5 text-champagne-dark" />
+                    <span className="font-bold text-xs text-[#141414] block flex items-center gap-1">
+                      <Fingerprint className="w-3.5 h-3.5 text-[#141414]" />
                       <span>تفعيل الدخول ببصمة الإصبع (Touch ID / Windows Hello / WebAuthn)</span>
                     </span>
                     <span className="text-[11px] text-zinc-600 block mt-0.5">
@@ -610,7 +610,7 @@ export const SettingsPage: React.FC = () => {
                     <span className="font-bold text-xs text-black block">
                       تفعيل الدخول ببصمة الوجه ثلاثية الأبعاد (Face ID)
                     </span>
-                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    <span className="text-[11px] text-[#707070] block mt-0.5">
                       تمكين تقنية التعرف على الوجه وفحص الحيوية (Liveness Detection) لتسجيل الدخول السريع والآمن.
                     </span>
                   </div>
@@ -648,14 +648,14 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               {/* Device Biometric Registration & Testing Card */}
-              <div className="p-5 bg-gradient-to-br from-champagne-pale/60 to-zinc-50 rounded-2xl border border-champagne/30 space-y-4">
+              <div className="p-5 bg-gradient-to-br from-[#f3f3f3] to-zinc-50 rounded-2xl border border-[#e0e0e0] space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-charcoal text-champagne-light flex items-center justify-center shadow-xs">
+                    <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center shadow-xs">
                       <Fingerprint className="w-4 h-4" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-xs text-charcoal m-0">
+                      <h3 className="font-bold text-xs text-[#141414] m-0">
                         إدارة وتفويض بصمة هذا الجهاز لحسابك (This Device WebAuthn)
                       </h3>
                       <p className="text-[11px] text-zinc-600 m-0 font-sans">
@@ -666,7 +666,7 @@ export const SettingsPage: React.FC = () => {
 
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
                     hwSupport.hasHardware 
-                      ? 'bg-champagne-pale text-champagne-dark border border-champagne/40' 
+                      ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' 
                       : 'bg-zinc-100 text-zinc-700 border border-zinc-200'
                   }`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
@@ -674,8 +674,8 @@ export const SettingsPage: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="text-xs text-zinc-600 flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-champagne/20 font-sans">
-                  <Laptop className="w-4 h-4 text-champagne-dark flex-shrink-0" />
+                <div className="text-xs text-zinc-600 flex items-center gap-2 bg-white/80 p-2.5 rounded-xl border border-[#e0e0e0] font-sans">
+                  <Laptop className="w-4 h-4 text-[#141414] flex-shrink-0" />
                   <span>الجهاز المكتشف: <strong>{hwSupport.detectedDevice}</strong></span>
                 </div>
 
@@ -688,12 +688,12 @@ export const SettingsPage: React.FC = () => {
                       const hasResult = settingsTestResult && settingsTestResult.credId === cred.id;
 
                       return (
-                        <div key={cred.id} className="p-3 bg-white rounded-xl border border-champagne/20 flex items-center justify-between flex-wrap gap-2">
+                        <div key={cred.id} className="p-3 bg-white rounded-xl border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
                           <div className="flex items-center gap-2">
-                            <Fingerprint className="w-4 h-4 text-champagne-dark" />
+                            <Fingerprint className="w-4 h-4 text-[#141414]" />
                             <div>
                               <span className="font-bold text-xs text-black block">{cred.biometricType}</span>
-                              <span className="text-[10px] text-zinc-500 font-mono">ID: {cred.credentialId.slice(0, 14)}... • {new Date(cred.enrolledAt).toLocaleDateString('ar-SA')}</span>
+                              <span className="text-[10px] text-[#707070] font-mono">ID: {cred.credentialId.slice(0, 14)}... • {new Date(cred.enrolledAt).toLocaleDateString('ar-SA')}</span>
                             </div>
                           </div>
 
@@ -702,7 +702,7 @@ export const SettingsPage: React.FC = () => {
                               type="button"
                               disabled={isTesting}
                               onClick={() => handleTestSettingsBiometric(cred)}
-                              className="button-outline-on-light text-champagne-dark hover:border-champagne"
+                              className="button-outline-on-light text-[#141414] hover:border-[#141414]"
                               style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                             >
                               {isTesting ? 'جاري الفحص...' : 'فحص ومطابقة'}
@@ -710,7 +710,7 @@ export const SettingsPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleDeleteSettingsBiometric(cred)}
-                              className="p-1 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50"
+                              className="p-1 rounded-lg border border-[#e0e0e0] text-[#141414] hover:bg-[#eaeaea]"
                               title="حذف البصمة"
                             >
                               <Trash2 className="w-3 h-3" />
@@ -719,9 +719,9 @@ export const SettingsPage: React.FC = () => {
 
                           {hasResult && (
                             <div className={`w-full p-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 mt-1 ${
-                              settingsTestResult.success ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-rose-50 text-rose-800'
+                              settingsTestResult.success ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414]'
                             }`}>
-                              {settingsTestResult.success ? <CheckCircle2 className="w-3.5 h-3.5 text-champagne-dark" /> : <AlertCircle className="w-3.5 h-3.5 text-rose-600" />}
+                              {settingsTestResult.success ? <CheckCircle2 className="w-3.5 h-3.5 text-[#141414]" /> : <AlertCircle className="w-3.5 h-3.5 text-[#141414]" />}
                               <span>{settingsTestResult.message}</span>
                             </div>
                           )}
@@ -751,7 +751,7 @@ export const SettingsPage: React.FC = () => {
                     className="button-outline-on-light"
                     style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
-                    <ScanFace className="w-3.5 h-3.5 text-amber-600" />
+                    <ScanFace className="w-3.5 h-3.5 text-[#141414]" />
                     <span>تسجيل بصمة الوجه</span>
                   </button>
                 </div>
@@ -767,7 +767,7 @@ export const SettingsPage: React.FC = () => {
                   <h3 className="text-sm font-bold text-black m-0">
                     مصفوفة الصلاحيات والأدوار (Role-Based Access Control - RBAC Matrix)
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-[#707070] mt-1">
                     تحديد دقيق لصلاحيات القراءة، الإنشاء، التعديل، الحذف، والاعتماد المالي لكل دور وظيفي.
                   </p>
                 </div>
@@ -858,7 +858,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">البيانات الأساسية للمنظومة والهوية الرسمية</h3>
-                <p className="text-xs text-zinc-500 mt-1">تعديل الأسماء الرسمية، أرقام السجلات والتراخيص، والعنوان المعتمد للتقارير والسندات.</p>
+                <p className="text-xs text-[#707070] mt-1">تعديل الأسماء الرسمية، أرقام السجلات والتراخيص، والعنوان المعتمد للتقارير والسندات.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -943,7 +943,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">قنوات التواصل والشبكات الاجتماعية والموقع الجغرافي</h3>
-                <p className="text-xs text-zinc-500 mt-1">تحديد روابط السوشيال ميديا وربط الخريطة الحية للمقر الرئيسي وفروعه.</p>
+                <p className="text-xs text-[#707070] mt-1">تحديد روابط السوشيال ميديا وربط الخريطة الحية للمقر الرئيسي وفروعه.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1019,7 +1019,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">الشعارات والهوية البصرية والعلامة المائية</h3>
-                <p className="text-xs text-zinc-500 mt-1">تحديد مسارات الشعارات المعتمدة للمنصة، الأيقونات المصغرة، ونصوص الختم والطباعة.</p>
+                <p className="text-xs text-[#707070] mt-1">تحديد مسارات الشعارات المعتمدة للمنصة، الأيقونات المصغرة، ونصوص الختم والطباعة.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1036,16 +1036,16 @@ export const SettingsPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="p-4 rounded-2xl border border-zinc-200 bg-zinc-900 text-white flex flex-col items-center justify-center text-center">
-                  <div className="w-16 h-16 rounded-full bg-zinc-800 p-2 border border-zinc-700 flex items-center justify-center mb-3 shadow-sm">
+                <div className="p-4 rounded-2xl border border-zinc-200 bg-[#f3f3f3] text-[#141414] flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 rounded-full bg-zinc-800 p-2 border border-[#e0e0e0] flex items-center justify-center mb-3 shadow-sm">
                     <img src={logoDarkUrl} alt="Logo Dark" className="max-h-full max-w-full object-contain" />
                   </div>
-                  <label className="text-xs font-bold text-white mb-1">شعار النمط الليلي (Dark Mode)</label>
+                  <label className="text-xs font-bold text-[#141414] mb-1">شعار النمط الليلي (Dark Mode)</label>
                   <input 
                     type="text" 
                     value={logoDarkUrl} 
                     onChange={e => setLogoDarkUrl(e.target.value)} 
-                    className="w-full bg-zinc-800 border border-zinc-700 rounded-xl py-1.5 px-2 text-[11px] text-white text-center font-mono mt-2" 
+                    className="w-full bg-zinc-800 border border-[#e0e0e0] rounded-xl py-1.5 px-2 text-[11px] text-white text-center font-mono mt-2" 
                   />
                 </div>
 
@@ -1099,7 +1099,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-5">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">إدارة الروابط السريعة الحكومية والخدمية (Quick Links Bar)</h3>
-                <p className="text-xs text-zinc-500 mt-1">الروابط المباشرة الظاهرة في القائمة والشريط العلوي لتسريع وصول الموظفين للبوابات الحكومية.</p>
+                <p className="text-xs text-[#707070] mt-1">الروابط المباشرة الظاهرة في القائمة والشريط العلوي لتسريع وصول الموظفين للبوابات الحكومية.</p>
               </div>
 
               {/* Add Quick Link Form */}
@@ -1148,18 +1148,18 @@ export const SettingsPage: React.FC = () => {
                     {quickLinks.map((link) => (
                       <tr key={link.id} className="hover:bg-zinc-50">
                         <td className="p-3.5 font-bold text-black">{link.name}</td>
-                        <td className="p-3.5 font-mono text-zinc-500 text-[11px]">
-                          <a href={link.url} target="_blank" rel="noreferrer" className="text-champagne-dark hover:underline flex items-center gap-1">
+                        <td className="p-3.5 font-mono text-[#707070] text-[11px]">
+                          <a href={link.url} target="_blank" rel="noreferrer" className="text-[#141414] hover:underline flex items-center gap-1">
                             <span>{link.url}</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         </td>
-                        <td className="p-3.5 text-zinc-500">{link.category}</td>
+                        <td className="p-3.5 text-[#707070]">{link.category}</td>
                         <td className="p-3.5 text-center"><Badge text={link.status} type="success" /></td>
                         <td className="p-3.5 text-center">
                           <button 
                             onClick={() => handleDeleteQuickLink(link.id)}
-                            className="p-1 rounded-full text-zinc-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                            className="p-1 rounded-full text-[#707070] hover:text-[#141414] hover:bg-[#eaeaea] transition-colors"
                             title="حذف الرابط"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1178,7 +1178,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">إعدادات بوابة تسجيل دخول العملاء والموقع الخارجي</h3>
-                <p className="text-xs text-zinc-500 mt-1">تحديد بوابات الدخول المعتمدة للعملاء والزوار وطرق التحقق من الهوية.</p>
+                <p className="text-xs text-[#707070] mt-1">تحديد بوابات الدخول المعتمدة للعملاء والزوار وطرق التحقق من الهوية.</p>
               </div>
 
               <div className="space-y-3">
@@ -1193,7 +1193,7 @@ export const SettingsPage: React.FC = () => {
                     <span className="font-bold text-xs text-black block">
                       تفعيل تسجيل الدخول بالنفاذ الوطني الموحد (Nafath SSO)
                     </span>
-                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    <span className="text-[11px] text-[#707070] block mt-0.5">
                       مطابقة هويات العملاء إلكترونياً وتوثيق طلبات الاستقدام والتأجير عبر تطبيق نفاذ.
                     </span>
                   </div>
@@ -1210,7 +1210,7 @@ export const SettingsPage: React.FC = () => {
                     <span className="font-bold text-xs text-black block">
                       السماح بالدخول برقم الجوال ورمز التحقق الفوري (SMS OTP Login)
                     </span>
-                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    <span className="text-[11px] text-[#707070] block mt-0.5">
                       تمكين العملاء من تصفح ومتابعة حجوزاتهم دون الحاجة لكلمة مرور عبر رسالة تحقق سريعة.
                     </span>
                   </div>
@@ -1227,7 +1227,7 @@ export const SettingsPage: React.FC = () => {
                     <span className="font-bold text-xs text-black block">
                       السماح للزوار بتصفح السير الذاتية وحجز الموعد دون تسجيل مسبق
                     </span>
-                    <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    <span className="text-[11px] text-[#707070] block mt-0.5">
                       عرض الكوادر المتاحة مع إخفاء الأرقام السرية والجواز حتى مرحلة التعاقد.
                     </span>
                   </div>
@@ -1251,7 +1251,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">تهيئة محركات البحث والإحصائيات (SEO & Analytics Tags)</h3>
-                <p className="text-xs text-zinc-500 mt-1">تحديد وسوم الميتا تاغ، ومعرفات Google Analytics وميتا بيكسل لتحسين الظهور الرقمي.</p>
+                <p className="text-xs text-[#707070] mt-1">تحديد وسوم الميتا تاغ، ومعرفات Google Analytics وميتا بيكسل لتحسين الظهور الرقمي.</p>
               </div>
 
               <div className="space-y-3">
@@ -1323,15 +1323,15 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">إعدادات الشات المباشر (Zoho SalesIQ Live Chat)</h3>
-                <p className="text-xs text-zinc-500 mt-1">تضمين ويدجت المحادثة الحية لدعم العملاء على مدار الساعة.</p>
+                <p className="text-xs text-[#707070] mt-1">تضمين ويدجت المحادثة الحية لدعم العملاء على مدار الساعة.</p>
               </div>
 
-              <label className="flex items-center gap-3 p-4 rounded-2xl bg-champagne-pale border border-champagne/30 cursor-pointer">
+              <label className="flex items-center gap-3 p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={enableSalesIq}
                   onChange={e => setEnableSalesIq(e.target.checked)}
-                  className="rounded text-champagne focus:ring-0 w-4 h-4"
+                  className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                 />
                 <div>
                   <span className="font-bold text-xs text-black block">
@@ -1349,7 +1349,7 @@ export const SettingsPage: React.FC = () => {
                   rows={4} 
                   value={zohoSalesIqCode} 
                   onChange={e => setZohoSalesIqCode(e.target.value)}
-                  className="w-full bg-zinc-900 text-champagne-light font-mono text-[11px] rounded-2xl p-3 border border-zinc-700 focus:outline-none" 
+                  className="w-full bg-[#f3f3f3] text-[#141414] font-mono text-[11px] rounded-2xl p-3 border border-[#e0e0e0] focus:outline-none" 
                 />
               </div>
 
@@ -1384,7 +1384,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
                 <h3 className="text-sm font-bold text-black m-0">السياسات والشروط وبنود ضمان مساند</h3>
-                <p className="text-xs text-zinc-500 mt-1">صياغة وتعديل الشروط الملحقة بعقود الاستقدام والتأجير وسياسة الضمان 90 يوماً.</p>
+                <p className="text-xs text-[#707070] mt-1">صياغة وتعديل الشروط الملحقة بعقود الاستقدام والتأجير وسياسة الضمان 90 يوماً.</p>
               </div>
 
               <div>
@@ -1427,7 +1427,7 @@ export const SettingsPage: React.FC = () => {
                   <ShoppingBag className="w-4 h-4 text-black" />
                   <span>إعدادات وتراخيص ربط المتاجر الإلكترونية وبوابات الدفع (E-Commerce Connectors)</span>
                 </h3>
-                <p className="text-xs text-zinc-500 mt-1">
+                <p className="text-xs text-[#707070] mt-1">
                   تهيئة مفاتيح الـ API و Webhooks لمنصات سلة، زد، شوبيفاي، ووكومرس، ومزودي الدفع الإلكتروني.
                 </p>
               </div>
@@ -1441,7 +1441,7 @@ export const SettingsPage: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">منصة سلة (Salla API v2 Hub)</h4>
-                      <p className="text-[11px] text-zinc-500 m-0">تزامن باقات التأجير، استلام الطلبات، وتوليد الفواتير</p>
+                      <p className="text-[11px] text-[#707070] m-0">تزامن باقات التأجير، استلام الطلبات، وتوليد الفواتير</p>
                     </div>
                   </div>
                   <button
@@ -1502,7 +1502,7 @@ export const SettingsPage: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">منصة زد (Zid E-Commerce)</h4>
-                      <p className="text-[11px] text-zinc-500 m-0">مزامنة الكتالوج، الخدمات، وعقود العمالة المهنية</p>
+                      <p className="text-[11px] text-[#707070] m-0">مزامنة الكتالوج، الخدمات، وعقود العمالة المهنية</p>
                     </div>
                   </div>
                   <button
@@ -1549,12 +1549,12 @@ export const SettingsPage: React.FC = () => {
               <div className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#fafafa', border: '1px solid #e4e4e7' }}>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#95bf47', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#141414', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
                       Sh
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">متجر شوبيفاي (Shopify GraphQL Store)</h4>
-                      <p className="text-[11px] text-zinc-500 m-0">البوابة الدولية للمجموعة واستيراد الحجوزات</p>
+                      <p className="text-[11px] text-[#707070] m-0">البوابة الدولية للمجموعة واستيراد الحجوزات</p>
                     </div>
                   </div>
                   <button
@@ -1606,7 +1606,7 @@ export const SettingsPage: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">بوابة الدفع الإلكتروني (Moyasar Gateway)</h4>
-                      <p className="text-[11px] text-zinc-500 m-0">سداد الفواتير وعقود التأجير بمدى، فيزا، ماستركارد، و Apple Pay</p>
+                      <p className="text-[11px] text-[#707070] m-0">سداد الفواتير وعقود التأجير بمدى، فيزا، ماستركارد، و Apple Pay</p>
                     </div>
                   </div>
                   <button
@@ -1659,7 +1659,7 @@ export const SettingsPage: React.FC = () => {
                   <h3 className="text-sm font-bold text-black m-0">
                     النسخ الاحتياطي الشامل وإدارة البيانات الحقيقية وقواعد البيانات
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">
+                  <p className="text-xs text-[#707070] mt-1">
                     إدارة نمط تشغيل المنظومة (Real Production vs Demo)، وتصدير واستعادة قواعد البيانات المحلية والسحابية
                   </p>
                 </div>
@@ -1675,9 +1675,9 @@ export const SettingsPage: React.FC = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">نمط تشغيل المنظومة والبيانات (Data Mode)</h4>
-                      <p className="text-xs text-zinc-500 m-0">
+                      <p className="text-xs text-[#707070] m-0">
                         الوضع الحالي:{' '}
-                        <strong className={dataMode === 'production_real' ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'}>
+                        <strong className={dataMode === 'production_real' ? 'text-[#141414] font-bold' : 'text-[#141414] font-bold'}>
                           {dataMode === 'production_real' ? 'وضع العمل بالبيانات الحقيقية (Production Real)' : 'وضع المعاينة والتجربة (Demo Preview)'}
                         </strong>
                       </p>
@@ -1702,7 +1702,7 @@ export const SettingsPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <p className="text-[11px] text-zinc-500 leading-relaxed m-0 border-t border-zinc-200/60 pt-2">
+                <p className="text-[11px] text-[#707070] leading-relaxed m-0 border-t border-zinc-200/60 pt-2">
                   في وضع العمل بالبيانات الحقيقية، يتم حفظ كافة العقود والعملاء والقيود في الذاكرة الدائمة وقاعدة البيانات الحقيقية فقط دون إدراج سجلات افتراضية مسبقة، لتكون المجموعة جاهزة للتشغيل اليومي المباشر.
                 </p>
               </div>
@@ -1712,12 +1712,12 @@ export const SettingsPage: React.FC = () => {
                 {/* Export Full Database */}
                 <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-4">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                    <div className="w-9 h-9 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold">
                       <Download className="w-4 h-4" />
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">تصدير نسخة احتياطية شاملة (Export Backup)</h4>
-                      <p className="text-[11px] text-zinc-500 m-0">توليد ملف JSON يحتوي على كافة الجداول والسجلات والقيود</p>
+                      <p className="text-[11px] text-[#707070] m-0">توليد ملف JSON يحتوي على كافة الجداول والسجلات والقيود</p>
                     </div>
                   </div>
 
@@ -1730,7 +1730,7 @@ export const SettingsPage: React.FC = () => {
                     disabled={isExportingDb}
                     onClick={handleExportDatabase}
                     className="button-primary-pill w-full flex items-center justify-center gap-2"
-                    style={{ padding: '8px 16px', fontSize: '12px', minHeight: '36px', background: '#10b981', borderColor: '#10b981' }}
+                    style={{ padding: '8px 16px', fontSize: '12px', minHeight: '36px', background: '#141414', color: '#ffffff', borderColor: '#141414' }}
                   >
                     <Download className="w-4 h-4" />
                     <span>{isExportingDb ? 'جارٍ توليد النسخة...' : 'تحميل النسخة الاحتياطية الآن (JSON)'}</span>
@@ -1740,12 +1740,12 @@ export const SettingsPage: React.FC = () => {
                 {/* Import / Restore Database */}
                 <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-4">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                    <div className="w-9 h-9 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold">
                       <UploadCloud className="w-4 h-4" />
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-black m-0">استعادة قاعدة البيانات (Restore Backup)</h4>
-                      <p className="text-[11px] text-zinc-500 m-0">استرجاع الجداول والبيانات من ملف نسخة سابقة</p>
+                      <p className="text-[11px] text-[#707070] m-0">استرجاع الجداول والبيانات من ملف نسخة سابقة</p>
                     </div>
                   </div>
 
@@ -1754,7 +1754,7 @@ export const SettingsPage: React.FC = () => {
                   </p>
 
                   <label className="button-outline-on-light w-full flex items-center justify-center gap-2 cursor-pointer" style={{ padding: '8px 16px', fontSize: '12px', minHeight: '36px' }}>
-                    <UploadCloud className="w-4 h-4 text-amber-600" />
+                    <UploadCloud className="w-4 h-4 text-[#141414]" />
                     <span>رفع واستعادة ملف النسخة الاحتياطية</span>
                     <input
                       type="file"
@@ -1781,7 +1781,7 @@ export const SettingsPage: React.FC = () => {
                     />
                     <div>
                       <span className="font-bold block">نسخ يومي تلقائي (Daily)</span>
-                      <span className="text-[10px] text-zinc-500">عند نهاية يوم العمل (الساعة 11:59 مساءً)</span>
+                      <span className="text-[10px] text-[#707070]">عند نهاية يوم العمل (الساعة 11:59 مساءً)</span>
                     </div>
                   </label>
                   <label className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer">
@@ -1795,7 +1795,7 @@ export const SettingsPage: React.FC = () => {
                     />
                     <div>
                       <span className="font-bold block">نسخ أسبوعي (Weekly)</span>
-                      <span className="text-[10px] text-zinc-500">كل يوم جمعة مع بداية الأسبوع المالي</span>
+                      <span className="text-[10px] text-[#707070]">كل يوم جمعة مع بداية الأسبوع المالي</span>
                     </div>
                   </label>
                   <label className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer">
@@ -1809,22 +1809,22 @@ export const SettingsPage: React.FC = () => {
                     />
                     <div>
                       <span className="font-bold block">نسخ شهري (Monthly)</span>
-                      <span className="text-[10px] text-zinc-500">مع الإقفال المحاسبي الشهري</span>
+                      <span className="text-[10px] text-[#707070]">مع الإقفال المحاسبي الشهري</span>
                     </div>
                   </label>
                 </div>
               </div>
 
               {/* Danger Zone: Purge Demo Data */}
-              <div className="card-pricing p-5 rounded-3xl bg-rose-50/60 border border-rose-200 space-y-3">
+              <div className="card-pricing p-5 rounded-3xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold">
+                    <div className="w-9 h-9 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold">
                       <Trash2 className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-rose-900 m-0">تصفير وحذف البيانات التجريبية (Purge Demo Data)</h4>
-                      <p className="text-[11px] text-rose-700 m-0">تهيئة النظام بالكامل للتشغيل الحقيقي من الصفر (Zero Mock State)</p>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">تصفير وحذف البيانات التجريبية (Purge Demo Data)</h4>
+                      <p className="text-[11px] text-[#141414] m-0">تهيئة النظام بالكامل للتشغيل الحقيقي من الصفر (Zero Mock State)</p>
                     </div>
                   </div>
                   <button
@@ -1832,13 +1832,13 @@ export const SettingsPage: React.FC = () => {
                     disabled={isPurgingData}
                     onClick={handlePurgeDemoData}
                     className="button-primary-pill"
-                    style={{ background: '#e11d48', borderColor: '#e11d48', color: '#fff', padding: '6px 16px', fontSize: '11.5px', minHeight: '34px' }}
+                    style={{ background: '#141414', borderColor: '#141414', color: '#ffffff', padding: '6px 16px', fontSize: '11.5px', minHeight: '34px' }}
                   >
                     <RotateCcw className="w-3.5 h-3.5 ml-1" />
                     <span>{isPurgingData ? 'جارٍ التصفير...' : 'تصفير البيانات التجريبية والبدء ببيانات حقيقية'}</span>
                   </button>
                 </div>
-                <p className="text-[11px] text-rose-800/80 leading-relaxed m-0">
+                <p className="text-[11px] text-[#141414] leading-relaxed m-0">
                   تنبيه: سيؤدي هذا الإجراء إلى حذف جميع سجلات العقود والعملاء والطلبات والتسكين والسير الذاتية التجريبية، وتجهيز النظام ليكون جاهزاً لإدخال العقود والبيانات التشغيلية الحقيقية لشركة خالد السليم.
                 </p>
               </div>

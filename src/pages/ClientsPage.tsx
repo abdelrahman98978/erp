@@ -193,7 +193,7 @@ export const ClientsPage: React.FC = () => {
             onClick={() => setActiveTab('data-import', 'معالج استيراد البيانات الشامل (Excel / CSV)')}
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
           >
-            <Upload className="w-4 h-4 ml-1 text-emerald-400" />
+            <Upload className="w-4 h-4 ml-1 text-[#141414]" />
             <span>استيراد Excel</span>
           </button>
 
@@ -228,7 +228,7 @@ export const ClientsPage: React.FC = () => {
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#e11d48', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {clients.filter((c: any) => c.status === 'محظور').length} عملاء
           </div>
-          <span className="pill-tag-shade text-rose-700" style={{ fontSize: '11px', marginTop: '10px' }}>ممنوع من التعاقد</span>
+          <span className="pill-tag-shade text-[#141414]" style={{ fontSize: '11px', marginTop: '10px' }}>ممنوع من التعاقد</span>
         </div>
       </div>
 
@@ -249,7 +249,7 @@ export const ClientsPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('active')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'active' ? 'bg-emerald-600 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'active' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               عملاء نشطون ({clients.filter((c: any) => c.status !== 'محظور').length})
@@ -258,7 +258,7 @@ export const ClientsPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('blacklist')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'blacklist' ? 'bg-rose-600 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'blacklist' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               القائمة المحظورة ({clients.filter((c: any) => c.status === 'محظور').length})
@@ -284,7 +284,7 @@ export const ClientsPage: React.FC = () => {
           </div>
 
           <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
             <input
               type="text"
               aria-label="ابحث برقم العميل، الاسم، الجوال"
@@ -312,13 +312,13 @@ export const ClientsPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-zinc-400">
+                  <td colSpan={7} className="py-10 text-center text-[#707070]">
                     جاري استرجاع سجلات العملاء المباشرة...
                   </td>
                 </tr>
               ) : filteredClients.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-zinc-400">
+                  <td colSpan={7} className="py-10 text-center text-[#707070]">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <BusinessIllustration type="empty-search" size="md" />
                       <span className="font-bold text-black">لا يوجد عملاء مطابقين لمعايير البحث</span>
@@ -341,7 +341,7 @@ export const ClientsPage: React.FC = () => {
                         />
                         <div>
                           <div className="font-bold text-black">{c.name}</div>
-                          <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
+                          <div className="text-[11px] text-[#707070] font-mono mt-0.5">
                             {c.phone} • هوية: {c.national_id || 'غير مسجلة'}
                           </div>
                         </div>
@@ -359,8 +359,8 @@ export const ClientsPage: React.FC = () => {
                     <td className="p-3.5">
                       <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
                         c.status === 'محظور'
-                          ? 'bg-rose-100 text-rose-800'
-                          : 'bg-emerald-100 text-emerald-800'
+                          ? 'bg-[#f3f3f3] text-[#141414]'
+                          : 'bg-[#f3f3f3] text-[#141414]'
                       }`}>
                         {c.status || 'نشط'}
                       </span>
@@ -372,7 +372,7 @@ export const ClientsPage: React.FC = () => {
                           href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 rounded-full hover:bg-emerald-50 text-emerald-600 transition-colors"
+                          className="p-1.5 rounded-full hover:bg-[#eaeaea] text-[#141414] transition-colors"
                           title="محادثة واتساب"
                         >
                           <MessageSquare className="w-3.5 h-3.5" />
@@ -392,8 +392,8 @@ export const ClientsPage: React.FC = () => {
                           onClick={() => handleToggleBlacklist(c)}
                           className={`p-1.5 rounded-full transition-colors ${
                             c.status === 'محظور'
-                              ? 'hover:bg-emerald-50 text-emerald-600'
-                              : 'hover:bg-rose-50 text-rose-500'
+                              ? 'hover:bg-[#eaeaea] text-[#141414]'
+                              : 'hover:bg-[#eaeaea] text-[#141414]'
                           }`}
                           title={c.status === 'محظور' ? 'إلغاء الحظر' : 'حظر العميل'}
                         >
@@ -403,7 +403,7 @@ export const ClientsPage: React.FC = () => {
                         {/* Delete Button */}
                         <button
                           onClick={() => handleDeleteClient(c)}
-                          className="p-1.5 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                          className="p-1.5 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                           title="حذف العميل"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -422,12 +422,12 @@ export const ClientsPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل عميل جديد بالدليل المحاسبي</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -515,12 +515,12 @@ export const ClientsPage: React.FC = () => {
       {editingClient && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Edit className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Edit className="w-4 h-4 text-[#141414]" />
                 <span>تعديل بيانات العميل #{editingClient.client_no || editingClient.id}</span>
               </h3>
-              <button onClick={() => setEditingClient(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setEditingClient(null)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

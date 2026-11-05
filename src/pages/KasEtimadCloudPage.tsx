@@ -807,15 +807,15 @@ export const KasEtimadCloudPage: React.FC = () => {
   // Status Badge Helper
   const getStatusPill = (status: string) => {
     if (status.includes('تمت الترسية') || status === 'مدفوع' || status === 'مقبول' || status === 'مكتمل' || status === 'مكتملة' || status === 'ساري' || status === 'مغلق فائز') {
-      return <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">✓ {status}</span>;
+      return <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">✓ {status}</span>;
     }
     if (status.includes('رفع العرض') || status === 'مدفوع جزئيًا' || status === 'مرسل' || status === 'قيد التقدم' || status === 'مفتوحة' || status === 'مفتوح' || status === 'مؤهل' || status === 'عرض سعر مرسل') {
-      return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-600 border border-sky-500/20">{status}</span>;
+      return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">{status}</span>;
     }
     if (status.includes('لاغي') || status === 'ملغي' || status === 'مرفوض' || status === 'غير مدفوع' || status === 'متأخر' || status === 'حرج' || status === 'مغلق خاسر') {
-      return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-600 border border-rose-500/20">✕ {status}</span>;
+      return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">✕ {status}</span>;
     }
-    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-600 border border-amber-500/20">● {status}</span>;
+    return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">● {status}</span>;
   };
 
   return (
@@ -846,7 +846,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 منظومة سحابة اعتماد وإدارة المنافسات والفوترة الذكية
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 المنصة السحابية الموحدة لإدارة المنافسات الحكومية، الفواتير الإلكترونية ZATCA، عروض الأسعار، والمشاريع
               </p>
             </div>
@@ -854,7 +854,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
           <div className="flex items-center gap-2 flex-wrap">
             {/* Etimad Engineering Lead Badge */}
-            <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-1 px-3">
+            <div className="flex items-center gap-2 bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1 px-3">
               <CorporateAvatar
                 size="sm"
                 archetype="tenders-engineer"
@@ -863,21 +863,21 @@ export const KasEtimadCloudPage: React.FC = () => {
                 role="رئيس قسم المنافسات واعتماد"
               />
               <div className="text-right">
-                <div className="text-[11px] font-bold text-white leading-tight">م. أحمد البشير</div>
-                <div className="text-[10px] text-emerald-300 leading-tight">مسؤول سحابة اعتماد</div>
+                <div className="text-[11px] font-bold text-[#141414] leading-tight">م. أحمد البشير</div>
+                <div className="text-[10px] text-[#141414] leading-tight">مسؤول سحابة اعتماد</div>
               </div>
             </div>
             {/* Live Task Timer */}
-            <div className="flex items-center bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs">
+            <div className="flex items-center bg-[#f3f3f3] border border-[#e0e0e0] rounded-full px-3 py-1 text-xs">
               <button
                 onClick={() => setIsTimerRunning(!isTimerRunning)}
-                className="text-white hover:text-emerald-300 ml-1.5 flex items-center gap-1 font-bold cursor-pointer"
+                className="text-[#141414] hover:text-[#262626] ml-1.5 flex items-center gap-1 font-bold cursor-pointer"
                 title={isTimerRunning ? 'إيقاف المؤقت' : 'بدء المؤقت'}
               >
-                {isTimerRunning ? <Square className="w-3.5 h-3.5 text-rose-400" /> : <Play className="w-3.5 h-3.5 text-emerald-400" />}
+                {isTimerRunning ? <Square className="w-3.5 h-3.5 text-[#141414]" /> : <Play className="w-3.5 h-3.5 text-[#141414]" />}
                 <span>{isTimerRunning ? 'إيقاف' : 'المؤقت'}</span>
               </button>
-              <span className="font-mono font-bold text-emerald-300 mr-1">
+              <span className="font-mono font-bold text-[#141414] mr-1">
                 {formatTimer(timerSeconds)}
               </span>
             </div>
@@ -903,7 +903,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <Plus className="w-4 h-4 ml-1 text-emerald-700" />
+              <Plus className="w-4 h-4 ml-1 text-[#141414]" />
               <span>+ إضافة سريعة</span>
             </button>
 
@@ -914,7 +914,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
               title="تحديث البيانات"
             >
-              <RefreshCw className="w-3.5 h-3.5 ml-1 text-cyan-400" />
+              <RefreshCw className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>تحديث</span>
             </button>
 
@@ -997,7 +997,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             100%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-full h-full bg-emerald-500 rounded-full" />
+            <div className="w-full h-full bg-[#141414] rounded-full" />
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>معتمد وموثق سحابياً</span>
         </div>
@@ -1006,7 +1006,7 @@ export const KasEtimadCloudPage: React.FC = () => {
       {/* Main Module Navigation Bar - Capsule Pill Design */}
       <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto max-w-full pb-1">
-          <span className="text-xs font-semibold text-zinc-500 ml-1">الأقسام:</span>
+          <span className="text-xs font-semibold text-[#707070] ml-1">الأقسام:</span>
           {[
             { id: 'dashboard', label: 'لوحة التحكم', icon: BarChart3 },
             { id: 'competitions', label: 'المنافسات', count: competitions.length, icon: Award, badge: 'اعتماد' },
@@ -1091,7 +1091,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>المنافسات</span>
-                <Award className="w-4 h-4 text-emerald-600" />
+                <Award className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {stats.totalCompetitions}
@@ -1106,7 +1106,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>إجمالي الفواتير</span>
-                <DollarSign className="w-4 h-4 text-emerald-800" />
+                <DollarSign className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.totalInvoicesAmount / 1000).toFixed(0)}k
@@ -1121,7 +1121,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>المحصل الفعلي</span>
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.paidAmount / 1000).toFixed(0)}k
@@ -1136,7 +1136,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>غير محصل</span>
-                <Clock className="w-4 h-4 text-rose-500" />
+                <Clock className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.unpaidAmount / 1000).toFixed(0)}k
@@ -1151,7 +1151,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>العروض التجارية</span>
-                <Send className="w-4 h-4 text-sky-600" />
+                <Send className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.totalProposalsValue / 1000).toFixed(0)}k
@@ -1166,7 +1166,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>الاشتراكات</span>
-                <RefreshCw className="w-4 h-4 text-emerald-800" />
+                <RefreshCw className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.totalSubscriptionsRevenue / 1000).toFixed(0)}k
@@ -1181,7 +1181,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>المشاريع</span>
-                <Briefcase className="w-4 h-4 text-emerald-400" />
+                <Briefcase className="w-4 h-4 text-[#141414]" />
               </div>
               <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {stats.activeProjects}
@@ -1212,18 +1212,18 @@ export const KasEtimadCloudPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3 mb-3">
                 <div>
                   <h2 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-                    <Activity className="w-4 h-4 text-emerald-600" />
+                    <Activity className="w-4 h-4 text-[#141414]" />
                     <span>حركة المبيعات والتحصيلات الشهرية (2026)</span>
                   </h2>
-                  <p className="text-xs text-zinc-400 mt-1 font-sans">مقارنة الفواتير الصادرة والمبالغ المحصلة عبر منصة اعتماد</p>
+                  <p className="text-xs text-[#707070] mt-1 font-sans">مقارنة الفواتير الصادرة والمبالغ المحصلة عبر منصة اعتماد</p>
                 </div>
                 <div className="flex items-center gap-3 text-xs font-semibold">
                   <span className="flex items-center gap-1.5 text-zinc-900">
                     <span className="w-3 h-3 rounded-full bg-black inline-block" />
                     الفواتير الصادرة
                   </span>
-                  <span className="flex items-center gap-1.5 text-emerald-600">
-                    <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
+                  <span className="flex items-center gap-1.5 text-[#141414]">
+                    <span className="w-3 h-3 rounded-full bg-[#141414] inline-block" />
                     التحصيلات النقدية
                   </span>
                 </div>
@@ -1246,9 +1246,9 @@ export const KasEtimadCloudPage: React.FC = () => {
                   const colHeight = Math.round((item.collected / maxVal) * 100);
                   return (
                     <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group cursor-pointer">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-[10px] font-mono px-2 py-1 rounded-lg pointer-events-none mb-1 shadow-lg text-center z-10">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] text-[10px] font-mono px-2 py-1 rounded-lg pointer-events-none mb-1 shadow-lg text-center z-10">
                         <div>صادر: {item.invoiced.toLocaleString()} ⃁</div>
-                        <div className="text-emerald-400">محصل: {item.collected.toLocaleString()} ⃁</div>
+                        <div className="text-[#141414]">محصل: {item.collected.toLocaleString()} ⃁</div>
                       </div>
                       <div className="w-full flex items-end justify-center gap-1 h-36">
                         <div 
@@ -1256,11 +1256,11 @@ export const KasEtimadCloudPage: React.FC = () => {
                           style={{ height: `${invHeight}%` }} 
                         />
                         <div 
-                          className="w-3.5 bg-emerald-500 rounded-t-md transition-all group-hover:brightness-110" 
+                          className="w-3.5 bg-[#141414] rounded-t-md transition-all group-hover:brightness-110" 
                           style={{ height: `${colHeight}%` }} 
                         />
                       </div>
-                      <span className="text-[11px] text-zinc-500 font-medium truncate group-hover:text-black transition-colors">{item.month}</span>
+                      <span className="text-[11px] text-[#707070] font-medium truncate group-hover:text-black transition-colors">{item.month}</span>
                     </div>
                   );
                 })}
@@ -1272,7 +1272,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                   <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-                    <Award className="w-4 h-4 text-emerald-600" />
+                    <Award className="w-4 h-4 text-[#141414]" />
                     <span>مسار ترسية المنافسات</span>
                   </h3>
                   <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
@@ -1294,30 +1294,30 @@ export const KasEtimadCloudPage: React.FC = () => {
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
                       <span className="text-zinc-800">2. تمت الترسية بنجاح (فائز)</span>
-                      <span className="font-mono text-emerald-600 font-bold">2 منافسة (33%)</span>
+                      <span className="font-mono text-[#141414] font-bold">2 منافسة (33%)</span>
                     </div>
                     <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                      <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '33%' }} />
+                      <div className="bg-[#141414] h-2 rounded-full" style={{ width: '33%' }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
                       <span className="text-zinc-800">3. تحت الدراسة والتسعير</span>
-                      <span className="font-mono text-amber-600 font-bold">1 منافسة (17%)</span>
+                      <span className="font-mono text-[#141414] font-bold">1 منافسة (17%)</span>
                     </div>
                     <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                      <div className="bg-amber-500 h-2 rounded-full" style={{ width: '17%' }} />
+                      <div className="bg-[#141414] h-2 rounded-full" style={{ width: '17%' }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between font-semibold mb-1">
                       <span className="text-zinc-800">4. لم يتم التسعير (لاغي)</span>
-                      <span className="font-mono text-rose-500 font-bold">1 منافسة (17%)</span>
+                      <span className="font-mono text-[#141414] font-bold">1 منافسة (17%)</span>
                     </div>
                     <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                      <div className="bg-rose-400 h-2 rounded-full" style={{ width: '17%' }} />
+                      <div className="bg-[#141414] h-2 rounded-full" style={{ width: '17%' }} />
                     </div>
                   </div>
                 </div>
@@ -1348,7 +1348,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="card-pricing space-y-4" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                 <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                  <DollarSign className="w-4 h-4 text-[#141414]" />
                   <span>حالات الفواتير والتحصيل</span>
                 </h3>
                 <span className="pill-tag-shade" style={{ fontSize: '10px' }}>2026</span>
@@ -1357,31 +1357,31 @@ export const KasEtimadCloudPage: React.FC = () => {
               <div className="space-y-3.5 pt-1">
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-rose-600">غير مدفوع (33%)</span>
+                    <span className="text-[#141414]">غير مدفوع (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
                   <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                    <div className="bg-rose-500 h-2 rounded-full" style={{ width: '33%' }} />
+                    <div className="bg-[#141414] h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-amber-600">مدفوع جزئياً (33%)</span>
+                    <span className="text-[#141414]">مدفوع جزئياً (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
                   <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                    <div className="bg-amber-500 h-2 rounded-full" style={{ width: '33%' }} />
+                    <div className="bg-[#141414] h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-emerald-600">مدفوع بالكامل (33%)</span>
+                    <span className="text-[#141414]">مدفوع بالكامل (33%)</span>
                     <span className="font-mono">1 / 3</span>
                   </div>
                   <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '33%' }} />
+                    <div className="bg-[#141414] h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
               </div>
@@ -1399,7 +1399,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="lg:col-span-2 card-pricing space-y-4" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                 <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
-                  <CheckSquare className="w-4 h-4 text-emerald-600" />
+                  <CheckSquare className="w-4 h-4 text-[#141414]" />
                   <span>آخر المهام وجداول التوريدات</span>
                 </h3>
                 <button
@@ -1417,12 +1417,12 @@ export const KasEtimadCloudPage: React.FC = () => {
                   <div key={task.id} className="py-3 flex items-center justify-between gap-3 text-xs">
                     <div className="flex items-center gap-3">
                       <div className={`w-2.5 h-2.5 rounded-full ${
-                        task.priority === 'عاجل' ? 'bg-rose-500 animate-ping' :
-                        task.priority === 'مرتفع' ? 'bg-amber-500' : 'bg-emerald-500'
+                        task.priority === 'عاجل' ? 'bg-[#141414] animate-ping' :
+                        task.priority === 'مرتفع' ? 'bg-[#141414]' : 'bg-[#141414]'
                       }`} />
                       <div>
                         <div className="font-bold text-zinc-900 leading-relaxed">{task.taskName}</div>
-                        <div className="text-zinc-500 text-[11px] mt-0.5">
+                        <div className="text-[#707070] text-[11px] mt-0.5">
                           المسؤول: <span className="text-black font-semibold">{task.assignedTo}</span> • استحقاق: <span className="font-mono">{task.dueDate}</span>
                         </div>
                       </div>
@@ -1449,7 +1449,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 placeholder="بحث برقم المنافسة، العنوان، الجهة الحكومية..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-secondary/50 border border-border text-xs focus:ring-1 focus:ring-emerald-500"
+                className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-secondary/50 border border-border text-xs focus:ring-1 focus:ring-[#141414]/20"
               />
             </div>
 
@@ -1479,7 +1479,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => setShowAddCompModal(true)}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
                 <span>منافسة جديدة</span>
@@ -1507,7 +1507,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {filteredCompetitions.map(comp => (
-                    <tr key={comp.id} className="hover:bg-emerald-500/5 transition-colors">
+                    <tr key={comp.id} className="hover:bg-[#eaeaea] transition-colors">
                       <td className="p-3 text-center font-mono text-muted-foreground font-bold">{comp.seq}</td>
                       <td className="p-3 font-semibold text-foreground">
                         <div className="leading-relaxed">{comp.title}</div>
@@ -1515,7 +1515,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       </td>
                       <td className="p-3 text-center">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                          comp.isWinner === 'Yes' ? 'bg-emerald-500/20 text-emerald-600' : 'bg-secondary text-muted-foreground'
+                          comp.isWinner === 'Yes' ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-secondary text-muted-foreground'
                         }`}>
                           {comp.isWinner}
                         </span>
@@ -1537,7 +1537,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                               setDetailType('competition');
                               setShowDetailModal(true);
                             }}
-                            className="text-emerald-600 hover:underline font-bold"
+                            className="text-[#141414] hover:underline font-bold"
                           >
                             عرض
                           </button>
@@ -1549,7 +1549,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                 setReloadKey(k => k + 1);
                               }
                             }}
-                            className="text-rose-600 hover:underline"
+                            className="text-[#141414] hover:underline"
                           >
                             حذف
                           </button>
@@ -1572,7 +1572,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border shadow-sm">
             <div>
               <h3 className="text-base font-black text-foreground flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-emerald-600" />
+                <DollarSign className="w-5 h-5 text-[#141414]" />
                 <span>سجل الفواتير الإلكترونية ZATCA المرحلة 2 (شركة كاس للتجارة)</span>
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">فواتير ضريبية مبسطة وأساسية متوافقة مع متطلبات هيئة الزكاة والضريبة والجمارك</p>
@@ -1586,7 +1586,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   onClick={() => setInvoicesViewMode('cards')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     invoicesViewMode === 'cards'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#141414] text-white shadow-sm'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -1598,7 +1598,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   onClick={() => setInvoicesViewMode('table')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     invoicesViewMode === 'table'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#141414] text-white shadow-sm'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -1609,7 +1609,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => setShowAddInvoiceModal(true)}
-                className="px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md shadow-emerald-600/20"
+                className="px-4 py-2 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-black text-xs flex items-center gap-1.5 shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ إنشاء فاتورة جديدة</span>
@@ -1664,8 +1664,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {invoices.map(inv => (
-                    <tr key={inv.id} className="hover:bg-emerald-500/5">
-                      <td className="p-3 font-mono font-bold text-emerald-600">{inv.invoiceNumber}</td>
+                    <tr key={inv.id} className="hover:bg-[#eaeaea]">
+                      <td className="p-3 font-mono font-bold text-[#141414]">{inv.invoiceNumber}</td>
                       <td className="p-3 text-left font-mono font-bold text-foreground">{inv.amount.toLocaleString()} ⃁</td>
                       <td className="p-3 text-left font-mono text-muted-foreground">{inv.taxAmount.toLocaleString()} ⃁</td>
                       <td className="p-3 font-mono text-muted-foreground">{inv.date}</td>
@@ -1681,7 +1681,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                               setDetailType('invoice');
                               setShowDetailModal(true);
                             }}
-                            className="text-emerald-600 hover:underline font-bold"
+                            className="text-[#141414] hover:underline font-bold"
                           >
                             عرض / ZATCA
                           </button>
@@ -1693,7 +1693,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                   setQuickPayInvoice(inv);
                                   setShowQuickPayModal(true);
                                 }}
-                                className="text-sky-600 hover:underline font-bold"
+                                className="text-[#141414] hover:underline font-bold"
                               >
                                 تسجيل سداد
                               </button>
@@ -1708,7 +1708,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                 addNotification({ title: 'تم حذف الفاتورة', message: `تم حذف ${inv.invoiceNumber} بنجاح`, type: 'info' });
                               }
                             }}
-                            className="text-rose-600 hover:underline"
+                            className="text-[#141414] hover:underline"
                           >
                             حذف
                           </button>
@@ -1730,12 +1730,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
+              <FileSpreadsheet className="w-5 h-5 text-[#141414]" />
               <span>عروض الأسعار وعطاءات المنافسات التقديرية</span>
             </h3>
             <button
               onClick={() => setShowAddEstimateModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>عرض سعر جديد</span>
@@ -1759,8 +1759,8 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {estimates.map(est => (
-                  <tr key={est.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono font-bold text-emerald-600">{est.estimateNumber}</td>
+                  <tr key={est.id} className="hover:bg-[#eaeaea]">
+                    <td className="p-3 font-mono font-bold text-[#141414]">{est.estimateNumber}</td>
                     <td className="p-3 text-left font-mono font-bold text-foreground">{est.totalAmount.toLocaleString()} ⃁</td>
                     <td className="p-3 text-left font-mono text-muted-foreground">{est.taxAmount.toLocaleString()} ⃁</td>
                     <td className="p-3 font-semibold text-foreground">{est.clientName}</td>
@@ -1776,13 +1776,13 @@ export const KasEtimadCloudPage: React.FC = () => {
                             setDetailType('estimate');
                             setShowDetailModal(true);
                           }}
-                          className="text-emerald-600 hover:underline font-bold text-[11px]"
+                          className="text-[#141414] hover:underline font-bold text-[11px]"
                         >
                           معاينة
                         </button>
                         <button
                           onClick={() => handleConvertEstimateToInvoice(est)}
-                          className="px-2 py-0.5 rounded bg-emerald-600/10 text-emerald-700 hover:bg-emerald-600 hover:text-white font-bold text-[10px] transition-colors"
+                          className="px-2 py-0.5 rounded bg-[#f3f3f3] text-[#141414] hover:bg-[#262626] hover:text-[#141414] font-bold text-[10px] transition-colors"
                         >
                           تحويل لفاتورة
                         </button>
@@ -1803,12 +1803,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Receipt className="w-5 h-5 text-emerald-600" />
+              <Receipt className="w-5 h-5 text-[#141414]" />
               <span>سجل المدفوعات وسندات القبض البنكية</span>
             </h3>
             <button
               onClick={() => setShowAddPaymentModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>سند قبض جديد</span>
@@ -1831,13 +1831,13 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {payments.map(pay => (
-                  <tr key={pay.id} className="hover:bg-emerald-500/5">
-                    <td className="p-3 font-mono font-bold text-emerald-600">{pay.paymentNumber}</td>
+                  <tr key={pay.id} className="hover:bg-[#eaeaea]">
+                    <td className="p-3 font-mono font-bold text-[#141414]">{pay.paymentNumber}</td>
                     <td className="p-3 font-mono text-muted-foreground">{pay.invoiceNumber}</td>
                     <td className="p-3 font-semibold text-foreground">{pay.clientName}</td>
                     <td className="p-3">{pay.paymentMode}</td>
                     <td className="p-3 font-mono text-muted-foreground">{pay.transactionId}</td>
-                    <td className="p-3 text-left font-mono font-bold text-emerald-600">{pay.amount.toLocaleString()} ⃁</td>
+                    <td className="p-3 text-left font-mono font-bold text-[#141414]">{pay.amount.toLocaleString()} ⃁</td>
                     <td className="p-3 font-mono text-muted-foreground">{pay.date}</td>
                     <td className="p-3 text-muted-foreground">{pay.notes || '-'}</td>
                   </tr>
@@ -1880,7 +1880,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => setShowAddItemModal(true)}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة صنف</span>
@@ -1902,10 +1902,10 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {filteredItems.map(item => (
-                  <tr key={item.id} className="hover:bg-emerald-500/5">
+                  <tr key={item.id} className="hover:bg-[#eaeaea]">
                     <td className="p-3 font-bold text-foreground">{item.description}</td>
                     <td className="p-3 text-muted-foreground">{item.longDescription || '-'}</td>
-                    <td className="p-3 font-medium text-emerald-600">{item.group}</td>
+                    <td className="p-3 font-medium text-[#141414]">{item.group}</td>
                     <td className="p-3">{item.unit}</td>
                     <td className="p-3 text-left font-mono font-bold text-foreground">{item.rate.toLocaleString()} ⃁</td>
                     <td className="p-3 text-center font-mono">{item.taxPct}%</td>
@@ -1924,12 +1924,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-emerald-600" />
+              <UserPlus className="w-5 h-5 text-[#141414]" />
               <span>خط الأنابيب والفرص البيعية والمنافسات المحتملة</span>
             </h3>
             <button
               onClick={() => setShowAddLeadModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>إضافة فرصة جديدة</span>
@@ -1940,7 +1940,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             {leads.map(lead => (
               <div key={lead.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-[#141414] bg-[#f3f3f3] px-2 py-0.5 rounded-full">
                     {lead.source}
                   </span>
                   {getStatusPill(lead.status)}
@@ -1951,7 +1951,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
                 <div className="p-3 bg-secondary/40 rounded-xl flex justify-between items-center text-xs">
                   <span className="text-muted-foreground">قيمة الفرصة المتوقعة:</span>
-                  <span className="font-mono font-bold text-emerald-600">{lead.opportunityValue.toLocaleString()} ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">{lead.opportunityValue.toLocaleString()} ⃁</span>
                 </div>
                 <div className="text-[11px] text-muted-foreground font-mono flex justify-between pt-1">
                   <span>{lead.phone}</span>
@@ -1970,12 +1970,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-emerald-600" />
+              <Briefcase className="w-5 h-5 text-[#141414]" />
               <span>مشاريع التوريد والتشغيل لشركة كاس</span>
             </h3>
             <button
               onClick={() => setShowAddProjectModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>مشروع جديد</span>
@@ -1999,14 +1999,14 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <span className="font-mono">{proj.progress}%</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${proj.progress}%` }} />
+                    <div className="bg-[#141414] h-2 rounded-full" style={{ width: `${proj.progress}%` }} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs bg-secondary/30 p-3 rounded-xl">
                   <div>
                     <span className="text-muted-foreground block text-[11px]">الميزانية المرصودة:</span>
-                    <span className="font-bold font-mono text-emerald-600">{proj.budget.toLocaleString()} ⃁</span>
+                    <span className="font-bold font-mono text-[#141414]">{proj.budget.toLocaleString()} ⃁</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-[11px]">الموعد النهائي:</span>
@@ -2030,12 +2030,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <CheckSquare className="w-5 h-5 text-emerald-600" />
+              <CheckSquare className="w-5 h-5 text-[#141414]" />
               <span>سجل مهام التشغيل والتوريد</span>
             </h3>
             <button
               onClick={() => setShowAddTaskModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>مهمة جديدة</span>
@@ -2058,14 +2058,14 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {tasks.map(task => (
-                  <tr key={task.id} className="hover:bg-emerald-500/5">
+                  <tr key={task.id} className="hover:bg-[#eaeaea]">
                     <td className="p-3 font-bold text-foreground">{task.taskName}</td>
                     <td className="p-3 text-muted-foreground">{task.project || '-'}</td>
                     <td className="p-3 font-semibold">{task.assignedTo}</td>
                     <td className="p-3">
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
-                        task.priority === 'عاجل' ? 'bg-rose-500/10 text-rose-600' :
-                        task.priority === 'مرتفع' ? 'bg-amber-500/10 text-amber-600' : 'bg-sky-500/10 text-sky-600'
+                        task.priority === 'عاجل' ? 'bg-[#f3f3f3] text-[#141414]' :
+                        task.priority === 'مرتفع' ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-[#f3f3f3] text-[#141414]'
                       }`}>
                         {task.priority}
                       </span>
@@ -2089,12 +2089,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <FileCheck className="w-5 h-5 text-emerald-600" />
+              <FileCheck className="w-5 h-5 text-[#141414]" />
               <span>العقود والاتفاقيات الحكومية والتجارية</span>
             </h3>
             <button
               onClick={() => setShowAddContractModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>عقد جديد</span>
@@ -2116,11 +2116,11 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {contracts.map(cnt => (
-                  <tr key={cnt.id} className="hover:bg-emerald-500/5">
+                  <tr key={cnt.id} className="hover:bg-[#eaeaea]">
                     <td className="p-3 font-bold text-foreground">{cnt.subject}</td>
                     <td className="p-3 font-semibold">{cnt.clientName}</td>
                     <td className="p-3">{cnt.contractType}</td>
-                    <td className="p-3 text-left font-mono font-bold text-emerald-600">{cnt.contractValue.toLocaleString()} ⃁</td>
+                    <td className="p-3 text-left font-mono font-bold text-[#141414]">{cnt.contractValue.toLocaleString()} ⃁</td>
                     <td className="p-3 font-mono text-muted-foreground">{cnt.startDate}</td>
                     <td className="p-3 font-mono text-muted-foreground">{cnt.endDate}</td>
                     <td className="p-3">{getStatusPill(cnt.status)}</td>
@@ -2139,12 +2139,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-emerald-600" />
+              <CreditCard className="w-5 h-5 text-[#141414]" />
               <span>مصروفات التشغيل وتكاليف المشاريع</span>
             </h3>
             <button
               onClick={() => setShowAddExpenseModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>تسجيل مصروف</span>
@@ -2166,9 +2166,9 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {expenses.map(exp => (
-                  <tr key={exp.id} className="hover:bg-emerald-500/5">
+                  <tr key={exp.id} className="hover:bg-[#eaeaea]">
                     <td className="p-3 font-bold text-foreground">{exp.expenseName}</td>
-                    <td className="p-3 text-emerald-600 font-medium">{exp.category}</td>
+                    <td className="p-3 text-[#141414] font-medium">{exp.category}</td>
                     <td className="p-3 text-left font-mono font-bold text-foreground">{exp.amount.toLocaleString()} ⃁</td>
                     <td className="p-3 text-left font-mono text-muted-foreground">{exp.taxAmount.toLocaleString()} ⃁</td>
                     <td className="p-3 text-muted-foreground">{exp.project || '-'}</td>
@@ -2189,12 +2189,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-emerald-600" />
+              <HelpCircle className="w-5 h-5 text-[#141414]" />
               <span>تذاكر الدعم والربط مع الجهات والمنافسات</span>
             </h3>
             <button
               onClick={() => setShowAddTicketModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>تذكرة جديدة</span>
@@ -2216,9 +2216,9 @@ export const KasEtimadCloudPage: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-border/40">
                 {tickets.map(tkt => (
-                  <tr key={tkt.id} className="hover:bg-emerald-500/5">
+                  <tr key={tkt.id} className="hover:bg-[#eaeaea]">
                     <td className="p-3 font-bold text-foreground">{tkt.subject}</td>
-                    <td className="p-3 font-medium text-emerald-600">{tkt.department}</td>
+                    <td className="p-3 font-medium text-[#141414]">{tkt.department}</td>
                     <td className="p-3 text-muted-foreground">{tkt.service}</td>
                     <td className="p-3">{tkt.contact}</td>
                     <td className="p-3 font-semibold">{tkt.priority}</td>
@@ -2239,7 +2239,7 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-emerald-600" />
+              <BookOpen className="w-5 h-5 text-[#141414]" />
               <span>قاعدة المعرفة واللوائح التنظيمية لمنصة اعتماد</span>
             </h3>
           </div>
@@ -2247,7 +2247,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {knowledge.map(art => (
               <div key={art.id} className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3">
-                <span className="text-xs font-semibold bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-semibold bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded-full">
                   {art.category}
                 </span>
                 <h4 className="font-bold text-foreground text-sm">{art.title}</h4>
@@ -2273,7 +2273,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           {/* Calendar Header with Navigation and Filter */}
           <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
@@ -2309,7 +2309,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   setCalendarYear(2026);
                   setSelectedCalendarDay(30);
                 }}
-                className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold"
+                className="px-3 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold"
               >
                 اليوم
               </button>
@@ -2344,7 +2344,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   onClick={() => setCalendarFilter(f.id as any)}
                   className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                     calendarFilter === f.id
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#141414] text-white shadow-sm'
                       : 'bg-secondary text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -2385,35 +2385,35 @@ export const KasEtimadCloudPage: React.FC = () => {
                         !isValidDay 
                           ? 'opacity-20 border-transparent bg-secondary/10 pointer-events-none' 
                           : isSelected
-                          ? 'border-emerald-500 bg-emerald-500/10 shadow-sm'
+                          ? 'border-[#e0e0e0] bg-[#f3f3f3] shadow-sm'
                           : isToday
-                          ? 'border-emerald-500/50 bg-emerald-500/5 hover:border-emerald-500'
+                          ? 'border-[#e0e0e0] bg-[#f3f3f3] hover:border-[#141414]'
                           : 'border-border/60 bg-secondary/20 hover:border-border hover:bg-secondary/40 cursor-pointer'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold font-mono text-xs ${
-                          isToday ? 'bg-emerald-600 text-white' : isSelected ? 'font-black text-emerald-600' : 'text-foreground'
+                          isToday ? 'bg-[#141414] text-white' : isSelected ? 'font-black text-[#ffffff]' : 'text-foreground'
                         }`}>
                           {isValidDay ? dayNum : ''}
                         </span>
-                        {isToday && <span className="text-[9px] font-bold text-emerald-600">اليوم</span>}
+                        {isToday && <span className="text-[9px] font-bold text-[#141414]">اليوم</span>}
                       </div>
 
                       {isValidDay && (
                         <div className="space-y-1 mt-1">
                           {dayComp && (calendarFilter === 'all' || calendarFilter === 'competitions') && (
-                            <div className="text-[9px] font-semibold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded truncate">
+                            <div className="text-[9px] font-semibold bg-[#f3f3f3] text-[#141414] px-1.5 py-0.5 rounded truncate">
                               منافسة اعتماد
                             </div>
                           )}
                           {dayInv && (calendarFilter === 'all' || calendarFilter === 'invoices') && (
-                            <div className="text-[9px] font-semibold bg-sky-500/20 text-sky-700 dark:text-sky-300 px-1.5 py-0.5 rounded truncate">
+                            <div className="text-[9px] font-semibold bg-[#f3f3f3] text-[#141414] px-1.5 py-0.5 rounded truncate">
                               استحقاق فاتورة
                             </div>
                           )}
                           {dayTask && (calendarFilter === 'all' || calendarFilter === 'tasks') && (
-                            <div className="text-[9px] font-semibold bg-amber-500/20 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded truncate">
+                            <div className="text-[9px] font-semibold bg-[#f3f3f3] text-[#141414] px-1.5 py-0.5 rounded truncate">
                               تسليم مهمة
                             </div>
                           )}
@@ -2435,28 +2435,28 @@ export const KasEtimadCloudPage: React.FC = () => {
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-1.5">
-                  <div className="flex items-center justify-between font-bold text-emerald-600">
+                <div className="p-3 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-[#141414]">
                     <span>موعد تقديم منافسة</span>
-                    <span className="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded-full">معتمد</span>
+                    <span className="text-[10px] bg-[#f3f3f3] px-2 py-0.5 rounded-full">معتمد</span>
                   </div>
                   <div className="font-semibold text-foreground">توريد وتركيب أنظمة إنارة لمستشفى الملك سلمان بالطائف</div>
                   <div className="text-[11px] text-muted-foreground font-mono">الجهة: الشؤون الصحية بالحرس الوطني</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/20 space-y-1.5">
-                  <div className="flex items-center justify-between font-bold text-sky-600">
+                <div className="p-3 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-[#141414]">
                     <span>استحقاق سداد فاتورة</span>
-                    <span className="text-[10px] bg-sky-500/20 px-2 py-0.5 rounded-full">ZATCA</span>
+                    <span className="text-[10px] bg-[#f3f3f3] px-2 py-0.5 rounded-full">ZATCA</span>
                   </div>
                   <div className="font-semibold text-foreground">فاتورة رقم INV-000001 (قيمة: 106,006 ⃁)</div>
                   <div className="text-[11px] text-muted-foreground">العميل: مؤسسة خالد السليم للتجارة</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5">
-                  <div className="flex items-center justify-between font-bold text-amber-600">
+                <div className="p-3 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-1.5">
+                  <div className="flex items-center justify-between font-bold text-[#141414]">
                     <span>موعد إنجاز مهمة تشغيل</span>
-                    <span className="text-[10px] bg-amber-500/20 px-2 py-0.5 rounded-full">عاجل</span>
+                    <span className="text-[10px] bg-[#f3f3f3] px-2 py-0.5 rounded-full">عاجل</span>
                   </div>
                   <div className="font-semibold text-foreground">إدارة مشتريات الدمام – توريد مضخات غاطسة</div>
                   <div className="text-[11px] text-muted-foreground font-mono">المسؤول: محمد خالد</div>
@@ -2465,7 +2465,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => setShowAddTaskModal(true)}
-                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold flex items-center justify-center gap-1.5"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>+ جدولة حدث أو مهمة جديدة</span>
@@ -2484,7 +2484,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                <TrendingUp className="w-5 h-5 text-[#141414]" />
                 <span>التقارير المالية والإقرارات الضريبية ZATCA</span>
               </h3>
               <p className="text-xs text-muted-foreground">شركة كاس للتجارة والمقاولات • السجل الضريبي 310245879600003</p>
@@ -2511,7 +2511,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => window.print()}
-                className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+                className="px-3.5 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>طباعة التقرير</span>
@@ -2523,26 +2523,26 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
               <span className="text-xs text-muted-foreground font-semibold">إجمالي المبيعات والفواتير</span>
-              <div className="text-2xl font-bold font-mono text-emerald-600">{stats.totalInvoicesAmount.toLocaleString()} ⃁</div>
+              <div className="text-2xl font-bold font-mono text-[#141414]">{stats.totalInvoicesAmount.toLocaleString()} ⃁</div>
               <div className="text-xs text-muted-foreground">ضريبة القيمة المضافة 15%: {(stats.totalInvoicesAmount * 0.15).toLocaleString()} ⃁</div>
             </div>
 
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
               <span className="text-xs text-muted-foreground font-semibold">المبالغ المحصلة فعلياً</span>
-              <div className="text-2xl font-bold font-mono text-sky-600">{stats.paidAmount.toLocaleString()} ⃁</div>
-              <div className="text-xs text-sky-600 font-semibold">{Math.round((stats.paidAmount / (stats.totalInvoicesAmount || 1)) * 100)}% من إجمالي المستحقات</div>
+              <div className="text-2xl font-bold font-mono text-[#141414]">{stats.paidAmount.toLocaleString()} ⃁</div>
+              <div className="text-xs text-[#141414] font-semibold">{Math.round((stats.paidAmount / (stats.totalInvoicesAmount || 1)) * 100)}% من إجمالي المستحقات</div>
             </div>
 
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
               <span className="text-xs text-muted-foreground font-semibold">تكاليف التشغيل والمصروفات</span>
-              <div className="text-2xl font-bold font-mono text-rose-600">{stats.totalExpenses.toLocaleString()} ⃁</div>
+              <div className="text-2xl font-bold font-mono text-[#141414]">{stats.totalExpenses.toLocaleString()} ⃁</div>
               <div className="text-xs text-muted-foreground">ضريبة المدخلات المستردة: {(stats.totalExpenses * 0.15).toLocaleString()} ⃁</div>
             </div>
 
             <div className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-2">
               <span className="text-xs text-muted-foreground font-semibold">صافي الربح التشغيلي</span>
               <div className="text-2xl font-bold font-mono text-foreground">{(stats.totalInvoicesAmount - stats.totalExpenses).toLocaleString()} ⃁</div>
-              <div className="text-xs text-emerald-600 font-bold">هامش ربح تقديري: {Math.round(((stats.totalInvoicesAmount - stats.totalExpenses) / (stats.totalInvoicesAmount || 1)) * 100)}%</div>
+              <div className="text-xs text-[#141414] font-bold">هامش ربح تقديري: {Math.round(((stats.totalInvoicesAmount - stats.totalExpenses) / (stats.totalInvoicesAmount || 1)) * 100)}%</div>
             </div>
           </div>
 
@@ -2555,7 +2555,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </h4>
                 <p className="text-xs text-muted-foreground mt-0.5">الحساب الضريبي الموحد لمؤسسة خالد عبدالعزيز السليم (كاس)</p>
               </div>
-              <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full font-bold text-xs font-mono">
+              <span className="px-3 py-1 bg-[#f3f3f3] text-[#141414] rounded-full font-bold text-xs font-mono">
                 جاهز للإقرار
               </span>
             </div>
@@ -2575,19 +2575,19 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <td className="p-3 font-semibold text-foreground">1. المبيعات الخاضعة للنسبة الأساسية (15%)</td>
                     <td className="p-3 text-left font-bold">{stats.totalInvoicesAmount.toLocaleString()}</td>
                     <td className="p-3 text-left">15%</td>
-                    <td className="p-3 text-left font-bold text-emerald-600">{(stats.totalInvoicesAmount * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td className="p-3 text-left font-bold text-[#141414]">{(stats.totalInvoicesAmount * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                   </tr>
                   <tr>
                     <td className="p-3 font-semibold text-foreground">2. المشتريات الخاضعة للنسبة الأساسية (ضريبة المدخلات)</td>
                     <td className="p-3 text-left font-bold">{stats.totalExpenses.toLocaleString()}</td>
                     <td className="p-3 text-left">15%</td>
-                    <td className="p-3 text-left font-bold text-rose-600">{(stats.totalExpenses * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td className="p-3 text-left font-bold text-[#141414]">{(stats.totalExpenses * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                   </tr>
-                  <tr className="bg-emerald-500/5 font-extrabold text-foreground border-t-2 border-emerald-500">
+                  <tr className="bg-[#f3f3f3] font-extrabold text-foreground border-t-2 border-[#e0e0e0]">
                     <td className="p-3 text-sm">صافي ضريبة القيمة المضافة المستحقة للسداد للهيئة (1 - 2)</td>
                     <td className="p-3 text-left">{(stats.totalInvoicesAmount - stats.totalExpenses).toLocaleString()}</td>
                     <td className="p-3 text-left">15%</td>
-                    <td className="p-3 text-left text-sm text-emerald-600">{((stats.totalInvoicesAmount - stats.totalExpenses) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ⃁</td>
+                    <td className="p-3 text-left text-sm text-[#141414]">{((stats.totalInvoicesAmount - stats.totalExpenses) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ⃁</td>
                   </tr>
                 </tbody>
               </table>
@@ -2607,12 +2607,12 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Users className="w-5 h-5 text-emerald-600" />
+              <Users className="w-5 h-5 text-[#141414]" />
               <span>دليل العملاء والجهات الحكومية المتعاقدة</span>
             </h3>
             <button
               onClick={() => setShowAddClientModal(true)}
-              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>إضافة عميل جديد</span>
@@ -2624,7 +2624,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               <div 
                 key={client.id} 
                 onClick={() => setSelectedClientProfile(client)}
-                className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:border-emerald-500/50 cursor-pointer transition-all hover:scale-[1.01]"
+                className="p-5 rounded-2xl bg-card border border-border shadow-sm space-y-3 hover:border-[#141414] cursor-pointer transition-all hover:scale-[1.01]"
               >
                 <div className="flex items-start justify-between">
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
@@ -2655,7 +2655,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="card-pricing flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
             <div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <UserCheck className="w-4 h-4" />
                 </div>
                 <h3 className="text-base font-extrabold text-foreground">
@@ -2673,7 +2673,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="بحث في الطاقم..."
                   value={staffSearch}
                   onChange={e => setStaffSearch(e.target.value)}
-                  className="pl-3 pr-9 py-2 text-xs rounded-full bg-secondary/50 border border-border/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 w-48 sm:w-60"
+                  className="pl-3 pr-9 py-2 text-xs rounded-full bg-secondary/50 border border-border/60 focus:outline-none focus:ring-2 focus:ring-[#141414]/20 w-48 sm:w-60"
                 />
               </div>
 
@@ -2690,7 +2690,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   setFormData({});
                   setShowAddStaffModal(true);
                 }}
-                className="button-primary-pill !py-2 !px-4 !text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+                className="button-primary-pill !py-2 !px-4 !text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>عضو جديد</span>
@@ -2730,13 +2730,13 @@ export const KasEtimadCloudPage: React.FC = () => {
                           <span>{st.name}</span>
                         </td>
                         <td className="p-3.5 font-mono text-muted-foreground">
-                          <a href={`mailto:${st.email}`} className="hover:text-emerald-600 transition-colors">
+                          <a href={`mailto:${st.email}`} className="hover:text-[#141414] transition-colors">
                             {st.email}
                           </a>
                         </td>
                         <td className="p-3.5 font-mono text-muted-foreground">
                           {st.phone ? (
-                            <a href={`tel:${st.phone}`} className="hover:text-emerald-600 transition-colors">
+                            <a href={`tel:${st.phone}`} className="hover:text-[#141414] transition-colors">
                               {st.phone}
                             </a>
                           ) : (
@@ -2767,7 +2767,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                 });
                                 setShowAddStaffModal(true);
                               }}
-                              className="w-7 h-7 rounded-full bg-secondary hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-[#eaeaea] text-muted-foreground hover:text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
                               title="تعديل بيانات العضو"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
@@ -2784,7 +2784,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                   });
                                 }
                               }}
-                              className="w-7 h-7 rounded-full bg-secondary hover:bg-rose-500/15 text-muted-foreground hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-[#eaeaea] text-muted-foreground hover:text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
                               title="حذف العضو"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -2810,7 +2810,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="card-pricing flex flex-col md:flex-row md:items-center justify-between gap-4 p-5">
             <div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <Settings className="w-4 h-4" />
                 </div>
                 <h3 className="text-base font-extrabold text-foreground">
@@ -2828,7 +2828,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="بحث في التصنيفات أو الكود..."
                   value={categorySearch}
                   onChange={e => setCategorySearch(e.target.value)}
-                  className="pl-3 pr-9 py-2 text-xs rounded-full bg-secondary/50 border border-border/60 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 w-48 sm:w-60"
+                  className="pl-3 pr-9 py-2 text-xs rounded-full bg-secondary/50 border border-border/60 focus:outline-none focus:ring-2 focus:ring-[#141414]/20 w-48 sm:w-60"
                 />
               </div>
 
@@ -2845,7 +2845,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   setFormData({});
                   setShowAddCategoryModal(true);
                 }}
-                className="button-primary-pill !py-2 !px-4 !text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 cursor-pointer"
+                className="button-primary-pill !py-2 !px-4 !text-xs font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>تصنيف جديد</span>
@@ -2881,7 +2881,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                         <td className="p-3.5 text-center font-mono text-muted-foreground">{idx + 1}</td>
                         <td className="p-3.5 font-bold text-foreground">
                           <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span className="w-2 h-2 rounded-full bg-[#141414]"></span>
                             <span>{cat.name}</span>
                           </div>
                         </td>
@@ -2903,7 +2903,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                   type: 'success'
                                 });
                               }}
-                              className="w-7 h-7 rounded-full bg-secondary hover:bg-sky-500/15 text-muted-foreground hover:text-sky-600 flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-[#eaeaea] text-muted-foreground hover:text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
                               title="نسخ الكود"
                             >
                               <Copy className="w-3.5 h-3.5" />
@@ -2918,7 +2918,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                 });
                                 setShowAddCategoryModal(true);
                               }}
-                              className="w-7 h-7 rounded-full bg-secondary hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-[#eaeaea] text-muted-foreground hover:text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
                               title="تعديل التصنيف"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
@@ -2935,7 +2935,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                   });
                                 }
                               }}
-                              className="w-7 h-7 rounded-full bg-secondary hover:bg-rose-500/15 text-muted-foreground hover:text-rose-600 flex items-center justify-center transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-full bg-secondary hover:bg-[#eaeaea] text-muted-foreground hover:text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
                               title="حذف التصنيف"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -2959,54 +2959,54 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-6">
           {/* Top KPI Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي العروض التجارية</span>
                 <span className="text-2xl font-bold font-mono text-foreground block mt-1">{proposals.length}</span>
                 <span className="text-[10px] text-muted-foreground">عرض مسجل بالنظام</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <Send className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">عروض مقبولة ومعتمدة</span>
-                <span className="text-2xl font-bold font-mono text-emerald-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {proposals.filter(p => p.status === 'مقبول').length}
                 </span>
-                <span className="text-[10px] text-emerald-600 font-medium">
+                <span className="text-[10px] text-[#141414] font-medium">
                   {proposals.length ? Math.round((proposals.filter(p => p.status === 'مقبول').length / proposals.length) * 100) : 0}% نسبة القبول
                 </span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي القيمة التقديرية</span>
-                <span className="text-xl font-bold font-mono text-sky-600 block mt-1 truncate">
+                <span className="text-xl font-bold font-mono text-[#141414] block mt-1 truncate">
                   {proposals.reduce((sum, p) => sum + (p.totalAmount || 0), 0).toLocaleString()} ⃁
                 </span>
                 <span className="text-[10px] text-muted-foreground">قيمة العروض الجارية</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <DollarSign className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">عروض قيد الانتظار</span>
-                <span className="text-2xl font-bold font-mono text-amber-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {proposals.filter(p => p.status === 'مرسل' || p.status === 'مسودة').length}
                 </span>
-                <span className="text-[10px] text-amber-600 font-medium">بانتظار موافقة العميل</span>
+                <span className="text-[10px] text-[#141414] font-medium">بانتظار موافقة العميل</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <Clock className="w-6 h-6" />
               </div>
             </div>
@@ -3021,7 +3021,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   onClick={() => setStatusFilter(st)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     statusFilter === st
-                      ? 'bg-amber-600 text-white shadow-xs'
+                      ? 'bg-[#141414] text-white shadow-xs'
                       : 'bg-secondary text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -3040,7 +3040,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   setItemLines([{ description: 'بند توريد/خدمات كاس', qty: 1, rate: 1000, taxPct: 15, total: 1150 }]);
                   setShowAddProposalModal(true);
                 }}
-                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-amber-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>إنشاء عرض تجاري جديد</span>
@@ -3086,7 +3086,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       .filter(p => statusFilter === 'all' || p.status === statusFilter)
                       .map((p) => (
                         <tr key={p.id} className="hover:bg-secondary/30 transition-colors">
-                          <td className="px-4 py-3 font-mono font-bold text-amber-600 dark:text-amber-400">
+                          <td className="px-4 py-3 font-mono font-bold text-[#141414]">
                             {p.proposalNumber}
                           </td>
                           <td className="px-4 py-3 font-semibold text-foreground max-w-[240px] truncate">
@@ -3097,7 +3097,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                               {p.toClient}
                             </span>
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                          <td className="px-4 py-3 font-mono font-bold text-[#141414]">
                             {p.totalAmount.toLocaleString()} ⃁
                           </td>
                           <td className="px-4 py-3 font-mono text-muted-foreground">
@@ -3108,7 +3108,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                           </td>
                           <td className="px-4 py-3 text-muted-foreground">
                             {p.project ? (
-                              <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 text-[10px] font-medium">
+                              <span className="px-2 py-0.5 rounded-md bg-[#f3f3f3] text-[#141414] text-[10px] font-medium">
                                 {p.project}
                               </span>
                             ) : (
@@ -3126,7 +3126,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                   setDetailType('estimate');
                                   setShowDetailModal(true);
                                 }}
-                                className="p-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 transition-colors cursor-pointer"
+                                className="p-1.5 rounded-lg bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] transition-colors cursor-pointer"
                                 title="عرض وتفاصيل العرض"
                               >
                                 <Eye className="w-3.5 h-3.5" />
@@ -3137,7 +3137,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                   setReloadKey(k => k + 1);
                                   addNotification({ title: 'تم الحذف', message: 'تم حذف العرض التجاري بنجاح.', type: 'info' });
                                 }}
-                                className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                                className="p-1.5 rounded-lg bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] transition-colors cursor-pointer"
                                 title="حذف العرض"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -3161,52 +3161,52 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-6">
           {/* Top KPI Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-orange-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي إشعارات الائتمان</span>
                 <span className="text-2xl font-bold font-mono text-foreground block mt-1">{creditNotes.length}</span>
                 <span className="text-[10px] text-muted-foreground">إشعار قيد مالي</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <ArrowDownRight className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">المبالغ الدائنة المتبقية</span>
-                <span className="text-xl font-bold font-mono text-amber-600 block mt-1 truncate">
+                <span className="text-xl font-bold font-mono text-[#141414] block mt-1 truncate">
                   {creditNotes.reduce((sum, cn) => sum + (cn.remainingAmount || 0), 0).toLocaleString()} ⃁
                 </span>
-                <span className="text-[10px] text-amber-600 font-medium">رصيد دائن للعملاء</span>
+                <span className="text-[10px] text-[#141414] font-medium">رصيد دائن للعملاء</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <CreditCard className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي المبالغ المقيدة</span>
-                <span className="text-xl font-bold font-mono text-emerald-600 block mt-1 truncate">
+                <span className="text-xl font-bold font-mono text-[#141414] block mt-1 truncate">
                   {creditNotes.reduce((sum, cn) => sum + (cn.totalAmount || 0), 0).toLocaleString()} ⃁
                 </span>
                 <span className="text-[10px] text-muted-foreground">إجمالي قيود الخصم</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <DollarSign className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-blue-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إشعارات سارية</span>
-                <span className="text-2xl font-bold font-mono text-blue-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {creditNotes.filter(cn => cn.status === 'مفتوح' || cn.status === 'مسودة').length}
                 </span>
-                <span className="text-[10px] text-blue-600 font-medium">جاهزة للتسوية</span>
+                <span className="text-[10px] text-[#141414] font-medium">جاهزة للتسوية</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
             </div>
@@ -3215,7 +3215,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           {/* Action Toolbar */}
           <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <ArrowDownRight className="w-4 h-4 text-orange-600" />
+              <ArrowDownRight className="w-4 h-4 text-[#141414]" />
               <span>جدول إشعارات الائتمان المقيدة</span>
               <span className="text-xs text-muted-foreground font-mono">({creditNotes.length})</span>
             </h3>
@@ -3225,7 +3225,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 setFormData({});
                 setShowAddCreditNoteModal(true);
               }}
-              className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-orange-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>إصدار إشعار ائتمان جديد</span>
@@ -3260,7 +3260,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   ) : (
                     creditNotes.map((cn) => (
                       <tr key={cn.id} className="hover:bg-secondary/30 transition-colors">
-                        <td className="px-4 py-3 font-mono font-bold text-orange-600 dark:text-orange-400">
+                        <td className="px-4 py-3 font-mono font-bold text-[#141414]">
                           {cn.creditNoteNumber}
                         </td>
                         <td className="px-4 py-3 font-semibold text-foreground">
@@ -3269,7 +3269,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                         <td className="px-4 py-3 font-mono text-muted-foreground">
                           {cn.date}
                         </td>
-                        <td className="px-4 py-3 font-mono text-sky-600 dark:text-sky-400 font-bold">
+                        <td className="px-4 py-3 font-mono text-[#141414] font-bold">
                           {cn.invoiceRef || '—'}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground">
@@ -3281,7 +3281,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                             '—'
                           )}
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold text-amber-600 dark:text-amber-400">
+                        <td className="px-4 py-3 font-mono font-bold text-[#141414]">
                           {cn.remainingAmount.toLocaleString()} ⃁
                         </td>
                         <td className="px-4 py-3 font-mono font-bold text-foreground">
@@ -3297,7 +3297,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                               setReloadKey(k => k + 1);
                               addNotification({ title: 'تم الحذف', message: 'تم حذف إشعار الائتمان بنجاح.', type: 'info' });
                             }}
-                            className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] transition-colors cursor-pointer"
                             title="حذف الإشعار"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -3320,54 +3320,54 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-6">
           {/* Top KPI Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-teal-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">الاشتراكات النشطة</span>
-                <span className="text-2xl font-bold font-mono text-teal-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {subscriptions.filter(s => s.status === 'نشط').length}
                 </span>
                 <span className="text-[10px] text-muted-foreground">من أصل {subscriptions.length} اشتراك</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <RefreshCw className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">الإيراد المتكرر (MRR)</span>
-                <span className="text-xl font-bold font-mono text-emerald-600 block mt-1 truncate">
+                <span className="text-xl font-bold font-mono text-[#141414] block mt-1 truncate">
                   {subscriptions.filter(s => s.status === 'نشط').reduce((sum, s) => sum + s.amount, 0).toLocaleString()} ⃁
                 </span>
-                <span className="text-[10px] text-emerald-600 font-medium">فوترة دورية شهرية</span>
+                <span className="text-[10px] text-[#141414] font-medium">فوترة دورية شهرية</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <TrendingUp className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">الإيراد السنوي التقديري (ARR)</span>
-                <span className="text-xl font-bold font-mono text-sky-600 block mt-1 truncate">
+                <span className="text-xl font-bold font-mono text-[#141414] block mt-1 truncate">
                   {(subscriptions.filter(s => s.status === 'نشط').reduce((sum, s) => sum + s.amount, 0) * 12).toLocaleString()} ⃁
                 </span>
                 <span className="text-[10px] text-muted-foreground">توقع التدفقات السنوية</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <DollarSign className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">اشتراكات متوقفة</span>
-                <span className="text-2xl font-bold font-mono text-amber-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {subscriptions.filter(s => s.status === 'متوقف').length}
                 </span>
-                <span className="text-[10px] text-amber-600 font-medium">تحتاج إلى تجديد</span>
+                <span className="text-[10px] text-[#141414] font-medium">تحتاج إلى تجديد</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <Clock className="w-6 h-6" />
               </div>
             </div>
@@ -3376,7 +3376,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           {/* Action Toolbar */}
           <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <RefreshCw className="w-4 h-4 text-teal-600" />
+              <RefreshCw className="w-4 h-4 text-[#141414]" />
               <span>بطاقات الاشتراكات وعقود الصيانة الدورية</span>
               <span className="text-xs text-muted-foreground font-mono">({subscriptions.length})</span>
             </h3>
@@ -3386,7 +3386,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 setFormData({});
                 setShowAddSubscriptionModal(true);
               }}
-              className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-teal-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>تسجيل اشتراك دوري جديد</span>
@@ -3403,7 +3403,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-400 font-bold text-[10px] border border-teal-500/20">
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-bold text-[10px] border border-[#e0e0e0]">
                         {sub.billingInterval}
                       </span>
                       <h4 className="text-base font-bold text-foreground mt-2 leading-snug">
@@ -3417,8 +3417,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <span
                       className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
                         sub.status === 'نشط'
-                          ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
-                          : 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                          : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                       }`}
                     >
                       {sub.status === 'نشط' ? '● ساري ونشط' : '○ متوقف'}
@@ -3450,7 +3450,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
                     <div className="p-2.5 rounded-2xl bg-secondary/50 border border-border/40">
                       <span className="text-[11px] text-muted-foreground block">الفوترة القادمة</span>
-                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold block mt-0.5 text-[11px]">
+                      <span className="font-mono text-[#141414] font-bold block mt-0.5 text-[11px]">
                         {sub.nextBillingDate}
                       </span>
                     </div>
@@ -3472,8 +3472,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                     }}
                     className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       sub.status === 'نشط'
-                        ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
-                        : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
+                        ? 'bg-[#f3f3f3] text-[#141414] hover:bg-[#eaeaea]'
+                        : 'bg-[#f3f3f3] text-[#141414] hover:bg-[#eaeaea]'
                     }`}
                   >
                     {sub.status === 'نشط' ? 'إيقاف الاشتراك مؤقتاً' : 'تفعيل الاشتراك الآن'}
@@ -3485,7 +3485,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       setReloadKey(k => k + 1);
                       addNotification({ title: 'تم الحذف', message: 'تم حذف الاشتراك بنجاح.', type: 'info' });
                     }}
-                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] transition-colors cursor-pointer"
                     title="حذف الاشتراك"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -3504,54 +3504,54 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-6">
           {/* Top KPI Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">إجمالي الطلبات</span>
                 <span className="text-2xl font-bold font-mono text-foreground block mt-1">{estimateRequests.length}</span>
                 <span className="text-[10px] text-muted-foreground">طلب تسعير مستلم</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <FilePlus className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-emerald-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">طلبات جديدة</span>
-                <span className="text-2xl font-bold font-mono text-emerald-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {estimateRequests.filter(r => r.status === 'جديد').length}
                 </span>
-                <span className="text-[10px] text-emerald-600 font-medium">بانتظار دراسة التسعير</span>
+                <span className="text-[10px] text-[#141414] font-medium">بانتظار دراسة التسعير</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <Clock className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-sky-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">تم تحويلها لعروض أسعار</span>
-                <span className="text-2xl font-bold font-mono text-sky-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {estimateRequests.filter(r => r.status === 'تم التحويل لعرض سعر').length}
                 </span>
                 <span className="text-[10px] text-muted-foreground">عروض أسعار معتمدة</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-amber-500/40 transition-all flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-card border border-border shadow-xs hover:border-[#141414] transition-all flex items-center justify-between">
               <div>
                 <span className="text-xs text-muted-foreground block font-medium">نسبة إنجاز التسعير</span>
-                <span className="text-2xl font-bold font-mono text-amber-600 block mt-1">
+                <span className="text-2xl font-bold font-mono text-[#141414] block mt-1">
                   {estimateRequests.length
                     ? Math.round((estimateRequests.filter(r => r.status === 'تم التحويل لعرض سعر').length / estimateRequests.length) * 100)
                     : 100}%
                 </span>
                 <span className="text-[10px] text-muted-foreground">معدل الاستجابة</span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+              <div className="w-12 h-12 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                 <Award className="w-6 h-6" />
               </div>
             </div>
@@ -3560,7 +3560,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           {/* Action Toolbar */}
           <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <FilePlus className="w-4 h-4 text-amber-600" />
+              <FilePlus className="w-4 h-4 text-[#141414]" />
               <span>سجل طلبات عروض الأسعار والمواصفات المستلمة</span>
               <span className="text-xs text-muted-foreground font-mono">({estimateRequests.length})</span>
             </h3>
@@ -3570,7 +3570,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 setFormData({});
                 setShowAddEstimateRequestModal(true);
               }}
-              className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-amber-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>تسجيل طلب عرض سعر جديد</span>
@@ -3602,7 +3602,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   ) : (
                     estimateRequests.map((req) => (
                       <tr key={req.id} className="hover:bg-secondary/30 transition-colors">
-                        <td className="px-4 py-3 font-mono font-bold text-amber-600 dark:text-amber-400">
+                        <td className="px-4 py-3 font-mono font-bold text-[#141414]">
                           {req.requestNumber}
                         </td>
                         <td className="px-4 py-3 font-semibold text-foreground">
@@ -3630,7 +3630,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                     type: 'success'
                                   });
                                 }}
-                                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                                className="px-3 py-1.5 rounded-xl bg-[#f3f3f3] text-[#141414] hover:bg-[#eaeaea] text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
                               >
                                 <Sparkles className="w-3.5 h-3.5" />
                                 <span>تحويل لعرض سعر</span>
@@ -3643,7 +3643,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                                 setReloadKey(k => k + 1);
                                 addNotification({ title: 'تم الحذف', message: 'تم حذف الطلب بنجاح.', type: 'info' });
                               }}
-                              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] transition-colors cursor-pointer"
                               title="حذف الطلب"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -3668,7 +3668,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           {/* Action Toolbar */}
           <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Mail className="w-4 h-4 text-pink-600" />
+              <Mail className="w-4 h-4 text-[#141414]" />
               <span>قوالب الرسائل والبريد الإلكتروني المعتمدة</span>
               <span className="text-xs text-muted-foreground font-mono">({emailTemplates.length} قالب)</span>
             </h3>
@@ -3678,7 +3678,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 setFormData({});
                 setShowAddTemplateModal(true);
               }}
-              className="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-pink-600/20 transition-all hover:scale-[1.02] cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>إنشاء قالب بريد جديد</span>
@@ -3695,7 +3695,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-pink-500/10 text-pink-600 border border-pink-500/20">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                         {tmpl.category}
                       </span>
                       <h4 className="text-base font-bold text-foreground mt-2">
@@ -3712,7 +3712,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                         setReloadKey(k => k + 1);
                         addNotification({ title: 'تم الحذف', message: 'تم حذف القالب بنجاح.', type: 'info' });
                       }}
-                      className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] transition-colors cursor-pointer"
                       title="حذف القالب"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -3765,7 +3765,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             {/* 1. VAT Calculator */}
             <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                   <Calculator className="w-5 h-5" />
                 </div>
                 <div>
@@ -3787,24 +3787,24 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
 
                 {formData.vatAmount && parseFloat(formData.vatAmount) > 0 && (
-                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2.5">
+                  <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2.5">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">المبلغ الأساسي:</span>
                       <span className="font-bold font-mono">{parseFloat(formData.vatAmount).toLocaleString()} ⃁</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">ضريبة 15%:</span>
-                      <span className="font-bold font-mono text-emerald-600">
+                      <span className="font-bold font-mono text-[#141414]">
                         {(parseFloat(formData.vatAmount) * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ⃁
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm border-t border-emerald-500/20 pt-2 font-bold">
-                      <span className="text-emerald-700 dark:text-emerald-400">الإجمالي النهائي:</span>
-                      <span className="font-mono text-emerald-700 dark:text-emerald-400">
+                    <div className="flex justify-between text-sm border-t border-[#e0e0e0] pt-2 font-bold">
+                      <span className="text-[#141414]">الإجمالي النهائي:</span>
+                      <span className="font-mono text-[#141414]">
                         {(parseFloat(formData.vatAmount) * 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ⃁
                       </span>
                     </div>
-                    <div className="text-[10px] text-muted-foreground pt-1 border-t border-emerald-500/10 leading-relaxed">
+                    <div className="text-[10px] text-muted-foreground pt-1 border-t border-[#e0e0e0] leading-relaxed">
                       فقط {tafqeet(Math.round(parseFloat(formData.vatAmount) * 1.15))} لا غير
                     </div>
                   </div>
@@ -3815,7 +3815,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             {/* 2. Reverse VAT Calculator */}
             <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-600">
+                <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                   <ArrowRightLeft className="w-5 h-5" />
                 </div>
                 <div>
@@ -3837,7 +3837,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
 
                 {formData.reverseVat && parseFloat(formData.reverseVat) > 0 && (
-                  <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/30 space-y-2.5">
+                  <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2.5">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">أصل المبلغ (قبل الضريبة):</span>
                       <span className="font-bold font-mono">
@@ -3846,13 +3846,13 @@ export const KasEtimadCloudPage: React.FC = () => {
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">قيمة الضريبة المقتطعة:</span>
-                      <span className="font-bold font-mono text-sky-600">
+                      <span className="font-bold font-mono text-[#141414]">
                         {(parseFloat(formData.reverseVat) - parseFloat(formData.reverseVat) / 1.15).toLocaleString(undefined, { minimumFractionDigits: 2 })} ⃁
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm border-t border-sky-500/20 pt-2 font-bold">
-                      <span className="text-sky-700 dark:text-sky-400">الإجمالي المدخل:</span>
-                      <span className="font-mono text-sky-700 dark:text-sky-400">
+                    <div className="flex justify-between text-sm border-t border-[#e0e0e0] pt-2 font-bold">
+                      <span className="text-[#141414]">الإجمالي المدخل:</span>
+                      <span className="font-mono text-[#141414]">
                         {parseFloat(formData.reverseVat).toLocaleString(undefined, { minimumFractionDigits: 2 })} ⃁
                       </span>
                     </div>
@@ -3864,7 +3864,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             {/* 3. Fast Tafqeet Tool */}
             <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
+                <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -3886,7 +3886,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
 
                 {formData.tafqeetNumber && parseFloat(formData.tafqeetNumber) > 0 && (
-                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
                     <span className="text-[11px] text-muted-foreground block font-medium">الصيغة النصية المعتمدة:</span>
                     <p className="text-xs font-bold text-foreground leading-relaxed">
                       فقط {tafqeet(parseFloat(formData.tafqeetNumber))} لا غير.
@@ -3896,7 +3896,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                         navigator.clipboard?.writeText(`فقط ${tafqeet(parseFloat(formData.tafqeetNumber))} لا غير.`);
                         addNotification({ title: 'تم النسخ', message: 'تم نسخ النص المفقّط.', type: 'success' });
                       }}
-                      className="px-3 py-1 rounded-lg bg-amber-600 text-white font-bold text-[10px] flex items-center gap-1 mt-2 cursor-pointer"
+                      className="px-3 py-1 rounded-lg bg-[#141414] text-white font-bold text-[10px] flex items-center gap-1 mt-2 cursor-pointer"
                     >
                       <Copy className="w-3 h-3" />
                       <span>نسخ النص</span>
@@ -3942,7 +3942,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-slate-500 block">الحالة:</span>
-                <span className="font-bold text-emerald-700">{selectedDetail.status}</span>
+                <span className="font-bold text-[#141414]">{selectedDetail.status}</span>
               </div>
             </div>
 
@@ -3972,7 +3972,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <span>المبلغ الخاضع للضريبة:</span>
                 <span className="font-bold">{(selectedDetail.amount || selectedDetail.totalItemsValue || selectedDetail.totalAmount || 0).toLocaleString()} ⃁</span>
               </div>
-              <div className="flex justify-between font-mono text-emerald-700 font-bold">
+              <div className="flex justify-between font-mono text-[#141414] font-bold">
                 <span>ضريبة القيمة المضافة (15%):</span>
                 <span>{(selectedDetail.taxAmount || ((selectedDetail.amount || selectedDetail.totalItemsValue || 0) * 0.15)).toLocaleString()} ⃁</span>
               </div>
@@ -3994,7 +3994,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               </button>
               <button
                 onClick={() => window.print()}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5"
+                className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl text-xs font-bold flex items-center gap-1.5"
               >
                 <Printer className="w-4 h-4" />
                 <span>طباعة المستند الرسمي</span>
@@ -4012,7 +4012,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-emerald-600" />
+                <DollarSign className="w-5 h-5 text-[#141414]" />
                 <span>إنشاء فاتورة ضريبية ذكية ZATCA المرحلة الثانية</span>
               </h3>
               <button onClick={() => setShowAddInvoiceModal(false)} className="p-1 rounded-lg text-muted-foreground hover:bg-secondary">
@@ -4074,7 +4074,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setItemLines([...itemLines, { description: 'بند جديد', qty: 1, rate: 500, taxPct: 15, total: 575 }])}
-                  className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg font-bold flex items-center gap-1"
+                  className="px-2.5 py-1 bg-[#141414] text-white rounded-lg font-bold flex items-center gap-1"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>+ بند إضافي</span>
@@ -4138,7 +4138,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setItemLines(itemLines.filter((_, i) => i !== idx))}
-                            className="text-rose-600 font-bold"
+                            className="text-[#141414] font-bold"
                           >
                             ×
                           </button>
@@ -4155,7 +4155,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   <span>المبلغ قبل الضريبة:</span>
                   <span className="font-bold">{itemLines.reduce((s, it) => s + (it.qty * it.rate), 0).toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex justify-between font-mono text-emerald-600">
+                <div className="flex justify-between font-mono text-[#141414]">
                   <span>ضريبة القيمة المضافة (15%):</span>
                   <span className="font-bold">{(itemLines.reduce((s, it) => s + (it.qty * it.rate), 0) * 0.15).toLocaleString()} ⃁</span>
                 </div>
@@ -4171,7 +4171,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
             <div className="flex justify-end gap-2 pt-3 border-t border-border">
               <button onClick={() => setShowAddInvoiceModal(false)} className="px-4 py-2 rounded-xl bg-secondary text-muted-foreground text-xs">إلغاء</button>
-              <button onClick={handleSaveInvoice} className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">حفظ وإصدار الفاتورة</button>
+              <button onClick={handleSaveInvoice} className="px-5 py-2 rounded-xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs">حفظ وإصدار الفاتورة</button>
             </div>
           </div>
         </div>
@@ -4211,7 +4211,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddEstimateModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
-              <button onClick={handleSaveEstimate} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ عرض السعر</button>
+              <button onClick={handleSaveEstimate} className="px-5 py-2 bg-[#141414] text-white rounded-xl font-bold text-xs">حفظ عرض السعر</button>
             </div>
           </div>
         </div>
@@ -4264,7 +4264,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddPaymentModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
-              <button onClick={handleSavePayment} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ السند</button>
+              <button onClick={handleSavePayment} className="px-5 py-2 bg-[#141414] text-white rounded-xl font-bold text-xs">حفظ السند</button>
             </div>
           </div>
         </div>
@@ -4317,7 +4317,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddItemModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
-              <button onClick={handleSaveItem} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ الصنف</button>
+              <button onClick={handleSaveItem} className="px-5 py-2 bg-[#141414] text-white rounded-xl font-bold text-xs">حفظ الصنف</button>
             </div>
           </div>
         </div>
@@ -4367,7 +4367,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddClientModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs">إلغاء</button>
-              <button onClick={handleSaveClient} className="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs">حفظ العميل</button>
+              <button onClick={handleSaveClient} className="px-5 py-2 bg-[#141414] text-white rounded-xl font-bold text-xs">حفظ العميل</button>
             </div>
           </div>
         </div>
@@ -4381,7 +4381,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="card-pricing max-w-lg w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <Tag className="w-4 h-4" />
                 </div>
                 <h3 className="text-base font-extrabold text-foreground">
@@ -4407,7 +4407,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="المقاولات، التجارة، المعارض..."
                   value={formData.catName || ''}
                   onChange={e => setFormData({ ...formData, catName: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-semibold"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs font-semibold"
                 />
               </div>
 
@@ -4418,7 +4418,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="01, 02, 9987..."
                   value={formData.catCode || ''}
                   onChange={e => setFormData({ ...formData, catCode: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-mono font-bold"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs font-mono font-bold"
                 />
               </div>
 
@@ -4429,7 +4429,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="شرح نطاق الأعمال والأنشطة التابعة لهذا التصنيف..."
                   value={formData.catDesc || ''}
                   onChange={e => setFormData({ ...formData, catDesc: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs"
                 />
               </div>
             </div>
@@ -4446,7 +4446,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               </button>
               <button
                 onClick={handleSaveCategory}
-                className="button-primary-pill !py-2 !px-5 !text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer"
+                className="button-primary-pill !py-2 !px-5 !text-xs font-bold shadow-md cursor-pointer"
               >
                 {editingCategory ? 'حفظ التعديلات' : 'إضافة التصنيف الآن'}
               </button>
@@ -4463,7 +4463,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="card-pricing max-w-lg w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <UserCheck className="w-4 h-4" />
                 </div>
                 <h3 className="text-base font-extrabold text-foreground">
@@ -4489,7 +4489,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="الاسم الثلاثي أو الثنائي..."
                   value={formData.staffName || ''}
                   onChange={e => setFormData({ ...formData, staffName: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-semibold"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs font-semibold"
                 />
               </div>
 
@@ -4500,7 +4500,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="name@kas.com.sa"
                   value={formData.staffEmail || ''}
                   onChange={e => setFormData({ ...formData, staffEmail: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-mono"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs font-mono"
                 />
               </div>
 
@@ -4511,7 +4511,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   placeholder="05XXXXXXXX"
                   value={formData.staffPhone || ''}
                   onChange={e => setFormData({ ...formData, staffPhone: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-mono"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs font-mono"
                 />
               </div>
 
@@ -4520,7 +4520,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <select
                   value={formData.staffRole || 'Employee'}
                   onChange={e => setFormData({ ...formData, staffRole: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/40 text-xs font-semibold"
+                  className="w-full px-4 py-2.5 bg-secondary/50 border border-border/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#141414]/20 text-xs font-semibold"
                 >
                   <option value="Employee / موظف تشغيل">Employee / موظف تشغيل</option>
                   <option value="المنافسات / مسؤول دراسة العطاءات">المنافسات / مسؤول دراسة العطاءات</option>
@@ -4543,7 +4543,7 @@ export const KasEtimadCloudPage: React.FC = () => {
               </button>
               <button
                 onClick={handleSaveStaff}
-                className="button-primary-pill !py-2 !px-5 !text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer"
+                className="button-primary-pill !py-2 !px-5 !text-xs font-bold shadow-md cursor-pointer"
               >
                 {editingStaff ? 'حفظ التعديلات' : 'إضافة العضو للطاقم'}
               </button>
@@ -4564,7 +4564,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-bold text-foreground">{selectedClientProfile.company}</h3>
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414]">
                       عميل معتمد
                     </span>
                   </div>
@@ -4591,19 +4591,19 @@ export const KasEtimadCloudPage: React.FC = () => {
               </div>
               <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
                 <span className="text-[11px] text-muted-foreground block">المسدد</span>
-                <span className="text-base font-bold font-mono text-emerald-600 mt-0.5 block">
+                <span className="text-base font-bold font-mono text-[#141414] mt-0.5 block">
                   {invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + (i.paidAmount || 0), 0).toLocaleString()} ⃁
                 </span>
               </div>
               <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
                 <span className="text-[11px] text-muted-foreground block">المتبقي</span>
-                <span className="text-base font-bold font-mono text-rose-500 mt-0.5 block">
+                <span className="text-base font-bold font-mono text-[#141414] mt-0.5 block">
                   {(invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + i.amount, 0) - invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).reduce((s, i) => s + (i.paidAmount || 0), 0)).toLocaleString()} ⃁
                 </span>
               </div>
               <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border">
                 <span className="text-[11px] text-muted-foreground block">العقود النشطة</span>
-                <span className="text-base font-bold font-mono text-amber-600 mt-0.5 block">
+                <span className="text-base font-bold font-mono text-[#141414] mt-0.5 block">
                   {contracts.filter(c => c.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(c.clientName)).length} عقد
                 </span>
               </div>
@@ -4623,7 +4623,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   onClick={() => setClientProfileTab(tab.id as any)}
                   className={`px-4 py-2 border-b-2 transition-all ${
                     clientProfileTab === tab.id
-                      ? 'border-emerald-600 text-emerald-600'
+                      ? 'border-[#e0e0e0] text-[#141414]'
                       : 'border-transparent text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -4650,7 +4650,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   <h4 className="font-bold text-foreground text-sm">التصنيف والمجموعات</h4>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedClientProfile.groups.map((g, idx) => (
-                      <span key={idx} className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold text-[11px]">
+                      <span key={idx} className="px-2.5 py-1 rounded-full bg-[#f3f3f3] text-[#141414] font-semibold text-[11px]">
                         {g}
                       </span>
                     ))}
@@ -4676,8 +4676,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-border/40">
                     {invoices.filter(i => i.clientName.includes(selectedClientProfile.company) || selectedClientProfile.company.includes(i.clientName)).map(inv => (
-                      <tr key={inv.id} className="hover:bg-emerald-500/5">
-                        <td className="p-3 font-mono font-bold text-emerald-600">{inv.invoiceNumber}</td>
+                      <tr key={inv.id} className="hover:bg-[#eaeaea]">
+                        <td className="p-3 font-mono font-bold text-[#141414]">{inv.invoiceNumber}</td>
                         <td className="p-3 text-left font-mono font-bold">{inv.amount.toLocaleString()} ⃁</td>
                         <td className="p-3 font-mono text-muted-foreground">{inv.date}</td>
                         <td className="p-3 font-mono text-muted-foreground">{inv.dueDate}</td>
@@ -4697,7 +4697,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       <h5 className="font-bold text-foreground">{cnt.subject}</h5>
                       <div className="text-muted-foreground mt-0.5 font-mono">{cnt.startDate} إلى {cnt.endDate} • {cnt.contractType}</div>
                     </div>
-                    <div className="text-left font-mono font-bold text-emerald-600">
+                    <div className="text-left font-mono font-bold text-[#141414]">
                       {cnt.contractValue.toLocaleString()} ⃁
                     </div>
                   </div>
@@ -4711,10 +4711,10 @@ export const KasEtimadCloudPage: React.FC = () => {
                   <div key={proj.id} className="p-4 rounded-2xl bg-secondary/30 border border-border/60 space-y-2 text-xs">
                     <div className="flex justify-between font-bold">
                       <span>{proj.projectName}</span>
-                      <span className="font-mono text-emerald-600">{proj.progress}%</span>
+                      <span className="font-mono text-[#141414]">{proj.progress}%</span>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-1.5">
-                      <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${proj.progress}%` }} />
+                      <div className="bg-[#141414] h-1.5 rounded-full" style={{ width: `${proj.progress}%` }} />
                     </div>
                   </div>
                 ))}
@@ -4735,7 +4735,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     setFormData({ clientName: selectedClientProfile.company });
                     setShowAddInvoiceModal(true);
                   }}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl text-xs font-bold flex items-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>إنشاء فاتورة لهذا العميل</span>
@@ -4754,7 +4754,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-emerald-600" />
+                <Receipt className="w-5 h-5 text-[#141414]" />
                 <span>تسجيل دفعة سداد للفاتورة</span>
               </h3>
               <button onClick={() => setShowQuickPayModal(false)} className="p-1 text-muted-foreground"><X className="w-5 h-5" /></button>
@@ -4772,7 +4772,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">المبلغ المستحق:</span>
-                  <span className="font-mono font-bold text-rose-500">{(quickPayInvoice.amount - (quickPayInvoice.paidAmount || 0)).toLocaleString()} ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">{(quickPayInvoice.amount - (quickPayInvoice.paidAmount || 0)).toLocaleString()} ⃁</span>
                 </div>
               </div>
 
@@ -4845,7 +4845,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                   setShowQuickPayModal(false);
                   setReloadKey(k => k + 1);
                 }}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs"
+                className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl font-bold text-xs"
               >
                 تأكيد وقيد السداد
               </button>
@@ -4861,7 +4861,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Send className="w-5 h-5 text-amber-600" />
+                <Send className="w-5 h-5 text-[#141414]" />
                 <span>إنشاء عرض تجاري جديد (Proposal)</span>
               </h3>
               <button onClick={() => setShowAddProposalModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -4943,7 +4943,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddProposalModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveProposal} className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveProposal} className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl font-bold text-xs">
                 حفظ وإصدار العرض
               </button>
             </div>
@@ -4959,7 +4959,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <ArrowDownRight className="w-5 h-5 text-orange-600" />
+                <ArrowDownRight className="w-5 h-5 text-[#141414]" />
                 <span>إصدار إشعار ائتمان مالي جديد (Credit Note)</span>
               </h3>
               <button onClick={() => setShowAddCreditNoteModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -5009,7 +5009,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddCreditNoteModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveCreditNote} className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveCreditNote} className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl font-bold text-xs">
                 قيد إشعار الائتمان
               </button>
             </div>
@@ -5025,7 +5025,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <RefreshCw className="w-5 h-5 text-teal-600" />
+                <RefreshCw className="w-5 h-5 text-[#141414]" />
                 <span>تسجيل اشتراك دوري جديد</span>
               </h3>
               <button onClick={() => setShowAddSubscriptionModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -5101,7 +5101,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddSubscriptionModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveSubscription} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveSubscription} className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl font-bold text-xs">
                 حفظ وتفعيل الاشتراك
               </button>
             </div>
@@ -5117,7 +5117,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <FilePlus className="w-5 h-5 text-amber-600" />
+                <FilePlus className="w-5 h-5 text-[#141414]" />
                 <span>تسجيل طلب عرض سعر جديد</span>
               </h3>
               <button onClick={() => setShowAddEstimateRequestModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -5157,7 +5157,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddEstimateRequestModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveEstimateRequest} className="px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveEstimateRequest} className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl font-bold text-xs">
                 تسجيل الطلب
               </button>
             </div>
@@ -5173,7 +5173,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="bg-card border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                <Mail className="w-5 h-5 text-pink-600" />
+                <Mail className="w-5 h-5 text-[#141414]" />
                 <span>إنشاء قالب بريد إلكتروني جديد</span>
               </h3>
               <button onClick={() => setShowAddTemplateModal(false)} className="p-1 text-muted-foreground hover:bg-secondary rounded-lg">
@@ -5228,7 +5228,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2 pt-3 border-t">
               <button onClick={() => setShowAddTemplateModal(false)} className="px-4 py-2 bg-secondary rounded-xl text-xs font-bold">إلغاء</button>
-              <button onClick={handleSaveEmailTemplate} className="px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-xs">
+              <button onClick={handleSaveEmailTemplate} className="px-5 py-2 bg-[#141414] hover:bg-[#262626] text-white rounded-xl font-bold text-xs">
                 حفظ القالب
               </button>
             </div>

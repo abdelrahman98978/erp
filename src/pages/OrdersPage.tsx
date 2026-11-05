@@ -504,7 +504,7 @@ export const OrdersPage: React.FC = () => {
           </div>
 
           <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
             <input
               type="text"
               aria-label="ابحث برقم الطلب، العميل، العاملة"
@@ -533,13 +533,13 @@ export const OrdersPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-zinc-400">
+                  <td colSpan={8} className="py-10 text-center text-[#707070]">
                     جاري استرجاع الطلبات...
                   </td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-zinc-400">
+                  <td colSpan={8} className="py-10 text-center text-[#707070]">
                     لا توجد طلبات مسجلة مطابقة للبحث
                   </td>
                 </tr>
@@ -552,7 +552,7 @@ export const OrdersPage: React.FC = () => {
                         <CorporateAvatar name={ord.client_name} isClient size="sm" />
                         <div>
                           <div className="font-bold text-black">{ord.client_name}</div>
-                          <div className="text-zinc-500 font-mono">{ord.client_phone}</div>
+                          <div className="text-[#707070] font-mono">{ord.client_phone}</div>
                         </div>
                       </div>
                     </td>
@@ -561,7 +561,7 @@ export const OrdersPage: React.FC = () => {
                         <CorporateAvatar name={ord.maid_name} profession={ord.request_type || 'عاملة منزلية'} isCandidate size="sm" />
                         <div>
                           <div className="font-bold text-black">{ord.maid_name}</div>
-                          <div className="text-zinc-500">{ord.nationality}</div>
+                          <div className="text-[#707070]">{ord.nationality}</div>
                         </div>
                       </div>
                     </td>
@@ -571,7 +571,7 @@ export const OrdersPage: React.FC = () => {
                     </td>
                     <td className="p-3.5">
                       <span className="font-mono font-bold text-black flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-amber-600" />
+                        <Clock className="w-3 h-3 text-[#141414]" />
                         {ord.deadline}
                       </span>
                     </td>
@@ -594,7 +594,7 @@ export const OrdersPage: React.FC = () => {
                             <ArrowLeft className="w-3 h-3 mr-1" />
                           </button>
                         ) : (
-                          <span className="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                          <span className="text-xs text-[#141414] font-bold flex items-center justify-center gap-1">
                             <CheckCheck className="w-3.5 h-3.5" />
                             <span>موثق</span>
                           </span>
@@ -604,7 +604,7 @@ export const OrdersPage: React.FC = () => {
                           href={`https://wa.me/${ord.client_phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`السلام عليكم ورحمة الله، عميلنا العزيز ${ord.client_name} بخصوص طلب الاستقدام الخاص بكم #${ord.id}`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 rounded-full hover:bg-emerald-50 text-emerald-600 transition-colors"
+                          className="p-1.5 rounded-full hover:bg-[#eaeaea] text-[#141414] transition-colors"
                           title="مراسلة العميل عبر واتساب"
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
@@ -620,7 +620,7 @@ export const OrdersPage: React.FC = () => {
 
                         <button
                           onClick={() => handleDeleteOrder(ord)}
-                          className="p-1.5 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                          className="p-1.5 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                           title="حذف الطلب"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -639,14 +639,14 @@ export const OrdersPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل طلب استقدام جديد</span>
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -761,14 +761,14 @@ export const OrdersPage: React.FC = () => {
       {editingOrder && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Edit className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Edit className="w-4 h-4 text-[#141414]" />
                 <span>تعديل بيانات الطلب #{editingOrder.id}</span>
               </h3>
               <button
                 onClick={() => setEditingOrder(null)}
-                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>

@@ -190,7 +190,7 @@ export const LegalCompliancePage: React.FC = () => {
             className="button-outline-on-dark"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-champagne-light" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
             <span>تصدير السجل (Excel)</span>
           </button>
         </div>
@@ -265,7 +265,7 @@ export const LegalCompliancePage: React.FC = () => {
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3 flex-wrap">
               <div className="relative w-full md:w-80">
-                <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+                <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
                 <input
                   type="text"
                   aria-label="البحث باسم الموظف، الهوية، رقم التوثيق، أو القسم"
@@ -331,22 +331,22 @@ export const LegalCompliancePage: React.FC = () => {
                         />
                         <div>
                           <div className="font-bold text-black">{item.employee_name}</div>
-                          <div className="text-[11px] text-zinc-400 font-mono">هوية: {item.national_id} • @{item.username}</div>
+                          <div className="text-[11px] text-[#707070] font-mono">هوية: {item.national_id} • @{item.username}</div>
                         </div>
                       </div>
                     </td>
                     <td className="p-3.5">
                       <div className="font-bold text-zinc-800">{item.department}</div>
-                      <div className="text-[11px] text-zinc-400">{item.branch} • {item.job_title}</div>
+                      <div className="text-[11px] text-[#707070]">{item.branch} • {item.job_title}</div>
                     </td>
                     <td className="p-3.5 font-mono text-[11px] text-zinc-600">
                       <div>{item.signed_at}</div>
-                      <div className="text-zinc-400 text-[10px]">{item.signed_at_hijri || '1447 هـ'}</div>
+                      <div className="text-[#707070] text-[10px]">{item.signed_at_hijri || '1447 هـ'}</div>
                     </td>
-                    <td className="p-3.5 font-mono text-champagne-dark font-bold text-[11px]">{item.ip_address}</td>
+                    <td className="p-3.5 font-mono text-[#141414] font-bold text-[11px]">{item.ip_address}</td>
                     <td className="p-3.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-champagne-pale text-champagne-dark text-[11px] font-bold border border-champagne/30">
-                        <Fingerprint className="w-3 h-3 text-champagne-dark" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] text-[11px] font-bold border border-[#e0e0e0]">
+                        <Fingerprint className="w-3 h-3 text-[#141414]" />
                         <span>توقيع بيومتري إلكتروني</span>
                       </span>
                     </td>
@@ -359,7 +359,7 @@ export const LegalCompliancePage: React.FC = () => {
                           style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                           title="معاينة شهادة التعهد"
                         >
-                          <Eye className="w-3 h-3 ml-1 text-champagne-dark" />
+                          <Eye className="w-3 h-3 ml-1 text-[#141414]" />
                           <span>معاينة</span>
                         </button>
                         <button
@@ -373,7 +373,7 @@ export const LegalCompliancePage: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleRequireReSign(item)}
-                          className="p-1 rounded-lg border border-amber-200 text-amber-700 hover:bg-amber-50 transition-colors"
+                          className="p-1 rounded-lg border border-[#e0e0e0] text-[#141414] hover:bg-[#eaeaea] transition-colors"
                           title="إلزام بإعادة التوقيع"
                         >
                           <RefreshCw className="w-3.5 h-3.5" />
@@ -395,7 +395,7 @@ export const LegalCompliancePage: React.FC = () => {
             <div key={policy.departmentKey} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
                 <div className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-champagne-dark" />
+                  <Building2 className="w-5 h-5 text-[#141414]" />
                   <h3 className="text-sm font-bold text-black m-0">{policy.departmentName}</h3>
                 </div>
                 <span className="pill-tag-mint text-[10px]">ميثاق معتمد</span>
@@ -403,7 +403,7 @@ export const LegalCompliancePage: React.FC = () => {
 
               <div className="space-y-3">
                 <div>
-                  <span className="text-[11px] font-bold text-zinc-500 block mb-1.5">المرجعيات والأنظمة الحاكمة:</span>
+                  <span className="text-[11px] font-bold text-[#707070] block mb-1.5">المرجعيات والأنظمة الحاكمة:</span>
                   <div className="flex flex-wrap gap-1">
                     {policy.applicableLaws.map((law, lIdx) => (
                       <span key={lIdx} className="text-[10px] bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded font-medium border border-zinc-200">
@@ -419,7 +419,7 @@ export const LegalCompliancePage: React.FC = () => {
                     <div key={clause.id} className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs">
                       <div className="font-bold text-zinc-900 flex items-center justify-between">
                         <span>{cIdx + 1}. {clause.title}</span>
-                        <span className="text-[9px] text-zinc-500 font-mono">{clause.lawReference}</span>
+                        <span className="text-[9px] text-[#707070] font-mono">{clause.lawReference}</span>
                       </div>
                       <p className="text-zinc-600 text-[11px] mt-1 leading-relaxed">{clause.description}</p>
                     </div>
@@ -436,18 +436,18 @@ export const LegalCompliancePage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="border-b border-zinc-100 pb-4 mb-4">
             <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
-              <Scale className="w-5 h-5 text-champagne-dark" />
+              <Scale className="w-5 h-5 text-[#141414]" />
               <span>المرجعيات التشريعية والنظامية في المملكة العربية السعودية</span>
             </h3>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-[#707070] mt-1">
               الأنظمة والمراسيم الملكية التي تؤطر حجية المعاملات والتواقيع الإلكترونية ومسؤولية مستخدمي أنظمة الـ ERP
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl bg-champagne-pale border border-champagne/30 space-y-2">
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
               <h4 className="font-bold text-xs text-black flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-champagne-dark" />
+                <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>1. نظام التعاملات الإلكترونية (مرسوم ملكي م/18)</span>
               </h4>
               <p className="text-xs text-zinc-700 leading-relaxed">
@@ -455,32 +455,32 @@ export const LegalCompliancePage: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-2">
-              <h4 className="font-bold text-xs text-rose-950 flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4 text-rose-700" />
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
+              <h4 className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-[#141414]" />
                 <span>2. نظام مكافحة جرائم المعلوماتية (مرسوم ملكي م/17)</span>
               </h4>
-              <p className="text-xs text-rose-900 leading-relaxed">
+              <p className="text-xs text-[#141414] leading-relaxed">
                 يجرم النظام الدخول غير المشروع أو إفشاء البيانات والوثائق السرية أو تعديل أو مسح السجلات بدون تفويض رسمي، ويفرض عقوبات بالسجن والغرامة.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-2">
-              <h4 className="font-bold text-xs text-blue-950 flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-blue-700" />
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
+              <h4 className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
+                <Lock className="w-4 h-4 text-[#141414]" />
                 <span>3. نظام حماية البيانات الشخصية السعودي (PDPL)</span>
               </h4>
-              <p className="text-xs text-blue-900 leading-relaxed">
+              <p className="text-xs text-[#141414] leading-relaxed">
                 يُلزم كافة الموظفين بالمحافظة على خصوصية بيانات العملاء والعمالة المنزلية وعدم تداولها أو استخدامها لأي غرض خارج إطار العقد المعتمد.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-2">
-              <h4 className="font-bold text-xs text-amber-950 flex items-center gap-1.5">
-                <Fingerprint className="w-4 h-4 text-amber-700" />
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
+              <h4 className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
+                <Fingerprint className="w-4 h-4 text-[#141414]" />
                 <span>4. ضوابط الهيئة الوطنية للأمن السيبراني (NCA ECC)</span>
               </h4>
-              <p className="text-xs text-amber-900 leading-relaxed">
+              <p className="text-xs text-[#141414] leading-relaxed">
                 تفرض إلزامية التحقق الثنائي (2FA) ومراقبة وتوثيق سجلات الدخول وسجل النشاطات (Audit Trail) ومسؤولية الحسابات الإدارية.
               </p>
             </div>
@@ -492,12 +492,12 @@ export const LegalCompliancePage: React.FC = () => {
       {selectedUndertaking && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2200] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-300 overflow-hidden font-sans max-h-[90vh] flex flex-col">
-            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                <Scale className="w-4 h-4 text-champagne-light" />
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
+              <h3 className="font-bold text-sm text-[#141414] flex items-center gap-2">
+                <Scale className="w-4 h-4 text-[#141414]" />
                 <span>وثيقة الإقرار والتعهد وإبراء الذمة القانونية الرقمية المعتمدة</span>
               </h3>
-              <button onClick={() => setSelectedUndertaking(null)} className="p-1 text-zinc-400 hover:text-white">
+              <button onClick={() => setSelectedUndertaking(null)} className="p-1 text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -506,10 +506,10 @@ export const LegalCompliancePage: React.FC = () => {
             <div className="p-8 overflow-y-auto space-y-5 bg-white text-black border-4 border-double border-zinc-300 m-4 rounded-2xl">
               {/* Certificate Header */}
               <div className="text-center border-b-2 border-black pb-4">
-                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">المملكة العربية السعودية</div>
+                <div className="text-xs font-bold text-[#707070] uppercase tracking-widest">المملكة العربية السعودية</div>
                 <div className="text-lg font-bold text-black mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
-                <div className="text-sm font-bold text-champagne-dark mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية</div>
-                <div className="text-[11px] font-mono text-zinc-500 mt-1">
+                <div className="text-sm font-bold text-[#141414] mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية</div>
+                <div className="text-[11px] font-mono text-[#707070] mt-1">
                   رقم الاعتماد الرقمي: <span className="font-bold text-black">{selectedUndertaking.compliance_hash}</span>
                 </div>
               </div>
@@ -537,16 +537,16 @@ export const LegalCompliancePage: React.FC = () => {
               {/* Signature & Digital Timestamp Footer */}
               <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-zinc-300 text-xs items-end">
                 <div className="space-y-1">
-                  <div className="text-zinc-500 text-[11px]">بيانات التوثيق الرقمي:</div>
+                  <div className="text-[#707070] text-[11px]">بيانات التوثيق الرقمي:</div>
                   <div className="font-mono text-[10px] text-zinc-700">تاريخ التوقيع: {selectedUndertaking.signed_at}</div>
                   <div className="font-mono text-[10px] text-zinc-700">عنوان الـ IP: {selectedUndertaking.ip_address}</div>
-                  <div className="font-mono text-[9px] text-champagne-dark font-bold">الحالة: {selectedUndertaking.status}</div>
+                  <div className="font-mono text-[9px] text-[#141414] font-bold">الحالة: {selectedUndertaking.status}</div>
                 </div>
 
                 <div className="text-center space-y-2">
-                  <div className="text-zinc-500 text-[11px]">التوقيع الإلكتروني المعتمد:</div>
+                  <div className="text-[#707070] text-[11px]">التوقيع الإلكتروني المعتمد:</div>
                   <div className="border border-zinc-200 rounded-lg p-2 bg-zinc-50 inline-block min-w-[140px]">
-                    <Fingerprint className="w-8 h-8 text-champagne-dark mx-auto" />
+                    <Fingerprint className="w-8 h-8 text-[#141414] mx-auto" />
                     <span className="text-[10px] font-bold text-black block mt-1">توقيع رقمي موثق ومطابق</span>
                   </div>
                   <div className="text-[10px] font-bold text-black">{selectedUndertaking.employee_name}</div>

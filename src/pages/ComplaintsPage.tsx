@@ -348,7 +348,7 @@ export const ComplaintsPage: React.FC = () => {
             onClick={() => setShowAddDisputeModal(true)}
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <ShieldAlert className="w-4 h-4 ml-1 text-rose-600" />
+            <ShieldAlert className="w-4 h-4 ml-1 text-[#141414]" />
             <span>+ رفع شكوى للإدارة العليا</span>
           </button>
           <button
@@ -437,7 +437,7 @@ export const ComplaintsPage: React.FC = () => {
               <h3 className="text-sm font-bold text-black">
                 مطالبات التعويض المالي واسترجاع المبالغ للعملاء
               </h3>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-[#707070] mt-0.5">
                 متابعة المطالبات المالية الناتجة عن رفض العمل، الهروب، أو إلغاء العقود وتأكيد التحويلات البنكية
               </p>
             </div>
@@ -470,7 +470,7 @@ export const ComplaintsPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-mono text-zinc-600">{c.ref}</td>
                     <td className="p-3.5 text-zinc-700">{c.reason}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">{c.amount.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{c.amount.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-[11px] text-zinc-600">{c.iban}</td>
                     <td className="p-3.5"><Badge text={c.status} type={c.status.includes('تم') ? 'success' : 'warning'} /></td>
                     <td className="p-3.5 text-center">
@@ -520,7 +520,7 @@ export const ComplaintsPage: React.FC = () => {
             <h3 className="text-base font-bold text-black">
               تصنيفات الشكاوى ومصفوفة اتفاقية مستوى الخدمة (SLA Matrix)
             </h3>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs text-[#707070] mt-1">
               المدد الزمنية المحددة للاستجابة والحل، ومسارات التصعيد التلقائي للمشرفين والإدارة العليا
             </p>
           </div>
@@ -540,7 +540,7 @@ export const ComplaintsPage: React.FC = () => {
                     <span className="font-bold text-black text-sm">{item.type}</span>
                     <Badge text={item.prio} type={item.prio.includes('طارئ') ? 'danger' : 'primary'} />
                   </div>
-                  <div className="text-xs font-mono font-bold text-emerald-800 mb-2">المهلة الزمنية (SLA): {item.sla}</div>
+                  <div className="text-xs font-mono font-bold text-[#141414] mb-2">المهلة الزمنية (SLA): {item.sla}</div>
                   <div className="text-xs text-zinc-600 mb-1"><strong className="text-zinc-800">القسم المسؤول:</strong> {item.dept}</div>
                   <div className="text-xs text-zinc-600"><strong className="text-zinc-800">الإجراء:</strong> {item.action}</div>
                 </div>
@@ -558,7 +558,7 @@ export const ComplaintsPage: React.FC = () => {
               <h3 className="text-sm font-bold text-black">
                 شكاوى ونزاعات الشركات والمكاتب المرفوعة للإدارة العليا
               </h3>
-              <p className="text-xs text-zinc-500 mt-0.5">
+              <p className="text-xs text-[#707070] mt-0.5">
                 متابعة والبت بالشكاوى التشغيلية والمالية بين توباز، دار الرواد، السفير، الماسي، والأيال والمكاتب الخارجية
               </p>
             </div>
@@ -592,9 +592,9 @@ export const ComplaintsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-zinc-800">{disp.target_entity}</td>
                     <td className="p-3.5">
                       <div className="font-bold text-black">{disp.subject}</div>
-                      <div className="text-[11px] text-zinc-500">{disp.details}</div>
+                      <div className="text-[11px] text-[#707070]">{disp.details}</div>
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-rose-700">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">
                       {(disp.amount_claimed ?? 0) > 0 ? `${(disp.amount_claimed ?? 0).toLocaleString()} ⃁` : 'غير مالي'}
                     </td>
                     <td className="p-3.5"><Badge text={disp.priority} type={disp.priority.includes('VIP') ? 'danger' : 'warning'} /></td>
@@ -617,7 +617,7 @@ export const ComplaintsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
               <input
                 type="text"
                 aria-label="ابحث برقم التذكرة، اسم العميل، أو الجوال"
@@ -674,7 +674,7 @@ export const ComplaintsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {filteredTickets.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-zinc-400">
+                    <td colSpan={8} className="p-8 text-center text-[#707070]">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <BusinessIllustration type="empty-search" size="md" />
                         <span className="font-bold text-black">لا توجد تذاكر أو شكاوى مطابقة للبحث</span>
@@ -694,13 +694,13 @@ export const ComplaintsPage: React.FC = () => {
                           />
                           <div>
                             <div className="font-bold text-black">{ticket.client_name}</div>
-                            <div className="text-[11px] text-zinc-400 font-mono">{ticket.client_phone}</div>
+                            <div className="text-[11px] text-[#707070] font-mono">{ticket.client_phone}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-3.5">
                         <div className="font-bold text-black">{ticket.category}</div>
-                        <div className="text-[11px] text-zinc-500 font-mono">{ticket.contract_ref}</div>
+                        <div className="text-[11px] text-[#707070] font-mono">{ticket.contract_ref}</div>
                       </td>
                       <td className="p-3.5">
                         <Badge
@@ -710,12 +710,12 @@ export const ComplaintsPage: React.FC = () => {
                       </td>
                       <td className="p-3.5">
                         {ticket.sla_hours_left > 0 ? (
-                          <span className={`font-mono font-bold text-xs flex items-center gap-1 ${ticket.sla_hours_left <= 4 ? 'text-rose-600' : 'text-amber-600'}`}>
+                          <span className={`font-mono font-bold text-xs flex items-center gap-1 ${ticket.sla_hours_left <= 4 ? 'text-[#141414]' : 'text-[#141414]'}`}>
                             <Clock className="w-3.5 h-3.5" />
                             <span>متبقي {ticket.sla_hours_left} ساعة</span>
                           </span>
                         ) : (
-                          <span className="text-zinc-400">مكتملة</span>
+                          <span className="text-[#707070]">مكتملة</span>
                         )}
                       </td>
                       <td className="p-3.5 text-zinc-600">
@@ -741,7 +741,7 @@ export const ComplaintsPage: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteTicket(ticket)}
-                            className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                            className="p-1 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                             title="حذف الشكوى"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -768,7 +768,7 @@ export const ComplaintsPage: React.FC = () => {
                   <CorporateAvatar name={c.client_name} departmentId="crm" size="sm" />
                   <div className="min-w-0 flex-1">
                     <div className="font-bold text-xs text-black truncate">{c.client_name}</div>
-                    <div className="text-[11px] text-zinc-400 font-mono truncate">{c.client_phone} • {c.ticket_no}</div>
+                    <div className="text-[11px] text-[#707070] font-mono truncate">{c.client_phone} • {c.ticket_no}</div>
                   </div>
                 </div>
               ))}
@@ -781,7 +781,7 @@ export const ComplaintsPage: React.FC = () => {
                     <CorporateAvatar name="بندر صالح الهويريني" departmentId="crm" size="sm" status="online" />
                     <div>
                       <h4 className="text-xs font-bold text-black">بندر صالح الهويريني (+966555774494)</h4>
-                      <span className="text-[11px] text-zinc-400 font-mono">تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
+                      <span className="text-[11px] text-[#707070] font-mono">تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
                     </div>
                   </div>
                   <Badge text="مرفوعة للمشرف" type="danger" />
@@ -791,7 +791,7 @@ export const ComplaintsPage: React.FC = () => {
                   <div className="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl max-w-[80%] text-xs text-black">
                     السلام عليكم، العاملة ترغب بالامتناع عن العمل وتطالب بالتحويل للإيواء أو الترحيل. نأمل المعالجة عاجلاً.
                   </div>
-                  <div className="bg-black text-white p-3 rounded-2xl max-w-[80%] mr-auto text-xs">
+                  <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-3 rounded-2xl max-w-[80%] mr-auto text-xs">
                     وعليكم السلام أستاذ بندر، تم استلام الطلب وتصعيد التذكرة مباشرة لمشرف الإيواء لمتابعة حالة العاملة.
                   </div>
                 </div>
@@ -832,9 +832,9 @@ export const ComplaintsPage: React.FC = () => {
               <h4 className="text-xs font-bold text-zinc-700">توزيع مسببات الشكاوى</h4>
               {[
                 { label: 'رفض عمل أو عدم رغبة العاملة', percent: 45, color: 'bg-black' },
-                { label: 'تأخير الوصول من المكتب الخارجي', percent: 25, color: 'bg-rose-600' },
-                { label: 'تسويات واسترجاع مالي', percent: 18, color: 'bg-amber-500' },
-                { label: 'استفسارات عامة وسلوك', percent: 12, color: 'bg-emerald-600' }
+                { label: 'تأخير الوصول من المكتب الخارجي', percent: 25, color: 'bg-[#141414]' },
+                { label: 'تسويات واسترجاع مالي', percent: 18, color: 'bg-[#141414]' },
+                { label: 'استفسارات عامة وسلوك', percent: 12, color: 'bg-[#141414]' }
               ].map((item, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between text-xs font-bold">
@@ -868,12 +868,12 @@ export const ComplaintsPage: React.FC = () => {
       {showAddDisputeModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-[#141414]" />
                 <span>رفع بلاغ / شكوى بين الشركات للإدارة العليا</span>
               </h3>
-              <button onClick={() => setShowAddDisputeModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddDisputeModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -975,12 +975,12 @@ export const ComplaintsPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Headphones className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Headphones className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل وتوجيه شكوى / تذكرة جديدة</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1086,21 +1086,21 @@ export const ComplaintsPage: React.FC = () => {
       {selectedTicket && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Headphones className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Headphones className="w-4 h-4 text-[#141414]" />
                 <span>معالجة التذكرة رقم ({selectedTicket.ticket_no})</span>
               </h3>
-              <button onClick={() => setSelectedTicket(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setSelectedTicket(null)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-6 space-y-4 bg-white text-black">
               <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 space-y-2 text-xs">
-                <div><strong className="text-zinc-500">العميل:</strong> <span className="font-bold text-black">{selectedTicket.client_name} ({selectedTicket.client_phone})</span></div>
-                <div><strong className="text-zinc-500">الشرح:</strong> <span className="text-zinc-700">{selectedTicket.description}</span></div>
-                <div><strong className="text-zinc-500">المسؤول الحالي:</strong> <span className="font-bold text-emerald-700">{selectedTicket.assigned_agent}</span></div>
+                <div><strong className="text-[#707070]">العميل:</strong> <span className="font-bold text-black">{selectedTicket.client_name} ({selectedTicket.client_phone})</span></div>
+                <div><strong className="text-[#707070]">الشرح:</strong> <span className="text-zinc-700">{selectedTicket.description}</span></div>
+                <div><strong className="text-[#707070]">المسؤول الحالي:</strong> <span className="font-bold text-[#141414]">{selectedTicket.assigned_agent}</span></div>
               </div>
 
               <div className="flex gap-2 justify-end pt-3 border-t border-zinc-100 flex-wrap">
@@ -1108,7 +1108,7 @@ export const ComplaintsPage: React.FC = () => {
                   إلغاء
                 </button>
                 <button 
-                  className="button-outline-on-light text-emerald-700 border-emerald-300 hover:bg-emerald-50 flex items-center gap-1"
+                  className="button-outline-on-light text-[#141414] border-[#e0e0e0] hover:bg-[#eaeaea] flex items-center gap-1"
                   onClick={() => handleGeneratePaymentVoucher(selectedTicket)} 
                   style={{ minHeight: '36px', padding: '6px 12px', fontSize: '12px' }}
                   title="توليد سند صرف مالي مباشر في دفتر الأستاذ العام"
@@ -1116,7 +1116,7 @@ export const ComplaintsPage: React.FC = () => {
                   <Receipt className="w-3.5 h-3.5" />
                   <span>توليد سند صرف تسوية</span>
                 </button>
-                <button className="button-outline-on-light text-rose-600 border-rose-200 hover:bg-rose-50" onClick={() => handleResolveTicket('مرفوعة للمشرف')} style={{ minHeight: '36px', padding: '6px 14px', fontSize: '12.5px' }}>
+                <button className="button-outline-on-light text-[#141414] border-[#e0e0e0] hover:bg-[#eaeaea]" onClick={() => handleResolveTicket('مرفوعة للمشرف')} style={{ minHeight: '36px', padding: '6px 14px', fontSize: '12.5px' }}>
                   تصعيد للمشرف
                 </button>
                 <button className="button-primary-pill" onClick={() => handleResolveTicket('تم الحل وإغلاق الشكوى')} style={{ minHeight: '36px', padding: '6px 18px', fontSize: '12.5px' }}>

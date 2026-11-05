@@ -175,7 +175,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e5e5e5] text-[11px] font-mono font-bold text-[#141414]">
                   {employee.employee_code || employee.id}
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#141414] text-white text-[10px] font-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold">
                   <CheckCircle2 className="w-3 h-3" />
                   <span>ملف 360° موثق</span>
                 </span>
@@ -199,7 +199,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               type="button"
               onClick={onClose}
               aria-label="إغلاق"
-              className="w-8 h-8 rounded-full bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-white flex items-center justify-center transition-colors cursor-pointer border border-[#e5e5e5]"
+              className="w-8 h-8 rounded-full bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#141414] flex items-center justify-center transition-colors cursor-pointer border border-[#e5e5e5]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -372,7 +372,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                     <h4 className="text-sm font-black text-[#141414] m-0">تفاصيل مسير الأجور وحماية الأجور (WPS)</h4>
                     <p className="text-[11px] text-[#707070] mt-0.5 m-0">توزيع البدلات والاستقطاعات التأمينية المعتمدة شهرياً</p>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-[#141414] text-white text-[10px] font-bold">
+                  <span className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold">
                     مطابق لملف SIF
                   </span>
                 </div>
@@ -390,9 +390,9 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                     <div className="text-[10px] font-bold text-[#707070]">استقطاع التأمينات ({gosiCalc.employeeRatePercent}%)</div>
                     <div className="text-base font-black text-[#707070] tabular-nums mt-1">-⃁ {gosiEmployee.toLocaleString()}</div>
                   </div>
-                  <div className="bg-[#141414] text-white p-3.5 rounded-[16px]">
-                    <div className="text-[10px] font-bold text-white/70">صافي الراتب المحول</div>
-                    <div className="text-base font-black text-white tabular-nums mt-1">⃁ {netSalary.toLocaleString()}</div>
+                  <div className="bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] p-3.5 rounded-[16px]">
+                    <div className="text-[10px] font-bold text-[#707070]">صافي الراتب المحول</div>
+                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">⃁ {netSalary.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
@@ -457,7 +457,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                     موثقة رقمياً ومطابقة لنظام التعاملات الإلكترونية السعودي ونظام PDPL
                   </p>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-[#141414] text-white text-[10px] font-bold font-mono">
+                <span className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold font-mono">
                   E-SIGN VERIFIED
                 </span>
               </div>
@@ -496,7 +496,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               <div className="bg-[#fafafa] rounded-[20px] p-4 border border-[#ececec] space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-black text-[#141414] m-0">تقييم الأداء الربعي والمستهدفات (KPIs)</h4>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-white text-[10px] font-bold">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold">
                     ممتاز (4.9 / 5)
                   </span>
                 </div>

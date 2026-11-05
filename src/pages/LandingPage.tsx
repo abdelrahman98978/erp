@@ -123,7 +123,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'بوابة متكاملة لإدارة عقود استقدام الأفراد، إصدار التأشيرات الفورية، التوثيق عبر مساند، وبوالص التأمين الشاملة.',
       image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
       stats: '1,420+ عقد نشط',
-      themeColor: '#8C681E',
+      themeColor: '#141414',
       license: 'ترخيص مساند RC01 • س.ت 1010123456'
     },
     {
@@ -136,7 +136,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'حلول تشغيلية مرنة لقطاع الأعمال وباقات تأجير الكوادر المهنية والعمالة المنزلية المعتمدة.',
       image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
       stats: '890+ عقد إيجار',
-      themeColor: '#1D2428',
+      themeColor: '#141414',
       license: 'ترخيص مساند RC02 • س.ت 1010543210'
     },
     {
@@ -149,7 +149,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'منظومة الفرز والتوظيف الذكي ATS، استيراد السير بالدفعة، وشبكة مكاتب التوظيف في 14 دولة.',
       image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
       stats: '3,250+ سيرة ذاتية',
-      themeColor: '#8C681E',
+      themeColor: '#141414',
       license: 'ترخيص مساند RC03 • س.ت 1010776543'
     },
     {
@@ -162,7 +162,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'بوابة مستقلة ومعزولة كلياً لإدارة منافسات اعتماد، جداول الكميات الذكية BOQ، الفوترة المشفرة ZATCA، وسجل الموردين.',
       image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80',
       stats: '2,650+ منافسة اعتماد',
-      themeColor: '#1D2428',
+      themeColor: '#141414',
       license: 'سجل تجاري 1010789234 • ضريبي 3102847592'
     },
     {
@@ -175,26 +175,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       desc: 'بوابة إدارة غرف وأسرة الإيواء والضيافة، المتابعة الصحية والغذائية، وإجراءات الترحيل الممتثلة لمعايير وزارة الموارد البشرية.',
       image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
       stats: '120 سرير • امتثال 100%',
-      themeColor: '#047857',
+      themeColor: '#141414',
       license: 'ترخيص مراكز الإيواء HRSD-MOL • س.ت 1010642918'
     }
   ];
 
   return (
     <div
-      className="bg-[#ffffff] text-zinc-900 min-h-screen w-full overflow-x-hidden font-sans selection:bg-champagne selection:text-black"
+      className="bg-[#ffffff] text-[#141414] min-h-screen w-full overflow-x-hidden font-sans selection:bg-[#141414] selection:text-[#ffffff]"
       dir={currentLanguage.dir}
       style={{
         fontFamily: 'var(--font-family-ui)',
         fontFeatureSettings: '"ss03" 1',
-        background: 'radial-gradient(ellipse at 50% -10%, #fbfbf5 0%, #ffffff 50%, #f4f6f9 100%)'
+        background: 'radial-gradient(ellipse at 50% -10%, #f3f3f3 0%, #ffffff 50%, #f4f6f9 100%)'
       }}
     >
       {/* 1. Top Navigation Bar - Luxury White Frosted Glass */}
       <header className="sticky top-0 z-[100] backdrop-blur-md bg-white/90 border-b border-zinc-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-xs transition-all">
         {/* Brand / Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full border border-champagne/60 p-0.5 bg-white shadow-xs flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-full border border-[#e0e0e0] p-0.5 bg-white shadow-xs flex items-center justify-center shrink-0">
             <img
               src="/logo.png"
               alt="Logo"
@@ -205,7 +205,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             <span className="font-bold text-sm sm:text-base tracking-tight text-zinc-950 font-display">
               مجموعة خالد السليم
             </span>
-            <span className="text-[10.5px] text-zinc-500 tracking-wider uppercase font-semibold">
+            <span className="text-[10.5px] text-[#707070] tracking-wider uppercase font-semibold">
               KHALID AL-SULAIM GROUP • ERP
             </span>
           </div>
@@ -264,35 +264,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       {mobileMenuOpen && (
         <div className="fixed inset-0 top-[61px] z-50 bg-white/95 backdrop-blur-lg border-b border-zinc-200 p-6 flex flex-col justify-between overflow-y-auto animate-fadeIn md:hidden">
           <div className="space-y-6">
-            <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+            <div className="text-xs font-bold text-[#707070] uppercase tracking-widest">
               التنقل والأقسام الرئيسية
             </div>
             <div className="space-y-4">
               <a
                 href="#companies"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-lg font-bold text-zinc-900 hover:text-champagne-dark transition-colors py-1"
+                className="block text-lg font-bold text-zinc-900 hover:text-[#141414] transition-colors py-1"
               >
                 الشركات التابعة للمجموعة
               </a>
               <a
                 href="#capabilities"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-lg font-bold text-zinc-900 hover:text-champagne-dark transition-colors py-1"
+                className="block text-lg font-bold text-zinc-900 hover:text-[#141414] transition-colors py-1"
               >
                 القدرات والأنظمة التشغيلية
               </a>
               <a
                 href="#values"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-lg font-bold text-zinc-900 hover:text-champagne-dark transition-colors py-1"
+                className="block text-lg font-bold text-zinc-900 hover:text-[#141414] transition-colors py-1"
               >
                 القيم المؤسسية والحوكمة
               </a>
             </div>
 
             <div className="pt-4 border-t border-zinc-200 space-y-3">
-              <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">
+              <div className="text-xs font-bold text-[#707070] uppercase tracking-widest mb-2">
                 بوابات الدخول المستقلة للشركات
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -300,10 +300,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   <button
                     key={c.code}
                     onClick={() => handleSelect(c.id, c.portalCode)}
-                    className="p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-right text-xs font-semibold hover:border-champagne hover:bg-white transition-all text-zinc-900 flex items-center justify-between"
+                    className="p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-right text-xs font-semibold hover:border-[#141414] hover:bg-white transition-all text-zinc-900 flex items-center justify-between"
                   >
                     <span>{c.nameAr}</span>
-                    <ArrowLeft className="w-3.5 h-3.5 text-zinc-400" />
+                    <ArrowLeft className="w-3.5 h-3.5 text-[#707070]" />
                   </button>
                 ))}
               </div>
@@ -498,15 +498,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
                 {/* Error / Success Messages */}
                 {errorMsg && (
-                  <div className="p-3 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-2 text-xs font-bold text-red-700">
-                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                  <div className="p-3 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center gap-2 text-xs font-bold text-[#141414]">
+                    <AlertCircle className="w-4 h-4 text-[#141414] shrink-0" />
                     <span>{errorMsg}</span>
                   </div>
                 )}
 
                 {successMsg && (
-                  <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-2 text-xs font-bold text-emerald-800">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div className="p-3 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center gap-2 text-xs font-bold text-[#141414]">
+                    <CheckCircle2 className="w-4 h-4 text-[#141414] shrink-0" />
                     <span>{successMsg}</span>
                   </div>
                 )}
@@ -594,7 +594,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-bold text-[#707070]">
           <div className="flex items-center gap-2 text-[#141414] font-extrabold tracking-wider">
             <span>KSHG</span>
-            <span className="text-zinc-300">•</span>
+            <span className="text-[#141414]">•</span>
             <span className="text-zinc-900">مجموعة خالد السليم القابضة</span>
           </div>
 
@@ -617,7 +617,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             </span>
           </div>
 
-          <div className="text-[11px] text-zinc-500 font-medium hidden lg:block">
+          <div className="text-[11px] text-[#707070] font-medium hidden lg:block">
             تنوع في القطاعات • قوة في التنفيذ • استدامة في النمو
           </div>
         </div>
@@ -636,7 +636,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               الشركات التابعة ومساحات العمل المستقلة
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-zinc-500 max-w-md">
+          <p className="text-xs sm:text-sm text-[#707070] max-w-md">
             أنظمة تشغيل سحابية منفصلة كلياً لكل شركة مع بيئة عمل مخصصة وتكامل إداري موحد
           </p>
         </div>
@@ -697,14 +697,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 <div className="p-5 text-right space-y-3.5">
                   {/* Company Logo + Arabic Title */}
                   <div className="flex items-start gap-3">
-                    <div className="shrink-0 p-1 bg-white rounded-xl border border-zinc-200/80 shadow-xs group-hover:border-amber-400/60 transition-colors">
+                    <div className="shrink-0 p-1 bg-white rounded-xl border border-zinc-200/80 shadow-xs group-hover:border-[#141414] transition-colors">
                       <CompanyLogo companyId={comp.id} size={38} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm sm:text-base font-bold text-zinc-950 leading-snug font-display">
                         {comp.nameAr}
                       </h3>
-                      <span className="text-[10px] text-zinc-500 font-medium block truncate mt-0.5">
+                      <span className="text-[10px] text-[#707070] font-medium block truncate mt-0.5">
                         {comp.nameEn}
                       </span>
                     </div>
@@ -730,14 +730,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
               {/* Bottom Action Button & License */}
               <div className="p-5 pt-0 text-right space-y-2.5">
-                <div className="w-full py-2.5 px-3.5 rounded-xl bg-zinc-50 group-hover:bg-zinc-950 text-zinc-800 group-hover:text-white border border-zinc-200/90 group-hover:border-zinc-950 transition-all duration-200 font-bold text-xs flex items-center justify-between shadow-2xs">
+                <div className="w-full py-2.5 px-3.5 rounded-xl bg-zinc-50 group-hover:bg-[#f3f3f3] text-zinc-800 group-hover:text-[#141414] border border-zinc-200/90 group-hover:border-zinc-950 transition-all duration-200 font-bold text-xs flex items-center justify-between shadow-2xs">
                   <span className="text-[11.5px]">بوابة الدخول المستقلة</span>
-                  <div className="w-6 h-6 rounded-full bg-white group-hover:bg-zinc-800 text-zinc-700 group-hover:text-amber-400 flex items-center justify-center transition-all shadow-2xs">
+                  <div className="w-6 h-6 rounded-full bg-white group-hover:bg-zinc-800 text-zinc-700 group-hover:text-[#141414] flex items-center justify-center transition-all shadow-2xs">
                     <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
                   </div>
                 </div>
 
-                <div className="text-[9.5px] text-zinc-400 font-mono truncate pt-1 border-t border-zinc-100 flex items-center justify-between">
+                <div className="text-[9.5px] text-[#707070] font-mono truncate pt-1 border-t border-zinc-100 flex items-center justify-between">
                   <span>{comp.license}</span>
                 </div>
               </div>
@@ -754,7 +754,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-2 font-display">
               بنية تحتية موحدة بمقاييس عالمية
             </h2>
-            <p className="text-sm text-zinc-500 mt-2">
+            <p className="text-sm text-[#707070] mt-2">
               منظومة إلكترونية متكاملة تدير الشركات والأقسام المستقلة وتتكامل مع المنصات الحكومية والنظام المالي الموحد
             </p>
           </div>
@@ -798,12 +798,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-[#707070]">
                 <span className="font-bold text-[#141414] flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#141414]" />
                   <span>ربط نشط وممتثل 100%</span>
                 </span>
-                <span className="font-mono text-[10px] text-zinc-400">GOV Gateway v2.4</span>
+                <span className="font-mono text-[10px] text-[#707070]">GOV Gateway v2.4</span>
               </div>
             </div>
 
@@ -845,12 +845,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-[#707070]">
                 <span className="font-bold text-black flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#141414]" />
                   <span>عزل مالي ومحاسبي 100%</span>
                 </span>
-                <span className="font-mono text-[10px] text-zinc-400">6-Divisions Finance</span>
+                <span className="font-mono text-[10px] text-[#707070]">6-Divisions Finance</span>
               </div>
             </div>
 
@@ -892,12 +892,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500">
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-[#707070]">
                 <span className="font-bold text-[#141414] flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#141414]" />
                   <span>توجيه مؤسسي 24/7</span>
                 </span>
-                <span className="font-mono text-[10px] text-zinc-400">Faris & Noura Suite</span>
+                <span className="font-mono text-[10px] text-[#707070]">Faris & Noura Suite</span>
               </div>
             </div>
           </div>
@@ -954,7 +954,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto pt-8 border-t border-zinc-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+        <div className="max-w-7xl mx-auto pt-8 border-t border-zinc-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#707070]">
           <span>
             © {new Date().getFullYear()} مجموعة خالد السليم (KSHG) • جميع الحقوق محفوظة ومحمية • رؤية 2030
           </span>

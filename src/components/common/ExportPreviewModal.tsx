@@ -598,7 +598,7 @@ export const ExportPreviewModal: React.FC<ExportPreviewModalProps> = ({
                     type="button"
                     disabled={Boolean(activeExportingFormat)}
                     onClick={() => handleRunExport(fmt.id)}
-                    className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-[#ffffff] border border-[#e0e0e0] text-[11px] font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer"
+                    className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#ffffff] border border-[#e0e0e0] text-[11px] font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer"
                   >
                     <span className={`inline-flex shrink-0 ${isBusy ? 'animate-spin' : ''}`}>
                       <Icon className="w-3 h-3" />

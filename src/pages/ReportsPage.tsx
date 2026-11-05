@@ -163,21 +163,21 @@ export const ReportsPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 التقارير التحليلية والمؤشرات المالية والتشغيلية للمجموعة
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 تحليل الأرباح والخسائر، عقود مساند، باقات التأجير، وتصدير التقارير المعتمدة بـ 10 صيغ احترافية
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15">
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0]">
               <CorporateAvatar
                 name="المدير المالي والتنفيذي"
                 departmentId="finance"
                 size="xs"
                 status="verified"
               />
-              <span className="text-[11px] font-bold text-white/90">اعتماد الإدارة المالية</span>
+              <span className="text-[11px] font-bold text-[#141414]">اعتماد الإدارة المالية</span>
             </div>
             <ExportDropdown
               sectionKey={currentExport.sectionKey}
@@ -336,8 +336,8 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-mono">{row.recruitment_contracts} عقد</td>
                     <td className="p-3.5 font-mono">{row.rent_contracts} عقد</td>
                     <td className="p-3.5 font-mono font-bold text-black">{(row.total_revenue ?? 0).toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{(row.expenses ?? 0).toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{(row.net_profit ?? 0).toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{(row.expenses ?? 0).toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{(row.net_profit ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5">
                       <Badge text={row.margin} type="success" />
                     </td>
@@ -351,7 +351,7 @@ export const ReportsPage: React.FC = () => {
                   <td className="p-3.5 font-mono">{totalRent} عقد</td>
                   <td className="p-3.5 font-mono">{(totalRevenue ?? 0).toLocaleString()} ⃁</td>
                   <td className="p-3.5 font-mono">{(totalExpenses ?? 0).toLocaleString()} ⃁</td>
-                  <td className="p-3.5 font-mono text-champagne-dark">{(totalNetProfit ?? 0).toLocaleString()} ⃁</td>
+                  <td className="p-3.5 font-mono text-[#141414]">{(totalNetProfit ?? 0).toLocaleString()} ⃁</td>
                   <td className="p-3.5"><Badge text="57.6%" type="purple" /></td>
                 </tr>
               </tfoot>
@@ -394,7 +394,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{s.channel}</td>
                     <td className="p-3.5 font-mono">{s.count} عقد</td>
                     <td className="p-3.5 font-mono">{s.avg.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{s.total.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{s.total.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-bold text-black">{s.share}</td>
                     <td className="p-3.5"><Badge text={s.conv} type="success" /></td>
                   </tr>
@@ -439,7 +439,7 @@ export const ReportsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{item.country}</td>
                     <td className="p-3.5 font-mono">{item.count} تأشيرة</td>
                     <td className="p-3.5 font-mono text-zinc-600">{item.visa_days}</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{item.total_days}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{item.total_days}</td>
                     <td className="p-3.5 font-bold text-black">{item.on_time}</td>
                     <td className="p-3.5"><Badge text={item.rating} type="success" /></td>
                   </tr>
@@ -484,10 +484,10 @@ export const ReportsPage: React.FC = () => {
                   <tr key={idx} className="hover:bg-zinc-50">
                     <td className="p-3.5 font-bold text-black">{row.item}</td>
                     <td className="p-3.5 font-mono font-bold text-black">{row.total.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{row.vat.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono text-rose-700">{row.direct.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{row.vat.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono text-[#141414]">{row.direct.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-zinc-600">{row.admin.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-mono font-bold text-champagne-dark">{row.net.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{row.net.toLocaleString()} ⃁</td>
                     <td className="p-3.5"><Badge text={row.status} type="success" /></td>
                   </tr>
                 ))}

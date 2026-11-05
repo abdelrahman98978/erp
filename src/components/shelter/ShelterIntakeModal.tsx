@@ -217,8 +217,8 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6 bg-[#ffffff] text-[#141414]">
           {errorMsg && (
-            <div className="p-4 rounded-[16px] bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2 font-medium">
-              <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0" />
+            <div className="p-4 rounded-[16px] bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs flex items-center gap-2 font-medium">
+              <AlertTriangle className="w-4 h-4 text-[#141414] flex-shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -248,14 +248,14 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
           {/* Existing Worker Picker */}
           {!isNewWorker ? (
             <div className="space-y-2">
-              <label className="text-xs font-bold text-zinc-300 block">اختر العاملة المراد إدخالها للسكن:</label>
+              <label className="text-xs font-bold text-[#141414] block">اختر العاملة المراد إدخالها للسكن:</label>
               <select
                 value={selectedWorkerId}
                 onChange={(e) => setSelectedWorkerId(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                className="w-full px-3 py-2.5 rounded-xl text-xs font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
               >
                 {existingWorkers.map((w: WorkerProfile) => (
-                  <option key={w.id} value={w.id} className="bg-[#14181c] text-white">
+                  <option key={w.id} value={w.id} className="bg-[#ffffff] text-[#141414]">
                     {w.fullNameAr} ({w.nationality}) - جواز: {w.passportNumber} - المكتب: {w.originalOfficeId} - الحالة: [{w.operationalStatus}]
                   </option>
                 ))}
@@ -263,74 +263,74 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
             </div>
           ) : (
             /* New Worker Registration Section */
-            <div className="space-y-4 p-4 rounded-xl bg-black/40 border border-white/10">
-              <h3 className="text-xs font-black text-amber-300 flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-amber-400" />
+            <div className="space-y-4 p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0]">
+              <h3 className="text-xs font-black text-[#141414] flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-[#141414]" />
                 <span>البيانات الأساسية للعاملة الجديدة:</span>
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">الاسم بالعربية *</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الاسم بالعربية *</label>
                   <input
                     type="text"
                     required
                     value={fullNameAr}
                     onChange={(e) => setFullNameAr(e.target.value)}
                     placeholder="مثال: مريم ديسالي غيتاتشو"
-                    className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+                    className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">الاسم بالإنجليزية</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الاسم بالإنجليزية</label>
                   <input
                     type="text"
                     value={fullNameEn}
                     onChange={(e) => setFullNameEn(e.target.value)}
                     placeholder="Maryam Desale Getachew"
-                    className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 font-sans text-left"
+                    className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414] font-sans text-left"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">رقم جواز السفر *</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">رقم جواز السفر *</label>
                   <input
                     type="text"
                     required
                     value={passportNumber}
                     onChange={(e) => setPassportNumber(e.target.value)}
                     placeholder="EP1234567"
-                    className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400 font-mono text-left"
+                    className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414] font-mono text-left"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">الجنسية *</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الجنسية *</label>
                   <select
                     value={nationality}
                     onChange={(e) => setNationality(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                    className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                   >
-                    <option value="الفلبين" className="bg-[#14181c]">الفلبين</option>
-                    <option value="إندونيسيا" className="bg-[#14181c]">إندونيسيا</option>
-                    <option value="إثيوبيا" className="bg-[#14181c]">إثيوبيا</option>
-                    <option value="أوغندا" className="bg-[#14181c]">أوغندا</option>
-                    <option value="كينيا" className="bg-[#14181c]">كينيا</option>
-                    <option value="سيريلانكا" className="bg-[#14181c]">سيريلانكا</option>
-                    <option value="بنجلاديش" className="bg-[#14181c]">بنجلاديش</option>
+                    <option value="الفلبين" className="bg-[#ffffff]">الفلبين</option>
+                    <option value="إندونيسيا" className="bg-[#ffffff]">إندونيسيا</option>
+                    <option value="إثيوبيا" className="bg-[#ffffff]">إثيوبيا</option>
+                    <option value="أوغندا" className="bg-[#ffffff]">أوغندا</option>
+                    <option value="كينيا" className="bg-[#ffffff]">كينيا</option>
+                    <option value="سيريلانكا" className="bg-[#ffffff]">سيريلانكا</option>
+                    <option value="بنجلاديش" className="bg-[#ffffff]">بنجلاديش</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">مكتب الاستقدام الأصلي التابعة له *</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">مكتب الاستقدام الأصلي التابعة له *</label>
                   <select
                     value={originalOfficeId}
                     onChange={(e) => setOriginalOfficeId(e.target.value as GroupOfficeId)}
-                    className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                    className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                   >
                     {GROUP_COMPANIES.map(c => (
-                      <option key={c.id} value={c.id} className="bg-[#14181c]">
+                      <option key={c.id} value={c.id} className="bg-[#ffffff]">
                         {c.name} ({c.id})
                       </option>
                     ))}
@@ -338,24 +338,24 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">الراتب الشهري المطلوب (⃁)</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">الراتب الشهري المطلوب (⃁)</label>
                   <input
                     type="number"
                     value={monthlySalary}
                     onChange={(e) => setMonthlySalary(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-mono"
+                    className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414] font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">المهارات والخبرات (مفصولة بفاصلة)</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">المهارات والخبرات (مفصولة بفاصلة)</label>
                 <input
                   type="text"
                   value={skillsStr}
                   onChange={(e) => setSkillsStr(e.target.value)}
                   placeholder="طبخ، رعاية أطفال، تنظيف، غسيل"
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
                 />
               </div>
             </div>
@@ -363,101 +363,101 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
 
           {/* Intake Parameters */}
           <div className="space-y-3">
-            <h3 className="text-xs font-black text-white flex items-center gap-2 border-b border-white/10 pb-2">
-              <Hotel className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-xs font-black text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
+              <Hotel className="w-4 h-4 text-[#141414]" />
               <span>تفاصيل الدخول وتخصيص السكن:</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">مقر الإيواء *</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">مقر الإيواء *</label>
                 <select
                   value={shelterBranch}
                   onChange={(e) => setShelterBranch(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                 >
-                  <option value="مقر الإيواء الرئيسي - الرياض" className="bg-[#14181c]">مقر الإيواء الرئيسي - الرياض</option>
-                  <option value="مقر الإيواء - جدة" className="bg-[#14181c]">مقر الإيواء - جدة</option>
-                  <option value="مقر الإيواء - الخبر" className="bg-[#14181c]">مقر الإيواء - الخبر</option>
+                  <option value="مقر الإيواء الرئيسي - الرياض" className="bg-[#ffffff]">مقر الإيواء الرئيسي - الرياض</option>
+                  <option value="مقر الإيواء - جدة" className="bg-[#ffffff]">مقر الإيواء - جدة</option>
+                  <option value="مقر الإيواء - الخبر" className="bg-[#ffffff]">مقر الإيواء - الخبر</option>
                 </select>
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">تاريخ ووقت الدخول *</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">تاريخ ووقت الدخول *</label>
                 <input
                   type="datetime-local"
                   required
                   value={intakeDateTime}
                   onChange={(e) => setIntakeDateTime(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">سبب دخول السكن *</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">سبب دخول السكن *</label>
                 <select
                   value={intakeReason}
                   onChange={(e) => setIntakeReason(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                 >
-                  <option value="تنازل كفيل أول" className="bg-[#14181c]">تنازل كفيل أول</option>
-                  <option value="استقدام جديد (لم يستلم الكفيل)" className="bg-[#14181c]">استقدام جديد (لم يستلم الكفيل)</option>
-                  <option value="إرجاع من تجربة نقل خدمات" className="bg-[#14181c]">إرجاع من تجربة نقل خدمات</option>
-                  <option value="نقل من مقر إيواء فرعي" className="bg-[#14181c]">نقل من مقر إيواء فرعي</option>
-                  <option value="انتهاء عقد وطلب ترحيل" className="bg-[#14181c]">انتهاء عقد وطلب ترحيل</option>
+                  <option value="تنازل كفيل أول" className="bg-[#ffffff]">تنازل كفيل أول</option>
+                  <option value="استقدام جديد (لم يستلم الكفيل)" className="bg-[#ffffff]">استقدام جديد (لم يستلم الكفيل)</option>
+                  <option value="إرجاع من تجربة نقل خدمات" className="bg-[#ffffff]">إرجاع من تجربة نقل خدمات</option>
+                  <option value="نقل من مقر إيواء فرعي" className="bg-[#ffffff]">نقل من مقر إيواء فرعي</option>
+                  <option value="انتهاء عقد وطلب ترحيل" className="bg-[#ffffff]">انتهاء عقد وطلب ترحيل</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">الغرفة / الجناح</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">الغرفة / الجناح</label>
                 <input
                   type="text"
                   value={assignedRoom}
                   onChange={(e) => setAssignedRoom(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">رقم السرير</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">رقم السرير</label>
                 <input
                   type="text"
                   value={assignedBed}
                   onChange={(e) => setAssignedBed(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-zinc-300 block mb-1">الرغبة بالعمل</label>
+                <label className="text-[11px] font-bold text-[#141414] block mb-1">الرغبة بالعمل</label>
                 <select
                   value={workWillingness}
                   onChange={(e) => setWorkWillingness(e.target.value as any)}
-                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                 >
-                  <option value="ترغب بالعمل" className="bg-[#14181c]">ترغب بالعمل (جاهزة للنقل)</option>
-                  <option value="مشروطة" className="bg-[#14181c]">ترغب بشروط معينة</option>
-                  <option value="لا ترغب بالعمل" className="bg-[#14181c]">لا ترغب بالعمل (ترحيل)</option>
+                  <option value="ترغب بالعمل" className="bg-[#ffffff]">ترغب بالعمل (جاهزة للنقل)</option>
+                  <option value="مشروطة" className="bg-[#ffffff]">ترغب بشروط معينة</option>
+                  <option value="لا ترغب بالعمل" className="bg-[#ffffff]">لا ترغب بالعمل (ترحيل)</option>
                 </select>
               </div>
             </div>
           </div>
 
           {/* DEDICATED FIRST SPONSOR SECTION (Crucial BRD Requirement) */}
-          <div className="space-y-3 p-4 rounded-xl bg-blue-950/25 border border-blue-500/30">
+          <div className="space-y-3 p-4 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0]">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-black text-blue-300 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-blue-400" />
+              <h3 className="text-xs font-black text-[#141414] flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-[#141414]" />
                 <span>قسم بيانات الكفيل الأول (المتنازل أو المستقدم الأصلي):</span>
               </h3>
-              <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-blue-300">
+              <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-bold text-[#141414]">
                 <input
                   type="checkbox"
                   checked={hasFirstSponsor}
                   onChange={(e) => setHasFirstSponsor(e.target.checked)}
-                  className="rounded text-amber-400 focus:ring-0"
+                  className="rounded text-[#141414] focus:ring-0"
                 />
                 <span>تضمين بيانات الكفيل الأول</span>
               </label>
@@ -467,85 +467,85 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
               <div className="space-y-3 pt-2">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-300 block mb-1">اسم الكفيل الأول</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">اسم الكفيل الأول</label>
                     <input
                       type="text"
                       value={sponsorName}
                       onChange={(e) => setSponsorName(e.target.value)}
                       placeholder="اسم صاحب العمل السابق"
-                      className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-400"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-300 block mb-1">هوية الكفيل الأول</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">هوية الكفيل الأول</label>
                     <input
                       type="text"
                       maxLength={10}
                       value={sponsorNationalId}
                       onChange={(e) => setSponsorNationalId(e.target.value)}
                       placeholder="10XXXXXXXX"
-                      className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-400 font-mono"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414] font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-300 block mb-1">جوال الكفيل الأول</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">جوال الكفيل الأول</label>
                     <input
                       type="tel"
                       value={sponsorPhone}
                       onChange={(e) => setSponsorPhone(e.target.value)}
                       placeholder="05XXXXXXXX"
-                      className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-400 font-mono text-left"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414] font-mono text-left"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-300 block mb-1">رقم عقد الاستقدام الأصلي</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">رقم عقد الاستقدام الأصلي</label>
                     <input
                       type="text"
                       value={originalContractRef}
                       onChange={(e) => setOriginalContractRef(e.target.value)}
                       placeholder="RC-2026-XXXX"
-                      className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-400"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-300 block mb-1">سريان الضمان</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">سريان الضمان</label>
                     <select
                       value={warrantyStatus}
                       onChange={(e) => setWarrantyStatus(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-black/50 border border-white/15 text-white focus:outline-none focus:border-blue-400"
+                      className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414]"
                     >
-                      <option value="ساري (ضمن 90 يوم)" className="bg-[#14181c]">ساري (ضمن فترة ضمان 90 يوم)</option>
-                      <option value="منتهي" className="bg-[#14181c]">منتهي الضمان</option>
-                      <option value="تنازل اختياري" className="bg-[#14181c]">تنازل اختياري بعد انتهاء الضمان</option>
+                      <option value="ساري (ضمن 90 يوم)" className="bg-[#ffffff]">ساري (ضمن فترة ضمان 90 يوم)</option>
+                      <option value="منتهي" className="bg-[#ffffff]">منتهي الضمان</option>
+                      <option value="تنازل اختياري" className="bg-[#ffffff]">تنازل اختياري بعد انتهاء الضمان</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-zinc-300 block mb-1">المطالبة المالية للكفيل (⃁)</label>
+                    <label className="text-[11px] font-bold text-[#141414] block mb-1">المطالبة المالية للكفيل (⃁)</label>
                     <input
                       type="number"
                       value={financialClaimAmount}
                       onChange={(e) => setFinancialClaimAmount(Number(e.target.value))}
                       placeholder="0"
-                      className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-blue-400 font-mono"
+                      className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414] font-mono"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold text-zinc-300 block mb-1">سبب الإرجاع / التنازل حسب إفادة الكفيل</label>
+                  <label className="text-[11px] font-bold text-[#141414] block mb-1">سبب الإرجاع / التنازل حسب إفادة الكفيل</label>
                   <textarea
                     rows={2}
                     value={sponsorReturnReason}
                     onChange={(e) => setSponsorReturnReason(e.target.value)}
                     placeholder="عدم التوافق مع متطلبات المنزل، رفض الطبخ، رغبة العاملة في العمل لدى عائلة صغيرة، إلخ..."
-                    className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-blue-400"
+                    className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
                   />
                 </div>
               </div>
@@ -553,36 +553,36 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
           </div>
 
           {/* Checklist Checks */}
-          <div className="flex items-center gap-6 p-3 bg-black/40 rounded-xl border border-white/10 text-xs">
-            <label className="flex items-center gap-2 cursor-pointer font-bold text-zinc-300">
+          <div className="flex items-center gap-6 p-3 bg-[#f3f3f3]/40 rounded-xl border border-[#e0e0e0] text-xs">
+            <label className="flex items-center gap-2 cursor-pointer font-bold text-[#141414]">
               <input
                 type="checkbox"
                 checked={medicalCheckPassed}
                 onChange={(e) => setMedicalCheckPassed(e.target.checked)}
-                className="rounded text-amber-400 focus:ring-0"
+                className="rounded text-[#141414] focus:ring-0"
               />
               <span>تم الفحص الطبي الأولي (لائقة)</span>
             </label>
 
-            <label className="flex items-center gap-2 cursor-pointer font-bold text-zinc-300">
+            <label className="flex items-center gap-2 cursor-pointer font-bold text-[#141414]">
               <input
                 type="checkbox"
                 checked={luggageInspected}
                 onChange={(e) => setLuggageInspected(e.target.checked)}
-                className="rounded text-amber-400 focus:ring-0"
+                className="rounded text-[#141414] focus:ring-0"
               />
               <span>تم استلام وتفتيش الأمتعة</span>
             </label>
           </div>
 
           <div>
-            <label className="text-[11px] font-bold text-zinc-300 block mb-1">ملاحظات عامة</label>
+            <label className="text-[11px] font-bold text-[#141414] block mb-1">ملاحظات عامة</label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="أي تفاصيل خاصة بالحالة الصحية أو النفسية أو التسكين..."
-              className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
             />
           </div>
 

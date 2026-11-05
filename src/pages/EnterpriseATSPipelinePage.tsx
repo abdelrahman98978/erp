@@ -324,20 +324,20 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <CorporateAvatar name={cnd.name} profession={cnd.appliedPosition} isCandidate size="md" status="verified" />
                   <div>
-                    <span className="text-xs text-zinc-400 font-mono font-bold">{cnd.candidateCode}</span>
+                    <span className="text-xs text-[#707070] font-mono font-bold">{cnd.candidateCode}</span>
                     <h2 className="text-base font-bold text-black mt-0.5">{cnd.name}</h2>
                   </div>
                 </div>
 
                 {/* AI Score Badge */}
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-2.5 py-1 text-center">
+                <div className="bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] rounded-2xl px-2.5 py-1 text-center">
                   <div className="text-[10px] font-bold">مطابقة AI</div>
                   <div className="text-sm font-bold font-mono">{cnd.aiScore}%</div>
                 </div>
               </div>
 
               <div className="text-xs font-semibold text-zinc-800 mb-3">
-                الوظيفة المطلوبة: <span className="text-emerald-700 font-bold">{cnd.appliedPosition}</span>
+                الوظيفة المطلوبة: <span className="text-[#141414] font-bold">{cnd.appliedPosition}</span>
               </div>
 
               <div className="bg-zinc-50 p-3 rounded-2xl text-xs space-y-1.5 mb-4 border border-zinc-100 text-zinc-700">
@@ -360,7 +360,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                   className="button-outline-on-light"
                   style={{ fontSize: '11px', padding: '3px 10px', minHeight: '26px' }}
                 >
-                  <Calendar className="w-3 h-3 ml-1 text-blue-600" />
+                  <Calendar className="w-3 h-3 ml-1 text-[#141414]" />
                   <span>جدولة مقابلة</span>
                 </button>
               </div>
@@ -397,14 +397,14 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
       {showInterviewModal && activeCandidate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
           <div className="w-full max-w-md bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Video className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h2 className="text-base font-bold text-[#141414] flex items-center gap-2">
+                <Video className="w-4 h-4 text-[#141414]" />
                 <span>جدولة مقابلة مرئية: {activeCandidate.name}</span>
               </h2>
               <button
                 onClick={() => setShowInterviewModal(false)}
-                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -431,7 +431,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 />
               </div>
 
-              <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-2xl text-xs text-emerald-900 leading-relaxed">
+              <div className="bg-[#f3f3f3] border border-[#e0e0e0] p-3 rounded-2xl text-xs text-[#141414] leading-relaxed">
                 سيتم إرسال رابط المقابلة المرئية تلقائياً للمرشح عبر الواتساب والبريد الإلكتروني، وإشعار المكتب الخارجي.
               </div>
 
@@ -478,12 +478,12 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
           <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in border border-zinc-200">
             <div className="p-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold text-xs">
                   <UserPlus className="w-4 h-4" />
                 </div>
                 <h3 className="text-sm font-bold text-black m-0">إضافة طلب احتياج / مرشح وظيفي جديد</h3>
               </div>
-              <button onClick={() => setShowNewCandidateModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowNewCandidateModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>

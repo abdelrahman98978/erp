@@ -64,10 +64,10 @@ export const IPWhitelistManager: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-zinc-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-600" />
+            <ShieldCheck className="w-5 h-5 text-[#141414]" />
             <h3 className="text-base font-bold text-zinc-900 m-0">إدارة القائمة البيضاء للعناوين والشبكات الموثوقة (IP Whitelist)</h3>
           </div>
-          <p className="text-xs text-zinc-500 mt-1">
+          <p className="text-xs text-[#707070] mt-1">
             تقييد الوصول للنظام من شبكات الفروع المعتمدة أو استثناءات الـ VPN المؤقتة لحماية بيانات المجموعة
           </p>
         </div>
@@ -83,20 +83,20 @@ export const IPWhitelistManager: React.FC = () => {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200">
-          <div className="text-xs font-medium text-emerald-800 mb-1">الشبكات النشطة والمسموحة</div>
-          <div className="text-2xl font-bold font-mono text-emerald-950">
+        <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+          <div className="text-xs font-medium text-[#141414] mb-1">الشبكات النشطة والمسموحة</div>
+          <div className="text-2xl font-bold font-mono text-[#141414]">
             {whitelist.filter(i => i.isActive).length}
           </div>
-          <div className="text-[10px] text-emerald-700 mt-1">تمرير حركة المرور فورياً</div>
+          <div className="text-[10px] text-[#141414] mt-1">تمرير حركة المرور فورياً</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
-          <div className="text-xs font-medium text-amber-800 mb-1">استثناءات مؤقتة (سفر / مهام)</div>
-          <div className="text-2xl font-bold font-mono text-amber-950">
+        <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+          <div className="text-xs font-medium text-[#141414] mb-1">استثناءات مؤقتة (سفر / مهام)</div>
+          <div className="text-2xl font-bold font-mono text-[#141414]">
             {whitelist.filter(i => i.isTemporary && i.isActive).length}
           </div>
-          <div className="text-[10px] text-amber-700 mt-1">تنتهي صلاحيتها تلقائياً</div>
+          <div className="text-[10px] text-[#141414] mt-1">تنتهي صلاحيتها تلقائياً</div>
         </div>
 
         <div className="p-4 rounded-2xl bg-zinc-100 border border-zinc-200">
@@ -104,7 +104,7 @@ export const IPWhitelistManager: React.FC = () => {
           <div className="text-2xl font-bold font-mono text-zinc-800">
             {whitelist.filter(i => !i.isActive).length}
           </div>
-          <div className="text-[10px] text-zinc-500 mt-1">محظورة من الوصول</div>
+          <div className="text-[10px] text-[#707070] mt-1">محظورة من الوصول</div>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ export const IPWhitelistManager: React.FC = () => {
       <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-xs">
         <div className="p-4 border-b border-zinc-100 flex items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-zinc-400 absolute right-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#707070] absolute right-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="البحث بعنوان IP أو اسم الفرع..."
@@ -121,7 +121,7 @@ export const IPWhitelistManager: React.FC = () => {
               className="w-full pl-3 pr-9 py-1.5 text-xs bg-zinc-50 border border-zinc-200 rounded-lg focus:outline-hidden focus:border-zinc-400"
             />
           </div>
-          <div className="text-xs text-zinc-500 font-mono">
+          <div className="text-xs text-[#707070] font-mono">
             {filtered.length} عنوان مدرج
           </div>
         </div>
@@ -144,15 +144,15 @@ export const IPWhitelistManager: React.FC = () => {
               {filtered.map(entry => (
                 <tr key={entry.id} className="hover:bg-zinc-50/80 transition-colors">
                   <td className="p-3 font-mono font-bold text-zinc-900 flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${entry.isActive ? 'bg-emerald-500' : 'bg-zinc-300'}`} />
+                    <span className={`w-2 h-2 rounded-full ${entry.isActive ? 'bg-[#141414]' : 'bg-zinc-300'}`} />
                     {entry.ipAddress}
                   </td>
                   <td className="p-3 text-zinc-800 font-medium">{entry.label}</td>
                   <td className="p-3 text-center">
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                       entry.isTemporary 
-                        ? 'bg-amber-50 text-amber-800 border border-amber-200' 
-                        : 'bg-sky-50 text-sky-800 border border-sky-200'
+                        ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' 
+                        : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                     }`}>
                       {entry.isTemporary ? 'مؤقت' : 'دائم (فرع)'}
                     </span>
@@ -161,9 +161,9 @@ export const IPWhitelistManager: React.FC = () => {
                   <td className="p-3 text-center font-mono text-zinc-600">{entry.addedAt}</td>
                   <td className="p-3 text-center font-mono text-[11px]">
                     {entry.expiresAt ? (
-                      <span className="text-amber-700 font-bold">{entry.expiresAt}</span>
+                      <span className="text-[#141414] font-bold">{entry.expiresAt}</span>
                     ) : (
-                      <span className="text-zinc-400">غير محدد (دائم)</span>
+                      <span className="text-[#707070]">غير محدد (دائم)</span>
                     )}
                   </td>
                   <td className="p-3 text-center">
@@ -173,11 +173,11 @@ export const IPWhitelistManager: React.FC = () => {
                       title={entry.isActive ? 'تعطيل القاعدة' : 'تفعيل القاعدة'}
                     >
                       {entry.isActive ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 text-[#141414] bg-[#f3f3f3] px-2 py-0.5 rounded-full text-[10px] font-bold">
                           <CheckCircle2 className="w-3 h-3" /> نشط
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                        <span className="inline-flex items-center gap-1 text-[#707070] bg-zinc-100 px-2 py-0.5 rounded-full text-[10px] font-bold">
                           معطل
                         </span>
                       )}
@@ -186,7 +186,7 @@ export const IPWhitelistManager: React.FC = () => {
                   <td className="p-3 text-center">
                     <button
                       onClick={() => handleDelete(entry.id)}
-                      className="text-red-500 hover:text-red-700 p-1 rounded-md hover:bg-red-50 transition-colors"
+                      className="text-[#141414] hover:text-[#141414] p-1 rounded-md hover:bg-[#eaeaea] transition-colors"
                       title="حذف من القائمة البيضاء"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -204,7 +204,7 @@ export const IPWhitelistManager: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-zinc-200">
             <h4 className="text-base font-bold text-zinc-900 mb-4 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-emerald-600" />
+              <Plus className="w-5 h-5 text-[#141414]" />
               <span>إضافة عنوان IP موثوق للقائمة البيضاء</span>
             </h4>
 
@@ -239,7 +239,7 @@ export const IPWhitelistManager: React.FC = () => {
                     type="checkbox"
                     checked={isTemp}
                     onChange={e => setIsTemp(e.target.checked)}
-                    className="rounded-sm border-zinc-300 text-emerald-600 focus:ring-emerald-500"
+                    className="rounded-sm border-zinc-300 text-[#141414] focus:ring-[#141414]/20"
                   />
                   <span>استثناء مؤقت (ينتهي تلقائياً)</span>
                 </label>

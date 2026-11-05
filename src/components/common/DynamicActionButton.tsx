@@ -207,24 +207,24 @@ export const DynamicActionButton: React.FC<DynamicActionButtonProps> = ({
 
   const getPhaseVariantClasses = () => {
     if (phase === 'success') {
-      return 'bg-[#047857] text-white border border-emerald-400/50 shadow-md shadow-emerald-950/20';
+      return 'bg-[#141414] text-[#ffffff] text-white border border-[#e0e0e0] shadow-md ';
     }
     if (phase === 'error') {
-      return 'bg-rose-600 text-white border border-rose-400/50';
+      return 'bg-[#141414] text-white border border-[#e0e0e0]';
     }
     if (phase === 'verifying' || phase === 'executing') {
-      return 'bg-[#1D2428] text-[#CFA64A] border border-[#CFA64A] shadow-md';
+      return 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] shadow-md';
     }
     switch (variant) {
       case 'gold':
-        return 'bg-[#CFA64A] hover:bg-[#d8b159] text-[#1D2428] border border-[#8C681E]/30 shadow-xs';
+        return 'bg-[#141414] text-[#ffffff] hover:bg-[#262626] border border-[#141414] shadow-xs';
       case 'charcoal':
-        return 'bg-[#1D2428] hover:bg-black text-[#CFA64A] border border-[#CFA64A]/45 shadow-xs';
+        return 'bg-[#141414] text-[#ffffff] hover:bg-[#262626] border border-[#141414] shadow-xs';
       case 'emerald':
-        return 'bg-[#047857] hover:bg-emerald-800 text-white border border-emerald-500/30 shadow-xs';
+        return 'bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-white border border-[#e0e0e0] shadow-xs';
       case 'outline':
       default:
-        return 'bg-[#FBFBF5] hover:bg-[#1D2428] text-[#1D2428] hover:text-[#CFA64A] border border-[#CFA64A]/50';
+        return 'bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] hover:text-[#141414] border border-[#e0e0e0]';
     }
   };
 
@@ -248,7 +248,7 @@ export const DynamicActionButton: React.FC<DynamicActionButtonProps> = ({
       {/* Animated Progress Bar Fill during verifying/executing */}
       {(phase === 'verifying' || phase === 'executing') && (
         <span
-          className="absolute bottom-0 right-0 h-1 bg-[#CFA64A] transition-all duration-300"
+          className="absolute bottom-0 right-0 h-1 bg-[#141414] text-[#ffffff] transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       )}
@@ -256,7 +256,7 @@ export const DynamicActionButton: React.FC<DynamicActionButtonProps> = ({
       {/* Icon / Spinner / Checkmark Morph */}
       <span className="shrink-0 flex items-center justify-center">
         {phase === 'verifying' || phase === 'executing' ? (
-          <Loader2 className="w-4 h-4 animate-spin text-[#CFA64A]" />
+          <Loader2 className="w-4 h-4 animate-spin text-[#141414]" />
         ) : phase === 'success' ? (
           <CheckCircle2 className="w-4 h-4 text-white animate-bounce" />
         ) : phase === 'error' ? (
@@ -271,12 +271,12 @@ export const DynamicActionButton: React.FC<DynamicActionButtonProps> = ({
 
       {/* Optional Amount Badge in Idle or Reference Code in Success */}
       {phase === 'idle' && amountBadge && (
-        <span className="px-2 py-0.5 rounded-md bg-black/15 text-[10.5px] font-extrabold font-mono shrink-0">
+        <span className="px-2 py-0.5 rounded-md bg-[#f3f3f3] text-[10.5px] font-extrabold font-mono shrink-0">
           {amountBadge}
         </span>
       )}
       {phase === 'success' && refCode && (
-        <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-md bg-white/20 text-[10px] font-mono font-bold shrink-0">
+        <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-md bg-[#f3f3f3] text-[10px] font-mono font-bold shrink-0">
           #{refCode}
         </span>
       )}

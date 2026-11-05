@@ -336,16 +336,16 @@ export const FinancePage: React.FC = () => {
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCIAL & ACCOUNTING SUITE</span>
                 <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>المعايير المحاسبية SOCPA / IFRS</span>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0]">
                   <CorporateAvatar name="إبراهيم الشمري" role="المدير المالي المعتمد" departmentId="finance" size="xs" status="verified" />
-                  <span className="text-[10.5px] font-bold text-[#F5EDDC]">الاعتماد المالي: إبراهيم الشمري</span>
+                  <span className="text-[10.5px] font-bold text-[#141414]">الاعتماد المالي: إبراهيم الشمري</span>
                 </div>
               </div>
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 الإدارة المالية والقوائم الختامية
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
-                المركز المالي، ميزان المراجعة، قائمة الدخل، قيود اليومية، وتسويات مساند لـ <strong className="text-white">{activeCompany.name}</strong>
+              <p className="text-xs text-[#707070] mt-1 font-sans">
+                المركز المالي، ميزان المراجعة، قائمة الدخل، قيود اليومية، وتسويات مساند لـ <strong className="text-[#141414]">{activeCompany.name}</strong>
               </p>
             </div>
           </div>
@@ -355,10 +355,10 @@ export const FinancePage: React.FC = () => {
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
               className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: '#e0e0e0', background: '#ffffff', color: '#141414', fontWeight: 700 }}
               title="رفع واستخلاص آلي لـ 100+ فاتورة أو مستندات PDF / Word / Excel أو قيود نظام محاسبي منفصل"
             >
-              <FileCheck className="w-3.5 h-3.5 ml-1 text-[#CFA64A]" />
+              <FileCheck className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>رفع واستخلاص فواتير / مستندات (100+ فاتورة / PDF / Word / Excel)</span>
             </button>
             <button
@@ -374,7 +374,7 @@ export const FinancePage: React.FC = () => {
               className="button-outline-on-dark"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
-              <Receipt className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <Receipt className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>سند قبض / صرف</span>
             </button>
 
@@ -383,7 +383,7 @@ export const FinancePage: React.FC = () => {
               className="button-outline-on-dark"
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>Excel</span>
             </button>
             <button
@@ -391,7 +391,7 @@ export const FinancePage: React.FC = () => {
               className="button-outline-on-dark"
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
-              <FileText className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>PDF</span>
             </button>
           </div>
@@ -427,7 +427,7 @@ export const FinancePage: React.FC = () => {
                   }`}
                 >
                   <span>{t.label}</span>
-                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
+                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#707070]'}`} />
                 </button>
               );
             })}
@@ -460,7 +460,7 @@ export const FinancePage: React.FC = () => {
                   }`}
                 >
                   <span>{t.label}</span>
-                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
+                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#707070]'}`} />
                 </button>
               );
             })}
@@ -493,7 +493,7 @@ export const FinancePage: React.FC = () => {
                   }`}
                 >
                   <span>{t.label}</span>
-                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
+                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#707070]'}`} />
                 </button>
               );
             })}
@@ -526,7 +526,7 @@ export const FinancePage: React.FC = () => {
                   }`}
                 >
                   <span>{t.label}</span>
-                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
+                  <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#707070]'}`} />
                 </button>
               );
             })}
@@ -562,21 +562,21 @@ export const FinancePage: React.FC = () => {
               <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>220,500.00 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-shade">مصاريف الفترة</span>
-                <span className="text-[11px] text-zinc-500">تأشيرات، رواتب، إعاشة</span>
+                <span className="text-[11px] text-[#707070]">تأشيرات، رواتب، إعاشة</span>
               </div>
             </div>
 
             <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
               <div className="flex items-center justify-between mb-2">
                 <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>صافي الأرباح التشغيلية</span>
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] flex items-center justify-center text-[#141414]">
                   <Coins className="w-4 h-4" />
                 </div>
               </div>
               <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', letterSpacing: '-0.02em' }}>304,971.20 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-mint">هامش ربح 58%</span>
-                <span className="text-[11px] text-zinc-400">أداء مالي قياسي</span>
+                <span className="text-[11px] text-[#707070]">أداء مالي قياسي</span>
               </div>
             </div>
 
@@ -590,7 +590,7 @@ export const FinancePage: React.FC = () => {
               <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>184,500.00 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-shade">فترة الضمان</span>
-                <span className="text-[11px] text-zinc-500">حساب وسيط محمي</span>
+                <span className="text-[11px] text-[#707070]">حساب وسيط محمي</span>
               </div>
             </div>
           </div>
@@ -606,7 +606,7 @@ export const FinancePage: React.FC = () => {
                 <Scale className="w-4 h-4 text-black" />
                 <span>ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
+              <p className="text-xs text-[#707070] mt-1">مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -615,7 +615,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
               <button
@@ -623,7 +623,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>PDF</span>
               </button>
               <button
@@ -665,8 +665,8 @@ export const FinancePage: React.FC = () => {
                     </td>
                     <td className="p-3 font-mono">{row.opening_debit.toLocaleString()}</td>
                     <td className="p-3 font-mono">{row.opening_credit.toLocaleString()}</td>
-                    <td className="p-3 font-mono text-emerald-700 font-bold">{row.period_debit.toLocaleString()}</td>
-                    <td className="p-3 font-mono text-rose-700 font-bold">{row.period_credit.toLocaleString()}</td>
+                    <td className="p-3 font-mono text-[#141414] font-bold">{row.period_debit.toLocaleString()}</td>
+                    <td className="p-3 font-mono text-[#141414] font-bold">{row.period_credit.toLocaleString()}</td>
                     <td className="p-3 font-mono font-bold text-black">
                       {Math.abs(row.balance).toLocaleString()} {row.balance >= 0 ? 'مدين' : 'دائن'}
                     </td>
@@ -687,7 +687,7 @@ export const FinancePage: React.FC = () => {
                 <Landmark className="w-4 h-4 text-black" />
                 <span>قائمة المركز المالي الموحدة (Balance Sheet)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
+              <p className="text-xs text-[#707070] mt-1">مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -696,7 +696,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
               <button
@@ -704,7 +704,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>PDF</span>
               </button>
             </div>
@@ -764,7 +764,7 @@ export const FinancePage: React.FC = () => {
                 </div>
                 <div className="flex justify-between py-1 text-zinc-600">
                   <span>الأرباح الصافية المرحلة:</span>
-                  <span className="font-bold font-mono text-emerald-700">520,396.20 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">520,396.20 ⃁</span>
                 </div>
               </div>
             </div>
@@ -781,7 +781,7 @@ export const FinancePage: React.FC = () => {
                 <TrendingUp className="w-4 h-4 text-black" />
                 <span>قائمة الدخل والأرباح والخسائر (Income Statement / P&L)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">تحليل الإيرادات، التكاليف المباشرة، والمصروفات الإدارية وصافي الربح</p>
+              <p className="text-xs text-[#707070] mt-1">تحليل الإيرادات، التكاليف المباشرة، والمصروفات الإدارية وصافي الربح</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -790,7 +790,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
               <button
@@ -798,7 +798,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>PDF</span>
               </button>
             </div>
@@ -813,12 +813,12 @@ export const FinancePage: React.FC = () => {
               <span>إيرادات عقود التأجير والتشغيل:</span>
               <span className="font-mono">115,471.20 ⃁</span>
             </div>
-            <div className="flex justify-between py-2.5 bg-emerald-50 px-3 rounded-xl font-black text-emerald-900 border border-emerald-200">
+            <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-black text-[#141414] border border-[#e0e0e0]">
               <span>إجمالي الإيرادات التشغيلية:</span>
               <span className="font-mono">525,471.20 ⃁</span>
             </div>
 
-            <div className="pt-2 text-rose-700 space-y-1">
+            <div className="pt-2 text-[#141414] space-y-1">
               <div className="flex justify-between py-1.5 border-b border-zinc-200">
                 <span>تكلفة المكاتب الخارجية والتأشيرات:</span>
                 <span className="font-mono">‎- ⃁</span>
@@ -833,9 +833,9 @@ export const FinancePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-between py-3.5 bg-black text-white px-5 rounded-2xl font-bold text-sm">
+            <div className="flex justify-between py-3.5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] px-5 rounded-2xl font-bold text-sm">
               <span>صافي الربح للفترة (Net Income):</span>
-              <span className="font-mono text-emerald-400">304,971.20 ⃁</span>
+              <span className="font-mono text-[#141414]">304,971.20 ⃁</span>
             </div>
           </div>
         </div>
@@ -847,10 +847,10 @@ export const FinancePage: React.FC = () => {
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
               <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <Coins className="w-4 h-4 text-emerald-600" />
+                <Coins className="w-4 h-4 text-[#141414]" />
                 <span>قائمة التدفقات النقدية (Cash Flow Statement)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 حركة السيولة النقدية من الأنشطة التشغيلية والاستثمارية والتمويلية لـ {activeCompany.name}
               </p>
             </div>
@@ -863,22 +863,22 @@ export const FinancePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200">
-              <div className="text-xs font-bold text-emerald-900 mb-1">صافي التدفقات التشغيلية</div>
-              <div className="text-xl font-bold font-mono text-emerald-950">+200,000.00 ⃁</div>
-              <div className="text-[10px] text-emerald-700 mt-1">مقبوضات العقود ناقص الرواتب والتشغيل</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+              <div className="text-xs font-bold text-[#141414] mb-1">صافي التدفقات التشغيلية</div>
+              <div className="text-xl font-bold font-mono text-[#141414]">+200,000.00 ⃁</div>
+              <div className="text-[10px] text-[#141414] mt-1">مقبوضات العقود ناقص الرواتب والتشغيل</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <div className="text-xs font-bold text-zinc-800 mb-1">صافي التدفقات الاستثمارية</div>
-              <div className="text-xl font-bold font-mono text-rose-700">‎- ⃁</div>
-              <div className="text-[10px] text-zinc-500 mt-1">تجهيزات ومعدات إيواء وسيارات</div>
+              <div className="text-xl font-bold font-mono text-[#141414]">‎- ⃁</div>
+              <div className="text-[10px] text-[#707070] mt-1">تجهيزات ومعدات إيواء وسيارات</div>
             </div>
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <div className="text-xs font-bold text-zinc-800 mb-1">صافي التدفقات التمويلية</div>
               <div className="text-xl font-bold font-mono text-zinc-700">0.00 ⃁</div>
-              <div className="text-[10px] text-zinc-500 mt-1">لا توجد قروض أو توزيعات نقدية</div>
+              <div className="text-[10px] text-[#707070] mt-1">لا توجد قروض أو توزيعات نقدية</div>
             </div>
           </div>
 
@@ -897,13 +897,13 @@ export const FinancePage: React.FC = () => {
                 </div>
                 <div className="flex justify-between text-zinc-700">
                   <span>(-) الزيادة في المدينين وحسابات مساند المعلقة:</span>
-                  <span className="font-mono font-bold text-rose-600">‎- ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">‎- ⃁</span>
                 </div>
                 <div className="flex justify-between text-zinc-700">
                   <span>(-) سداد مستحقات الوكلاء الخارجيين:</span>
-                  <span className="font-mono font-bold text-rose-600">‎- ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">‎- ⃁</span>
                 </div>
-                <div className="flex justify-between bg-emerald-100/60 p-2 rounded-lg font-bold text-emerald-950">
+                <div className="flex justify-between bg-[#f3f3f3] p-2 rounded-lg font-bold text-[#141414]">
                   <span>صافي النقد المتوفر من الأنشطة التشغيلية:</span>
                   <span className="font-mono">200,000.00 ⃁</span>
                 </div>
@@ -915,7 +915,7 @@ export const FinancePage: React.FC = () => {
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between text-zinc-700">
                   <span>شراء أصول ثابتة وتجهيزات فروع:</span>
-                  <span className="font-mono font-bold text-rose-600">‎- ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">‎- ⃁</span>
                 </div>
                 <div className="flex justify-between bg-zinc-200/60 p-2 rounded-lg font-bold text-zinc-900">
                   <span>صافي النقد المستخدم في الأنشطة الاستثمارية:</span>
@@ -929,13 +929,13 @@ export const FinancePage: React.FC = () => {
                 <span>رصيد النقدية وما في حكمها في بداية الفترة:</span>
                 <span className="font-mono">750,000.00 ⃁</span>
               </div>
-              <div className="flex justify-between text-emerald-700 font-bold">
+              <div className="flex justify-between text-[#141414] font-bold">
                 <span>صافي الزيادة في النقدية خلال الفترة:</span>
                 <span className="font-mono">+155,000.00 ⃁</span>
               </div>
-              <div className="flex justify-between bg-black text-white p-4 rounded-xl font-bold text-sm">
+              <div className="flex justify-between bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-4 rounded-xl font-bold text-sm">
                 <span>رصيد النقدية وما في حكمها في نهاية الفترة (البنوك والصناديق):</span>
-                <span className="font-mono text-emerald-400">905,000.00 ⃁</span>
+                <span className="font-mono text-[#141414]">905,000.00 ⃁</span>
               </div>
             </div>
           </div>
@@ -967,7 +967,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
             </div>
@@ -990,7 +990,7 @@ export const FinancePage: React.FC = () => {
                 {filteredJournals.map((j) => (
                   <tr key={j.id} className="hover:bg-zinc-50">
                     <td className="p-3 font-mono font-bold text-black">{j.ref_no}</td>
-                    <td className="p-3 text-zinc-500 font-mono">{j.date}</td>
+                    <td className="p-3 text-[#707070] font-mono">{j.date}</td>
                     <td className="p-3 font-bold text-black">{j.branch}</td>
                     <td className="p-3 text-zinc-700">{j.description}</td>
                     <td className="p-3 font-mono font-bold text-black">{j.amount.toLocaleString()} ⃁</td>
@@ -1064,9 +1064,9 @@ export const FinancePage: React.FC = () => {
                   <span
                     className={`text-[10.5px] px-2.5 py-0.5 rounded-full font-bold ${
                       voucherFilterType === 'قبض'
-                        ? 'bg-emerald-100 text-emerald-800'
+                        ? 'bg-[#f3f3f3] text-[#141414]'
                         : voucherFilterType === 'صرف'
-                        ? 'bg-rose-100 text-rose-800'
+                        ? 'bg-[#f3f3f3] text-[#141414]'
                         : 'bg-zinc-100 text-zinc-800'
                     }`}
                   >
@@ -1077,7 +1077,7 @@ export const FinancePage: React.FC = () => {
                       : 'شامل القبض والصرف'}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-500 m-0 mt-1">{currentSubtitle}</p>
+                <p className="text-xs text-[#707070] m-0 mt-1">{currentSubtitle}</p>
               </div>
 
               {/* Quick Action Buttons */}
@@ -1099,8 +1099,8 @@ export const FinancePage: React.FC = () => {
                     padding: '6px 14px',
                     fontSize: '11.5px',
                     minHeight: '32px',
-                    background: '#10b981',
-                    borderColor: '#10b981',
+                    background: '#141414',
+                    borderColor: '#141414',
                     color: '#ffffff',
                   }}
                   title="إصدار سند قبض نقدي أو بنكي جديد"
@@ -1126,8 +1126,8 @@ export const FinancePage: React.FC = () => {
                     padding: '6px 14px',
                     fontSize: '11.5px',
                     minHeight: '32px',
-                    background: '#e11d48',
-                    borderColor: '#e11d48',
+                    background: '#141414',
+                    borderColor: '#141414',
                     color: '#ffffff',
                   }}
                   title="إصدار سند صرف أو مصروف جديد"
@@ -1148,28 +1148,28 @@ export const FinancePage: React.FC = () => {
 
             {/* KPI Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="p-3.5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between">
+              <div className="p-3.5 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] font-bold text-emerald-800">إجمالي المقبوضات (سندات القبض)</div>
-                  <div className="text-base font-mono font-bold text-emerald-900 mt-0.5">
+                  <div className="text-[11px] font-bold text-[#141414]">إجمالي المقبوضات (سندات القبض)</div>
+                  <div className="text-base font-mono font-bold text-[#141414] mt-0.5">
                     {totalReceipts.toLocaleString()} <span className="text-[10px] font-sans">⃁</span>
                   </div>
-                  <div className="text-[10px] text-emerald-600 mt-0.5">{receiptCount} سند قبض مسجل</div>
+                  <div className="text-[10px] text-[#141414] mt-0.5">{receiptCount} سند قبض مسجل</div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                <div className="w-9 h-9 rounded-full bg-[#f3f3f3] flex items-center justify-center text-[#141414]">
                   <ArrowDownLeft className="w-5 h-5" />
                 </div>
               </div>
 
-              <div className="p-3.5 bg-rose-50/50 rounded-2xl border border-rose-100 flex items-center justify-between">
+              <div className="p-3.5 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] font-bold text-rose-800">إجمالي المصروفات (سندات الصرف)</div>
-                  <div className="text-base font-mono font-bold text-rose-900 mt-0.5">
+                  <div className="text-[11px] font-bold text-[#141414]">إجمالي المصروفات (سندات الصرف)</div>
+                  <div className="text-base font-mono font-bold text-[#141414] mt-0.5">
                     {totalPayments.toLocaleString()} <span className="text-[10px] font-sans">⃁</span>
                   </div>
-                  <div className="text-[10px] text-rose-600 mt-0.5">{paymentCount} سند صرف مسجل</div>
+                  <div className="text-[10px] text-[#141414] mt-0.5">{paymentCount} سند صرف مسجل</div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-700">
+                <div className="w-9 h-9 rounded-full bg-[#f3f3f3] flex items-center justify-center text-[#141414]">
                   <ArrowUpRight className="w-5 h-5" />
                 </div>
               </div>
@@ -1179,25 +1179,25 @@ export const FinancePage: React.FC = () => {
                   <div className="text-[11px] font-bold text-zinc-700">صافي التدفق النقدي</div>
                   <div
                     className={`text-base font-mono font-bold mt-0.5 ${
-                      netCashFlow >= 0 ? 'text-zinc-900' : 'text-rose-600'
+                      netCashFlow >= 0 ? 'text-zinc-900' : 'text-[#141414]'
                     }`}
                   >
                     {netCashFlow.toLocaleString()} <span className="text-[10px] font-sans">⃁</span>
                   </div>
-                  <div className="text-[10px] text-zinc-500 mt-0.5">الفرق بين المقبوضات والمدفوعات</div>
+                  <div className="text-[10px] text-[#707070] mt-0.5">الفرق بين المقبوضات والمدفوعات</div>
                 </div>
                 <div className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center text-zinc-800">
                   <Landmark className="w-5 h-5" />
                 </div>
               </div>
 
-              <div className="p-3.5 bg-amber-50/50 rounded-2xl border border-amber-100 flex items-center justify-between">
+              <div className="p-3.5 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] flex items-center justify-between">
                 <div>
-                  <div className="text-[11px] font-bold text-amber-800">السندات المعروضة حالياً</div>
-                  <div className="text-base font-mono font-bold text-amber-900 mt-0.5">
+                  <div className="text-[11px] font-bold text-[#141414]">السندات المعروضة حالياً</div>
+                  <div className="text-base font-mono font-bold text-[#141414] mt-0.5">
                     {displayedVouchers.length} <span className="text-[10px] font-sans">سند</span>
                   </div>
-                  <div className="text-[10px] text-amber-700 mt-0.5">
+                  <div className="text-[10px] text-[#141414] mt-0.5">
                     {voucherFilterType === 'all'
                       ? 'جميع السندات'
                       : voucherFilterType === 'قبض'
@@ -1205,7 +1205,7 @@ export const FinancePage: React.FC = () => {
                       : 'تصفية: صرف فقط'}
                   </div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+                <div className="w-9 h-9 rounded-full bg-[#f3f3f3] flex items-center justify-center text-[#141414]">
                   <Receipt className="w-5 h-5" />
                 </div>
               </div>
@@ -1230,8 +1230,8 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setVoucherFilterType('قبض')}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
                     voucherFilterType === 'قبض'
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'text-zinc-600 hover:text-emerald-700'
+                      ? 'bg-[#141414] text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-[#141414]'
                   }`}
                 >
                   <ArrowDownLeft className="w-3 h-3" />
@@ -1242,8 +1242,8 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setVoucherFilterType('صرف')}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 ${
                     voucherFilterType === 'صرف'
-                      ? 'bg-rose-600 text-white shadow-sm'
-                      : 'text-zinc-600 hover:text-rose-700'
+                      ? 'bg-[#141414] text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-[#141414]'
                   }`}
                 >
                   <ArrowUpRight className="w-3 h-3" />
@@ -1253,7 +1253,7 @@ export const FinancePage: React.FC = () => {
 
               {/* Search Box */}
               <div className="relative min-w-[240px]">
-                <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-[#707070]" />
                 <input
                   type="text"
                   placeholder="بحث برقم السند، المستفيد، الخزينة..."
@@ -1290,7 +1290,7 @@ export const FinancePage: React.FC = () => {
                             type={v.type === 'قبض' ? 'success' : 'danger'}
                           />
                         </td>
-                        <td className="p-3 text-zinc-500 font-mono">{v.date}</td>
+                        <td className="p-3 text-[#707070] font-mono">{v.date}</td>
                         <td className="p-3 font-bold text-black">
                           <div className="flex items-center gap-2">
                             <CorporateAvatar name={v.payee_payer} isClient={v.type === 'قبض'} departmentId="finance" size="sm" status="verified" />
@@ -1317,10 +1317,10 @@ export const FinancePage: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={8} className="p-8 text-center text-zinc-400">
-                        <Receipt className="w-8 h-8 mx-auto mb-2 text-zinc-300" />
+                      <td colSpan={8} className="p-8 text-center text-[#707070]">
+                        <Receipt className="w-8 h-8 mx-auto mb-2 text-[#141414]" />
                         <p className="text-xs font-bold text-zinc-600 m-0">لا توجد سندات مطابقة لمعايير البحث والتصفية</p>
-                        <p className="text-[11px] text-zinc-400 m-0 mt-1">يمكنك إضافة سند جديد أو تغيير معايير البحث أعلاه</p>
+                        <p className="text-[11px] text-[#707070] m-0 mt-1">يمكنك إضافة سند جديد أو تغيير معايير البحث أعلاه</p>
                       </td>
                     </tr>
                   )}
@@ -1342,7 +1342,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '4px 12px', fontSize: '11px', minHeight: '30px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
             </div>
@@ -1371,8 +1371,8 @@ export const FinancePage: React.FC = () => {
                     </td>
                     <td className="p-3 text-zinc-600">{s.country}</td>
                     <td className="p-3 font-bold text-black">{s.cv_count} سيرة ذاتية</td>
-                    <td className="p-3 font-mono font-bold text-rose-700">${s.balance_usd.toLocaleString()}</td>
-                    <td className="p-3 font-mono font-bold text-emerald-700">{s.balance_sar.toLocaleString()} ⃁</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">${s.balance_usd.toLocaleString()}</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{s.balance_sar.toLocaleString()} ⃁</td>
                     <td className="p-3">
                       <Badge text={s.status} type="success" />
                     </td>
@@ -1429,12 +1429,12 @@ export const FinancePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-black text-white p-6 rounded-2xl space-y-3">
-              <h4 className="text-xs font-bold text-zinc-400">النتيجة النظامية المعتمدة:</h4>
-              <div className="text-3xl font-light font-mono text-emerald-400">
+            <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-6 rounded-2xl space-y-3">
+              <h4 className="text-xs font-bold text-[#707070]">النتيجة النظامية المعتمدة:</h4>
+              <div className="text-3xl font-light font-mono text-[#141414]">
                 {calculateEOSBResult().toLocaleString()} ⃁
               </div>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
+              <p className="text-[11px] text-[#707070] leading-relaxed">
                 تم الاحتساب وفقاً للمادتين 84 و 85 من نظام العمل السعودي المعتمد من وزارة الموارد البشرية والتنمية الاجتماعية.
               </p>
             </div>
@@ -1448,10 +1448,10 @@ export const FinancePage: React.FC = () => {
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
               <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-emerald-600" />
+                <Clock className="w-4 h-4 text-[#141414]" />
                 <span>تقرير أعمار الذمم والتقادم المالي (Accounts Aging Report)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 توزيع مستحقات العملاء المدينة والتزامات الموردين الدائنة حسب فترات الاستحقاق لمتابعة التحصيل والسيولة
               </p>
             </div>
@@ -1465,28 +1465,28 @@ export const FinancePage: React.FC = () => {
 
           {/* Aging Summary Buckets */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
-              <div className="text-[11px] font-bold text-emerald-800 mb-1">0 - 30 يوماً (ساري)</div>
-              <div className="text-lg font-bold font-mono text-emerald-950">13,800.00 ⃁</div>
-              <div className="text-[10px] text-emerald-600 mt-0.5">عميل واحد (تحصيل ممتاز)</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-[11px] font-bold text-[#141414] mb-1">0 - 30 يوماً (ساري)</div>
+              <div className="text-lg font-bold font-mono text-[#141414]">13,800.00 ⃁</div>
+              <div className="text-[10px] text-[#141414] mt-0.5">عميل واحد (تحصيل ممتاز)</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-sky-50/70 border border-sky-200 text-center">
-              <div className="text-[11px] font-bold text-sky-800 mb-1">31 - 60 يوماً (مستحق)</div>
-              <div className="text-lg font-bold font-mono text-sky-950">28,750.00 ⃁</div>
-              <div className="text-[10px] text-sky-600 mt-0.5">عميل واحد (ضمن فترة السماح)</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-[11px] font-bold text-[#141414] mb-1">31 - 60 يوماً (مستحق)</div>
+              <div className="text-lg font-bold font-mono text-[#141414]">28,750.00 ⃁</div>
+              <div className="text-[10px] text-[#141414] mt-0.5">عميل واحد (ضمن فترة السماح)</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-center">
-              <div className="text-[11px] font-bold text-amber-800 mb-1">61 - 90 يوماً (تنبيه متأخر)</div>
-              <div className="text-lg font-bold font-mono text-amber-950">42,000.00 ⃁</div>
-              <div className="text-[10px] text-amber-700 mt-0.5">عميل واحد (يتطلب متابعة فورية)</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-[11px] font-bold text-[#141414] mb-1">61 - 90 يوماً (تنبيه متأخر)</div>
+              <div className="text-lg font-bold font-mono text-[#141414]">42,000.00 ⃁</div>
+              <div className="text-[10px] text-[#141414] mt-0.5">عميل واحد (يتطلب متابعة فورية)</div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-red-50/70 border border-red-200 text-center">
-              <div className="text-[11px] font-bold text-red-800 mb-1">+90 يوماً (حرج / ديون مشكوك فيها)</div>
-              <div className="text-lg font-bold font-mono text-red-950">65,000.00 ⃁</div>
-              <div className="text-[10px] text-red-700 mt-0.5">عميل واحد (تحت الإجراء القانوني)</div>
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+              <div className="text-[11px] font-bold text-[#141414] mb-1">+90 يوماً (حرج / ديون مشكوك فيها)</div>
+              <div className="text-lg font-bold font-mono text-[#141414]">65,000.00 ⃁</div>
+              <div className="text-[10px] text-[#141414] mt-0.5">عميل واحد (تحت الإجراء القانوني)</div>
             </div>
           </div>
 
@@ -1494,7 +1494,7 @@ export const FinancePage: React.FC = () => {
           <div className="bg-zinc-50/60 rounded-2xl border border-zinc-200 p-4 space-y-3">
             <h4 className="text-xs font-bold text-zinc-900 flex items-center justify-between">
               <span>أعمار ذمم العملاء المدينة (Accounts Receivable)</span>
-              <span className="text-[11px] font-mono text-zinc-500">4 حسابات عملاء نشطة</span>
+              <span className="text-[11px] font-mono text-[#707070]">4 حسابات عملاء نشطة</span>
             </h4>
 
             <div className="overflow-x-auto bg-white rounded-xl border border-zinc-200">
@@ -1514,45 +1514,45 @@ export const FinancePage: React.FC = () => {
                   <tr className="hover:bg-zinc-50">
                     <td className="p-3 font-sans font-bold text-zinc-900">بندر صالح الهويريني</td>
                     <td className="p-3 text-center font-bold">13,800.00</td>
-                    <td className="p-3 text-center text-emerald-700 font-bold">13,800.00</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-[#141414] font-bold">13,800.00</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
                     <td className="p-3 text-center font-sans">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">منتظم</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">منتظم</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-zinc-50">
                     <td className="p-3 font-sans font-bold text-zinc-900">شركة دار الرواد للمقاولات</td>
                     <td className="p-3 text-center font-bold">28,750.00</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-sky-700 font-bold">28,750.00</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414] font-bold">28,750.00</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
                     <td className="p-3 text-center font-sans">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700 border border-sky-200">فترة سماح</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">فترة سماح</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-zinc-50">
                     <td className="p-3 font-sans font-bold text-zinc-900">مؤسسة أفق المستقبل للتجارة</td>
                     <td className="p-3 text-center font-bold">42,000.00</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-amber-700 font-bold">42,000.00</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414] font-bold">42,000.00</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
                     <td className="p-3 text-center font-sans">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">إشعار مطالبة</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">إشعار مطالبة</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-zinc-50">
                     <td className="p-3 font-sans font-bold text-zinc-900">شركة البناء الحديث المحدودة</td>
-                    <td className="p-3 text-center font-bold text-red-700">65,000.00</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-zinc-300">-</td>
-                    <td className="p-3 text-center text-red-700 font-bold">65,000.00</td>
+                    <td className="p-3 text-center font-bold text-[#141414]">65,000.00</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414]">-</td>
+                    <td className="p-3 text-center text-[#141414] font-bold">65,000.00</td>
                     <td className="p-3 text-center font-sans">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200">تحت التحصيل القانوني</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">تحت التحصيل القانوني</span>
                     </td>
                   </tr>
                 </tbody>
@@ -1571,7 +1571,7 @@ export const FinancePage: React.FC = () => {
                 <FolderTree className="w-4 h-4 text-black" />
                 <span>شجرة الحسابات والدليل المحاسبي الموحد (Chart of Accounts)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 الهيكل المحاسبي الشامل لـ ({activeCompany.name}) مقسم وفق المعايير المحاسبية (1: أصول، 2: خصوم، 3: حقوق ملكية، 4: إيرادات، 5: مصروفات)
               </p>
             </div>
@@ -1582,7 +1582,7 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '34px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>تصدير الدليل</span>
               </button>
             </div>
@@ -1657,7 +1657,7 @@ export const FinancePage: React.FC = () => {
                     >
                       <td className="p-3 font-mono font-bold text-black">{account.code}</td>
                       <td className="p-3 font-bold text-black">{account.nameAr}</td>
-                      <td className="p-3 font-mono text-zinc-400">{account.nameEn}</td>
+                      <td className="p-3 font-mono text-[#707070]">{account.nameEn}</td>
                       <td className="p-3">
                         <Badge
                           text={account.category}
@@ -1707,10 +1707,10 @@ export const FinancePage: React.FC = () => {
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
               <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-emerald-600" />
+                <BarChart3 className="w-4 h-4 text-[#141414]" />
                 <span>الموازنة التقديرية مقابل الفعلي (Budget vs. Actual Variance)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 مقارنة المخصصات المعتمدة بالمصروفات الفعلية والالتزامات لكل قطاع في {activeCompany.name}
               </p>
             </div>
@@ -1729,7 +1729,7 @@ export const FinancePage: React.FC = () => {
                 <Lock className="w-4 h-4 text-black" />
                 <span>إقفال الفترات والسنوات المالية (Fiscal Period Locks)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 قفل الفترات المحاسبية يمنع إجراء أي تعديلات أو إضافة قيود جديدة بأثر رجعي لحماية التقارير المالية والضريبية.
               </p>
             </div>
@@ -1760,7 +1760,7 @@ export const FinancePage: React.FC = () => {
                     isClosed
                       ? 'bg-zinc-50 border-zinc-200'
                       : period.m === 8
-                      ? 'bg-emerald-50/40 border-emerald-300'
+                      ? 'bg-[#f3f3f3] border-[#e0e0e0]'
                       : 'bg-white border-zinc-200'
                   }`}
                 >
@@ -1768,13 +1768,13 @@ export const FinancePage: React.FC = () => {
                     <span className="font-bold text-xs text-black">{period.name}</span>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold ${
-                        isClosed ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        isClosed ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                       }`}
                     >
                       {isClosed ? 'مغلق' : 'مفتوح'}
                     </span>
                   </div>
-                  <p className="text-[10.5px] text-zinc-500 mb-3">{period.desc}</p>
+                  <p className="text-[10.5px] text-[#707070] mb-3">{period.desc}</p>
                   <button
                     onClick={() => {
                       if (isClosed) {
@@ -1809,10 +1809,10 @@ export const FinancePage: React.FC = () => {
                 <span className="pill-tag-shade text-[11px]">مطابقة الكشف البنكي مع الدفاتر</span>
               </div>
               <h3 className="text-base font-bold text-black mt-1 mb-0 flex items-center gap-2">
-                <Landmark className="w-5 h-5 text-emerald-600" />
+                <Landmark className="w-5 h-5 text-[#141414]" />
                 <span>مذكرة التسوية والمطابقة البنكية الآلية</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 مطابقة حركات كشف الحساب البنكي الوارد من البنك مع رصيد الأستاذ العام والدفاتر المحاسبية لـ {activeCompany.name}
               </p>
             </div>
@@ -1830,7 +1830,7 @@ export const FinancePage: React.FC = () => {
                 className="button-white-pill"
                 style={{ padding: '6px 16px', fontSize: '11.5px', background: '#000000', color: '#ffffff' }}
               >
-                <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+                <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>مطابقة آلية لكافة الحركات (Auto-Match)</span>
               </button>
               <button
@@ -1905,7 +1905,7 @@ export const FinancePage: React.FC = () => {
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
                 <div className="flex items-center gap-2">
-                  <ArrowUpRight className="w-4 h-4 text-rose-600" />
+                  <ArrowUpRight className="w-4 h-4 text-[#141414]" />
                   <h4 className="text-xs font-bold text-black m-0">1. شيكات وحوالات صادرة لم تصرف من البنك (-)</h4>
                 </div>
                 <span className="pill-tag-shade text-[10px]">تخصم من رصيد البنك</span>
@@ -1929,7 +1929,7 @@ export const FinancePage: React.FC = () => {
                         }
                       }}
                       className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                        isCleared ? 'bg-zinc-50/50 border-zinc-200 opacity-60' : 'bg-rose-50/30 border-rose-200'
+                        isCleared ? 'bg-zinc-50/50 border-zinc-200 opacity-60' : 'bg-[#f3f3f3] border-[#e0e0e0]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -1942,14 +1942,14 @@ export const FinancePage: React.FC = () => {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-bold text-xs text-black">{item.no}</span>
-                            <span className="text-[10px] text-zinc-400">{item.date}</span>
+                            <span className="text-[10px] text-[#707070]">{item.date}</span>
                           </div>
                           <p className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</p>
                         </div>
                       </div>
                       <div className="text-left font-mono">
-                        <span className="font-bold text-xs text-rose-700 block">{item.amount.toLocaleString()} ⃁</span>
-                        <span className="text-[9.5px] text-zinc-400">{isCleared ? 'تمت المطابقة' : 'معلقة بالطريق'}</span>
+                        <span className="font-bold text-xs text-[#141414] block">{item.amount.toLocaleString()} ⃁</span>
+                        <span className="text-[9.5px] text-[#707070]">{isCleared ? 'تمت المطابقة' : 'معلقة بالطريق'}</span>
                       </div>
                     </div>
                   );
@@ -1961,7 +1961,7 @@ export const FinancePage: React.FC = () => {
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
                 <div className="flex items-center gap-2">
-                  <ArrowDownLeft className="w-4 h-4 text-emerald-600" />
+                  <ArrowDownLeft className="w-4 h-4 text-[#141414]" />
                   <h4 className="text-xs font-bold text-black m-0">2. إيداعات ومقبوضات قيد التحصيل (+)</h4>
                 </div>
                 <span className="pill-tag-mint text-[10px]">تضاف لرصيد البنك</span>
@@ -1985,7 +1985,7 @@ export const FinancePage: React.FC = () => {
                         }
                       }}
                       className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                        isCleared ? 'bg-zinc-50/50 border-zinc-200 opacity-60' : 'bg-emerald-50/30 border-emerald-200'
+                        isCleared ? 'bg-zinc-50/50 border-zinc-200 opacity-60' : 'bg-[#f3f3f3] border-[#e0e0e0]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -1998,14 +1998,14 @@ export const FinancePage: React.FC = () => {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-bold text-xs text-black">{item.no}</span>
-                            <span className="text-[10px] text-zinc-400">{item.date}</span>
+                            <span className="text-[10px] text-[#707070]">{item.date}</span>
                           </div>
                           <p className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</p>
                         </div>
                       </div>
                       <div className="text-left font-mono">
-                        <span className="font-bold text-xs text-emerald-700 block">+{item.amount.toLocaleString()} ⃁</span>
-                        <span className="text-[9.5px] text-zinc-400">{isCleared ? 'تمت المطابقة' : 'قيد المقاصة'}</span>
+                        <span className="font-bold text-xs text-[#141414] block">+{item.amount.toLocaleString()} ⃁</span>
+                        <span className="text-[9.5px] text-[#707070]">{isCleared ? 'تمت المطابقة' : 'قيد المقاصة'}</span>
                       </div>
                     </div>
                   );
@@ -2015,61 +2015,61 @@ export const FinancePage: React.FC = () => {
           </div>
 
           {/* Live Official Bank Reconciliation Summary Card */}
-          <div className="bg-black text-white p-6 rounded-3xl space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3 flex-wrap gap-2">
-              <h4 className="text-sm font-bold text-white flex items-center gap-2 m-0">
-                <Scale className="w-4 h-4 text-emerald-400" />
+          <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-6 rounded-3xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-3 flex-wrap gap-2">
+              <h4 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+                <Scale className="w-4 h-4 text-[#141414]" />
                 <span>ملخص مذكرة التسوية البنكية المعتمدة (Reconciliation Summary)</span>
               </h4>
               <span className="pill-tag-mint text-xs">مطابقة تامة 100%</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-              <div className="space-y-2 bg-zinc-900/60 p-4 rounded-2xl border border-zinc-800">
-                <div className="text-zinc-400 font-bold mb-2">جانب البنك (Bank Statement):</div>
-                <div className="flex justify-between text-zinc-300">
+              <div className="space-y-2 bg-[#f3f3f3]/60 p-4 rounded-2xl border border-[#e0e0e0]">
+                <div className="text-[#707070] font-bold mb-2">جانب البنك (Bank Statement):</div>
+                <div className="flex justify-between text-[#141414]">
                   <span>الرصيد بموجب كشف الحساب البنكي:</span>
-                  <span className="font-mono font-bold text-white">{parseFloat(bankStatementBalance || '0').toLocaleString()} ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">{parseFloat(bankStatementBalance || '0').toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex justify-between text-emerald-400">
+                <div className="flex justify-between text-[#141414]">
                   <span>(+) إيداعات قيد التحصيل (غير مقاصة):</span>
                   <span className="font-mono font-bold">+12,700.00 ⃁</span>
                 </div>
-                <div className="flex justify-between text-rose-400">
+                <div className="flex justify-between text-[#141414]">
                   <span>(-) شيكات وحوالات صادرة لم تصرف:</span>
                   <span className="font-mono font-bold">‎- ⃁</span>
                 </div>
-                <div className="border-t border-zinc-700 pt-2 flex justify-between font-bold text-white text-sm">
+                <div className="border-t border-[#e0e0e0] pt-2 flex justify-between font-bold text-[#141414] text-sm">
                   <span>الرصيد البنكي المعدل (Adjusted Bank):</span>
-                  <span className="font-mono text-emerald-400">429,617.00 ⃁</span>
+                  <span className="font-mono text-[#141414]">429,617.00 ⃁</span>
                 </div>
               </div>
 
-              <div className="space-y-2 bg-zinc-900/60 p-4 rounded-2xl border border-zinc-800">
-                <div className="text-zinc-400 font-bold mb-2">جانب الدفاتر (General Ledger):</div>
-                <div className="flex justify-between text-zinc-300">
+              <div className="space-y-2 bg-[#f3f3f3]/60 p-4 rounded-2xl border border-[#e0e0e0]">
+                <div className="text-[#707070] font-bold mb-2">جانب الدفاتر (General Ledger):</div>
+                <div className="flex justify-between text-[#141414]">
                   <span>الرصيد الدفتري في ميزان المراجعة:</span>
-                  <span className="font-mono font-bold text-white">429,674.50 ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">429,674.50 ⃁</span>
                 </div>
-                <div className="flex justify-between text-rose-400">
+                <div className="flex justify-between text-[#141414]">
                   <span>(-) المصاريف والرسوم البنكية غير المسجلة:</span>
                   <span className="font-mono font-bold">‎- ⃁</span>
                 </div>
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-[#707070]">
                   <span>(+) أرباح وإيداعات مباشرة بالبنك:</span>
                   <span className="font-mono font-bold">0.00 ⃁</span>
                 </div>
-                <div className="border-t border-zinc-700 pt-2 flex justify-between font-bold text-white text-sm">
+                <div className="border-t border-[#e0e0e0] pt-2 flex justify-between font-bold text-[#141414] text-sm">
                   <span>الرصيد الدفتري المعدل (Adjusted Books):</span>
-                  <span className="font-mono text-emerald-400">429,617.00 ⃁</span>
+                  <span className="font-mono text-[#141414]">429,617.00 ⃁</span>
                 </div>
               </div>
             </div>
 
-            <div className="p-3 bg-emerald-950/60 border border-emerald-500/40 rounded-2xl flex items-center justify-between">
+            <div className="p-3 bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                <span className="text-xs font-bold text-emerald-200">
+                <CheckCircle2 className="w-5 h-5 text-[#141414] shrink-0" />
+                <span className="text-xs font-bold text-[#141414]">
                   حالة التوازن: الرصيد البنكي المعدل يطابق تماماً الرصيد الدفتري المعدل (الفارق = 0.00 ⃁).
                 </span>
               </div>
@@ -2093,7 +2093,7 @@ export const FinancePage: React.FC = () => {
                   });
                 }}
                 className="button-primary-pill"
-                style={{ padding: '6px 18px', fontSize: '11.5px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+                style={{ padding: '6px 18px', fontSize: '11.5px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
               >
                 اعتماد التسوية رسمياً
               </button>
@@ -2112,10 +2112,10 @@ export const FinancePage: React.FC = () => {
                 <span className="pill-tag-shade text-[11px]">هيئة الزكاة والضريبة والجمارك</span>
               </div>
               <h3 className="text-base font-bold text-black mt-1 mb-0 flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-emerald-600" />
+                <Receipt className="w-5 h-5 text-[#141414]" />
                 <span>الإقرار الضريبي لضريبة القيمة المضافة (ZATCA Phase 2)</span>
               </h3>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[#707070] mt-1">
                 حساب ضريبة المخرجات وضريبة المدخلات وصافي الضريبة المستحقة للسداد لـ {activeCompany.name}
               </p>
             </div>
@@ -2170,19 +2170,19 @@ export const FinancePage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '11.5px' }}
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>تصدير Excel</span>
               </button>
             </div>
           </div>
 
           {/* ZATCA Phase 2 Fatoora Integration Banner */}
-          <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex items-center justify-between flex-wrap gap-3">
+          <div className="p-4 bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="w-6 h-6 text-emerald-700 shrink-0" />
+              <ShieldCheck className="w-6 h-6 text-[#141414] shrink-0" />
               <div>
-                <h4 className="text-xs font-bold text-emerald-950 m-0">الربط الإلكتروني والتكامل مع منصة فاتورة (ZATCA Fatoora API)</h4>
-                <p className="text-[11px] text-emerald-800 mt-0.5">
+                <h4 className="text-xs font-bold text-[#141414] m-0">الربط الإلكتروني والتكامل مع منصة فاتورة (ZATCA Fatoora API)</h4>
+                <p className="text-[11px] text-[#141414] mt-0.5">
                   كافة الفواتير الضريبية المبسطة والإشعارات الدائنة والمدينة مشفرة بختم التشفير الرقمي والـ QR Code المتوافق مع متطلبات المرحلة الثانية.
                 </p>
               </div>
@@ -2203,7 +2203,7 @@ export const FinancePage: React.FC = () => {
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="font-bold text-black block">عقود التأجير وعمولات الاستقدام (15%)</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 525,471.20 ⃁</span>
+                    <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 525,471.20 ⃁</span>
                   </div>
                   <span className="font-mono font-bold text-black text-xs">78,820.68 ⃁</span>
                 </div>
@@ -2211,7 +2211,7 @@ export const FinancePage: React.FC = () => {
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="font-bold text-black block">مبيعات الشركات والجهات الخاضعة (15%)</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 120,000.00 ⃁</span>
+                    <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 120,000.00 ⃁</span>
                   </div>
                   <span className="font-mono font-bold text-black text-xs">18,000.00 ⃁</span>
                 </div>
@@ -2219,9 +2219,9 @@ export const FinancePage: React.FC = () => {
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="font-bold text-black block">خدمات وصادرات معفاة / بنسبة الصفر (0%)</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ: 65,000.00 ⃁</span>
+                    <span className="text-[10px] text-[#707070] font-mono">المبلغ: 65,000.00 ⃁</span>
                   </div>
-                  <span className="font-mono font-bold text-zinc-400 text-xs">0.00 ⃁</span>
+                  <span className="font-mono font-bold text-[#707070] text-xs">0.00 ⃁</span>
                 </div>
               </div>
             </div>
@@ -2237,38 +2237,38 @@ export const FinancePage: React.FC = () => {
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="font-bold text-black block">مشتريات تشغيلية ومراكز إيواء وضيافة (15%)</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 220,500.00 ⃁</span>
+                    <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 220,500.00 ⃁</span>
                   </div>
-                  <span className="font-mono font-bold text-rose-700 text-xs">33,075.00 ⃁</span>
+                  <span className="font-mono font-bold text-[#141414] text-xs">33,075.00 ⃁</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="font-bold text-black block">رسوم استيراد وتأشيرات خاضعة بالجمارك (15%)</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">المبلغ الخاضع: 85,000.00 ⃁</span>
+                    <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 85,000.00 ⃁</span>
                   </div>
-                  <span className="font-mono font-bold text-rose-700 text-xs">12,750.00 ⃁</span>
+                  <span className="font-mono font-bold text-[#141414] text-xs">12,750.00 ⃁</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
                     <span className="font-bold text-black block">مصروفات معفاة من الخصم الضريبي</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">رواتب وكوادر إدارية</span>
+                    <span className="text-[10px] text-[#707070] font-mono">رواتب وكوادر إدارية</span>
                   </div>
-                  <span className="font-mono font-bold text-zinc-400 text-xs">0.00 ⃁</span>
+                  <span className="font-mono font-bold text-[#707070] text-xs">0.00 ⃁</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Final Net VAT Box */}
-          <div className="bg-black text-white p-6 rounded-3xl flex items-center justify-between flex-wrap gap-4">
+          <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-6 rounded-3xl flex items-center justify-between flex-wrap gap-4">
             <div>
-              <span className="text-xs text-zinc-400 font-semibold block">صافي ضريبة القيمة المضافة المستحقة للسداد لهيئة الزكاة (Net Tax Due):</span>
-              <div className="text-3xl font-light font-mono text-emerald-400 mt-1">
+              <span className="text-xs text-[#707070] font-semibold block">صافي ضريبة القيمة المضافة المستحقة للسداد لهيئة الزكاة (Net Tax Due):</span>
+              <div className="text-3xl font-light font-mono text-[#141414] mt-1">
                 50,995.68 ⃁
               </div>
-              <p className="text-[11px] text-zinc-400 mt-1">
+              <p className="text-[11px] text-[#707070] mt-1">
                 ضريبة المخرجات (96,820.68 ⃁) - ضريبة المدخلات (45,825.00 ⃁) = 50,995.68 ⃁
               </p>
             </div>
@@ -2294,7 +2294,7 @@ export const FinancePage: React.FC = () => {
                 });
               }}
               className="button-white-pill"
-              style={{ padding: '8px 24px', fontSize: '13px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+              style={{ padding: '8px 24px', fontSize: '13px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
             >
               تقديم الإقرار وسداد الفاتورة إلكترونياً
             </button>
@@ -2306,16 +2306,16 @@ export const FinancePage: React.FC = () => {
       {selectedAccountForDrilldown && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-emerald-400" />
-                <h3 className="font-bold text-sm text-white m-0">
+                <FileCheck className="w-4 h-4 text-[#141414]" />
+                <h3 className="font-bold text-sm text-[#141414] m-0">
                   كشف حساب تفصيلي: {selectedAccountForDrilldown.name} ({selectedAccountForDrilldown.code})
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedAccountForDrilldown(null)}
-                className="text-zinc-400 hover:text-white"
+                className="text-[#707070] hover:text-[#141414]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2324,16 +2324,16 @@ export const FinancePage: React.FC = () => {
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-3 gap-3 bg-zinc-50 p-3 rounded-2xl border border-zinc-200 text-xs">
                 <div>
-                  <span className="text-zinc-400 block font-bold">رمز الحساب:</span>
+                  <span className="text-[#707070] block font-bold">رمز الحساب:</span>
                   <span className="font-mono font-bold text-black">{selectedAccountForDrilldown.code}</span>
                 </div>
                 <div>
-                  <span className="text-zinc-400 block font-bold">النوع:</span>
+                  <span className="text-[#707070] block font-bold">النوع:</span>
                   <span className="font-bold text-black">{selectedAccountForDrilldown.type || 'أصول'}</span>
                 </div>
                 <div>
-                  <span className="text-zinc-400 block font-bold">الرصيد التراكمي:</span>
-                  <span className="font-mono font-bold text-emerald-700">
+                  <span className="text-[#707070] block font-bold">الرصيد التراكمي:</span>
+                  <span className="font-mono font-bold text-[#141414]">
                     {Number(selectedAccountForDrilldown.balance || 0).toLocaleString()} ⃁
                   </span>
                 </div>
@@ -2346,11 +2346,11 @@ export const FinancePage: React.FC = () => {
                     <div key={j.id} className="p-3 bg-white hover:bg-zinc-50 flex items-center justify-between">
                       <div>
                         <span className="font-bold text-black">{j.ref_no}</span>
-                        <p className="text-[11px] text-zinc-500 mt-0.5">{j.description}</p>
+                        <p className="text-[11px] text-[#707070] mt-0.5">{j.description}</p>
                       </div>
                       <div className="text-left font-mono">
                         <span className="font-bold text-black block">{j.amount.toLocaleString()} ⃁</span>
-                        <span className="text-[10px] text-zinc-400">{j.date}</span>
+                        <span className="text-[10px] text-[#707070]">{j.date}</span>
                       </div>
                     </div>
                   ))}
@@ -2383,9 +2383,9 @@ export const FinancePage: React.FC = () => {
       {showAddVoucherModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white m-0">إصدار سند مالي جديد (قبض / صرف)</h3>
-              <button onClick={() => setShowAddVoucherModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414] m-0">إصدار سند مالي جديد (قبض / صرف)</h3>
+              <button onClick={() => setShowAddVoucherModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -2468,9 +2468,9 @@ export const FinancePage: React.FC = () => {
       {showAddJournalModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white m-0">تسجيل قيد محاسبي يومي جديد</h3>
-              <button onClick={() => setShowAddJournalModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414] m-0">تسجيل قيد محاسبي يومي جديد</h3>
+              <button onClick={() => setShowAddJournalModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -2542,9 +2542,9 @@ export const FinancePage: React.FC = () => {
       {showAddAdjustmentModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white m-0">تسجيل تسوية بنكية جديدة (Bank Adjustment)</h3>
-              <button onClick={() => setShowAddAdjustmentModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414] m-0">تسجيل تسوية بنكية جديدة (Bank Adjustment)</h3>
+              <button onClick={() => setShowAddAdjustmentModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -2635,21 +2635,21 @@ export const FinancePage: React.FC = () => {
       {selectedVoucherForPrint && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
-            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
-                <Printer className="w-4 h-4 text-emerald-400" />
-                <h3 className="font-bold text-sm text-white m-0">معاينة وطباعة سند مالي معتمد</h3>
+                <Printer className="w-4 h-4 text-[#141414]" />
+                <h3 className="font-bold text-sm text-[#141414] m-0">معاينة وطباعة سند مالي معتمد</h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
                   className="button-white-pill"
-                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
                   <Printer className="w-3.5 h-3.5 ml-1" />
                   <span>طباعة فورية</span>
                 </button>
-                <button onClick={() => setSelectedVoucherForPrint(null)} className="text-zinc-400 hover:text-white">
+                <button onClick={() => setSelectedVoucherForPrint(null)} className="text-[#707070] hover:text-[#141414]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -2662,14 +2662,14 @@ export const FinancePage: React.FC = () => {
                 <div>
                   <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
                   <p className="text-xs text-zinc-600 mt-0.5 font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
-                  <p className="text-xs text-zinc-500">المملكة العربية السعودية - الرياض</p>
+                  <p className="text-xs text-[#707070]">المملكة العربية السعودية - الرياض</p>
                 </div>
                 <div className="text-left">
                   <div className="text-base font-extrabold text-black font-mono border-2 border-black px-3 py-1 rounded-xl">
                     سند {selectedVoucherForPrint.type}
                   </div>
                   <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">{selectedVoucherForPrint.voucher_no}</div>
-                  <div className="text-xs font-mono text-zinc-500">{selectedVoucherForPrint.date}</div>
+                  <div className="text-xs font-mono text-[#707070]">{selectedVoucherForPrint.date}</div>
                 </div>
               </div>
 
@@ -2684,7 +2684,7 @@ export const FinancePage: React.FC = () => {
 
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
                   <span className="font-bold text-zinc-700">المبلغ وقدره:</span>
-                  <span className="font-mono font-extrabold text-base text-emerald-800">
+                  <span className="font-mono font-extrabold text-base text-[#141414]">
                     {selectedVoucherForPrint.amount.toLocaleString()} ⃁
                   </span>
                 </div>
@@ -2703,19 +2703,19 @@ export const FinancePage: React.FC = () => {
               {/* Signatures */}
               <div className="grid grid-cols-4 gap-4 pt-8 border-t border-zinc-200 text-center text-xs">
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">منظم السند</span>
+                  <span className="text-[#707070] block font-bold mb-8">منظم السند</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">المحاسب المالي</span>
                 </div>
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">المراجع المالي</span>
+                  <span className="text-[#707070] block font-bold mb-8">المراجع المالي</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">تدقيق الحسابات</span>
                 </div>
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">المدير المالي</span>
+                  <span className="text-[#707070] block font-bold mb-8">المدير المالي</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">الاعتماد والصرف</span>
                 </div>
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">توقيع المستلم</span>
+                  <span className="text-[#707070] block font-bold mb-8">توقيع المستلم</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">الاسم والختم</span>
                 </div>
               </div>
@@ -2738,21 +2738,21 @@ export const FinancePage: React.FC = () => {
       {selectedJournalForPrint && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
-            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-emerald-400" />
-                <h3 className="font-bold text-sm text-white m-0">معاينة وطباعة قيد اليومية (Double-Entry Journal)</h3>
+                <BookOpen className="w-4 h-4 text-[#141414]" />
+                <h3 className="font-bold text-sm text-[#141414] m-0">معاينة وطباعة قيد اليومية (Double-Entry Journal)</h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
                   className="button-white-pill"
-                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000000', fontWeight: 700 }}
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
                   <Printer className="w-3.5 h-3.5 ml-1" />
                   <span>طباعة القيد</span>
                 </button>
-                <button onClick={() => setSelectedJournalForPrint(null)} className="text-zinc-400 hover:text-white">
+                <button onClick={() => setSelectedJournalForPrint(null)} className="text-[#707070] hover:text-[#141414]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -2762,13 +2762,13 @@ export const FinancePage: React.FC = () => {
               <div className="flex items-center justify-between border-b-2 border-black pb-4">
                 <div>
                   <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
-                  <p className="text-xs text-zinc-500 font-mono mt-0.5">دفتر القيود اليومية العامة</p>
+                  <p className="text-xs text-[#707070] font-mono mt-0.5">دفتر القيود اليومية العامة</p>
                 </div>
                 <div className="text-left">
                   <div className="text-sm font-extrabold text-black font-mono border border-black px-3 py-1 rounded-xl">
                     قيد يومية: {selectedJournalForPrint.ref_no}
                   </div>
-                  <div className="text-xs font-mono text-zinc-500 mt-1">التاريخ: {selectedJournalForPrint.date}</div>
+                  <div className="text-xs font-mono text-[#707070] mt-1">التاريخ: {selectedJournalForPrint.date}</div>
                   <div className="text-xs text-zinc-600 font-bold">الفرع: {selectedJournalForPrint.branch}</div>
                 </div>
               </div>
@@ -2794,18 +2794,18 @@ export const FinancePage: React.FC = () => {
                       <td className="p-2.5 font-bold">1102</td>
                       <td className="p-2.5 font-sans">بنك الرياض - حساب الاستقدام</td>
                       <td className="p-2.5 font-bold text-black">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
-                      <td className="p-2.5 text-zinc-400">0.00</td>
+                      <td className="p-2.5 text-[#707070]">0.00</td>
                     </tr>
                     <tr>
                       <td className="p-2.5 font-bold">4101</td>
                       <td className="p-2.5 font-sans">إيرادات وساطة عقود الاستقدام</td>
-                      <td className="p-2.5 text-zinc-400">0.00</td>
-                      <td className="p-2.5 font-bold text-rose-700">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
+                      <td className="p-2.5 text-[#707070]">0.00</td>
+                      <td className="p-2.5 font-bold text-[#141414]">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
                     </tr>
                     <tr className="bg-zinc-50 font-bold border-t-2 border-black">
                       <td colSpan={2} className="p-2.5 font-sans text-left pl-4">الإجمالي المتوازن:</td>
                       <td className="p-2.5 text-black">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
-                      <td className="p-2.5 text-rose-700">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
+                      <td className="p-2.5 text-[#141414]">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>
                 </table>
@@ -2813,15 +2813,15 @@ export const FinancePage: React.FC = () => {
 
               <div className="grid grid-cols-3 gap-4 pt-8 border-t border-zinc-200 text-center text-xs">
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">معد القيد</span>
+                  <span className="text-[#707070] block font-bold mb-8">معد القيد</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">المحاسب المسؤول</span>
                 </div>
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">المراجع المالي</span>
+                  <span className="text-[#707070] block font-bold mb-8">المراجع المالي</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">التدقيق والترحيل</span>
                 </div>
                 <div>
-                  <span className="text-zinc-500 block font-bold mb-8">اعتماد الإدارة المالية</span>
+                  <span className="text-[#707070] block font-bold mb-8">اعتماد الإدارة المالية</span>
                   <span className="border-t border-zinc-400 pt-1 block font-mono text-[10px]">المدير المالي</span>
                 </div>
               </div>

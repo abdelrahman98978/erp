@@ -2825,7 +2825,7 @@ export const HRPage: React.FC = () => {
                         onChange={e => setEosSalary(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
                       />
-                      <span className="absolute left-3 top-2 text-xs text-zinc-400">⃁</span>
+                      <span className="absolute left-3 top-2 text-xs text-[#707070]">⃁</span>
                     </div>
                   </div>
 
@@ -2899,7 +2899,7 @@ export const HRPage: React.FC = () => {
                       type="checkbox"
                       checked={eosCustodyCleared}
                       onChange={(e) => setEosCustodyCleared(e.target.checked)}
-                      className="rounded text-emerald-700 w-4 h-4"
+                      className="rounded text-[#141414] w-4 h-4"
                     />
                     <span className="text-xs font-bold text-zinc-800">
                       تم تسليم وإخلاء كافة العهد العينية والمالية للموظف
@@ -2958,7 +2958,7 @@ export const HRPage: React.FC = () => {
                   <div className="p-4 bg-zinc-50 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <span className="font-bold text-xs text-black block">قيد تسوية وصرف مخالصة نهاية الخدمة</span>
-                      <span className="text-[11px] text-zinc-500">حساب مدين: مخصص نهاية الخدمة وتعويض الإجازات (51050) | دائن: السلف (11040) والبنك (11020)</span>
+                      <span className="text-[11px] text-[#707070]">حساب مدين: مخصص نهاية الخدمة وتعويض الإجازات (51050) | دائن: السلف (11040) والبنك (11020)</span>
                     </div>
                     <button
                       onClick={async () => {
@@ -3190,7 +3190,7 @@ export const HRPage: React.FC = () => {
                         onChange={e => setGosiBasic(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
                       />
-                      <span className="absolute left-3 top-2 text-xs text-zinc-400">⃁</span>
+                      <span className="absolute left-3 top-2 text-xs text-[#707070]">⃁</span>
                     </div>
                   </div>
 
@@ -3204,7 +3204,7 @@ export const HRPage: React.FC = () => {
                         onChange={e => setGosiHousing(Math.max(0, Number(e.target.value)))}
                         className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
                       />
-                      <span className="absolute left-3 top-2 text-xs text-zinc-400">⃁</span>
+                      <span className="absolute left-3 top-2 text-xs text-[#707070]">⃁</span>
                     </div>
                   </div>
 
@@ -3320,16 +3320,16 @@ export const HRPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{w.name}</td>
                     <td className="p-3.5">
                       <div>{w.job}</div>
-                      <div className="text-[11px] text-zinc-400">{w.nationality}</div>
+                      <div className="text-[11px] text-[#707070]">{w.nationality}</div>
                     </td>
                     <td className="p-3.5 font-mono font-bold text-zinc-700">{w.iqama}</td>
                     <td className="p-3.5">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${w.status.includes('مؤجرة') ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${w.status.includes('مؤجرة') ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-[#f3f3f3] text-[#141414]'}`}>
                         {w.status}
                       </span>
-                      <div className="text-[10px] text-zinc-400 mt-0.5">{w.location}</div>
+                      <div className="text-[10px] text-[#707070] mt-0.5">{w.location}</div>
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">⃁ {w.salary.toLocaleString('en-US')}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">⃁ {w.salary.toLocaleString('en-US')}</td>
                     <td className="p-3.5"><Badge text={w.insurance} type="success" /></td>
                     <td className="p-3.5 text-center">
                       <div className="flex items-center justify-center gap-1.5">
@@ -3379,12 +3379,12 @@ export const HRPage: React.FC = () => {
       {showAddEmpModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Users className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Users className="w-4 h-4 text-[#141414]" />
                 <span>إدراج موظف جديد وتعيين الصلاحيات الإدارية</span>
               </h3>
-              <button onClick={() => setShowAddEmpModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddEmpModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -3392,7 +3392,7 @@ export const HRPage: React.FC = () => {
             <form onSubmit={handleAddEmployee} className="p-6 space-y-4 bg-white text-black overflow-y-auto flex-1">
               <div className="border-b border-zinc-100 pb-2">
                 <h4 className="text-xs font-bold text-black flex items-center gap-1.5">
-                  <Briefcase className="w-3.5 h-3.5 text-emerald-600" />
+                  <Briefcase className="w-3.5 h-3.5 text-[#141414]" />
                   <span>1. البيانات الشخصية والمهنية</span>
                 </h4>
               </div>
@@ -3492,16 +3492,16 @@ export const HRPage: React.FC = () => {
 
               {/* System Access & RBAC Role Assignment */}
               <div className="border-t border-zinc-100 pt-3">
-                <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+                <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-3">
                   <label className="flex items-center gap-2.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={createSystemUser}
                       onChange={(e) => setCreateSystemUser(e.target.checked)}
-                      className="rounded text-amber-700 focus:ring-0 w-4 h-4"
+                      className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                     />
-                    <span className="font-bold text-xs text-amber-950 flex items-center gap-1.5">
-                      <Key className="w-3.5 h-3.5 text-amber-700" />
+                    <span className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
+                      <Key className="w-3.5 h-3.5 text-[#141414]" />
                       <span>إنشاء حساب مستخدم في منظومة الـ ERP وتعيين الصلاحيات فوراً</span>
                     </span>
                   </label>
@@ -3509,11 +3509,11 @@ export const HRPage: React.FC = () => {
                   {createSystemUser && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
                       <div>
-                        <label className="block text-xs font-semibold text-amber-900 mb-1">الدور الوظيفي والصلاحيات (RBAC Role)</label>
+                        <label className="block text-xs font-semibold text-[#141414] mb-1">الدور الوظيفي والصلاحيات (RBAC Role)</label>
                         <select
                           value={assignedRole}
                           onChange={(e) => setAssignedRole(e.target.value)}
-                          className="w-full bg-white border border-amber-200 rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
+                          className="w-full bg-white border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
                         >
                           <option value="Administrator">Administrator (مدير نظام - كامل الصلاحيات)</option>
                           <option value="Branch Manager">Branch Manager (مدير فرع)</option>
@@ -3531,9 +3531,9 @@ export const HRPage: React.FC = () => {
                             type="checkbox"
                             checked={enable2FA}
                             onChange={(e) => setEnable2FA(e.target.checked)}
-                            className="rounded text-amber-700 focus:ring-0 w-4 h-4"
+                            className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                           />
-                          <span className="text-xs font-semibold text-amber-900">
+                          <span className="text-xs font-semibold text-[#141414]">
                             تفعيل المصادقة الثنائية (2FA) والبصمة البيومترية للحساب
                           </span>
                         </label>
@@ -3569,12 +3569,12 @@ export const HRPage: React.FC = () => {
       {showPromotionModal && targetEmpForPromotion && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-[#141414]" />
                 <span>إصدار قرار ترقية وتعديل الدرجة والصلاحيات للموظف</span>
               </h3>
-              <button onClick={() => setShowPromotionModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowPromotionModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -3599,18 +3599,18 @@ export const HRPage: React.FC = () => {
               {/* Current vs Promoted Comparison Box */}
               <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 grid grid-cols-2 gap-4">
                 <div className="border-l border-zinc-200 pl-3">
-                  <span className="text-[11px] text-zinc-500 font-semibold block">الوضع الحالي:</span>
+                  <span className="text-[11px] text-[#707070] font-semibold block">الوضع الحالي:</span>
                   <div className="font-bold text-xs text-zinc-800 mt-1">{targetEmpForPromotion.job_title}</div>
-                  <div className="text-[11px] text-zinc-500">{targetEmpForPromotion.department} • {targetEmpForPromotion.grade || 'الدرجة الثالثة'}</div>
+                  <div className="text-[11px] text-[#707070]">{targetEmpForPromotion.department} • {targetEmpForPromotion.grade || 'الدرجة الثالثة'}</div>
                   <div className="font-mono font-bold text-xs text-zinc-700 mt-1">الراتب: {targetEmpForPromotion.salary.toLocaleString()} ⃁</div>
                 </div>
 
                 <div>
-                  <span className="text-[11px] text-emerald-700 font-semibold block">الوضع بعد الترقية المعتمدة:</span>
-                  <div className="font-bold text-xs text-emerald-900 mt-1">{promoNewTitle || 'مسمى وظيفي جديد'}</div>
-                  <div className="text-[11px] text-emerald-700">{promoNewDepartment} • {promoNewGrade}</div>
-                  <div className="font-mono font-bold text-xs text-emerald-800 mt-1">الراتب الجديد: {(parseFloat(promoNewSalary) || 0).toLocaleString()} ⃁</div>
-                  <div className="text-[10px] text-emerald-700 font-bold mt-0.5">
+                  <span className="text-[11px] text-[#141414] font-semibold block">الوضع بعد الترقية المعتمدة:</span>
+                  <div className="font-bold text-xs text-[#141414] mt-1">{promoNewTitle || 'مسمى وظيفي جديد'}</div>
+                  <div className="text-[11px] text-[#141414]">{promoNewDepartment} • {promoNewGrade}</div>
+                  <div className="font-mono font-bold text-xs text-[#141414] mt-1">الراتب الجديد: {(parseFloat(promoNewSalary) || 0).toLocaleString()} ⃁</div>
+                  <div className="text-[10px] text-[#141414] font-bold mt-0.5">
                     الزيادة: +{Math.max(0, (parseFloat(promoNewSalary) || 0) - targetEmpForPromotion.salary).toLocaleString()} ⃁
                   </div>
                 </div>
@@ -3688,14 +3688,14 @@ export const HRPage: React.FC = () => {
               {/* RBAC Role & Performance Rating */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-zinc-100">
                 <div>
-                  <label className="block text-xs font-semibold text-amber-900 mb-1 flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                  <label className="block text-xs font-semibold text-[#141414] mb-1 flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#141414]" />
                     <span>ترقية الصلاحية في الـ ERP (RBAC Role Upgrade)</span>
                   </label>
                   <select
                     value={promoSystemRole}
                     onChange={(e) => setPromoSystemRole(e.target.value)}
-                    className="w-full bg-amber-50/50 border border-amber-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
                   >
                     <option value="Administrator">Administrator (مدير نظام عام)</option>
                     <option value="Branch Manager">Branch Manager (مدير فرع)</option>
@@ -3708,14 +3708,14 @@ export const HRPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-amber-900 mb-1 flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 text-amber-600" />
+                  <label className="block text-xs font-semibold text-[#141414] mb-1 flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-[#141414]" />
                     <span>تقييم الأداء السنوي المستند عليه</span>
                   </label>
                   <select
                     value={promoPerformanceRating}
                     onChange={(e) => setPromoPerformanceRating(e.target.value as any)}
-                    className="w-full bg-amber-50/50 border border-amber-200 rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
                   >
                     <option value="استثنائي (5/5)">استثنائي (5/5) - أداء فائق وتجاوز الأهداف</option>
                     <option value="ممتاز (5/5)">ممتاز (5/5) - تحقيق كامل المستهدفات</option>
@@ -3762,12 +3762,12 @@ export const HRPage: React.FC = () => {
       {selectedEmpForAgreement && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2200] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-300 overflow-hidden font-sans max-h-[90vh] flex flex-col">
-            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                <FileSignature className="w-4 h-4 text-emerald-400" />
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
+              <h3 className="font-bold text-sm text-[#141414] flex items-center gap-2">
+                <FileSignature className="w-4 h-4 text-[#141414]" />
                 <span>وثيقة التوقيع والاتفاقية القانونية المعتمدة للموظف</span>
               </h3>
-              <button onClick={() => setSelectedEmpForAgreement(null)} className="p-1 text-zinc-400 hover:text-white">
+              <button onClick={() => setSelectedEmpForAgreement(null)} className="p-1 text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -3776,10 +3776,10 @@ export const HRPage: React.FC = () => {
             <div className="p-8 overflow-y-auto space-y-5 bg-white text-black border-4 border-double border-zinc-300 m-4 rounded-2xl">
               {/* Header */}
               <div className="text-center border-b-2 border-black pb-4">
-                <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">المملكة العربية السعودية</div>
+                <div className="text-xs font-bold text-[#707070] uppercase tracking-widest">المملكة العربية السعودية</div>
                 <div className="text-lg font-bold text-black mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
-                <div className="text-sm font-bold text-emerald-800 mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية (NDA)</div>
-                <div className="text-[11px] font-mono text-zinc-500 mt-1">
+                <div className="text-sm font-bold text-[#141414] mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية (NDA)</div>
+                <div className="text-[11px] font-mono text-[#707070] mt-1">
                   رقم الاعتماد الرقمي: <span className="font-bold text-black">{selectedEmpForAgreement.compliance_hash || `SA-COMPLIANCE-${selectedEmpForAgreement.employee_code}`}</span>
                 </div>
               </div>
@@ -3807,17 +3807,17 @@ export const HRPage: React.FC = () => {
               {/* Signature Stamp Footer */}
               <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-zinc-300 text-xs items-end">
                 <div className="space-y-1">
-                  <div className="text-zinc-500 text-[11px]">بيانات التوثيق الرقمي:</div>
+                  <div className="text-[#707070] text-[11px]">بيانات التوثيق الرقمي:</div>
                   <div className="font-mono text-[10px] text-zinc-700">تاريخ التوقيع: {selectedEmpForAgreement.hire_date || '2026-01-15'} 10:30:00</div>
                   <div className="font-mono text-[10px] text-zinc-700">عنوان الـ IP: 192.168.1.15 (شبكة المنظومة)</div>
-                  <div className="font-mono text-[9px] text-emerald-800 font-bold">الحالة: معتمد وموثق نظامياً</div>
+                  <div className="font-mono text-[9px] text-[#141414] font-bold">الحالة: معتمد وموثق نظامياً</div>
                 </div>
 
                 <div className="text-center space-y-2">
-                  <div className="text-zinc-500 text-[11px]">التوقيع الإلكتروني والبصمة:</div>
+                  <div className="text-[#707070] text-[11px]">التوقيع الإلكتروني والبصمة:</div>
                   <div className="border border-zinc-200 rounded-lg p-2 bg-zinc-50 inline-block min-w-[140px]">
-                    <Fingerprint className="w-8 h-8 text-emerald-700 mx-auto" />
-                    <span className="text-[10px] font-bold text-emerald-900 block mt-1">توقيع رقمي موثق ومطابق</span>
+                    <Fingerprint className="w-8 h-8 text-[#141414] mx-auto" />
+                    <span className="text-[10px] font-bold text-[#141414] block mt-1">توقيع رقمي موثق ومطابق</span>
                   </div>
                   <div className="text-[10px] font-bold text-black">{selectedEmpForAgreement.name}</div>
                 </div>
@@ -3876,9 +3876,9 @@ export const HRPage: React.FC = () => {
       {showVacModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2100] flex items-center justify-center p-4 font-sans">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white">تقديم طلب إجازة جديد (المادة 109 / 117)</h3>
-              <button onClick={() => setShowVacModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414]">تقديم طلب إجازة جديد (المادة 109 / 117)</h3>
+              <button onClick={() => setShowVacModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -3960,9 +3960,9 @@ export const HRPage: React.FC = () => {
       {showAdvModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2100] flex items-center justify-center p-4 font-sans">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white">تسجيل طلب سلفة وجدولة الأقساط الشهرية</h3>
-              <button onClick={() => setShowAdvModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414]">تسجيل طلب سلفة وجدولة الأقساط الشهرية</h3>
+              <button onClick={() => setShowAdvModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -4017,7 +4017,7 @@ export const HRPage: React.FC = () => {
                   <option value="سند صرف خزينة">سند صرف من الصندوق الرئيسي</option>
                 </select>
               </div>
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-900">
+              <div className="p-3 bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl text-[11px] text-[#141414]">
                 القسط الشهري المحسوب تلقائياً:{' '}
                 <strong className="font-mono">
                   {((parseFloat(advAmount) || 0) / Math.max(1, parseInt(advInstallments, 10) || 1)).toFixed(2)} ⃁ / شهر
@@ -4040,9 +4040,9 @@ export const HRPage: React.FC = () => {
       {showSancModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2100] flex items-center justify-center p-4 font-sans">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white">قيد مخالفة وجزاء إداري (لائحة تنظيم العمل)</h3>
-              <button onClick={() => setShowSancModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414]">قيد مخالفة وجزاء إداري (لائحة تنظيم العمل)</h3>
+              <button onClick={() => setShowSancModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -4090,7 +4090,7 @@ export const HRPage: React.FC = () => {
                   type="checkbox"
                   checked={sancDeduct}
                   onChange={(e) => setSancDeduct(e.target.checked)}
-                  className="rounded text-rose-700 w-4 h-4"
+                  className="rounded text-[#141414] w-4 h-4"
                 />
                 <span className="font-bold text-zinc-800">استقطاع آلي مباشر من مسير الرواتب الشهري</span>
               </label>
@@ -4121,9 +4121,9 @@ export const HRPage: React.FC = () => {
       {showPermModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2100] flex items-center justify-center p-4 font-sans">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white">تسجيل إذن خروج واستئذان أثناء الدوام</h3>
-              <button onClick={() => setShowPermModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414]">تسجيل إذن خروج واستئذان أثناء الدوام</h3>
+              <button onClick={() => setShowPermModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -4202,9 +4202,9 @@ export const HRPage: React.FC = () => {
       {showRewModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2100] flex items-center justify-center p-4 font-sans">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden">
-            <div className="p-4 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-sm text-white">اعتماد مكافأة مالية أو حافز أداء</h3>
-              <button onClick={() => setShowRewModal(false)} className="text-zinc-400 hover:text-white">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-sm text-[#141414]">اعتماد مكافأة مالية أو حافز أداء</h3>
+              <button onClick={() => setShowRewModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -4242,7 +4242,7 @@ export const HRPage: React.FC = () => {
                     min="50"
                     value={rewAmount}
                     onChange={(e) => setRewAmount(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 font-mono font-bold text-emerald-700"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 font-mono font-bold text-[#141414]"
                   />
                 </div>
                 <div>

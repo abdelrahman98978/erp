@@ -664,7 +664,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   type="button"
                   aria-label={isExpanded ? `طي حساب ${node.name}` : `توسيع حساب ${node.name}`}
                   onClick={() => toggleNode(node.code)}
-                  className="p-1 text-zinc-400 hover:text-black rounded"
+                  className="p-1 text-[#707070] hover:text-black rounded"
                 >
                   {isExpanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                 </button>
@@ -678,7 +678,7 @@ export const SmaccAccountingPage: React.FC = () => {
             <span className={depth === 0 ? 'text-black font-bold text-sm' : depth === 1 ? 'text-zinc-900 font-semibold text-xs' : 'text-zinc-700 text-xs'}>
               {node.name}
             </span>
-            {node.nameEn && <span className="text-[10px] text-zinc-400 font-mono block">{node.nameEn}</span>}
+            {node.nameEn && <span className="text-[10px] text-[#707070] font-mono block">{node.nameEn}</span>}
           </td>
           <td className="p-3">
             <span className="pill-tag-shade text-[10px] py-0.5 px-2">
@@ -686,12 +686,12 @@ export const SmaccAccountingPage: React.FC = () => {
             </span>
           </td>
           <td className="p-3 text-xs">
-            <span className={node.nature === 'مدين' ? 'text-emerald-700 font-bold' : 'text-[#8C681E] font-bold'}>
+            <span className={node.nature === 'مدين' ? 'text-[#141414] font-bold' : 'text-[#141414] font-bold'}>
               {node.nature}
             </span>
           </td>
           <td className="p-3 font-mono font-bold text-xs text-left pl-4">
-            <span className={node.balance >= 0 ? 'text-black' : 'text-rose-700'}>
+            <span className={node.balance >= 0 ? 'text-black' : 'text-[#141414]'}>
               {node.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ⃁
             </span>
           </td>
@@ -721,7 +721,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleDeleteAccount(node.code, node.name)}
-                  className="p-1 text-zinc-400 hover:text-rose-600 rounded"
+                  className="p-1 text-[#707070] hover:text-[#141414] rounded"
                   title="حذف الحساب"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -764,10 +764,10 @@ export const SmaccAccountingPage: React.FC = () => {
                   {activeCompany.name} ({activeCompanyId === 'all' ? 'GROUP' : activeCompanyId})
                 </span>
               </div>
-              <h1 className="text-xl md:text-2xl font-bold text-white m-0">
+              <h1 className="text-xl md:text-2xl font-bold text-[#141414] m-0">
                 المنظومة المالية والمحاسبية الموحدة — 6 أنظمة متكاملة
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 عزل محاسبي مستقل لكل شركة • دليل الحسابات الشجري الخماسي، قيود اليومية المزدوجة، سندات القبض والصرف، المبيعات و ZATCA، المشتريات، المخزون والأصول، ومراكز التكلفة
               </p>
             </div>
@@ -776,7 +776,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowBatchExtractor(true)}
-              className="px-4 py-2 rounded-full bg-[#CFA64A] hover:bg-[#b88f38] text-black font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+              className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
             >
               <UploadCloud className="w-4 h-4" />
               <span>استيراد فواتير / مستندات / نظام محاسبي منفصل (100 صورة / PDF / Word / Excel)</span>
@@ -804,7 +804,7 @@ export const SmaccAccountingPage: React.FC = () => {
         </div>
 
         {/* Tab Navigation Menu */}
-        <div className="flex flex-wrap items-center bg-white/10 p-1.5 rounded-full border border-white/15 gap-1 text-xs mt-6 overflow-x-auto">
+        <div className="flex flex-wrap items-center bg-[#f3f3f3] p-1.5 rounded-full border border-[#e0e0e0] gap-1 text-xs mt-6 overflow-x-auto">
           {[
             { id: 'coa', label: '1. شجرة الحسابات (COA)' },
             { id: 'journals', label: '2. قيود اليومية المزدوجة' },
@@ -898,19 +898,19 @@ export const SmaccAccountingPage: React.FC = () => {
             onClick={div.onClick}
             className={`text-right p-3 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
               div.active
-                ? 'bg-[#F5EDDC] border-[#CFA64A] shadow-xs'
+                ? 'bg-[#f3f3f3] border-[#e0e0e0] shadow-xs'
                 : 'bg-white hover:bg-zinc-50 border-zinc-200'
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-base">{div.emoji}</span>
-              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold bg-black text-[#CFA64A]">
+              <span className="px-2 py-0.5 rounded-full text-[9.5px] font-mono font-bold bg-black text-[#ffffff]">
                 {div.code}
               </span>
             </div>
             <div>
               <div className="text-xs font-extrabold text-black leading-snug">{div.title}</div>
-              <div className="text-[10.5px] text-zinc-500 mt-0.5 line-clamp-1">{div.subtitle}</div>
+              <div className="text-[10.5px] text-[#707070] mt-0.5 line-clamp-1">{div.subtitle}</div>
             </div>
           </button>
         ))}
@@ -921,7 +921,7 @@ export const SmaccAccountingPage: React.FC = () => {
         <div className="space-y-4">
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-2.5 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-2.5 text-[#707070]" />
               <input
                 type="text"
                 aria-label="البحث بالرمز أو اسم الحساب"
@@ -969,7 +969,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
               >
-                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
                 <span>تصدير الدليل Excel</span>
               </button>
             </div>
@@ -1002,7 +1002,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-black m-0">سجل القيود المحاسبية والترحيل المزدوج (Journals)</h3>
-              <p className="text-xs text-zinc-500 m-0">كافة القيود اليومية المرحلة والمسودات مع التدقيق الآلي للتوازن</p>
+              <p className="text-xs text-[#707070] m-0">كافة القيود اليومية المرحلة والمسودات مع التدقيق الآلي للتوازن</p>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1030,7 +1030,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
               >
-                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
                 <span>تصدير القيود Excel</span>
               </button>
             </div>
@@ -1054,11 +1054,11 @@ export const SmaccAccountingPage: React.FC = () => {
                 {journals.map(j => (
                   <tr key={j.id} className="hover:bg-zinc-50">
                     <td className="p-3 font-mono font-bold text-black">{j.ref_no}</td>
-                    <td className="p-3 font-mono text-zinc-500">{j.date}</td>
+                    <td className="p-3 font-mono text-[#707070]">{j.date}</td>
                     <td className="p-3 text-zinc-700">{j.branch}</td>
                     <td className="p-3 font-semibold text-black max-w-xs truncate">{j.description}</td>
                     <td className="p-3 font-mono font-bold text-black">{j.total_debit.toLocaleString()} ⃁</td>
-                    <td className="p-3 font-mono font-bold text-rose-700">{j.total_credit.toLocaleString()} ⃁</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{j.total_credit.toLocaleString()} ⃁</td>
                     <td className="p-3">
                       <span className="pill-tag-mint text-[10.5px]">{j.status}</span>
                     </td>
@@ -1086,7 +1086,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-black m-0">سندات القبض وسندات الصرف الرسمية</h3>
-              <p className="text-xs text-zinc-500 m-0">توثيق المتحصلات والمصروفات مع الترحيل الآلي الفوري للقيود</p>
+              <p className="text-xs text-[#707070] m-0">توثيق المتحصلات والمصروفات مع الترحيل الآلي الفوري للقيود</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <button
@@ -1095,7 +1095,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   setIsVoucherModalOpen(true);
                 }}
                 className="button-primary-pill"
-                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px', background: '#10b981', borderColor: '#10b981' }}
+                style={{ padding: '6px 16px', fontSize: '12px', minHeight: '34px', background: '#141414', color: '#ffffff', borderColor: '#141414' }}
               >
                 <ArrowDownLeft className="w-4 h-4 ml-1" />
                 <span>+ سند قبض جديد</span>
@@ -1106,7 +1106,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   setIsVoucherModalOpen(true);
                 }}
                 className="button-primary-pill"
-                style={{ padding: '6px 16px', fontSize: '12px', background: '#e11d48', borderColor: '#e11d48' }}
+                style={{ padding: '6px 16px', fontSize: '12px', background: '#141414', color: '#ffffff', borderColor: '#141414' }}
               >
                 <ArrowUpRight className="w-4 h-4 ml-1" />
                 <span>+ سند صرف جديد</span>
@@ -1143,7 +1143,7 @@ export const SmaccAccountingPage: React.FC = () => {
                         سند {v.type}
                       </span>
                     </td>
-                    <td className="p-3 font-mono text-zinc-500">{v.date}</td>
+                    <td className="p-3 font-mono text-[#707070]">{v.date}</td>
                     <td className="p-3 font-semibold text-black">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar
@@ -1156,7 +1156,7 @@ export const SmaccAccountingPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="p-3 text-zinc-700">{v.treasury}</td>
-                    <td className="p-3 font-mono font-bold text-emerald-700">{v.amount.toLocaleString()} ⃁</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{v.amount.toLocaleString()} ⃁</td>
                     <td className="p-3 text-zinc-600 max-w-xs truncate">{v.notes}</td>
                     <td className="p-3 text-center">
                       <button
@@ -1212,7 +1212,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 className="button-outline-on-light"
                 style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
               >
-                <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+                <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
                 <span>تصدير كشف الحساب Excel</span>
               </button>
               <button
@@ -1241,11 +1241,11 @@ export const SmaccAccountingPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {ledgerEntries.map((row, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
-                    <td className="p-3 font-mono text-zinc-500">{row.date}</td>
+                    <td className="p-3 font-mono text-[#707070]">{row.date}</td>
                     <td className="p-3 font-mono font-bold text-black">{row.refNo}</td>
                     <td className="p-3 font-medium text-black">{row.desc}</td>
                     <td className="p-3 font-mono font-bold text-black">{row.debit > 0 ? `${row.debit.toLocaleString()} ⃁` : '-'}</td>
-                    <td className="p-3 font-mono font-bold text-rose-700">{row.credit > 0 ? `${row.credit.toLocaleString()} ⃁` : '-'}</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{row.credit > 0 ? `${row.credit.toLocaleString()} ⃁` : '-'}</td>
                     <td className="p-3 font-mono font-extrabold text-black text-left pl-4">{row.cumulative.toLocaleString()} ⃁</td>
                   </tr>
                 ))}
@@ -1261,7 +1261,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-black m-0">ميزان المراجعة بالمجاميع والأرصدة (Trial Balance)</h3>
-              <p className="text-xs text-zinc-500 m-0">تحقق توازن الحسابات الإجمالية ومطابقة جانبي المدين والدائن</p>
+              <p className="text-xs text-[#707070] m-0">تحقق توازن الحسابات الإجمالية ومطابقة جانبي المدين والدائن</p>
             </div>
             <button
               onClick={() => {
@@ -1278,7 +1278,7 @@ export const SmaccAccountingPage: React.FC = () => {
               className="button-outline-on-light"
               style={{ padding: '6px 14px', fontSize: '12px', minHeight: '34px' }}
             >
-              <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+              <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
               <span>تصدير ميزان المراجعة Excel</span>
             </button>
           </div>
@@ -1301,7 +1301,7 @@ export const SmaccAccountingPage: React.FC = () => {
                     <td className="p-3 font-semibold text-black">{a.nameAr}</td>
                     <td className="p-3"><span className="pill-tag-shade text-[10px]">{a.category}</span></td>
                     <td className="p-3 font-mono font-bold text-black">{a.nature === 'مدين' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}</td>
-                    <td className="p-3 font-mono font-bold text-rose-700">{a.nature === 'دائن' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{a.nature === 'دائن' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1316,7 +1316,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-black m-0">قائمة الدخل والأرباح والخسائر (Income Statement)</h3>
-              <p className="text-xs text-zinc-500 m-0">مقارنة الإيرادات التشغيلية بالمصروفات لحساب صافي الربح</p>
+              <p className="text-xs text-[#707070] m-0">مقارنة الإيرادات التشغيلية بالمصروفات لحساب صافي الربح</p>
             </div>
             <button
               onClick={() => window.print()}
@@ -1331,15 +1331,15 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="card-pricing p-6 bg-white rounded-2xl space-y-4 border border-zinc-200">
             <div className="flex justify-between items-center pb-3 border-b border-zinc-100">
               <span className="font-bold text-sm text-black">إجمالي الإيرادات التشغيلية المكتسبة</span>
-              <span className="font-mono font-bold text-emerald-700 text-sm">+{totalRevenues.toLocaleString()} ⃁</span>
+              <span className="font-mono font-bold text-[#141414] text-sm">+{totalRevenues.toLocaleString()} ⃁</span>
             </div>
             <div className="flex justify-between items-center pb-3 border-b border-zinc-100">
               <span className="font-bold text-sm text-black">خصم: تكلفة التشغيل والمصروفات العمومية</span>
-              <span className="font-mono font-bold text-rose-700 text-sm">‎- ⃁</span>
+              <span className="font-mono font-bold text-[#141414] text-sm">‎- ⃁</span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-black text-white rounded-2xl">
+            <div className="flex justify-between items-center p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] rounded-2xl">
               <span className="font-bold text-base">صافي أرباح الفترة التشغيلية (Net Profit):</span>
-              <span className="font-mono font-extrabold text-emerald-400 text-lg">
+              <span className="font-mono font-extrabold text-[#141414] text-lg">
                 {netProfit.toLocaleString()} ⃁
               </span>
             </div>
@@ -1353,7 +1353,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-black m-0">قائمة المركز المالي والميزانية العمومية (Balance Sheet)</h3>
-              <p className="text-xs text-zinc-500 m-0">إجمالي الأصول والخصوم وحقوق الملكية وفق المعادلة المحاسبية</p>
+              <p className="text-xs text-[#707070] m-0">إجمالي الأصول والخصوم وحقوق الملكية وفق المعادلة المحاسبية</p>
             </div>
             <button
               onClick={() => window.print()}
@@ -1375,7 +1375,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 </div>
                 <div className="pt-3 border-t border-zinc-100 flex justify-between font-bold text-sm text-black">
                   <span>إجمالي الأصول:</span>
-                  <span className="font-mono text-emerald-700">{totalAssets.toLocaleString()} ⃁</span>
+                  <span className="font-mono text-[#141414]">{totalAssets.toLocaleString()} ⃁</span>
                 </div>
               </div>
             </div>
@@ -1393,11 +1393,11 @@ export const SmaccAccountingPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-zinc-600">أرباح الفترة التشغيلية</span>
-                  <span className="font-mono font-bold text-emerald-700">{netProfit.toLocaleString()} ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">{netProfit.toLocaleString()} ⃁</span>
                 </div>
                 <div className="pt-3 border-t border-zinc-100 flex justify-between font-bold text-sm text-black">
                   <span>إجمالي الخصوم وحقوق الملكية:</span>
-                  <span className="font-mono text-amber-700">{(totalLiabilities + totalEquity + netProfit).toLocaleString()} ⃁</span>
+                  <span className="font-mono text-[#141414]">{(totalLiabilities + totalEquity + netProfit).toLocaleString()} ⃁</span>
                 </div>
               </div>
             </div>
@@ -1411,7 +1411,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="bg-white p-4 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
             <div>
               <h3 className="text-sm font-bold text-black m-0">مراكز التكلفة التشغيلية والتحليل المالي</h3>
-              <p className="text-xs text-zinc-500 m-0">توزيع الإيرادات والمصروفات حسب الفروع ومراكز النشاط</p>
+              <p className="text-xs text-[#707070] m-0">توزيع الإيرادات والمصروفات حسب الفروع ومراكز النشاط</p>
             </div>
           </div>
 
@@ -1431,9 +1431,9 @@ export const SmaccAccountingPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>المنصرف الفعلي:</span>
-                    <span className="font-mono font-bold text-rose-700">{cc.actual.toLocaleString()} ⃁</span>
+                    <span className="font-mono font-bold text-[#141414]">{cc.actual.toLocaleString()} ⃁</span>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-zinc-100 font-bold text-emerald-700">
+                  <div className="flex justify-between pt-2 border-t border-zinc-100 font-bold text-[#141414]">
                     <span>الوفر المتبقي:</span>
                     <span className="font-mono">{(cc.budget - cc.actual).toLocaleString()} ⃁</span>
                   </div>
@@ -1453,7 +1453,7 @@ export const SmaccAccountingPage: React.FC = () => {
             </div>
             <div>
               <h3 className="text-sm font-bold text-black m-0">إقفال السنة المالية وترحيل الأرباح والخسائر</h3>
-              <p className="text-xs text-zinc-500 m-0">إقفال الحسابات المؤقتة وترحيل صافي الربح إلى الأرباح المبقاة (حساب #3102)</p>
+              <p className="text-xs text-[#707070] m-0">إقفال الحسابات المؤقتة وترحيل صافي الربح إلى الأرباح المبقاة (حساب #3102)</p>
             </div>
           </div>
 
@@ -1464,7 +1464,7 @@ export const SmaccAccountingPage: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span className="text-zinc-600">صافي الربح المعد للترحيل:</span>
-              <span className="font-mono font-bold text-emerald-700">{netProfit.toLocaleString()} ⃁</span>
+              <span className="font-mono font-bold text-[#141414]">{netProfit.toLocaleString()} ⃁</span>
             </div>
             <div className="flex justify-between">
               <span className="text-zinc-600">حساب الإقفال المرحل إليه:</span>
@@ -1674,7 +1674,7 @@ export const SmaccAccountingPage: React.FC = () => {
                           const val = e.target.value;
                           setJournalLines(prev => prev.map((l, i) => i === idx ? { ...l, credit: val } : l));
                         }}
-                        className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg p-1 text-xs font-mono font-bold text-rose-700"
+                        className="w-24 bg-zinc-50 border border-zinc-200 rounded-lg p-1 text-xs font-mono font-bold text-[#141414]"
                       />
                     </td>
                     <td className="p-2">
@@ -1693,7 +1693,7 @@ export const SmaccAccountingPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleRemoveJournalLine(idx)}
-                        className="text-zinc-400 hover:text-rose-600"
+                        className="text-[#707070] hover:text-[#141414]"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -1713,7 +1713,7 @@ export const SmaccAccountingPage: React.FC = () => {
               </button>
               <div className="flex items-center gap-4 text-xs font-bold">
                 <span>إجمالي المدين: <strong className="text-black font-mono">{totalDebit.toFixed(2)} ⃁</strong></span>
-                <span>إجمالي الدائن: <strong className="text-rose-700 font-mono">{totalCredit.toFixed(2)} ⃁</strong></span>
+                <span>إجمالي الدائن: <strong className="text-[#141414] font-mono">{totalCredit.toFixed(2)} ⃁</strong></span>
                 <span className={`pill-tag-${isJournalBalanced ? 'mint' : 'shade'}`}>
                   {isJournalBalanced ? '✓ القيد متوازن' : '✕ غير متوازن'}
                 </span>
@@ -1813,21 +1813,21 @@ export const SmaccAccountingPage: React.FC = () => {
       {selectedJournalForPreview && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
-            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-emerald-400" />
-                <h3 className="font-bold text-sm text-white m-0">معاينة وطباعة قيد اليومية: {selectedJournalForPreview.ref_no}</h3>
+                <BookOpen className="w-4 h-4 text-[#141414]" />
+                <h3 className="font-bold text-sm text-[#141414] m-0">معاينة وطباعة قيد اليومية: {selectedJournalForPreview.ref_no}</h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
                   className="button-white-pill"
-                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000', fontWeight: 700 }}
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
                   <Printer className="w-3.5 h-3.5 ml-1" />
                   <span>طباعة القيد</span>
                 </button>
-                <button onClick={() => setSelectedJournalForPreview(null)} className="text-zinc-400 hover:text-white">
+                <button onClick={() => setSelectedJournalForPreview(null)} className="text-[#707070] hover:text-[#141414]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1837,11 +1837,11 @@ export const SmaccAccountingPage: React.FC = () => {
               <div className="flex items-center justify-between border-b-2 border-black pb-3">
                 <div>
                   <h2 className="text-base font-bold text-black m-0">{activeCompany.name}</h2>
-                  <p className="text-[11px] text-zinc-500 font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
+                  <p className="text-[11px] text-[#707070] font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
                 </div>
                 <div className="text-left font-mono">
                   <span className="font-bold text-sm block">{selectedJournalForPreview.ref_no}</span>
-                  <span className="text-xs text-zinc-500 block">{selectedJournalForPreview.date}</span>
+                  <span className="text-xs text-[#707070] block">{selectedJournalForPreview.date}</span>
                 </div>
               </div>
 
@@ -1866,13 +1866,13 @@ export const SmaccAccountingPage: React.FC = () => {
                         <td className="p-2 font-bold">{l.accountCode}</td>
                         <td className="p-2 font-sans font-medium">{l.accountName}</td>
                         <td className="p-2 font-bold text-black">{l.debit > 0 ? `${l.debit.toLocaleString()} ⃁` : '-'}</td>
-                        <td className="p-2 font-bold text-rose-700">{l.credit > 0 ? `${l.credit.toLocaleString()} ⃁` : '-'}</td>
+                        <td className="p-2 font-bold text-[#141414]">{l.credit > 0 ? `${l.credit.toLocaleString()} ⃁` : '-'}</td>
                       </tr>
                     ))}
                     <tr className="bg-zinc-50 font-bold border-t-2 border-black">
                       <td colSpan={2} className="p-2 font-sans text-left pl-4">الإجمالي المتوازن:</td>
                       <td className="p-2 font-extrabold text-black">{selectedJournalForPreview.total_debit.toLocaleString()} ⃁</td>
-                      <td className="p-2 font-extrabold text-rose-700">{selectedJournalForPreview.total_credit.toLocaleString()} ⃁</td>
+                      <td className="p-2 font-extrabold text-[#141414]">{selectedJournalForPreview.total_credit.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>
                 </table>
@@ -1898,21 +1898,21 @@ export const SmaccAccountingPage: React.FC = () => {
       {selectedVoucherForPreview && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
-            <div className="p-4 bg-black text-white flex items-center justify-between print:hidden">
+            <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-emerald-400" />
-                <h3 className="font-bold text-sm text-white m-0">سند {selectedVoucherForPreview.type} رقم: {selectedVoucherForPreview.voucher_no}</h3>
+                <Receipt className="w-4 h-4 text-[#141414]" />
+                <h3 className="font-bold text-sm text-[#141414] m-0">سند {selectedVoucherForPreview.type} رقم: {selectedVoucherForPreview.voucher_no}</h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => window.print()}
                   className="button-white-pill"
-                  style={{ padding: '4px 14px', fontSize: '11px', background: '#10b981', color: '#000', fontWeight: 700 }}
+                  style={{ padding: '4px 14px', fontSize: '11px', background: '#141414', color: '#ffffff', fontWeight: 700 }}
                 >
                   <Printer className="w-3.5 h-3.5 ml-1" />
                   <span>طباعة السند</span>
                 </button>
-                <button onClick={() => setSelectedVoucherForPreview(null)} className="text-zinc-400 hover:text-white">
+                <button onClick={() => setSelectedVoucherForPreview(null)} className="text-[#707070] hover:text-[#141414]">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1922,23 +1922,23 @@ export const SmaccAccountingPage: React.FC = () => {
               <div className="flex items-center justify-between border-b-2 border-black pb-3">
                 <div>
                   <h2 className="text-base font-bold text-black m-0">{activeCompany.name}</h2>
-                  <p className="text-[11px] text-zinc-500 font-mono">الرقم الضريبي: 310928374900003</p>
+                  <p className="text-[11px] text-[#707070] font-mono">الرقم الضريبي: 310928374900003</p>
                 </div>
                 <div className="text-left font-mono">
                   <span className="font-bold text-sm block border border-black px-2 py-0.5 rounded-lg">سند {selectedVoucherForPreview.type}</span>
-                  <span className="text-xs text-zinc-500 block mt-1">{selectedVoucherForPreview.date}</span>
+                  <span className="text-xs text-[#707070] block mt-1">{selectedVoucherForPreview.date}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs bg-zinc-50 p-3 rounded-xl">
-                <div><span className="text-zinc-500">المستفيد / المستلم منه:</span> <strong className="text-black block">{selectedVoucherForPreview.payee}</strong></div>
-                <div><span className="text-zinc-500">المبلغ بالأرقام:</span> <strong className="text-black font-mono text-sm block">{selectedVoucherForPreview.amount.toLocaleString()} ⃁</strong></div>
-                <div><span className="text-zinc-500">الخزينة / الحساب:</span> <span className="font-semibold block">{selectedVoucherForPreview.treasury}</span></div>
-                <div><span className="text-zinc-500">مركز التكلفة:</span> <span className="font-semibold block">{selectedVoucherForPreview.cost_center}</span></div>
+                <div><span className="text-[#707070]">المستفيد / المستلم منه:</span> <strong className="text-black block">{selectedVoucherForPreview.payee}</strong></div>
+                <div><span className="text-[#707070]">المبلغ بالأرقام:</span> <strong className="text-black font-mono text-sm block">{selectedVoucherForPreview.amount.toLocaleString()} ⃁</strong></div>
+                <div><span className="text-[#707070]">الخزينة / الحساب:</span> <span className="font-semibold block">{selectedVoucherForPreview.treasury}</span></div>
+                <div><span className="text-[#707070]">مركز التكلفة:</span> <span className="font-semibold block">{selectedVoucherForPreview.cost_center}</span></div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-xl text-xs">
-                <span className="text-zinc-500 block mb-0.5">البيان والشرح:</span>
+                <span className="text-[#707070] block mb-0.5">البيان والشرح:</span>
                 <span className="font-medium text-black">{selectedVoucherForPreview.notes}</span>
               </div>
 

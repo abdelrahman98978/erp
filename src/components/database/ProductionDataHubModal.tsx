@@ -215,7 +215,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'overview'
                 ? 'border-black text-black'
-                : 'border-transparent text-zinc-500 hover:text-black'
+                : 'border-transparent text-[#707070] hover:text-black'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -227,7 +227,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'tables'
                 ? 'border-black text-black'
-                : 'border-transparent text-zinc-500 hover:text-black'
+                : 'border-transparent text-[#707070] hover:text-black'
             }`}
           >
             <Layers className="w-4 h-4" />
@@ -239,7 +239,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'import'
                 ? 'border-black text-black'
-                : 'border-transparent text-zinc-500 hover:text-black'
+                : 'border-transparent text-[#707070] hover:text-black'
             }`}
           >
             <Upload className="w-4 h-4" />
@@ -251,7 +251,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'credentials'
                 ? 'border-black text-black'
-                : 'border-transparent text-zinc-500 hover:text-black'
+                : 'border-transparent text-[#707070] hover:text-black'
             }`}
           >
             <Key className="w-4 h-4" />
@@ -266,8 +266,8 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             <div className="space-y-6">
               {/* Connection Status Card */}
               {supabaseConfigError && (
-                <div role="alert" className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center gap-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <div role="alert" className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs flex items-center gap-3">
+                  <AlertTriangle className="w-5 h-5 text-[#141414] flex-shrink-0" />
                   <div>
                     <div className="font-bold">تنبيه تكوين قاعدة البيانات:</div>
                     <div className="mt-0.5">{supabaseConfigError}</div>
@@ -277,15 +277,15 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
 
               <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 flex items-center justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-3">
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${connStatus.connected ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-200 text-zinc-700'}`}>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${connStatus.connected ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-zinc-200 text-zinc-700'}`}>
                     <Server className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <h4 className="text-xs font-bold text-black m-0">حالة محرك البيانات وقاعدة البيانات</h4>
-                      <span className={`w-2 h-2 rounded-full ${connStatus.connected ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                      <span className={`w-2 h-2 rounded-full ${connStatus.connected ? 'bg-[#141414]' : 'bg-[#141414]'}`} />
                     </div>
-                    <p className="text-[11px] text-zinc-500 m-0 mt-0.5">
+                    <p className="text-[11px] text-[#707070] m-0 mt-0.5">
                       {connStatus.message} {connStatus.latency ? `(${connStatus.latency} ms)` : ''}
                     </p>
                   </div>
@@ -311,13 +311,13 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   onClick={() => handleModeChange('production_real')}
                   className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
                     currentMode === 'production_real' 
-                      ? 'border-emerald-500 bg-emerald-50/40 shadow-sm' 
+                      ? 'border-[#e0e0e0] bg-[#f3f3f3] shadow-sm' 
                       : 'border-zinc-200 bg-white hover:border-zinc-400'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                      <ShieldCheck className="w-5 h-5 text-[#141414]" />
                       <span className="text-sm font-bold text-black">نمط الإنتاج المؤسسي الفعلي (موصى به)</span>
                     </div>
                     {currentMode === 'production_real' && (
@@ -329,11 +329,11 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   </p>
                   <ul className="text-[11px] text-zinc-600 space-y-1">
                     <li className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#141414]" />
                       <span>حفظ دائم في قاعدة البيانات وسير العمليات المؤسسية</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#141414]" />
                       <span>ربط تلقائي بالقيود المحاسبية والفواتير المفسوحة</span>
                     </li>
                   </ul>
@@ -344,13 +344,13 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   onClick={() => handleModeChange('demo_preview')}
                   className={`p-5 rounded-2xl border-2 cursor-pointer transition-all ${
                     currentMode === 'demo_preview' 
-                      ? 'border-amber-500 bg-amber-50/40 shadow-sm' 
+                      ? 'border-[#e0e0e0] bg-[#f3f3f3] shadow-sm' 
                       : 'border-zinc-200 bg-white hover:border-zinc-400'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Cpu className="w-5 h-5 text-amber-600" />
+                      <Cpu className="w-5 h-5 text-[#141414]" />
                       <span className="text-sm font-bold text-black">نمط المعاينة الاستعراضي (Demo)</span>
                     </div>
                     {currentMode === 'demo_preview' && (
@@ -362,7 +362,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   </p>
                   <ul className="text-[11px] text-zinc-600 space-y-1">
                     <li className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#141414] inline-block" />
                       <span>بيانات استرشادية للعرض السريع</span>
                     </li>
                   </ul>
@@ -370,20 +370,20 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
               </div>
 
               {/* Purge Demo Data Action */}
-              <div className="p-5 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between flex-wrap gap-4">
+              <div className="p-5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h4 className="text-xs font-bold text-rose-900 m-0 flex items-center gap-1.5">
-                    <AlertTriangle className="w-4 h-4 text-rose-600" />
+                  <h4 className="text-xs font-bold text-[#141414] m-0 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-[#141414]" />
                     <span>تصفير وإفراغ السجلات الافتراضية بالكامل</span>
                   </h4>
-                  <p className="text-xs text-rose-700 m-0 mt-1">
+                  <p className="text-xs text-[#141414] m-0 mt-1">
                     تصفير الجداول في كافة الوحدات للبدء بسجلات إنتاجية معتمدة ونظيفة.
                   </p>
                 </div>
 
                 <button
                   onClick={handlePurgeData}
-                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-colors"
+                  className="bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   <span>تصفير السجلات والبدء الفعلي</span>
@@ -396,7 +396,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
           {activeSubTab === 'tables' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-500 font-bold">
+                <span className="text-xs text-[#707070] font-bold">
                   جداول المنظومة المؤسسية وعدد السجلات المسجلة:
                 </span>
                 <button
@@ -419,7 +419,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                     >
                       <div>
                         <div className="text-xs font-bold text-black">{info.label}</div>
-                        <div className="text-[10px] text-zinc-400 font-mono">table: {key}</div>
+                        <div className="text-[10px] text-[#707070] font-mono">table: {key}</div>
                       </div>
                       <div className="text-right">
                         <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${count > 0 ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-600'}`}>
@@ -453,11 +453,11 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
               </div>
 
               <div className="p-8 border-2 border-dashed border-zinc-300 rounded-2xl bg-zinc-50 text-center space-y-3">
-                <FileSpreadsheet className="w-10 h-10 text-emerald-600 mx-auto" />
+                <FileSpreadsheet className="w-10 h-10 text-[#141414] mx-auto" />
                 <h4 className="text-sm font-bold text-black m-0">
                   استيراد واستخلاص أي مستند مهما كانت صيغته (PDF, Word, Excel, CSV, XML, JSON, صور الفواتير)
                 </h4>
-                <p className="text-xs text-zinc-500 max-w-md mx-auto">
+                <p className="text-xs text-[#707070] max-w-md mx-auto">
                   قم باختيار مستند واحد أو دفعة مستندات وفواتير (حتى 100+ ملف أو مخرجات نظام محاسبي منفصل للشركة الأخرى) ليتم التعرف عليها وتوجيهها تلقائياً للقسم المعني
                 </p>
 
@@ -484,11 +484,11 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             <div className="space-y-4">
               {!import.meta.env.DEV ? (
                 <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-200 text-center space-y-3">
-                  <Lock className="w-10 h-10 text-zinc-400 mx-auto" />
+                  <Lock className="w-10 h-10 text-[#707070] mx-auto" />
                   <h4 className="text-sm font-bold text-black m-0">
                     إدارة بيانات الربط مقفلة في بيئة الإنتاج
                   </h4>
-                  <p className="text-xs text-zinc-500 max-w-md mx-auto leading-relaxed">
+                  <p className="text-xs text-[#707070] max-w-md mx-auto leading-relaxed">
                     لحماية المنظومة ومنع التلاعب بمفاتيح الوصول، يتم ضبط بيانات الربط السحابي حصرياً عبر متغيرات البيئة 
                     (<code className="font-mono text-zinc-700">VITE_SUPABASE_URL</code> و <code className="font-mono text-zinc-700">VITE_SUPABASE_ANON_KEY</code>) أثناء مرحلة البناء والنشر.
                   </p>
@@ -543,9 +543,9 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-xs text-zinc-500">
+        <div className="p-4 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-xs text-[#707070]">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <ShieldCheck className="w-4 h-4 text-[#141414]" />
             <span>نظام بيانات معزول وممتثل لضوابط الهيئة وحماية البيانات الشخصية (PDPL)</span>
           </div>
           <button

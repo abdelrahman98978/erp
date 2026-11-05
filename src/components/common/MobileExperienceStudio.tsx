@@ -293,7 +293,7 @@ export const MobileExperienceStudio: React.FC = () => {
             className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-[#141414] transition-all duration-200 active:scale-95 cursor-pointer"
             title="فتح نسخة الهاتف التفاعلية وإشعاراتها والعمل في الخلفية"
           >
-            <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] group-hover:bg-[#141414] group-hover:text-[#ffffff] transition-colors">
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] group-hover:bg-[#262626] group-hover:text-[#ffffff] transition-colors">
               <Smartphone className="w-4 h-4" />
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#0066ff] ring-2 ring-[#ffffff]" />
             </div>
@@ -433,7 +433,7 @@ export const MobileExperienceStudio: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleTriggerMobileNotification('musaned')}
-                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#141414] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#262626] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>إشعار عقد مساند</span>
@@ -441,7 +441,7 @@ export const MobileExperienceStudio: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleTriggerMobileNotification('zatca')}
-                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#141414] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#262626] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
                       <span>إشعار فاتورة ZATCA</span>
@@ -449,7 +449,7 @@ export const MobileExperienceStudio: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleTriggerMobileNotification('etimad')}
-                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#141414] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#262626] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <Layers className="w-3.5 h-3.5" />
                       <span>إشعار منافسة اعتماد</span>
@@ -457,7 +457,7 @@ export const MobileExperienceStudio: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleTriggerMobileNotification('shelter')}
-                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#141414] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-2.5 py-2 rounded-full bg-[#ffffff] hover:bg-[#262626] hover:text-[#ffffff] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>إشعار إيواء ميداني</span>
@@ -612,18 +612,18 @@ export const MobileExperienceStudio: React.FC = () => {
                 >
                   {/* Native Phone Status Bar + Dynamic Island */}
                   <div
-                    className="h-9 bg-slate-950 text-white px-6 flex items-center justify-between text-[11px] font-bold select-none shrink-0 border-b border-white/5"
+                    className="h-9 bg-slate-950 text-white px-6 flex items-center justify-between text-[11px] font-bold select-none shrink-0 border-b border-[#e0e0e0]"
                     dir="ltr"
                   >
                     <span>{currentTime}</span>
-                    <div className="w-24 h-4 bg-black rounded-full border border-white/10 flex items-center justify-end px-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500/80 animate-pulse" />
+                    <div className="w-24 h-4 bg-[#f3f3f3] rounded-full border border-[#e0e0e0] flex items-center justify-end px-2">
+                      <span className="w-2 h-2 rounded-full bg-[#f3f3f3] animate-pulse" />
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] text-emerald-400 font-extrabold">5G</span>
+                      <span className="text-[10px] text-[#141414] font-extrabold">5G</span>
                       <Wifi className="w-3.5 h-3.5 text-white" />
                       <div className="w-5 h-2.5 rounded-sm border border-white/80 p-0.5 flex items-center">
-                        <div className="w-full h-full bg-emerald-400 rounded-[1px]" />
+                        <div className="w-full h-full bg-[#141414] rounded-[1px]" />
                       </div>
                     </div>
                   </div>
@@ -645,13 +645,13 @@ export const MobileExperienceStudio: React.FC = () => {
 
               <div className="mt-2.5 flex items-center gap-3 text-xs text-slate-400">
                 <span>
-                  المقاس الفعلي: <strong className="text-amber-300">{selectedDevice.width}px × {selectedDevice.height}px</strong>
+                  المقاس الفعلي: <strong className="text-[#141414]">{selectedDevice.width}px × {selectedDevice.height}px</strong>
                 </span>
                 <span>•</span>
                 <button
                   type="button"
                   onClick={() => window.open(iframeSrc.replace('?mobileFrame=1', ''), '_blank')}
-                  className="text-amber-300 hover:text-amber-200 underline flex items-center gap-1"
+                  className="text-[#141414] hover:text-[#141414] underline flex items-center gap-1"
                 >
                   <span>فتح في تبويب مستقل</span>
                   <ExternalLink className="w-3 h-3" />

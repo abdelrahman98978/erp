@@ -156,22 +156,22 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
           </div>
           <div>
             <h2 className="font-bold text-xs text-zinc-900 leading-tight">نظام المحاسبة الشامل</h2>
-            <p className="text-[10.5px] text-zinc-500">الإصدار المؤسسي الحديث</p>
+            <p className="text-[10.5px] text-[#707070]">الإصدار المؤسسي الحديث</p>
           </div>
         </div>
-        <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" title="النظام متصل" />
+        <span className="w-2 h-2 rounded-full bg-[#141414] ring-2 ring-[#141414]/20" title="النظام متصل" />
       </div>
 
       {/* Menu Quick Search Input */}
       <div className="p-3 border-b border-zinc-200 bg-white">
         <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
+          <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-[#707070]" />
           <input
             type="text"
             placeholder="البحث في القائمة المالية..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#fbfbf5] border border-zinc-200 rounded-full py-1 pr-8 pl-3 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-black transition-all"
+            className="w-full bg-[#f3f3f3] border border-zinc-200 rounded-full py-1 pr-8 pl-3 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-black transition-all"
           />
         </div>
       </div>
@@ -201,11 +201,11 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#c1fbd4]' : 'text-zinc-500'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#c1fbd4]' : 'text-[#707070]'}`} />
                   <span>{item.title}</span>
                 </div>
                 {hasChildren && (
-                  <span className="text-zinc-400 hover:text-zinc-600">
+                  <span className="text-[#707070] hover:text-zinc-600">
                     {isOpen ? (
                       <ChevronDown className="w-3 h-3" />
                     ) : (
@@ -247,12 +247,12 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="p-3 bg-zinc-50 border-t border-zinc-200 text-[11px] text-zinc-500 flex flex-col gap-1">
+      <div className="p-3 bg-zinc-50 border-t border-zinc-200 text-[11px] text-[#707070] flex flex-col gap-1">
         <div className="flex items-center justify-between text-zinc-700">
           <span>حالة النظام:</span>
-          <span className="font-semibold text-emerald-600">جاهز ومطابق 100%</span>
+          <span className="font-semibold text-[#141414]">جاهز ومطابق 100%</span>
         </div>
-        <div className="text-[10px] text-zinc-400 text-center mt-1">
+        <div className="text-[10px] text-[#707070] text-center mt-1">
           حقوق الطبع © 2026 بحر العرب لأنظمة المعلومات
         </div>
       </div>

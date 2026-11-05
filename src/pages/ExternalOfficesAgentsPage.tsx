@@ -383,7 +383,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
             className="button-white-pill"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <FileSpreadsheet className="w-4 h-4 ml-1 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 ml-1 text-[#141414]" />
             <span>Excel</span>
           </button>
         </div>
@@ -429,7 +429,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
       {activeTab === 'offices' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-zinc-500 font-semibold">عدد الوكالات المعتمدة: {offices.length} وكالة دولية</span>
+            <span className="text-xs text-[#707070] font-semibold">عدد الوكالات المعتمدة: {offices.length} وكالة دولية</span>
             <button
               onClick={() => setShowAddOfficeModal(true)}
               className="button-primary-pill text-xs py-1.5 px-4"
@@ -464,19 +464,19 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
 
                   <div className="text-xs text-zinc-600 space-y-2 mb-4">
                     <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#707070]" />
                       <span>الترخيص: <strong className="font-mono text-black">{office.licenseNumber}</strong></span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <UserCheck className="w-3.5 h-3.5 text-zinc-400" />
+                      <UserCheck className="w-3.5 h-3.5 text-[#707070]" />
                       <span>المدير: <strong className="text-black">{office.managerName}</strong></span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5 text-zinc-400" />
+                      <Phone className="w-3.5 h-3.5 text-[#707070]" />
                       <span className="font-mono">{office.phone}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Mail className="w-3.5 h-3.5 text-zinc-400" />
+                      <Mail className="w-3.5 h-3.5 text-[#707070]" />
                       <span>{office.email}</span>
                     </div>
                   </div>
@@ -484,7 +484,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
 
                 <div className="flex justify-between border-t border-zinc-100 pt-3 text-xs bg-zinc-50 -mx-6 -mb-6 p-4 rounded-b-3xl">
                   <div>السير المتاحة: <strong className="text-black font-mono font-bold">{office.activeCandidatesCount}</strong></div>
-                  <div>العمالة الواصلة: <strong className="text-emerald-700 font-mono font-bold">{office.arrivedCountCount}</strong></div>
+                  <div>العمالة الواصلة: <strong className="text-[#141414] font-mono font-bold">{office.arrivedCountCount}</strong></div>
                 </div>
               </div>
             ))}
@@ -529,7 +529,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     </td>
                     <td className="p-3.5">
                       <div className="font-mono">{u.phone}</div>
-                      <div className="text-[11px] text-zinc-400">{u.email}</div>
+                      <div className="text-[11px] text-[#707070]">{u.email}</div>
                     </td>
                     <td className="p-3.5 font-semibold text-black">{u.linked_office}</td>
                     <td className="p-3.5 text-zinc-600">{u.nationality}</td>
@@ -575,7 +575,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{f.office_name}</td>
                     <td className="p-3.5 font-semibold text-zinc-800">{f.file_title}</td>
                     <td className="p-3.5"><Badge text={f.file_type} type="purple" /></td>
-                    <td className="p-3.5 font-mono text-zinc-500">{f.upload_date}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{f.upload_date}</td>
                     <td className="p-3.5 font-mono">{f.file_size}</td>
                     <td className="p-3.5 text-center">
                       <button
@@ -601,7 +601,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">تسجيل وكالة / مكتب خارجي معتمد</h3>
-              <button onClick={() => setShowAddOfficeModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowAddOfficeModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -721,7 +721,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">إضافة مستخدم وكيل خارجي</h3>
-              <button onClick={() => setShowAddUserModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowAddUserModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -799,7 +799,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
               <h3 className="text-sm font-bold text-black m-0">رفع وثيقة أو ترخيص معتمد للمكتب</h3>
-              <button onClick={() => setShowAddFileModal(false)} className="text-zinc-400 hover:text-black">
+              <button onClick={() => setShowAddFileModal(false)} className="text-[#707070] hover:text-black">
                 <X className="w-5 h-5" />
               </button>
             </div>

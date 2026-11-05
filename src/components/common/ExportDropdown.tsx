@@ -402,7 +402,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
                         onClick={() => handleExport(fmt.id)}
                         className="w-full text-right p-2.5 rounded-[16px] hover:bg-[#f3f3f3] border border-transparent hover:border-[#e0e0e0] transition-all flex items-start gap-3 group cursor-pointer"
                       >
-                        <div className="w-8 h-8 rounded-[10px] bg-[#f3f3f3] group-hover:bg-[#141414] text-[#141414] group-hover:text-[#ffffff] border border-[#e0e0e0] group-hover:border-[#141414] flex items-center justify-center shrink-0 transition-colors">
+                        <div className="w-8 h-8 rounded-[10px] bg-[#f3f3f3] group-hover:bg-[#262626] text-[#141414] group-hover:text-[#ffffff] border border-[#e0e0e0] group-hover:border-[#141414] flex items-center justify-center shrink-0 transition-colors">
                           <Icon className="w-4 h-4" />
                         </div>
 
@@ -442,7 +442,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
                         onClick={() => handleExport(fmt.id)}
                         className="w-full text-right p-2.5 rounded-[16px] hover:bg-[#f3f3f3] border border-transparent hover:border-[#e0e0e0] transition-all flex items-start gap-3 group cursor-pointer"
                       >
-                        <div className="w-8 h-8 rounded-[10px] bg-[#f3f3f3] group-hover:bg-[#141414] text-[#141414] group-hover:text-[#ffffff] border border-[#e0e0e0] group-hover:border-[#141414] flex items-center justify-center shrink-0 transition-colors">
+                        <div className="w-8 h-8 rounded-[10px] bg-[#f3f3f3] group-hover:bg-[#262626] text-[#141414] group-hover:text-[#ffffff] border border-[#e0e0e0] group-hover:border-[#141414] flex items-center justify-center shrink-0 transition-colors">
                           <Icon className="w-4 h-4" />
                         </div>
 

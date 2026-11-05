@@ -320,7 +320,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
   const sourceColorMap: Record<string, string> = {
     'TikTok Ads': 'bg-black',
     'Google Search': 'bg-zinc-700',
-    'Musaned Direct': 'bg-champagne',
+    'Musaned Direct': 'bg-[#141414]',
     'Instagram': 'bg-zinc-500',
     'Direct': 'bg-zinc-400',
   };
@@ -394,8 +394,8 @@ export const WebsiteVisitorsPage: React.FC = () => {
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>REALTIME WEB TRAFFIC</span>
               {/* Live Pulse Indicator */}
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#141414] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#141414]" />
               </span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
@@ -485,8 +485,8 @@ export const WebsiteVisitorsPage: React.FC = () => {
           <span>سجل الزيارات المباشر</span>
           {/* Live dot */}
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#141414] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#141414]" />
           </span>
         </button>
         <button
@@ -540,7 +540,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <div className="relative w-64">
-                <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-zinc-400" />
+                <Search className="w-3.5 h-3.5 absolute right-3 top-2.5 text-[#707070]" />
                 <input
                   type="text"
                   aria-label="ابحث بالمدينة، IP، المصدر"
@@ -559,11 +559,11 @@ export const WebsiteVisitorsPage: React.FC = () => {
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('website_visitors', filteredVisitors, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-champagne-dark" />
+                <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>Excel</span>
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('website_visitors', filteredVisitors, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
-                <FileText className="w-3.5 h-3.5 ml-1 text-rose-600" />
+                <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>PDF</span>
               </button>
             </div>
@@ -572,10 +572,10 @@ export const WebsiteVisitorsPage: React.FC = () => {
           {/* Last refresh timestamp */}
           <div className="px-4 py-1.5 bg-zinc-50 border-b border-zinc-100 flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#141414] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#141414]" />
             </span>
-            <span className="text-[11px] text-zinc-400 font-mono">
+            <span className="text-[11px] text-[#707070] font-mono">
               آخر تحديث: {lastRefresh.toLocaleTimeString('ar-SA')} | تحديث تلقائي كل 30 ثانية
             </span>
           </div>
@@ -583,15 +583,15 @@ export const WebsiteVisitorsPage: React.FC = () => {
           {/* Loading State */}
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16">
-              <RefreshCw className="w-8 h-8 text-zinc-300 animate-spin mb-3" />
-              <span className="text-sm text-zinc-400">جارٍ تحميل بيانات الزوار...</span>
+              <RefreshCw className="w-8 h-8 text-[#141414] animate-spin mb-3" />
+              <span className="text-sm text-[#707070]">جارٍ تحميل بيانات الزوار...</span>
             </div>
           ) : filteredVisitors.length === 0 ? (
             /* Empty State */
             <div className="flex flex-col items-center justify-center py-16">
               <BusinessIllustration type="empty-search" size="md" />
-              <div className="text-sm font-bold text-zinc-500 mb-1 mt-3">لا توجد زيارات مطابقة</div>
-              <div className="text-xs text-zinc-400">حاول تغيير كلمة البحث أو إزالة الفلتر</div>
+              <div className="text-sm font-bold text-[#707070] mb-1 mt-3">لا توجد زيارات مطابقة</div>
+              <div className="text-xs text-[#707070]">حاول تغيير كلمة البحث أو إزالة الفلتر</div>
               {searchQuery && (
                 <button
                   onClick={() => { setSearchQuery(''); setLeadFilter('all'); }}
@@ -626,7 +626,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
                           <CorporateAvatar name={row.phone || row.city || row.ip_address} size="xs" departmentId="crm" />
                           <div>
                             <div className="font-mono font-bold text-black">{row.ip_address || '-'}</div>
-                            {row.phone && <div className="text-[11px] text-zinc-500 font-mono font-bold">{row.phone}</div>}
+                            {row.phone && <div className="text-[11px] text-[#707070] font-mono font-bold">{row.phone}</div>}
                           </div>
                         </div>
                       </td>
@@ -638,13 +638,13 @@ export const WebsiteVisitorsPage: React.FC = () => {
                         />
                       </td>
                       <td className="p-3.5">
-                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${row.source === 'TikTok Ads' ? 'bg-black text-white' : row.source === 'Google Search' ? 'bg-zinc-100 text-black' : row.source === 'Musaned Direct' ? 'bg-champagne-pale text-champagne-dark border border-champagne/30' : 'bg-zinc-50 text-zinc-700'}`}>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${row.source === 'TikTok Ads' ? 'bg-black text-white' : row.source === 'Google Search' ? 'bg-zinc-100 text-black' : row.source === 'Musaned Direct' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-zinc-50 text-zinc-700'}`}>
                           {row.source || 'Direct'}
                         </span>
                       </td>
-                      <td className="p-3.5 font-semibold text-champagne-dark text-xs">{row.page_visited || '-'}</td>
+                      <td className="p-3.5 font-semibold text-[#141414] text-xs">{row.page_visited || '-'}</td>
                       <td className="p-3.5 font-mono font-bold text-zinc-700">{Math.floor((Number(row.duration_sec) || 0) / 60)} د و {(Number(row.duration_sec) || 0) % 60} ث</td>
-                      <td className="p-3.5 text-amber-700 font-bold text-xs">{row.visit_time || '-'}</td>
+                      <td className="p-3.5 text-[#141414] font-bold text-xs">{row.visit_time || '-'}</td>
                       <td className="p-3.5 text-center">
                         <div className="flex items-center justify-center gap-1.5 flex-wrap">
                           {row.phone ? (
@@ -657,7 +657,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
                                 style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                                 title="مراسلة واتساب فورية"
                               >
-                                <PhoneCall className="w-3 h-3 text-champagne-light" />
+                                <PhoneCall className="w-3 h-3 text-[#141414]" />
                                 <span>واتساب</span>
                               </a>
                               <button
@@ -667,12 +667,12 @@ export const WebsiteVisitorsPage: React.FC = () => {
                                 style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                                 title="تحويل العميل للـ CRM وقاعدة بيانات العملاء"
                               >
-                                <UserPlus className="w-3 h-3 text-emerald-600" />
+                                <UserPlus className="w-3 h-3 text-[#141414]" />
                                 <span>+ CRM</span>
                               </button>
                             </>
                           ) : (
-                            <span className="text-zinc-400 text-xs">زائر مجهول</span>
+                            <span className="text-[#707070] text-xs">زائر مجهول</span>
                           )}
                         </div>
                       </td>
@@ -701,19 +701,19 @@ export const WebsiteVisitorsPage: React.FC = () => {
                   <h3 className="text-base font-bold text-black mt-1 mb-0">{cv.name}</h3>
                 </div>
               </div>
-              <div className="text-xs text-zinc-500 mb-4">كود السيرة: <strong className="font-mono text-black">{cv.cv_code}</strong> | {cv.profession}</div>
+              <div className="text-xs text-[#707070] mb-4">كود السيرة: <strong className="font-mono text-black">{cv.cv_code}</strong> | {cv.profession}</div>
 
               <div className="bg-zinc-50 p-3 rounded-2xl grid grid-cols-3 gap-2 text-center border border-zinc-100">
                 <div>
-                  <div className="text-[11px] text-zinc-500">المشاهدات</div>
+                  <div className="text-[11px] text-[#707070]">المشاهدات</div>
                   <div className="text-sm font-bold text-black mt-0.5 font-mono">{cv.views_count}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-zinc-500">الحجوزات</div>
-                  <div className="text-sm font-bold text-champagne-dark mt-0.5 font-mono">{cv.reservation_count}</div>
+                  <div className="text-[11px] text-[#707070]">الحجوزات</div>
+                  <div className="text-sm font-bold text-[#141414] mt-0.5 font-mono">{cv.reservation_count}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-zinc-500">التحويل</div>
+                  <div className="text-[11px] text-[#707070]">التحويل</div>
                   <div className="text-sm font-bold text-black mt-0.5 font-mono">{cv.conversion_rate}</div>
                 </div>
               </div>
@@ -746,7 +746,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
                 </div>
               ))}
               {sourceStats.length === 0 && (
-                <div className="text-center py-6 text-zinc-400 text-xs">لا توجد بيانات مصادر</div>
+                <div className="text-center py-6 text-[#707070] text-xs">لا توجد بيانات مصادر</div>
               )}
             </div>
           </div>
@@ -763,7 +763,7 @@ export const WebsiteVisitorsPage: React.FC = () => {
                   <span className="font-mono">{deviceStats.mobilePct}%</span>
                 </div>
                 <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
-                  <div className="h-full bg-black rounded-full" style={{ width: `${deviceStats.mobilePct}%`, transition: 'width 0.5s ease' }} />
+                  <div className="h-full bg-[#f3f3f3] border-b border-[#e0e0e0] rounded-full" style={{ width: `${deviceStats.mobilePct}%`, transition: 'width 0.5s ease' }} />
                 </div>
               </div>
 

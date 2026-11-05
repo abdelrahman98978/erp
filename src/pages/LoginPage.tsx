@@ -970,7 +970,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 <div
                   role="alert"
                   aria-live="assertive"
-                  className="p-3.5 rounded-2xl bg-[#fff1f2] border border-[#fecdd3] text-[#be123c] text-xs font-bold flex items-center gap-2"
+                  className="p-3.5 rounded-2xl bg-[#fff1f2] border border-[#fecdd3] text-[#141414] text-xs font-bold flex items-center gap-2"
                 >
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>

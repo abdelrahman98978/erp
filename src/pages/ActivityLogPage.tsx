@@ -222,7 +222,7 @@ export const ActivityLogPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 سجل النشاط وحركات التدقيق الأمني
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 تتبع غير قابل للتعديل لكافة العمليات المالية، إنشاء العقود، تسجيل الدخول، وتغييرات الصلاحيات
               </p>
             </div>
@@ -233,10 +233,10 @@ export const ActivityLogPage: React.FC = () => {
               className="button-outline-on-dark"
               onClick={handleExecuteAllEmployees}
               disabled={isExecutingBatch}
-              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.5)', background: 'rgba(207, 166, 74, 0.14)', color: '#fde68a', fontWeight: 700 }}
+              style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: '#e0e0e0', background: '#ffffff', color: '#141414', fontWeight: 700 }}
               title="تنفيذ عملية تشغيلية ومالية حية لكل موظف من موظفي المجموعة الـ 28"
             >
-              <Zap className={`w-3.5 h-3.5 ml-1 text-amber-400 ${isExecutingBatch ? 'animate-spin' : ''}`} />
+              <Zap className={`w-3.5 h-3.5 ml-1 text-[#141414] ${isExecutingBatch ? 'animate-spin' : ''}`} />
               <span>{isExecutingBatch ? 'جاري التنفيذ...' : 'إجراء عملية حية لكل موظف (28 موظفاً)'}</span>
             </button>
             <button
@@ -249,7 +249,7 @@ export const ActivityLogPage: React.FC = () => {
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(16, 185, 129, 0.4)', color: '#6ee7b7' }}
               title="الانتقال إلى منظومة مراقبة الموظفين ونبض المشاعر"
             >
-              <Activity className="w-3.5 h-3.5 ml-1 text-emerald-400" />
+              <Activity className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>رادار المراقبة ونبض المشاعر</span>
             </button>
             <button
@@ -258,7 +258,7 @@ export const ActivityLogPage: React.FC = () => {
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
               title="تحديث السجلات"
             >
-              <RefreshCw className="w-3.5 h-3.5 ml-1 text-cyan-400" />
+              <RefreshCw className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>تحديث</span>
             </button>
             <ExportDropdown
@@ -274,7 +274,7 @@ export const ActivityLogPage: React.FC = () => {
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px', borderColor: 'rgba(244, 63, 94, 0.4)', color: '#fda4af' }}
               title="تفريغ السجل"
             >
-              <Trash2 className="w-3.5 h-3.5 ml-1 text-rose-400" />
+              <Trash2 className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>تفريغ السجل</span>
             </button>
           </div>
@@ -311,7 +311,7 @@ export const ActivityLogPage: React.FC = () => {
       {/* Filter Bars */}
       <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
         <div className="flex flex-wrap gap-1.5 items-center">
-          <span className="text-xs font-semibold text-zinc-500 ml-1">تصفية:</span>
+          <span className="text-xs font-semibold text-[#707070] ml-1">تصفية:</span>
           {modules.map(m => {
             const isActive = selectedModule === m;
             return (
@@ -402,7 +402,7 @@ export const ActivityLogPage: React.FC = () => {
                       />
                       <div>
                         <div className="font-bold text-black">{row.user_name}</div>
-                        <div className="text-[10px] text-zinc-400">{row.role}</div>
+                        <div className="text-[10px] text-[#707070]">{row.role}</div>
                       </div>
                     </div>
                   </td>
@@ -410,10 +410,10 @@ export const ActivityLogPage: React.FC = () => {
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         row.severity === 'حرج'
-                          ? 'bg-red-100 text-red-800 border border-red-300'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : row.severity === 'تنبيه'
-                          ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                          : 'bg-champagne-pale text-champagne-dark border border-champagne/30'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                          : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                       }`}
                     >
                       {row.severity}
@@ -423,11 +423,11 @@ export const ActivityLogPage: React.FC = () => {
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         row.action_type === 'اعتماد مالي'
-                          ? 'bg-champagne-pale text-champagne-dark border border-champagne/30'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : row.action_type === 'حذف'
-                          ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : row.action_type === 'تسجيل دخول'
-                          ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : 'bg-zinc-100 text-zinc-800'
                       }`}
                     >
@@ -438,9 +438,9 @@ export const ActivityLogPage: React.FC = () => {
                   <td className="p-3.5 text-zinc-600 max-w-sm leading-relaxed">{row.details}</td>
                   <td className="p-3.5 font-mono text-[11px]">
                     <div className="text-zinc-800 font-bold">{row.ip_address}</div>
-                    <div className="text-zinc-400 text-[10px]">{row.device}</div>
+                    <div className="text-[#707070] text-[10px]">{row.device}</div>
                   </td>
-                  <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{row.created_at}</td>
+                  <td className="p-3.5 text-[#707070] font-mono text-[11px]">{row.created_at}</td>
                 </tr>
               ))}
             </tbody>

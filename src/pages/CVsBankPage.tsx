@@ -652,7 +652,7 @@ export const CVsBankPage: React.FC = () => {
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
                 CV BANK & RECRUITMENT SUITE
               </span>
-              <span className="text-[11px] font-mono text-zinc-400">
+              <span className="text-[11px] font-mono text-[#707070]">
                 {activeCompany.name}
               </span>
             </div>
@@ -691,9 +691,9 @@ export const CVsBankPage: React.FC = () => {
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
             className="button-outline-on-dark flex items-center gap-1.5"
-            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '40px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '40px', borderColor: '#e0e0e0', background: '#ffffff', color: '#141414', fontWeight: 700 }}
           >
-            <Sparkles className="w-4 h-4 text-[#CFA64A]" />
+            <Sparkles className="w-4 h-4 text-[#141414]" />
             <span>استخلاص سير ذاتية (PDF / Word / صور)</span>
           </button>
 
@@ -703,7 +703,7 @@ export const CVsBankPage: React.FC = () => {
             className="button-white-pill flex items-center gap-1.5 shadow-md hover:scale-105 transition-all"
             style={{ fontSize: '12.5px', padding: '7px 20px', minHeight: '40px', backgroundColor: '#ffffff', color: '#000000', fontWeight: 'bold' }}
           >
-            <Plus className="w-4 h-4 text-emerald-600" />
+            <Plus className="w-4 h-4 text-[#141414]" />
             <span>+ إضافة سيرة ذاتية</span>
           </button>
 
@@ -713,7 +713,7 @@ export const CVsBankPage: React.FC = () => {
             className="button-outline-on-dark flex items-center gap-1.5"
             style={{ fontSize: '12px', padding: '6px 14px', minHeight: '40px' }}
           >
-            <Download className="w-4 h-4 text-emerald-400" />
+            <Download className="w-4 h-4 text-[#141414]" />
             <span>استيراد جماعي (Excel)</span>
           </button>
 
@@ -765,10 +765,10 @@ export const CVsBankPage: React.FC = () => {
       {/* ─── Category Tabs (Identical to Sidebar Structure) ─── */}
       <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200 pb-3">
         {[
-          { key: 'recruitment', label: `سير ذاتية التوسط (استقدام)`, count: counts.recruitment, icon: UserCheck, color: 'text-blue-600' },
-          { key: 'rental', label: `سير ذاتية التأجير والتشغيل`, count: counts.rental, icon: HeartHandshake, color: 'text-amber-600' },
-          { key: 'reserved', label: `سير ذاتية محجوزة`, count: counts.reserved, icon: BookmarkCheck, color: 'text-amber-600' },
-          { key: 'backout', label: `سير ذاتية تراجع (باك أوت)`, count: counts.backout, icon: UserX, color: 'text-rose-600' },
+          { key: 'recruitment', label: `سير ذاتية التوسط (استقدام)`, count: counts.recruitment, icon: UserCheck, color: 'text-[#141414]' },
+          { key: 'rental', label: `سير ذاتية التأجير والتشغيل`, count: counts.rental, icon: HeartHandshake, color: 'text-[#141414]' },
+          { key: 'reserved', label: `سير ذاتية محجوزة`, count: counts.reserved, icon: BookmarkCheck, color: 'text-[#141414]' },
+          { key: 'backout', label: `سير ذاتية تراجع (باك أوت)`, count: counts.backout, icon: UserX, color: 'text-[#141414]' },
           { key: 'pending', label: `سير بانتظار الاعتماد`, count: counts.pending, icon: Clock, color: 'text-zinc-600' },
           { key: 'all', label: `جميع السير الذاتية`, count: counts.all, icon: Layers, color: 'text-black' },
         ].map(cat => {
@@ -819,7 +819,7 @@ export const CVsBankPage: React.FC = () => {
       <div className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-[280px]">
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute right-3.5 top-3 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3.5 top-3 text-[#707070]" />
             <input
               type="text"
               aria-label="البحث برقم الكود، اسم العاملة، رقم الجواز، أو المكتب الخارجي"
@@ -853,7 +853,7 @@ export const CVsBankPage: React.FC = () => {
             <button
               onClick={() => setViewMode('cards')}
               className={`p-1.5 rounded-full text-xs flex items-center gap-1 transition ${
-                viewMode === 'cards' ? 'bg-white shadow-sm font-bold text-black' : 'text-zinc-500'
+                viewMode === 'cards' ? 'bg-white shadow-sm font-bold text-black' : 'text-[#707070]'
               }`}
               title="عرض كروت تفاعلية"
             >
@@ -863,7 +863,7 @@ export const CVsBankPage: React.FC = () => {
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-full text-xs flex items-center gap-1 transition ${
-                viewMode === 'table' ? 'bg-white shadow-sm font-bold text-black' : 'text-zinc-500'
+                viewMode === 'table' ? 'bg-white shadow-sm font-bold text-black' : 'text-[#707070]'
               }`}
               title="عرض جدول محاسبي"
             >
@@ -872,7 +872,7 @@ export const CVsBankPage: React.FC = () => {
             </button>
           </div>
 
-          <span className="text-xs font-mono font-bold text-zinc-500 px-2 py-1 bg-zinc-100 rounded-full">
+          <span className="text-xs font-mono font-bold text-[#707070] px-2 py-1 bg-zinc-100 rounded-full">
             {filteredCVs.length} سيرة مطابقة
           </span>
         </div>
@@ -896,8 +896,8 @@ export const CVsBankPage: React.FC = () => {
                     <span
                       className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
                         cv.type === 'تأجير'
-                          ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                          : 'bg-blue-50 text-blue-800 border border-blue-200'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                          : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                       }`}
                     >
                       {cv.type}
@@ -932,14 +932,14 @@ export const CVsBankPage: React.FC = () => {
                     <h3 className="text-sm font-black text-black leading-snug truncate">
                       {cv.maid_name_ar || cv.maid_name}
                     </h3>
-                    <div className="text-[11px] text-zinc-500 truncate font-sans">
+                    <div className="text-[11px] text-[#707070] truncate font-sans">
                       {cv.maid_name}
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-[10px] font-mono font-bold text-zinc-600 bg-zinc-100 px-1.5 py-0.5 rounded">
                         {cv.cv_code}
                       </span>
-                      <span className="text-[10.5px] text-zinc-500 font-semibold truncate">
+                      <span className="text-[10.5px] text-[#707070] font-semibold truncate">
                         {cv.job}
                       </span>
                     </div>
@@ -949,22 +949,22 @@ export const CVsBankPage: React.FC = () => {
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-2 p-3 bg-zinc-50 rounded-2xl border border-zinc-100 mb-3 text-xs">
                   <div>
-                    <span className="text-zinc-400 text-[10px] block">العمر / الحالة</span>
+                    <span className="text-[#707070] text-[10px] block">العمر / الحالة</span>
                     <strong className="text-zinc-800 font-sans">
                       {cv.age} سنة ({cv.marital_status})
                     </strong>
                   </div>
                   <div>
-                    <span className="text-zinc-400 text-[10px] block">الديانة</span>
+                    <span className="text-[#707070] text-[10px] block">الديانة</span>
                     <strong className="text-zinc-800 font-sans">{cv.religion}</strong>
                   </div>
                   <div>
-                    <span className="text-zinc-400 text-[10px] block">رقم الجواز</span>
+                    <span className="text-[#707070] text-[10px] block">رقم الجواز</span>
                     <strong className="font-mono text-zinc-800 text-[11px]">{cv.passport_number}</strong>
                   </div>
                   <div>
-                    <span className="text-zinc-400 text-[10px] block">الراتب / التكلفة</span>
-                    <strong className="font-mono text-emerald-700 font-bold">
+                    <span className="text-[#707070] text-[10px] block">الراتب / التكلفة</span>
+                    <strong className="font-mono text-[#141414] font-bold">
                       {cv.salary.toLocaleString()} ⃁
                     </strong>
                   </div>
@@ -972,7 +972,7 @@ export const CVsBankPage: React.FC = () => {
 
                 {/* Experience & Skills */}
                 <div className="mb-3">
-                  <div className="text-[10px] text-zinc-400 mb-1">
+                  <div className="text-[10px] text-[#707070] mb-1">
                     الخبرة: <span className="text-zinc-700 font-medium">{cv.experience_country || 'جديدة لم يسبق لها السفر'}</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
@@ -985,7 +985,7 @@ export const CVsBankPage: React.FC = () => {
                       </span>
                     ))}
                     {cv.skills.length > 3 && (
-                      <span className="text-[9.5px] text-zinc-400 self-center">
+                      <span className="text-[9.5px] text-[#707070] self-center">
                         +{cv.skills.length - 3} مهارات
                       </span>
                     )}
@@ -1002,10 +1002,10 @@ export const CVsBankPage: React.FC = () => {
                   className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-bold transition shadow-sm ${
                     cv.status === 'متاح'
                       ? 'bg-black text-white hover:bg-zinc-800'
-                      : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+                      : 'bg-zinc-100 text-[#707070] cursor-not-allowed'
                   }`}
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#141414]" />
                   <span>{cv.type === 'تأجير' ? 'حجز وتأجير فوري' : 'حجز وتعاقد'}</span>
                 </button>
 
@@ -1024,7 +1024,7 @@ export const CVsBankPage: React.FC = () => {
                   )}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-2 rounded-full bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
+                  className="p-2 rounded-full bg-[#f3f3f3] text-[#141414] hover:bg-[#eaeaea] transition"
                   title="مشاركة عبر الواتساب"
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -1060,14 +1060,14 @@ export const CVsBankPage: React.FC = () => {
                     <td className="p-3.5 font-mono font-bold text-black">{cv.cv_code}</td>
                     <td className="p-3.5">
                       <div className="font-bold text-black">{cv.maid_name_ar || cv.maid_name}</div>
-                      <div className="text-[10px] text-zinc-400 font-sans">{cv.maid_name}</div>
+                      <div className="text-[10px] text-[#707070] font-sans">{cv.maid_name}</div>
                     </td>
                     <td className="p-3.5 font-semibold text-zinc-800">{cv.nationality}</td>
                     <td className="p-3.5">{cv.job}</td>
                     <td className="p-3.5">
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          cv.type === 'تأجير' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                          cv.type === 'تأجير' ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-[#f3f3f3] text-[#141414]'
                         }`}
                       >
                         {cv.type}
@@ -1076,7 +1076,7 @@ export const CVsBankPage: React.FC = () => {
                     <td className="p-3.5">
                       {cv.age} سنة | {cv.religion}
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">
                       {cv.salary.toLocaleString()} ⃁
                     </td>
                     <td className="p-3.5 text-zinc-600 truncate max-w-[140px]">{cv.external_office}</td>
@@ -1095,7 +1095,7 @@ export const CVsBankPage: React.FC = () => {
                           className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
                             cv.status === 'متاح'
                               ? 'bg-black text-white hover:bg-zinc-800'
-                              : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
+                              : 'bg-zinc-100 text-[#707070] cursor-not-allowed'
                           }`}
                         >
                           حجز فوري
@@ -1103,7 +1103,7 @@ export const CVsBankPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setSelectedCVForPrint(cv)}
-                          className="p-1 text-zinc-500 hover:text-black rounded"
+                          className="p-1 text-[#707070] hover:text-black rounded"
                           title="معاينة كرت السيرة"
                         >
                           <Printer className="w-3.5 h-3.5" />
@@ -1124,14 +1124,14 @@ export const CVsBankPage: React.FC = () => {
           <div className="w-full max-w-lg bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6 font-sans">
             <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-emerald-600" />
+                <Sparkles className="w-5 h-5 text-[#141414]" />
                 <h3 className="font-bold text-black text-base">
                   حجز فوري: {bookingCV.maid_name_ar || bookingCV.maid_name} ({bookingCV.cv_code})
                 </h3>
               </div>
               <button
                 onClick={() => setBookingCV(null)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black"
+                className="p-1 rounded-full text-[#707070] hover:text-black"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1140,15 +1140,15 @@ export const CVsBankPage: React.FC = () => {
             <form onSubmit={handleConfirmBooking} className="space-y-4">
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-xs space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">الجنسية والمهنة:</span>
+                  <span className="text-[#707070]">الجنسية والمهنة:</span>
                   <strong className="text-black">{bookingCV.nationality} - {bookingCV.job}</strong>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">نوع التعاقد:</span>
-                  <strong className="text-emerald-700 font-bold">{bookingCV.type === 'تأجير' ? 'تأجير تشغيلي مباشر' : 'عقد استقدام (توسط مساند)'}</strong>
+                  <span className="text-[#707070]">نوع التعاقد:</span>
+                  <strong className="text-[#141414] font-bold">{bookingCV.type === 'تأجير' ? 'تأجير تشغيلي مباشر' : 'عقد استقدام (توسط مساند)'}</strong>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-500">التكلفة / الراتب:</span>
+                  <span className="text-[#707070]">التكلفة / الراتب:</span>
                   <strong className="font-mono text-black font-bold">{bookingCV.salary.toLocaleString()} ⃁</strong>
                 </div>
               </div>
@@ -1177,7 +1177,7 @@ export const CVsBankPage: React.FC = () => {
                 />
               </div>
 
-              <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-[11px] text-emerald-800">
+              <div className="p-3 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] text-[11px] text-[#141414]">
                 ✓ سيتم قفل السيرة الذاتية وتغيير حالتها إلى "محجوز" وإصدار ملف التعاقد في قائمة العقود فورياً.
               </div>
 
@@ -1213,7 +1213,7 @@ export const CVsBankPage: React.FC = () => {
               </h3>
               <button
                 onClick={() => setSelectedCVForPrint(null)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black"
+                className="p-1 rounded-full text-[#707070] hover:text-black"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1231,18 +1231,18 @@ export const CVsBankPage: React.FC = () => {
                     <h2 className="text-base font-black text-black">
                       {selectedCVForPrint.maid_name_ar}
                     </h2>
-                    <div className="text-xs text-zinc-500 font-mono">
+                    <div className="text-xs text-[#707070] font-mono">
                       {selectedCVForPrint.maid_name}
                     </div>
-                    <div className="text-xs text-emerald-800 font-bold mt-1">
+                    <div className="text-xs text-[#141414] font-bold mt-1">
                       {selectedCVForPrint.job} | {selectedCVForPrint.nationality}
                     </div>
                   </div>
 
                   <div className="text-left font-mono">
-                    <div className="text-xs text-zinc-400">رقم الجواز:</div>
+                    <div className="text-xs text-[#707070]">رقم الجواز:</div>
                     <div className="text-sm font-bold text-black">{selectedCVForPrint.passport_number}</div>
-                    <div className="text-xs text-emerald-700 font-bold">{selectedCVForPrint.salary} ⃁ / شهرياً</div>
+                    <div className="text-xs text-[#141414] font-bold">{selectedCVForPrint.salary} ⃁ / شهرياً</div>
                   </div>
                 </div>
 

@@ -57,8 +57,8 @@ const VisibilityToggle: React.FC<ToggleProps> = ({ hidden, disabled, onToggle, l
       disabled
         ? 'bg-[#f6f6f6] text-[#b0b0b0] border-[#eeeeee] cursor-not-allowed'
         : hidden
-          ? 'bg-[#fff1f2] text-[#be123c] border-[#fecdd3] hover:bg-[#ffe4e6] cursor-pointer'
-          : 'bg-[#f0fdf4] text-[#15803d] border-[#bbf7d0] hover:bg-[#dcfce7] cursor-pointer'
+          ? 'bg-[#fff1f2] text-[#141414] border-[#fecdd3] hover:bg-[#ffe4e6] cursor-pointer'
+          : 'bg-[#f0fdf4] text-[#141414] border-[#bbf7d0] hover:bg-[#dcfce7] cursor-pointer'
     }`}
   >
     {hidden ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -359,7 +359,7 @@ export const ModuleVisibilityManager: React.FC = () => {
           role="status"
           className={`p-3 rounded-2xl text-xs font-bold flex items-center gap-2 ${
             status.type === 'success'
-              ? 'bg-[#f0fdf4] border border-[#bbf7d0] text-[#15803d]'
+              ? 'bg-[#f0fdf4] border border-[#bbf7d0] text-[#141414]'
               : 'bg-[#fffbeb] border border-[#fde68a] text-[#92400e]'
           }`}
         >
@@ -383,7 +383,7 @@ export const ModuleVisibilityManager: React.FC = () => {
           إظهار الكل
         </button>
         <div className="flex items-center gap-3">
-          {isDirty && <span className="text-[11px] font-bold text-[#b45309]">تغييرات غير محفوظة</span>}
+          {isDirty && <span className="text-[11px] font-bold text-[#141414]">تغييرات غير محفوظة</span>}
           <button
             type="button"
             onClick={() => void handleSave()}

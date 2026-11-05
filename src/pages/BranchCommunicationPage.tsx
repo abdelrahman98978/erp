@@ -189,7 +189,7 @@ export const BranchCommunicationPage: React.FC = () => {
             <BusinessIllustration type="branch-network" size="sm" showBackground={false} />
           </div>
           <div className="sm:hidden" style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-            <ArrowLeftRight className="w-5 h-5 text-champagne-light" />
+            <ArrowLeftRight className="w-5 h-5 text-[#141414]" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -272,8 +272,8 @@ export const BranchCommunicationPage: React.FC = () => {
           </div>
 
           <div className="mt-4 p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
-            <span className="text-[11px] text-zinc-500 flex items-center justify-center gap-1">
-              <Lock className="w-3 h-3 text-zinc-400" />
+            <span className="text-[11px] text-[#707070] flex items-center justify-center gap-1">
+              <Lock className="w-3 h-3 text-[#707070]" />
               <span>تشفير SSL متوافق مع الحوكمة الداخلية</span>
             </span>
           </div>
@@ -285,7 +285,7 @@ export const BranchCommunicationPage: React.FC = () => {
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
               <div>
                 <h2 className="text-sm font-bold text-black m-0">{activeChannel}</h2>
-                <span className="text-[11px] text-zinc-400">سجل الرسائل الحية المحفوظ في قاعدة البيانات</span>
+                <span className="text-[11px] text-[#707070]">سجل الرسائل الحية المحفوظ في قاعدة البيانات</span>
               </div>
               <span className="pill-tag-mint" style={{ fontSize: '10px' }}>مباشر Live</span>
             </div>
@@ -293,7 +293,7 @@ export const BranchCommunicationPage: React.FC = () => {
             {/* Chat History Box */}
             <div className="space-y-3 overflow-y-auto max-h-[300px] pr-1">
               {filteredMessages.length === 0 ? (
-                <div className="p-8 text-center text-zinc-400 text-xs flex flex-col items-center justify-center gap-2">
+                <div className="p-8 text-center text-[#707070] text-xs flex flex-col items-center justify-center gap-2">
                   <BusinessIllustration type="empty-search" size="md" />
                   <span>لا توجد رسائل في هذه القناة. ابدأ بكتابة رسالة في الأسفل.</span>
                 </div>
@@ -311,12 +311,12 @@ export const BranchCommunicationPage: React.FC = () => {
                         <div>
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold text-black">{msg.sender_name}</span>
-                            <span className="text-[10px] text-zinc-500">({msg.sender_role})</span>
+                            <span className="text-[10px] text-[#707070]">({msg.sender_role})</span>
                           </div>
-                          <span className="text-[10px] text-zinc-400 font-mono">{msg.sender_branch}</span>
+                          <span className="text-[10px] text-[#707070] font-mono">{msg.sender_branch}</span>
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono text-zinc-400">{msg.timestamp}</span>
+                      <span className="text-[10px] font-mono text-[#707070]">{msg.timestamp}</span>
                     </div>
                     <p className="text-xs text-zinc-800 leading-relaxed m-0 font-sans">{msg.content}</p>
                   </div>
@@ -383,7 +383,7 @@ export const BranchCommunicationPage: React.FC = () => {
                   <td className="p-3.5">
                     <Badge text={t.status} type={t.status === 'تم القبول والتحويل' ? 'success' : t.status === 'مرفوض' ? 'danger' : 'warning'} />
                   </td>
-                  <td className="p-3.5 font-mono text-[11px] text-zinc-400">{t.created_at}</td>
+                  <td className="p-3.5 font-mono text-[11px] text-[#707070]">{t.created_at}</td>
                   <td className="p-3.5 text-center">
                     {t.status === 'بانتظار الاعتماد' ? (
                       <div className="flex items-center justify-center gap-1.5">
@@ -403,7 +403,7 @@ export const BranchCommunicationPage: React.FC = () => {
                         </button>
                       </div>
                     ) : (
-                      <span className="text-[10px] text-zinc-400 font-semibold">تم البت</span>
+                      <span className="text-[10px] text-[#707070] font-semibold">تم البت</span>
                     )}
                   </td>
                 </tr>
@@ -417,12 +417,12 @@ export const BranchCommunicationPage: React.FC = () => {
       {showTransferModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <ArrowLeftRight className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <ArrowLeftRight className="w-4 h-4 text-[#141414]" />
                 <span>تقديم طلب مناقلة وتنسيق بين الفروع</span>
               </h3>
-              <button onClick={() => setShowTransferModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowTransferModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

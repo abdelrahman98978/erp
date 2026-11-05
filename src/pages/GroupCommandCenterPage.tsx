@@ -65,7 +65,7 @@ export const GroupCommandCenterPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-1 px-3">
+          <div className="flex items-center gap-2 bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1 px-3">
             <CorporateAvatar
               size="sm"
               archetype="saudi-executive"
@@ -74,8 +74,8 @@ export const GroupCommandCenterPage: React.FC = () => {
               role="رئيس مجلس الإدارة"
             />
             <div className="text-right">
-              <div className="text-[11px] font-bold text-white leading-tight">خالد عبدالعزيز السليم</div>
-              <div className="text-[10px] text-emerald-300 leading-tight">رئيس مجلس الإدارة</div>
+              <div className="text-[11px] font-bold text-[#141414] leading-tight">خالد عبدالعزيز السليم</div>
+              <div className="text-[10px] text-[#141414] leading-tight">رئيس مجلس الإدارة</div>
             </div>
           </div>
 
@@ -152,11 +152,11 @@ export const GroupCommandCenterPage: React.FC = () => {
                   <td className="p-3.5">{c.branchesCount} فروع</td>
                   <td className="p-3.5 font-bold text-zinc-800">{c.employeesCount} موظف</td>
                   <td className="p-3.5 font-mono">{c.activeOrdersCount} طلب</td>
-                  <td className="p-3.5 font-mono font-bold text-emerald-700">
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">
                     {c.revenueYTD.toLocaleString('ar-SA')} ⃁
                   </td>
                   <td className="p-3.5">
-                    <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
+                    <span className="bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] px-2.5 py-0.5 rounded-full text-[10px] font-bold">
                       مستقل 100% (ZATCA Ready)
                     </span>
                   </td>
@@ -184,7 +184,7 @@ export const GroupCommandCenterPage: React.FC = () => {
             <ShieldCheck className="w-4 h-4 text-black" />
             <span>سجلات التدقيق والحماية المركزية (Group Security Audit Trail)</span>
           </h3>
-          <span className="text-[11px] text-zinc-400 font-semibold">سجلات غير قابلة للتعديل أو الحذف</span>
+          <span className="text-[11px] text-[#707070] font-semibold">سجلات غير قابلة للتعديل أو الحذف</span>
         </div>
 
         <div className="space-y-2.5">
@@ -201,12 +201,12 @@ export const GroupCommandCenterPage: React.FC = () => {
                     <span className="bg-zinc-200 text-black px-2 py-0.5 rounded-full text-[10px] font-bold">
                       {log.actionType}
                     </span>
-                    <span className="text-[11px] text-zinc-400 font-mono">IP: {log.ipAddress}</span>
+                    <span className="text-[11px] text-[#707070] font-mono">IP: {log.ipAddress}</span>
                   </div>
                   <div className="text-zinc-600">{log.details}</div>
                 </div>
               </div>
-              <div className="text-[11px] text-zinc-400 font-mono">
+              <div className="text-[11px] text-[#707070] font-mono">
                 {new Date(log.timestamp).toLocaleTimeString('ar-SA')}
               </div>
             </div>
@@ -218,18 +218,18 @@ export const GroupCommandCenterPage: React.FC = () => {
       {showImpersonateModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <UserCheck className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-[#141414]" />
                 <span>دخول النظام بصلاحيات موظف (Act As Employee)</span>
               </h3>
-              <button onClick={() => setShowImpersonateModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowImpersonateModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleExecuteImpersonation} className="p-6 space-y-4 bg-white text-black">
-              <p className="text-xs text-zinc-500 leading-relaxed m-0">
+              <p className="text-xs text-[#707070] leading-relaxed m-0">
                 سيتم تسجيل هذا الدخول بالكامل في سجلات التدقيق (Audit Log) مع تسجيل السبب والتوقيت ورفع بصمة العملية.
               </p>
 

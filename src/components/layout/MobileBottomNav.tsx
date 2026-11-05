@@ -175,19 +175,19 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           dir="rtl"
         >
           <div
-            className="w-full max-w-md bg-[#FBFBF5] rounded-t-3xl border-t-2 border-[#CFA64A] shadow-2xl p-4 space-y-3 pb-24"
+            className="w-full max-w-md bg-[#f3f3f3] rounded-t-3xl border-t-2 border-[#e0e0e0] shadow-2xl p-4 space-y-3 pb-24"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-zinc-200 pb-2.5">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-[#1D2428] text-[#CFA64A] flex items-center justify-center">
+                <span className="w-7 h-7 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <Zap className="w-4 h-4" />
                 </span>
                 <div>
-                  <h4 className="text-xs font-black text-[#1D2428]">
+                  <h4 className="text-xs font-black text-[#141414]">
                     مركز الإجراءات السريعة للهاتف
                   </h4>
-                  <p className="text-[10.5px] text-zinc-500">{deptMeta.nameAr}</p>
+                  <p className="text-[10.5px] text-[#707070]">{deptMeta.nameAr}</p>
                 </div>
               </div>
               <button
@@ -206,12 +206,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   setShowQuickSheet(false);
                   setQuickSearchOpen(true);
                 }}
-                className="p-3 rounded-xl bg-[#1D2428] text-white flex items-center gap-2.5 text-right border border-[#CFA64A]/40"
+                className="p-3 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center gap-2.5 text-right border border-[#e0e0e0]"
               >
-                <Search className="w-4 h-4 text-[#CFA64A] shrink-0" />
+                <Search className="w-4 h-4 text-[#141414] shrink-0" />
                 <div>
                   <div className="text-xs font-black">البحث والأوامر</div>
-                  <div className="text-[10px] text-zinc-400">بحث شامل فوري</div>
+                  <div className="text-[10px] text-[#707070]">بحث شامل فوري</div>
                 </div>
               </button>
 
@@ -221,12 +221,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   setShowQuickSheet(false);
                   window.dispatchEvent(new CustomEvent('open-universal-extractor'));
                 }}
-                className="p-3 rounded-xl bg-white text-[#1D2428] flex items-center gap-2.5 text-right border border-zinc-200 shadow-2xs"
+                className="p-3 rounded-xl bg-white text-[#141414] flex items-center gap-2.5 text-right border border-zinc-200 shadow-2xs"
               >
-                <UploadCloud className="w-4 h-4 text-[#8C681E] shrink-0" />
+                <UploadCloud className="w-4 h-4 text-[#141414] shrink-0" />
                 <div>
                   <div className="text-xs font-black">ماسح الفواتير OCR</div>
-                  <div className="text-[10px] text-zinc-500">100+ فاتورة ومستند</div>
+                  <div className="text-[10px] text-[#707070]">100+ فاتورة ومستند</div>
                 </div>
               </button>
 
@@ -243,12 +243,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     })
                   );
                 }}
-                className="p-3 rounded-xl bg-[#CFA64A] text-[#1D2428] flex items-center gap-2.5 text-right font-black"
+                className="p-3 rounded-xl bg-[#141414] text-[#ffffff] flex items-center gap-2.5 text-right font-black"
               >
                 <Sparkles className="w-4 h-4 shrink-0" />
                 <div>
                   <div className="text-xs font-black">فارس ونُورة AI</div>
-                  <div className="text-[10px] text-[#1D2428]/80">مساعد المهام الذكي</div>
+                  <div className="text-[10px] text-[#141414]/80">مساعد المهام الذكي</div>
                 </div>
               </button>
 
@@ -258,20 +258,20 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   setShowQuickSheet(false);
                   onOpenAppLauncher();
                 }}
-                className="p-3 rounded-xl bg-white text-[#1D2428] flex items-center gap-2.5 text-right border border-zinc-200 shadow-2xs"
+                className="p-3 rounded-xl bg-white text-[#141414] flex items-center gap-2.5 text-right border border-zinc-200 shadow-2xs"
               >
-                <Grid className="w-4 h-4 text-emerald-700 shrink-0" />
+                <Grid className="w-4 h-4 text-[#141414] shrink-0" />
                 <div>
                   <div className="text-xs font-black">منصة التطبيقات</div>
-                  <div className="text-[10px] text-zinc-500">كافة وحدات القسم</div>
+                  <div className="text-[10px] text-[#707070]">كافة وحدات القسم</div>
                 </div>
               </button>
             </div>
 
             {pinnedTabs.length > 0 && (
               <div className="space-y-1.5 pt-1">
-                <div className="text-[11px] font-black text-[#8C681E] flex items-center gap-1">
-                  <Star className="w-3.5 h-3.5 fill-[#CFA64A] text-[#CFA64A]" />
+                <div className="text-[11px] font-black text-[#141414] flex items-center gap-1">
+                  <Star className="w-3.5 h-3.5 fill-[#141414] text-[#141414]" />
                   <span>شاشاتي المثبتة في المفضلة:</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -283,7 +283,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         setShowQuickSheet(false);
                         onSelectTab(pin.href, pin.title);
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-white border border-[#CFA64A]/40 text-[11px] font-bold text-[#1D2428]"
+                      className="px-2.5 py-1 rounded-lg bg-white border border-[#e0e0e0] text-[11px] font-bold text-[#141414]"
                     >
                       {pin.title}
                     </button>
@@ -308,8 +308,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <div
             className={`px-3 py-1 text-[10.5px] font-bold flex items-center justify-between border-b ${
               !bgState.isOnline
-                ? 'bg-[#FAEBD7] text-[#8C6239] border-[#CFA64A]/40'
-                : 'bg-zinc-900 text-[#CFA64A] border-zinc-800'
+                ? 'bg-[#FAEBD7] text-[#8C6239] border-[#e0e0e0]'
+                : 'bg-zinc-900 text-[#ffffff] border-[#e0e0e0]'
             }`}
           >
             <div className="flex items-center gap-1.5 truncate">
@@ -322,7 +322,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </>
               ) : (
                 <>
-                  <ShieldCheck className="w-3 h-3 text-[#CFA64A] shrink-0" />
+                  <ShieldCheck className="w-3 h-3 text-[#141414] shrink-0" />
                   <span className="truncate">
                     طابور المزامنة الخلفية ({bgState.pendingOfflineCount} عمليات جاهزة للمزامنة)
                   </span>
@@ -334,7 +334,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               <button
                 type="button"
                 onClick={handleManualSync}
-                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#CFA64A] text-black text-[10px] font-extrabold shrink-0"
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-extrabold shrink-0"
               >
                 <RefreshCw className={`w-2.5 h-2.5 ${syncingNow ? 'animate-spin' : ''}`} />
                 <span>مزامنة الآن</span>
@@ -350,12 +350,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             type="button"
             onClick={() => onSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')}
             className={`flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-              isHomeActive ? 'text-black font-extrabold' : 'text-zinc-500 hover:text-black'
+              isHomeActive ? 'text-black font-extrabold' : 'text-[#707070] hover:text-black'
             }`}
           >
             <div
               className={`w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-                isHomeActive ? 'bg-black text-[#CFA64A]' : ''
+                isHomeActive ? 'bg-black text-[#ffffff]' : ''
               }`}
             >
               <Home className="w-4 h-4" />
@@ -368,12 +368,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             type="button"
             onClick={() => onSelectTab(primaryOpsTab.href, primaryOpsTab.title)}
             className={`flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-              isOpsActive ? 'text-black font-extrabold' : 'text-zinc-500 hover:text-black'
+              isOpsActive ? 'text-black font-extrabold' : 'text-[#707070] hover:text-black'
             }`}
           >
             <div
               className={`w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-                isOpsActive ? 'bg-black text-[#CFA64A]' : ''
+                isOpsActive ? 'bg-black text-[#ffffff]' : ''
               }`}
             >
               <OpsIcon className="w-4 h-4" />
@@ -387,7 +387,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               type="button"
               onClick={() => setShowQuickSheet((prev) => !prev)}
               aria-label="الإجراءات السريعة ووحدات القسم"
-              className="w-12 h-12 -mt-4 rounded-2xl bg-[#1D2428] text-[#CFA64A] border-2 border-[#CFA64A] shadow-lg shadow-black/20 flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
+              className="w-12 h-12 -mt-4 rounded-2xl bg-[#141414] text-[#ffffff] border-2 border-[#e0e0e0] shadow-lg shadow-black/20 flex flex-col items-center justify-center gap-0.5 active:scale-95 transition-transform"
             >
               <Zap className="w-4 h-4" />
               <span className="text-[9px] font-black text-white leading-none">إجراء سريع</span>
@@ -399,17 +399,17 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             type="button"
             onClick={onToggleNotifications}
             className={`relative flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-              isNotificationsOpen ? 'text-black font-extrabold' : 'text-zinc-500 hover:text-black'
+              isNotificationsOpen ? 'text-black font-extrabold' : 'text-[#707070] hover:text-black'
             }`}
           >
             <div
               className={`relative w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-                isNotificationsOpen ? 'bg-black text-[#CFA64A]' : ''
+                isNotificationsOpen ? 'bg-black text-[#ffffff]' : ''
               }`}
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-600 text-white text-[9.5px] font-black flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#141414] text-white text-[9.5px] font-black flex items-center justify-center shadow-xs">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}
@@ -421,7 +421,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="flex flex-col items-center justify-center gap-1 h-full rounded-xl text-zinc-500 hover:text-black transition-colors"
+            className="flex flex-col items-center justify-center gap-1 h-full rounded-xl text-[#707070] hover:text-black transition-colors"
           >
             <div className="w-9 h-7 rounded-full flex items-center justify-center">
               <Menu className="w-4 h-4" />

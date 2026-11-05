@@ -177,7 +177,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
       {/* Speech Bubble / Dynamic Greeting Card */}
       <div 
         key={`${selectedPortal.id}-${persona}`}
-        className="speech-bubble-anim relative z-30 max-w-[340px] mb-2 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-amber-400 transition-colors"
+        className="speech-bubble-anim relative z-30 max-w-[340px] mb-2 p-3.5 rounded-2xl bg-white/95 backdrop-blur-md border border-zinc-200 shadow-xl text-right cursor-pointer hover:border-[#141414] transition-colors"
         style={{
           boxShadow: '0 16px 32px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04)'
         }}
@@ -216,7 +216,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
                 className={`px-2 py-0.5 rounded-full text-[9.5px] font-extrabold transition-all cursor-pointer ${
                   persona === 'faris'
                     ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
-                    : 'text-zinc-500 hover:text-zinc-800'
+                    : 'text-[#707070] hover:text-zinc-800'
                 }`}
               >
                 فارس
@@ -229,8 +229,8 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
                 }}
                 className={`px-2 py-0.5 rounded-full text-[9.5px] font-extrabold transition-all cursor-pointer ${
                   persona === 'noura'
-                    ? 'bg-white text-amber-700 shadow-xs border border-champagne/40'
-                    : 'text-zinc-500 hover:text-zinc-800'
+                    ? 'bg-white text-[#141414] shadow-xs border border-[#e0e0e0]'
+                    : 'text-[#707070] hover:text-zinc-800'
                 }`}
               >
                 نُورة
@@ -258,7 +258,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
 
         {/* Interactive Chat Prompt Button */}
         <div className="mt-2.5 pt-2 border-t border-zinc-100 flex items-center justify-between text-[10.5px]">
-          <span className="font-bold text-amber-700 flex items-center gap-1 whitespace-nowrap">
+          <span className="font-bold text-[#141414] flex items-center gap-1 whitespace-nowrap">
             <span>{persona === 'noura' ? 'تحدثي مع نُورة' : 'تحدث مع فارس'}</span>
             <span>←</span>
           </span>
@@ -274,12 +274,12 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
             }}
             className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9.5px] font-bold border transition-all cursor-pointer ${
               isAudioPlaying
-                ? 'bg-amber-100 text-amber-900 border-amber-300 animate-pulse'
-                : 'bg-zinc-100 hover:bg-amber-50 text-zinc-700 hover:text-amber-800 border-zinc-200'
+                ? 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0] animate-pulse'
+                : 'bg-zinc-100 hover:bg-[#eaeaea] text-zinc-700 hover:text-[#141414] border-zinc-200'
             }`}
             title={isAudioPlaying ? 'إيقاف الصوت' : `استمع لصوت ${persona === 'noura' ? 'نُورة' : 'فارس'}`}
           >
-            {isAudioPlaying ? <VolumeX className="w-3 h-3 text-amber-700" /> : <Volume2 className="w-3 h-3 text-amber-600" />}
+            {isAudioPlaying ? <VolumeX className="w-3 h-3 text-[#141414]" /> : <Volume2 className="w-3 h-3 text-[#141414]" />}
             <span>{isAudioPlaying ? 'إيقاف' : 'استمع'}</span>
           </button>
         </div>

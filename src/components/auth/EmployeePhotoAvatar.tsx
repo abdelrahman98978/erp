@@ -175,7 +175,7 @@ export const EmployeePhotoAvatar: React.FC<EmployeePhotoAvatarProps> = ({
 
       {shouldShowOnline && (
         <span
-          className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#ffffff]"
+          className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#141414] border-2 border-[#ffffff]"
           title="متصل الآن"
         />
       )}

@@ -34,7 +34,7 @@ const GROUP_COMPANIES = [
   { id: 'ayal', name: 'الأيال للسفر والسياحة (Al-Ayal Travel)', icon: Plane, color: '#6f3b18' },
   { id: 'damas', name: 'مكتب داماس الإثيوبي (DAMAS Agency)', icon: Globe, color: '#059669' },
   { id: 'platinum', name: 'مكتب بلاتينيوم الفلبيني (PLATINUM Int\'l)', icon: Globe, color: '#2563EB' },
-  { id: 'versatile', name: 'مكتب فيرساتيل الهندي (VERSATILE Ltd)', icon: Globe, color: '#D97706' }
+  { id: 'versatile', name: 'مكتب فيرساتيل الهندي (VERSATILE Ltd)', icon: Globe, color: '#141414' }
 ];
 
 const MOCK_DISPATCHES: GroupDispatchMemo[] = [
@@ -180,7 +180,7 @@ export const GroupDispatchPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <BusinessIllustration type="travel-logistics" size="sm" />
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-              <Send className="w-5 h-5 text-champagne-light" />
+              <Send className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -192,7 +192,7 @@ export const GroupDispatchPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 مركز التواصل والإرسال الموحد لشركات المجموعة والمكاتب الخارجية
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 مجموعة خالد السليم • توباز، دار الرواد، السفير، الماسي، الأيال للسفر والسياحة، والمكاتب الخارجية
               </p>
             </div>
@@ -302,7 +302,7 @@ export const GroupDispatchPage: React.FC = () => {
                   <td className="p-3.5 font-mono font-bold text-black">{row.dispatch_no}</td>
                   <td className="p-3.5">
                     <div className="font-bold text-black">من: {row.source_entity}</div>
-                    <div className="text-[11px] text-zinc-500">إلى: {row.target_entity}</div>
+                    <div className="text-[11px] text-[#707070]">إلى: {row.target_entity}</div>
                   </td>
                   <td className="p-3.5">
                     <span className="bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded-full text-[10px] font-bold inline-block mb-1">
@@ -314,9 +314,9 @@ export const GroupDispatchPage: React.FC = () => {
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         row.priority === 'عاجل جداً'
-                          ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : row.priority === 'هام'
-                          ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : 'bg-zinc-100 text-zinc-800'
                       }`}
                     >
@@ -327,18 +327,18 @@ export const GroupDispatchPage: React.FC = () => {
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         row.status === 'تم الاستلام والتنفيذ'
-                          ? 'bg-champagne-pale text-champagne-dark border border-champagne/30'
-                          : 'bg-amber-50 text-amber-800 border border-amber-200'
+                          ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                          : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                       }`}
                     >
                       {row.status}
                     </span>
                     <div className="flex items-center gap-1.5 mt-1.5">
                       <CorporateAvatar name={row.assigned_officer} profession="سائق خاص" size="sm" />
-                      <span className="text-[10px] text-zinc-500 font-medium">المسؤول: {row.assigned_officer}</span>
+                      <span className="text-[10px] text-[#707070] font-medium">المسؤول: {row.assigned_officer}</span>
                     </div>
                   </td>
-                  <td className="p-3.5 text-zinc-500 font-mono text-[11px]">{row.created_at}</td>
+                  <td className="p-3.5 text-[#707070] font-mono text-[11px]">{row.created_at}</td>
                   <td className="p-3.5 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <button
@@ -368,12 +368,12 @@ export const GroupDispatchPage: React.FC = () => {
       {showDispatchModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Send className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Send className="w-4 h-4 text-[#141414]" />
                 <span>توجيه خطاب / معاملة رسمية بين الشركات</span>
               </h3>
-              <button onClick={() => setShowDispatchModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowDispatchModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -485,12 +485,12 @@ export const GroupDispatchPage: React.FC = () => {
       {selectedMemo && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#141414]" />
                 <span>وثيقة الخطاب والمعاملة الرسمية {selectedMemo.dispatch_no}</span>
               </h3>
-              <button onClick={() => setSelectedMemo(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setSelectedMemo(null)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

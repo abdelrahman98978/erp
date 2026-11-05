@@ -189,7 +189,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
         className="card-feature-cinematic bg-[#000000] text-white"
         style={{
           backgroundColor: '#000000',
-          background: 'linear-gradient(135deg, #09090b 0%, #111827 50%, #064e3b 100%)',
+          background: '#f3f3f3',
           borderRadius: '18px',
           padding: '28px',
           color: '#FFFFFF',
@@ -208,10 +208,10 @@ export const EmployeeMonitoringPage: React.FC = () => {
                   رصد الإنتاجية ونبض المشاعر
                 </span>
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-white m-0">
+              <h1 className="text-2xl font-bold tracking-tight text-[#141414] m-0">
                 منظومة متابعة النقرات والمشاعر والمراقبة الذكية
               </h1>
-              <p className="text-xs text-zinc-300 mt-1 max-w-2xl font-sans">
+              <p className="text-xs text-[#141414] mt-1 max-w-2xl font-sans">
                 تتبع متوازن لنشاط الموظفين داخل النظام، كشف فترات الخمول والإنهاك، رصد النقرات العصبية (Rage Clicks)، وحماية أمن البيانات (DLP).
               </p>
             </div>
@@ -264,164 +264,164 @@ export const EmployeeMonitoringPage: React.FC = () => {
       {/* 2. Top Executive KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Mood Index */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-semibold text-[#707070]">
               مؤشر عافية ورضا الفريق
             </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
               <HeartHandshake className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+            <span className="text-3xl font-extrabold text-zinc-900">
               {metrics.teamMoodScore}
             </span>
-            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span className="text-xs font-bold text-[#141414]">
               من 5.0 (مرتفع وإيجابي)
             </span>
           </div>
-          <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+          <div className="mt-3 w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500" 
+              className="h-full bg-[#141414] rounded-full transition-all duration-500" 
               style={{ width: `${(metrics.teamMoodScore / 5) * 100}%` }} 
             />
           </div>
-          <span className="text-[11px] text-zinc-400 mt-2 block">
+          <span className="text-[11px] text-[#707070] mt-2 block">
             بناءً على تقييمات نبض الدوام الصباحي
           </span>
         </div>
 
         {/* Metric 2: Active vs Idle Ratio */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-semibold text-[#707070]">
               معدل النشاط الفعّال (Active Rate)
             </span>
-            <div className="w-8 h-8 rounded-lg bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
               <MousePointerClick className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-zinc-900 dark:text-white">
+            <span className="text-3xl font-extrabold text-zinc-900">
               {metrics.activeRatio}%
             </span>
-            <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">
+            <span className="text-xs font-bold text-[#141414]">
               مقابل 12% فترات خمول
             </span>
           </div>
-          <div className="mt-3 w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+          <div className="mt-3 w-full bg-zinc-100 h-1.5 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-cyan-500 rounded-full transition-all duration-500" 
+              className="h-full bg-[#141414] rounded-full transition-all duration-500" 
               style={{ width: `${metrics.activeRatio}%` }} 
             />
           </div>
-          <span className="text-[11px] text-zinc-400 mt-2 block">
+          <span className="text-[11px] text-[#707070] mt-2 block">
             حركة إدخال وتفاعل بالماوس والكيبورد بالـ ERP
           </span>
         </div>
 
         {/* Metric 3: Rage Clicks */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-semibold text-[#707070]">
               رادار النقرات العصبية (Rage Clicks)
             </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
               <Zap className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-amber-500">
+            <span className="text-3xl font-extrabold text-[#141414]">
               {metrics.totalRageClicks}
             </span>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs text-[#707070]">
               حالات رُصدت اليوم
             </span>
           </div>
-          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-[#141414] font-medium">
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>معظمها في شاشة مزامنة منصة مساند</span>
           </div>
-          <span className="text-[11px] text-zinc-400 mt-1 block">
+          <span className="text-[11px] text-[#707070] mt-1 block">
             إشارة لحاجة النظام لتسريع السيرفر أو تبسيط الزر
           </span>
         </div>
 
         {/* Metric 4: Security & DLP Alerts */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+        <div className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+            <span className="text-xs font-semibold text-[#707070]">
               تنبيهات أمن البيانات (DLP Alerts)
             </span>
-            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
               <ShieldAlert className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-rose-500">
+            <span className="text-3xl font-extrabold text-[#141414]">
               {metrics.securityAlertsCount}
             </span>
-            <span className="text-xs font-bold text-rose-600 dark:text-rose-400">
+            <span className="text-xs font-bold text-[#141414]">
               تصدير بيانات حساسة
             </span>
           </div>
-          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-[#707070]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#141414]" />
             <span>تم التوثيق وتحديد عناوين الـ IP للمستخدمين</span>
           </div>
-          <span className="text-[11px] text-zinc-400 mt-1 block">
+          <span className="text-[11px] text-[#707070] mt-1 block">
             رصد تصدير أكثر من 50 عميل في دفعة واحدة
           </span>
         </div>
       </div>
 
       {/* 3. Filter Bar & Tab Navigation */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-zinc-200 pb-3">
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-900/80 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center gap-1 bg-zinc-100 p-1 rounded-xl border border-zinc-200">
           <button
             onClick={() => setActiveTab('matrix')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeTab === 'matrix'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-white  text-zinc-900  shadow-sm'
+                : 'text-[#707070] hover:text-zinc-900 '
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5 text-emerald-500" />
+            <BarChart3 className="w-3.5 h-3.5 text-[#141414]" />
             <span>رادار الفريق والإنتاجية ({filteredSummaries.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('mood_stream')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeTab === 'mood_stream'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-white  text-zinc-900  shadow-sm'
+                : 'text-[#707070] hover:text-zinc-900 '
             }`}
           >
-            <Smile className="w-3.5 h-3.5 text-cyan-500" />
+            <Smile className="w-3.5 h-3.5 text-[#141414]" />
             <span>سجل النبض والمشاعر ({filteredMoodLogs.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('telemetry')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeTab === 'telemetry'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-white  text-zinc-900  shadow-sm'
+                : 'text-[#707070] hover:text-zinc-900 '
             }`}
           >
-            <MousePointerClick className="w-3.5 h-3.5 text-amber-500" />
+            <MousePointerClick className="w-3.5 h-3.5 text-[#141414]" />
             <span>تتبع النقرات والتنبيهات الحية ({telemetryEvents.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('rules')}
             className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
               activeTab === 'rules'
-                ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
-                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-white  text-zinc-900  shadow-sm'
+                : 'text-[#707070] hover:text-zinc-900 '
             }`}
           >
-            <Sliders className="w-3.5 h-3.5 text-amber-500" />
+            <Sliders className="w-3.5 h-3.5 text-[#141414]" />
             <span>قواعد وضوابط المراقبة</span>
           </button>
         </div>
@@ -429,14 +429,14 @@ export const EmployeeMonitoringPage: React.FC = () => {
         {/* Filters */}
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <Search className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-[#707070]" />
             <input
               type="text"
               aria-label="بحث بالموظف، الدور، أو الفرع"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="بحث بالموظف، الدور، أو الفرع..."
-              className="pl-3 pr-8 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-emerald-500 w-48 sm:w-56"
+              className="pl-3 pr-8 py-1.5 text-xs rounded-xl bg-white border border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#141414] w-48 sm:w-56"
             />
           </div>
 
@@ -444,7 +444,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             aria-label="تصفية حسب الفرع"
             value={selectedBranch}
             onChange={e => setSelectedBranch(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white border border-zinc-200 text-zinc-700 focus:outline-none"
           >
             {branches.map(b => (
               <option key={b} value={b}>{b}</option>
@@ -455,7 +455,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             aria-label="تصفية حسب الحالة المزاجية"
             value={selectedMoodFilter}
             onChange={e => setSelectedMoodFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 focus:outline-none"
+            className="px-3 py-1.5 text-xs rounded-xl bg-white border border-zinc-200 text-zinc-700 focus:outline-none"
           >
             <option value="الكل">جميع الحالات المزاجية</option>
             <option value="thrilled">متحمس ومنجز</option>
@@ -469,24 +469,24 @@ export const EmployeeMonitoringPage: React.FC = () => {
 
       {/* TAB 1: Team Monitoring Matrix */}
       {activeTab === 'matrix' && (
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between">
+        <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-zinc-100 flex items-center justify-between">
             <div>
-              <h2 className="text-sm font-bold text-zinc-900 dark:text-white">
+              <h2 className="text-sm font-bold text-zinc-900">
                 مصفوفة إنتاجية الموظفين ورصد الاحتراق الوظيفي
               </h2>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-[#707070]">
                 مقارنة دقيقة تجمع بين زمن النشاط الفعلي، النقرات العصبية، ومعدل إنجاز المعاملات.
               </p>
             </div>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
               تحديث حي مستمر
             </span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs">
-              <thead className="bg-zinc-50 dark:bg-zinc-850/60 text-zinc-500 dark:text-zinc-400 font-semibold border-b border-zinc-200 dark:border-zinc-800">
+              <thead className="bg-zinc-50 text-[#707070] font-semibold border-b border-zinc-200">
                 <tr>
                   <th className="p-3.5">الموظف / الدور</th>
                   <th className="p-3.5">الفرع</th>
@@ -499,10 +499,10 @@ export const EmployeeMonitoringPage: React.FC = () => {
                   <th className="p-3.5 text-center">إجراء المتابعة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+              <tbody className="divide-y divide-zinc-100">
                 {filteredSummaries.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="p-8 text-center text-zinc-400">
+                    <td colSpan={9} className="p-8 text-center text-[#707070]">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <BusinessIllustration type="empty-search" size="md" />
                         <span>لا توجد سجلات موظفين تطابق معايير البحث المحددة.</span>
@@ -516,7 +516,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
                     const activePct = Math.round((emp.active_time_mins / (totalMins || 1)) * 100);
 
                     return (
-                      <tr key={emp.user_id} className="hover:bg-zinc-50 dark:hover:bg-zinc-850/40 transition-colors">
+                      <tr key={emp.user_id} className="hover:bg-zinc-50 transition-colors">
                         <td className="p-3.5">
                           <div className="flex items-center gap-2.5">
                             <CorporateAvatar
@@ -527,17 +527,17 @@ export const EmployeeMonitoringPage: React.FC = () => {
                               status={emp.burnout_risk === 'منخفض' ? 'online' : 'none'}
                             />
                             <div>
-                              <div className="font-bold text-zinc-900 dark:text-white">
+                              <div className="font-bold text-zinc-900">
                                 {emp.user_name}
                               </div>
-                              <div className="text-[11px] text-zinc-400">
+                              <div className="text-[11px] text-[#707070]">
                                 {emp.role}
                               </div>
                             </div>
                           </div>
                         </td>
 
-                        <td className="p-3.5 text-zinc-600 dark:text-zinc-300">
+                        <td className="p-3.5 text-zinc-600">
                           {emp.branch}
                         </td>
 
@@ -558,21 +558,21 @@ export const EmployeeMonitoringPage: React.FC = () => {
                         <td className="p-3.5">
                           <div className="w-36">
                             <div className="flex items-center justify-between text-[11px] mb-1">
-                              <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                              <span className="font-semibold text-[#141414]">
                                 {Math.floor(emp.active_time_mins / 60)}س {emp.active_time_mins % 60}د
                               </span>
-                              <span className="text-zinc-400">
+                              <span className="text-[#707070]">
                                 خمول: {emp.idle_time_mins}د
                               </span>
                             </div>
-                            <div className="w-full bg-zinc-200 dark:bg-zinc-800 h-2 rounded-full overflow-hidden flex">
+                            <div className="w-full bg-zinc-200 h-2 rounded-full overflow-hidden flex">
                               <div 
-                                className="h-full bg-emerald-500 rounded-l-full" 
+                                className="h-full bg-[#141414] rounded-l-full" 
                                 style={{ width: `${activePct}%` }}
                                 title={`نشاط: ${activePct}%`}
                               />
                               <div 
-                                className="h-full bg-amber-400 rounded-r-full" 
+                                className="h-full bg-[#141414] rounded-r-full" 
                                 style={{ width: `${100 - activePct}%` }}
                                 title={`خمول: ${100 - activePct}%`}
                               />
@@ -580,41 +580,41 @@ export const EmployeeMonitoringPage: React.FC = () => {
                           </div>
                         </td>
 
-                        <td className="p-3.5 font-mono text-zinc-700 dark:text-zinc-300">
+                        <td className="p-3.5 font-mono text-zinc-700">
                           {emp.total_clicks.toLocaleString()}
                         </td>
 
                         <td className="p-3.5">
                           {emp.rage_clicks_count > 0 ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                               <Zap className="w-3 h-3" />
                               {emp.rage_clicks_count}
                             </span>
                           ) : (
-                            <span className="text-zinc-400 font-mono">0</span>
+                            <span className="text-[#707070] font-mono">0</span>
                           )}
                         </td>
 
                         <td className="p-3.5">
-                          <span className="inline-flex items-center gap-1 font-bold text-zinc-900 dark:text-white">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-teal-500" />
+                          <span className="inline-flex items-center gap-1 font-bold text-zinc-900">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#141414]" />
                             {emp.tasks_velocity} معاملة
                           </span>
                         </td>
 
                         <td className="p-3.5">
                           {emp.burnout_risk === 'مرتفع' && (
-                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-800">
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                               مرتفع (بحاجة مساندة)
                             </span>
                           )}
                           {emp.burnout_risk === 'متوسط' && (
-                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-800">
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                               متوسط (تحت المتابعة)
                             </span>
                           )}
                           {emp.burnout_risk === 'منخفض' && (
-                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
+                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                               مستقر ومريح
                             </span>
                           )}
@@ -632,7 +632,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
                                   type: 'success',
                                 });
                               }}
-                              className="px-2.5 py-1 text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 rounded-lg border border-amber-500/30 transition-colors"
+                              className="px-2.5 py-1 text-[11px] font-semibold text-[#141414] bg-[#f3f3f3] hover:bg-[#eaeaea] rounded-lg border border-[#e0e0e0] transition-colors"
                               title={`تنفيذ عملية حية باسم ${emp.user_name}`}
                             >
                               إجراء عملية
@@ -664,7 +664,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
                                   type: 'success',
                                 });
                               }}
-                              className="px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded-lg border border-emerald-500/30 transition-colors"
+                              className="px-2.5 py-1 text-[11px] font-semibold text-[#141414] hover:bg-[#eaeaea] rounded-lg border border-[#e0e0e0] transition-colors"
                             >
                               جلسة مساندة
                             </button>
@@ -689,7 +689,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
               return (
                 <div 
                   key={log.id} 
-                  className="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm relative overflow-hidden transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
+                  className="p-5 rounded-2xl bg-white border border-zinc-200 shadow-sm relative overflow-hidden transition-all hover:border-zinc-300"
                 >
                   <div 
                     className="absolute top-0 inset-x-0 h-1" 
@@ -705,37 +705,37 @@ export const EmployeeMonitoringPage: React.FC = () => {
                         size="sm"
                       />
                       <div>
-                        <h4 className="text-sm font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                        <h4 className="text-sm font-bold text-zinc-900 flex items-center gap-1.5">
                           <span>{log.user_name}</span>
                           <span>{moodItem.emoji}</span>
                         </h4>
-                        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                        <span className="text-[11px] text-[#707070]">
                           {log.role} — {log.branch}
                         </span>
                       </div>
                     </div>
-                    <span className="text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] text-[#707070] bg-zinc-100 px-2 py-0.5 rounded-full">
                       {log.timestamp}
                     </span>
                   </div>
 
-                  <div className="mt-3.5 pt-3 border-t border-zinc-100 dark:border-zinc-800/80">
+                  <div className="mt-3.5 pt-3 border-t border-zinc-100">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xs font-bold" style={{ color: moodItem.color }}>
                         {moodItem.label}
                       </span>
-                      <span className="text-zinc-300 dark:text-zinc-700">•</span>
-                      <span className="text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800/60 px-2 py-0.5 rounded-md">
+                      <span className="text-[#141414]">•</span>
+                      <span className="text-[11px] text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded-md">
                         {REASON_CATEGORIES[log.reason_category]}
                       </span>
                     </div>
 
                     {log.note ? (
-                      <p className="text-xs text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-850 p-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 leading-relaxed font-sans">
+                      <p className="text-xs text-zinc-600 bg-zinc-50 p-2.5 rounded-xl border border-zinc-100 leading-relaxed font-sans">
                         "{log.note}"
                       </p>
                     ) : (
-                      <p className="text-xs text-zinc-400 italic">
+                      <p className="text-xs text-[#707070] italic">
                         لم يتم تدوين ملاحظات إضافية.
                       </p>
                     )}
@@ -749,46 +749,46 @@ export const EmployeeMonitoringPage: React.FC = () => {
 
       {/* TAB 3: Telemetry Stream */}
       {activeTab === 'telemetry' && (
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
-          <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+        <div className="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+          <div className="p-4 border-b border-zinc-100 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white">
+              <h3 className="text-sm font-bold text-zinc-900">
                 سجل تدفق الأحداث الحية والنقرات والتنبيهات
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs text-[#707070]">
                 تسجيل مستمر لأحداث النقرات المتكررة، فترات الخمول، وتصدير الملفات الضخمة.
               </p>
             </div>
             <button
               onClick={handleSimulateRageClick}
-              className="px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 rounded-lg hover:bg-amber-200 transition-colors"
+              className="px-3 py-1.5 text-xs font-bold text-[#141414] bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg hover:bg-[#eaeaea] transition-colors"
             >
               + محاكاة حدث
             </button>
           </div>
 
-          <div className="divide-y divide-zinc-100 dark:divide-zinc-800 max-h-[500px] overflow-y-auto">
+          <div className="divide-y divide-zinc-100 max-h-[500px] overflow-y-auto">
             {telemetryEvents.map(evt => (
-              <div key={evt.id} className="p-4 hover:bg-zinc-50 dark:hover:bg-zinc-850/40 transition-colors flex items-start justify-between gap-4">
+              <div key={evt.id} className="p-4 hover:bg-zinc-50 transition-colors flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
                   <div className="mt-1">
                     {evt.event_type === 'rage_click' && (
-                      <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-500 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                         <Zap className="w-4 h-4" />
                       </div>
                     )}
                     {evt.event_type === 'data_export' && (
-                      <div className="w-8 h-8 rounded-lg bg-rose-500/15 text-rose-500 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                         <Download className="w-4 h-4" />
                       </div>
                     )}
                     {evt.event_type === 'prolonged_idle' && (
-                      <div className="w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-500 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                         <Clock className="w-4 h-4" />
                       </div>
                     )}
                     {evt.event_type !== 'rage_click' && evt.event_type !== 'data_export' && evt.event_type !== 'prolonged_idle' && (
-                      <div className="w-8 h-8 rounded-lg bg-zinc-500/15 text-zinc-400 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-zinc-500/15 text-[#707070] flex items-center justify-center">
                         <MousePointerClick className="w-4 h-4" />
                       </div>
                     )}
@@ -802,28 +802,28 @@ export const EmployeeMonitoringPage: React.FC = () => {
                         departmentId="hr"
                         size="xs"
                       />
-                      <span className="font-bold text-xs text-zinc-900 dark:text-white">
+                      <span className="font-bold text-xs text-zinc-900">
                         {evt.user_name}
                       </span>
-                      <span className="text-zinc-400 text-xs">({evt.role} — {evt.branch})</span>
+                      <span className="text-[#707070] text-xs">({evt.role} — {evt.branch})</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                        evt.severity === 'critical' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400' :
-                        evt.severity === 'warning' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400' :
-                        'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
+                        evt.severity === 'critical' ? 'bg-[#f3f3f3] text-[#141414]  ' :
+                        evt.severity === 'warning' ? 'bg-[#f3f3f3] text-[#141414]  ' :
+                        'bg-zinc-100 text-zinc-600  '
                       }`}>
                         {evt.target_label}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-1 leading-relaxed font-sans">
+                    <p className="text-xs text-zinc-600 mt-1 leading-relaxed font-sans">
                       {evt.details}
                     </p>
-                    <span className="text-[10px] text-zinc-400 font-mono mt-1 block">
+                    <span className="text-[10px] text-[#707070] font-mono mt-1 block">
                       الوحدة: {evt.module} | المعرف: {evt.id}
                     </span>
                   </div>
                 </div>
 
-                <span className="text-xs font-mono text-zinc-400 shrink-0">
+                <span className="text-xs font-mono text-[#707070] shrink-0">
                   {evt.timestamp}
                 </span>
               </div>
@@ -836,22 +836,22 @@ export const EmployeeMonitoringPage: React.FC = () => {
       {activeTab === 'rules' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-1">
+            <div className="p-6 rounded-2xl bg-white border border-zinc-200 shadow-sm">
+              <h3 className="text-sm font-bold text-zinc-900 mb-1">
                 إعدادات عتبات التنبيه الرقابي التلقائي
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-6">
+              <p className="text-xs text-[#707070] mb-6">
                 تخصيص قواعد استشعار الضغط الوظيفي وحماية أمن البيانات في المنظومة.
               </p>
 
               <div className="space-y-4">
                 {/* Rule 1: Rage Click Threshold */}
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                    <h4 className="text-xs font-bold text-zinc-900">
                       عتبة رصد النقرات العصبية (Rage Click Threshold)
                     </h4>
-                    <p className="text-[11px] text-zinc-500">
+                    <p className="text-[11px] text-[#707070]">
                       عدد النقرات المتتالية على نفس الزر في ثانية واحدة لإطلاق تنبيه بطء/تعثر.
                     </p>
                   </div>
@@ -862,19 +862,19 @@ export const EmployeeMonitoringPage: React.FC = () => {
                       max={10}
                       value={rulesConfig.rageClickThreshold}
                       onChange={e => setRulesConfig({ ...rulesConfig, rageClickThreshold: Number(e.target.value) })}
-                      className="w-16 px-2 py-1 text-xs text-center font-bold bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white"
+                      className="w-16 px-2 py-1 text-xs text-center font-bold bg-white border border-zinc-300 rounded-lg text-zinc-900"
                     />
-                    <span className="text-xs text-zinc-500">نقرات/ثانية</span>
+                    <span className="text-xs text-[#707070]">نقرات/ثانية</span>
                   </div>
                 </div>
 
                 {/* Rule 2: Idle Alert Minutes */}
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                    <h4 className="text-xs font-bold text-zinc-900">
                       مهلة تسجيل الخمول المطول (Idle Inactivity Threshold)
                     </h4>
-                    <p className="text-[11px] text-zinc-500">
+                    <p className="text-[11px] text-[#707070]">
                       المدة الزمنية التي إذا توقف فيها تفاعل الموظف يتم احتسابها كفترة خمول.
                     </p>
                   </div>
@@ -885,19 +885,19 @@ export const EmployeeMonitoringPage: React.FC = () => {
                       max={60}
                       value={rulesConfig.idleAlertMinutes}
                       onChange={e => setRulesConfig({ ...rulesConfig, idleAlertMinutes: Number(e.target.value) })}
-                      className="w-16 px-2 py-1 text-xs text-center font-bold bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white"
+                      className="w-16 px-2 py-1 text-xs text-center font-bold bg-white border border-zinc-300 rounded-lg text-zinc-900"
                     />
-                    <span className="text-xs text-zinc-500">دقيقة</span>
+                    <span className="text-xs text-[#707070]">دقيقة</span>
                   </div>
                 </div>
 
                 {/* Rule 3: Export DLP Limit */}
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 border border-zinc-200">
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                    <h4 className="text-xs font-bold text-zinc-900">
                       حد الأمان لمنع تسريب البيانات (DLP Export Limit)
                     </h4>
-                    <p className="text-[11px] text-zinc-500">
+                    <p className="text-[11px] text-[#707070]">
                       عدد السجلات المصدرة في ملف واحد التي تستوجب إشعاراً أمنياً للمدير.
                     </p>
                   </div>
@@ -908,19 +908,19 @@ export const EmployeeMonitoringPage: React.FC = () => {
                       max={500}
                       value={rulesConfig.exportSecurityLimit}
                       onChange={e => setRulesConfig({ ...rulesConfig, exportSecurityLimit: Number(e.target.value) })}
-                      className="w-20 px-2 py-1 text-xs text-center font-bold bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-900 dark:text-white"
+                      className="w-20 px-2 py-1 text-xs text-center font-bold bg-white border border-zinc-300 rounded-lg text-zinc-900"
                     />
-                    <span className="text-xs text-zinc-500">سجل</span>
+                    <span className="text-xs text-[#707070]">سجل</span>
                   </div>
                 </div>
 
                 {/* Toggle: Burnout Notification */}
-                <label className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-850/60 border border-zinc-200 dark:border-zinc-800 cursor-pointer">
+                <label className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-50 border border-zinc-200 cursor-pointer">
                   <div>
-                    <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
+                    <h4 className="text-xs font-bold text-zinc-900">
                       التنبيه التلقائي للمدير عند تكرار مشاعر الضغط (Burnout Alert)
                     </h4>
-                    <p className="text-[11px] text-zinc-500">
+                    <p className="text-[11px] text-[#707070]">
                       إرسال إشعار فوري لجدولة جلسة دعم 1-on-1 إذا سجل الموظف إجهاداً لـ 3 أيام متتالية.
                     </p>
                   </div>
@@ -928,7 +928,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
                     type="checkbox"
                     checked={rulesConfig.notifyManagerOnBurnout}
                     onChange={e => setRulesConfig({ ...rulesConfig, notifyManagerOnBurnout: e.target.checked })}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-0"
+                    className="w-4 h-4 rounded text-[#141414] focus:ring-0"
                   />
                 </label>
               </div>
@@ -957,7 +957,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
                       type: 'success',
                     });
                   }}
-                  className="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow transition-colors"
+                  className="px-5 py-2 text-xs font-bold text-white bg-[#141414] hover:bg-[#262626] rounded-xl shadow transition-colors"
                 >
                   حفظ وتفعيل القواعد
                 </button>
@@ -966,38 +966,38 @@ export const EmployeeMonitoringPage: React.FC = () => {
           </div>
 
           {/* Ethics & Legal Governance Card */}
-          <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 text-white space-y-4">
-            <div className="flex items-center gap-2 text-emerald-400">
+          <div className="p-6 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] space-y-4">
+            <div className="flex items-center gap-2 text-[#141414]">
               <ShieldCheck className="w-5 h-5" />
-              <h3 className="text-sm font-bold text-white">
+              <h3 className="text-sm font-bold text-[#141414]">
                 ميثاق المراقبة الأخلاقية والمهنية
               </h3>
             </div>
             
-            <p className="text-xs text-zinc-300 leading-relaxed font-sans">
+            <p className="text-xs text-[#141414] leading-relaxed font-sans">
               تم تصميم هذه المنظومة وفق معايير الحوكمة الرشيدة التي تضمن زيادة كفاءة العمل وحماية صحة الموظفين:
             </p>
 
-            <ul className="space-y-2.5 text-xs text-zinc-400">
+            <ul className="space-y-2.5 text-xs text-[#707070]">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#141414] shrink-0 mt-0.5" />
                 <span><strong>منع الكيلوجر (No Keylogging):</strong> لا يتم تسجيل ضربات المفاتيح الشخصية للمحافظة على سرية الموظف.</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#141414] shrink-0 mt-0.5" />
                 <span><strong>التركيز على المخرجات:</strong> المراقبة تقيس المعاملات المنجزة والتعثر التقني وليس العقاب على الحركة.</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#141414] shrink-0 mt-0.5" />
                 <span><strong>حماية أمن المؤسسة:</strong> رصد فوري لتسريب قوائم العملاء والعقود حمايةً للأصول الرقمية.</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#141414] shrink-0 mt-0.5" />
                 <span><strong>التدخل الداعم:</strong> تحويل إشارات الإجهاد إلى جلسات مساندة وتخفيف للأعباء بدلاً من التوبيخ.</span>
               </li>
             </ul>
 
-            <div className="p-3 bg-white/5 rounded-xl border border-white/10 text-[11px] text-zinc-300">
+            <div className="p-3 bg-[#f3f3f3] rounded-xl border border-[#e0e0e0] text-[11px] text-[#141414]">
               <em>"المراقبة الذكية تُبنى على تعزيز الثقة وتذليل العقبات، لا على التجسس وهدم المعنويات."</em>
             </div>
           </div>

@@ -434,23 +434,23 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
         <div className="bg-zinc-50 border-b border-zinc-200 px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-700">
           <div className="flex items-center gap-4 flex-wrap">
             <div>
-              <span className="text-zinc-400 block text-[10px]">الموظف المصرح له:</span>
+              <span className="text-[#707070] block text-[10px]">الموظف المصرح له:</span>
               <span className="font-bold text-black">{user.name}</span>
             </div>
             <div>
-              <span className="text-zinc-400 block text-[10px]">المسمى الوظيفي:</span>
+              <span className="text-[#707070] block text-[10px]">المسمى الوظيفي:</span>
               <span className="font-semibold text-zinc-800">{user.job_title || user.role || 'أخصائي معتمد'}</span>
             </div>
             <div>
-              <span className="text-zinc-400 block text-[10px]">الفرع:</span>
+              <span className="text-[#707070] block text-[10px]">الفرع:</span>
               <span className="font-semibold text-zinc-800">{user.branch || 'الفرع الرئيسي'}</span>
             </div>
             <div>
-              <span className="text-zinc-400 block text-[10px]">عنوان الـ IP الموثق:</span>
-              <span className="font-mono text-emerald-700 font-bold">{clientIp}</span>
+              <span className="text-[#707070] block text-[10px]">عنوان الـ IP الموثق:</span>
+              <span className="font-mono text-[#141414] font-bold">{clientIp}</span>
             </div>
           </div>
-          <div className="text-zinc-500 font-mono text-[11px]">
+          <div className="text-[#707070] font-mono text-[11px]">
             التاريخ: {currentDate}
           </div>
         </div>
@@ -458,15 +458,15 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
         {/* Scrollable Policy Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 text-zinc-800 text-xs leading-relaxed">
           {/* Saudi Legal Reference Box */}
-          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200">
-            <h4 className="font-bold text-sm text-emerald-950 flex items-center gap-2 mb-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-700" />
+          <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0]">
+            <h4 className="font-bold text-sm text-[#141414] flex items-center gap-2 mb-2">
+              <ShieldCheck className="w-4 h-4 text-[#141414]" />
               <span>المرجعيات النظامية والقوانين السعودية الحاكمة</span>
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-emerald-900 font-medium">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-[#141414] font-medium">
               {policy.applicableLaws.map((law, idx) => (
                 <div key={idx} className="flex items-start gap-1.5">
-                  <span className="text-emerald-700 font-bold">•</span>
+                  <span className="text-[#141414] font-bold">•</span>
                   <span>{law}</span>
                 </div>
               ))}
@@ -501,9 +501,9 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
           </div>
 
           {/* Mandatory Checkboxes */}
-          <div className="p-5 rounded-2xl bg-amber-50/50 border border-amber-200 space-y-3">
-            <h4 className="font-bold text-xs text-amber-950 flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-amber-700" />
+          <div className="p-5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-3">
+            <h4 className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-[#141414]" />
               <span>الإقرارات والتعهدات الإلزامية للمصادقة والدخول:</span>
             </h4>
 
@@ -561,10 +561,10 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <h4 className="font-bold text-xs text-black flex items-center gap-1.5">
-                  <Fingerprint className="w-4 h-4 text-emerald-600" />
+                  <Fingerprint className="w-4 h-4 text-[#141414]" />
                   <span>التوقيع الإلكتروني المعتمد للموظف (Digital E-Signature)</span>
                 </h4>
-                <p className="text-[11px] text-zinc-500">
+                <p className="text-[11px] text-[#707070]">
                   ارسم توقيعك في المربع أدناه أو اختر المصادقة البيومترية المعترف بها بنظام التعاملات الإلكترونية
                 </p>
               </div>
@@ -575,7 +575,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                   onClick={() => setUseBiometricSign(!useBiometricSign)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-all flex items-center gap-1.5 ${
                     useBiometricSign
-                      ? 'bg-emerald-600 text-white border-emerald-600 font-bold'
+                      ? 'bg-[#141414] text-white border-[#e0e0e0] font-bold'
                       : 'bg-white text-zinc-700 border-zinc-300 hover:bg-zinc-100'
                   }`}
                 >
@@ -587,7 +587,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                   <button
                     type="button"
                     onClick={clearSignature}
-                    className="text-xs text-zinc-500 hover:text-rose-600 px-3 py-1 rounded-full border border-zinc-200 bg-white flex items-center gap-1"
+                    className="text-xs text-[#707070] hover:text-[#141414] px-3 py-1 rounded-full border border-zinc-200 bg-white flex items-center gap-1"
                   >
                     <RefreshCw className="w-3 h-3" />
                     <span>مسح التوقيع</span>
@@ -612,18 +612,18 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                   className="w-full h-32 cursor-crosshair touch-none"
                 />
                 {!hasSignature && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-zinc-400 text-xs">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-[#707070] text-xs">
                     ارسم توقيعك هنا بالماوس أو الشاشة اللمسية...
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
-                <Fingerprint className="w-10 h-10 text-emerald-600 mx-auto" />
-                <div className="font-bold text-xs text-emerald-950">
+              <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center space-y-2">
+                <Fingerprint className="w-10 h-10 text-[#141414] mx-auto" />
+                <div className="font-bold text-xs text-[#141414]">
                   تم اعتماد التفويض البيومتري للموظف ({user.name})
                 </div>
-                <div className="text-[11px] text-emerald-800">
+                <div className="text-[11px] text-[#141414]">
                   سيتم ربط التوقيع بالبصمة المحمية وتوليد شهادة أمان رقمية مشفرة بختم المنظومة.
                 </div>
               </div>
@@ -633,14 +633,14 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
 
         {/* Footer Actions */}
         {submitError && (
-          <div role="alert" className="px-5 py-3 bg-red-50 border-t border-red-200 text-red-700 text-xs flex items-center gap-2">
+          <div role="alert" className="px-5 py-3 bg-[#f3f3f3] border-t border-[#e0e0e0] text-[#141414] text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
             <span>{submitError}</span>
           </div>
         )}
         <div className="p-5 bg-zinc-50 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-3">
-          <div className="text-[11px] text-zinc-500 flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="text-[11px] text-[#707070] flex items-center gap-1.5">
+            <Lock className="w-3.5 h-3.5 text-[#141414]" />
             <span>توثيق رقمي مشفر • التزام بنظام التعاملات الإلكترونية السعودي</span>
           </div>
 
@@ -663,7 +663,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                 <span>جاري توثيق التوقيع...</span>
               ) : (
                 <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-[#141414]" />
                   <span>اعتماد التوقيع والدخول للمنظومة</span>
                 </>
               )}

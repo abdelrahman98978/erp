@@ -145,40 +145,40 @@ export const SponsorshipTransferPage: React.FC = () => {
 
   // Helper for office badge
   const getOfficeMeta = (officeId: GroupOfficeId) => {
-    return GROUP_OFFICES[officeId] || { name: officeId, primaryColor: '#6366f1', badgeColor: 'bg-amber-900/40 text-amber-300 border border-amber-500/30' };
+    return GROUP_OFFICES[officeId] || { name: officeId, primaryColor: '#6366f1', badgeColor: 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' };
   };
 
   return (
     <div className="space-y-6 text-zinc-900 font-sans" dir="rtl">
       {/* 1. Master Cinematic Hero Header - KAS Suite Luxury Design */}
-      <div className="rounded-2xl p-6 bg-[#000000] bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] text-white border border-amber-500/20 shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl p-6 bg-[#000000] bg-gradient-to-l from-[#f3f3f3] via-[#f3f3f3] to-[#f3f3f3] text-[#141414] border border-[#e0e0e0] shadow-xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="flex items-start gap-4">
             <BusinessIllustration type="sponsorship-transfer" size="sm" />
             <div className="space-y-2.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 font-mono tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-mono tracking-wider">
                   SHELTER & SPONSORSHIP TRANSFER PLATFORM
                 </span>
-                <span className="text-xs text-zinc-400 font-mono">
+                <span className="text-xs text-[#707070] font-mono">
                   نطاق موحد ومحمي — 4 مكاتب معتمدة • عزل الكفيل الأول • متابعة يومية
                 </span>
               </div>
 
-              <h1 className="text-2xl font-bold text-white m-0 tracking-tight font-display">
+              <h1 className="text-2xl font-bold text-[#141414] m-0 tracking-tight font-display">
                 لوحة قيادة التنازل ونقل الخدمات وإدارة السكن الموحدة
               </h1>
-              <p className="text-xs text-zinc-300 max-w-2xl leading-relaxed">
+              <p className="text-xs text-[#141414] max-w-2xl leading-relaxed">
                 الفصل المحكم بين مكتب العاملة الأصلي والمكتب المنفذ لنقل الخدمات، ملف موحد دائم للعاملة، قسم مستقل لتوثيق الكفيل الأول ومطالباته، ومتابعة رقمية استباقية لفترة تجربة العملاء.
               </p>
 
               {/* The 4 Group Offices Badges */}
               <div className="pt-1 flex items-center gap-2 flex-wrap">
-                <span className="text-[11px] text-zinc-400 font-bold ml-1">المكاتب والشركات المعتمدة:</span>
+                <span className="text-[11px] text-[#707070] font-bold ml-1">المكاتب والشركات المعتمدة:</span>
                 {GROUP_COMPANIES.map((comp: any) => (
                   <div 
                     key={comp.id}
-                    className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-black/40 text-zinc-200 border border-white/10 flex items-center gap-1.5"
+                    className="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center gap-1.5"
                   >
                     <span className="w-2 h-2 rounded-full" style={{ backgroundColor: comp.brandColor }} />
                     <span>{comp.name}</span>
@@ -200,7 +200,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                   setActiveTab('catalog');
                 }
               }}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-400 text-black hover:bg-amber-300 shadow-md shadow-amber-500/20 flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-black" />
               <span>+ حجز نقل خدمات لعميل</span>
@@ -209,9 +209,9 @@ export const SponsorshipTransferPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowIntakeModal(true)}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#1d252c] text-white hover:bg-[#252f38] border border-white/15 flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] text-[#141414] hover:bg-[#f3f3f3] border border-[#e0e0e0] flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Hotel className="w-4 h-4 text-emerald-400" />
+              <Hotel className="w-4 h-4 text-[#141414]" />
               <span>+ تسكين نزيلة جديدة</span>
             </button>
 
@@ -219,13 +219,13 @@ export const SponsorshipTransferPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowNotificationDrawer(true)}
-              className="relative px-3.5 py-2 rounded-xl text-xs font-bold bg-black/40 hover:bg-black/60 text-zinc-200 border border-white/15 flex items-center gap-1.5 transition-all cursor-pointer"
+              className="relative px-3.5 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center gap-1.5 transition-all cursor-pointer"
               title="مركز الإشعارات والتنبيهات الاستباقية"
             >
-              <Bell className="w-4 h-4 text-amber-400" />
+              <Bell className="w-4 h-4 text-[#141414]" />
               <span>مركز التنبيهات ({proactiveAlerts.length})</span>
               {criticalAlertsCount > 0 && (
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping absolute -top-0.5 -right-0.5" />
+                <span className="w-2 h-2 rounded-full bg-[#141414] animate-ping absolute -top-0.5 -right-0.5" />
               )}
             </button>
 
@@ -245,14 +245,14 @@ export const SponsorshipTransferPage: React.FC = () => {
         <div className="rounded-2xl p-4 bg-[#fff1f2] text-[#141414] flex items-center justify-between flex-wrap gap-4 border border-[#fecdd3]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white border border-[#fecdd3] flex items-center justify-center font-black shrink-0">
-              <AlertTriangle className="w-5 h-5 text-[#be123c]" />
+              <AlertTriangle className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#be123c] text-white font-mono">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#be123c] text-[#141414] font-mono">
                   تنبيه استباقي عاجل (T=0)
                 </span>
-                <span className="text-xs text-[#be123c] font-bold">
+                <span className="text-xs text-[#141414] font-bold">
                   تجاوز مدة التجربة أو انتهاء اليوم
                 </span>
               </div>
@@ -335,7 +335,7 @@ export const SponsorshipTransferPage: React.FC = () => {
       </div>
 
       {/* 3. Navigation SubTabs - KAS Suite Pill Styling */}
-      <div className="rounded-2xl p-2 bg-[#14181c] border border-white/10 shadow-md">
+      <div className="rounded-2xl p-2 bg-[#ffffff] border border-[#e0e0e0] shadow-md">
         <div className="flex items-center gap-2 flex-wrap p-1">
           {/* Tab 1: Daily Follow-up */}
           <button
@@ -343,14 +343,14 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => setActiveTab('followup')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'followup'
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md '
+                : 'text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3]'
             }`}
           >
             <Hourglass className="w-4 h-4" />
             <span>المتابعة اليومية للعملاء</span>
             {urgentFollowupsCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white animate-pulse">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#141414] text-[#ffffff] animate-pulse">
                 {urgentFollowupsCount} عاجل
               </span>
             )}
@@ -362,13 +362,13 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => setActiveTab('catalog')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'catalog'
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md '
+                : 'text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3]'
             }`}
           >
             <UserCheck className="w-4 h-4" />
             <span>كتالوج العاملات المتاحة</span>
-            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
               {availableWorkersCount}
             </span>
           </button>
@@ -379,8 +379,8 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => setActiveTab('inmates')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'inmates'
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md '
+                : 'text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3]'
             }`}
           >
             <Hotel className="w-4 h-4" />
@@ -393,8 +393,8 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => setActiveTab('transfers')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'transfers'
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md '
+                : 'text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3]'
             }`}
           >
             <Repeat className="w-4 h-4" />
@@ -407,8 +407,8 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => setActiveTab('timeline')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'timeline'
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md '
+                : 'text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3]'
             }`}
           >
             <History className="w-4 h-4" />
@@ -421,8 +421,8 @@ export const SponsorshipTransferPage: React.FC = () => {
             onClick={() => setActiveTab('dashboard')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'dashboard'
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md '
+                : 'text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3]'
             }`}
           >
             <Building2 className="w-4 h-4" />
@@ -456,13 +456,13 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* TAB 3: Shelter Inmates & Intake Management */}
       {activeTab === 'inmates' && (
-        <div className="rounded-2xl bg-[#14181c] border border-white/10 p-5 shadow-md space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-white/10">
+        <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] p-5 shadow-md space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-[#e0e0e0]">
             <div>
-              <h2 className="text-sm font-bold text-white m-0">
+              <h2 className="text-sm font-bold text-[#141414] m-0">
                 سجل نزيلات مراكز الإيواء والتسكين المشترك
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5 m-0">
+              <p className="text-xs text-[#707070] mt-0.5 m-0">
                 توزيع الغرف، حالة الإعاشة، الفحوصات الطبية، ومدة البقاء بالسكن
               </p>
             </div>
@@ -470,7 +470,7 @@ export const SponsorshipTransferPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowIntakeModal(true)}
-              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-black bg-amber-400 hover:bg-amber-300 shadow-md shadow-amber-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-[#ffffff] bg-[#141414] hover:bg-[#262626] shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>+ تسكين نزيلة جديدة</span>
@@ -478,9 +478,9 @@ export const SponsorshipTransferPage: React.FC = () => {
           </div>
 
           {/* Inmates Table */}
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-[#e0e0e0]">
             <table className="w-full text-right text-xs">
-              <thead className="bg-black/50 text-zinc-400 font-bold border-b border-white/10">
+              <thead className="bg-[#f3f3f3]/50 text-[#141414] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3">العاملة</th>
                   <th className="p-3">الجنسية والجواز</th>
@@ -492,60 +492,60 @@ export const SponsorshipTransferPage: React.FC = () => {
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 font-medium text-zinc-200">
+              <tbody className="divide-y divide-[#e0e0e0] font-medium text-[#141414]">
                 {accommodationCases.map((acc) => {
                   const worker = workers.find(w => w.id === acc.workerId);
                   const office = getOfficeMeta(acc.originalOfficeId);
                   if (!worker) return null;
 
                   return (
-                    <tr key={acc.id} className="hover:bg-white/5 transition-colors">
+                    <tr key={acc.id} className="hover:bg-[#f3f3f3] transition-colors">
                       <td className="p-3">
                         <div className="flex items-center gap-2.5">
                           <CorporateAvatar name={worker.fullNameAr} profession="عاملة منزلية" isCandidate size="sm" />
                           <div>
-                            <div className="font-bold text-white">{worker.fullNameAr}</div>
-                            <div className="text-[10.5px] text-zinc-400 font-mono">{acc.caseCode}</div>
+                            <div className="font-bold text-[#141414]">{worker.fullNameAr}</div>
+                            <div className="text-[10.5px] text-[#707070] font-mono">{acc.caseCode}</div>
                           </div>
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <div className="text-zinc-200 font-bold">{worker.nationality}</div>
-                        <div className="text-[10.5px] font-mono text-zinc-400">{worker.passportNumber}</div>
+                        <div className="text-[#141414] font-bold">{worker.nationality}</div>
+                        <div className="text-[10.5px] font-mono text-[#707070]">{worker.passportNumber}</div>
                       </td>
 
                       <td className="p-3">
                         <span 
-                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-white/5 border border-white/10 text-zinc-200"
+                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]"
                         >
                           {office.name}
                         </span>
                       </td>
 
                       <td className="p-3">
-                        <span className="text-zinc-300 text-xs">{acc.entryReason}</span>
+                        <span className="text-[#141414] text-xs">{acc.entryReason}</span>
                       </td>
 
                       <td className="p-3">
-                        <div className="flex items-center gap-1 text-zinc-200 font-bold">
-                          <Bed className="w-3.5 h-3.5 text-zinc-400" />
+                        <div className="flex items-center gap-1 text-[#141414] font-bold">
+                          <Bed className="w-3.5 h-3.5 text-[#707070]" />
                           <span>{acc.roomNumber || 'جناح رئيسي'}</span>
-                          {acc.bedNumber && <span className="text-zinc-400 font-normal">({acc.bedNumber})</span>}
+                          {acc.bedNumber && <span className="text-[#707070] font-normal">({acc.bedNumber})</span>}
                         </div>
                       </td>
 
-                      <td className="p-3 font-mono text-zinc-400 text-[11px]">
+                      <td className="p-3 font-mono text-[#707070] text-[11px]">
                         {new Date(acc.entryDateTime).toLocaleDateString('ar-SA')}
                       </td>
 
                       <td className="p-3">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold ${
                           worker.operationalStatus === 'متاحة لنقل الخدمات' 
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+                            ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' 
                             : worker.operationalStatus === 'خرجت للعميل'
-                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                            : 'bg-white/5 text-zinc-300 border border-white/10'
+                            ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                            : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                         }`}>
                           {worker.operationalStatus}
                         </span>
@@ -556,7 +556,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenProfile(worker)}
-                            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3] transition-colors cursor-pointer"
                             title="عرض الملف الشامل"
                           >
                             <Eye className="w-4 h-4" />
@@ -565,7 +565,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleOpenBooking(worker)}
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-400 text-black hover:bg-amber-300 transition-colors cursor-pointer"
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] transition-colors cursor-pointer"
                             >
                               حجز لعميل
                             </button>
@@ -583,18 +583,18 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* TAB 4: All Transfer Cases */}
       {activeTab === 'transfers' && (
-        <div className="rounded-2xl bg-[#14181c] border border-white/10 p-5 shadow-md space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-white/10">
+        <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] p-5 shadow-md space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-[#e0e0e0]">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-white m-0">
+                <h2 className="text-sm font-bold text-[#141414] m-0">
                   سجل عمليات نقل الخدمات والتنازل الموحد
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">
+                <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-mono">
                   {transferCases.length} عمليات
                 </span>
               </div>
-              <p className="text-xs text-zinc-400 mt-0.5 m-0">
+              <p className="text-xs text-[#707070] mt-0.5 m-0">
                 فصل صريح بين المكتب الأصلي للعاملة والمكتب المنفذ للعملية مع التفاصيل المالية الدقيقة
               </p>
             </div>
@@ -611,9 +611,9 @@ export const SponsorshipTransferPage: React.FC = () => {
           </div>
 
           {/* Transfers Table */}
-          <div className="overflow-x-auto rounded-xl border border-white/10">
+          <div className="overflow-x-auto rounded-xl border border-[#e0e0e0]">
             <table className="w-full text-right text-xs">
-              <thead className="bg-black/50 text-zinc-400 font-bold border-b border-white/10">
+              <thead className="bg-[#f3f3f3]/50 text-[#141414] font-bold border-b border-[#e0e0e0]">
                 <tr>
                   <th className="p-3">كود العملية</th>
                   <th className="p-3">العاملة</th>
@@ -626,15 +626,15 @@ export const SponsorshipTransferPage: React.FC = () => {
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 font-medium text-zinc-200">
+              <tbody className="divide-y divide-[#e0e0e0] font-medium text-[#141414]">
                 {transferCases.map((transfer) => {
                   const worker = workers.find(w => w.id === transfer.workerId);
                   const origOffice = getOfficeMeta(transfer.originalOfficeId);
                   const execOffice = getOfficeMeta(transfer.executingOfficeId);
 
                   return (
-                    <tr key={transfer.id} className="hover:bg-white/5 transition-colors">
-                      <td className="p-3 font-mono font-bold text-amber-300">
+                    <tr key={transfer.id} className="hover:bg-[#f3f3f3] transition-colors">
+                      <td className="p-3 font-mono font-bold text-[#141414]">
                         {transfer.transferCode}
                       </td>
 
@@ -642,8 +642,8 @@ export const SponsorshipTransferPage: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <CorporateAvatar name={worker?.fullNameAr || 'عاملة'} profession="عاملة منزلية" isCandidate size="sm" />
                           <div>
-                            <div className="font-bold text-white">{worker?.fullNameAr || 'عاملة'}</div>
-                            <div className="text-[10.5px] text-zinc-400 font-mono">جواز: {worker?.passportNumber || '-'}</div>
+                            <div className="font-bold text-[#141414]">{worker?.fullNameAr || 'عاملة'}</div>
+                            <div className="text-[10.5px] text-[#707070] font-mono">جواز: {worker?.passportNumber || '-'}</div>
                           </div>
                         </div>
                       </td>
@@ -651,7 +651,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                       {/* Decoupled Office 1: Original */}
                       <td className="p-3">
                         <span 
-                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-white/5 border border-white/10 text-zinc-200"
+                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]"
                         >
                           {origOffice.name}
                         </span>
@@ -660,7 +660,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                       {/* Decoupled Office 2: Executing */}
                       <td className="p-3">
                         <span 
-                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-white/5 border border-white/10 text-zinc-200"
+                          className="px-2.5 py-1 rounded-xl text-[10.5px] font-bold inline-block bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]"
                         >
                           {execOffice.name}
                         </span>
@@ -670,24 +670,24 @@ export const SponsorshipTransferPage: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <CorporateAvatar name={transfer.newClientName} isClient size="sm" />
                           <div>
-                            <div className="font-bold text-white">{transfer.newClientName}</div>
-                            <div className="text-[10.5px] font-mono text-zinc-400">{transfer.newClientPhone}</div>
+                            <div className="font-bold text-[#141414]">{transfer.newClientName}</div>
+                            <div className="text-[10.5px] font-mono text-[#707070]">{transfer.newClientPhone}</div>
                           </div>
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <div className="font-bold text-emerald-400 font-mono">
+                        <div className="font-bold text-[#141414] font-mono">
                           {transfer.transferFee.toLocaleString('ar-SA')} ⃁
                         </div>
-                        <div className="text-[10.5px] text-zinc-400">
+                        <div className="text-[10.5px] text-[#707070]">
                           عربون: {transfer.downPayment.toLocaleString('ar-SA')} | متبقي: {transfer.remainingAmount.toLocaleString('ar-SA')}
                         </div>
                       </td>
 
                       <td className="p-3">
-                        <div className="text-zinc-200 font-bold">{transfer.followupDaysDuration} أيام</div>
-                        <div className="text-[10.5px] text-zinc-400 font-mono">
+                        <div className="text-[#141414] font-bold">{transfer.followupDaysDuration} أيام</div>
+                        <div className="text-[10.5px] text-[#707070] font-mono">
                           انتهاء: {transfer.followupEndDate || '-'}
                         </div>
                       </td>
@@ -695,10 +695,10 @@ export const SponsorshipTransferPage: React.FC = () => {
                       <td className="p-3">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10.5px] font-bold ${
                           transfer.transferStatus === 'تم نقل الخدمات' 
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+                            ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' 
                             : transfer.transferStatus === 'عادت من العميل'
-                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                            ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                            : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                         }`}>
                           {transfer.transferStatus}
                         </span>
@@ -709,7 +709,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenProfile(worker)}
-                            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3] transition-colors cursor-pointer"
                             title="عرض الملف الشامل"
                           >
                             <Eye className="w-4 h-4" />
@@ -727,58 +727,58 @@ export const SponsorshipTransferPage: React.FC = () => {
 
       {/* TAB 5: Movement Timeline Audit Trail */}
       {activeTab === 'timeline' && (
-        <div className="rounded-2xl bg-[#14181c] border border-white/10 p-5 shadow-md space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-white/10">
+        <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] p-5 shadow-md space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 pb-3 border-b border-[#e0e0e0]">
             <div>
-              <h2 className="text-sm font-bold text-white m-0">
+              <h2 className="text-sm font-bold text-[#141414] m-0">
                 سجل المخطط الزمني والتدقيق الشامل لكافة الحركات
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5 m-0">
+              <p className="text-xs text-[#707070] mt-0.5 m-0">
                 توثيق غير قابل للحذف لكل دخول، تقييم، حجز، تسليم، اتصال متابعة، إرجاع وتسوية مالية
               </p>
             </div>
 
-            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+            <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-mono">
               {timeline.length} حدث موثق
             </span>
           </div>
 
-          <div className="relative pr-6 border-r-2 border-white/10 space-y-4 pt-2">
+          <div className="relative pr-6 border-r-2 border-[#e0e0e0] space-y-4 pt-2">
             {timeline.map((item) => {
               const worker = workers.find(w => w.id === item.workerId);
               return (
                 <div key={item.id} className="relative group">
-                  <span className="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-[#14181c] border-4 border-amber-400 group-hover:scale-125 transition-transform" />
+                  <span className="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-[#ffffff] border-4 border-[#e0e0e0] group-hover:scale-125 transition-transform" />
 
-                  <div className="bg-black/40 hover:bg-black/60 transition-colors p-4 rounded-xl border border-white/5 space-y-1.5">
+                  <div className="bg-[#f3f3f3]/40 hover:bg-[#f3f3f3]/60 transition-colors p-4 rounded-xl border border-[#e0e0e0] space-y-1.5">
                     <div className="flex items-center justify-between flex-wrap gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs text-white">
+                        <span className="font-bold text-xs text-[#141414]">
                           {item.movementType}
                         </span>
                         {worker && (
-                          <span className="text-xs font-bold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-lg">
+                          <span className="text-xs font-bold text-[#141414] bg-[#f3f3f3] border border-[#e0e0e0] px-2 py-0.5 rounded-lg">
                             {worker.fullNameAr} ({worker.nationality})
                           </span>
                         )}
                       </div>
-                      <span className="text-[10.5px] text-zinc-400 font-mono">
+                      <span className="text-[10.5px] text-[#707070] font-mono">
                         {new Date(item.eventDateTime).toLocaleString('ar-SA')}
                       </span>
                     </div>
 
-                    <p className="text-xs text-zinc-300 leading-relaxed m-0">
+                    <p className="text-xs text-[#141414] leading-relaxed m-0">
                       {item.description}
                     </p>
 
-                    <div className="flex items-center gap-4 pt-2 text-[10.5px] text-zinc-400 border-t border-white/5 flex-wrap">
-                      <span>الموظف: <strong className="text-zinc-200">{item.actorEmployee}</strong></span>
+                    <div className="flex items-center gap-4 pt-2 text-[10.5px] text-[#707070] border-t border-[#e0e0e0] flex-wrap">
+                      <span>الموظف: <strong className="text-[#141414]">{item.actorEmployee}</strong></span>
                       {item.officeId && (
-                        <span>المكتب: <strong className="text-zinc-200">{item.officeId}</strong></span>
+                        <span>المكتب: <strong className="text-[#141414]">{item.officeId}</strong></span>
                       )}
                       {item.fromStatus && item.toStatus && (
                         <span>
-                          الحالة: <span className="line-through">{item.fromStatus}</span> ➔ <strong className="text-emerald-400">{item.toStatus}</strong>
+                          الحالة: <span className="line-through">{item.fromStatus}</span> ➔ <strong className="text-[#141414]">{item.toStatus}</strong>
                         </span>
                       )}
                     </div>
@@ -802,12 +802,12 @@ export const SponsorshipTransferPage: React.FC = () => {
               return (
                 <div 
                   key={office.id}
-                  className="bg-[#14181c] rounded-2xl p-4 border border-white/10 shadow-md relative overflow-hidden space-y-3"
+                  className="bg-[#ffffff] rounded-2xl p-4 border border-[#e0e0e0] shadow-md relative overflow-hidden space-y-3"
                 >
                   <div className="h-1 w-full absolute top-0 right-0 left-0" style={{ backgroundColor: office.brandColor }} />
                   
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-white text-xs m-0">{office.name}</h3>
+                    <h3 className="font-bold text-[#141414] text-xs m-0">{office.name}</h3>
                     <span 
                       className="px-2 py-0.5 rounded-lg text-[10px] font-bold"
                       style={{ backgroundColor: `${office.brandColor}20`, color: office.brandColor }}
@@ -817,38 +817,38 @@ export const SponsorshipTransferPage: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
-                    <div className="bg-black/40 p-2.5 rounded-xl border border-white/5">
-                      <div className="text-[10.5px] text-zinc-400 font-bold">عاملات تابعة له</div>
-                      <div className="text-base font-extrabold text-white mt-1">{officeWorkers.length}</div>
+                    <div className="bg-[#f3f3f3]/40 p-2.5 rounded-xl border border-[#e0e0e0]">
+                      <div className="text-[10.5px] text-[#707070] font-bold">عاملات تابعة له</div>
+                      <div className="text-base font-extrabold text-[#141414] mt-1">{officeWorkers.length}</div>
                     </div>
 
-                    <div className="bg-black/40 p-2.5 rounded-xl border border-white/5">
-                      <div className="text-[10.5px] text-zinc-400 font-bold">عمليات نفذها</div>
-                      <div className="text-base font-extrabold text-white mt-1">{officeTransfers.length}</div>
+                    <div className="bg-[#f3f3f3]/40 p-2.5 rounded-xl border border-[#e0e0e0]">
+                      <div className="text-[10.5px] text-[#707070] font-bold">عمليات نفذها</div>
+                      <div className="text-base font-extrabold text-[#141414] mt-1">{officeTransfers.length}</div>
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
-                    <span className="text-zinc-400 text-[11px]">إجمالي إيراد المكتب:</span>
-                    <strong className="text-emerald-400 font-mono">{officeRevenue.toLocaleString('ar-SA')} ⃁</strong>
+                  <div className="pt-2 border-t border-[#e0e0e0] flex items-center justify-between text-xs">
+                    <span className="text-[#707070] text-[11px]">إجمالي إيراد المكتب:</span>
+                    <strong className="text-[#141414] font-mono">{officeRevenue.toLocaleString('ar-SA')} ⃁</strong>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          <div className="p-5 bg-gradient-to-l from-[#182026] via-[#141a1f] to-[#101417] border border-amber-500/20 rounded-2xl text-white shadow-md flex items-center justify-between flex-wrap gap-4">
+          <div className="p-5 bg-gradient-to-l from-[#f3f3f3] via-[#f3f3f3] to-[#f3f3f3] border border-[#e0e0e0] rounded-2xl text-[#141414] shadow-md flex items-center justify-between flex-wrap gap-4">
             <div>
               <h3 className="text-sm font-bold m-0 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>تطابق المنظومة المشتركة مع كراسة الشروط (BRD)</span>
               </h3>
-              <p className="text-xs text-zinc-300 mt-1 max-w-xl m-0 leading-relaxed">
+              <p className="text-xs text-[#141414] mt-1 max-w-xl m-0 leading-relaxed">
                 تم استيفاء جميع الشروط الـ 10 من فصل المكاتب، منع الحجز المزدوج، التسعير اليدوي المرن، المتابعة اليومية مع العداد والإنذارات اللونية، وتوثيق الكفيل الأول.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold font-mono">
+              <span className="px-3 py-1.5 rounded-xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-bold font-mono">
                 ✓ 100% متوافق مع BRD
               </span>
             </div>

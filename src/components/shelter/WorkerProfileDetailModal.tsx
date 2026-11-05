@@ -168,69 +168,69 @@ const WorkerProfileDetailModalContent: React.FC<
             <div className="space-y-6">
               {/* Key Highlights Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-black/40 p-3.5 rounded-xl border border-white/5">
-                  <div className="text-[11px] text-zinc-400 font-bold">الراتب الشهري</div>
-                  <div className="text-base font-black text-emerald-400 mt-1 font-mono">
+                <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
+                  <div className="text-[11px] text-[#707070] font-bold">الراتب الشهري</div>
+                  <div className="text-base font-black text-[#141414] mt-1 font-mono">
                     {worker.requestedSalary?.toLocaleString('ar-SA')} ⃁
                   </div>
                 </div>
 
-                <div className="bg-black/40 p-3.5 rounded-xl border border-white/5">
-                  <div className="text-[11px] text-zinc-400 font-bold">العمر / الميلاد</div>
-                  <div className="text-base font-black text-white mt-1">
+                <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
+                  <div className="text-[11px] text-[#707070] font-bold">العمر / الميلاد</div>
+                  <div className="text-base font-black text-[#141414] mt-1">
                     {worker.age ? `${worker.age} سنة` : 'غير محدد'}
                   </div>
                 </div>
 
-                <div className="bg-black/40 p-3.5 rounded-xl border border-white/5">
-                  <div className="text-[11px] text-zinc-400 font-bold">الديانة</div>
-                  <div className="text-base font-black text-white mt-1">
+                <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
+                  <div className="text-[11px] text-[#707070] font-bold">الديانة</div>
+                  <div className="text-base font-black text-[#141414] mt-1">
                     {worker.religion || 'غير محدد'}
                   </div>
                 </div>
 
-                <div className="bg-black/40 p-3.5 rounded-xl border border-white/5">
-                  <div className="text-[11px] text-zinc-400 font-bold">رقم الإقامة</div>
-                  <div className="text-base font-black text-white mt-1 font-mono">
+                <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
+                  <div className="text-[11px] text-[#707070] font-bold">رقم الإقامة</div>
+                  <div className="text-base font-black text-[#141414] mt-1 font-mono">
                     {worker.iqamaNumber || 'لا توجد إقامة بعد'}
                   </div>
                 </div>
               </div>
 
               {/* Skills and Languages */}
-              <div className="bg-black/40 p-5 rounded-2xl border border-white/5 space-y-4">
+              <div className="bg-[#f3f3f3]/40 p-5 rounded-2xl border border-[#e0e0e0] space-y-4">
                 <div>
-                  <h3 className="text-xs font-bold text-white flex items-center gap-2 mb-2 m-0">
-                    <Award className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 mb-2 m-0">
+                    <Award className="w-4 h-4 text-[#141414]" />
                     <span>المهارات والخبرات الموثقة:</span>
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {worker.skills && worker.skills.length > 0 ? (
                       worker.skills.map((skill, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                        <span key={idx} className="px-3 py-1 rounded-xl text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                           ✓ {skill}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-zinc-400">لا توجد مهارات مسجلة</span>
+                      <span className="text-xs text-[#707070]">لا توجد مهارات مسجلة</span>
                     )}
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-white/5">
-                  <h3 className="text-xs font-bold text-white flex items-center gap-2 mb-2 m-0">
-                    <Languages className="w-4 h-4 text-blue-400" />
+                <div className="pt-3 border-t border-[#e0e0e0]">
+                  <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 mb-2 m-0">
+                    <Languages className="w-4 h-4 text-[#141414]" />
                     <span>اللغات التي تجيدها:</span>
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {worker.languages && worker.languages.length > 0 ? (
                       worker.languages.map((lang, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-xl text-xs font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                        <span key={idx} className="px-3 py-1 rounded-xl text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                           {lang}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-zinc-400">غير محدد</span>
+                      <span className="text-xs text-[#707070]">غير محدد</span>
                     )}
                   </div>
                 </div>
@@ -238,28 +238,28 @@ const WorkerProfileDetailModalContent: React.FC<
 
               {/* Psychological & Medical Evaluation */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <div className="p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#141414]">
+                    <ShieldCheck className="w-4 h-4 text-[#141414]" />
                     <span>الفحص الطبي وجاهزية العمل:</span>
                   </div>
-                  <div className="text-xs text-zinc-300 leading-relaxed">
-                    الحالة الطبية: <strong className="text-emerald-400">{(worker as any).medicalStatus || 'لائقة طبياً'}</strong>
+                  <div className="text-xs text-[#141414] leading-relaxed">
+                    الحالة الطبية: <strong className="text-[#141414]">{(worker as any).medicalStatus || 'لائقة طبياً'}</strong>
                   </div>
                   {(worker as any).medicalNotes && (
-                    <p className="text-[11px] text-zinc-400 bg-white/5 p-2 rounded-lg m-0">
+                    <p className="text-[11px] text-[#707070] bg-[#f3f3f3] p-2 rounded-lg m-0">
                       {(worker as any).medicalNotes}
                     </p>
                   )}
                 </div>
 
-                <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                <div className="p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#141414]">
+                    <Sparkles className="w-4 h-4 text-[#141414]" />
                     <span>التقييم السلوكي والتوافق:</span>
                   </div>
-                  <div className="text-xs text-zinc-300 leading-relaxed">
-                    التقييم العام: <strong className="text-amber-300">{(worker as any).psychologicalEvaluation || 'ممتاز ومستعد للعمل'}</strong>
+                  <div className="text-xs text-[#141414] leading-relaxed">
+                    التقييم العام: <strong className="text-[#141414]">{(worker as any).psychologicalEvaluation || 'ممتاز ومستعد للعمل'}</strong>
                   </div>
                 </div>
               </div>
@@ -271,42 +271,42 @@ const WorkerProfileDetailModalContent: React.FC<
             <div className="space-y-4">
               {firstSponsor ? (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-amber-400/10 border border-amber-400/25 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] flex items-center justify-between">
                     <div>
-                      <div className="text-xs font-bold text-amber-300">قسم الكفيل الأول (المتنازل)</div>
-                      <p className="text-[11px] text-zinc-400 m-0 mt-0.5">
+                      <div className="text-xs font-bold text-[#141414]">قسم الكفيل الأول (المتنازل)</div>
+                      <p className="text-[11px] text-[#707070] m-0 mt-0.5">
                         بيانات مستقلة ومحفوظة بدقة لحفظ حقوق المكتب والكفيل الأصلي.
                       </p>
                     </div>
-                    <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-400 text-black">
+                    <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff]">
                       {firstSponsor.settlementStatus || 'معلق'}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
-                      <div className="text-xs font-bold text-zinc-400">اسم الكفيل الأول:</div>
-                      <div className="text-sm font-bold text-white">{firstSponsor.sponsorName}</div>
-                      <div className="text-xs text-zinc-400 font-mono">هوية: {firstSponsor.nationalIdOrIqama}</div>
-                      <div className="text-xs text-zinc-400 font-mono">هاتف: {firstSponsor.phoneNumber}</div>
+                    <div className="p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-2">
+                      <div className="text-xs font-bold text-[#707070]">اسم الكفيل الأول:</div>
+                      <div className="text-sm font-bold text-[#141414]">{firstSponsor.sponsorName}</div>
+                      <div className="text-xs text-[#707070] font-mono">هوية: {firstSponsor.nationalIdOrIqama}</div>
+                      <div className="text-xs text-[#707070] font-mono">هاتف: {firstSponsor.phoneNumber}</div>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
-                      <div className="text-xs font-bold text-zinc-400">التفاصيل المالية للكفيل الأول:</div>
-                      <div className="text-xs text-zinc-300">
-                        المبلغ المستحق له: <strong className="text-emerald-400 font-mono">{firstSponsor.financialClaimAmount ? `${firstSponsor.financialClaimAmount.toLocaleString('ar-SA')} ⃁` : 'لا توجد مطالبات'}</strong>
+                    <div className="p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-2">
+                      <div className="text-xs font-bold text-[#707070]">التفاصيل المالية للكفيل الأول:</div>
+                      <div className="text-xs text-[#141414]">
+                        المبلغ المستحق له: <strong className="text-[#141414] font-mono">{firstSponsor.financialClaimAmount ? `${firstSponsor.financialClaimAmount.toLocaleString('ar-SA')} ⃁` : 'لا توجد مطالبات'}</strong>
                       </div>
-                      <div className="text-xs text-zinc-300">
+                      <div className="text-xs text-[#141414]">
                         سبب الإعادة / التنازل: <strong>{firstSponsor.returnReason || 'غير محدد'}</strong>
                       </div>
-                      <div className="text-xs text-zinc-300">
+                      <div className="text-xs text-[#141414]">
                         حالة الضمان: <strong>{firstSponsor.warrantyStatus || 'خارج الضمان'}</strong>
                       </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="p-8 text-center bg-black/40 rounded-xl border border-white/5 text-xs text-zinc-400">
+                <div className="p-8 text-center bg-[#f3f3f3]/40 rounded-xl border border-[#e0e0e0] text-xs text-[#141414]">
                   العاملة مستقدمة جديدة ولم تسجل لها كفالة أولى سابقة داخل النظام.
                 </div>
               )}
@@ -316,29 +316,29 @@ const WorkerProfileDetailModalContent: React.FC<
           {/* TAB 3: Movement Timeline */}
           {activeTab === 'timeline' && (
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 m-0">
-                <History className="w-4 h-4 text-amber-400" />
+              <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 m-0">
+                <History className="w-4 h-4 text-[#141414]" />
                 <span>سجل المخطط الزمني الكامل للعاملة:</span>
               </h3>
 
               {movementTimeline.length === 0 ? (
-                <div className="p-8 text-center bg-black/40 rounded-xl border border-white/5 text-xs text-zinc-400">
+                <div className="p-8 text-center bg-[#f3f3f3]/40 rounded-xl border border-[#e0e0e0] text-xs text-[#141414]">
                   لا توجد حركات مسجلة حتى الآن.
                 </div>
               ) : (
-                <div className="relative pr-6 border-r-2 border-white/10 space-y-4 pt-2">
+                <div className="relative pr-6 border-r-2 border-[#e0e0e0] space-y-4 pt-2">
                   {movementTimeline.map((m: WorkerMovementTimeline) => (
                     <div key={m.id} className="relative">
-                      <span className="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-[#14181c] border-4 border-amber-400" />
-                      <div className="p-3.5 rounded-xl bg-black/40 border border-white/5 space-y-1">
+                      <span className="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-[#ffffff] border-4 border-[#e0e0e0]" />
+                      <div className="p-3.5 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-1">
                         <div className="flex items-center justify-between flex-wrap gap-2">
-                          <span className="font-bold text-xs text-white">{m.movementType}</span>
-                          <span className="text-[10.5px] text-zinc-400 font-mono">
+                          <span className="font-bold text-xs text-[#141414]">{m.movementType}</span>
+                          <span className="text-[10.5px] text-[#707070] font-mono">
                             {new Date(m.eventDateTime).toLocaleString('ar-SA')}
                           </span>
                         </div>
-                        <p className="text-xs text-zinc-300 m-0 leading-relaxed">{m.description}</p>
-                        <div className="text-[10px] text-zinc-400 pt-1 flex items-center gap-3">
+                        <p className="text-xs text-[#141414] m-0 leading-relaxed">{m.description}</p>
+                        <div className="text-[10px] text-[#707070] pt-1 flex items-center gap-3">
                           <span>المسؤول: {m.actorEmployee}</span>
                           {m.officeId && <span>المكتب: {m.officeId}</span>}
                         </div>
@@ -353,13 +353,13 @@ const WorkerProfileDetailModalContent: React.FC<
           {/* TAB 4: Client Trials History */}
           {activeTab === 'trials' && (
             <div className="space-y-4">
-              <h3 className="text-xs font-bold text-white flex items-center gap-2 m-0">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+              <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 m-0">
+                <Sparkles className="w-4 h-4 text-[#141414]" />
                 <span>سجل تجارب العملاء ونقل الخدمات:</span>
               </h3>
 
               {transferTrials.length === 0 ? (
-                <div className="p-8 text-center bg-black/40 rounded-xl border border-white/5 text-xs text-zinc-400">
+                <div className="p-8 text-center bg-[#f3f3f3]/40 rounded-xl border border-[#e0e0e0] text-xs text-[#141414]">
                   لم تخض هذه العاملة أي تجارب عملاء سابقة حتى الآن (0 تجارب).
                 </div>
               ) : (
@@ -367,32 +367,32 @@ const WorkerProfileDetailModalContent: React.FC<
                   {transferTrials.map((t: TransferCase) => {
                     const execOffice = GROUP_COMPANIES.find(c => c.id === t.executingOfficeId);
                     return (
-                      <div key={t.id} className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
+                      <div key={t.id} className="p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-2">
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-xs text-white">{t.newClientName}</span>
-                            <span className="font-mono text-[11px] text-zinc-400">({t.newClientPhone})</span>
+                            <span className="font-bold text-xs text-[#141414]">{t.newClientName}</span>
+                            <span className="font-mono text-[11px] text-[#707070]">({t.newClientPhone})</span>
                           </div>
                           <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
                             t.transferStatus === 'تم نقل الخدمات' 
-                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+                              ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' 
                               : t.transferStatus === 'عادت من العميل' 
-                              ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' 
-                              : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                              ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' 
+                              : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           }`}>
                             {t.transferStatus}
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-zinc-300">
-                          <div>المكتب المنفذ: <strong className="text-white">{execOffice?.name || t.executingOfficeId}</strong></div>
-                          <div>التكلفة المتفق عليها: <strong className="text-emerald-400 font-mono">{t.transferFee.toLocaleString('ar-SA')} ⃁</strong></div>
-                          <div>مدة التجربة: <strong className="text-white">{t.followupDaysDuration} أيام</strong></div>
-                          <div>القرار: <strong className="text-amber-300">{t.clientDecision}</strong></div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-[#141414]">
+                          <div>المكتب المنفذ: <strong className="text-[#141414]">{execOffice?.name || t.executingOfficeId}</strong></div>
+                          <div>التكلفة المتفق عليها: <strong className="text-[#141414] font-mono">{t.transferFee.toLocaleString('ar-SA')} ⃁</strong></div>
+                          <div>مدة التجربة: <strong className="text-[#141414]">{t.followupDaysDuration} أيام</strong></div>
+                          <div>القرار: <strong className="text-[#141414]">{t.clientDecision}</strong></div>
                         </div>
 
                         {t.returnReason && (
-                          <div className="p-2.5 rounded-lg bg-rose-950/40 text-rose-200 text-xs border border-rose-500/30">
+                          <div className="p-2.5 rounded-lg bg-[#f3f3f3] text-[#141414] text-xs border border-[#e0e0e0]">
                             <strong>سبب الإرجاع:</strong> {t.returnReason}
                           </div>
                         )}

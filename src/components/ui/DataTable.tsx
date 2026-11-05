@@ -231,7 +231,7 @@ export function DataTable<T extends { id: string | number }>({
                 onClick={() => handleDensityChange(opt.id)}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
                   density === opt.id
-                    ? 'bg-[#1D2428] text-[#CFA64A] shadow-2xs'
+                    ? 'bg-[#f3f3f3] text-[#141414] shadow-2xs'
                     : 'text-zinc-600 hover:text-black'
                 }`}
               >
@@ -243,47 +243,47 @@ export function DataTable<T extends { id: string | number }>({
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {selectedIds.size > 0 && (
-            <div className="inline-flex items-center gap-1.5 bg-[#1D2428] text-white px-3 py-1.5 rounded-full text-xs font-bold border border-[#CFA64A]/50">
-              <span className="text-[#CFA64A] font-black">محدد ({selectedIds.size})</span>
+            <div className="inline-flex items-center gap-1.5 bg-[#f3f3f3] text-[#141414] px-3 py-1.5 rounded-full text-xs font-bold border border-[#e0e0e0]">
+              <span className="text-[#141414] font-black">محدد ({selectedIds.size})</span>
               <button
                 type="button"
                 onClick={() => handleExport('excel')}
-                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer"
+                className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[11px] text-[#141414] cursor-pointer"
               >
                 Excel
               </button>
               <button
                 type="button"
                 onClick={() => handleExport('pdf')}
-                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer"
+                className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[11px] text-[#141414] cursor-pointer"
               >
                 PDF
               </button>
               <button
                 type="button"
                 onClick={() => handleExport('word')}
-                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] text-white cursor-pointer"
+                className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[11px] text-[#141414] cursor-pointer"
               >
                 Word
               </button>
               <button
                 type="button"
                 onClick={() => handleExport('wps')}
-                className="px-2 py-0.5 rounded-full bg-emerald-500/30 hover:bg-emerald-500/50 text-[11px] text-emerald-200 cursor-pointer"
+                className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#eaeaea] text-[11px] text-[#141414] cursor-pointer"
               >
                 WPS
               </button>
               <button
                 type="button"
                 onClick={() => handleExport('print')}
-                className="px-2 py-0.5 rounded-full bg-[#CFA64A]/30 hover:bg-[#CFA64A]/50 text-[11px] text-[#E6D3A7] cursor-pointer"
+                className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[11px] text-[#141414] cursor-pointer"
               >
                 طباعة
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedIds(new Set())}
-                className="px-1.5 py-0.5 rounded-full text-zinc-300 hover:text-rose-300 text-[11px] cursor-pointer"
+                className="px-1.5 py-0.5 rounded-full text-[#141414] hover:text-[#141414] text-[11px] cursor-pointer"
                 title="إلغاء التحديد"
               >
                 ✕
@@ -345,12 +345,12 @@ export function DataTable<T extends { id: string | number }>({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    color: '#1D2428',
+                    color: '#141414',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <i className="fa-solid fa-wand-magic-sparkles" style={{ fontSize: '14px', color: '#CFA64A' }}></i>
+                  <i className="fa-solid fa-wand-magic-sparkles" style={{ fontSize: '14px', color: '#141414' }}></i>
                   <span>استخلاص ذكي (PDF / صور / Excel)</span>
                 </button>
 
@@ -469,7 +469,7 @@ export function DataTable<T extends { id: string | number }>({
                   type="checkbox"
                   checked={filteredData.length > 0 && selectedIds.size === filteredData.length}
                   onChange={toggleSelectAll}
-                  style={{ cursor: 'pointer', accentColor: '#1D2428' }}
+                  style={{ cursor: 'pointer', accentColor: '#141414' }}
                 />
               </th>
               {columns.map((col, index) => (
@@ -501,10 +501,10 @@ export function DataTable<T extends { id: string | number }>({
                   <div className="flex flex-col items-center justify-center gap-3">
                     <BusinessIllustration type="empty-search" size="md" />
                     <div className="space-y-1">
-                      <div className="text-sm font-black text-[#1D2428]">
+                      <div className="text-sm font-black text-[#141414]">
                         لا توجد نتائج مطابقة لخيارات البحث أو التصفية
                       </div>
-                      <div className="text-xs text-zinc-500">
+                      <div className="text-xs text-[#707070]">
                         يمكنك تعديل كلمات البحث أو استخدام مستخرج المستندات الذكي لإضافة سجلات جديدة
                       </div>
                     </div>
@@ -513,7 +513,7 @@ export function DataTable<T extends { id: string | number }>({
                         <button
                           type="button"
                           onClick={() => setSearchQuery('')}
-                          className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#FBFBF5] text-[#1D2428] border border-[#B8924A]/50 hover:bg-[#F5EDDC] transition-colors cursor-pointer"
+                          className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-[#f3f3f3] transition-colors cursor-pointer"
                         >
                           إعادة ضبط البحث
                         </button>
@@ -522,7 +522,7 @@ export function DataTable<T extends { id: string | number }>({
                         <button
                           type="button"
                           onClick={onAddClick}
-                          className="px-4 py-1.5 rounded-full text-xs font-black bg-[#1D2428] text-[#CFA64A] hover:bg-black transition-colors cursor-pointer"
+                          className="px-4 py-1.5 rounded-full text-xs font-black bg-[#f3f3f3] text-[#141414] hover:bg-black transition-colors cursor-pointer"
                         >
                           + {addLabel}
                         </button>
@@ -532,7 +532,7 @@ export function DataTable<T extends { id: string | number }>({
                         onClick={() =>
                           window.dispatchEvent(new CustomEvent('open-universal-extractor'))
                         }
-                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#1D2428] border border-zinc-300 hover:bg-zinc-50 transition-colors cursor-pointer"
+                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-[#141414] border border-zinc-300 hover:bg-zinc-50 transition-colors cursor-pointer"
                       >
                         استخلاص من ملف (OCR)
                       </button>
@@ -546,7 +546,7 @@ export function DataTable<T extends { id: string | number }>({
                   key={row.id}
                   style={{
                     borderBottom: '1px solid #e4e4e7',
-                    backgroundColor: selectedIds.has(row.id) ? '#FBFBF5' : '#ffffff',
+                    backgroundColor: selectedIds.has(row.id) ? '#f3f3f3' : '#ffffff',
                     transition: 'background-color 0.15s ease',
                   }}
                   onMouseEnter={(e) => {
@@ -561,7 +561,7 @@ export function DataTable<T extends { id: string | number }>({
                       type="checkbox"
                       checked={selectedIds.has(row.id)}
                       onChange={() => toggleSelectRow(row.id)}
-                      style={{ cursor: 'pointer', accentColor: '#1D2428' }}
+                      style={{ cursor: 'pointer', accentColor: '#141414' }}
                     />
                   </td>
                   {columns.map((col, colIdx) => (

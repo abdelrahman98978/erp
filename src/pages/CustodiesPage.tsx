@@ -171,7 +171,7 @@ export const CustodiesPage: React.FC = () => {
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
             <input
               type="text"
               aria-label="ابحث باسم العُهدة، الموظف، أو الرقم التسلسلي"
@@ -207,7 +207,7 @@ export const CustodiesPage: React.FC = () => {
                   <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
                   <td className="p-3.5">
                     <div className="font-bold text-black">{row.item_name}</div>
-                    <div className="text-[11px] text-zinc-500 font-mono">S/N: {row.serial_number}</div>
+                    <div className="text-[11px] text-[#707070] font-mono">S/N: {row.serial_number}</div>
                   </td>
                   <td className="p-3.5 font-semibold text-black">
                     <div className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export const CustodiesPage: React.FC = () => {
                     <Badge text={row.location} type="purple" />
                   </td>
                   <td className="p-3.5 font-mono font-bold text-black">{(row.estimated_value ?? 0).toLocaleString()} ⃁</td>
-                  <td className="p-3.5 font-mono text-zinc-500">{row.received_date}</td>
+                  <td className="p-3.5 font-mono text-[#707070]">{row.received_date}</td>
                   <td className="p-3.5">
                     <Badge text={row.status} type={row.status === 'في حوزة الموظف' ? 'success' : row.status === 'تم الاسترجاع' ? 'purple' : 'warning'} />
                   </td>
@@ -249,7 +249,7 @@ export const CustodiesPage: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteCustody(row)}
-                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        className="p-1 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                         title="حذف العهدة"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -267,12 +267,12 @@ export const CustodiesPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Vault className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Vault className="w-4 h-4 text-[#141414]" />
                 <span>تسليم عُهدة جديدة لموظف</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -357,15 +357,15 @@ export const CustodiesPage: React.FC = () => {
       {selectedCustodyForDoc && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-base text-white flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#141414]" />
                   <span>سند تسلم واستلام عُهدة موظف رسمية</span>
                 </h3>
-                <p className="text-xs text-zinc-400 mt-0.5">مجموعة خالد السليم التجارية</p>
+                <p className="text-xs text-[#707070] mt-0.5">مجموعة خالد السليم التجارية</p>
               </div>
-              <button onClick={() => setSelectedCustodyForDoc(null)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setSelectedCustodyForDoc(null)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -379,7 +379,7 @@ export const CustodiesPage: React.FC = () => {
                 <div><strong>اسم الأصل:</strong> {selectedCustodyForDoc.item_name}</div>
                 <div><strong>الرقم التسلسلي:</strong> <span className="font-mono">{selectedCustodyForDoc.serial_number}</span></div>
                 <div><strong>تاريخ الاستلام:</strong> <span className="font-mono">{selectedCustodyForDoc.received_date}</span></div>
-                <div><strong>القيمة التقديرية:</strong> <span className="font-mono font-bold text-emerald-700">{(selectedCustodyForDoc.estimated_value ?? 0).toLocaleString()} ⃁</span></div>
+                <div><strong>القيمة التقديرية:</strong> <span className="font-mono font-bold text-[#141414]">{(selectedCustodyForDoc.estimated_value ?? 0).toLocaleString()} ⃁</span></div>
               </div>
 
               <div className="flex justify-between pt-4 border-t border-dashed border-zinc-200 text-xs text-zinc-600">

@@ -336,31 +336,31 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
           </div>
 
           {/* Section 6: Exceptions & Expiration Override */}
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-3">
+          <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-3">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-700" />
-              <h4 className="text-xs font-bold text-amber-900 m-0">
+              <AlertTriangle className="w-4 h-4 text-[#141414]" />
+              <h4 className="text-xs font-bold text-[#141414] m-0">
                 استثناء الصلاحيات المؤقت وتاريخ الانتهاء (Permission Overrides):
               </h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-amber-900 mb-1">سبب الاستثناء الإداري:</label>
+                <label className="block text-[11px] font-bold text-[#141414] mb-1">سبب الاستثناء الإداري:</label>
                 <input
                   type="text"
                   placeholder="مثال: تغطية مهام قسم المالية أثناء الإجازة الرسمية"
                   value={overrideReason}
                   onChange={e => setOverrideReason(e.target.value)}
-                  className="w-full bg-white border border-amber-300 rounded-xl p-2 text-xs text-black"
+                  className="w-full bg-white border border-[#e0e0e0] rounded-xl p-2 text-xs text-black"
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-amber-900 mb-1">تاريخ انتهاء الاستثناء:</label>
+                <label className="block text-[11px] font-bold text-[#141414] mb-1">تاريخ انتهاء الاستثناء:</label>
                 <input
                   type="date"
                   value={overrideExpiry}
                   onChange={e => setOverrideExpiry(e.target.value)}
-                  className="w-full bg-white border border-amber-300 rounded-xl p-2 text-xs text-black"
+                  className="w-full bg-white border border-[#e0e0e0] rounded-xl p-2 text-xs text-black"
                 />
               </div>
             </div>

@@ -1289,32 +1289,23 @@ button[data-dyn-state="completed"] {
 .content-body div[class*="bg-[#121619]"] .text-amber-300,
 .content-body div[class*="bg-[#121619]"] .text-amber-400,
 .content-body div[class*="bg-black/"]:not(.fixed) .text-amber-300,
-.content-body div[class*="bg-black/"]:not(.fixed) .text-amber-400 {
-  color: #b45309 !important;
-}
-
+.content-body div[class*="bg-black/"]:not(.fixed) .text-amber-400,
 .content-body div[class*="bg-[#14181c]"] .text-emerald-300,
 .content-body div[class*="bg-[#14181c]"] .text-emerald-400,
 .content-body div[class*="bg-[#121619]"] .text-emerald-400,
 .content-body div[class*="bg-black/"]:not(.fixed) .text-emerald-300,
-.content-body div[class*="bg-black/"]:not(.fixed) .text-emerald-400 {
-  color: #15803d !important;
-}
-
+.content-body div[class*="bg-black/"]:not(.fixed) .text-emerald-400,
 .content-body div[class*="bg-[#14181c]"] .text-cyan-300,
 .content-body div[class*="bg-[#14181c]"] .text-cyan-400,
 .content-body div[class*="bg-[#14181c]"] .text-blue-300,
 .content-body div[class*="bg-[#14181c]"] .text-blue-400,
 .content-body div[class*="bg-black/"]:not(.fixed) .text-cyan-400,
-.content-body div[class*="bg-black/"]:not(.fixed) .text-blue-400 {
-  color: #0066ff !important;
-}
-
+.content-body div[class*="bg-black/"]:not(.fixed) .text-blue-400,
 .content-body div[class*="bg-[#14181c]"] .text-rose-300,
 .content-body div[class*="bg-[#14181c]"] .text-rose-400,
 .content-body div[class*="bg-black/"]:not(.fixed) .text-rose-300,
 .content-body div[class*="bg-black/"]:not(.fixed) .text-rose-400 {
-  color: #be123c !important;
+  color: #141414 !important;
 }
 
 /* Hide duplicate legacy 44x44 icon circle when BusinessIllustration is present in hero banners */
@@ -1515,6 +1506,7 @@ button[data-dyn-state="completed"] {
    pure #ffffff / #f3f3f3 / #141414 / #707070 Mobbin Light Mode.
    ========================================================================== */
 div.fixed.inset-0 > div[class*="bg-[#14181c]"],
+div.fixed.inset-0 > div[class*="bg-[#171c20]"],
 div.fixed.inset-0 > div[class*="bg-[#182026]"],
 div.fixed.inset-0 > div[class*="bg-[#1D2428]"],
 div.fixed.inset-0 > div[class*="bg-zinc-950"],
@@ -1522,6 +1514,16 @@ div.fixed.inset-0 > div[class*="bg-slate-900"] {
   background: #ffffff !important;
   color: #141414 !important;
   border-color: #e0e0e0 !important;
+}
+
+div.fixed.inset-0 > div > div.bg-black.text-white,
+div.fixed.inset-0 > div > div.bg-zinc-950.text-white,
+div.fixed.inset-0 > div > div[class*="bg-[#141414]"].text-white,
+div.fixed.inset-0 > div > div[class*="bg-[#1a2126]"],
+div.fixed.inset-0 > div > div[class*="bg-[#181d22]"] {
+  background: #f3f3f3 !important;
+  color: #141414 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
 }
 
 div.fixed.inset-0 div[class*="bg-black/"]:not(.fixed):not([class*="inset-0"]),
@@ -1555,6 +1557,7 @@ div.fixed.inset-0 .text-blue-300,
 div.fixed.inset-0 .text-emerald-400,
 div.fixed.inset-0 h2.text-white,
 div.fixed.inset-0 h3.text-white,
+div.fixed.inset-0 h4.text-white,
 div.fixed.inset-0 div.text-white:not([class*="bg-"]) {
   color: #141414 !important;
 }

@@ -349,8 +349,8 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
         <div
           className={`p-3.5 rounded-2xl border text-xs font-bold flex items-center justify-between ${
             feedbackBanner.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-              : 'bg-rose-50 border-rose-200 text-rose-900'
+              ? 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]'
+              : 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]'
           }`}
         >
           <span>{feedbackBanner.text}</span>
@@ -418,12 +418,12 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                     }`}
                   >
                     <span className="text-xs font-bold flex items-center gap-1.5">
-                      <AlertTriangle className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-amber-600'}`} />
+                      <AlertTriangle className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#141414]'}`} />
                       <span>مؤشر انتباه: {card.label_ar}</span>
                     </span>
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-[#f3f3f3] text-[#141414]'
+                        isActive ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-[#f3f3f3] text-[#141414]'
                       }`}
                     >
                       {card.count}
@@ -452,7 +452,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                   <span>{w.fullNameAr}</span>
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
-                      isSelected ? 'bg-white/20 text-white' : 'bg-white text-[#707070]'
+                      isSelected ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-white text-[#707070]'
                     }`}
                   >
                     تجارب: {w.clientTrialsCount || 0}/3
@@ -500,8 +500,8 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
             </div>
 
             {diagnostic.summary.intentConflictWarningAr && (
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 text-xs font-bold flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-700" />
+              <div className="p-3 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-[#141414]" />
                 <span>{diagnostic.summary.intentConflictWarningAr}</span>
               </div>
             )}
@@ -522,12 +522,12 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               <div className="p-3.5 rounded-xl bg-white border border-[#e0e0e0] space-y-1.5">
                 <div className="text-[11px] font-semibold text-[#707070]">ضوابط أهلية النقل والتجارب (Ewaa Guard)</div>
                 {diagnostic.eligibility.allowed ? (
-                  <div className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+                  <div className="text-xs font-bold text-[#141414] flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
                     <span>مؤهلة لنقل الخدمات (مدة التجربة النظامية: {diagnostic.defaultTrialDays} أيام)</span>
                   </div>
                 ) : (
-                  <div className="text-xs font-bold text-rose-700 space-y-1">
+                  <div className="text-xs font-bold text-[#141414] space-y-1">
                     {diagnostic.eligibility.blockersAr.map((b, idx) => (
                       <div key={idx} className="flex items-start gap-1">
                         <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
@@ -537,7 +537,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                   </div>
                 )}
                 {diagnostic.eligibility.warningsAr.map((w, idx) => (
-                  <div key={idx} className="text-[11px] font-semibold text-amber-800">
+                  <div key={idx} className="text-[11px] font-semibold text-[#141414]">
                     • {w}
                   </div>
                 ))}
@@ -611,7 +611,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                         key={st.state_key}
                         type="button"
                         onClick={() => handleTransitionStage(st.state_key)}
-                        className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#141414] hover:text-white border border-[#e0e0e0] text-[11px] font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#262626] hover:text-[#141414] border border-[#e0e0e0] text-[11px] font-bold transition-all cursor-pointer"
                         title={`انقل المرحلة إلى: ${st.label_ar}`}
                       >
                         {idx + 1}. {st.label_ar}
@@ -691,7 +691,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                           </span>
                         </td>
                         <td className="p-2.5 whitespace-nowrap">
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-white text-[11px] font-bold">
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold">
                             {row.stateLabelAr}
                           </span>
                         </td>
@@ -705,7 +705,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               row.slaOverdue
-                                ? 'bg-rose-100 text-rose-900 border border-rose-300'
+                                ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                                 : 'bg-[#f3f3f3] text-[#141414]'
                             }`}
                           >
@@ -717,9 +717,9 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               row.escalationAr.includes('عاجل')
-                                ? 'bg-rose-100 text-rose-900 border border-rose-300'
+                                ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                                 : row.escalationAr.includes('عالية')
-                                ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                                ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                                 : 'bg-[#f3f3f3] text-[#707070]'
                             }`}
                           >
@@ -759,9 +759,9 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                           sc.priority === 'critical'
-                            ? 'bg-rose-100 text-rose-900 border border-rose-300'
+                            ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                             : sc.priority === 'high'
-                            ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                            ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                             : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                         }`}
                       >
@@ -772,10 +772,10 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                       <strong>المطلوب الآن:</strong> {sc.arNow}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                      <div className="p-2 rounded-lg bg-emerald-50/70 border border-emerald-200 text-emerald-950">
+                      <div className="p-2 rounded-lg bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]">
                         <strong>المسار (أ):</strong> {sc.arIfYes}
                       </div>
-                      <div className="p-2 rounded-lg bg-amber-50/70 border border-amber-200 text-amber-950">
+                      <div className="p-2 rounded-lg bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]">
                         <strong>المسار البديل (ب):</strong> {sc.arIfNo}
                       </div>
                     </div>
@@ -804,7 +804,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                 تنتقل العاملة تلقائياً بين هذه المراحل بناءً على الوقائع والأدلة الموثقة (determine_worker_journey_state).
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full bg-[#141414] text-white text-xs font-mono font-bold">
+            <span className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-xs font-mono font-bold">
               {EWAA_WORKFLOW_ROUTES.length} مسارات • {EWAA_WORKFLOW_STATES.length} مرحلة
             </span>
           </div>
@@ -1179,13 +1179,13 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               معاينة فورية لقرار محرك (Ewaa) المشتق من الوقائع:
             </div>
             {!liveObservationPreview.ok ? (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs font-bold">
+              <div className="p-3 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs font-bold">
                 حارس الوقائع (منع الإدخال المتعارض): {liveObservationPreview.error}
               </div>
             ) : (
               <div className="space-y-2 text-xs">
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 rounded-full bg-[#141414] text-white font-bold">
+                  <span className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] font-bold">
                     المرحلة المشتقة: {liveObservationPreview.result.journey_stage}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] font-bold">
@@ -1200,7 +1200,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                   {liveObservationPreview.result.parallel_actions.join(' • ')}
                 </div>
                 {liveObservationPreview.result.missing_verifications.length > 0 && (
-                  <div className="text-amber-800 font-semibold">
+                  <div className="text-[#141414] font-semibold">
                     <strong>مهام التحقق المفتوحة تلقائياً (غير معروف ≠ لا):</strong>{' '}
                     {liveObservationPreview.result.missing_verifications.join(' ، ')}
                   </div>
@@ -1247,10 +1247,10 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
               </div>
               <div className="flex flex-wrap gap-4 pt-1 text-[11px] text-[#707070]">
                 <span>إجمالي المطالبة: ⃁ {diagnostic.wageReconciliation.totalClaimed.toLocaleString()}</span>
-                <span className="text-emerald-700 font-bold">
+                <span className="text-[#141414] font-bold">
                   مسدد موثق بدليل: ⃁ {diagnostic.wageReconciliation.verifiedPaid.toLocaleString()}
                 </span>
-                <span className="text-amber-800 font-bold">
+                <span className="text-[#141414] font-bold">
                   مسجل حسب الإفادة فقط: ⃁ {diagnostic.wageReconciliation.reportedUnverifiedPaid.toLocaleString()}
                 </span>
               </div>

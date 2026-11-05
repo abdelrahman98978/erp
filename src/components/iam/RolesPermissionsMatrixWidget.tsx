@@ -30,16 +30,16 @@ export const DEFAULT_ACTIONS: ModuleAction[] = [
 ];
 
 export const ACTION_LABELS: Record<ModuleAction, { ar: string; desc: string; color: string }> = {
-  view: { ar: 'عرض', desc: 'استعراض الشاشة والبيانات', color: 'bg-blue-50 text-blue-700' },
-  create: { ar: 'إنشاء', desc: 'إضافة سجلات جديدة', color: 'bg-champagne-pale text-champagne-dark border border-champagne/30' },
-  edit: { ar: 'تعديل', desc: 'تحديث البيانات الحالية', color: 'bg-amber-50 text-amber-700' },
-  delete: { ar: 'حذف', desc: 'حذف السجلات نهائياً', color: 'bg-red-50 text-red-700' },
-  approve: { ar: 'اعتماد', desc: 'الموافقة على الطلبات والعقود', color: 'bg-amber-50 text-amber-700' },
-  reject: { ar: 'رفض', desc: 'رفض المعاملات وإعادتها', color: 'bg-rose-50 text-rose-700' },
-  export: { ar: 'تصدير', desc: 'تصدير التقارير وExcel/PDF', color: 'bg-teal-50 text-teal-700' },
-  print: { ar: 'طباعة', desc: 'طباعة النماذج والمستندات', color: 'bg-cyan-50 text-cyan-700' },
-  import: { ar: 'استيراد', desc: 'رفع واستيراد البيانات', color: 'bg-amber-50 text-amber-700' },
-  assign: { ar: 'إسناد', desc: 'توجيه وتعيين المهام للموظفين', color: 'bg-orange-50 text-orange-700' },
+  view: { ar: 'عرض', desc: 'استعراض الشاشة والبيانات', color: 'bg-[#f3f3f3] text-[#141414]' },
+  create: { ar: 'إنشاء', desc: 'إضافة سجلات جديدة', color: 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' },
+  edit: { ar: 'تعديل', desc: 'تحديث البيانات الحالية', color: 'bg-[#f3f3f3] text-[#141414]' },
+  delete: { ar: 'حذف', desc: 'حذف السجلات نهائياً', color: 'bg-[#f3f3f3] text-[#141414]' },
+  approve: { ar: 'اعتماد', desc: 'الموافقة على الطلبات والعقود', color: 'bg-[#f3f3f3] text-[#141414]' },
+  reject: { ar: 'رفض', desc: 'رفض المعاملات وإعادتها', color: 'bg-[#f3f3f3] text-[#141414]' },
+  export: { ar: 'تصدير', desc: 'تصدير التقارير وExcel/PDF', color: 'bg-[#f3f3f3] text-[#141414]' },
+  print: { ar: 'طباعة', desc: 'طباعة النماذج والمستندات', color: 'bg-[#f3f3f3] text-[#141414]' },
+  import: { ar: 'استيراد', desc: 'رفع واستيراد البيانات', color: 'bg-[#f3f3f3] text-[#141414]' },
+  assign: { ar: 'إسناد', desc: 'توجيه وتعيين المهام للموظفين', color: 'bg-[#f3f3f3] text-[#141414]' },
   archive: { ar: 'أرشفة', desc: 'نقل السجلات إلى الأرشيف', color: 'bg-slate-50 text-slate-700' },
   restore: { ar: 'استعادة', desc: 'استرجاع السجلات المؤرشفة', color: 'bg-zinc-50 text-zinc-700' },
 };
@@ -268,14 +268,14 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-zinc-100">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center shadow-xs">
-            <ShieldCheck className="w-5 h-5 text-champagne-light" />
+            <ShieldCheck className="w-5 h-5 text-[#141414]" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
               مصفوفة الصلاحيات الدقيقة للوحدات والعمليات (Roles & Permissions Matrix)
               <span className="pill-tag-mint" style={{ fontSize: '10px' }}>12 عملية معتمدة</span>
             </h3>
-            <p className="text-xs text-zinc-500 m-0 mt-0.5">
+            <p className="text-xs text-[#707070] m-0 mt-0.5">
               تحديد وضبط الإجراءات الـ 12 المسموحة لكل وحدة بنظام Deny by Default الصارم
             </p>
           </div>
@@ -322,10 +322,10 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-black">{preset.name}</span>
                 {selectedPreset === preset.id && (
-                  <span className="w-2 h-2 rounded-full bg-champagne" />
+                  <span className="w-2 h-2 rounded-full bg-[#141414]" />
                 )}
               </div>
-              <p className="text-[11px] text-zinc-500 m-0 leading-tight">
+              <p className="text-[11px] text-[#707070] m-0 leading-tight">
                 {preset.desc}
               </p>
             </div>
@@ -338,12 +338,12 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-right border-collapse text-xs">
             <thead>
-              <tr className="bg-zinc-900 text-white font-bold text-[11px]">
-                <th className="py-3 px-4 w-52 sticky right-0 bg-zinc-900 z-10">الوحدة الإدارية / Module</th>
+              <tr className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] font-bold text-[11px]">
+                <th className="py-3 px-4 w-52 sticky right-0 bg-[#f3f3f3] border-b border-[#e0e0e0] z-10">الوحدة الإدارية / Module</th>
                 {DEFAULT_ACTIONS.map(action => (
                   <th key={action} className="py-3 px-2 text-center whitespace-nowrap min-w-[65px]" title={ACTION_LABELS[action].desc}>
                     <div className="font-bold">{ACTION_LABELS[action].ar}</div>
-                    <div className="text-[9px] font-mono text-zinc-400 uppercase font-normal">{action}</div>
+                    <div className="text-[9px] font-mono text-[#707070] uppercase font-normal">{action}</div>
                   </th>
                 ))}
                 <th className="py-3 px-3 text-center w-24">التحكم</th>
@@ -354,7 +354,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
                 <tr key={row.moduleId} className={`hover:bg-zinc-50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50/50'}`}>
                   <td className="py-3 px-4 font-bold text-black sticky right-0 bg-inherit z-10 border-l border-zinc-200">
                     <div className="text-xs">{row.moduleName}</div>
-                    <div className="text-[10px] text-zinc-400 font-mono font-normal">module: {row.moduleId}</div>
+                    <div className="text-[10px] text-[#707070] font-mono font-normal">module: {row.moduleId}</div>
                   </td>
 
                   {DEFAULT_ACTIONS.map(action => {
@@ -367,7 +367,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
                           className={`w-6 h-6 rounded-lg inline-flex items-center justify-center transition-all ${
                             enabled
                               ? 'bg-black text-white shadow-xs hover:bg-zinc-800'
-                              : 'bg-zinc-100 text-zinc-300 hover:bg-zinc-200 hover:text-zinc-600'
+                              : 'bg-zinc-100 text-[#141414] hover:bg-zinc-200 hover:text-zinc-600'
                           }`}
                           title={`${row.moduleName} - ${ACTION_LABELS[action].ar}: ${enabled ? 'مفعل' : 'محظور'}`}
                         >
@@ -407,11 +407,11 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
       {/* Security Decision Hierarchy Footer Notes */}
       <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-4 text-xs">
         <div className="flex items-center gap-2">
-          <Lock className="w-4 h-4 text-champagne-dark" />
+          <Lock className="w-4 h-4 text-[#141414]" />
           <span className="text-zinc-700 font-bold">
             تسلسل قرار الوصول (Deny By Default Flow):
           </span>
-          <span className="text-zinc-500 font-mono text-[11px]">
+          <span className="text-[#707070] font-mono text-[11px]">
             Active User → Tenant → Company Isolation → Branch Scope → Dept Scope → Module Perm → Data Scope (0-6)
           </span>
         </div>

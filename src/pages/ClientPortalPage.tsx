@@ -236,7 +236,7 @@ export const ClientPortalPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 بوابة الخدمة الذاتية وتتبع العقود والوصول
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 متابعة مباشرة ومؤتمتة لخطوات الاستقدام، توثيق مساند، بوالص التأمين، وخدمة العملاء على مدار الساعة
               </p>
             </div>
@@ -246,7 +246,7 @@ export const ClientPortalPage: React.FC = () => {
             <button
               onClick={() => handleOpenSupport()}
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#10b981', color: '#ffffff', fontWeight: '700' }}
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#141414', color: '#ffffff', fontWeight: '700' }}
             >
               <AlertCircle className="w-4 h-4 text-white" />
               <span>+ تقديم بلاغ أو استفسار</span>
@@ -258,7 +258,7 @@ export const ClientPortalPage: React.FC = () => {
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
               style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
             >
-              <MessageCircle className="w-4 h-4 text-champagne-dark" />
+              <MessageCircle className="w-4 h-4 text-[#141414]" />
               <span>خدمة العملاء (واتساب)</span>
             </a>
           </div>
@@ -269,20 +269,20 @@ export const ClientPortalPage: React.FC = () => {
       <div className="card-pricing p-4 rounded-2xl bg-white border border-zinc-200 shadow-sm flex items-center gap-3">
         <CorporateAvatar name={nationalIdOrPhone || 'عميل البوابة الموثق'} archetype="client-vip" size="sm" status="verified" />
         <div className="flex-1">
-          <label className="block text-[11px] font-bold text-zinc-500 mb-0.5">البحث الفوري عن العقود ومراحل العمالة</label>
+          <label className="block text-[11px] font-bold text-[#707070] mb-0.5">البحث الفوري عن العقود ومراحل العمالة</label>
           <input
             type="text"
             aria-label="البحث الفوري عن العقود ومراحل العمالة"
             value={nationalIdOrPhone}
             onChange={e => setNationalIdOrPhone(e.target.value)}
             placeholder="أدخل رقم العقد (MSN-...)، أو اسم العاملة، أو رقم الجواز للتحقق والتتبع المباشر..."
-            className="w-full bg-transparent text-xs text-black font-semibold placeholder:text-zinc-400 focus:outline-none"
+            className="w-full bg-transparent text-xs text-black font-semibold placeholder:text-[#707070] focus:outline-none"
           />
         </div>
         {nationalIdOrPhone && (
           <button
             onClick={() => setNationalIdOrPhone('')}
-            className="text-xs text-zinc-400 hover:text-black font-bold px-2 py-1"
+            className="text-xs text-[#707070] hover:text-black font-bold px-2 py-1"
           >
             مسح
           </button>
@@ -325,7 +325,7 @@ export const ClientPortalPage: React.FC = () => {
             90 يوماً
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
-            <div className="w-full h-full bg-emerald-500 rounded-full" />
+            <div className="w-full h-full bg-[#141414] rounded-full" />
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>ضمان رسمي شامل</span>
         </div>
@@ -334,8 +334,8 @@ export const ClientPortalPage: React.FC = () => {
       {/* Contract Lifecycle Cards */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <Plane className="w-5 h-5 text-emerald-600" />
+          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <Plane className="w-5 h-5 text-[#141414]" />
             <span>العقود السارية ومراحل الوصول الحية</span>
           </h2>
           <span className="pill-tag-mint text-xs">محدث لحظياً عبر مساند</span>
@@ -351,17 +351,17 @@ export const ClientPortalPage: React.FC = () => {
           {filteredContracts.map((contract) => (
             <div 
               key={contract.id}
-              className="card-pricing border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all space-y-4 bg-white dark:bg-zinc-900"
+              className="card-pricing border border-zinc-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all space-y-4 bg-white"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-100">
                 <div className="flex items-center gap-3">
                   <CorporateAvatar name={contract.workerName} profession={contract.profession} size="md" status="verified" />
                   <div>
-                    <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                    <h3 className="font-extrabold text-slate-900 text-base">
                       {contract.workerName}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs text-zinc-500 mt-0.5">
-                      <span>رقم العقد: <strong className="text-zinc-800 dark:text-zinc-200">{contract.contractNumber}</strong></span>
+                    <div className="flex items-center gap-2 text-xs text-[#707070] mt-0.5">
+                      <span>رقم العقد: <strong className="text-zinc-800">{contract.contractNumber}</strong></span>
                       <span>•</span>
                       <span>{contract.profession}</span>
                       <span>•</span>
@@ -378,7 +378,7 @@ export const ClientPortalPage: React.FC = () => {
                     <button 
                       onClick={() => handleOpenPayment(contract)}
                       className="button-primary-pill text-xs font-bold flex items-center gap-1 shadow-sm"
-                      style={{ minHeight: '34px', padding: '6px 14px', background: '#10b981' }}
+                      style={{ minHeight: '34px', padding: '6px 14px', background: '#141414', color: '#ffffff' }}
                     >
                       <CreditCard className="w-3.5 h-3.5" />
                       <span>سداد الرصيد ({(contract.amount - contract.paidAmount).toLocaleString()} ⃁)</span>
@@ -386,10 +386,10 @@ export const ClientPortalPage: React.FC = () => {
                   )}
                   <button 
                     onClick={() => handleOpenSupport(contract)}
-                    className="button-outline-on-light text-xs font-bold flex items-center gap-1 text-amber-700 hover:bg-amber-50"
+                    className="button-outline-on-light text-xs font-bold flex items-center gap-1 text-[#141414] hover:bg-[#eaeaea]"
                     style={{ minHeight: '34px', padding: '6px 12px' }}
                   >
-                    <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                    <AlertCircle className="w-3.5 h-3.5 text-[#141414]" />
                     <span>طلب دعم / بلاغ</span>
                   </button>
                   <button 
@@ -405,44 +405,44 @@ export const ClientPortalPage: React.FC = () => {
 
               {/* 8-Stage Progress Tracker */}
               <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+                <div className="flex justify-between text-xs font-bold text-slate-700">
                   <span>نسبة الإنجاز: {contract.progressPct}%</span>
-                  <span className="text-emerald-600 dark:text-emerald-400">
+                  <span className="text-[#141414]">
                     الوصول المتوقع: {contract.expectedArrival}
                   </span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500" 
+                    className="h-full bg-[#141414] rounded-full transition-all duration-500" 
                     style={{ width: `${contract.progressPct}%` }}
                   />
                 </div>
                 
                 {contract.flightDetails && (
-                  <div className="p-3 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-xl border border-emerald-200/50 dark:border-emerald-800/40 text-xs text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
-                    <Plane className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div className="p-3 bg-[#f3f3f3] rounded-xl border border-[#e0e0e0] text-xs text-[#141414] flex items-center gap-2">
+                    <Plane className="w-4 h-4 text-[#141414] shrink-0" />
                     <span><strong>بيانات الرحلة:</strong> {contract.flightDetails}</span>
                   </div>
                 )}
               </div>
 
               {/* Bottom Metadata & Guarantee */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs text-slate-600 dark:text-slate-400">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs text-slate-600">
                 <div>
                   <span className="text-slate-400 block text-[11px]">قيمة العقد الإجمالية</span>
-                  <strong className="text-slate-900 dark:text-white font-bold">{contract.amount.toLocaleString()} ⃁</strong>
+                  <strong className="text-slate-900 font-bold">{contract.amount.toLocaleString()} ⃁</strong>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px]">المبلغ المسدد</span>
-                  <strong className="text-emerald-600 font-bold">{contract.paidAmount.toLocaleString()} ⃁</strong>
+                  <strong className="text-[#141414] font-bold">{contract.paidAmount.toLocaleString()} ⃁</strong>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px]">الوكيل الخارجي</span>
-                  <strong className="text-slate-800 dark:text-slate-200 font-medium">{contract.agencyName}</strong>
+                  <strong className="text-slate-800 font-medium">{contract.agencyName}</strong>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px]">فترة الضمان المتبقية</span>
-                  <strong className="text-amber-600 font-bold">{contract.guaranteeDaysLeft} يوماً</strong>
+                  <strong className="text-[#141414] font-bold">{contract.guaranteeDaysLeft} يوماً</strong>
                 </div>
               </div>
             </div>
@@ -454,17 +454,17 @@ export const ClientPortalPage: React.FC = () => {
       {/* Contract Detail Modal */}
       {selectedContract && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl relative space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="bg-white rounded-3xl p-6 max-w-xl w-full border border-slate-200 shadow-2xl relative space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-6 h-6 text-emerald-600" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                <ShieldCheck className="w-6 h-6 text-[#141414]" />
+                <h3 className="font-extrabold text-slate-900 text-base">
                   سجل العقد المعتمد #{selectedContract.contractNumber}
                 </h3>
               </div>
               <button 
                 onClick={() => setSelectedContract(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center"
               >
                 ✕
               </button>
@@ -472,57 +472,57 @@ export const ClientPortalPage: React.FC = () => {
 
             <div className="space-y-3 text-xs">
               {/* Official Verification QR Stamp */}
-              <div className="p-3 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between">
+              <div className="p-3 bg-zinc-50 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shadow-sm">
-                    <QrCode className="w-6 h-6 text-champagne-light" />
+                    <QrCode className="w-6 h-6 text-[#141414]" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold text-black dark:text-white">شهادة تتبع حالة العقد المعتمدة رسمياً</div>
-                    <div className="text-[10px] text-zinc-500 font-mono">MUSANED VERIFICATION: #{selectedContract.contractNumber}</div>
+                    <div className="text-[11px] font-bold text-black">شهادة تتبع حالة العقد المعتمدة رسمياً</div>
+                    <div className="text-[10px] text-[#707070] font-mono">MUSANED VERIFICATION: #{selectedContract.contractNumber}</div>
                   </div>
                 </div>
                 <span className="pill-tag-mint text-[10px]">ساري ومعتمد</span>
               </div>
 
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl space-y-1.5">
+              <div className="p-3 bg-slate-50 rounded-xl space-y-1.5">
                 <div className="flex justify-between">
                   <span className="text-slate-500">اسم العامل/ة:</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{selectedContract.workerName}</span>
+                  <span className="font-bold text-slate-900">{selectedContract.workerName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">رقم جواز السفر:</span>
-                  <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedContract.passportNumber}</span>
+                  <span className="font-mono font-bold text-slate-900">{selectedContract.passportNumber}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">المهنة والجنسية:</span>
-                  <span className="font-medium text-slate-800 dark:text-slate-200">{selectedContract.profession} - {selectedContract.nationality}</span>
+                  <span className="font-medium text-slate-800">{selectedContract.profession} - {selectedContract.nationality}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">الوكالة المصدرة:</span>
-                  <span className="font-medium text-slate-800 dark:text-slate-200">{selectedContract.agencyName}</span>
+                  <span className="font-medium text-slate-800">{selectedContract.agencyName}</span>
                 </div>
               </div>
 
-              <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl space-y-1.5 border border-emerald-200/50 dark:border-emerald-800/40">
+              <div className="p-3 bg-[#f3f3f3] rounded-xl space-y-1.5 border border-[#e0e0e0]">
                 <div className="flex justify-between">
-                  <span className="text-emerald-800 dark:text-emerald-300">حالة العقد عبر مساند:</span>
-                  <span className="font-bold text-emerald-700 dark:text-emerald-400">{selectedContract.status} ({selectedContract.progressPct}%)</span>
+                  <span className="text-[#141414]">حالة العقد عبر مساند:</span>
+                  <span className="font-bold text-[#141414]">{selectedContract.status} ({selectedContract.progressPct}%)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-emerald-800 dark:text-emerald-300">فترة الضمان النظامي:</span>
-                  <span className="font-bold text-emerald-700 dark:text-emerald-400">{selectedContract.guaranteeDaysLeft} يوماً (سارية)</span>
+                  <span className="text-[#141414]">فترة الضمان النظامي:</span>
+                  <span className="font-bold text-[#141414]">{selectedContract.guaranteeDaysLeft} يوماً (سارية)</span>
                 </div>
                 {selectedContract.flightDetails && (
-                  <div className="flex justify-between pt-1 border-t border-emerald-100 dark:border-emerald-900/40">
-                    <span className="text-emerald-800 dark:text-emerald-300">بيانات الرحلة والقدوم:</span>
-                    <span className="font-bold text-emerald-900 dark:text-emerald-200">{selectedContract.flightDetails}</span>
+                  <div className="flex justify-between pt-1 border-t border-[#e0e0e0]">
+                    <span className="text-[#141414]">بيانات الرحلة والقدوم:</span>
+                    <span className="font-bold text-[#141414]">{selectedContract.flightDetails}</span>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex justify-between items-center gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex-wrap">
+            <div className="flex justify-between items-center gap-2 pt-3 border-t border-zinc-100 flex-wrap">
               <button
                 type="button"
                 onClick={() => window.print()}
@@ -540,7 +540,7 @@ export const ClientPortalPage: React.FC = () => {
                   className="button-outline-on-light text-xs font-bold inline-flex items-center gap-1"
                   style={{ minHeight: '34px', padding: '6px 14px' }}
                 >
-                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                  <MessageCircle className="w-3.5 h-3.5 text-[#141414]" />
                   <span>دعم العملاء</span>
                 </a>
                 <button
@@ -559,18 +559,18 @@ export const ClientPortalPage: React.FC = () => {
       {/* Support / Complaint Modal */}
       {showSupportModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-lg w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="card-pricing bg-white rounded-3xl p-6 max-w-lg w-full border border-zinc-200 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                <AlertCircle className="w-5 h-5 text-[#141414]" />
+                <h3 className="font-extrabold text-slate-900 text-base">
                   تقديم بلاغ أو طلب دعم ومتابعة
                 </h3>
               </div>
               <button 
                 type="button" 
                 onClick={() => setShowSupportModal(false)} 
-                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
                 ✕
               </button>
@@ -579,36 +579,36 @@ export const ClientPortalPage: React.FC = () => {
             <form onSubmit={handleCreateSupportTicket} className="space-y-3 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">اسم العميل بالكامل *</label>
+                  <label className="block font-bold text-zinc-600 mb-1">اسم العميل بالكامل *</label>
                   <input
                     type="text"
                     required
                     placeholder="اسم صاحب العقد"
                     value={supportForm.clientName}
                     onChange={e => setSupportForm({ ...supportForm, clientName: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-slate-900"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">رقم الجوال للتواصل *</label>
+                  <label className="block font-bold text-zinc-600 mb-1">رقم الجوال للتواصل *</label>
                   <input
                     type="text"
                     required
                     placeholder="05XXXXXXXX"
                     value={supportForm.clientPhone}
                     onChange={e => setSupportForm({ ...supportForm, clientPhone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">رقم العقد المرتبط</label>
+                  <label className="block font-bold text-zinc-600 mb-1">رقم العقد المرتبط</label>
                   <select
                     value={supportForm.contractNumber}
                     onChange={e => setSupportForm({ ...supportForm, contractNumber: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-slate-900 font-mono"
                   >
                     {contractsList.map(c => (
                       <option key={c.id} value={c.contractNumber}>
@@ -618,11 +618,11 @@ export const ClientPortalPage: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">نوع الطلب / البلاغ *</label>
+                  <label className="block font-bold text-zinc-600 mb-1">نوع الطلب / البلاغ *</label>
                   <select
                     value={supportForm.type}
                     onChange={e => setSupportForm({ ...supportForm, type: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-slate-900"
                   >
                     <option value="تأخير في إجراءات الاستقدام">تأخير في إجراءات الاستقدام</option>
                     <option value="طلب استبدال خلال فترة الضمان">طلب استبدال خلال فترة الضمان</option>
@@ -635,18 +635,18 @@ export const ClientPortalPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">تفاصيل البلاغ أو الملاحظات *</label>
+                <label className="block font-bold text-zinc-600 mb-1">تفاصيل البلاغ أو الملاحظات *</label>
                 <textarea
                   required
                   rows={3}
                   placeholder="يرجى توضيح تفاصيل طلبك أو الشكوى بالتفصيل لسرعة اتخاذ الإجراء..."
                   value={supportForm.description}
                   onChange={e => setSupportForm({ ...supportForm, description: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-slate-900 resize-none"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex justify-end gap-2 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setShowSupportModal(false)}
@@ -658,7 +658,7 @@ export const ClientPortalPage: React.FC = () => {
                 <button
                   type="submit"
                   className="button-primary-pill text-xs font-bold"
-                  style={{ padding: '8px 22px', background: '#10b981' }}
+                  style={{ padding: '8px 22px', background: '#141414', color: '#ffffff' }}
                 >
                   إرسال البلاغ لقاعدة البيانات
                 </button>
@@ -671,55 +671,55 @@ export const ClientPortalPage: React.FC = () => {
       {/* Pay Contract Balance Modal */}
       {showPayModal && payingContract && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="card-pricing bg-white dark:bg-zinc-900 rounded-3xl p-6 max-w-md w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl space-y-4 text-right dir-rtl">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="card-pricing bg-white rounded-3xl p-6 max-w-md w-full border border-zinc-200 shadow-2xl space-y-4 text-right dir-rtl">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
+                <CreditCard className="w-5 h-5 text-[#141414]" />
+                <h3 className="font-extrabold text-slate-900 text-base">
                   سداد الدفعة المتبقية للعقد
                 </h3>
               </div>
               <button 
                 type="button" 
                 onClick={() => { setShowPayModal(false); setPayingContract(null); }} 
-                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 text-zinc-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleProcessPayment} className="space-y-3.5 text-xs">
-              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 space-y-2">
+              <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">رقم العقد:</span>
-                  <span className="font-mono font-bold text-slate-900 dark:text-white">{payingContract.contractNumber}</span>
+                  <span className="text-zinc-600">رقم العقد:</span>
+                  <span className="font-mono font-bold text-slate-900">{payingContract.contractNumber}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">العاملة:</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{payingContract.workerName}</span>
+                  <span className="text-zinc-600">العاملة:</span>
+                  <span className="font-bold text-slate-900">{payingContract.workerName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">إجمالي قيمة العقد:</span>
-                  <span className="font-mono font-bold text-slate-900 dark:text-white">{payingContract.amount.toLocaleString()} ⃁</span>
+                  <span className="text-zinc-600">إجمالي قيمة العقد:</span>
+                  <span className="font-mono font-bold text-slate-900">{payingContract.amount.toLocaleString()} ⃁</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">المسدد مسبقاً:</span>
-                  <span className="font-mono font-bold text-zinc-700 dark:text-zinc-300">{payingContract.paidAmount.toLocaleString()} ⃁</span>
+                  <span className="text-zinc-600">المسدد مسبقاً:</span>
+                  <span className="font-mono font-bold text-zinc-700">{payingContract.paidAmount.toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-emerald-200 dark:border-emerald-800">
-                  <span className="text-emerald-900 dark:text-emerald-300 font-bold">المبلغ المطلوب سداده الآن:</span>
-                  <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
+                <div className="flex justify-between pt-2 border-t border-[#e0e0e0]">
+                  <span className="text-[#141414] font-bold">المبلغ المطلوب سداده الآن:</span>
+                  <span className="text-sm font-extrabold text-[#141414] font-mono">
                     {(payingContract.amount - payingContract.paidAmount).toLocaleString()} ⃁
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-zinc-600 dark:text-zinc-300 mb-1">طريقة الدفع الإلكتروني *</label>
+                <label className="block font-bold text-zinc-600 mb-1">طريقة الدفع الإلكتروني *</label>
                 <select
                   value={payMethod}
                   onChange={e => setPayMethod(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-slate-900"
                 >
                   <option value="بطاقة مدى البنكية (Mada)">بطاقة مدى البنكية (Mada)</option>
                   <option value="بطاقة ائتمانية (Visa / MasterCard)">بطاقة ائتمانية (Visa / MasterCard)</option>
@@ -728,14 +728,14 @@ export const ClientPortalPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="p-3 bg-zinc-50 dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 space-y-2">
-                <div className="flex items-center gap-2 text-zinc-500">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-2">
+                <div className="flex items-center gap-2 text-[#707070]">
+                  <ShieldCheck className="w-4 h-4 text-[#141414]" />
                   <span className="text-[11px]">بوابة دفع آمنة ومشفرة 256-bit بمعايير PCI-DSS</span>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => { setShowPayModal(false); setPayingContract(null); }}
@@ -747,7 +747,7 @@ export const ClientPortalPage: React.FC = () => {
                 <button
                   type="submit"
                   className="button-primary-pill text-xs font-bold"
-                  style={{ padding: '8px 22px', background: '#10b981' }}
+                  style={{ padding: '8px 22px', background: '#141414', color: '#ffffff' }}
                 >
                   تأكيد السداد وتوليد سند القبض
                 </button>

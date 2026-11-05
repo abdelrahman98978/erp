@@ -241,14 +241,14 @@ export const MasterConstantsPage: React.FC = () => {
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 ثوابت وإعدادات الاستقدام والتشغيل
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans">
+              <p className="text-xs text-[#707070] mt-1 font-sans">
                 إدارة الجنسيات والدول، المهن المعتمدة، الأديان، المهارات، المطارات، الحالات الاجتماعية، ومراحل العقود
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3 py-1">
+            <div className="flex items-center gap-2 bg-[#f3f3f3] border border-[#e0e0e0] rounded-full px-3 py-1">
               <CorporateAvatar
                 departmentId="executive"
                 name="أمين حوكمة الثوابت"
@@ -257,8 +257,8 @@ export const MasterConstantsPage: React.FC = () => {
                 status="verified"
               />
               <div className="text-right">
-                <div className="text-[11px] font-bold text-white">حوكمة القاموس الموحد</div>
-                <div className="text-[9.5px] text-emerald-400">معتمد عبر الشركات الخمس</div>
+                <div className="text-[11px] font-bold text-[#141414]">حوكمة القاموس الموحد</div>
+                <div className="text-[9.5px] text-[#141414]">معتمد عبر الشركات الخمس</div>
               </div>
             </div>
             <button
@@ -348,9 +348,9 @@ export const MasterConstantsPage: React.FC = () => {
               )}
               <div>
                 <h2 className="text-xs font-bold text-black m-0">{item.title}</h2>
-                {item.subtext && <p className="text-[11px] text-zinc-500 m-0 mt-0.5">{item.subtext}</p>}
+                {item.subtext && <p className="text-[11px] text-[#707070] m-0 mt-0.5">{item.subtext}</p>}
                 {item.code && (
-                  <span className="text-[10px] text-zinc-400 font-mono block mt-0.5">
+                  <span className="text-[10px] text-[#707070] font-mono block mt-0.5">
                     كود: {item.code}
                   </span>
                 )}
@@ -368,7 +368,7 @@ export const MasterConstantsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleDeleteItem(item.id)}
-                className="p-1 rounded-full text-zinc-400 hover:text-rose-600 transition-colors"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414] transition-colors"
                 title="حذف"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -382,12 +382,12 @@ export const MasterConstantsPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-champagne-light" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#141414]" />
                 <span>إضافة بند جديد في القاموس</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

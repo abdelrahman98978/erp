@@ -405,7 +405,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
               onClick={() => setActiveDept(tab.id)}
               className={`px-3.5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 isActive
-                  ? 'bg-[#141414] text-white'
+                  ? 'bg-[#141414] text-[#ffffff]'
                   : 'bg-transparent text-[#707070] hover:bg-[#f3f3f3] hover:text-[#141414]'
               }`}
             >
@@ -414,7 +414,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
               {tab.badge && (
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                    isActive ? 'bg-[#f3f3f3] text-[#141414]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                   }`}
                 >
                   {tab.badge}
@@ -436,16 +436,16 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
               {/* Two Column Section: Recent Tenders & Live Invoices */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Tenders */}
-                <div className="rounded-2xl p-5 bg-[#14181c] border border-white/10 shadow-md space-y-4">
+                <div className="rounded-2xl p-5 bg-[#ffffff] border border-[#e0e0e0] shadow-md space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-amber-400" />
+                    <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-[#141414]" />
                       <span>أحدث المنافسات الحكومية المعتمدة لشركة كاس</span>
                     </h3>
                     <button
                       type="button"
                       onClick={() => setActiveDept('monafasat')}
-                      className="text-xs text-amber-400 hover:underline flex items-center gap-1 font-bold"
+                      className="text-xs text-[#141414] hover:underline flex items-center gap-1 font-bold"
                     >
                       <span>عرض الكل</span>
                       <ChevronLeft className="w-3.5 h-3.5" />
@@ -454,25 +454,25 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
 
                   <div className="space-y-2.5">
                     {tenders.slice(0, 3).map(t => (
-                      <div key={t.id} className="p-3 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between gap-3">
+                      <div key={t.id} className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono text-amber-300 font-bold bg-amber-400/10 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-mono text-[#141414] font-bold bg-[#f3f3f3] px-1.5 py-0.5 rounded">
                               {t.referenceNumber}
                             </span>
-                            <span className="text-[10.5px] px-2 py-0.2 rounded-full bg-white/5 text-zinc-300">
+                            <span className="text-[10.5px] px-2 py-0.2 rounded-full bg-[#f3f3f3] text-[#141414]">
                               {t.entity}
                             </span>
                           </div>
-                          <div className="text-xs font-bold text-white mt-1 truncate">
+                          <div className="text-xs font-bold text-[#141414] mt-1 truncate">
                             {t.title}
                           </div>
-                          <div className="text-[10.5px] text-zinc-400 mt-0.5">
-                            الميزانية: <strong className="text-emerald-400 font-mono">{t.budget.toLocaleString()} ⃁</strong> • الموعد: {t.deadline}
+                          <div className="text-[10.5px] text-[#707070] mt-0.5">
+                            الميزانية: <strong className="text-[#141414] font-mono">{t.budget.toLocaleString()} ⃁</strong> • الموعد: {t.deadline}
                           </div>
                         </div>
 
-                        <span className="text-[10px] px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold shrink-0">
+                        <span className="text-[10px] px-2 py-1 rounded-lg bg-[#f3f3f3] text-[#141414] font-bold shrink-0">
                           {t.status}
                         </span>
                       </div>
@@ -481,16 +481,16 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                 </div>
 
                 {/* Recent ZATCA Invoices */}
-                <div className="rounded-2xl p-5 bg-[#14181c] border border-white/10 shadow-md space-y-4">
+                <div className="rounded-2xl p-5 bg-[#ffffff] border border-[#e0e0e0] shadow-md space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <Receipt className="w-4 h-4 text-emerald-400" />
+                    <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                      <Receipt className="w-4 h-4 text-[#141414]" />
                       <span>الفواتير الضريبية المشفرة ZATCA</span>
                     </h3>
                     <button
                       type="button"
                       onClick={() => setActiveDept('zatca-invoices')}
-                      className="text-xs text-emerald-400 hover:underline flex items-center gap-1 font-bold"
+                      className="text-xs text-[#141414] hover:underline flex items-center gap-1 font-bold"
                     >
                       <span>عرض الفواتير</span>
                       <ChevronLeft className="w-3.5 h-3.5" />
@@ -499,26 +499,26 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
 
                   <div className="space-y-2.5">
                     {invoices.map(inv => (
-                      <div key={inv.id} className="p-3 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between gap-3">
+                      <div key={inv.id} className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono text-emerald-300 font-bold bg-emerald-400/10 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-mono text-[#141414] font-bold bg-[#f3f3f3] px-1.5 py-0.5 rounded">
                               {inv.number}
                             </span>
-                            <span className="text-xs font-bold text-white">{inv.client}</span>
+                            <span className="text-xs font-bold text-[#141414]">{inv.client}</span>
                           </div>
-                          <div className="text-[10.5px] text-zinc-400 mt-1 font-mono">
-                            الإجمالي: <strong className="text-white">{inv.total.toLocaleString()} ⃁</strong> (شامل الضريبة 15%: {inv.vat.toLocaleString()} ⃁)
+                          <div className="text-[10.5px] text-[#707070] mt-1 font-mono">
+                            الإجمالي: <strong className="text-[#141414]">{inv.total.toLocaleString()} ⃁</strong> (شامل الضريبة 15%: {inv.vat.toLocaleString()} ⃁)
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
                           {inv.qr && (
-                            <span className="p-1 rounded bg-white/10 text-white" title="QR مشفر ZATCA">
-                              <QrCode className="w-4 h-4 text-emerald-400" />
+                            <span className="p-1 rounded bg-[#f3f3f3] text-[#141414]" title="QR مشفر ZATCA">
+                              <QrCode className="w-4 h-4 text-[#141414]" />
                             </span>
                           )}
-                          <span className="text-[10px] px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold">
+                          <span className="text-[10px] px-2 py-1 rounded-lg bg-[#f3f3f3] text-[#141414] font-bold">
                             {inv.status}
                           </span>
                         </div>
@@ -536,15 +536,15 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {activeDept === 'monafasat' && (
             <div className="space-y-4">
               {/* Search & Filter bar */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#14181c] border border-white/10">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-2xl bg-[#ffffff] border border-[#e0e0e0]">
                 <div className="relative flex-1 max-w-md">
-                  <Search className="w-4 h-4 text-zinc-400 absolute right-3 top-3" />
+                  <Search className="w-4 h-4 text-[#707070] absolute right-3 top-3" />
                   <input
                     type="text"
                     placeholder="ابحث برقم المنافسة أو الجهة الحكومية أو المسمى..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-black/50 border border-white/10 rounded-xl pr-9 pl-3 py-2 text-xs text-white outline-none focus:border-amber-400 font-sans"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl pr-9 pl-3 py-2 text-xs text-[#141414] outline-none focus:border-[#141414] font-sans"
                   />
                 </div>
 
@@ -552,7 +552,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-400 cursor-pointer"
+                    className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-xs text-[#141414] outline-none focus:border-[#141414] cursor-pointer"
                   >
                     <option value="all">كافة الحالات</option>
                     <option value="ترسية معتمدة">ترسية معتمدة</option>
@@ -563,10 +563,10 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
               </div>
 
               {/* Tenders Table */}
-              <div className="rounded-2xl bg-[#14181c] border border-white/10 overflow-hidden shadow-lg">
+              <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] overflow-hidden shadow-lg">
                 <div className="overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-[#181d22] text-zinc-400 border-b border-white/10">
+                    <thead className="bg-[#ffffff] text-[#707070] border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3.5 font-bold">الرقم المرجعي</th>
                         <th className="p-3.5 font-bold">عنوان المنافسة</th>
@@ -578,20 +578,20 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                         <th className="p-3.5 font-bold text-center">الإجراءات</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-[#e0e0e0]">
                       {tenders
                         .filter(t => statusFilter === 'all' || t.status === statusFilter)
                         .filter(t => !searchQuery || t.title.includes(searchQuery) || t.referenceNumber.includes(searchQuery) || t.entity.includes(searchQuery))
                         .map(t => (
-                          <tr key={t.id} className="hover:bg-white/5 transition-colors">
-                            <td className="p-3.5 font-mono font-bold text-amber-400">{t.referenceNumber}</td>
-                            <td className="p-3.5 font-bold text-white max-w-xs truncate">{t.title}</td>
-                            <td className="p-3.5 text-zinc-300">{t.entity}</td>
-                            <td className="p-3.5 font-mono font-bold text-emerald-400">{t.budget.toLocaleString()} ⃁</td>
-                            <td className="p-3.5 text-zinc-400">{t.deadline}</td>
-                            <td className="p-3.5 text-zinc-400">{t.itemsCount} صنف</td>
+                          <tr key={t.id} className="hover:bg-[#f3f3f3] transition-colors">
+                            <td className="p-3.5 font-mono font-bold text-[#141414]">{t.referenceNumber}</td>
+                            <td className="p-3.5 font-bold text-[#141414] max-w-xs truncate">{t.title}</td>
+                            <td className="p-3.5 text-[#141414]">{t.entity}</td>
+                            <td className="p-3.5 font-mono font-bold text-[#141414]">{t.budget.toLocaleString()} ⃁</td>
+                            <td className="p-3.5 text-[#707070]">{t.deadline}</td>
+                            <td className="p-3.5 text-[#707070]">{t.itemsCount} صنف</td>
                             <td className="p-3.5">
-                              <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                              <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                                 {t.status}
                               </span>
                             </td>
@@ -606,7 +606,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                                     message: `تم تحميل بنود المنافسة ${t.referenceNumber} في محرر الأسعار الذكي`,
                                   });
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 font-bold text-[11px] inline-flex items-center gap-1"
+                                className="px-2.5 py-1 rounded-lg bg-[#f3f3f3] text-[#141414] hover:bg-[#eaeaea] font-bold text-[11px] inline-flex items-center gap-1"
                               >
                                 <Calculator className="w-3 h-3" />
                                 <span>تسعير BOQ</span>
@@ -627,49 +627,49 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {activeDept === 'boq-editor' && (
             <div className="space-y-4">
               {/* BOQ Header Summary Card */}
-              <div className="rounded-2xl p-4 bg-[#14181c] border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="rounded-2xl p-4 bg-[#ffffff] border border-[#e0e0e0] flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[10.5px] font-bold">
+                    <span className="px-2 py-0.5 rounded bg-[#f3f3f3] text-[#141414] font-mono text-[10.5px] font-bold">
                       BOQ-2026-ETM-88991
                     </span>
-                    <span className="text-xs text-zinc-400">مؤسسة كاس للتجارة — كراسة التوريدات المعتمدة</span>
+                    <span className="text-xs text-[#707070]">مؤسسة كاس للتجارة — كراسة التوريدات المعتمدة</span>
                   </div>
-                  <h2 className="text-base font-bold text-white mt-1">
+                  <h2 className="text-base font-bold text-[#141414] mt-1">
                     كراسة أسعار وتكاليف: توريد وتجهيزات ضيافة لفعاليات اليوم الوطني 96
                   </h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className="text-xs text-[#707070] mt-0.5">
                     حساب الهامش الربحي، الضريبة 15%، والتفقيط التلقائي بالريال السعودي
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="px-4 py-2 rounded-xl bg-black/40 border border-white/10 text-center">
-                    <div className="text-[10px] text-zinc-400 font-bold">الإجمالي قبل الضريبة</div>
-                    <div className="text-base font-black text-white font-mono">245,000 ⃁</div>
+                  <div className="px-4 py-2 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] text-center">
+                    <div className="text-[10px] text-[#707070] font-bold">الإجمالي قبل الضريبة</div>
+                    <div className="text-base font-black text-[#141414] font-mono">245,000 ⃁</div>
                   </div>
-                  <div className="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-center">
-                    <div className="text-[10px] text-emerald-400 font-bold">الإجمالي شامل الضريبة 15%</div>
-                    <div className="text-base font-black text-emerald-300 font-mono">281,750 ⃁</div>
+                  <div className="px-4 py-2 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
+                    <div className="text-[10px] text-[#141414] font-bold">الإجمالي شامل الضريبة 15%</div>
+                    <div className="text-base font-black text-[#141414] font-mono">281,750 ⃁</div>
                   </div>
                 </div>
               </div>
 
               {/* Live BOQ Table */}
-              <div className="rounded-2xl bg-[#14181c] border border-white/10 overflow-hidden shadow-lg">
-                <div className="p-3 border-b border-white/10 bg-[#181d22] flex items-center justify-between">
-                  <div className="text-xs font-bold text-zinc-300 flex items-center gap-2">
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] overflow-hidden shadow-lg">
+                <div className="p-3 border-b border-[#e0e0e0] bg-[#ffffff] flex items-center justify-between">
+                  <div className="text-xs font-bold text-[#141414] flex items-center gap-2">
+                    <FileSpreadsheet className="w-4 h-4 text-[#141414]" />
                     <span>جدول بنود الكميات والتسعير المعتمد (Live Sheet):</span>
                   </div>
-                  <div className="text-[11px] text-zinc-400">
+                  <div className="text-[11px] text-[#707070]">
                     التفقيط: <strong>مائتان وواحد وثمانون ألفاً وسبعمائة وخمسون ريالاً سعودياً فقط لا غير</strong>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-[#12161a] text-zinc-400 border-b border-white/10">
+                    <thead className="bg-[#ffffff] text-[#707070] border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3 font-bold">#</th>
                         <th className="p-3 font-bold">وصف البند / الصنف</th>
@@ -681,36 +681,36 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                         <th className="p-3 font-bold">الإجمالي (شامل الضريبة 15%)</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 font-mono">
-                      <tr className="hover:bg-white/5">
-                        <td className="p-3 text-zinc-500 font-sans">1</td>
-                        <td className="p-3 font-bold text-white font-sans">أطقم ضيافة فاخرة متكاملة للصالات الرسمية</td>
-                        <td className="p-3 text-zinc-400 font-sans">طقم</td>
-                        <td className="p-3 text-white">40</td>
-                        <td className="p-3 text-zinc-400">1,800 ⃁</td>
-                        <td className="p-3 text-amber-300 font-bold">2,600 ⃁</td>
-                        <td className="p-3 text-emerald-400 font-bold">+44.4%</td>
-                        <td className="p-3 text-emerald-300 font-bold">119,600 ⃁</td>
+                    <tbody className="divide-y divide-[#e0e0e0] font-mono">
+                      <tr className="hover:bg-[#f3f3f3]">
+                        <td className="p-3 text-[#707070] font-sans">1</td>
+                        <td className="p-3 font-bold text-[#141414] font-sans">أطقم ضيافة فاخرة متكاملة للصالات الرسمية</td>
+                        <td className="p-3 text-[#707070] font-sans">طقم</td>
+                        <td className="p-3 text-[#141414]">40</td>
+                        <td className="p-3 text-[#707070]">1,800 ⃁</td>
+                        <td className="p-3 text-[#141414] font-bold">2,600 ⃁</td>
+                        <td className="p-3 text-[#141414] font-bold">+44.4%</td>
+                        <td className="p-3 text-[#141414] font-bold">119,600 ⃁</td>
                       </tr>
-                      <tr className="hover:bg-white/5">
-                        <td className="p-3 text-zinc-500 font-sans">2</td>
-                        <td className="p-3 font-bold text-white font-sans">تجهيز بوفيهات إعاشة وخدمة ضيافة VIP يومية</td>
-                        <td className="p-3 text-zinc-400 font-sans">يوم</td>
-                        <td className="p-3 text-white">5</td>
-                        <td className="p-3 text-zinc-400">12,000 ⃁</td>
-                        <td className="p-3 text-amber-300 font-bold">18,500 ⃁</td>
-                        <td className="p-3 text-emerald-400 font-bold">+54.1%</td>
-                        <td className="p-3 text-emerald-300 font-bold">106,375 ⃁</td>
+                      <tr className="hover:bg-[#f3f3f3]">
+                        <td className="p-3 text-[#707070] font-sans">2</td>
+                        <td className="p-3 font-bold text-[#141414] font-sans">تجهيز بوفيهات إعاشة وخدمة ضيافة VIP يومية</td>
+                        <td className="p-3 text-[#707070] font-sans">يوم</td>
+                        <td className="p-3 text-[#141414]">5</td>
+                        <td className="p-3 text-[#707070]">12,000 ⃁</td>
+                        <td className="p-3 text-[#141414] font-bold">18,500 ⃁</td>
+                        <td className="p-3 text-[#141414] font-bold">+54.1%</td>
+                        <td className="p-3 text-[#141414] font-bold">106,375 ⃁</td>
                       </tr>
-                      <tr className="hover:bg-white/5">
-                        <td className="p-3 text-zinc-500 font-sans">3</td>
-                        <td className="p-3 font-bold text-white font-sans">شاشات عرض تفاعلية ونظم صوتية للمنصة الرئيسية</td>
-                        <td className="p-3 text-zinc-400 font-sans">باقة</td>
-                        <td className="p-3 text-white">2</td>
-                        <td className="p-3 text-zinc-400">18,000 ⃁</td>
-                        <td className="p-3 text-amber-300 font-bold">24,250 ⃁</td>
-                        <td className="p-3 text-emerald-400 font-bold">+34.7%</td>
-                        <td className="p-3 text-emerald-300 font-bold">55,775 ⃁</td>
+                      <tr className="hover:bg-[#f3f3f3]">
+                        <td className="p-3 text-[#707070] font-sans">3</td>
+                        <td className="p-3 font-bold text-[#141414] font-sans">شاشات عرض تفاعلية ونظم صوتية للمنصة الرئيسية</td>
+                        <td className="p-3 text-[#707070] font-sans">باقة</td>
+                        <td className="p-3 text-[#141414]">2</td>
+                        <td className="p-3 text-[#707070]">18,000 ⃁</td>
+                        <td className="p-3 text-[#141414] font-bold">24,250 ⃁</td>
+                        <td className="p-3 text-[#141414] font-bold">+34.7%</td>
+                        <td className="p-3 text-[#141414] font-bold">55,775 ⃁</td>
                       </tr>
                     </tbody>
                   </table>
@@ -726,34 +726,34 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {suppliers.map(sup => (
-                  <div key={sup.id} className="p-4 rounded-2xl bg-[#14181c] border border-white/10 shadow-md space-y-3">
+                  <div key={sup.id} className="p-4 rounded-2xl bg-[#ffffff] border border-[#e0e0e0] shadow-md space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                        <div className="w-8 h-8 rounded-lg bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold">
                           <Store className="w-4 h-4" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white">{sup.name}</div>
-                          <div className="text-[10.5px] text-zinc-400">{sup.category}</div>
+                          <div className="text-xs font-bold text-[#141414]">{sup.name}</div>
+                          <div className="text-[10.5px] text-[#707070]">{sup.category}</div>
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414]">
                         {sup.rating}
                       </span>
                     </div>
 
-                    <div className="p-2.5 rounded-xl bg-black/40 border border-white/5 space-y-1.5 text-[11px]">
-                      <div className="flex items-center justify-between text-zinc-400">
+                    <div className="p-2.5 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-1.5 text-[11px]">
+                      <div className="flex items-center justify-between text-[#707070]">
                         <span>رقم الاتصال:</span>
-                        <span className="text-white font-mono">{sup.phone}</span>
+                        <span className="text-[#141414] font-mono">{sup.phone}</span>
                       </div>
-                      <div className="flex items-center justify-between text-zinc-400">
+                      <div className="flex items-center justify-between text-[#707070]">
                         <span>المشاريع المشتركة:</span>
-                        <span className="text-emerald-400 font-bold">{sup.activeProjects} مشاريع</span>
+                        <span className="text-[#141414] font-bold">{sup.activeProjects} مشاريع</span>
                       </div>
-                      <div className="flex items-center justify-between text-zinc-400">
+                      <div className="flex items-center justify-between text-[#707070]">
                         <span>إجمالي التعاملات:</span>
-                        <span className="text-white font-mono font-bold">{sup.totalVolume.toLocaleString()} ⃁</span>
+                        <span className="text-[#141414] font-mono font-bold">{sup.totalVolume.toLocaleString()} ⃁</span>
                       </div>
                     </div>
 
@@ -763,7 +763,7 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                         setShowAddPoModal(true);
                         setNewPO(prev => ({ ...prev, supplierName: sup.name }));
                       }}
-                      className="w-full py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs text-amber-300 font-bold border border-white/10 flex items-center justify-center gap-1.5"
+                      className="w-full py-1.5 rounded-xl bg-[#f3f3f3] hover:bg-[#f3f3f3] text-xs text-[#141414] font-bold border border-[#e0e0e0] flex items-center justify-center gap-1.5"
                     >
                       <Truck className="w-3.5 h-3.5" />
                       <span>إصدار أمر صرف / توريد للمورد</span>
@@ -779,10 +779,10 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {/* ========================================================================= */}
           {activeDept === 'purchase-orders' && (
             <div className="space-y-4">
-              <div className="rounded-2xl bg-[#14181c] border border-white/10 overflow-hidden shadow-lg">
+              <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] overflow-hidden shadow-lg">
                 <div className="overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-[#181d22] text-zinc-400 border-b border-white/10">
+                    <thead className="bg-[#ffffff] text-[#707070] border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3.5 font-bold">رقم أمر الصرف</th>
                         <th className="p-3.5 font-bold">المورد المعتمد</th>
@@ -792,16 +792,16 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                         <th className="p-3.5 font-bold">حالة التوريد</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-[#e0e0e0]">
                       {purchaseOrders.map(po => (
-                        <tr key={po.id} className="hover:bg-white/5">
-                          <td className="p-3.5 font-mono font-bold text-amber-400">{po.poNumber}</td>
-                          <td className="p-3.5 font-bold text-white">{po.supplierName}</td>
-                          <td className="p-3.5 text-zinc-300">{po.project}</td>
-                          <td className="p-3.5 font-mono font-bold text-emerald-400">{po.amount.toLocaleString()} ⃁</td>
-                          <td className="p-3.5 text-zinc-400">{po.date}</td>
+                        <tr key={po.id} className="hover:bg-[#f3f3f3]">
+                          <td className="p-3.5 font-mono font-bold text-[#141414]">{po.poNumber}</td>
+                          <td className="p-3.5 font-bold text-[#141414]">{po.supplierName}</td>
+                          <td className="p-3.5 text-[#141414]">{po.project}</td>
+                          <td className="p-3.5 font-mono font-bold text-[#141414]">{po.amount.toLocaleString()} ⃁</td>
+                          <td className="p-3.5 text-[#707070]">{po.date}</td>
                           <td className="p-3.5">
-                            <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                            <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                               {po.status}
                             </span>
                           </td>
@@ -820,44 +820,44 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {activeDept === 'contracts-projects' && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-[#14181c] border border-white/10 space-y-3">
+                <div className="p-5 rounded-2xl bg-[#ffffff] border border-[#e0e0e0] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414]">
                       مشروع ساري
                     </span>
-                    <span className="text-xs text-zinc-400 font-mono">CNT-KAS-2026-01</span>
+                    <span className="text-xs text-[#707070] font-mono">CNT-KAS-2026-01</span>
                   </div>
-                  <h3 className="text-sm font-bold text-white">مشروع توريدات احتفالات اليوم الوطني 96 لميناء جدة</h3>
-                  <p className="text-xs text-zinc-400">الجهة المتعاقدة: الهيئة العامة للموانئ • القيمة: 95,018.75 ⃁</p>
+                  <h3 className="text-sm font-bold text-[#141414]">مشروع توريدات احتفالات اليوم الوطني 96 لميناء جدة</h3>
+                  <p className="text-xs text-[#707070]">الجهة المتعاقدة: الهيئة العامة للموانئ • القيمة: 95,018.75 ⃁</p>
                   
                   <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
+                    <div className="flex items-center justify-between text-xs text-[#707070]">
                       <span>نسبة الإنجاز المعتمدة:</span>
-                      <span className="text-emerald-400 font-bold">85%</span>
+                      <span className="text-[#141414] font-bold">85%</span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                      <div className="h-full bg-emerald-400 rounded-full" style={{ width: '85%' }} />
+                    <div className="w-full h-2 rounded-full bg-[#f3f3f3] overflow-hidden">
+                      <div className="h-full bg-[#141414] rounded-full" style={{ width: '85%' }} />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#14181c] border border-white/10 space-y-3">
+                <div className="p-5 rounded-2xl bg-[#ffffff] border border-[#e0e0e0] space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#f3f3f3] text-[#141414]">
                       قيد التنفيذ
                     </span>
-                    <span className="text-xs text-zinc-400 font-mono">CNT-KAS-2026-02</span>
+                    <span className="text-xs text-[#707070] font-mono">CNT-KAS-2026-02</span>
                   </div>
-                  <h3 className="text-sm font-bold text-white">عقد تأمين أجهزة وتقنيات المقرات الإدارية التابعة</h3>
-                  <p className="text-xs text-zinc-400">الجهة المتعاقدة: أمانة منطقة الرياض • القيمة: 340,000 ⃁</p>
+                  <h3 className="text-sm font-bold text-[#141414]">عقد تأمين أجهزة وتقنيات المقرات الإدارية التابعة</h3>
+                  <p className="text-xs text-[#707070]">الجهة المتعاقدة: أمانة منطقة الرياض • القيمة: 340,000 ⃁</p>
                   
                   <div className="space-y-1">
-                    <div className="flex items-center justify-between text-xs text-zinc-400">
+                    <div className="flex items-center justify-between text-xs text-[#707070]">
                       <span>نسبة الإنجاز المعتمدة:</span>
-                      <span className="text-amber-400 font-bold">60%</span>
+                      <span className="text-[#141414] font-bold">60%</span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                      <div className="h-full bg-amber-400 rounded-full" style={{ width: '60%' }} />
+                    <div className="w-full h-2 rounded-full bg-[#f3f3f3] overflow-hidden">
+                      <div className="h-full bg-[#141414] rounded-full" style={{ width: '60%' }} />
                     </div>
                   </div>
                 </div>
@@ -870,10 +870,10 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {/* ========================================================================= */}
           {activeDept === 'zatca-invoices' && (
             <div className="space-y-4">
-              <div className="rounded-2xl bg-[#14181c] border border-white/10 overflow-hidden shadow-lg">
+              <div className="rounded-2xl bg-[#ffffff] border border-[#e0e0e0] overflow-hidden shadow-lg">
                 <div className="overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-[#181d22] text-zinc-400 border-b border-white/10">
+                    <thead className="bg-[#ffffff] text-[#707070] border-b border-[#e0e0e0]">
                       <tr>
                         <th className="p-3.5 font-bold">رقم الفاتورة</th>
                         <th className="p-3.5 font-bold">الجهة / العميل</th>
@@ -885,26 +885,26 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                         <th className="p-3.5 font-bold">حالة ZATCA</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 font-mono">
+                    <tbody className="divide-y divide-[#e0e0e0] font-mono">
                       {invoices.map(inv => (
-                        <tr key={inv.id} className="hover:bg-white/5">
-                          <td className="p-3.5 font-bold text-emerald-400">{inv.number}</td>
-                          <td className="p-3.5 font-sans font-bold text-white">{inv.client}</td>
-                          <td className="p-3.5 text-zinc-300">{inv.amount.toLocaleString()} ⃁</td>
-                          <td className="p-3.5 text-amber-300">{inv.vat.toLocaleString()} ⃁</td>
-                          <td className="p-3.5 text-emerald-300 font-bold">{inv.total.toLocaleString()} ⃁</td>
-                          <td className="p-3.5 text-zinc-400 font-sans">{inv.date}</td>
+                        <tr key={inv.id} className="hover:bg-[#f3f3f3]">
+                          <td className="p-3.5 font-bold text-[#141414]">{inv.number}</td>
+                          <td className="p-3.5 font-sans font-bold text-[#141414]">{inv.client}</td>
+                          <td className="p-3.5 text-[#141414]">{inv.amount.toLocaleString()} ⃁</td>
+                          <td className="p-3.5 text-[#141414]">{inv.vat.toLocaleString()} ⃁</td>
+                          <td className="p-3.5 text-[#141414] font-bold">{inv.total.toLocaleString()} ⃁</td>
+                          <td className="p-3.5 text-[#707070] font-sans">{inv.date}</td>
                           <td className="p-3.5 text-center">
                             {inv.qr ? (
-                              <span className="p-1 rounded bg-emerald-500/20 text-emerald-400 inline-block" title="مشفر ZATCA">
+                              <span className="p-1 rounded bg-[#f3f3f3] text-[#141414] inline-block" title="مشفر ZATCA">
                                 <QrCode className="w-4 h-4" />
                               </span>
                             ) : (
-                              <span className="text-zinc-500">—</span>
+                              <span className="text-[#707070]">—</span>
                             )}
                           </td>
                           <td className="p-3.5 font-sans">
-                            <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                               {inv.status}
                             </span>
                           </td>
@@ -922,35 +922,35 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {/* ========================================================================= */}
           {activeDept === 'etmad-cloud-api' && (
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-[#14181c] border border-white/10 space-y-4">
+              <div className="p-6 rounded-2xl bg-[#ffffff] border border-[#e0e0e0] space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold">
                       <CloudLightning className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white">بوابة الربط والتكامل المباشر مع منصة اعتماد الحكومية</h3>
-                      <p className="text-xs text-zinc-400 font-mono">Etmad Cloud Gateway: https://api.etimad.sa/v2/monafasat/kas</p>
+                      <h3 className="text-sm font-bold text-[#141414]">بوابة الربط والتكامل المباشر مع منصة اعتماد الحكومية</h3>
+                      <p className="text-xs text-[#707070] font-mono">Etmad Cloud Gateway: https://api.etimad.sa/v2/monafasat/kas</p>
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] font-bold text-xs flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#141414] animate-pulse"></span>
                     <span>متصل ونشط (Connected)</span>
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-xs">
-                    <span className="text-zinc-500 block mb-1">معرّف المورد المعتمد:</span>
-                    <span className="text-amber-400 font-mono font-bold">KAS-VEND-99042</span>
+                  <div className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] text-xs">
+                    <span className="text-[#707070] block mb-1">معرّف المورد المعتمد:</span>
+                    <span className="text-[#141414] font-mono font-bold">KAS-VEND-99042</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-xs">
-                    <span className="text-zinc-500 block mb-1">آخر مزامنة آلية:</span>
-                    <span className="text-emerald-400 font-mono font-bold">منذ دقيقتين (2 mins ago)</span>
+                  <div className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] text-xs">
+                    <span className="text-[#707070] block mb-1">آخر مزامنة آلية:</span>
+                    <span className="text-[#141414] font-mono font-bold">منذ دقيقتين (2 mins ago)</span>
                   </div>
-                  <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-xs">
-                    <span className="text-zinc-500 block mb-1">حالة الـ Webhooks:</span>
-                    <span className="text-cyan-400 font-mono font-bold">Active (100% Delivery)</span>
+                  <div className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] text-xs">
+                    <span className="text-[#707070] block mb-1">حالة الـ Webhooks:</span>
+                    <span className="text-[#141414] font-mono font-bold">Active (100% Delivery)</span>
                   </div>
                 </div>
               </div>
@@ -962,32 +962,32 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
           {/* ========================================================================= */}
           {activeDept === 'audit-security' && (
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-[#14181c] border border-emerald-500/30 space-y-4">
+              <div className="p-6 rounded-2xl bg-[#ffffff] border border-[#e0e0e0] space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold">
                       <ShieldCheck className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white">شهادة الامتثال والعزل التام لمؤسسة كاس (Tenant Isolation Certificate)</h3>
-                      <p className="text-xs text-zinc-400">Zero Cross-Tenant Leakage • معزولة كلياً عن شركات الاستقدام</p>
+                      <h3 className="text-sm font-bold text-[#141414]">شهادة الامتثال والعزل التام لمؤسسة كاس (Tenant Isolation Certificate)</h3>
+                      <p className="text-xs text-[#707070]">Zero Cross-Tenant Leakage • معزولة كلياً عن شركات الاستقدام</p>
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs">
+                  <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] font-bold text-xs">
                     الامتثال 100%
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-black/40 border border-white/5 text-xs text-zinc-300 space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                <div className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] text-xs text-[#141414] space-y-2">
+                  <div className="flex items-center gap-2 text-[#141414] font-bold">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>تم حجب أقسام شركة كاس بنجاح من القوائم الجانبية لشركات الصفا الماسي والياقوت وتوباز.</span>
                   </div>
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                  <div className="flex items-center gap-2 text-[#141414] font-bold">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>سجلات المناقصات والـ BOQ مقيدة بمفتاح tenantId و company_id = 'KAS'.</span>
                   </div>
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                  <div className="flex items-center gap-2 text-[#141414] font-bold">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>فواتير ZATCA مرتبطة بالرقم الضريبي المستقل 310284759200003 دون أي تداخل محاسبي.</span>
                   </div>
@@ -1002,86 +1002,86 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
       {/* ========================================================================= */}
       {showAddTenderModal && (
         <div className="fixed inset-0 z-[500] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#171c20] border border-white/15 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
-            <div className="p-4 border-b border-white/10 bg-[#1a2126] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-amber-400" />
+          <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
+            <div className="p-4 border-b border-[#e0e0e0] bg-[#f3f3f3] flex items-center justify-between">
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#141414]" />
                 <span>تسجيل منافسة جديدة — اعتماد كاس</span>
               </h3>
-              <button onClick={() => setShowAddTenderModal(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowAddTenderModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleCreateTender} className="p-5 space-y-3.5 text-xs">
               <div>
-                <label className="block text-zinc-300 mb-1 font-bold">عنوان المنافسة:</label>
+                <label className="block text-[#141414] mb-1 font-bold">عنوان المنافسة:</label>
                 <input
                   type="text"
                   required
                   value={newTender.title}
                   onChange={e => setNewTender({ ...newTender, title: e.target.value })}
                   placeholder="مثال: توريد وتجهيز منصات ومستلزمات ضيافة..."
-                  className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">الجهة الحكومية:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">الجهة الحكومية:</label>
                   <input
                     type="text"
                     required
                     value={newTender.entity}
                     onChange={e => setNewTender({ ...newTender, entity: e.target.value })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">الميزانية التقديرية (⃁):</label>
+                  <label className="block text-[#141414] mb-1 font-bold">الميزانية التقديرية (⃁):</label>
                   <input
                     type="number"
                     required
                     value={newTender.budget}
                     onChange={e => setNewTender({ ...newTender, budget: Number(e.target.value) })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400 font-mono"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414] font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">تاريخ الإغلاق:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">تاريخ الإغلاق:</label>
                   <input
                     type="date"
                     required
                     value={newTender.deadline}
                     onChange={e => setNewTender({ ...newTender, deadline: e.target.value })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">القطاع / التصنيف:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">القطاع / التصنيف:</label>
                   <input
                     type="text"
                     value={newTender.category}
                     onChange={e => setNewTender({ ...newTender, category: e.target.value })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-[#e0e0e0] flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddTenderModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white bg-white/5"
+                  className="px-4 py-2 rounded-xl text-xs text-[#707070] hover:text-[#141414] bg-[#f3f3f3]"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-400 text-black hover:bg-amber-300 shadow-md"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] shadow-md"
                 >
                   حفظ وتسجيل المنافسة
                 </button>
@@ -1096,62 +1096,62 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
       {/* ========================================================================= */}
       {showAddSupplierModal && (
         <div className="fixed inset-0 z-[500] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#171c20] border border-white/15 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
-            <div className="p-4 border-b border-white/10 bg-[#1a2126] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Store className="w-4 h-4 text-blue-400" />
+          <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
+            <div className="p-4 border-b border-[#e0e0e0] bg-[#f3f3f3] flex items-center justify-between">
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                <Store className="w-4 h-4 text-[#141414]" />
                 <span>اعتماد مورد / مقاول جديد لشركة كاس</span>
               </h3>
-              <button onClick={() => setShowAddSupplierModal(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowAddSupplierModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleCreateSupplier} className="p-5 space-y-3.5 text-xs">
               <div>
-                <label className="block text-zinc-300 mb-1 font-bold">اسم الشركة أو المورد:</label>
+                <label className="block text-[#141414] mb-1 font-bold">اسم الشركة أو المورد:</label>
                 <input
                   type="text"
                   required
                   value={newSupplier.name}
                   onChange={e => setNewSupplier({ ...newSupplier, name: e.target.value })}
                   placeholder="مثال: شركة التوريدات اللوجستية الحديثة"
-                  className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">التصنيف والنشاط:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">التصنيف والنشاط:</label>
                   <input
                     type="text"
                     value={newSupplier.category}
                     onChange={e => setNewSupplier({ ...newSupplier, category: e.target.value })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">رقم الهاتف / الجوال:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">رقم الهاتف / الجوال:</label>
                   <input
                     type="text"
                     value={newSupplier.phone}
                     onChange={e => setNewSupplier({ ...newSupplier, phone: e.target.value })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400 font-mono"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414] font-mono"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-[#e0e0e0] flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddSupplierModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white bg-white/5"
+                  className="px-4 py-2 rounded-xl text-xs text-[#707070] hover:text-[#141414] bg-[#f3f3f3]"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-400 text-black hover:bg-amber-300 shadow-md"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] shadow-md"
                 >
                   اعتماد المورد
                 </button>
@@ -1166,13 +1166,13 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
       {/* ========================================================================= */}
       {showAddPoModal && (
         <div className="fixed inset-0 z-[500] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#171c20] border border-white/15 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
-            <div className="p-4 border-b border-white/10 bg-[#1a2126] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Truck className="w-4 h-4 text-amber-400" />
+          <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
+            <div className="p-4 border-b border-[#e0e0e0] bg-[#f3f3f3] flex items-center justify-between">
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                <Truck className="w-4 h-4 text-[#141414]" />
                 <span>إصدار أمر توريد / صرف مستودعات (PO)</span>
               </h3>
-              <button onClick={() => setShowAddPoModal(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowAddPoModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1187,62 +1187,62 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
               className="p-5 space-y-3.5 text-xs"
             >
               <div>
-                <label className="block text-zinc-300 mb-1 font-bold">اسم المورد:</label>
+                <label className="block text-[#141414] mb-1 font-bold">اسم المورد:</label>
                 <input
                   type="text"
                   required
                   value={newPO.supplierName}
                   onChange={e => setNewPO({ ...newPO, supplierName: e.target.value })}
                   placeholder="اختر أو اكتب اسم المورد المعتمد..."
-                  className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div>
-                <label className="block text-zinc-300 mb-1 font-bold">المشروع المستفيد:</label>
+                <label className="block text-[#141414] mb-1 font-bold">المشروع المستفيد:</label>
                 <input
                   type="text"
                   required
                   value={newPO.projectName}
                   onChange={e => setNewPO({ ...newPO, projectName: e.target.value })}
-                  className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">المبلغ (⃁):</label>
+                  <label className="block text-[#141414] mb-1 font-bold">المبلغ (⃁):</label>
                   <input
                     type="number"
                     required
                     value={newPO.amount}
                     onChange={e => setNewPO({ ...newPO, amount: Number(e.target.value) })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400 font-mono"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414] font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">تاريخ التوريد المتوقع:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">تاريخ التوريد المتوقع:</label>
                   <input
                     type="date"
                     required
                     value={newPO.deliveryDate}
                     onChange={e => setNewPO({ ...newPO, deliveryDate: e.target.value })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-[#e0e0e0] flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddPoModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white bg-white/5"
+                  className="px-4 py-2 rounded-xl text-xs text-[#707070] hover:text-[#141414] bg-[#f3f3f3]"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 text-white hover:bg-amber-400 shadow-md"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] shadow-md"
                 >
                   اعتماد أمر الصرف
                 </button>
@@ -1257,13 +1257,13 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
       {/* ========================================================================= */}
       {showAddInvoiceModal && (
         <div className="fixed inset-0 z-[500] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#171c20] border border-white/15 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
-            <div className="p-4 border-b border-white/10 bg-[#1a2126] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Receipt className="w-4 h-4 text-emerald-400" />
+          <div className="bg-[#ffffff] border border-[#e0e0e0] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in">
+            <div className="p-4 border-b border-[#e0e0e0] bg-[#f3f3f3] flex items-center justify-between">
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-[#141414]" />
                 <span>إصدار فاتورة ضريبية ZATCA المرحلة 2</span>
               </h3>
-              <button onClick={() => setShowAddInvoiceModal(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowAddInvoiceModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1280,61 +1280,61 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
               className="p-5 space-y-3.5 text-xs"
             >
               <div>
-                <label className="block text-zinc-300 mb-1 font-bold">اسم الجهة / العميل:</label>
+                <label className="block text-[#141414] mb-1 font-bold">اسم الجهة / العميل:</label>
                 <input
                   type="text"
                   required
                   value={newInvoice.clientName}
                   onChange={e => setNewInvoice({ ...newInvoice, clientName: e.target.value })}
                   placeholder="مثال: وزارة الموارد البشرية والتنمية الاجتماعية"
-                  className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">المبلغ الخاضع للضريبة (⃁):</label>
+                  <label className="block text-[#141414] mb-1 font-bold">المبلغ الخاضع للضريبة (⃁):</label>
                   <input
                     type="number"
                     required
                     value={newInvoice.amount}
                     onChange={e => setNewInvoice({ ...newInvoice, amount: Number(e.target.value) })}
-                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white outline-none focus:border-amber-400 font-mono"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] outline-none focus:border-[#141414] font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-zinc-300 mb-1 font-bold">نسبة الضريبة:</label>
+                  <label className="block text-[#141414] mb-1 font-bold">نسبة الضريبة:</label>
                   <input
                     type="text"
                     disabled
                     value="15% (ZATCA Standard)"
-                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3 py-2 text-emerald-400 font-mono"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414] font-mono"
                   />
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1 text-zinc-300">
+              <div className="p-3 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] space-y-1 text-[#141414]">
                 <div className="flex items-center justify-between">
                   <span>قيمة الضريبة المضافة (15%):</span>
-                  <span className="font-mono text-amber-300 font-bold">{(Number(newInvoice.amount) * 0.15).toLocaleString()} ⃁</span>
+                  <span className="font-mono text-[#141414] font-bold">{(Number(newInvoice.amount) * 0.15).toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex items-center justify-between text-sm font-bold pt-1 border-t border-white/5">
-                  <span className="text-white">الإجمالي النهائي المطلوب:</span>
-                  <span className="font-mono text-emerald-400">{(Number(newInvoice.amount) * 1.15).toLocaleString()} ⃁</span>
+                <div className="flex items-center justify-between text-sm font-bold pt-1 border-t border-[#e0e0e0]">
+                  <span className="text-[#141414]">الإجمالي النهائي المطلوب:</span>
+                  <span className="font-mono text-[#141414]">{(Number(newInvoice.amount) * 1.15).toLocaleString()} ⃁</span>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-[#e0e0e0] flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddInvoiceModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs text-zinc-400 hover:text-white bg-white/5"
+                  className="px-4 py-2 rounded-xl text-xs text-[#707070] hover:text-[#141414] bg-[#f3f3f3]"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-black hover:bg-emerald-400 shadow-md flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] shadow-md flex items-center gap-1.5"
                 >
                   <QrCode className="w-4 h-4" />
                   <span>إصدار وتشفير ZATCA</span>

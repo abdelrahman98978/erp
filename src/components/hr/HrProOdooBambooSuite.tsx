@@ -784,7 +784,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
                 <h3 className="text-sm font-bold text-[#141414]">
                   معاينة قيد اليومية المحاسبي الآلي (Payroll GL Entry)
                 </h3>
-                <span className="px-3 py-1 rounded-full bg-[#141414] text-white text-[11px] font-semibold">
+                <span className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-semibold">
                   {simulatedPayslip.glEntry.isBalanced ? 'متوازن (Balanced)' : 'غير متوازن'}
                 </span>
               </div>
@@ -871,7 +871,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
                           {plan.role} • {plan.department} • المباشرة: <span className="font-mono">{plan.start_date}</span>
                         </div>
                       </div>
-                      <span className="px-3 py-1 rounded-full bg-[#141414] text-white font-mono text-xs font-bold">
+                      <span className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] font-mono text-xs font-bold">
                         {progressPct}%
                       </span>
                     </div>
@@ -976,7 +976,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
                           <span
                             className={`px-3 py-1 rounded-full font-mono font-bold text-xs ${
                               avg < 3
-                                ? 'bg-[#ffdad6] text-[#ba1a1a]'
+                                ? 'bg-[#f3f3f3] text-[#141414]'
                                 : 'bg-[#f3f3f3] text-[#141414]'
                             }`}
                           >
@@ -986,7 +986,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
                         <td>
                           <div className="text-[#141414] font-medium">{rev.smart_goal_summary}</div>
                           {rev.pip_required ? (
-                            <div className="mt-1 inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#ffdad6] text-[#ba1a1a] text-[11px] font-semibold">
+                            <div className="mt-1 inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] text-[11px] font-semibold">
                               <span>خطة تحسين أداء نشطة (PIP): {rev.pip_coaching_plan}</span>
                             </div>
                           ) : (
@@ -1131,13 +1131,13 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
       {showNewReviewModal && (
         <div className="fixed inset-0 z-[2100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-[#e0e0e0] rounded-[24px] max-w-lg w-full overflow-hidden shadow-[var(--elevation-modal)]">
-            <div className="p-4 bg-[#141414] text-white flex items-center justify-between">
-              <h4 className="text-sm font-bold text-white">تسجيل تقييم أداء معياري (1–5) / خطة تحسين PIP</h4>
+            <div className="p-4 bg-[#f3f3f3] text-[#141414] border-b border-[#e0e0e0] flex items-center justify-between">
+              <h4 className="text-sm font-bold text-[#141414]">تسجيل تقييم أداء معياري (1–5) / خطة تحسين PIP</h4>
               <button
                 type="button"
                 aria-label="إغلاق"
                 onClick={() => setShowNewReviewModal(false)}
-                className="text-[#adadad] hover:text-white"
+                className="text-[#adadad] hover:text-[#141414]"
               >
                 <X className="size-5" />
               </button>
@@ -1202,7 +1202,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
 
               {(revMastery + revExec + revComp + revCollab + revLead) / 5 < 3.0 && (
                 <div>
-                  <label htmlFor="rev-pip-input" className="block font-semibold text-[#ba1a1a] mb-1.5">
+                  <label htmlFor="rev-pip-input" className="block font-semibold text-[#141414] mb-1.5">
                     خطة التوجيه وتحسين الأداء الإلزامية (PIP Coaching Plan)
                   </label>
                   <input
@@ -1211,7 +1211,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
                     value={revPipCoaching}
                     onChange={(e) => setRevPipCoaching(e.target.value)}
                     placeholder="حدد خطوات التطوير الأسبوعية ومعايير القياس الموضوعية..."
-                    className="w-full min-h-[40px] bg-[#ffdad6]/40 border-2 border-[#fca5a5] rounded-[16px] px-3 py-2 text-[#141414]"
+                    className="w-full min-h-[40px] bg-[#f3f3f3] border-2 border-[#e0e0e0] rounded-[16px] px-3 py-2 text-[#141414]"
                   />
                 </div>
               )}
@@ -1237,13 +1237,13 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
       {showAddDependentModal && (
         <div className="fixed inset-0 z-[2100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white border border-[#e0e0e0] rounded-[24px] max-w-md w-full overflow-hidden shadow-[var(--elevation-modal)]">
-            <div className="p-4 bg-[#141414] text-white flex items-center justify-between">
-              <h4 className="text-sm font-bold text-white">إضافة تابع وتفعيل التغطية التأمينية الطبية</h4>
+            <div className="p-4 bg-[#f3f3f3] text-[#141414] border-b border-[#e0e0e0] flex items-center justify-between">
+              <h4 className="text-sm font-bold text-[#141414]">إضافة تابع وتفعيل التغطية التأمينية الطبية</h4>
               <button
                 type="button"
                 aria-label="إغلاق"
                 onClick={() => setShowAddDependentModal(false)}
-                className="text-[#adadad] hover:text-white"
+                className="text-[#adadad] hover:text-[#141414]"
               >
                 <X className="size-5" />
               </button>

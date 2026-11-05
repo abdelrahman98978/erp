@@ -267,9 +267,9 @@ export const FinancialRequestsPage: React.FC = () => {
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
             className="button-outline-on-dark"
-            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: 'rgba(207, 166, 74, 0.55)', background: 'rgba(207, 166, 74, 0.14)', color: '#F5EDDC', fontWeight: 700 }}
+            style={{ fontSize: '12.5px', padding: '6px 16px', minHeight: '38px', borderColor: '#e0e0e0', background: '#ffffff', color: '#141414', fontWeight: 700 }}
           >
-            <FileText className="w-4 h-4 ml-1 text-[#CFA64A]" />
+            <FileText className="w-4 h-4 ml-1 text-[#141414]" />
             <span>استخلاص مطالبات وفواتير الصرف (PDF / Word / Excel)</span>
           </button>
 
@@ -329,7 +329,7 @@ export const FinancialRequestsPage: React.FC = () => {
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+            <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
             <input
               type="text"
               aria-label="البحث بالرقم، المدفوع له، أو الوصف"
@@ -367,11 +367,11 @@ export const FinancialRequestsPage: React.FC = () => {
                   <td className="p-3.5 font-mono font-bold text-black">{r.request_number}</td>
                   <td className="p-3.5">
                     <div className="font-bold text-black">{r.paid_to}</div>
-                    <div className="text-[11px] text-zinc-500">{r.accounting_name}</div>
+                    <div className="text-[11px] text-[#707070]">{r.accounting_name}</div>
                   </td>
                   <td className="p-3.5"><Badge text={r.request_type} type="purple" /></td>
                   <td className="p-3.5 text-zinc-600">{r.branch}</td>
-                  <td className="p-3.5 font-mono font-bold text-emerald-700">{r.amount.toLocaleString()} ⃁</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{r.amount.toLocaleString()} ⃁</td>
                   <td className="p-3.5 text-zinc-600">{r.payment_method}</td>
                   <td className="p-3.5"><Badge text={r.escalation} type={r.escalation === 'شديد الأهمية' ? 'danger' : 'warning'} /></td>
                   <td className="p-3.5"><Badge text={r.status} type={r.status === 'تم السداد' ? 'success' : 'warning'} /></td>
@@ -401,7 +401,7 @@ export const FinancialRequestsPage: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleDeleteRequest(r)}
-                        className="p-1 rounded-full hover:bg-rose-50 text-zinc-400 hover:text-rose-600 transition-colors"
+                        className="p-1 rounded-full hover:bg-[#eaeaea] text-[#707070] hover:text-[#141414] transition-colors"
                         title="حذف الطلب"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -419,12 +419,12 @@ export const FinancialRequestsPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden font-sans max-h-[90vh] flex flex-col">
-            <div className="p-5 bg-black text-white flex items-center justify-between shrink-0">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between shrink-0">
+              <h3 className="font-bold text-base text-[#141414] flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#141414]" />
                 <span>إنشاء طلب مالي جديد</span>
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>

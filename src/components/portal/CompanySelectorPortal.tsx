@@ -41,7 +41,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
             <div style={{ width: '44px', height: '44px', borderRadius: '9999px', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', flexShrink: 0 }}>
-              <Building2 className="w-5 h-5 text-emerald-400" />
+              <Building2 className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -55,7 +55,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 بوابة اختيار الكيانات التشغيلية والشركات المستقلة
               </h1>
-              <p className="text-xs text-zinc-400 mt-1 font-sans max-w-3xl leading-relaxed">
+              <p className="text-xs text-[#707070] mt-1 font-sans max-w-3xl leading-relaxed">
                 اختر بيئة العمل الخاصة بكل كيان قانوني للوصول إلى السجلات المحاسبية المستقلة، المنافسات الحكومية، عقود الاستقدام، والتقارير التنفيذية مع الحفاظ التام على عزل البيانات.
               </p>
             </div>
@@ -79,9 +79,9 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
               cursor: 'pointer',
             }}
           >
-            <Globe className="w-4 h-4 text-emerald-700" />
+            <Globe className="w-4 h-4 text-[#141414]" />
             <span>الدخول للإدارة المركزية للمجموعة (All Companies)</span>
-            <ChevronLeft className="w-4 h-4 text-zinc-500" />
+            <ChevronLeft className="w-4 h-4 text-[#707070]" />
           </button>
         </div>
       </div>
@@ -92,8 +92,8 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
       {kasCompany && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#141414] animate-pulse"></span>
               <span>قطاع التجارة والمقاولات والمنافسات الحكومية (Featured Entity):</span>
             </h2>
             <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
@@ -134,7 +134,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                     <h3 className="display-sm" style={{ fontSize: '22px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                       {kasCompany.name}
                     </h3>
-                    <p className="text-xs text-zinc-400 mt-1 font-sans">
+                    <p className="text-xs text-[#707070] mt-1 font-sans">
                       KAS Trading & Contracting • إدارة المنافسات الحكومية، الفواتير الإلكترونية ZATCA، عروض الأسعار، وكراسات الكميات
                     </p>
                   </div>
@@ -185,7 +185,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                     cursor: 'pointer',
                   }}
                 >
-                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <Sparkles className="w-4 h-4 text-[#141414]" />
                   <span>دخول البوابة المستقلة لشركة كاس (KAS Suite)</span>
                   <ArrowLeft className="w-4 h-4" />
                 </button>
@@ -199,8 +199,8 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
       {/* 3. RECRUITMENT & OPERATING ENTITIES GRID */}
       {/* ========================================================================= */}
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+        <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-slate-600" />
           <span>شركات الاستقدام والكيانات التشغيلية المعتمدة (Recruitment Entities):</span>
         </h2>
 
@@ -246,26 +246,26 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   <h3 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', letterSpacing: '-0.01em', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                     {comp.name}
                   </h3>
-                  <div className="text-xs text-zinc-400 mt-1 font-sans font-medium">
+                  <div className="text-xs text-[#707070] mt-1 font-sans font-medium">
                     {comp.nameEn}
                   </div>
 
                   {/* Metrics Grid */}
                   <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-zinc-50 border border-zinc-200 mt-4 text-xs">
                     <div>
-                      <span className="text-[11px] text-zinc-500 block font-medium">الفروع النشطة</span>
+                      <span className="text-[11px] text-[#707070] block font-medium">الفروع النشطة</span>
                       <span className="text-sm font-bold text-black block mt-0.5">{comp.branchesCount} فروع</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-zinc-500 block font-medium">إجمالي الكادر</span>
-                      <span className="text-sm font-bold text-emerald-700 block mt-0.5">{comp.employeesCount} موظف</span>
+                      <span className="text-[11px] text-[#707070] block font-medium">إجمالي الكادر</span>
+                      <span className="text-sm font-bold text-[#141414] block mt-0.5">{comp.employeesCount} موظف</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-zinc-500 block font-medium">الطلبات السارية</span>
+                      <span className="text-[11px] text-[#707070] block font-medium">الطلبات السارية</span>
                       <span className="text-sm font-bold text-zinc-900 block mt-0.5">{comp.activeOrdersCount} طلب</span>
                     </div>
                     <div>
-                      <span className="text-[11px] text-zinc-500 block font-medium">الرقم الضريبي</span>
+                      <span className="text-[11px] text-[#707070] block font-medium">الرقم الضريبي</span>
                       <span className="text-[11px] font-mono font-bold text-zinc-700 block mt-0.5">{comp.taxNumber.slice(0, 8)}...</span>
                     </div>
                   </div>

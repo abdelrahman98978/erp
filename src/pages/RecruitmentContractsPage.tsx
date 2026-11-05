@@ -796,19 +796,19 @@ export const RecruitmentContractsPage: React.FC = () => {
           />
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-wider bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                 MUSANED RECRUITMENT PIPELINE
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#141414] animate-pulse" />
                 مباشر وموثق
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white m-0 font-display">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#141414] m-0 font-display">
               عقود الاستقدام المباشرة
             </h1>
-            <p className="text-sm text-zinc-300 m-0 mt-1 font-normal">
-              متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ <strong className="text-amber-300 font-bold">{activeCompany.name}</strong>
+            <p className="text-sm text-[#141414] m-0 mt-1 font-normal">
+              متابعة مراحل عقود مساند، التفييز، الإرساليات الخارجية، وحجوزات الطيران لـ <strong className="text-[#141414] font-bold">{activeCompany.name}</strong>
             </p>
           </div>
         </div>
@@ -817,18 +817,18 @@ export const RecruitmentContractsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
-            className="px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-[#1D2428] hover:bg-zinc-800 text-[#F5EDDC] border border-[#CFA64A]/50 flex items-center gap-1.5 transition-all cursor-pointer"
+            className="px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-[#f3f3f3] hover:bg-zinc-800 text-[#141414] border border-[#e0e0e0] flex items-center gap-1.5 transition-all cursor-pointer"
           >
-            <FileText className="w-4 h-4 text-[#CFA64A]" />
+            <FileText className="w-4 h-4 text-[#141414]" />
             <span>استخلاص عقود ومستندات (PDF / Word / Excel / صور)</span>
           </button>
 
           {/* Table / Kanban Toggle */}
-          <div className="bg-zinc-950/70 border border-zinc-800 p-1 rounded-2xl flex gap-1 shadow-inner backdrop-blur-md">
+          <div className="bg-[#f3f3f3]/70 border border-[#e0e0e0] p-1 rounded-2xl flex gap-1 shadow-inner backdrop-blur-md">
             <button
               onClick={() => setViewMode('table')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewMode === 'table' ? 'bg-amber-400 text-zinc-950 shadow-sm' : 'text-zinc-400 hover:text-white'
+                viewMode === 'table' ? 'bg-[#141414] text-[#ffffff] shadow-sm' : 'text-[#707070] hover:text-[#141414]'
               }`}
             >
               <List className="w-3.5 h-3.5" />
@@ -837,7 +837,7 @@ export const RecruitmentContractsPage: React.FC = () => {
             <button
               onClick={() => setViewMode('kanban')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewMode === 'kanban' ? 'bg-amber-400 text-zinc-950 shadow-sm' : 'text-zinc-400 hover:text-white'
+                viewMode === 'kanban' ? 'bg-[#141414] text-[#ffffff] shadow-sm' : 'text-[#707070] hover:text-[#141414]'
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
@@ -847,7 +847,7 @@ export const RecruitmentContractsPage: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#CFA64A] bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-500 text-zinc-950 border border-amber-300 shadow-lg shadow-amber-500/25 flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#141414] text-[#ffffff] bg-[#141414] text-[#ffffff] border border-[#e0e0e0] shadow-lg flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 shrink-0" />
             <span>إضافة عقد استقدام</span>
@@ -870,35 +870,35 @@ export const RecruitmentContractsPage: React.FC = () => {
           className="p-5 sm:p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-bold text-zinc-500">إجمالي عقود الاستقدام</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200/60 group-hover:scale-110 transition-transform">
+            <span className="text-xs sm:text-sm font-bold text-[#707070]">إجمالي عقود الاستقدام</span>
+            <div className="w-8 h-8 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0] group-hover:scale-110 transition-transform">
               <FileSignature className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
-            {contracts.length || 115} <span className="text-lg font-bold text-zinc-400">عقد</span>
+            {contracts.length || 115} <span className="text-lg font-bold text-[#707070]">عقد</span>
           </div>
-          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#141414]" />
             <span>موثقة عبر منصة مساند</span>
           </div>
         </div>
 
         {/* Card 2: Active Contracts */}
         <div 
-          className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-amber-50/40 via-white to-white border border-amber-200/80 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
+          className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-[#f3f3f3] via-white to-white border border-[#e0e0e0] shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs sm:text-sm font-bold text-zinc-700">العقود السارية والتنفيذ</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border border-amber-300/80 group-hover:scale-110 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0] group-hover:scale-110 transition-transform">
               <RefreshCw className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
-            {contracts.filter(c => c.stage !== 'مكتمل' && c.stage !== 'مرتجع').length || 27} <span className="text-lg font-bold text-zinc-400">عقد</span>
+            {contracts.filter(c => c.stage !== 'مكتمل' && c.stage !== 'مرتجع').length || 27} <span className="text-lg font-bold text-[#707070]">عقد</span>
           </div>
-          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100/80 text-amber-900 border border-amber-300/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#141414] animate-pulse" />
             <span>تفييز وحجوزات طيران</span>
           </div>
         </div>
@@ -907,22 +907,22 @@ export const RecruitmentContractsPage: React.FC = () => {
         <div 
           className="p-5 sm:p-6 rounded-3xl relative overflow-hidden shadow-lg transition-all duration-300 group"
           style={{
-            background: 'linear-gradient(135deg, #091725 0%, #132a44 100%)',
+            background: '#f3f3f3',
             border: '1.5px solid rgba(207, 166, 74, 0.45)',
             boxShadow: '0 12px 28px -8px rgba(9, 23, 37, 0.35)',
           }}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-bold text-zinc-300">إجمالي القيمة المالية للعقود</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center border border-amber-400/30 group-hover:scale-110 transition-transform">
+            <span className="text-xs sm:text-sm font-bold text-[#141414]">إجمالي القيمة المالية للعقود</span>
+            <div className="w-8 h-8 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0] group-hover:scale-110 transition-transform">
               <Zap className="w-4 h-4 fill-current" />
             </div>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-amber-300 mt-2.5 tracking-tight font-display">
-            {((contracts.reduce((sum, c) => sum + (c.total_amount || c.amount || 0), 0) || 1610000) / 1000000).toFixed(2)}M <span className="text-base font-bold text-amber-200/80">⃁</span>
+          <div className="text-3xl sm:text-4xl font-extrabold text-[#141414] mt-2.5 tracking-tight font-display">
+            {((contracts.reduce((sum, c) => sum + (c.total_amount || c.amount || 0), 0) || 1610000) / 1000000).toFixed(2)}M <span className="text-base font-bold text-[#141414]">⃁</span>
           </div>
-          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-400/20 text-amber-200 border border-amber-400/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#141414]" />
             <span>سداد آمن وحسابات وسيطة</span>
           </div>
         </div>
@@ -932,8 +932,8 @@ export const RecruitmentContractsPage: React.FC = () => {
           className="p-5 sm:p-6 rounded-3xl bg-white border border-zinc-200/80 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs sm:text-sm font-bold text-zinc-500">نسبة الامتثال والوصول</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200/60 group-hover:scale-110 transition-transform">
+            <span className="text-xs sm:text-sm font-bold text-[#707070]">نسبة الامتثال والوصول</span>
+            <div className="w-8 h-8 rounded-xl bg-[#f3f3f3] text-[#141414] flex items-center justify-center border border-[#e0e0e0] group-hover:scale-110 transition-transform">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
@@ -941,7 +941,7 @@ export const RecruitmentContractsPage: React.FC = () => {
             98.5%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2.5">
-            <div className="w-[98.5%] h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" />
+            <div className="w-[98.5%] h-full bg-[#141414] rounded-full" />
           </div>
           <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-zinc-100 text-zinc-700 border border-zinc-200">
             <span>ضمان 90 يوماً وتأمين شامل</span>
@@ -1002,7 +1002,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                 <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                   بوالص التأمين الإلزامية على عقود العمالة المنزلية (24 شهراً)
                 </h2>
-                <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+                <p className="text-xs text-[#707070] mt-0.5 font-sans">
                   حماية صاحب العمل والعاملة المنزلية ضد انقطاع العمل، هروب العمالة، الوفاة، أو التعويضات المالية
                 </p>
               </div>
@@ -1044,9 +1044,9 @@ export const RecruitmentContractsPage: React.FC = () => {
                       <td className="p-3.5 font-mono text-zinc-600">{pol.contract_number}</td>
                       <td className="p-3.5 font-bold text-black">{pol.client_name}</td>
                       <td className="p-3.5 text-black">{pol.maid_name}</td>
-                      <td className="p-3.5 font-bold text-emerald-800">{pol.company}</td>
+                      <td className="p-3.5 font-bold text-[#141414]">{pol.company}</td>
                       <td className="p-3.5 text-zinc-600">{pol.coverage}</td>
-                      <td className="p-3.5 font-mono text-zinc-500">{pol.start_date} إلى {pol.end_date}</td>
+                      <td className="p-3.5 font-mono text-[#707070]">{pol.start_date} إلى {pol.end_date}</td>
                       <td className="p-3.5 font-mono font-bold text-black">{pol.premium_sar} ⃁</td>
                       <td className="p-3.5">
                         <Badge 
@@ -1058,15 +1058,15 @@ export const RecruitmentContractsPage: React.FC = () => {
                         {!pol.status.includes('مطالبة') ? (
                           <button
                             onClick={() => handleFileInsuranceClaim(pol)}
-                            className="button-outline-on-light text-[11px] font-bold text-amber-700 hover:bg-amber-50"
+                            className="button-outline-on-light text-[11px] font-bold text-[#141414] hover:bg-[#eaeaea]"
                             style={{ minHeight: '26px', padding: '2px 8px' }}
                             title="رفع مطالبة تعويض لدى شركة التأمين ومساند"
                           >
-                            <ShieldAlert className="w-3 h-3 ml-1 inline text-amber-600" />
+                            <ShieldAlert className="w-3 h-3 ml-1 inline text-[#141414]" />
                             <span>رفع مطالبة</span>
                           </button>
                         ) : (
-                          <span className="text-[10px] text-zinc-400 font-medium">قيد التعويض</span>
+                          <span className="text-[10px] text-[#707070] font-medium">قيد التعويض</span>
                         )}
                       </td>
                     </tr>
@@ -1086,7 +1086,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                 سجل إرساليات المكاتب الخارجية وتفويج العمالة
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+              <p className="text-xs text-[#707070] mt-0.5 font-sans">
                 متابعة حركة جوازات العمالة، التأشيرات بالسفارة، حجز التذاكر، ومحطة الوصول
               </p>
             </div>
@@ -1135,23 +1135,23 @@ export const RecruitmentContractsPage: React.FC = () => {
                         type={d.dispatch_status.includes('وصول') ? 'success' : 'primary'} 
                       />
                     </td>
-                    <td className="p-3.5 font-mono text-zinc-500">{d.dispatch_date}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{d.dispatch_date}</td>
                     <td className="p-3.5 text-zinc-700">{d.arrival_station}</td>
-                    <td className="p-3.5 font-mono font-bold text-emerald-700">${d.cost_usd}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">${d.cost_usd}</td>
                     <td className="p-3.5 text-center">
                       <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => handleAdvanceDispatch(d)}
-                          className="button-outline-on-light text-[11px] font-bold text-emerald-800 hover:bg-emerald-50"
+                          className="button-outline-on-light text-[11px] font-bold text-[#141414] hover:bg-[#eaeaea]"
                           style={{ minHeight: '26px', padding: '2px 8px' }}
                           title="ترقية مسار الإرسالية للمرحلة التالية"
                         >
-                          <Plane className="w-3 h-3 ml-1 inline text-emerald-600" />
+                          <Plane className="w-3 h-3 ml-1 inline text-[#141414]" />
                           <span>ترقية المسار</span>
                         </button>
                         <button
                           onClick={() => handleDeleteDispatch(d)}
-                          className="p-1 text-zinc-400 hover:text-rose-600 rounded transition"
+                          className="p-1 text-[#707070] hover:text-[#141414] rounded transition"
                           title="حذف الإرسالية"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1174,7 +1174,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                 طلبات تمديد وتجديد عقود الاستقدام
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+              <p className="text-xs text-[#707070] mt-0.5 font-sans">
                 إدارة طلبات استمرار العمالة والتجديد المباشر بموافقة الأطراف
               </p>
             </div>
@@ -1215,9 +1215,9 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <td className="p-3.5 font-mono text-zinc-600">{ext.contract_number}</td>
                     <td className="p-3.5 font-bold text-black">{ext.client_name}</td>
                     <td className="p-3.5 text-black">{ext.maid_name}</td>
-                    <td className="p-3.5 font-bold text-emerald-800">{ext.extension_years} سنوات</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{ext.extension_years} سنوات</td>
                     <td className="p-3.5 text-zinc-600">{ext.applicant}</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{ext.request_date}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{ext.request_date}</td>
                     <td className="p-3.5">
                       <Badge 
                         text={ext.status} 
@@ -1229,7 +1229,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                         <div className="flex items-center justify-center gap-1.5">
                           <button
                             onClick={() => handleApproveExtension(ext)}
-                            className="px-2 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[11px] font-bold flex items-center gap-1"
+                            className="px-2 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] text-[11px] font-bold flex items-center gap-1"
                             title="اعتماد التمديد وتحديث ضمان العقد"
                           >
                             <Check className="w-3 h-3" />
@@ -1237,7 +1237,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleRejectExtension(ext)}
-                            className="px-2 py-1 rounded-full bg-rose-100 hover:bg-rose-200 text-rose-800 text-[11px] font-bold flex items-center gap-1"
+                            className="px-2 py-1 rounded-full bg-[#f3f3f3] hover:bg-[#eaeaea] text-[#141414] text-[11px] font-bold flex items-center gap-1"
                             title="رفض طلب التمديد"
                           >
                             <X className="w-3 h-3" />
@@ -1245,7 +1245,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                           </button>
                         </div>
                       ) : (
-                        <span className="text-[10px] text-zinc-400 font-medium">مكتمل</span>
+                        <span className="text-[10px] text-[#707070] font-medium">مكتمل</span>
                       )}
                     </td>
                   </tr>
@@ -1264,7 +1264,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
                 طلبات استرجاع العقود والتسويات المالية
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5 font-sans">
+              <p className="text-xs text-[#707070] mt-0.5 font-sans">
                 معالجة حالات رفض العمل وعدم التوافق وإصدار سندات الصرف والاسترداد المالي
               </p>
             </div>
@@ -1305,7 +1305,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-black">{ret.client_name}</td>
                     <td className="p-3.5 text-black">{ret.maid_name}</td>
                     <td className="p-3.5 text-zinc-700">{ret.notes}</td>
-                    <td className="p-3.5 font-mono text-zinc-500">{ret.request_date}</td>
+                    <td className="p-3.5 font-mono text-[#707070]">{ret.request_date}</td>
                     <td className="p-3.5">
                       <Badge 
                         text={ret.status} 
@@ -1317,14 +1317,14 @@ export const RecruitmentContractsPage: React.FC = () => {
                         <button
                           onClick={() => handleProcessReturn(ret)}
                           className="button-primary-pill text-[11px] font-bold flex items-center gap-1 mx-auto shadow-sm"
-                          style={{ minHeight: '26px', padding: '2px 10px', backgroundColor: '#059669' }}
+                          style={{ minHeight: '26px', padding: '2px 10px', backgroundColor: '#141414', color: '#ffffff' }}
                           title="اعتماد الإرجاع وتوليد سند صرف استرداد مالي تلقائي"
                         >
                           <DollarSign className="w-3 h-3" />
                           <span>تسوية وصرف استرداد</span>
                         </button>
                       ) : (
-                        <span className="text-[10px] font-bold text-emerald-700">تم الصرف المالي ✓</span>
+                        <span className="text-[10px] font-bold text-[#141414]">تم الصرف المالي ✓</span>
                       )}
                     </td>
                   </tr>
@@ -1340,7 +1340,7 @@ export const RecruitmentContractsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
             <div className="relative w-full md:w-80">
-              <Search className="w-4 h-4 absolute right-3 top-3 text-zinc-400" />
+              <Search className="w-4 h-4 absolute right-3 top-3 text-[#707070]" />
               <input
                 type="text"
                 aria-label="البحث برقم العقد، اسم العميل، اسم العاملة، أو الجواز"
@@ -1386,7 +1386,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                           <CorporateAvatar name={c.client_name} category={c.client_type || 'أفراد'} isClient size="xs" />
                           <div>
                             <div className="font-bold text-black">{c.client_name}</div>
-                            <div className="text-zinc-500 font-mono">{c.client_phone}</div>
+                            <div className="text-[#707070] font-mono">{c.client_phone}</div>
                           </div>
                         </div>
                       </td>
@@ -1395,15 +1395,15 @@ export const RecruitmentContractsPage: React.FC = () => {
                           <CorporateAvatar name={c.maid_name} role="عاملة منزلية" isCandidate size="xs" />
                           <div>
                             <div className="font-bold text-black">{c.maid_name}</div>
-                            <div className="text-zinc-500 font-mono">{c.maid_passport}</div>
+                            <div className="text-[#707070] font-mono">{c.maid_passport}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-3.5">
                         <div className="font-bold text-black">{c.nationality}</div>
-                        <div className="text-zinc-500 text-[11px]">{c.external_office || 'مكتب خارجي معتمد'}</div>
+                        <div className="text-[#707070] text-[11px]">{c.external_office || 'مكتب خارجي معتمد'}</div>
                       </td>
-                      <td className="p-3.5 font-mono font-bold text-emerald-700">{(c.amount ?? 0).toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{(c.amount ?? 0).toLocaleString()} ⃁</td>
                       <td className="p-3.5"><Badge text={c.stage} type="primary" /></td>
                       <td className="p-3.5"><Badge text={c.warranty_status} type="success" /></td>
                       <td className="p-3.5 text-center">
@@ -1438,12 +1438,12 @@ export const RecruitmentContractsPage: React.FC = () => {
                 <div key={c.id} className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-start mb-2">
-                      <span className="font-mono text-xs font-bold text-zinc-500">{c.contract_number}</span>
+                      <span className="font-mono text-xs font-bold text-[#707070]">{c.contract_number}</span>
                       <Badge text={c.stage} type="primary" />
                     </div>
                     <h4 className="font-bold text-black text-sm mb-1">{c.client_name}</h4>
                     <p className="text-xs text-zinc-600 mb-3">{c.maid_name} - {c.nationality}</p>
-                    <div className="py-2 px-3 bg-white rounded-xl text-xs font-mono font-bold text-emerald-700 mb-3 border border-zinc-200">
+                    <div className="py-2 px-3 bg-white rounded-xl text-xs font-mono font-bold text-[#141414] mb-3 border border-zinc-200">
                       {(c.amount ?? 0).toLocaleString()} ⃁
                     </div>
                   </div>
@@ -1474,14 +1474,14 @@ export const RecruitmentContractsPage: React.FC = () => {
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
           <div className="w-full max-w-xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-5 bg-black text-white flex items-center justify-between">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Plus className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#141414] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#141414]" />
                 <span>إضافة عقد استقدام جديد (Musaned Form)</span>
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                className="p-1.5 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1631,7 +1631,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <h3 className="font-bold text-black text-base">طباعة عقد الاستقدام المعتمد</h3>
               <button
                 onClick={() => setSelectedContractForPrint(null)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black"
+                className="p-1 rounded-full text-[#707070] hover:text-black"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1646,13 +1646,13 @@ export const RecruitmentContractsPage: React.FC = () => {
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-black">رقم توثيق منصة مساند:</span>
-                    <span className="font-mono font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
+                    <span className="font-mono font-bold text-[#141414] bg-[#f3f3f3] px-2.5 py-0.5 rounded-lg border border-[#e0e0e0]">
                       {selectedContractForPrint.musaned_number || 'MSN-2026-99201'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-black">حالة العقد:</span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414]">
                       {selectedContractForPrint.stage} - ساري وموثق
                     </span>
                   </div>
@@ -1665,10 +1665,10 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
                       الطرف الأول (المرخص له بالاستقدام)
                     </h4>
-                    <div className="flex justify-between"><span className="text-zinc-500">الاسم التجاري:</span><strong className="text-black">مجموعة السليم للاستقدام</strong></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">رقم ترخيص الاستقدام:</span><span className="font-mono font-bold text-black">390102</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">السجل التجاري:</span><span className="font-mono font-bold text-black">1010884920</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">الفرع الموثق:</span><span className="font-bold text-black">{selectedContractForPrint.branch || 'الفرع الرئيسي - الرياض'}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">الاسم التجاري:</span><strong className="text-black">مجموعة السليم للاستقدام</strong></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">رقم ترخيص الاستقدام:</span><span className="font-mono font-bold text-black">390102</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">السجل التجاري:</span><span className="font-mono font-bold text-black">1010884920</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">الفرع الموثق:</span><span className="font-bold text-black">{selectedContractForPrint.branch || 'الفرع الرئيسي - الرياض'}</span></div>
                   </div>
 
                   {/* Second Party (Employer) */}
@@ -1676,10 +1676,10 @@ export const RecruitmentContractsPage: React.FC = () => {
                     <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
                       الطرف الثاني (صاحب العمل المستقدم)
                     </h4>
-                    <div className="flex justify-between"><span className="text-zinc-500">اسم صاحب العمل:</span><strong className="text-black">{selectedContractForPrint.client_name}</strong></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">رقم الهوية / الإقامة:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_national_id || '1088741920'}</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">رقم الجوال:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_phone}</span></div>
-                    <div className="flex justify-between"><span className="text-zinc-500">مدينة التسليم:</span><span className="font-bold text-black">{selectedContractForPrint.delivery_city || 'الرياض'}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">اسم صاحب العمل:</span><strong className="text-black">{selectedContractForPrint.client_name}</strong></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">رقم الهوية / الإقامة:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_national_id || '1088741920'}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">رقم الجوال:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_phone}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">مدينة التسليم:</span><span className="font-bold text-black">{selectedContractForPrint.delivery_city || 'الرياض'}</span></div>
                   </div>
                 </div>
 
@@ -1689,14 +1689,14 @@ export const RecruitmentContractsPage: React.FC = () => {
                     بيانات ومواصفات العمالة المنزلية محل العقد
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
-                    <div><span className="text-zinc-500 block">اسم العامل/ة:</span><strong className="text-black">{selectedContractForPrint.maid_name}</strong></div>
-                    <div><span className="text-zinc-500 block">الجنسية:</span><strong className="text-black">{selectedContractForPrint.nationality}</strong></div>
-                    <div><span className="text-zinc-500 block">المهنة:</span><strong className="text-black">عاملة منزلية شاملة</strong></div>
-                    <div><span className="text-zinc-500 block">رقم جواز السفر:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.maid_passport || 'EP889201'}</span></div>
-                    <div><span className="text-zinc-500 block">الراتب الشهري:</span><strong className="font-mono text-black">1,500 ⃁</strong></div>
-                    <div><span className="text-zinc-500 block">المكتب الخارجي:</span><strong className="text-black">{selectedContractForPrint.external_office || 'وكالة إرساليات معتمدة'}</strong></div>
-                    <div><span className="text-zinc-500 block">مدة الضمان النظامية:</span><strong className="text-emerald-700 font-bold">{selectedContractForPrint.warranty_status || '90 يوماً'}</strong></div>
-                    <div><span className="text-zinc-500 block">التأمين على العقد:</span><strong className="text-emerald-700 font-bold">ساري لمدة 24 شهراً</strong></div>
+                    <div><span className="text-[#707070] block">اسم العامل/ة:</span><strong className="text-black">{selectedContractForPrint.maid_name}</strong></div>
+                    <div><span className="text-[#707070] block">الجنسية:</span><strong className="text-black">{selectedContractForPrint.nationality}</strong></div>
+                    <div><span className="text-[#707070] block">المهنة:</span><strong className="text-black">عاملة منزلية شاملة</strong></div>
+                    <div><span className="text-[#707070] block">رقم جواز السفر:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.maid_passport || 'EP889201'}</span></div>
+                    <div><span className="text-[#707070] block">الراتب الشهري:</span><strong className="font-mono text-black">1,500 ⃁</strong></div>
+                    <div><span className="text-[#707070] block">المكتب الخارجي:</span><strong className="text-black">{selectedContractForPrint.external_office || 'وكالة إرساليات معتمدة'}</strong></div>
+                    <div><span className="text-[#707070] block">مدة الضمان النظامية:</span><strong className="text-[#141414] font-bold">{selectedContractForPrint.warranty_status || '90 يوماً'}</strong></div>
+                    <div><span className="text-[#707070] block">التأمين على العقد:</span><strong className="text-[#141414] font-bold">ساري لمدة 24 شهراً</strong></div>
                   </div>
                 </div>
 
@@ -1725,7 +1725,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                         <td className="p-2.5 font-sans font-medium text-black">خدمات التوسط والاستقدام الشاملة</td>
                         <td className="p-2.5 text-center">{(selectedContractForPrint.amount ?? 14500).toLocaleString()} ⃁</td>
                         <td className="p-2.5 text-center">{((selectedContractForPrint.amount ?? 14500) * 0.15).toLocaleString()} ⃁</td>
-                        <td className="p-2.5 text-left font-bold text-emerald-700">{((selectedContractForPrint.amount ?? 14500) * 1.15).toLocaleString()} ⃁</td>
+                        <td className="p-2.5 text-left font-bold text-[#141414]">{((selectedContractForPrint.amount ?? 14500) * 1.15).toLocaleString()} ⃁</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1735,14 +1735,14 @@ export const RecruitmentContractsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
                   <div className="text-center space-y-6">
                     <div className="font-bold text-black text-xs">ختم وتوقيع الطرف الأول (الشركة)</div>
-                    <div className="w-24 h-24 mx-auto border-2 border-dashed border-emerald-600/40 rounded-full flex items-center justify-center bg-emerald-50/50">
-                      <span className="text-[10px] font-bold text-emerald-800 text-center leading-tight">مجموعة السليم<br />ختم الاعتماد الرسمي<br />مساند</span>
+                    <div className="w-24 h-24 mx-auto border-2 border-dashed border-[#e0e0e0] rounded-full flex items-center justify-center bg-[#f3f3f3]">
+                      <span className="text-[10px] font-bold text-[#141414] text-center leading-tight">مجموعة السليم<br />ختم الاعتماد الرسمي<br />مساند</span>
                     </div>
                   </div>
                   <div className="text-center space-y-6">
                     <div className="font-bold text-black text-xs">توقيع الطرف الثاني (صاحب العمل)</div>
                     <div className="w-full h-16 border-b-2 border-zinc-400 mt-8 flex items-end justify-center">
-                      <span className="text-[11px] text-zinc-400">التوقيع الإلكتروني معتمد بموجب النفاذ الوطني</span>
+                      <span className="text-[11px] text-[#707070]">التوقيع الإلكتروني معتمد بموجب النفاذ الوطني</span>
                     </div>
                   </div>
                 </div>
@@ -1759,12 +1759,12 @@ export const RecruitmentContractsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <Plane className="w-5 h-5 text-emerald-600" />
+                <Plane className="w-5 h-5 text-[#141414]" />
                 <h3 className="font-bold text-black text-base">تسجيل إرسالية وتفويج عمالة جديدة</h3>
               </div>
               <button 
                 onClick={() => setShowAddDispatchModal(false)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1887,12 +1887,12 @@ export const RecruitmentContractsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-emerald-600" />
+                <Clock className="w-5 h-5 text-[#141414]" />
                 <h3 className="font-bold text-black text-base">تقديم طلب تمديد عقد استقدام</h3>
               </div>
               <button 
                 onClick={() => setShowAddExtensionModal(false)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1985,12 +1985,12 @@ export const RecruitmentContractsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-rose-600" />
+                <AlertCircle className="w-5 h-5 text-[#141414]" />
                 <h3 className="font-bold text-black text-base">تسجيل طلب استرجاع عقد وتسوية مالية</h3>
               </div>
               <button 
                 onClick={() => setShowAddReturnModal(false)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2065,9 +2065,9 @@ export const RecruitmentContractsPage: React.FC = () => {
                           notes: `${calc.legalReasonAr} [استقطاع إداري: ${calc.adminFeeDeduction} ⃁ | النسبة: ${calc.refundPercentage}%]`,
                         });
                       }}
-                      className="text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1 transition-all"
+                      className="text-[10px] font-bold text-[#141414] bg-[#f3f3f3] hover:bg-[#eaeaea] px-2 py-0.5 rounded-full border border-[#e0e0e0] flex items-center gap-1 transition-all"
                     >
-                      <Zap className="w-3 h-3 text-emerald-600" />
+                      <Zap className="w-3 h-3 text-[#141414]" />
                       حساب نظامي آلي (مساند)
                     </button>
                   </div>
@@ -2075,13 +2075,13 @@ export const RecruitmentContractsPage: React.FC = () => {
                     type="number"
                     value={returnForm.refund_amount}
                     onChange={(e) => setReturnForm({ ...returnForm, refund_amount: e.target.value })}
-                    className="text-input w-full font-bold text-emerald-700"
+                    className="text-input w-full font-bold text-[#141414]"
                   />
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200/80 text-[11px] text-amber-900 flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="p-2.5 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] text-[11px] text-[#141414] flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#141414] shrink-0 mt-0.5" />
                 <span>
                   <strong>ضمان مساند المالي:</strong> يتم احتساب الاسترداد وفق الضوابط الوزارية (استقطاع إداري 5% خلال أول 30 يوماً، أو 20% بعد ذلك، واسترداد 100% في حال التأخير عن 90 يوماً أو رفض العمالة).
                 </span>
@@ -2108,7 +2108,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="button-primary-pill text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-md"
+                  className="button-primary-pill text-xs font-bold bg-[#141414] hover:bg-[#262626] text-white shadow-md"
                 >
                   تسجيل طلب الاسترجاع
                 </button>
@@ -2124,12 +2124,12 @@ export const RecruitmentContractsPage: React.FC = () => {
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                <ShieldCheck className="w-5 h-5 text-[#141414]" />
                 <h3 className="font-bold text-black text-base">إصدار وثيقة تأمين مساند جديدة (24 شهراً)</h3>
               </div>
               <button 
                 onClick={() => setShowAddInsuranceModal(false)}
-                className="p-1 rounded-full text-zinc-400 hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>

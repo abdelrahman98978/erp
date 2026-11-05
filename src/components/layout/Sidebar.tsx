@@ -412,7 +412,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 type="button"
                 onClick={onToggleCollapse}
-                className="hidden lg:inline-flex w-8 h-8 rounded-full bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-[#ffffff] items-center justify-center transition-colors cursor-pointer"
+                className="hidden lg:inline-flex w-8 h-8 rounded-full bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#ffffff] items-center justify-center transition-colors cursor-pointer"
                 title={effectiveMode === 'compact' ? 'توسيع القائمة الجانبية (Alt+B)' : 'طي القائمة الجانبية (Alt+B)'}
                 aria-label={effectiveMode === 'compact' ? 'توسيع القائمة الجانبية' : 'طي القائمة الجانبية'}
               >
@@ -639,7 +639,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             type="button"
             onClick={() => onSelectTab('logout', 'تسجيل الخروج')}
             title="تسجيل الخروج من القسم"
-            className="w-full h-10 app-icon-squircle bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-[#ffffff] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-full h-10 app-icon-squircle bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#ffffff] flex items-center justify-center cursor-pointer transition-colors"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -666,7 +666,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               type="button"
               onClick={() => onSelectTab('logout', 'تسجيل الخروج')}
-              className="w-full py-2 px-3 rounded-full bg-[#f3f3f3] hover:bg-[#141414] text-[#141414] hover:text-[#ffffff] text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              className="w-full py-2 px-3 rounded-full bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#ffffff] text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>تسجيل الخروج من القسم</span>

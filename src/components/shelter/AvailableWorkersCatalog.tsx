@@ -96,21 +96,21 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
   };
 
   return (
-    <div className="space-y-6 text-zinc-100 font-sans" dir="rtl">
+    <div className="space-y-6 text-[#141414] font-sans" dir="rtl">
       {/* Header & Filter Controls Bar - Dark Executive */}
-      <div className="bg-[#14181c] rounded-2xl border border-white/10 p-5 shadow-md space-y-4">
+      <div className="bg-[#ffffff] rounded-2xl border border-[#e0e0e0] p-5 shadow-md space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-              <h2 className="text-base font-bold text-white tracking-tight font-display m-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#141414] animate-pulse" />
+              <h2 className="text-base font-bold text-[#141414] tracking-tight font-display m-0">
                 كتالوج العاملات المتاحة لنقل الخدمات المباشر
               </h2>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-mono">
                 {availableWorkers.length} عاملة جاهزة
               </span>
             </div>
-            <p className="text-xs text-zinc-400 mt-1 m-0">
+            <p className="text-xs text-[#707070] mt-1 m-0">
               عاملات مدربات، مفحوصات طبياً ومؤهلات للنقل الفوري والتجربة عبر مكاتب المجموعة الأربعة
             </p>
           </div>
@@ -120,7 +120,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
               <button
                 type="button"
                 onClick={onRefresh}
-                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-xs font-bold transition-all cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-[#f3f3f3] hover:bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-xs font-bold transition-all cursor-pointer"
               >
                 تحديث الكتالوج
               </button>
@@ -129,17 +129,17 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
         </div>
 
         {/* Filter Controls */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-[#e0e0e0]">
           {/* Search Input */}
           <div className="relative">
-            <Search className="w-4 h-4 text-zinc-400 absolute right-3 top-3" />
+            <Search className="w-4 h-4 text-[#707070] absolute right-3 top-3" />
             <input
               type="text"
               aria-label="بحث بالاسم، الجواز، المهارة"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="بحث بالاسم، الجواز، المهارة..."
-              className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400"
+              className="w-full pr-9 pl-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] placeholder-zinc-500 focus:outline-none focus:border-[#141414]"
             />
           </div>
 
@@ -149,11 +149,11 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
               aria-label="تصفية حسب المكتب الأصلي"
               value={selectedOffice}
               onChange={(e) => setSelectedOffice(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-medium cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414] font-medium cursor-pointer"
             >
-              <option value="all" className="bg-[#14181c] text-white">كافة المكاتب الأصلية (المجموعة)</option>
+              <option value="all" className="bg-[#ffffff] text-[#141414]">كافة المكاتب الأصلية (المجموعة)</option>
               {GROUP_COMPANIES.map((c: any) => (
-                <option key={c.id} value={c.id} className="bg-[#14181c] text-white">
+                <option key={c.id} value={c.id} className="bg-[#ffffff] text-[#141414]">
                   مكتب: {c.name}
                 </option>
               ))}
@@ -166,11 +166,11 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
               aria-label="تصفية حسب الجنسية"
               value={selectedNationality}
               onChange={(e) => setSelectedNationality(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-medium cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414] font-medium cursor-pointer"
             >
-              <option value="all" className="bg-[#14181c] text-white">كافة الجنسيات</option>
+              <option value="all" className="bg-[#ffffff] text-[#141414]">كافة الجنسيات</option>
               {nationalities.map(n => (
-                <option key={n} value={n} className="bg-[#14181c] text-white">{n}</option>
+                <option key={n} value={n} className="bg-[#ffffff] text-[#141414]">{n}</option>
               ))}
             </select>
           </div>
@@ -181,11 +181,11 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
               aria-label="تصفية حسب التخصص أو المهارة"
               value={selectedSkill}
               onChange={(e) => setSelectedSkill(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs bg-black/50 border border-white/15 text-white focus:outline-none focus:border-amber-400 font-medium cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl text-xs bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] focus:outline-none focus:border-[#141414] font-medium cursor-pointer"
             >
-              <option value="all" className="bg-[#14181c] text-white">كافة التخصصات والمهارات</option>
+              <option value="all" className="bg-[#ffffff] text-[#141414]">كافة التخصصات والمهارات</option>
               {allSkills.map(s => (
-                <option key={s} value={s} className="bg-[#14181c] text-white">{s}</option>
+                <option key={s} value={s} className="bg-[#ffffff] text-[#141414]">{s}</option>
               ))}
             </select>
           </div>
@@ -193,14 +193,14 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
 
         {/* Quick Tags Filter */}
         <div className="flex items-center gap-2 flex-wrap pt-1 text-xs">
-          <span className="text-zinc-400 font-bold ml-1">تصفية التجارب السابقة:</span>
+          <span className="text-[#707070] font-bold ml-1">تصفية التجارب السابقة:</span>
           <button
             type="button"
             onClick={() => setTrialsFilter('all')}
             className={`px-3 py-1 rounded-xl font-bold transition-all cursor-pointer ${
               trialsFilter === 'all' 
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20' 
-                : 'bg-white/5 text-zinc-400 hover:text-white border border-white/10'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md ' 
+                : 'bg-[#f3f3f3] text-[#707070] hover:text-[#141414] border border-[#e0e0e0]'
             }`}
           >
             الكل
@@ -210,8 +210,8 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
             onClick={() => setTrialsFilter('zero')}
             className={`px-3 py-1 rounded-xl font-bold transition-all cursor-pointer ${
               trialsFilter === 'zero' 
-                ? 'bg-emerald-500 text-black shadow-md' 
-                : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 hover:bg-emerald-500/25'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md' 
+                : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-[#eaeaea]'
             }`}
           >
             استقدام جديد (0 تجارب سابقة)
@@ -221,8 +221,8 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
             onClick={() => setTrialsFilter('one_plus')}
             className={`px-3 py-1 rounded-xl font-bold transition-all cursor-pointer ${
               trialsFilter === 'one_plus' 
-                ? 'bg-amber-400 text-black shadow-md shadow-amber-500/20' 
-                : 'bg-amber-500/15 text-amber-300 border border-amber-500/25 hover:bg-amber-500/25'
+                ? 'bg-[#141414] text-[#ffffff] shadow-md ' 
+                : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-[#eaeaea]'
             }`}
           >
             عاملات خاضت تجارب سابقة (تنازل كفيل أول / إرجاع)
@@ -232,12 +232,12 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
 
       {/* Workers Grid */}
       {availableWorkers.length === 0 ? (
-        <div className="bg-[#14181c] rounded-2xl border border-white/10 p-12 text-center shadow-md">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+        <div className="bg-[#ffffff] rounded-2xl border border-[#e0e0e0] p-12 text-center shadow-md">
+          <div className="w-16 h-16 rounded-2xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center justify-center mx-auto mb-4">
             <UserCheck className="w-8 h-8" />
           </div>
-          <h3 className="text-base font-bold text-white m-0">لا توجد عاملات مطابقة لشروط البحث الحالية</h3>
-          <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
+          <h3 className="text-base font-bold text-[#141414] m-0">لا توجد عاملات مطابقة لشروط البحث الحالية</h3>
+          <p className="text-xs text-[#707070] mt-1 max-w-md mx-auto">
             يرجى ضبط معايير الفلترة أو إعادة ضبط البحث للاطلاع على باقي العاملات المتوفرات بالسكن.
           </p>
           <button
@@ -249,7 +249,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
               setSelectedSkill('all');
               setTrialsFilter('all');
             }}
-            className="mt-4 px-4 py-2 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition-all cursor-pointer shadow-md shadow-amber-500/20"
+            className="mt-4 px-4 py-2 rounded-xl bg-[#141414] text-[#ffffff] text-xs font-bold hover:bg-[#262626] transition-all cursor-pointer shadow-md"
           >
             إعادة تعيين الفلاتر
           </button>
@@ -261,7 +261,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
             return (
               <div
                 key={worker.id}
-                className="bg-[#14181c] rounded-2xl border border-white/10 hover:border-amber-500/40 shadow-md transition-all duration-300 overflow-hidden flex flex-col group relative"
+                className="bg-[#ffffff] rounded-2xl border border-[#e0e0e0] hover:border-[#141414] shadow-md transition-all duration-300 overflow-hidden flex flex-col group relative"
               >
                 {/* Top Accent Strip */}
                 <div 
@@ -275,23 +275,23 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
                   <div className="flex items-start gap-3">
                     {/* Name & Origin */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-white truncate font-display m-0">
+                      <h3 className="text-sm font-bold text-[#141414] truncate font-display m-0">
                         {worker.fullNameAr}
                       </h3>
-                      <p className="text-[11px] text-zinc-400 truncate dir-ltr text-right m-0">
+                      <p className="text-[11px] text-[#707070] truncate dir-ltr text-right m-0">
                         {worker.fullNameEn}
                       </p>
                       <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                        <span className="px-2 py-0.5 rounded-lg text-[10.5px] font-bold bg-white/5 border border-white/10 text-zinc-300">
+                        <span className="px-2 py-0.5 rounded-lg text-[10.5px] font-bold bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414]">
                           {worker.nationality}
                         </span>
                         {worker.religion && (
-                          <span className="px-2 py-0.5 rounded-lg text-[10.5px] font-medium bg-white/5 text-zinc-400">
+                          <span className="px-2 py-0.5 rounded-lg text-[10.5px] font-medium bg-[#f3f3f3] text-[#707070]">
                             {worker.religion}
                           </span>
                         )}
                         {worker.age && (
-                          <span className="px-2 py-0.5 rounded-lg text-[10.5px] font-medium bg-white/5 text-zinc-400">
+                          <span className="px-2 py-0.5 rounded-lg text-[10.5px] font-medium bg-[#f3f3f3] text-[#707070]">
                             {worker.age} سنة
                           </span>
                         )}
@@ -301,11 +301,11 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
 
                   {/* Decoupled Office Badge */}
                   <div 
-                    className="p-2.5 rounded-xl flex items-center justify-between text-xs bg-black/40 border border-white/5"
+                    className="p-2.5 rounded-xl flex items-center justify-between text-xs bg-[#f3f3f3] border border-[#e0e0e0]"
                   >
                     <div className="flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-zinc-400" />
-                      <span className="text-zinc-400 text-[11px]">المكتب الأصلي:</span>
+                      <Building2 className="w-3.5 h-3.5 text-[#707070]" />
+                      <span className="text-[#707070] text-[11px]">المكتب الأصلي:</span>
                     </div>
                     <span className="font-bold text-xs" style={{ color: office.color }}>
                       {office.name}
@@ -314,26 +314,26 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
 
                   {/* Key Metrics: Salary & Previous Trials */}
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-black/40 rounded-xl p-2.5 border border-white/5">
-                      <div className="text-[10.5px] text-zinc-400 font-bold flex items-center gap-1">
-                        <DollarSign className="w-3 h-3 text-amber-400" />
+                    <div className="bg-[#f3f3f3]/40 rounded-xl p-2.5 border border-[#e0e0e0]">
+                      <div className="text-[10.5px] text-[#707070] font-bold flex items-center gap-1">
+                        <DollarSign className="w-3 h-3 text-[#141414]" />
                         <span>الراتب الشهري</span>
                       </div>
-                      <div className="text-xs font-black text-emerald-400 mt-1 font-mono">
-                        {worker.requestedSalary?.toLocaleString('ar-SA') || '1,500'} <span className="text-[10px] text-zinc-500">⃁</span>
+                      <div className="text-xs font-black text-[#141414] mt-1 font-mono">
+                        {worker.requestedSalary?.toLocaleString('ar-SA') || '1,500'} <span className="text-[10px] text-[#707070]">⃁</span>
                       </div>
                     </div>
 
-                    <div className="bg-black/40 rounded-xl p-2.5 border border-white/5">
-                      <div className="text-[10.5px] text-zinc-400 font-bold flex items-center gap-1">
-                        <History className="w-3 h-3 text-amber-400" />
+                    <div className="bg-[#f3f3f3]/40 rounded-xl p-2.5 border border-[#e0e0e0]">
+                      <div className="text-[10.5px] text-[#707070] font-bold flex items-center gap-1">
+                        <History className="w-3 h-3 text-[#141414]" />
                         <span>تجارب سابقة</span>
                       </div>
                       <div className="text-xs font-black mt-1">
                         {worker.clientTrialsCount === 0 ? (
-                          <span className="text-emerald-400">جديدة (0)</span>
+                          <span className="text-[#141414]">جديدة (0)</span>
                         ) : (
-                          <span className="text-amber-300">{worker.clientTrialsCount} تجارب</span>
+                          <span className="text-[#141414]">{worker.clientTrialsCount} تجارب</span>
                         )}
                       </div>
                     </div>
@@ -341,8 +341,8 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
 
                   {/* Skills Chips */}
                   <div>
-                    <div className="text-[10.5px] text-zinc-400 font-bold mb-1 flex items-center gap-1">
-                      <Award className="w-3 h-3 text-emerald-400" />
+                    <div className="text-[10.5px] text-[#707070] font-bold mb-1 flex items-center gap-1">
+                      <Award className="w-3 h-3 text-[#141414]" />
                       <span>المهارات المعتمدة:</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
@@ -350,23 +350,23 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
                         worker.skills.slice(0, 4).map((skill, idx) => (
                           <span 
                             key={idx} 
-                            className="px-2 py-0.5 rounded-lg text-[10.5px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/25"
+                            className="px-2 py-0.5 rounded-lg text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]"
                           >
                             {skill}
                           </span>
                         ))
                       ) : (
-                        <span className="text-[10.5px] text-zinc-500 italic">أعمال منزلية عامة</span>
+                        <span className="text-[10.5px] text-[#707070] italic">أعمال منزلية عامة</span>
                       )}
                     </div>
                   </div>
 
                   {/* Passport & Languages */}
-                  <div className="flex items-center justify-between text-[10.5px] text-zinc-400 pt-2 border-t border-white/5">
-                    <span className="font-mono text-zinc-300 font-bold">جواز: {worker.passportNumber}</span>
+                  <div className="flex items-center justify-between text-[10.5px] text-[#707070] pt-2 border-t border-[#e0e0e0]">
+                    <span className="font-mono text-[#141414] font-bold">جواز: {worker.passportNumber}</span>
                     {worker.languages && worker.languages.length > 0 && (
                       <div className="flex items-center gap-1">
-                        <Languages className="w-3 h-3 text-zinc-400" />
+                        <Languages className="w-3 h-3 text-[#707070]" />
                         <span>{worker.languages.join(', ')}</span>
                       </div>
                     )}
@@ -374,20 +374,20 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
                 </div>
 
                 {/* Actions Footer */}
-                <div className="p-3 bg-black/40 border-t border-white/10 grid grid-cols-2 gap-2">
+                <div className="p-3 bg-[#f3f3f3]/40 border-t border-[#e0e0e0] grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => onViewProfile(worker)}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-200 bg-white/5 border border-white/10 hover:bg-white/10 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#141414] bg-[#f3f3f3] border border-[#e0e0e0] hover:bg-[#f3f3f3] transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <FileText className="w-3.5 h-3.5 text-zinc-400" />
+                    <FileText className="w-3.5 h-3.5 text-[#707070]" />
                     <span>الملف الشامل</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => onBookTransfer(worker)}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-black bg-amber-400 hover:bg-amber-300 shadow-md shadow-amber-500/20 transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#ffffff] bg-[#141414] hover:bg-[#262626] shadow-md transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-black" />
                     <span>حجز لعميل</span>
