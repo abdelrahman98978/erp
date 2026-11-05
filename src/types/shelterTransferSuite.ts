@@ -95,13 +95,47 @@ export interface WorkerProfile {
   photoUrl: string;
   cvUrl?: string;
   documentsStatus: 'مكتملة' | 'ناقصة' | 'جاري الاستخراج';
-  clientTrialsCount: number; // عداد مرات الخروج للعملاء
+  clientTrialsCount: number; // عداد مرات الخروج للعملاء (حد أقصى 3 تجارب وفق Ewaa)
   lastDispatchDate?: string;
   lastReturnDate?: string;
   responsibleEmployee: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
+
+  // ── EWAA ENGINE EXTENSIONS (حقول محرك التشغيل المبني على الوقائع والأدلة) ──
+  ewaaJourneyStage?: string;
+  physicalPresence?: 'inside_housing' | 'in_housing' | 'received_inside' | 'temporarily_outside' | 'at_airport' | 'with_client_trial' | 'direct_handover_completed' | 'departed_verified' | 'departed' | 'unknown_whereabouts' | 'pending_housing_receipt' | 'outside';
+  workerDeclaredIntent?: 'transfer' | 'final_exit' | 'return_employer' | 'undecided';
+  employerIntent?: 'transfer' | 'final_exit' | 'return_worker' | 'undecided';
+  decisionRoute?: 'transfer' | 'final_exit' | 'return_employer' | null;
+  receivingSource?: 'airport' | 'employer' | 'police' | 'embassy' | 'slslc' | 'other';
+  intakeFactsJson?: string;
+  belongings?: Array<{
+    item_key: string;
+    custody: string;
+    description: string;
+    amount: number | null;
+  }>;
+  missingVerifications?: string[];
+  parallelActions?: string[];
+  abscondingStatus?: 'none' | 'active' | 'unknown' | 'cleared';
+  hasOpenProtectionCase?: boolean;
+  wageClaimTotal?: number;
+  wageClaimPayments?: Array<{
+    id: string;
+    amount: number;
+    status: 'reported_unverified' | 'verified_with_evidence';
+    evidenceRef?: string;
+    paidAt: string;
+    recordedBy: string;
+    notes?: string;
+  }>;
+  finalExitVisaIssuedAt?: string | null;
+  flightAt?: string | null;
+  ticketResponsibility?: 'office' | 'employer' | 'worker' | 'unknown';
+  departureEvidenceRef?: string | null;
+  intentConfirmedAfterReturn?: boolean;
 }
 
 // ============================================================================
@@ -256,7 +290,10 @@ export type MovementEventType =
   | 'طلب نقل خدمات'
   | 'إتمام نقل الخدمات'
   | 'إرجاع للسكن'
-  | 'تسوية مالية';
+  | 'تسوية مالية'
+  | 'تسليم مباشر من المطار'
+  | 'توثيق مطالبة أجور'
+  | 'إثبات مغادرة نهائية';
 
 export interface WorkerMovementTimeline {
   id: string;

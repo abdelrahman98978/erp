@@ -18,6 +18,7 @@ import {
   generateRealCode128BarcodeSvg,
 } from '../../utils/realBarcodeGenerator';
 import { ExportDropdown } from '../common/ExportDropdown';
+import { maskNationalId, maskIban } from '../../utils/pdplMasking';
 
 export interface PayslipModalProps {
   record: EmployeePayrollRecord;
@@ -36,6 +37,8 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
   companyName,
   onClose,
 }) => {
+  const [revealPii, setRevealPii] = useState(false);
+  const piiRole = revealPii ? 'SUPER_ADMIN' : 'VIEWER';
   const gross =
     record.grossSalary ??
     record.basicSalary +
@@ -46,6 +49,12 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
       (record.rewardsAmount || 0);
 
   const totalDeductions = (record.gosiDeduction || 0) + (record.deductions || 0);
+  const gosiEmpRateLabel =
+    record.gosiEmployeeRatePercent !== undefined
+      ? `${record.gosiEmployeeRatePercent}%`
+      : record.isSaudi
+      ? '9.75%'
+      : '0%';
 
   return (
     <div
@@ -129,8 +138,19 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
               <strong className="text-[#141414]">{record.employeeName}</strong>
             </div>
             <div>
-              <span className="text-[#707070] block text-[11px]">رقم الهوية / الإقامة</span>
-              <strong className="font-mono text-[#141414]">{record.nationalIdOrIqama}</strong>
+              <div className="flex items-center justify-between">
+                <span className="text-[#707070] block text-[11px]">رقم الهوية / الإقامة (PDPL)</span>
+                <button
+                  type="button"
+                  onClick={() => setRevealPii((v) => !v)}
+                  className="text-[10px] font-bold underline text-[#141414] print:hidden cursor-pointer"
+                >
+                  {revealPii ? 'إخفاء' : 'إظهار'}
+                </button>
+              </div>
+              <strong className="font-mono text-[#141414]">
+                {maskNationalId(record.nationalIdOrIqama, piiRole)}
+              </strong>
             </div>
             <div>
               <span className="text-[#707070] block text-[11px]">المسمى والقسم</span>
@@ -144,7 +164,9 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
             </div>
             <div className="col-span-2">
               <span className="text-[#707070] block text-[11px]">رقم الآيبان (IBAN)</span>
-              <strong className="font-mono text-[#141414]">{record.iban}</strong>
+              <strong className="font-mono text-[#141414]">
+                {maskIban(record.iban, piiRole)}
+              </strong>
             </div>
           </div>
 
@@ -154,32 +176,32 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
             <div className="rounded-[20px] border border-[#e0e0e0] bg-[#ffffff] p-4 space-y-2.5">
               <div className="font-extrabold text-xs text-[#141414] border-b border-[#e5e5e5] pb-2 flex justify-between">
                 <span>1. الاستحقاقات والبدلات</span>
-                <span className="font-mono text-[#141414]">+{gross.toFixed(2)} ⃁</span>
+                <span className="font-mono text-[#141414]">+⃁ {gross.toFixed(2)}</span>
               </div>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-[#707070]">الراتب الأساسي</span>
                   <span className="font-mono font-bold text-[#141414]">
-                    {record.basicSalary.toFixed(2)} ⃁
+                    ⃁ {record.basicSalary.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#707070]">بدل السكن</span>
                   <span className="font-mono font-bold text-[#141414]">
-                    {record.housingAllowance.toFixed(2)} ⃁
+                    ⃁ {record.housingAllowance.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#707070]">بدل النقل والمواصلات</span>
                   <span className="font-mono font-bold text-[#141414]">
-                    {record.transportAllowance.toFixed(2)} ⃁
+                    ⃁ {record.transportAllowance.toFixed(2)}
                   </span>
                 </div>
                 {(record.otherAllowances || 0) > 0 && (
                   <div className="flex justify-between">
                     <span className="text-[#707070]">بدلات أخرى</span>
                     <span className="font-mono font-bold text-[#141414]">
-                      {record.otherAllowances.toFixed(2)} ⃁
+                      ⃁ {record.otherAllowances.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -187,7 +209,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                   <div className="flex justify-between text-[#141414]">
                     <span>أجر العمل الإضافي (المادة 107)</span>
                     <span className="font-mono font-bold">
-                      +{(record.overtimePay || 0).toFixed(2)} ⃁
+                      +⃁ {(record.overtimePay || 0).toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -195,7 +217,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                   <div className="flex justify-between text-[#141414]">
                     <span>مكافآت وحوافز معتمدة</span>
                     <span className="font-mono font-bold">
-                      +{(record.rewardsAmount || 0).toFixed(2)} ⃁
+                      +⃁ {(record.rewardsAmount || 0).toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -207,32 +229,30 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
               <div className="font-extrabold text-xs text-[#141414] border-b border-[#e0e0e0] pb-2 flex justify-between">
                 <span>2. الاستقطاعات النظامية</span>
                 <span className="font-mono text-[#141414]">
-                  -{totalDeductions.toFixed(2)} ⃁
+                  -⃁ {totalDeductions.toFixed(2)}
                 </span>
               </div>
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-[#707070]">
-                    حصة الموظف بالتأمينات (GOSI {record.isSaudi ? '9.75%' : '0%'})
+                    حصة الموظف بالتأمينات (GOSI {gosiEmpRateLabel})
                   </span>
                   <span className="font-mono font-bold text-[#141414]">
-                    -{record.gosiDeduction.toFixed(2)} ⃁
+                    -⃁ {record.gosiDeduction.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#707070]">استقطاع قسط السلفة الشهرية</span>
                   <span className="font-mono font-bold text-[#141414]">
-                    -{(record.advanceDeduction || 0).toFixed(2)} ⃁
+                    -⃁ {(record.advanceDeduction || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#707070]">الجزاءات الإدارية والغياب</span>
                   <span className="font-mono font-bold text-[#141414]">
-                    -(
-                    {(
+                    -⃁ {(
                       (record.sanctionDeduction || 0) + (record.absenceDeduction || 0)
-                    ).toFixed(2)}{' '}
-                    ⃁)
+                    ).toFixed(2)}
                   </span>
                 </div>
                 {record.deductionCapApplied && (
@@ -251,16 +271,16 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                 صافي الراتب المستحق للتحويل البنكي (WPS Net Salary)
               </span>
               <span className="text-[11px] text-[#ffffff] font-semibold">
-                شامل مساهمة المنشأة في التأمينات الاجتماعية (
-                {(record.gosiEmployerShare || 0).toFixed(2)} ⃁)
+                شامل مساهمة المنشأة في التأمينات الاجتماعية (⃁{' '}
+                {(record.gosiEmployerShare || 0).toFixed(2)})
               </span>
             </div>
             <div className="text-2xl font-extrabold font-mono text-[#ffffff]">
+              ⃁{' '}
               {record.netSalary.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
-              })}{' '}
-              ⃁
+              })}
             </div>
           </div>
         </div>
@@ -472,10 +492,10 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                   </thead>
                   <tbody className="font-mono font-bold bg-[#ffffff] text-[#141414]">
                     <tr className="border-t border-[#e0e0e0]">
-                      <td className="p-2.5">{basic.toLocaleString()} ⃁</td>
-                      <td className="p-2.5">{housing.toLocaleString()} ⃁</td>
-                      <td className="p-2.5">{transport.toLocaleString()} ⃁</td>
-                      <td className="p-2.5 font-extrabold">{employee.salary.toLocaleString()} ⃁</td>
+                      <td className="p-2.5">⃁ {basic.toLocaleString()}</td>
+                      <td className="p-2.5">⃁ {housing.toLocaleString()}</td>
+                      <td className="p-2.5">⃁ {transport.toLocaleString()}</td>
+                      <td className="p-2.5 font-extrabold">⃁ {employee.salary.toLocaleString()}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -506,19 +526,19 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                     </div>
                     <div className="grid grid-cols-2 gap-2 font-mono text-[#141414]">
                       <div>
-                        مكافأة نهاية الخدمة: <strong>{clearanceSummary.eosAward.toFixed(2)} ⃁</strong>
+                        مكافأة نهاية الخدمة: <strong>⃁ {clearanceSummary.eosAward.toFixed(2)}</strong>
                       </div>
                       <div>
                         بدل رصيد الإجازات:{' '}
-                        <strong>{clearanceSummary.leaveCompensation.toFixed(2)} ⃁</strong>
+                        <strong>⃁ {clearanceSummary.leaveCompensation.toFixed(2)}</strong>
                       </div>
                       <div>
                         خصم السلف المتبقية:{' '}
-                        <strong>-{clearanceSummary.advanceDeduction.toFixed(2)} ⃁</strong>
+                        <strong>-⃁ {clearanceSummary.advanceDeduction.toFixed(2)}</strong>
                       </div>
                       <div className="font-extrabold">
                         صافي المخالصة المستحق:{' '}
-                        <strong>{clearanceSummary.netFinalPayable.toFixed(2)} ⃁</strong>
+                        <strong>⃁ {clearanceSummary.netFinalPayable.toFixed(2)}</strong>
                       </div>
                     </div>
                   </div>

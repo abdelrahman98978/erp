@@ -20,6 +20,8 @@ import {
 import { DEPARTMENT_LEGAL_POLICIES } from '../legal/LegalDisclaimerModal';
 import { notificationPopupEngine } from '../../services/notificationPopupEngine';
 import { EmployeePhotoAvatar } from '../auth/EmployeePhotoAvatar';
+import { WpsPayrollEngine } from '../../services/wpsPayrollEngine';
+import { maskNationalId, maskIban } from '../../utils/pdplMasking';
 
 interface Employee360DigitalFileModalProps {
   employee: any;
@@ -31,6 +33,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
   onClose,
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'payroll' | 'documents' | 'signatures' | 'performance'>('overview');
+  const [revealPii, setRevealPii] = useState(false);
 
   const getPolicy = () => {
     const dept = (employee.department || '').toLowerCase();
@@ -44,11 +47,29 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
 
   const policy = getPolicy();
   const salary = Number(employee.salary ?? 8000);
-  const basicSalary = Math.round(salary * 0.7);
-  const housingAndTransport = Math.round(salary * 0.3);
-  const gosiEmployee = Math.round(basicSalary * 0.0975);
-  const netSalary = salary - gosiEmployee;
-  const estimatedEos = Math.round((salary / 2) * 3);
+  const basicSalary = Number(employee.basic_salary ?? Math.round(salary * 0.7));
+  const housingAllowance = Number(employee.housing_allowance ?? Math.round(salary * 0.2));
+  const transportAllowance = Number(employee.transport_allowance ?? Math.round(salary * 0.1));
+  const housingAndTransport = housingAllowance + transportAllowance;
+  const isSaudi = employee.national_id
+    ? String(employee.national_id).trim().startsWith('1')
+    : (employee.nationality || 'سعودي').includes('سعود');
+
+  const gosiCalc = WpsPayrollEngine.calculateGosi(basicSalary, housingAllowance, isSaudi);
+  const gosiEmployee = gosiCalc.employeeShare;
+  const netSalary = Number((salary - gosiEmployee).toFixed(2));
+
+  const eosCalc = WpsPayrollEngine.calculateEndOfService({
+    startDate: employee.hire_date || '2023-01-15',
+    endDate: new Date().toISOString().slice(0, 10),
+    lastBasicSalary: basicSalary,
+    totalAllowances: housingAndTransport + Number(employee.allowances || 0),
+    contractType: 'FIXED_TERM',
+    separationReason: 'TERMINATION_BY_EMPLOYER',
+    unusedLeaveDays: Number(employee.leave_balance ?? 21),
+  });
+  const estimatedEos = eosCalc.awardAmount;
+  const piiRole = revealPii ? 'SUPER_ADMIN' : 'VIEWER';
 
   const [sampleDocs, setSampleDocs] = useState<EmployeeDocument[]>([
     {
@@ -190,25 +211,25 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">إجمالي الراتب الشهري</div>
             <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
-              {salary.toLocaleString()} <span className="text-xs font-bold">⃁</span>
+              <span className="text-xs font-bold">⃁</span> {salary.toLocaleString()}
             </div>
           </div>
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">صافي الإيداع (WPS)</div>
             <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
-              {netSalary.toLocaleString()} <span className="text-xs font-bold">⃁</span>
+              <span className="text-xs font-bold">⃁</span> {netSalary.toLocaleString()}
             </div>
           </div>
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">رصيد الإجازات السنوي</div>
             <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
-              {employee.leave_balance || 24} <span className="text-[11px] font-bold text-[#707070]">يوم</span>
+              {employee.leave_balance ?? 21} <span className="text-[11px] font-bold text-[#707070]">يوم</span>
             </div>
           </div>
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">مكافأة نهاية الخدمة</div>
             <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
-              {estimatedEos.toLocaleString()} <span className="text-xs font-bold">⃁</span>
+              <span className="text-xs font-bold">⃁</span> {estimatedEos.toLocaleString()}
             </div>
           </div>
         </div>
@@ -248,18 +269,29 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-[#fafafa] rounded-[20px] p-4 border border-[#ececec] space-y-2.5">
-                  <div className="text-xs font-black text-[#141414] flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-[#707070]" />
-                    <span>بيانات الهوية والاتصال</span>
+                  <div className="text-xs font-black text-[#141414] flex items-center justify-between gap-1.5">
+                    <span className="flex items-center gap-1.5">
+                      <Shield className="w-3.5 h-3.5 text-[#707070]" />
+                      <span>بيانات الهوية والاتصال (PDPL)</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setRevealPii((v) => !v)}
+                      className="px-2 py-0.5 rounded-full bg-white border border-[#e0e0e0] text-[10px] font-bold text-[#141414] cursor-pointer"
+                    >
+                      {revealPii ? 'إخفاء PDPL' : 'إظهار الكامل'}
+                    </button>
                   </div>
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between py-1 border-b border-[#efefef]">
                       <span className="text-[#707070]">رقم الهوية / الإقامة</span>
-                      <span className="font-mono font-bold text-[#141414] tabular-nums">{employee.national_id}</span>
+                      <span className="font-mono font-bold text-[#141414] tabular-nums">
+                        {maskNationalId(employee.national_id, piiRole)}
+                      </span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-[#efefef]">
                       <span className="text-[#707070]">الجنسية</span>
-                      <span className="font-bold text-[#141414]">{employee.nationality || 'سعودي'}</span>
+                      <span className="font-bold text-[#141414]">{employee.nationality || (isSaudi ? 'سعودي' : 'مقيم')}</span>
                     </div>
                     <div className="flex justify-between py-1 border-b border-[#efefef]">
                       <span className="text-[#707070]">رقم الجوال</span>
@@ -293,7 +325,10 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                     <div className="flex justify-between py-1">
                       <span className="text-[#707070]">رقم الآيبان (IBAN)</span>
                       <span className="font-mono font-bold text-[#141414] text-[11px] tabular-nums">
-                        {employee.iban || employee.bankIban || `SA03800000000${employee.national_id || '1098765432'}12`}
+                        {maskIban(
+                          employee.iban || employee.bankIban || `SA03800000000${employee.national_id || '1098765432'}12`,
+                          piiRole
+                        )}
                       </span>
                     </div>
                   </div>
@@ -345,19 +380,19 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="bg-white p-3.5 rounded-[16px] border border-[#eaeaea]">
                     <div className="text-[10px] font-bold text-[#707070]">الراتب الأساسي (70%)</div>
-                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">{basicSalary.toLocaleString()} ⃁</div>
+                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">⃁ {basicSalary.toLocaleString()}</div>
                   </div>
                   <div className="bg-white p-3.5 rounded-[16px] border border-[#eaeaea]">
                     <div className="text-[10px] font-bold text-[#707070]">بدل السكن والنقل (30%)</div>
-                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">{housingAndTransport.toLocaleString()} ⃁</div>
+                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">⃁ {housingAndTransport.toLocaleString()}</div>
                   </div>
                   <div className="bg-white p-3.5 rounded-[16px] border border-[#eaeaea]">
-                    <div className="text-[10px] font-bold text-[#707070]">استقطاع التأمينات (9.75%)</div>
-                    <div className="text-base font-black text-[#707070] tabular-nums mt-1">-{gosiEmployee.toLocaleString()} ⃁</div>
+                    <div className="text-[10px] font-bold text-[#707070]">استقطاع التأمينات ({gosiCalc.employeeRatePercent}%)</div>
+                    <div className="text-base font-black text-[#707070] tabular-nums mt-1">-⃁ {gosiEmployee.toLocaleString()}</div>
                   </div>
                   <div className="bg-[#141414] text-white p-3.5 rounded-[16px]">
                     <div className="text-[10px] font-bold text-white/70">صافي الراتب المحول</div>
-                    <div className="text-base font-black text-white tabular-nums mt-1">{netSalary.toLocaleString()} ⃁</div>
+                    <div className="text-base font-black text-white tabular-nums mt-1">⃁ {netSalary.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
@@ -478,13 +513,14 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               </div>
 
               <div className="bg-white rounded-[20px] p-4 border border-[#ececec] space-y-2">
-                <h4 className="text-sm font-black text-[#141414] m-0">حساب مستحقات نهاية الخدمة التقديري (المادة 84 / 85)</h4>
+                <h4 className="text-sm font-black text-[#141414] m-0">حساب مستحقات نهاية الخدمة الفعلي (المادة 84 / 85)</h4>
                 <p className="text-xs text-[#707070] m-0">
-                  يُحتسب أجر نصف شهر عن كل سنة من السنوات الخمس الأولى، وأجر شهر كامل عن كل سنة تالية وفق نظام العمل السعودي.
+                  مدة الخدمة المحتسبة من تاريخ المباشرة ({employee.hire_date || '2023-01-15'}):{' '}
+                  <strong>{eosCalc.serviceYears} سنة و {eosCalc.serviceMonths} شهر</strong> ({eosCalc.legalArticleNote})
                 </p>
                 <div className="pt-2 flex items-center justify-between border-t border-[#efefef] text-sm font-black text-[#141414]">
                   <span>إجمالي الاستحقاق التراكمي المقدر:</span>
-                  <span className="tabular-nums text-base">{estimatedEos.toLocaleString()} ⃁</span>
+                  <span className="tabular-nums text-base">⃁ {estimatedEos.toLocaleString()}</span>
                 </div>
               </div>
             </div>

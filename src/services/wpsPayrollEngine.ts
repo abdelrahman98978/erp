@@ -31,6 +31,8 @@ export interface EmployeePayrollRecord {
   carriedForwardDeduction?: number;
   gosiDeduction: number;
   gosiEmployerShare?: number;
+  gosiEmployeeRatePercent?: number;
+  gosiEmployerRatePercent?: number;
   netSalary: number;
   workingDays: number;
   deductionCapApplied?: boolean;
@@ -463,6 +465,8 @@ export class WpsPayrollEngine {
     bankCode?: string;
     iban?: string;
     isSaudi: boolean;
+    isNewSubscriberPostJuly2024?: boolean;
+    calculationYear?: number;
     basicSalary: number;
     housingAllowance: number;
     transportAllowance: number;
@@ -484,7 +488,10 @@ export class WpsPayrollEngine {
     const rewards = Number(params.rewardsAmount) || 0;
     const grossSalary = Number((fixedWage + overtime + rewards).toFixed(2));
 
-    const gosi = this.calculateGosi(basic, housing, params.isSaudi);
+    const gosi = this.calculateGosi(basic, housing, params.isSaudi, {
+      isNewSubscriberPostJuly2024: params.isNewSubscriberPostJuly2024,
+      calculationYear: params.calculationYear,
+    });
     const gosiEmployee = gosi.employeeShare;
     const gosiEmployer = gosi.employerShare;
 
@@ -507,7 +514,7 @@ export class WpsPayrollEngine {
       effectiveNonGosiDeductions = maxNonGosiAllowed;
       carriedForwardDeduction = Number((rawNonGosiDeductions - maxNonGosiAllowed).toFixed(2));
       deductionCapApplied = true;
-      deductionCapNote = `تطبيق سقف المادة (92): تم تقليص الخصومات الشهرية لتقف عند 50% من الأجر وترحيل مبلغ (${carriedForwardDeduction.toFixed(2)} ⃁) للشهر القادم.`;
+      deductionCapNote = `تطبيق سقف المادة (92): تم تقليص الخصومات الشهرية لتقف عند 50% من الأجر وترحيل مبلغ (⃁ ${carriedForwardDeduction.toFixed(2)}) للشهر القادم.`;
     }
 
     const netSalary = Number((grossSalary - gosiEmployee - effectiveNonGosiDeductions).toFixed(2));
@@ -534,10 +541,151 @@ export class WpsPayrollEngine {
       carriedForwardDeduction,
       gosiDeduction: gosiEmployee,
       gosiEmployerShare: gosiEmployer,
+      gosiEmployeeRatePercent: gosi.employeeRatePercent,
+      gosiEmployerRatePercent: gosi.employerRatePercent,
       netSalary,
       workingDays: Math.max(0, (params.workingDays || 30) - (params.unpaidAbsenceDays || 0)),
       deductionCapApplied,
       deductionCapNote,
+    };
+  }
+
+  /**
+   * Enforces Articles 66 & 70 of Saudi Labor Law on Disciplinary Sanctions:
+   * - Single violation fine cannot exceed 5 days' basic wage.
+   * - Total monthly fine deductions cannot exceed 5 days' basic wage in a single month.
+   */
+  public static validateSanctionCap(
+    basicSalary: number,
+    requestedSanctionAmount: number,
+    existingMonthlySanctions: number = 0
+  ): {
+    maxFiveDaysBasicWage: number;
+    allowedAmountThisMonth: number;
+    excessCarriedForward: number;
+    wasCapped: boolean;
+    legalNote: string;
+  } {
+    const dailyBasic = Math.max(0, Number(basicSalary) || 0) / 30;
+    const maxFiveDaysBasicWage = Number((dailyBasic * 5).toFixed(2));
+    const remainingMonthlyQuota = Math.max(
+      0,
+      Number((maxFiveDaysBasicWage - Math.max(0, existingMonthlySanctions)).toFixed(2))
+    );
+    const req = Math.max(0, Number(requestedSanctionAmount) || 0);
+    const singleCapped = Math.min(req, maxFiveDaysBasicWage);
+    const allowedAmountThisMonth = Number(Math.min(singleCapped, remainingMonthlyQuota).toFixed(2));
+    const excessCarriedForward = Number(Math.max(0, req - allowedAmountThisMonth).toFixed(2));
+    const wasCapped = req > allowedAmountThisMonth;
+
+    return {
+      maxFiveDaysBasicWage,
+      allowedAmountThisMonth,
+      excessCarriedForward,
+      wasCapped,
+      legalNote: wasCapped
+        ? `المادتان (66 و70) من نظام العمل: لا يجوز أن تزيد الغرامة عن أجر 5 أيام (⃁ ${maxFiveDaysBasicWage.toFixed(2)}) للمخالفة الواحدة أو في الشهر الواحد؛ تم اعتماد ⃁ ${allowedAmountThisMonth.toFixed(2)} وترحيل الفائض.`
+        : `مطابق للمادتين (66 و70): ضمن سقف أجر 5 أيام أساسي (⃁ ${maxFiveDaysBasicWage.toFixed(2)}).`,
+    };
+  }
+
+  /**
+   * Enforces Article 93 of Saudi Labor Law on Employee Advances / Loans:
+   * - Standard loan deduction installment should not exceed 10% of the employee's wage.
+   */
+  public static validateAdvanceInstallmentCap(
+    grossWage: number,
+    monthlyInstallment: number
+  ): {
+    maxTenPercentInstallment: number;
+    exceedsTenPercent: boolean;
+    recommendedInstallmentsCount: (totalLoanAmount: number) => number;
+    legalNote: string;
+  } {
+    const maxTenPercentInstallment = Number((Math.max(0, Number(grossWage) || 0) * 0.1).toFixed(2));
+    const exceedsTenPercent = monthlyInstallment > maxTenPercentInstallment && maxTenPercentInstallment > 0;
+    return {
+      maxTenPercentInstallment,
+      exceedsTenPercent,
+      recommendedInstallmentsCount: (totalLoanAmount: number) =>
+        maxTenPercentInstallment > 0 ? Math.max(1, Math.ceil(totalLoanAmount / maxTenPercentInstallment)) : 1,
+      legalNote: exceedsTenPercent
+        ? `تنبيه المادة (93) من نظام العمل: القسط الشهري (⃁ ${monthlyInstallment.toFixed(2)}) يتجاوز سقف 10% من الأجر (⃁ ${maxTenPercentInstallment.toFixed(2)}).`
+        : `مطابق للمادة (93): القسط الشهري لا يتجاوز 10% من الأجر (⃁ ${maxTenPercentInstallment.toFixed(2)}).`,
+    };
+  }
+
+  /**
+   * Classifies Leave / Vacation Requests per Saudi Labor Law Articles 109, 113, 116, 117, 151 & 160
+   * Ensures only Annual Leave (Art. 109) deducts from the employee's annual leave balance.
+   */
+  public static classifyLeaveDeductionRule(
+    vacationType: string,
+    requestedDays: number,
+    dailyWage: number,
+    previousSickDaysInYear: number = 0
+  ): {
+    deductFromAnnualBalance: boolean;
+    annualDaysToDeduct: number;
+    payRatePercent: number;
+    unpaidDaysForPayroll: number;
+    legalReference: string;
+  } {
+    const type = (vacationType || '').trim();
+    const days = Math.max(1, Math.round(requestedDays));
+
+    if (type.includes('مرضية')) {
+      const sick = this.calculateSickLeavePay(dailyWage, previousSickDaysInYear, days);
+      const unpaidEquivalent = Number(((days * (100 - sick.effectivePayPercent)) / 100).toFixed(2));
+      return {
+        deductFromAnnualBalance: false,
+        annualDaysToDeduct: 0,
+        payRatePercent: sick.effectivePayPercent,
+        unpaidDaysForPayroll: unpaidEquivalent,
+        legalReference: `${sick.legalNote} (لا تُخصم من رصيد الإجازة السنوية الاعتيادية)`,
+      };
+    }
+
+    if (type.includes('زواج') || type.includes('وفاة') || type.includes('مولود') || type.includes('أحوال شخصية')) {
+      return {
+        deductFromAnnualBalance: false,
+        annualDaysToDeduct: 0,
+        payRatePercent: 100,
+        unpaidDaysForPayroll: 0,
+        legalReference:
+          'المادة (113) من نظام العمل: إجازة أحوال شخصية مدفوعة الأجر بالكامل (5 أيام للزواج أو الوفاة، 3 أيام للمولود) ولا تُخصم من الرصيد السنوي.',
+      };
+    }
+
+    if (type.includes('وضع') || type.includes('أمومة') || type.includes('عدة')) {
+      return {
+        deductFromAnnualBalance: false,
+        annualDaysToDeduct: 0,
+        payRatePercent: 100,
+        unpaidDaysForPayroll: 0,
+        legalReference:
+          'المادتان (151 و160) من نظام العمل: إجازة وضع/عدة نظامية مدفوعة الأجر ولا تُخصم من رصيد الإجازة السنوية.',
+      };
+    }
+
+    if (type.includes('بدون أجر') || type.includes('بدون راتب') || type.includes('غير مدفوعة')) {
+      return {
+        deductFromAnnualBalance: false,
+        annualDaysToDeduct: 0,
+        payRatePercent: 0,
+        unpaidDaysForPayroll: days,
+        legalReference:
+          'المادة (116) من نظام العمل: إجازة بدون أجر بموافقة الطرفين؛ تُستقطع أيامها من أجر الشهر دون المساس برصيد الإجازة السنوية المدفوعة.',
+      };
+    }
+
+    // Default: Annual / Emergency Leave (Art. 109)
+    return {
+      deductFromAnnualBalance: true,
+      annualDaysToDeduct: days,
+      payRatePercent: 100,
+      unpaidDaysForPayroll: 0,
+      legalReference: 'المادة (109) من نظام العمل: إجازة سنوية مدفوعة الأجر بالكامل وتُخصم من الرصيد السنوي المستحق.',
     };
   }
 

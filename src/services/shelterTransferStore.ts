@@ -17,6 +17,28 @@ import {
   AlertUrgencyLevel,
 } from '../types/shelterTransferSuite';
 import { notificationPopupEngine, triggerNotification } from './notificationPopupEngine';
+import {
+  intakeObservation,
+  validateTransferEligibilityAndReplacement,
+  reconcileWageClaimPayments,
+  verifyDepartureGate,
+  getHousingOutlook,
+  workerOperationSummary,
+  shouldShowHousingWork,
+  isIssuedVisaAwaitingTicket,
+  EWAA_TRIAL_DAYS_DEFAULT,
+  EWAA_MAX_CLIENT_TRIALS,
+  IntakeObservationInput,
+  EWAA_WORKFLOW_ROUTES,
+  EWAA_WORKFLOW_STATES,
+  getEwaaWorkflowStateDef,
+  getEwaaWorkflowStateRequirements,
+  determineWorkerJourneyState,
+  computeHousingOperationalDistribution,
+  remainingJourneyStages,
+  EwaaWorkflowStateKey,
+  EwaaWorkflowRouteKey,
+} from './ewaaHousingEngine';
 
 const STORAGE_KEYS = {
   WORKERS: 'erp_shelter_workers_v1',
@@ -178,7 +200,108 @@ const SEED_WORKERS: WorkerProfile[] = [
     lastReturnDate: new Date(Date.now() - 1 * 86400000).toISOString(),
     responsibleEmployee: 'سارة القحطاني',
     notes: 'العاملة ممتازة ولكن تشترط عائلة بدون حيوانات أليفة (حساسية)، جاهزة للتقييم وإعادة العرض',
+    ewaaJourneyStage: 'transfer_returned',
+    physicalPresence: 'inside_housing',
+    workerDeclaredIntent: 'transfer',
+    employerIntent: 'transfer',
+    intentConfirmedAfterReturn: false,
     createdAt: new Date(Date.now() - 22 * 86400000).toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'w-106',
+    workerCode: 'WRK-1006',
+    originalOfficeId: 'SAF',
+    fullNameAr: 'سيتي رحمة هدايت',
+    fullNameEn: 'Siti Rahmah Hidayat',
+    nationality: 'إندونيسيا',
+    passportNumber: 'ID8839201',
+    iqamaNumber: '2471928301',
+    age: 29,
+    saudiEntryDate: '2025-04-10',
+    initialShelterEntryDate: '2026-08-29',
+    initialEntryReason: 'صدور تأشيرة خروج نهائي وبانتظار حجز تذكرة السفر',
+    operationalStatus: 'مرحلة الترحيل',
+    requiredAction: 'سفر / خروج نهائي',
+    requestedSalary: 1400,
+    experienceYears: 3,
+    languages: ['العربية (جيد)', 'الإندونيسية'],
+    skills: ['طبخ', 'رعاية مسنين'],
+    photoUrl: '',
+    documentsStatus: 'مكتملة',
+    clientTrialsCount: 0,
+    responsibleEmployee: 'فهد العتيبي',
+    ewaaJourneyStage: 'ticket_office',
+    physicalPresence: 'inside_housing',
+    workerDeclaredIntent: 'final_exit',
+    employerIntent: 'final_exit',
+    finalExitVisaIssuedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    ticketResponsibility: 'office',
+    createdAt: new Date(Date.now() - 8 * 86400000).toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'w-107',
+    workerCode: 'WRK-1007',
+    originalOfficeId: 'DAR',
+    fullNameAr: 'حليمة نانتونغو كاتو',
+    fullNameEn: 'Halima Nantongo Kato',
+    nationality: 'أوغندا',
+    passportNumber: 'UG4491023',
+    iqamaNumber: '2529103847',
+    age: 27,
+    saudiEntryDate: '2025-12-01',
+    initialShelterEntryDate: '2026-08-18',
+    initialEntryReason: 'مطالبة أجور متأخرة وبلاغ تغيب قيد المعالجة لدى التسوية الودية',
+    operationalStatus: 'تحت التقييم',
+    requiredAction: 'تسوية ونزاع',
+    requestedSalary: 1100,
+    experienceYears: 2,
+    languages: ['الإنجليزية (جيد)'],
+    skills: ['تنظيف', 'ترتيب'],
+    photoUrl: '',
+    documentsStatus: 'ناقصة',
+    clientTrialsCount: 0,
+    responsibleEmployee: 'نورة الدوسري',
+    ewaaJourneyStage: 'committee_decision',
+    physicalPresence: 'inside_housing',
+    workerDeclaredIntent: 'final_exit',
+    employerIntent: 'return_worker',
+    abscondingStatus: 'active',
+    wageClaimTotal: 3600,
+    missingVerifications: ['إرفاق قرار التسوية الودية أو اللجنة', 'تأكيد سداد مستحقات شهرين'],
+    createdAt: new Date(Date.now() - 19 * 86400000).toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'w-108',
+    workerCode: 'WRK-1008',
+    originalOfficeId: 'TOP',
+    fullNameAr: 'جريس فيلانويفا راموس',
+    fullNameEn: 'Grace Villanueva Ramos',
+    nationality: 'الفلبين',
+    passportNumber: 'PH7720194',
+    iqamaNumber: '',
+    age: 25,
+    saudiEntryDate: '2026-09-05',
+    initialShelterEntryDate: '2026-09-05',
+    initialEntryReason: 'وصول جديد من المطار — بانتظار تسليمها لصاحب العمل',
+    operationalStatus: 'داخل السكن',
+    requiredAction: 'نقل خدمات',
+    requestedSalary: 1500,
+    experienceYears: 2,
+    languages: ['الإنجليزية (ممتاز)'],
+    skills: ['رعاية أطفال', 'تدبير منزلي'],
+    photoUrl: '',
+    documentsStatus: 'مكتملة',
+    clientTrialsCount: 0,
+    responsibleEmployee: 'مريم الدوسري',
+    ewaaJourneyStage: 'arrival_handover',
+    physicalPresence: 'inside_housing',
+    receivingSource: 'airport',
+    workerDeclaredIntent: 'return_employer',
+    employerIntent: 'return_worker',
+    createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
     updatedAt: new Date().toISOString(),
   },
 ];
@@ -534,7 +657,14 @@ class ShelterTransferStore {
     // Load from LocalStorage or initialize with Seeds
     try {
       const storedWorkers = localStorage.getItem(STORAGE_KEYS.WORKERS);
-      this.workers = storedWorkers ? JSON.parse(storedWorkers) : SEED_WORKERS;
+      if (storedWorkers) {
+        const parsed: WorkerProfile[] = JSON.parse(storedWorkers);
+        const existingIds = new Set(parsed.map((w) => w.id));
+        const missingSeeds = SEED_WORKERS.filter((s) => !existingIds.has(s.id));
+        this.workers = [...parsed, ...missingSeeds];
+      } else {
+        this.workers = SEED_WORKERS;
+      }
 
       const storedSponsors = localStorage.getItem(STORAGE_KEYS.FIRST_SPONSORS);
       this.firstSponsors = storedSponsors ? JSON.parse(storedSponsors) : SEED_FIRST_SPONSORS;
@@ -733,7 +863,7 @@ class ShelterTransferStore {
     };
   }
 
-  public canReserveWorker(workerId: string): { canReserve: boolean; reason?: string } {
+  public canReserveWorker(workerId: string): { canReserve: boolean; reason?: string; warningsAr?: string[] } {
     const worker = this.getWorkerById(workerId);
     if (!worker) return { canReserve: false, reason: 'العاملة غير موجودة بالسجلات' };
     if (worker.operationalStatus !== 'متاحة لنقل الخدمات') {
@@ -742,6 +872,26 @@ class ShelterTransferStore {
         reason: `العاملة في حالة (${worker.operationalStatus}) وليست متاحة للحجز حالياً.` 
       };
     }
+
+    // Ewaa Guard: Validate Transfer Eligibility (Max 3 trials, Active Absconding, Open Protection Case, Unconfirmed Intent after Return)
+    const ewaaCheck = validateTransferEligibilityAndReplacement({
+      workerId: worker.id,
+      nationality: worker.nationality,
+      workerDeclaredIntent: worker.workerDeclaredIntent,
+      abscondingStatus: worker.abscondingStatus,
+      hasOpenProtectionCase: worker.hasOpenProtectionCase,
+      completedTrialsCount: worker.clientTrialsCount || 0,
+      returnedFromPreviousTrialWithoutIntentConfirmation:
+        worker.clientTrialsCount > 0 && worker.intentConfirmedAfterReturn === false,
+    });
+
+    if (!ewaaCheck.allowed) {
+      return {
+        canReserve: false,
+        reason: ewaaCheck.blockersAr.join(' | '),
+      };
+    }
+
     const activeBooking = this.transferCases.find(
       t => t.workerId === workerId && (t.transferStatus === 'محجوزة' || t.transferStatus === 'خرجت للعميل' || t.transferStatus === 'بانتظار الاتفاقية')
     );
@@ -751,7 +901,7 @@ class ShelterTransferStore {
         reason: `العاملة محجوزة بالفعل للعميل (${activeBooking.newClientName}) برقم عقد (${activeBooking.transferCode})` 
       };
     }
-    return { canReserve: true };
+    return { canReserve: true, warningsAr: ewaaCheck.warningsAr };
   }
 
   // ============================================================================
@@ -1113,9 +1263,10 @@ class ShelterTransferStore {
     const worker = this.getWorkerById(params.workerId);
     if (!worker) throw new Error('العاملة غير موجودة');
 
-    // Rule 5: Only available workers can be reserved
-    if (worker.operationalStatus !== 'متاحة لنقل الخدمات') {
-      throw new Error(`لا يمكن حجز العاملة لأن حالتها الحالية: "${worker.operationalStatus}" وليست متاحة.`);
+    // Rule 5 + Ewaa Eligibility Guard: Only available & Ewaa-eligible workers can be reserved
+    const reserveCheck = this.canReserveWorker(worker.id);
+    if (!reserveCheck.canReserve) {
+      throw new Error(reserveCheck.reason || `لا يمكن حجز العاملة لأن حالتها الحالية: "${worker.operationalStatus}" وليست متاحة.`);
     }
 
     // Active accommodation case
@@ -1143,7 +1294,7 @@ class ShelterTransferStore {
       downPayment: params.downPayment,
       remainingAmount: Math.max(0, params.transferFee - params.downPayment),
       paymentStatus: params.downPayment >= params.transferFee ? 'مسدد بالكامل' : (params.downPayment > 0 ? 'دفعة أولى' : 'معلق'),
-      followupDaysDuration: params.followupDaysDuration || 5,
+      followupDaysDuration: params.followupDaysDuration || EWAA_TRIAL_DAYS_DEFAULT,
       notes: params.notes,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1193,7 +1344,7 @@ class ShelterTransferStore {
     if (!worker) throw new Error('العاملة غير موجودة');
 
     const deliveryTime = params.deliveryDateTime || new Date().toISOString();
-    const duration = params.followupDaysDuration || transfer.followupDaysDuration || 5;
+    const duration = params.followupDaysDuration || transfer.followupDaysDuration || EWAA_TRIAL_DAYS_DEFAULT;
 
     const endDate = new Date(new Date(deliveryTime).getTime() + duration * 86400000).toISOString().split('T')[0];
 
@@ -1205,8 +1356,10 @@ class ShelterTransferStore {
     if (params.agreementRefNo) transfer.agreementRefNo = params.agreementRefNo;
     transfer.updatedAt = new Date().toISOString();
 
-    // Update worker state
+    // Update worker state (Ewaa: physicalPresence = 'with_client_trial', ewaaJourneyStage = 'transfer_trial')
     worker.operationalStatus = 'خرجت للعميل';
+    worker.physicalPresence = 'with_client_trial';
+    worker.ewaaJourneyStage = 'transfer_trial';
     worker.lastDispatchDate = deliveryTime;
     worker.updatedAt = new Date().toISOString();
 
@@ -1389,9 +1542,12 @@ class ShelterTransferStore {
     transfer.paymentStatus = 'مسترد';
     transfer.updatedAt = nowIso;
 
-    // 2. Rule 11: Increment client_trials_count on worker
+    // 2. Rule 11 + Ewaa Rule: Increment client_trials_count on worker & require intent re-confirmation before new transfer
     worker.clientTrialsCount = (worker.clientTrialsCount || 0) + 1;
     worker.operationalStatus = params.nextAction;
+    worker.physicalPresence = 'inside_housing';
+    worker.ewaaJourneyStage = 'verification';
+    worker.intentConfirmedAfterReturn = false;
     worker.lastReturnDate = nowIso;
     worker.updatedAt = nowIso;
 
@@ -1648,6 +1804,533 @@ class ShelterTransferStore {
     }
   }
 
+
+  // ============================================================================
+  // EWAA ENGINE STORE METHODS (عمليات محرك الإيواء المبني على الوقائع والأدلة)
+  // ============================================================================
+
+  private resolveWorkerCanonicalStateKey(worker: WorkerProfile): EwaaWorkflowStateKey {
+    const activeTransfer = this.transferCases.find(
+      (t) =>
+        t.workerId === worker.id &&
+        ['خرجت للعميل', 'محجوزة', 'بانتظار الاتفاقية', 'جاهزة للتسليم', 'بانتظار نقل الخدمات'].includes(t.transferStatus)
+    );
+    if (worker.ewaaJourneyStage && EWAA_WORKFLOW_STATES.some((s) => s.state_key === worker.ewaaJourneyStage)) {
+      return worker.ewaaJourneyStage as EwaaWorkflowStateKey;
+    }
+    return determineWorkerJourneyState(
+      {
+        worker_declared_intent:
+          worker.workerDeclaredIntent ||
+          (worker.requiredAction === 'سفر / خروج نهائي' ? 'final_exit' : 'transfer'),
+        employer_intent: worker.employerIntent,
+        decision_route: worker.decisionRoute,
+        absconding_status: worker.abscondingStatus || 'none',
+        safety_concern: worker.hasOpenProtectionCase ? 'yes' : 'no',
+        salary_due: (worker.wageClaimTotal || 0) > 0 ? 'yes' : 'no',
+        prior_official_case: worker.requiredAction === 'تسوية ونزاع' ? 'yes' : 'no',
+        final_exit_status: worker.finalExitVisaIssuedAt ? 'issued' : 'not_issued',
+        final_exit_visa_issued_at: worker.finalExitVisaIssuedAt,
+        flight_at: worker.flightAt,
+        ticket_responsible: worker.ticketResponsibility || 'office',
+        physical_presence: worker.physicalPresence,
+        departure_confirmed: worker.departureEvidenceRef ? 'true' : 'false',
+        intent_confirmed_after_return: worker.intentConfirmedAfterReturn,
+      },
+      {
+        hasActiveTransfer: Boolean(activeTransfer),
+        activeTransferStatus: activeTransfer?.transferStatus || worker.operationalStatus,
+        returnedFromTrialWithoutIntentConfirmation:
+          worker.clientTrialsCount > 0 && worker.intentConfirmedAfterReturn === false,
+        isAirportArrivalHandoverOnly: worker.receivingSource === 'airport' && worker.workerDeclaredIntent === 'return_employer',
+      }
+    );
+  }
+
+  public getWorkerEwaaDiagnostic(workerId: string) {
+    const worker = this.getWorkerById(workerId);
+    if (!worker) return null;
+
+    const activeTransfer = this.transferCases.find(
+      (t) => t.workerId === worker.id && t.transferStatus === 'خرجت للعميل'
+    );
+    const inHousing =
+      worker.physicalPresence === 'inside_housing' ||
+      worker.operationalStatus === 'داخل السكن' ||
+      worker.operationalStatus === 'تحت التقييم' ||
+      worker.operationalStatus === 'متاحة لنقل الخدمات' ||
+      worker.operationalStatus === 'عادت من العميل' ||
+      worker.operationalStatus === 'مرحلة الترحيل';
+
+    const canonicalStateKey = this.resolveWorkerCanonicalStateKey(worker);
+    const canonicalStateDef = getEwaaWorkflowStateDef(canonicalStateKey);
+    const canonicalRouteDef =
+      EWAA_WORKFLOW_ROUTES.find((r) => r.key === canonicalStateDef.route_key) || EWAA_WORKFLOW_ROUTES[0];
+    const canonicalRequirements = getEwaaWorkflowStateRequirements(canonicalStateKey);
+
+    const wageReconciliation = reconcileWageClaimPayments(
+      worker.wageClaimTotal || 0,
+      worker.wageClaimPayments || []
+    );
+
+    const summary = workerOperationSummary({
+      fullNameAr: worker.fullNameAr,
+      inHousing,
+      physicalPresence: worker.physicalPresence || (inHousing ? 'inside_housing' : 'outside'),
+      journeyStage: canonicalStateKey,
+      canonicalStateKey,
+      workerDeclaredIntent: worker.workerDeclaredIntent || (worker.requiredAction === 'سفر / خروج نهائي' ? 'final_exit' : 'transfer'),
+      employerIntent: worker.employerIntent,
+      decisionRoute: worker.decisionRoute,
+      intakeFacts: worker.intakeFactsJson,
+      finalExitVisaIssuedAt: worker.finalExitVisaIssuedAt,
+      flightAt: worker.flightAt,
+      ticketResponsibility: worker.ticketResponsibility,
+      transferDeliveredAt: activeTransfer?.deliveryDateTime,
+      trialEndsAt: activeTransfer?.followupEndDate,
+      claimRemainingAmount: wageReconciliation.remainingVerifiedBalance,
+      missingVerificationsCount: (worker.missingVerifications || []).length,
+      responsibleEmployee: worker.responsibleEmployee,
+    });
+
+    const outlook = getHousingOutlook({
+      journey_stage: canonicalStateKey,
+      intake_facts: worker.intakeFactsJson,
+      worker_declared_intent: worker.workerDeclaredIntent,
+      employer_intent: worker.employerIntent,
+      decision_route: worker.decisionRoute,
+      receiving_source: worker.receivingSource,
+      physical_presence: worker.physicalPresence,
+      missing_verifications_count: (worker.missingVerifications || []).length,
+      claim_remaining_amount: wageReconciliation.remainingVerifiedBalance,
+      final_exit_visa_issued_at: worker.finalExitVisaIssuedAt,
+      flight_at: worker.flightAt,
+    });
+
+    const eligibility = validateTransferEligibilityAndReplacement({
+      workerId: worker.id,
+      nationality: worker.nationality,
+      workerDeclaredIntent: worker.workerDeclaredIntent,
+      abscondingStatus: worker.abscondingStatus,
+      hasOpenProtectionCase: worker.hasOpenProtectionCase,
+      completedTrialsCount: worker.clientTrialsCount || 0,
+      returnedFromPreviousTrialWithoutIntentConfirmation:
+        worker.clientTrialsCount > 0 && worker.intentConfirmedAfterReturn === false,
+    });
+
+    const showInHousingWorkQueue = shouldShowHousingWork({
+      inHousing,
+      routeKey: canonicalStateDef.route_key,
+      stateKey: canonicalStateKey,
+      journeyStage: canonicalStateKey,
+      transferDeliveredAt: activeTransfer?.deliveryDateTime,
+      trialEndsAt: activeTransfer?.followupEndDate,
+      transferCompletedAt: null,
+    });
+
+    const awaitingExitTicket = isIssuedVisaAwaitingTicket({
+      inHousing,
+      journeyStage: canonicalStateKey,
+      finalExitVisaIssuedAt: worker.finalExitVisaIssuedAt,
+      flightAt: worker.flightAt,
+    });
+
+    const remStageKeys = remainingJourneyStages(
+      {
+        worker_declared_intent:
+          worker.workerDeclaredIntent ||
+          (worker.requiredAction === 'سفر / خروج نهائي' ? 'final_exit' : 'transfer'),
+        decision_route: worker.decisionRoute,
+        journey_stage: canonicalStateKey,
+        final_exit_visa_issued_at: worker.finalExitVisaIssuedAt,
+        flight_at: worker.flightAt,
+        ticket_responsible: worker.ticketResponsibility || 'office',
+      },
+      [canonicalStateKey]
+    );
+    const remainingStages = remStageKeys.map((key) => getEwaaWorkflowStateDef(key));
+
+    return {
+      summary,
+      outlook,
+      wageReconciliation,
+      eligibility,
+      showInHousingWorkQueue,
+      awaitingExitTicket,
+      maxTrialsLimit: EWAA_MAX_CLIENT_TRIALS,
+      defaultTrialDays: EWAA_TRIAL_DAYS_DEFAULT,
+      canonicalStateKey,
+      canonicalStateDef,
+      canonicalRouteDef,
+      canonicalRequirements,
+      remainingStages,
+      allWorkflowStates: EWAA_WORKFLOW_STATES,
+    };
+  }
+
+  public getHousingOperationalBoard() {
+    const rows = this.workers.map((w) => {
+      const diag = this.getWorkerEwaaDiagnostic(w.id)!;
+      const sponsor = this.getFirstSponsor(w.id);
+      const activeTransfer = this.transferCases.find(
+        (t) => t.workerId === w.id && t.transferStatus === 'خرجت للعميل'
+      );
+      const entryMs = new Date(w.initialShelterEntryDate || w.createdAt).getTime();
+      const daysInHousing = Math.max(1, Math.ceil((Date.now() - entryMs) / 86400000));
+      const slaHours = diag.canonicalStateDef.sla_hours;
+      const slaDueMs = slaHours ? new Date(w.updatedAt || w.createdAt).getTime() + slaHours * 3600000 : null;
+      const slaOverdue =
+        Boolean(slaDueMs && slaDueMs < Date.now()) ||
+        (activeTransfer ? this.calculateFollowupStatus(activeTransfer).isOverdue : false);
+      const residenceOverLimit = daysInHousing > 14;
+      const missingCount =
+        (w.missingVerifications?.length || 0) +
+        (diag.wageReconciliation.remainingVerifiedBalance > 0 ? 1 : 0) +
+        (diag.awaitingExitTicket ? 1 : 0) +
+        (w.clientTrialsCount > 0 && w.intentConfirmedAfterReturn === false ? 1 : 0);
+
+      const inHousing =
+        w.physicalPresence === 'inside_housing' ||
+        ['داخل السكن', 'تحت التقييم', 'متاحة لنقل الخدمات', 'عادت من العميل', 'مرحلة الترحيل'].includes(w.operationalStatus);
+
+      return {
+        worker: w,
+        workerId: w.id,
+        workerCode: w.workerCode,
+        fullNameAr: w.fullNameAr,
+        nationality: w.nationality,
+        passportNumber: w.passportNumber,
+        iqamaNumber: w.iqamaNumber || '—',
+        employerName: activeTransfer?.newClientName || sponsor?.sponsorName || 'صاحب العمل الأول',
+        employerId: activeTransfer?.newClientNationalId || sponsor?.nationalIdOrIqama || '—',
+        inHousing,
+        workerStatusAr:
+          w.operationalStatus === 'خرجت للعميل'
+            ? 'عند العميل - فترة تجربة'
+            : w.physicalPresence === 'at_airport'
+            ? 'غادرت السكن - بانتظار السفر'
+            : w.operationalStatus === 'مغلق'
+            ? 'خارج السكن'
+            : 'في السكن',
+        routeKey: diag.canonicalStateDef.route_key as EwaaWorkflowRouteKey,
+        routeLabelAr: diag.canonicalRouteDef.label_ar,
+        stateKey: diag.canonicalStateKey,
+        stateLabelAr: diag.canonicalStateDef.label_ar,
+        requiredNowAr: diag.summary.nextBestActionAr,
+        daysInHousing,
+        responsibleEmployee: w.responsibleEmployee || 'مشرف السكن',
+        waitingOnAr: diag.canonicalStateDef.waiting_on_default || 'المكتب',
+        slaDisplayAr: slaHours ? `${slaHours} ساعة (${slaOverdue ? 'متأخرة' : 'ضمن المهلة'})` : 'مفتوحة حسب الجهة',
+        caseTypeAr: diag.canonicalRouteDef.card_label_ar,
+        escalationAr:
+          diag.canonicalStateDef.priority === 'urgent' || slaOverdue
+            ? 'تصعيد عاجل للمشرف'
+            : diag.canonicalStateDef.priority === 'high' || residenceOverLimit
+            ? 'متابعة عالية الأولوية'
+            : 'اعتيادي',
+        issuedAwaitingTicket: diag.awaitingExitTicket,
+        missingCount,
+        slaOverdue,
+        residenceOverLimit,
+      };
+    });
+
+    const distribution = computeHousingOperationalDistribution(rows);
+    return {
+      rows,
+      operationalCards: distribution.operationalCards,
+      attentionCards: distribution.attentionCards,
+    };
+  }
+
+  public updateWorkerJourneyState(params: {
+    workerId: string;
+    nextStateKey: EwaaWorkflowStateKey;
+    actorEmployee: string;
+    notes?: string;
+  }) {
+    const worker = this.getWorkerById(params.workerId);
+    if (!worker) throw new Error('العاملة غير موجودة');
+
+    const prevDef = getEwaaWorkflowStateDef(this.resolveWorkerCanonicalStateKey(worker));
+    const nextDef = getEwaaWorkflowStateDef(params.nextStateKey);
+
+    worker.ewaaJourneyStage = nextDef.state_key;
+    if (nextDef.route_key === 'transfer') {
+      worker.decisionRoute = 'transfer';
+      worker.operationalStatus =
+        nextDef.state_key === 'transfer_trial'
+          ? 'خرجت للعميل'
+          : nextDef.state_key === 'transfer_completed'
+          ? 'تم نقل الخدمات'
+          : nextDef.state_key === 'transfer_returned'
+          ? 'عادت من العميل'
+          : 'متاحة لنقل الخدمات';
+    } else if (nextDef.route_key === 'final_exit') {
+      worker.decisionRoute = 'final_exit';
+      worker.operationalStatus = nextDef.state_key === 'departed' ? 'مغلق' : 'مرحلة الترحيل';
+      if (['ticket_office', 'ticket_worker', 'ticket_booked', 'airport_transit', 'at_airport'].includes(nextDef.state_key) && !worker.finalExitVisaIssuedAt) {
+        worker.finalExitVisaIssuedAt = new Date().toISOString();
+      }
+      if (nextDef.state_key === 'at_airport') {
+        worker.physicalPresence = 'at_airport';
+      }
+    } else if (nextDef.route_key === 'return' || nextDef.route_key === 'arrival_delivery') {
+      worker.decisionRoute = 'return_employer';
+      worker.operationalStatus = nextDef.is_terminal ? 'مغلق' : 'داخل السكن';
+    } else {
+      worker.operationalStatus = 'تحت التقييم';
+    }
+    worker.updatedAt = new Date().toISOString();
+
+    this.addTimelineEvent({
+      workerId: worker.id,
+      movementType: 'تقييم أهلية',
+      fromStatus: prevDef.label_ar,
+      toStatus: nextDef.label_ar,
+      actorEmployee: params.actorEmployee,
+      officeId: worker.originalOfficeId,
+      description: `تحديث مرحلة الإيواء والسكن من (${prevDef.label_ar}) إلى (${nextDef.label_ar}) — المسار: ${nextDef.route_key}${params.notes ? ` — ${params.notes}` : ''}`,
+    });
+
+    this.saveAll();
+    return nextDef;
+  }
+
+  public intakeWorkerWithEwaaFacts(params: {
+    workerId?: string;
+    fullNameAr: string;
+    nationality: string;
+    passportNumber: string;
+    originalOfficeId: GroupOfficeId;
+    shelterBranch: string;
+    assignedRoom?: string;
+    assignedBed?: string;
+    sponsorName?: string;
+    sponsorPhone?: string;
+    receivingEmployee: string;
+    observationInput: IntakeObservationInput;
+  }): {
+    success: boolean;
+    worker?: WorkerProfile;
+    accommodationCase?: AccommodationCase | null;
+    observationResult?: ReturnType<typeof intakeObservation>;
+    error?: string;
+  } {
+    try {
+      const obs = intakeObservation(params.observationInput);
+
+      let worker = params.workerId ? this.getWorkerById(params.workerId) : undefined;
+      if (!worker) {
+        const added = this.addWorker({
+          fullNameAr: params.fullNameAr,
+          fullNameEn: params.fullNameAr,
+          nationality: params.nationality,
+          passportNumber: params.passportNumber,
+          originalOfficeId: params.originalOfficeId,
+          initialEntryReason: `استلام عبر (${params.observationInput.source || 'أخرى'}) - ${obs.next_action.slice(0, 80)}`,
+          operationalStatus:
+            obs.journey_stage === 'employer_delivered'
+              ? 'مغلق'
+              : obs.journey_stage === 'protection'
+              ? 'تحت التقييم'
+              : params.observationInput.worker_intent === 'final_exit'
+              ? 'مرحلة الترحيل'
+              : 'متاحة لنقل الخدمات',
+          responsibleEmployee: params.receivingEmployee,
+        });
+        if (!added.worker) throw new Error(added.error || 'تعذر إنشاء ملف العاملة');
+        worker = added.worker;
+      }
+
+      worker.ewaaJourneyStage = obs.canonical_state_key || obs.journey_stage;
+      worker.physicalPresence = obs.physical_presence;
+      worker.workerDeclaredIntent = (params.observationInput.worker_intent as any) || 'undecided';
+      worker.employerIntent = (params.observationInput.employer_intent as any) || 'undecided';
+      worker.receivingSource = (params.observationInput.source as any) || 'other';
+      worker.intakeFactsJson = obs.intake_facts;
+      worker.belongings = params.observationInput.belongings || [];
+      worker.missingVerifications = obs.missing_verifications;
+      worker.parallelActions = obs.parallel_actions;
+      worker.abscondingStatus = (params.observationInput.absconding_status as any) || 'unknown';
+      worker.hasOpenProtectionCase = params.observationInput.safety_concern === 'yes';
+      if (params.observationInput.unpaid_wages === 'yes' && Number(params.observationInput.salary_amount || 0) > 0) {
+        worker.wageClaimTotal = Number(params.observationInput.salary_amount);
+      }
+      worker.intentConfirmedAfterReturn = worker.workerDeclaredIntent !== 'undecided';
+      worker.updatedAt = new Date().toISOString();
+
+      let accCase: AccommodationCase | null = null;
+      // Ewaa Rule: Direct airport handover or unknown whereabouts NEVER creates a fake housing stay!
+      if (obs.creates_housing_stay) {
+        const accRes = this.createAccommodationCase({
+          workerId: worker.id,
+          originalOfficeId: params.originalOfficeId,
+          shelterBranch: params.shelterBranch,
+          intakeDateTime: new Date().toISOString(),
+          intakeReason: obs.next_action,
+          assignedRoom: params.assignedRoom,
+          assignedBed: params.assignedBed,
+          workWillingness:
+            worker.workerDeclaredIntent === 'final_exit'
+              ? 'لا ترغب بالعمل'
+              : worker.workerDeclaredIntent === 'transfer'
+              ? 'ترغب بالعمل'
+              : 'مشروطة',
+          notes: obs.missing_verifications.length > 0 ? `بنود قيد التحقق: ${obs.missing_verifications.join('، ')}` : undefined,
+        });
+        accCase = accRes.accommodationCase || null;
+      } else if (params.observationInput.direct_airport_handover) {
+        this.addTimelineEvent({
+          workerId: worker.id,
+          movementType: 'تسليم مباشر من المطار',
+          fromStatus: 'المطار',
+          toStatus: 'تسلّمها الكفيل مباشرة (بدون دخول السكن)',
+          actorEmployee: params.receivingEmployee,
+          officeId: params.originalOfficeId,
+          description: `تسليم مباشر من المطار إلى المستلم: ${params.observationInput.handover_recipient_name} (هوية: ${params.observationInput.handover_recipient_id}) - مرجع المحضر: ${params.observationInput.handover_receipt_ref || 'موثق'}`,
+        });
+      }
+
+      if (params.sponsorName) {
+        this.recordFirstSponsor({
+          workerId: worker.id,
+          sponsorName: params.sponsorName,
+          sponsorPhone: params.sponsorPhone,
+          reasonForReturn: obs.next_action.slice(0, 120),
+          financialClaimAmount: worker.wageClaimTotal || 0,
+        });
+      }
+
+      this.saveAll();
+      return { success: true, worker, accommodationCase: accCase, observationResult: obs };
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
+  }
+
+  public recordWageClaimPayment(params: {
+    workerId: string;
+    amount: number;
+    status: 'reported_unverified' | 'verified_with_evidence';
+    evidenceRef?: string;
+    recordedBy: string;
+    notes?: string;
+  }) {
+    const worker = this.getWorkerById(params.workerId);
+    if (!worker) throw new Error('العاملة غير موجودة');
+
+    if (params.status === 'verified_with_evidence' && (!params.evidenceRef || params.evidenceRef.trim().length < 3)) {
+      throw new Error('لا يمكن اعتماد دفعة أجور كموثقة بدون إدخال رقم مرجع الحوالة أو الإيصال الرسمي.');
+    }
+
+    if (!worker.wageClaimPayments) worker.wageClaimPayments = [];
+    worker.wageClaimPayments.unshift({
+      id: `wcp-${Date.now()}`,
+      amount: Number(params.amount),
+      status: params.status,
+      evidenceRef: params.evidenceRef,
+      paidAt: new Date().toISOString().split('T')[0],
+      recordedBy: params.recordedBy,
+      notes: params.notes,
+    });
+
+    const rec = reconcileWageClaimPayments(worker.wageClaimTotal || 0, worker.wageClaimPayments);
+    worker.updatedAt = new Date().toISOString();
+
+    this.addTimelineEvent({
+      workerId: worker.id,
+      movementType: 'توثيق مطالبة أجور',
+      actorEmployee: params.recordedBy,
+      officeId: worker.originalOfficeId,
+      description: `${
+        params.status === 'verified_with_evidence' ? 'دفعة أجور موثقة بدليل' : 'دفعة أجور مسجلة حسب الإفادة فقط (غير موثقة)'
+      } بمبلغ ⃁ ${Number(params.amount).toLocaleString()} — ${rec.statusSummaryAr}`,
+      attachmentRef: params.evidenceRef,
+    });
+
+    this.saveAll();
+    return rec;
+  }
+
+  public verifyFinalDeparture(params: {
+    workerId: string;
+    departureEvidenceRef: string;
+    verifiedByEmployee: string;
+  }) {
+    const worker = this.getWorkerById(params.workerId);
+    if (!worker) throw new Error('العاملة غير موجودة');
+
+    const gate = verifyDepartureGate({
+      physicalPresence: worker.physicalPresence || 'at_airport',
+      flightAt: worker.flightAt,
+      departureEvidenceRef: params.departureEvidenceRef,
+      verifiedByEmployee: params.verifiedByEmployee,
+    });
+
+    if (!gate.isVerifiedDeparted) {
+      throw new Error(gate.warningAr || 'لا يمكن إغلاق الملف كمغادرة نهائية بدون دليل مغادرة موثق.');
+    }
+
+    worker.ewaaJourneyStage = gate.resultingStage;
+    worker.physicalPresence = gate.resultingPresence;
+    worker.departureEvidenceRef = params.departureEvidenceRef;
+    worker.operationalStatus = 'مغلق';
+    worker.updatedAt = new Date().toISOString();
+
+    const activeAcc = this.accommodationCases.find((a) => a.workerId === worker.id && a.caseStatus === 'نشطة بالسكن');
+    if (activeAcc) {
+      activeAcc.exitDateTime = new Date().toISOString();
+      activeAcc.exitType = 'خروج نهائي وسفر';
+      activeAcc.caseStatus = 'مكتملة - خرجت';
+    }
+
+    this.addTimelineEvent({
+      workerId: worker.id,
+      movementType: 'إثبات مغادرة نهائية',
+      fromStatus: 'مرحلة الترحيل / المطار',
+      toStatus: 'غادرت المملكة نهائياً (موثقة)',
+      actorEmployee: params.verifiedByEmployee,
+      officeId: worker.originalOfficeId,
+      description: `تم التحقق من الإقلاع والمغادرة الفعلية من المملكة بموجب دليل المغادرة رقم: ${params.departureEvidenceRef}`,
+      attachmentRef: params.departureEvidenceRef,
+    });
+
+    this.saveAll();
+    return gate;
+  }
+
+  public reconfirmWorkerIntentAfterReturn(params: {
+    workerId: string;
+    confirmedIntent: 'transfer' | 'final_exit' | 'return_employer';
+    actorEmployee: string;
+  }) {
+    const worker = this.getWorkerById(params.workerId);
+    if (!worker) throw new Error('العاملة غير موجودة');
+
+    worker.workerDeclaredIntent = params.confirmedIntent;
+    worker.intentConfirmedAfterReturn = true;
+    worker.operationalStatus =
+      params.confirmedIntent === 'transfer' ? 'متاحة لنقل الخدمات' : 'مرحلة الترحيل';
+    worker.updatedAt = new Date().toISOString();
+
+    this.addTimelineEvent({
+      workerId: worker.id,
+      movementType: 'تقييم أهلية',
+      actorEmployee: params.actorEmployee,
+      officeId: worker.originalOfficeId,
+      description: `تأكيد رغبة العاملة المستقلة بعد العودة من التجربة: (${
+        params.confirmedIntent === 'transfer'
+          ? 'ترغب بنقل خدمات جديد'
+          : params.confirmedIntent === 'final_exit'
+          ? 'ترغب بالخروج النهائي'
+          : 'ترغب بالعودة للكفيل'
+      })`,
+    });
+
+    this.saveAll();
+    return worker;
+  }
 
   private addTimelineEvent(event: Omit<WorkerMovementTimeline, 'id' | 'eventDateTime'>) {
     const newEv: WorkerMovementTimeline = {

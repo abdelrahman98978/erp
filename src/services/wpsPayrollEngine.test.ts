@@ -212,4 +212,43 @@ describe('WpsPayrollEngine — Saudi Labor Law & WPS Enterprise Suite', () => {
       expect(alerts.some((a) => a.severity === 'CRITICAL_7D')).toBe(true);
     });
   });
+
+  describe('6. Sanction Cap (Art. 66/70), Advance Cap (Art. 93) & Leave Classification', () => {
+    it('caps disciplinary sanctions at 5 days of basic salary per violation and per month (Articles 66 & 70)', () => {
+      // Basic salary = 6,000 -> daily = 200 -> max 5 days = 1,000 SAR
+      const res = WpsPayrollEngine.validateSanctionCap(6000, 1500, 200);
+      expect(res.maxFiveDaysBasicWage).toBe(1000);
+      expect(res.wasCapped).toBe(true);
+      expect(res.allowedAmountThisMonth).toBe(800);
+      expect(res.excessCarriedForward).toBe(700);
+    });
+
+    it('validates advance monthly installment against the 10% ceiling (Article 93)', () => {
+      const withinCap = WpsPayrollEngine.validateAdvanceInstallmentCap(10000, 900);
+      expect(withinCap.exceedsTenPercent).toBe(false);
+      expect(withinCap.maxTenPercentInstallment).toBe(1000);
+
+      const overCap = WpsPayrollEngine.validateAdvanceInstallmentCap(10000, 1500);
+      expect(overCap.exceedsTenPercent).toBe(true);
+    });
+
+    it('only deducts Annual Leave from annual leave balance and classifies Sick/Personal/Unpaid leaves accurately', () => {
+      const annual = WpsPayrollEngine.classifyLeaveDeductionRule('إجازة اعتيادية سنوية', 5, 300);
+      expect(annual.deductFromAnnualBalance).toBe(true);
+      expect(annual.annualDaysToDeduct).toBe(5);
+
+      const sick = WpsPayrollEngine.classifyLeaveDeductionRule('إجازة مرضية بتقرير طبي معتمد (صحتي)', 10, 300, 25);
+      expect(sick.deductFromAnnualBalance).toBe(false);
+      expect(sick.annualDaysToDeduct).toBe(0);
+      expect(sick.legalReference).toContain('117');
+
+      const bereavement = WpsPayrollEngine.classifyLeaveDeductionRule('إجازة وفاة قريب / زواج (5 أيام مدفوعة)', 5, 300);
+      expect(bereavement.deductFromAnnualBalance).toBe(false);
+      expect(bereavement.annualDaysToDeduct).toBe(0);
+
+      const unpaid = WpsPayrollEngine.classifyLeaveDeductionRule('إجازة استثنائية بدون راتب', 4, 300);
+      expect(unpaid.deductFromAnnualBalance).toBe(false);
+      expect(unpaid.unpaidDaysForPayroll).toBe(4);
+    });
+  });
 });

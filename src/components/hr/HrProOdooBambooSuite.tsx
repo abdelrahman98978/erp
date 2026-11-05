@@ -31,6 +31,7 @@ export interface SuiteEmployeeSummary {
 
 export interface OnboardingPlanRecord {
   id: string;
+  company_id?: string;
   employee_id: string;
   employee_name: string;
   role: string;
@@ -48,6 +49,7 @@ export interface OnboardingPlanRecord {
 
 export interface PerformanceReviewRecord {
   id: string;
+  company_id?: string;
   employee_id: string;
   employee_name: string;
   role: string;
@@ -65,6 +67,7 @@ export interface PerformanceReviewRecord {
 
 export interface DependentBenefitRecord {
   id: string;
+  company_id?: string;
   employee_id: string;
   employee_name: string;
   dependent_name: string;
@@ -274,6 +277,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
       bankCode: 'ALRAJHI',
       iban: selectedEmployee.iban || 'SA0380000000608010167519',
       isSaudi,
+      isNewSubscriberPostJuly2024: simPostJuly2024Gosi,
       basicSalary: basic,
       housingAllowance: housing,
       transportAllowance: transport,
@@ -295,6 +299,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
     simSanctionInput,
     simOvertimeHours,
     simUnpaidDays,
+    simPostJuly2024Gosi,
   ]);
 
   const toggleOnboardingStep = async (
