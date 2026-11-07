@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 /**
  * Real ISO/IEC 18004 QR Code & ISO/IEC 15417 Code-128B Linear Barcode Generator
  * Plus Saudi ZATCA Phase 2 TLV (Tag-Length-Value) Base64 Encoder.
@@ -463,7 +464,7 @@ export function generateRealQrSvg(
     ? `background:${lightColor}; padding:3px; border:1px solid #e0e0e0; border-radius:10px; display:block;`
     : `background:${lightColor}; display:block;`;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${sizePx}" height="${sizePx}" viewBox="0 0 ${totalModules} ${totalModules}" shape-rendering="crispEdges" style="${styleAttr}" role="img" aria-label="QR Code"><rect width="${totalModules}" height="${totalModules}" fill="${lightColor}"/><path d="${pathData}" fill="${darkColor}"/></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${sizePx}" height="${sizePx}" viewBox="0 0 ${totalModules} ${totalModules}" shape-rendering="crispEdges" style="${styleAttr}" role="img" aria-label="${i18n.t('common.qrCode', 'رمز الاستجابة السريعة')}"><rect width="${totalModules}" height="${totalModules}" fill="${lightColor}"/><path d="${pathData}" fill="${darkColor}"/></svg>`;
 }
 
 // ─── 3. Real ISO/IEC 15417 Code-128B Linear Barcode SVG Generator ────────────

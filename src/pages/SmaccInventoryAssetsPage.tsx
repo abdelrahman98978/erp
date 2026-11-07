@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   Building2,
@@ -376,7 +377,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
           />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCIAL ENGINE</span>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{i18n.t("finance.financialEngine", "المحرك المالي للأصول والمخزون")}</span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
               إدارة الأصول الثابتة والمخزون

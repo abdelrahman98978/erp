@@ -96,12 +96,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed = false,
   onToggleCollapse,
 }) => {
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, t } = useLanguage();
   const { isSuperAdmin, activeCompany } = useIamSession();
   const { activeCompanyId } = useCompany();
   const { user: authUser } = useAuthContext();
   const { visibleMenu } = useModuleVisibility();
   const isRtl = currentLanguage.dir === 'rtl';
+
+  const getItemTitle = (item: NavItem): string => {
+    if (currentLanguage.code === 'ar') return item.title;
+    return t(item.id, t(item.href || item.id, item.title));
+  };
 
   const [displayMode, setDisplayMode] = useState<SidebarDisplayMode>('tree');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -287,7 +292,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 {renderIcon(item.icon, 'w-3.5 h-3.5')}
               </div>
-              <span className="truncate text-right">{item.title}</span>
+              <span className="truncate text-right">{getItemTitle(item)}</span>
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
@@ -319,7 +324,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       if (hasChildren) {
         toggleExpand(item.id, e);
       } else if (item.href) {
-        onSelectTab(item.href, item.title);
+        onSelectTab(item.href, getItemTitle(item));
         if (onClose && window.innerWidth < 1024) onClose();
       }
     };
@@ -341,7 +346,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <span className={`shrink-0 ${isDirectActive ? 'text-[#ffffff]' : 'text-[#707070]'}`}>
               {renderIcon(item.icon, 'w-3.5 h-3.5')}
             </span>
-            <span className="truncate text-right">{item.title}</span>
+            <span className="truncate text-right">{getItemTitle(item)}</span>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
@@ -401,7 +406,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {companyMeta.nameAr}
                 </div>
                 <div className="text-[11px] font-medium text-[#707070] truncate">
-                  الأقسام الإدارية الـ 9
+                  {t('sidebar.nineDepartments', 'الأقسام الإدارية الـ 9')}
                 </div>
               </div>
             )}
@@ -464,7 +469,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               title="عرض شجري للأقسام الـ 9"
             >
               <ListTree className="w-3.5 h-3.5 shrink-0" />
-              <span>الأقسام</span>
+              <span>{t('sidebar.departments', 'الأقسام')}</span>
             </button>
 
             <button
@@ -478,7 +483,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               title="عرض بطاقات"
             >
               <LayoutGrid className="w-3.5 h-3.5 shrink-0" />
-              <span>بطاقات</span>
+              <span>{t('sidebar.cards', 'بطاقات')}</span>
             </button>
 
             <button
@@ -488,7 +493,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               title="طي القائمة الجانبية"
             >
               <Columns className="w-3.5 h-3.5 shrink-0" />
-              <span>طي</span>
+              <span>{t('sidebar.collapse', 'طي')}</span>
             </button>
           </div>
         )}
@@ -500,8 +505,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <Search className="w-3.5 h-3.5 text-[#707070] shrink-0" />
               <input
                 type="text"
-                aria-label="بحث في الأقسام الـ 9"
-                placeholder="بحث في الأقسام الـ 9..."
+                aria-label={t('sidebar.searchPlaceholder', 'بحث في الأقسام الـ 9...')}
+                placeholder={t('sidebar.searchPlaceholder', 'بحث في الأقسام الـ 9...')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-none outline-none text-xs text-[#141414] placeholder-[#707070]"
@@ -524,12 +529,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {anyExpanded ? (
                   <>
                     <ChevronsDownUp className="w-3.5 h-3.5" />
-                    <span>طي الكل</span>
+                    <span>{t('sidebar.collapseAll', 'طي الكل')}</span>
                   </>
                 ) : (
                   <>
                     <ChevronsUpDown className="w-3.5 h-3.5" />
-                    <span>فتح الكل</span>
+                    <span>{t('sidebar.expandAll', 'فتح الكل')}</span>
                   </>
                 )}
               </button>
@@ -554,11 +559,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => {
                     const target = findFirstLeaf(item);
                     if (target) {
-                      onSelectTab(target.href, target.title);
+                      onSelectTab(target.href, t(target.href, target.title));
                       if (onClose && window.innerWidth < 1024) onClose();
                     }
                   }}
-                  title={item.title}
+                  title={getItemTitle(item)}
                   className={`relative w-11 h-11 app-icon-squircle flex items-center justify-center transition-colors cursor-pointer ${
                     isActive
                       ? 'bg-[#141414] text-[#ffffff]'
@@ -596,7 +601,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <div className="w-7 h-7 app-icon-squircle bg-[#141414] text-[#ffffff] flex items-center justify-center">
                       {renderIcon(item.icon, 'w-3.5 h-3.5 text-[#ffffff]')}
                     </div>
-                    <span>{item.title}</span>
+                    <span>{getItemTitle(item)}</span>
                   </div>
 
                   {leaves.length > 0 && (
@@ -609,7 +614,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             type="button"
                             onClick={() => {
                               if (leaf.href) {
-                                onSelectTab(leaf.href, leaf.title);
+                                onSelectTab(leaf.href, getItemTitle(leaf));
                                 if (onClose && window.innerWidth < 1024) onClose();
                               }
                             }}
@@ -619,7 +624,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 : 'bg-[#ffffff] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0]'
                             }`}
                           >
-                            {leaf.title}
+                            {getItemTitle(leaf)}
                           </button>
                         );
                       })}
@@ -637,8 +642,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {effectiveMode === 'compact' ? (
           <button
             type="button"
-            onClick={() => onSelectTab('logout', 'تسجيل الخروج')}
-            title="تسجيل الخروج من القسم"
+            onClick={() => onSelectTab('logout', t('sidebar.logout', 'تسجيل الخروج'))}
+            title={t('sidebar.logout', 'تسجيل الخروج من القسم')}
             className="w-full h-10 app-icon-squircle bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#ffffff] flex items-center justify-center cursor-pointer transition-colors"
           >
             <LogOut className="w-4 h-4" />
@@ -665,11 +670,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <button
               type="button"
-              onClick={() => onSelectTab('logout', 'تسجيل الخروج')}
+              onClick={() => onSelectTab('logout', t('sidebar.logout', 'تسجيل الخروج'))}
               className="w-full py-2 px-3 rounded-full bg-[#f3f3f3] hover:bg-[#262626] text-[#141414] hover:text-[#ffffff] text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span>تسجيل الخروج من القسم</span>
+              <span>{t('sidebar.logout', 'تسجيل الخروج من القسم')}</span>
             </button>
           </div>
         )}

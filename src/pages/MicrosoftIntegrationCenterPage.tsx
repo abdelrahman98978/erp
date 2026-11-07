@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { useAppStore } from '../stores/appStore';
@@ -189,7 +190,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
           <div>
             <span className="pill-tag-mint flex items-center gap-1" style={{ fontSize: '11.5px', padding: '6px 14px' }}>
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Microsoft Entra ID Connected</span>
+              <span>{i18n.t("exec.entraConnected", "متصل بـ Microsoft Entra ID")}</span>
             </span>
           </div>
         </div>

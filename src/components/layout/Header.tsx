@@ -47,16 +47,22 @@ export const Header: React.FC<HeaderProps> = ({
   const { setQuickSearchOpen, activeTab } = useAppStore();
 
   const resolvedTabTitle = useMemo(() => {
+    const targetSlug = (activeTab || activeTabTitle || 'dashboard').trim().toLowerCase();
+    if (currentLanguage.code !== 'ar') {
+      const translated = t(targetSlug, '');
+      if (translated && translated !== targetSlug) {
+        return translated;
+      }
+    }
     if (activeTabTitle && !/^[a-z0-9-_]+$/i.test(activeTabTitle)) {
       return activeTabTitle;
     }
-    const targetSlug = (activeTab || activeTabTitle || 'dashboard').trim().toLowerCase();
     if (SLUG_ARABIC_TITLES[targetSlug]) {
       return SLUG_ARABIC_TITLES[targetSlug];
     }
     const findTitle = (items: typeof SIDEBAR_MENU): string | null => {
       for (const item of items) {
-        if (item.href === targetSlug || item.id === targetSlug) return item.title;
+        if (item.href === targetSlug || item.id === targetSlug) return t(item.id, item.title);
         if (item.children) {
           const found = findTitle(item.children);
           if (found) return found;
@@ -67,9 +73,9 @@ export const Header: React.FC<HeaderProps> = ({
     return (
       findTitle(SIDEBAR_MENU) ||
       SLUG_ARABIC_TITLES[activeTabTitle?.toLowerCase()] ||
-      'لوحة المؤشرات التنفيذية'
+      t('dashboard', 'لوحة المؤشرات التنفيذية')
     );
-  }, [activeTabTitle, activeTab]);
+  }, [activeTabTitle, activeTab, currentLanguage.code, t]);
 
   const effectiveProfile = authUser || authService.getCurrentUser();
   const resolvedScope = useMemo(() => {
@@ -187,7 +193,7 @@ export const Header: React.FC<HeaderProps> = ({
             title={t('appLauncherTitle', 'شاشات القسم المصرح بها')}
           >
             <Grid className="w-3.5 h-3.5 shrink-0" />
-            <span>شاشات القسم</span>
+            <span>{t('header.departmentScreens', 'شاشات القسم')}</span>
           </button>
 
           {/* Mobile & Tablet Active Screen Title (< 768px) */}
@@ -213,7 +219,7 @@ export const Header: React.FC<HeaderProps> = ({
             {showBranchDropdown && (
               <div className="absolute top-full mt-2 right-0 bg-[#ffffff] border border-[#e0e0e0] rounded-[24px] w-64 z-[250] p-2.5 space-y-1 shadow-lg">
                 <div className="px-3 py-1.5 text-[11px] font-semibold text-[#707070] border-b border-[#f0f0f0]">
-                  الفرع التشغيلي:
+                  {t('header.operationalBranch', 'الفرع التشغيلي:')}
                 </div>
                 {branches.map((b) => (
                   <button
@@ -267,7 +273,9 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Activity className="w-3.5 h-3.5 text-[#141414] shrink-0" />
             <span className="hidden 2xl:inline">
-              {openErrorCount > 0 ? 'الأخطاء' : 'سلامة النظام'}
+              {openErrorCount > 0
+                ? t('header.systemErrors', 'الأخطاء')
+                : t('header.systemHealth', 'سلامة النظام')}
             </span>
             <span className="px-2 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold font-mono leading-none">
               {openErrorCount > 0 ? openErrorCount : '100%'}
@@ -282,7 +290,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="رفع واستخلاص آلي لأي مستند (100 صورة فاتورة / PDF / Word / Excel)"
           >
             <UploadCloud className="w-3.5 h-3.5 text-[#ffffff] shrink-0" />
-            <span className="hidden xl:inline">مستخرج المستندات</span>
+            <span className="hidden xl:inline">{t('header.docExtractor', 'مستخرج المستندات')}</span>
           </button>
 
           {/* Faris & Noura Institutional Advisor Quick Trigger */}
@@ -295,7 +303,7 @@ export const Header: React.FC<HeaderProps> = ({
             title="استدعاء المستشار المؤسسي الصوتي والنصي (فارس / نُورة)"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#141414] shrink-0" />
-            <span className="hidden 2xl:inline">فارس ونُورة</span>
+            <span className="hidden 2xl:inline">{t('header.aiAdvisor', 'فارس ونُورة')}</span>
           </button>
 
           {/* Language Selector */}
@@ -318,7 +326,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <div className="px-2 pt-1 pb-2 border-b border-[#f0f0f0] flex items-center justify-between">
                   <span className="text-xs font-semibold text-[#141414] flex items-center gap-1.5">
                     <Globe className="w-3.5 h-3.5 text-[#141414]" />
-                    <span>لغات النظام الرسمية</span>
+                    <span>{t('header.officialLanguages', 'لغات النظام الرسمية')}</span>
                   </span>
                   <button
                     type="button"
@@ -333,7 +341,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <Search className="w-3.5 h-3.5 text-[#707070] absolute right-3.5 top-2.5" />
                   <input
                     type="text"
-                    placeholder="ابحث عن لغة..."
+                    placeholder={t('header.searchLanguage', 'ابحث عن لغة...')}
                     value={langSearch}
                     onChange={(e) => setLangSearch(e.target.value)}
                     className="w-full bg-[#f0f0f0] rounded-[16px] pr-8 pl-3 py-1.5 text-xs text-[#141414] outline-none"

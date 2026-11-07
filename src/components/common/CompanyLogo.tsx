@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React, { useState } from 'react';
 import { CompanyId } from '../../types';
 
@@ -186,7 +187,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
         <circle cx="100" cy="100" r="72" fill="none" stroke="#34D399" strokeWidth="4" strokeDasharray="6 4" />
         <polygon points="100,38 152,68 152,132 100,162 48,132 48,68" fill="none" stroke="#F59E0B" strokeWidth="5" />
         <text x="100" y="112" textAnchor="middle" fill="#FFFFFF" fontSize="38" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
-          KAS
+          {i18n.t("company.kasCode", "KAS")}
         </text>
         <text x="100" y="132" textAnchor="middle" fill="#34D399" fontSize="12" fontWeight="700" fontFamily="sans-serif">
           TRADING

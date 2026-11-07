@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React from 'react';
 import {
   LayoutDashboard,
@@ -168,7 +169,7 @@ export const ShelterNavigationSidebar: React.FC<ShelterNavigationSidebarProps> =
               <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                 منظومة معزولة
               </span>
-              <span className="text-[10px] text-[#707070] font-mono">HRSD</span>
+              <span className="text-[10px] text-[#707070] font-mono">{i18n.t("shelter.hrsdBadge", "HRSD")}</span>
             </div>
             <h2 className="text-sm font-bold text-[#141414] truncate m-0 mt-0.5">
               بوابة مراكز الإيواء والتسكين

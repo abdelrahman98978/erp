@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { ExportDropdown } from '../components/common/ExportDropdown';
@@ -235,7 +236,7 @@ export const MasterConstantsPage: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>MASTER CONSTANTS</span>
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{i18n.t("exec.masterConstants", "الثوابت والبيانات الأساسية")}</span>
                 <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>القاموس والمحددات الشاملة</span>
               </div>
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>

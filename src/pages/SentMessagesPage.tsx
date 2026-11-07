@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
@@ -232,7 +233,7 @@ export const SentMessagesPage: React.FC = () => {
           <BusinessIllustration type="sent-messages" size="sm" showBackground={false} />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>COMMUNICATION HUB</span>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{i18n.t("crm.communicationHub", "مركز الاتصالات والإشعارات")}</span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, margin: '0', letterSpacing: '-0.02em', color: '#ffffff', fontFamily: 'var(--font-family-display)' }}>
               مركز الرسائل الموحد (SMS & WhatsApp Business)

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { useCompany } from '../../contexts/CompanyContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 import {
   authService,
   resolveDepartmentAndCompany,
@@ -54,6 +55,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 }) => {
   const { unreadCount, setQuickSearchOpen } = useAppStore();
   const { activeCompanyId } = useCompany();
+  const { currentLanguage, t } = useLanguage();
   const [bgState, setBgState] = useState<BackgroundExecutionState>(() =>
     backgroundExecutionService.getState()
   );
@@ -173,7 +175,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           data-mobile-sheet="true"
           className="fixed inset-0 bg-[#141414]/50 backdrop-blur-xs z-[250] lg:hidden flex items-end justify-center"
           onClick={() => setShowQuickSheet(false)}
-          dir="rtl"
+          dir={currentLanguage.dir}
         >
           <div
             className="w-full max-w-md bg-[#ffffff] rounded-t-[24px] border-t border-[#e0e0e0] shadow-2xl p-4 space-y-3 pb-24 motion-silk-enter"
@@ -186,7 +188,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </span>
                 <div>
                   <h4 className="text-xs font-bold text-[#141414] m-0">
-                    مركز الإجراءات السريعة للهاتف
+                    {t('nav.quickSheetTitle', 'مركز الإجراءات السريعة للهاتف')}
                   </h4>
                   <p className="text-[10.5px] text-[#707070] m-0">{deptMeta.nameAr}</p>
                 </div>
@@ -212,8 +214,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               >
                 <Search className="w-4 h-4 text-[#141414] shrink-0" />
                 <div>
-                  <div className="text-xs font-bold">البحث والأوامر</div>
-                  <div className="text-[10px] text-[#707070]">بحث شامل فوري</div>
+                  <div className="text-xs font-bold">{t('nav.searchAndCommands', 'البحث والأوامر')}</div>
+                  <div className="text-[10px] text-[#707070]">{t('nav.instantGlobalSearch', 'بحث شامل فوري')}</div>
                 </div>
               </button>
 
@@ -227,8 +229,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               >
                 <UploadCloud className="w-4 h-4 text-[#141414] shrink-0" />
                 <div>
-                  <div className="text-xs font-bold">ماسح الفواتير OCR</div>
-                  <div className="text-[10px] text-[#707070]">100+ فاتورة ومستند</div>
+                  <div className="text-xs font-bold">{t('nav.ocrScanner', 'ماسح الفواتير OCR')}</div>
+                  <div className="text-[10px] text-[#707070]">{t('nav.ocrSub', '100+ فاتورة ومستند')}</div>
                 </div>
               </button>
 
@@ -249,8 +251,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               >
                 <Sparkles className="w-4 h-4 text-[#ffffff] shrink-0" />
                 <div>
-                  <div className="text-xs font-bold text-[#ffffff]">فارس ونُورة AI</div>
-                  <div className="text-[10px] text-[#ffffff]/80">مساعد المهام الذكي</div>
+                  <div className="text-xs font-bold text-[#ffffff]">{t('nav.aiAssistant', 'فارس ونُورة AI')}</div>
+                  <div className="text-[10px] text-[#ffffff]/80">{t('nav.aiAssistantSub', 'مساعد المهام الذكي')}</div>
                 </div>
               </button>
 
@@ -264,8 +266,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               >
                 <Grid className="w-4 h-4 text-[#141414] shrink-0" />
                 <div>
-                  <div className="text-xs font-bold">منصة التطبيقات</div>
-                  <div className="text-[10px] text-[#707070]">كافة وحدات القسم</div>
+                  <div className="text-xs font-bold">{t('nav.appPlatform', 'منصة التطبيقات')}</div>
+                  <div className="text-[10px] text-[#707070]">{t('nav.appPlatformSub', 'كافة وحدات القسم')}</div>
                 </div>
               </button>
             </div>
@@ -274,7 +276,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               <div className="space-y-1.5 pt-1">
                 <div className="text-[11px] font-bold text-[#141414] flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 fill-[#141414] text-[#141414]" />
-                  <span>شاشاتي المثبتة في المفضلة:</span>
+                  <span>{t('nav.pinnedScreens', 'شاشاتي المثبتة في المفضلة:')}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {pinnedTabs.map((pin) => (
@@ -283,11 +285,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                       type="button"
                       onClick={() => {
                         setShowQuickSheet(false);
-                        onSelectTab(pin.href, pin.title);
+                        onSelectTab(pin.href, t(pin.href, pin.title));
                       }}
                       className="px-3 py-2 min-h-[40px] rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[11px] font-semibold text-[#141414] cursor-pointer"
                     >
-                      {pin.title}
+                      {t(pin.href, pin.title)}
                     </button>
                   ))}
                 </div>
@@ -298,7 +300,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       )}
 
       <nav
-        dir="rtl"
+        dir={currentLanguage.dir}
         aria-label="شريط التنقل السفلي للهاتف"
         className="fixed bottom-0 inset-x-0 z-[95] lg:hidden bg-[#ffffff]/95 backdrop-blur-xl border-t border-[#e0e0e0] shadow-[0_-8px_24px_rgba(20,20,20,0.06)] select-none"
         style={{
@@ -350,7 +352,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* 1. Home / Dashboard */}
           <button
             type="button"
-            onClick={() => onSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')}
+            onClick={() => onSelectTab('dashboard', t('dashboard', 'الرئيسية والمؤشرات التشغيلية'))}
             className={`flex flex-col items-center justify-center gap-1 h-full min-h-[48px] rounded-[14px] transition-colors motion-spring-press cursor-pointer ${
               isHomeActive ? 'text-[#141414] font-bold' : 'text-[#707070] hover:text-[#141414]'
             }`}
@@ -362,13 +364,13 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             >
               <Home className="w-4 h-4" />
             </div>
-            <span className="text-[10.5px] leading-none truncate">الرئيسية</span>
+            <span className="text-[10.5px] leading-none truncate">{t('nav.home', 'الرئيسية')}</span>
           </button>
 
           {/* 2. Primary Department Screen */}
           <button
             type="button"
-            onClick={() => onSelectTab(primaryOpsTab.href, primaryOpsTab.title)}
+            onClick={() => onSelectTab(primaryOpsTab.href, t(primaryOpsTab.href, primaryOpsTab.title))}
             className={`flex flex-col items-center justify-center gap-1 h-full min-h-[48px] rounded-[14px] transition-colors motion-spring-press cursor-pointer ${
               isOpsActive ? 'text-[#141414] font-bold' : 'text-[#707070] hover:text-[#141414]'
             }`}
@@ -380,7 +382,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             >
               <OpsIcon className="w-4 h-4" />
             </div>
-            <span className="text-[10.5px] leading-none truncate">{primaryOpsTab.label}</span>
+            <span className="text-[10.5px] leading-none truncate">
+              {currentLanguage.code === 'ar'
+                ? primaryOpsTab.label
+                : t(primaryOpsTab.href, primaryOpsTab.label)}
+            </span>
           </button>
 
           {/* 3. Center Elevated Action Button: Quick Action Sheet + App Launcher */}
@@ -392,7 +398,9 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               className="w-12 h-12 min-w-[48px] min-h-[48px] -mt-4 rounded-[18px] bg-[#141414] text-[#ffffff] border-2 border-[#ffffff] shadow-lg flex flex-col items-center justify-center gap-0.5 motion-spring-press cursor-pointer"
             >
               <Zap className="w-4 h-4 text-[#ffffff]" />
-              <span className="text-[9px] font-bold text-[#ffffff] leading-none">إجراء سريع</span>
+              <span className="text-[9px] font-bold text-[#ffffff] leading-none">
+                {t('nav.quickAction', 'إجراء سريع')}
+              </span>
             </button>
           </div>
 
@@ -416,7 +424,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </span>
               )}
             </div>
-            <span className="text-[10.5px] leading-none truncate">الإشعارات</span>
+            <span className="text-[10.5px] leading-none truncate">{t('nav.notifications', 'الإشعارات')}</span>
           </button>
 
           {/* 5. Full Sidebar Menu Drawer */}
@@ -428,7 +436,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <div className="w-10 h-7 rounded-full flex items-center justify-center">
               <Menu className="w-4 h-4" />
             </div>
-            <span className="text-[10.5px] leading-none truncate">القائمة</span>
+            <span className="text-[10.5px] leading-none truncate">{t('nav.menu', 'القائمة')}</span>
           </button>
         </div>
       </nav>

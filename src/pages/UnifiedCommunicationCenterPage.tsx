@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
@@ -263,7 +264,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
             <div className="flex gap-2">
               <button className="button-outline-on-light" onClick={() => exportData('unified_correspondence', filteredList, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
                 <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
-                <span>Excel</span>
+                <span>{i18n.t("export.excel", "Excel")}</span>
               </button>
               <button className="button-outline-on-light" onClick={() => exportData('unified_correspondence', filteredList, 'pdf')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
                 <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />

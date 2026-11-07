@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
@@ -503,7 +504,7 @@ export const BranchDepartmentsPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                  ENTERPRISE MATRIX
+                  {i18n.t("hr.enterpriseMatrix", "مصفوفة الفروع والأقسام")}
                 </span>
                 <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>
                   الهيكلية والأقسام التخصصية للمجموعة

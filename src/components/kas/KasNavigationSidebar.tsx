@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React from 'react';
 import { 
   Building2, Briefcase, FileSpreadsheet, Layers, ShieldCheck, 
@@ -139,7 +140,7 @@ export const KasNavigationSidebar: React.FC<KasNavigationSidebarProps> = ({
       <div className="p-4 border-b border-[#e0e0e0] bg-[#ffffff]">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#141414] text-[#ffffff] flex items-center justify-center font-black text-base shadow-lg shrink-0">
-            KAS
+            {i18n.t("company.kasCode", "KAS")}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">

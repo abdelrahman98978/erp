@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React, { useState } from 'react';
 import { 
   Zap, ShieldCheck, Database, RefreshCw, AlertTriangle, 
@@ -412,7 +413,7 @@ export const MusanedMasterIntegrationHub: React.FC = () => {
                 <div className="p-3 bg-white rounded-xl border border-zinc-200">
                   <div className="text-[#707070] text-[11px] mb-1 font-mono">3. Accounting Ledger</div>
                   <div className="font-bold text-[#141414] font-mono text-xs">{selectedCompany}-LEDGER-01</div>
-                  <div className="text-[10.5px] text-[#141414] mt-1">Separate Chart of Accounts</div>
+                  <div className="text-[10.5px] text-[#141414] mt-1">{i18n.t("finance.separateCoa", "دليل محاسبي مستقل")}</div>
                 </div>
 
                 <div className="p-3 bg-white rounded-xl border border-zinc-200">

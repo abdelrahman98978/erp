@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '../stores/appStore';
 import { exportData } from '../services/exportService';
@@ -609,7 +610,7 @@ export const SmaccModulesPage: React.FC = () => {
             />
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCE EXTENDED SUITE</span>
+                <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{i18n.t("finance.extendedSuite", "المنظومة المالية المتقدمة")}</span>
                 <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>الأصول والمخزون والمتاجر</span>
               </div>
               <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>

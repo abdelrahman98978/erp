@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -214,7 +215,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
               />
               <div className="text-right">
                 <div className="text-[11px] font-bold text-[#141414] leading-tight">مشرف النظام</div>
-                <div className="text-[10px] text-[#141414] leading-tight">Super Admin</div>
+                <div className="text-[10px] text-[#141414] leading-tight">{i18n.t("auth.superAdmin", "مدير النظام العام")}</div>
               </div>
             </div>
             <button

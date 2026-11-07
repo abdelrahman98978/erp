@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React, { useState } from 'react';
 import {
   Users,
@@ -21,7 +22,7 @@ export const SmaccDashboardWidget: React.FC = () => {
       <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '24px', background: '#ffffff', border: '1px solid #e0e0e0', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#f3f3f3', color: '#141414', border: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '11px' }}>
-            FIN
+            {i18n.t("finance.finCode", "FIN")}
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

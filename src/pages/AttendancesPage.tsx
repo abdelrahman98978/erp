@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
@@ -131,7 +132,7 @@ export const AttendancesPage: React.FC = () => {
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>BIOMETRIC ATTENDANCE</span>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{i18n.t("hr.biometricAttendance", "البصمة والحضور الذكي")}</span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
               سجل الحضور والانصراف والبصمة

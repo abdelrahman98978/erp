@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState } from 'react';
 import { useCompany } from '../contexts/CompanyContext';
 import { useImpersonation } from '../contexts/ImpersonationContext';
@@ -54,7 +55,7 @@ export const GroupCommandCenterPage: React.FC = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                GROUP EXECUTIVE GOVERNANCE
+                {i18n.t("exec.groupGovernance", "الحوكمة والقيادة التنفيذية")}
               </span>
               <span style={{ fontSize: '12px', color: '#a1a1aa' }}>خالد السليم للاستقدام والتشغيل</span>
             </div>

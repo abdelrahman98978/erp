@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { 
   Scale, ShieldCheck, FileText, Search, Plus, Filter, Download, 
@@ -172,7 +173,7 @@ export const LegalCompliancePage: React.FC = () => {
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>SAUDI LEGAL COMPLIANCE</span>
+              <span className="pill-tag-mint" style={{ fontSize: '11px' }}>{i18n.t("exec.saudiLegalCompliance", "الامتثال القانوني السعودي")}</span>
               <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>التبرئة القانونية والتواقيع الرقمية</span>
             </div>
             <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>

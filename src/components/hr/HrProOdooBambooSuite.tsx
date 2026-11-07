@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   GitBranch,
@@ -414,7 +415,7 @@ export const HrProOdooBambooSuite: React.FC<HrProOdooBambooSuiteProps> = ({
             </p>
           </div>
           <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] text-xs font-semibold">
-            Mobbin Monochrome UI
+            {i18n.t("ui.mobbinMonochrome", "واجهة موحدة")}
           </span>
         </div>
 

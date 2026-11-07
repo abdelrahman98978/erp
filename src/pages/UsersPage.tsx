@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { exportData } from '../services/exportService';
@@ -525,7 +526,7 @@ export const UsersPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>الصلاحيات النشطة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>6 أدوار</div>
-          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>RBAC Matrix</span>
+          <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>{i18n.t("exec.rbacMatrix", "مصفوفة الصلاحيات RBAC")}</span>
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+import i18n from '../i18n/config';
 import React, { useState, useEffect } from 'react';
 import { Badge } from '../components/ui/Badge';
 import { realErpDataStore } from '../services/realErpDataStore';
@@ -223,7 +224,7 @@ export const AgentImportsPage: React.FC = () => {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
-                AGENT BATCH IMPORTS
+                {i18n.t("ats.agentBatchImports", "استيراد دفعات الوكلاء")}
               </span>
               <span style={{ color: '#a1a1aa', fontSize: '12px' }}>استيراد السير الذاتية والمكاتب الدولية</span>
             </div>

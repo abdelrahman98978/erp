@@ -1,3 +1,4 @@
+import i18n from '../../i18n/config';
 import React, { useState } from 'react';
 import {
   Home,
@@ -152,7 +153,7 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
       <div className="p-4 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-[#141414] flex items-center justify-center font-bold text-white shadow-sm text-sm tracking-wider">
-            FIN
+            {i18n.t("finance.finCode", "FIN")}
           </div>
           <div>
             <h2 className="font-bold text-xs text-zinc-900 leading-tight">نظام المحاسبة الشامل</h2>
