@@ -60,10 +60,15 @@ import {
   CustomFieldDefinition,
   chartOfAccountsService,
 } from '../../services/accounting/chartOfAccountsService';
+import {
+  EnterpriseAccountingModulesHub,
+  EnterpriseModuleTab,
+} from './EnterpriseAccountingModulesHub';
+import { enterpriseAccountingSuiteService } from '../../services/accounting/enterpriseAccountingSuiteService';
 
 interface IfrsFinancialEngineWorkspaceProps {
-  initialSection?: 'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree';
-  initialStatementView?: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow';
+  initialSection?: 'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree' | 'enterprise-suite';
+  initialStatementView?: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' | 'ifrs-notes' | 'budget-variance';
 }
 
 export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspaceProps> = ({
@@ -74,12 +79,15 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const { addNotification } = useAppStore();
 
   const [activeSubTab, setActiveSubTab] = useState<
-    'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree'
+    'overview' | 'trial-balance' | 'diagnostics' | 'statements' | 'ratios-plan' | 'mapping-settings' | 'coa-tree' | 'enterprise-suite'
   >(initialSection);
 
   const [activeStatementView, setActiveStatementView] = useState<
-    'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow'
+    'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' | 'ifrs-notes' | 'budget-variance'
   >(initialStatementView);
+
+  const [activeEnterpriseModule, setActiveEnterpriseModule] = useState<EnterpriseModuleTab>('fixed-assets-ias16');
+  const [drilldownCodeFilter, setDrilldownCodeFilter] = useState<string | null>(null);
 
   React.useEffect(() => {
     setActiveSubTab(initialSection);
@@ -98,8 +106,13 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   );
 
   React.useEffect(() => {
-    setEntries(ifrsFinancialEngineService.getTrialBalance(activeCompanyId));
-    setSettings(ifrsFinancialEngineService.getSettings(activeCompanyId, activeCompany.name));
+    const syncEntries = () => {
+      setEntries(ifrsFinancialEngineService.getTrialBalance(activeCompanyId));
+      setSettings(ifrsFinancialEngineService.getSettings(activeCompanyId, activeCompany.name));
+    };
+    syncEntries();
+    window.addEventListener('erp-ifrs-live-sync', syncEntries);
+    return () => window.removeEventListener('erp-ifrs-live-sync', syncEntries);
   }, [activeCompanyId, activeCompany.name]);
 
   const [tbSearch, setTbSearch] = useState('');
@@ -329,21 +342,36 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       return;
     }
     pushUndoSnapshot(entries);
-    const next = entries.map((r) => {
-      if (r.seq === jeDebitSeq) {
-        return { ...r, periodDebit: r.periodDebit + jeAmount };
+    const debitAcc = entries.find((r) => r.seq === jeDebitSeq);
+    const creditAcc = entries.find((r) => r.seq === jeCreditSeq);
+    const { updatedEntries } = enterpriseAccountingSuiteService.postJournalToLiveTrialBalance(
+      activeCompanyId,
+      {
+        description: jeDescription || 'قيد يومية محاسبي مباشر',
+        sourceModule: 'قيد يومية يدوي',
+        lines: [
+          {
+            specificSeq: jeDebitSeq,
+            ifrsTargetCode: debitAcc?.manualCode || 'A-10',
+            fallbackAccountName: debitAcc?.accountName || 'حساب مدين',
+            debit: jeAmount,
+            credit: 0,
+          },
+          {
+            specificSeq: jeCreditSeq,
+            ifrsTargetCode: creditAcc?.manualCode || 'R-01',
+            fallbackAccountName: creditAcc?.accountName || 'حساب دائن',
+            debit: 0,
+            credit: jeAmount,
+          },
+        ],
       }
-      if (r.seq === jeCreditSeq) {
-        return { ...r, periodCredit: r.periodCredit + jeAmount };
-      }
-      return r;
-    });
-    setEntries(next);
-    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
+    );
+    setEntries(updatedEntries);
     setShowJournalModal(false);
     addNotification({
       title: 'تم ترحيل قيد اليومية بنجاح',
-      message: `تم ترحيل مبلغ (${jeAmount.toLocaleString()} ر.س) — ${jeDescription} وتحديث الميزان والقوائم المالية آلياً.`,
+      message: `تم ترحيل مبلغ (${jeAmount.toLocaleString()} ر.س) — ${jeDescription} وتحديث الميزان والقوائم المالية وسجل القيود آلياً.`,
       type: 'success',
     });
   };
@@ -1069,7 +1097,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   };
 
   const getStatementExportData = (
-    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' = activeStatementView
+    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' | 'ifrs-notes' | 'budget-variance' = activeStatementView
   ) => {
     if (view === 'balance-sheet') {
       const bs = engine.balanceSheet;
@@ -1372,17 +1400,19 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   };
 
   const getStatementTitle = (
-    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' = activeStatementView
+    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' | 'ifrs-notes' | 'budget-variance' = activeStatementView
   ) => {
     if (view === 'balance-sheet') return `قائمة المركز المالي (IAS 1) — ${settings.companyName}`;
     if (view === 'income-statement') return `قائمة الربح أو الخسارة والدخل الشامل (IAS 1 / IFRS 18) — ${settings.companyName}`;
     if (view === 'equity-changes') return `قائمة التغيرات في حقوق الملكية (IAS 1.106) — ${settings.companyName}`;
+    if (view === 'ifrs-notes') return `الإيضاحات المتممة للقوائم المالية (1–12) — ${settings.companyName}`;
+    if (view === 'budget-variance') return `الموازنة التقديرية وتحليل الانحراف — ${settings.companyName}`;
     return `قائمة التدفقات النقدية (IAS 7) — ${settings.companyName}`;
   };
 
   const handleExportStatement = (
     format: ExportFormat = 'excel',
-    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' = activeStatementView
+    view: 'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow' | 'ifrs-notes' | 'budget-variance' = activeStatementView
   ) => {
     const rows = getStatementExportData(view);
     const title = getStatementTitle(view);
@@ -1876,9 +1906,10 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
         {/* Navigation Pill Bar */}
         <div className="flex items-center gap-1.5 bg-[#f3f3f3] p-1.5 rounded-full border border-[#e0e0e0] overflow-x-auto">
           {[
-            { id: 'statements', label: 'القوائم المالية الختامية (المركز المالي • الدخل • الملكية • التدفقات)', icon: Landmark },
+            { id: 'statements', label: 'القوائم المالية والإيضاحات (المركز المالي • الدخل • الملكية • التدفقات • الإيضاحات)', icon: Landmark },
             { id: 'trial-balance', label: `ميزان المراجعة العام والأرصدة (${entries.length} حساب)`, icon: Scale },
             { id: 'coa-tree', label: 'دليل وشجرة الحسابات وحقول الأصول', icon: FolderTree },
+            { id: 'enterprise-suite', label: 'المنظومات التخصصية (الإهلاك • الزكاة والضريبة • أعمار الديون • الموازنات • القيود الآلية)', icon: Calculator },
             { id: 'ratios-plan', label: 'التحليل المالي ومؤشرات الأداء (16 مؤشراً)', icon: Target },
             { id: 'diagnostics', label: 'الرقابة المالية والتدقيق الآلي للحسابات', icon: ShieldCheck },
             { id: 'mapping-settings', label: 'قواعد التوجيه المحاسبي وإعدادات النظام', icon: Sliders },
@@ -2659,6 +2690,8 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 { id: 'income-statement', label: '2. قائمة الربح أو الخسارة والدخل الشامل (IAS 1 / IFRS 18)' },
                 { id: 'equity-changes', label: '3. قائمة التغيرات في حقوق الملكية (IAS 1.106)' },
                 { id: 'cash-flow', label: '4. قائمة التدفقات النقدية - غير المباشرة (IAS 7)' },
+                { id: 'ifrs-notes', label: '5. الإيضاحات المتممة للقوائم المالية (1–12)' },
+                { id: 'budget-variance', label: '6. الموازنة التقديرية وتحليل الانحراف (Budget vs. Actual)' },
               ].map((st) => (
                 <button
                   key={st.id}
@@ -3734,7 +3767,45 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               </div>
             </div>
           )}
+
+          {/* 5. AUTOMATED IFRS FINANCIAL STATEMENT NOTES (1-12) */}
+          {activeStatementView === 'ifrs-notes' && (
+            <EnterpriseAccountingModulesHub
+              activeModule="ifrs-notes-12"
+              engine={engine}
+              entries={entries}
+              settings={settings}
+              onEntriesUpdated={setEntries}
+            />
+          )}
+
+          {/* 6. BUDGET VS ACTUAL & VARIANCE ANALYSIS */}
+          {activeStatementView === 'budget-variance' && (
+            <EnterpriseAccountingModulesHub
+              activeModule="budget-variance"
+              engine={engine}
+              entries={entries}
+              settings={settings}
+              onEntriesUpdated={setEntries}
+            />
+          )}
         </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════════
+          ENTERPRISE ACCOUNTING MODULES HUB (الأصول والإهلاك • الزكاة والضريبة • أعمار الديون • الإيضاحات • الموازنات • القيود الآلية)
+         ═══════════════════════════════════════════════════════════════════════════ */}
+      {activeSubTab === 'enterprise-suite' && (
+        <EnterpriseAccountingModulesHub
+          activeModule={activeEnterpriseModule}
+          onSelectModule={setActiveEnterpriseModule}
+          engine={engine}
+          entries={entries}
+          settings={settings}
+          onEntriesUpdated={setEntries}
+          drilldownCodeFilter={drilldownCodeFilter}
+          onClearDrilldownFilter={() => setDrilldownCodeFilter(null)}
+        />
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
@@ -4255,6 +4326,18 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         </td>
                         <td className="p-2 text-center">
                           <div className="flex items-center justify-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setDrilldownCodeFilter(row.erpCode);
+                                setActiveEnterpriseModule('auto-journals-ledger');
+                                setActiveSubTab('enterprise-suite');
+                              }}
+                              className="px-2 py-0.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-[10px] font-bold cursor-pointer"
+                              title="فتح كشف حركة الحساب والقيود المكونة لرصيده"
+                            >
+                              كشف الحركة
+                            </button>
                             <button
                               type="button"
                               onClick={() => setHiddenRowSeqs((prev) => [...prev, row.seq])}

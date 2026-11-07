@@ -38,6 +38,7 @@ import { BusinessIllustration } from '../components/common/BusinessIllustration'
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { IFRS_MAPPING_CODES } from '../services/accounting/ifrsFinancialEngineService';
+import { enterpriseAccountingSuiteService } from '../services/accounting/enterpriseAccountingSuiteService';
 import { EXTENDED_IFRS_CLASSIFICATIONS } from '../services/accounting/ifrsExtendedReferenceData';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { IfrsFinancialEngineWorkspace } from '../components/finance/IfrsFinancialEngineWorkspace';
@@ -527,6 +528,22 @@ export const SmaccAccountingPage: React.FC = () => {
     setJournals(updated);
     await realErpDataStore.addRecord('company_journal_entries', newJv);
 
+    enterpriseAccountingSuiteService.postJournalToLiveTrialBalance(activeCompanyId, {
+      description: newJv.description || `قيد يومية مزدوج رقم ${newJv.ref_no}`,
+      sourceModule: 'قيد يومية يدوي',
+      referenceDoc: newJv.ref_no,
+      lines: newJv.lines.map((l) => {
+        const matchedAcc = rawAccounts.find((a) => a.code === l.accountCode);
+        return {
+          ifrsTargetCode: matchedAcc?.ifrsCode || 'A-10',
+          fallbackAccountName: l.accountName,
+          debit: l.debit,
+          credit: l.credit,
+          costCenter: l.costCenter,
+        };
+      }),
+    });
+
     setIsJournalModalOpen(false);
     addNotification({
       title: 'ترحيل قيد اليومية',
@@ -595,6 +612,22 @@ export const SmaccAccountingPage: React.FC = () => {
     const updatedJournals = [autoJv, ...journals];
     setJournals(updatedJournals);
     await realErpDataStore.addRecord('company_journal_entries', autoJv);
+
+    enterpriseAccountingSuiteService.postJournalToLiveTrialBalance(activeCompanyId, {
+      description: autoJv.description,
+      sourceModule: 'سند قبض / صرف',
+      referenceDoc: newVou.voucher_no,
+      lines:
+        voucherType === 'قبض'
+          ? [
+              { ifrsTargetCode: 'A-10', fallbackAccountName: 'بنك الراجحي الرئيسي', debit: amountNum, credit: 0, costCenter: newVou.cost_center },
+              { ifrsTargetCode: 'R-01', fallbackAccountName: 'إيرادات وساطة عقود الاستقدام', debit: 0, credit: amountNum, costCenter: newVou.cost_center },
+            ]
+          : [
+              { ifrsTargetCode: 'R-02', fallbackAccountName: 'مصروفات تشغيل ومراكز إيواء', debit: amountNum, credit: 0, costCenter: newVou.cost_center },
+              { ifrsTargetCode: 'A-10', fallbackAccountName: 'الصندوق الرئيسي (Cash)', debit: 0, credit: amountNum, costCenter: newVou.cost_center },
+            ],
+    });
 
     setIsVoucherModalOpen(false);
     addNotification({

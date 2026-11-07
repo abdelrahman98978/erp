@@ -6,6 +6,7 @@ import { useCompany } from '../contexts/CompanyContext';
 import { useTableMutation, useCostCenters } from '../hooks/queries/useErpQueries';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
 import { EXTENDED_IFRS_CLASSIFICATIONS } from '../services/accounting/ifrsExtendedReferenceData';
+import { enterpriseAccountingSuiteService } from '../services/accounting/enterpriseAccountingSuiteService';
 import { useAppStore } from '../stores/appStore';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { BudgetVsActualWidget } from '../components/finance/BudgetVsActualWidget';
@@ -352,6 +353,23 @@ export const FinancePage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord<Voucher>('finance_vouchers', newV, vouchers);
     setVouchers(updated);
+
+    enterpriseAccountingSuiteService.postJournalToLiveTrialBalance(activeCompany.id, {
+      description: `سند ${newV.type} — ${newV.payee_payer} (${newV.treasury})`,
+      sourceModule: 'سند قبض / صرف',
+      referenceDoc: newV.voucher_no,
+      lines:
+        newV.type === 'قبض'
+          ? [
+              { ifrsTargetCode: 'A-10', fallbackAccountName: newV.treasury, debit: newV.amount, credit: 0 },
+              { ifrsTargetCode: 'R-01', fallbackAccountName: newV.payee_payer, debit: 0, credit: newV.amount },
+            ]
+          : [
+              { ifrsTargetCode: 'R-04', fallbackAccountName: newV.payee_payer, debit: newV.amount, credit: 0 },
+              { ifrsTargetCode: 'A-10', fallbackAccountName: newV.treasury, debit: 0, credit: newV.amount },
+            ],
+    });
+
     setShowAddVoucherModal(false);
     setVoucherForm({ type: 'قبض', payee_payer: '', treasury: 'بنك الراجحي', amount: '' });
   };
@@ -384,6 +402,17 @@ export const FinancePage: React.FC = () => {
 
     const updated = await realErpDataStore.addRecord<JournalEntry>('finance_journals', newJ, journals);
     setJournals(updated);
+
+    enterpriseAccountingSuiteService.postJournalToLiveTrialBalance(activeCompany.id, {
+      description: newJ.description,
+      sourceModule: 'قيد يومية يدوي',
+      referenceDoc: newJ.ref_no,
+      lines: [
+        { ifrsTargetCode: 'A-10', fallbackAccountName: 'البنك / الحساب المدين', debit: amt, credit: 0, costCenter: newJ.branch },
+        { ifrsTargetCode: 'R-01', fallbackAccountName: 'الإيرادات / الحساب الدائن', debit: 0, credit: amt, costCenter: newJ.branch },
+      ],
+    });
+
     setShowAddJournalModal(false);
     setJournalForm({ description: '', amount: '', branch: 'فرع الرياض الرئيسي' });
   };
