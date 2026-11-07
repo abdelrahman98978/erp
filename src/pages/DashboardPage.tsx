@@ -398,7 +398,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Handshake className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.recruitmentContracts.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -425,7 +425,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <ShoppingCart className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.orders.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -452,7 +452,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <FileCheck className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.rentContracts.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -479,7 +479,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.rentMaids.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -504,7 +504,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <UserPlus className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.cvs.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -529,7 +529,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.clients.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -554,7 +554,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <FileText className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.ingaz.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -579,7 +579,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Headphones className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.complaints.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -604,7 +604,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Repeat className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.sponsorshipTransfers.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -629,7 +629,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <Hotel className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
+          <div className="text-2xl font-bold text-[#141414] mb-2 font-mono">
             {stats.shelter.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">

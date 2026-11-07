@@ -455,7 +455,7 @@ export const RentPackagesPage: React.FC = () => {
 
                   <div className="flex justify-between text-base py-3 font-bold text-[#141414] mt-2">
                     <span>الإجمالي النهائي شامل الضريبة:</span>
-                    <span className="font-mono text-[#141414] text-lg font-black">{calcGrandTotal.toLocaleString()} ⃁</span>
+                    <span className="font-mono text-[#141414] text-lg font-bold">{calcGrandTotal.toLocaleString()} ⃁</span>
                   </div>
                 </div>
 

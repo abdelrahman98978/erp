@@ -268,7 +268,7 @@ export const ZATCAPage: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setShowBatchExtractor(true)}
-            className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+            className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-bold text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
           >
             <UploadCloud className="w-4 h-4" />
             <span>رفع دفعة فواتير (100 صورة / PDF / Word / Excel)</span>
@@ -320,7 +320,7 @@ export const ZATCAPage: React.FC = () => {
                     setShowBatchExtractor(false);
                   }
                 }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#141414] text-[#ffffff] shadow-sm'
                     : 'bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
@@ -410,7 +410,7 @@ export const ZATCAPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowBatchExtractor(true)}
-              className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-black flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold flex items-center gap-1.5 cursor-pointer"
             >
               <UploadCloud className="w-3.5 h-3.5" />
               <span>إضافة صور / مستندات فواتير للجدول</span>
@@ -613,7 +613,7 @@ export const ZATCAPage: React.FC = () => {
                   <span>ضريبة القيمة المضافة (15%):</span>
                   <span className="font-mono">{vatAmount.toLocaleString()} ⃁</span>
                 </div>
-                <div className="flex justify-between text-[#141414] font-black text-sm border-t border-zinc-200 pt-2">
+                <div className="flex justify-between text-[#141414] font-bold text-sm border-t border-zinc-200 pt-2">
                   <span>المجموع النهائي المستحق:</span>
                   <span className="font-mono">{totalAmount.toLocaleString()} ⃁</span>
                 </div>
@@ -832,7 +832,7 @@ export const ZATCAPage: React.FC = () => {
           >
             <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] px-5 py-3.5 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-black text-[#141414]">
+                <h3 className="text-sm font-bold text-[#141414]">
                   مرفق / صورة الفاتورة: {selectedInvoiceAttachment.invoice_number}
                 </h3>
                 <p className="text-[11px] text-[#141414]">
@@ -848,7 +848,7 @@ export const ZATCAPage: React.FC = () => {
             </div>
             <div className="p-5 bg-[#f3f3f3] flex flex-col items-center">
               {selectedInvoiceAttachment.attachment_url ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={selectedInvoiceAttachment.attachment_url}
                   alt={selectedInvoiceAttachment.invoice_number}
                   className="max-h-[55vh] w-auto rounded-xl border border-zinc-300 shadow-md bg-white"
@@ -856,7 +856,7 @@ export const ZATCAPage: React.FC = () => {
               ) : (
                 <div className="w-full p-6 rounded-xl bg-white border border-zinc-200 text-center space-y-2">
                   <FileText className="w-10 h-10 text-[#141414] mx-auto" />
-                  <div className="text-sm font-black text-zinc-900">
+                  <div className="text-sm font-bold text-zinc-900">
                     فاتورة ضريبية إلكترونية معتمدة #{selectedInvoiceAttachment.invoice_number}
                   </div>
                   <div className="text-xs text-zinc-600">

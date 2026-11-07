@@ -223,7 +223,7 @@ const TransferBookingModalContent: React.FC<
 
           {/* Section 1: Office Decoupling (Crucial Business Requirement) */}
           <div className="space-y-2">
-            <label className="text-xs font-black text-[#141414] flex items-center gap-2">
+            <label className="text-xs font-bold text-[#141414] flex items-center gap-2">
               <Building2 className="w-4 h-4 text-[#141414]" />
               <span>المكتب المنفذ لعملية النقل (إصدار العقد والفوترة):</span>
             </label>
@@ -250,7 +250,7 @@ const TransferBookingModalContent: React.FC<
 
           {/* Section 2: New Client Details */}
           <div className="space-y-3">
-            <h3 className="text-xs font-black text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
+            <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
               <User className="w-4 h-4 text-[#141414]" />
               <span>بيانات العميل الجديد (الكفيل المرتقب):</span>
             </h3>
@@ -322,11 +322,11 @@ const TransferBookingModalContent: React.FC<
           {/* Section 3: Dynamic Manual Pricing (Crucial BRD Requirement) */}
           <div className="space-y-3 bg-[#f3f3f3] p-4 rounded-2xl border border-[#e0e0e0]">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-black text-[#141414] flex items-center gap-2">
+              <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-[#141414]" />
                 <span>التسعير اليدوي المرن والمدفوعات (وفق الاتفاق):</span>
               </h3>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                 تسعير حر غير مقيد
               </span>
             </div>
@@ -364,7 +364,7 @@ const TransferBookingModalContent: React.FC<
                 <label className="text-[11px] font-bold text-[#141414] block mb-1">
                   المبلغ المتبقي بعد التجربة (⃁)
                 </label>
-                <div className="px-3 py-2 rounded-xl text-xs font-black bg-[#f3f3f3]/40 border border-[#e0e0e0] text-[#141414]">
+                <div className="px-3 py-2 rounded-xl text-xs font-bold bg-[#f3f3f3]/40 border border-[#e0e0e0] text-[#141414]">
                   {remainingAmount.toLocaleString('ar-SA')} ⃁
                   <span className={`mr-2 text-[10px] px-2 py-0.5 rounded-full ${
                     paymentStatus === 'مسدد بالكامل' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
@@ -378,7 +378,7 @@ const TransferBookingModalContent: React.FC<
 
           {/* Section 4: Trial Schedule & Delivery */}
           <div className="space-y-3">
-            <h3 className="text-xs font-black text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
+            <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
               <Clock className="w-4 h-4 text-[#141414]" />
               <span>فترة التجربة وموعد التسليم:</span>
             </h3>

@@ -73,56 +73,56 @@ const PRESET_CONFIG: Record<
     defaultLabel: 'تنفيذ دفعة / سداد فوري',
     verifying: 'جاري التحقق من الرصيد والآيبان...',
     executing: 'جاري تنفيذ الحوالة البنكية...',
-    success: 'تم الدفع والتحويل بنجاح ✓',
+    success: 'تم الدفع والتحويل بنجاح ',
     defaultIcon: <CreditCard className="w-3.5 h-3.5" />,
   },
   receipt: {
     defaultLabel: 'تحصيل دفعة وإصدار سند',
     verifying: 'جاري مطابقة دفعة العميل...',
     executing: 'جاري إصدار سند القبض والترحيل...',
-    success: 'تم التحصيل وإصدار السند ✓',
+    success: 'تم التحصيل وإصدار السند ',
     defaultIcon: <Receipt className="w-3.5 h-3.5" />,
   },
   'wps-payroll': {
     defaultLabel: 'صرف مسير حماية الأجور WPS',
     verifying: 'جاري تدقيق مسير GOSI والآيبان...',
     executing: 'جاري إرسال ملف حماية الأجور WPS...',
-    success: 'تم صرف الرواتب وإيداع WPS ✓',
+    success: 'تم صرف الرواتب وإيداع WPS ',
     defaultIcon: <Send className="w-3.5 h-3.5" />,
   },
   'zatca-clearance': {
     defaultLabel: 'اعتماد وتشفير ZATCA فوري',
     verifying: 'جاري فحص XML UBL 2.1 والختم...',
     executing: 'جاري الاعتماد من منصة فاتورة ZATCA...',
-    success: 'معتمدة ومشفرة ZATCA ✓',
+    success: 'معتمدة ومشفرة ZATCA ',
     defaultIcon: <ShieldCheck className="w-3.5 h-3.5" />,
   },
   'journal-post': {
     defaultLabel: 'ترحيل القيود للأستاذ العام',
     verifying: 'جاري فحص توازن المدين والدائن...',
     executing: 'جاري الترحيل لدفتر الأستاذ العام...',
-    success: 'تم ترحيل القيد المحاسبي ✓',
+    success: 'تم ترحيل القيد المحاسبي ',
     defaultIcon: <Lock className="w-3.5 h-3.5" />,
   },
   'musaned-auth': {
     defaultLabel: 'توثيق ومزامنة مساند',
     verifying: 'جاري الاتصال ببوابة مساند...',
     executing: 'جاري توثيق العقد وإصدار الرقم...',
-    success: 'موثق رسمياً في مساند ✓',
+    success: 'موثق رسمياً في مساند ',
     defaultIcon: <ShieldCheck className="w-3.5 h-3.5" />,
   },
   approval: {
     defaultLabel: 'اعتماد وتوقيع تنفيذي',
     verifying: 'جاري التحقق من الصلاحية والاعتماد...',
     executing: 'جاري تسجيل التوقيع الرقمي...',
-    success: 'تم الاعتماد النهائي ✓',
+    success: 'تم الاعتماد النهائي ',
     defaultIcon: <Sparkles className="w-3.5 h-3.5" />,
   },
   custom: {
     defaultLabel: 'تنفيذ الإجراء الفوري',
     verifying: 'جاري التحقق من البيانات...',
     executing: 'جاري تنفيذ العملية...',
-    success: 'تم التنفيذ بنجاح ✓',
+    success: 'تم التنفيذ بنجاح ',
     defaultIcon: <ArrowUpLeft className="w-3.5 h-3.5" />,
   },
 };
@@ -243,7 +243,7 @@ export const DynamicActionButton: React.FC<DynamicActionButtonProps> = ({
       onClick={handleClick}
       data-dynamic-button="true"
       data-dynamic-phase={phase}
-      className={`relative overflow-hidden font-black inline-flex items-center justify-center transition-all duration-200 select-none cursor-pointer active:scale-[0.98] disabled:opacity-50 ${sizeClasses} ${getPhaseVariantClasses()} ${className}`}
+      className={`relative overflow-hidden font-bold inline-flex items-center justify-center transition-all duration-200 select-none cursor-pointer active:scale-[0.98] disabled:opacity-50 ${sizeClasses} ${getPhaseVariantClasses()} ${className}`}
     >
       {/* Animated Progress Bar Fill during verifying/executing */}
       {(phase === 'verifying' || phase === 'executing') && (
@@ -271,7 +271,7 @@ export const DynamicActionButton: React.FC<DynamicActionButtonProps> = ({
 
       {/* Optional Amount Badge in Idle or Reference Code in Success */}
       {phase === 'idle' && amountBadge && (
-        <span className="px-2 py-0.5 rounded-md bg-[#f3f3f3] text-[10.5px] font-extrabold font-mono shrink-0">
+        <span className="px-2 py-0.5 rounded-md bg-[#f3f3f3] text-[10.5px] font-bold font-mono shrink-0">
           {amountBadge}
         </span>
       )}

@@ -746,12 +746,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-center relative z-10">
               {/* Right Sub-Column: Brand Copy & 3 Checkmarks */}
               <div className="xl:col-span-6 space-y-3">
-                <h1 className="text-3xl sm:text-[42px] font-black tracking-tight text-[#141414] m-0 leading-tight whitespace-nowrap">
+                <h1 className="text-3xl sm:text-[42px] font-bold tracking-tight text-[#141414] m-0 leading-tight whitespace-nowrap">
                   خالد السليم <span className="text-[#c8c8c8] font-light mx-1">|</span>{' '}
                   <span className="font-sans">Al-Sulaim</span>
                 </h1>
 
-                <h2 className="text-xl sm:text-2xl font-extrabold text-[#141414] m-0 pt-1">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#141414] m-0 pt-1">
                   نستثمر في الفرص.. نصنع المستقبل
                 </h2>
 
@@ -858,7 +858,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   <span className="text-[11px] font-semibold text-[#707070] block">
                     مرحباً بعودتك
                   </span>
-                  <h2 className="text-lg sm:text-xl font-black text-[#141414] m-0 tracking-tight">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#141414] m-0 tracking-tight">
                     {detectedRouting.account?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
                   </h2>
                   <p className="text-[11px] font-medium text-[#707070] m-0">
@@ -1563,7 +1563,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   />
                 </svg>
                 <div>
-                  <h3 id="google-modal-title" className="text-base font-black text-[#141414] m-0">
+                  <h3 id="google-modal-title" className="text-base font-bold text-[#141414] m-0">
                     اختيار حساب Google للدخول
                   </h3>
                   <p className="text-[11px] text-[#707070] m-0">
@@ -1629,7 +1629,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       showStatusDot={true}
                     />
                     <div className="min-w-0">
-                      <div className="text-xs font-extrabold text-[#141414] truncate">
+                      <div className="text-xs font-bold text-[#141414] truncate">
                         {gAcc.name}
                       </div>
                       <div className="text-[11px] font-mono text-[#707070] truncate dir-ltr text-right">

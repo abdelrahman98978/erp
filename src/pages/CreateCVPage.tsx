@@ -583,7 +583,7 @@ export const CreateCVPage: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
                 <div>
-                  <h2 className="text-base font-extrabold text-[#141414]">مجموعة السليم للاستقدام</h2>
+                  <h2 className="text-base font-bold text-[#141414]">مجموعة السليم للاستقدام</h2>
                   <div className="text-[11px] text-[#707070]">Al-Saleem Recruitment Group | ترخيص استقدام: 390102</div>
                   <div className="text-[10px] text-[#707070] font-mono mt-0.5">معتمد من مساند ووزارة الموارد البشرية</div>
                 </div>

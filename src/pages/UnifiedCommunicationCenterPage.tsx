@@ -463,7 +463,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
           {/* Header of Letter */}
           <div className="flex justify-between items-center border-b-2 border-[#141414] pb-4 mb-6">
             <div>
-              <h2 className="text-base font-black text-[#141414] m-0">مجموعة شركات خالد السليم للاستقدام والتشغيل</h2>
+              <h2 className="text-base font-bold text-[#141414] m-0">مجموعة شركات خالد السليم للاستقدام والتشغيل</h2>
               <div className="text-xs text-[#707070] mt-0.5">المملكة العربية السعودية | المركز الرئيسي - الرياض</div>
             </div>
             <div className="text-left font-mono text-xs text-zinc-600">
@@ -506,7 +506,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
               <CorporateAvatar name={selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'} size="sm" status="verified" />
               <div className="text-right">
                 <div className="text-xs text-[#707070]">المعتمد:</div>
-                <div className="text-sm font-black text-[#141414] mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
+                <div className="text-sm font-bold text-[#141414] mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
               </div>
             </div>
           </div>

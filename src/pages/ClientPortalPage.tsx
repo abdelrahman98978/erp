@@ -334,7 +334,7 @@ export const ClientPortalPage: React.FC = () => {
       {/* Contract Lifecycle Cards */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <Plane className="w-5 h-5 text-[#141414]" />
             <span>العقود السارية ومراحل الوصول الحية</span>
           </h2>
@@ -357,7 +357,7 @@ export const ClientPortalPage: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <CorporateAvatar name={contract.workerName} profession={contract.profession} size="md" status="verified" />
                   <div>
-                    <h3 className="font-extrabold text-slate-900 text-base">
+                    <h3 className="font-bold text-slate-900 text-base">
                       {contract.workerName}
                     </h3>
                     <div className="flex items-center gap-2 text-xs text-[#707070] mt-0.5">
@@ -458,7 +458,7 @@ export const ClientPortalPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-6 h-6 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   سجل العقد المعتمد #{selectedContract.contractNumber}
                 </h3>
               </div>
@@ -466,7 +466,7 @@ export const ClientPortalPage: React.FC = () => {
                 onClick={() => setSelectedContract(null)}
                 className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -563,7 +563,7 @@ export const ClientPortalPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   تقديم بلاغ أو طلب دعم ومتابعة
                 </h3>
               </div>
@@ -572,7 +572,7 @@ export const ClientPortalPage: React.FC = () => {
                 onClick={() => setShowSupportModal(false)} 
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -675,7 +675,7 @@ export const ClientPortalPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   سداد الدفعة المتبقية للعقد
                 </h3>
               </div>
@@ -684,7 +684,7 @@ export const ClientPortalPage: React.FC = () => {
                 onClick={() => { setShowPayModal(false); setPayingContract(null); }} 
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -708,7 +708,7 @@ export const ClientPortalPage: React.FC = () => {
                 </div>
                 <div className="flex justify-between pt-2 border-t border-[#e0e0e0]">
                   <span className="text-[#141414] font-bold">المبلغ المطلوب سداده الآن:</span>
-                  <span className="text-sm font-extrabold text-[#141414] font-mono">
+                  <span className="text-sm font-bold text-[#141414] font-mono">
                     {(payingContract.amount - payingContract.paidAmount).toLocaleString()} ⃁
                   </span>
                 </div>

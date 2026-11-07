@@ -365,7 +365,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
     };
 
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black border shadow-2xs ${colorMap[type]}`}>
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shadow-2xs ${colorMap[type]}`}>
         {label}
       </span>
     );
@@ -532,7 +532,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
         <div className="text-xs text-[#707070] flex items-center gap-2 font-mono px-3 py-1 bg-zinc-50 rounded-full border border-zinc-200 shrink-0">
           <span className="font-bold">السجلات:</span>
-          <span className="font-black text-[#141414] font-mono">{filteredTenders.length.toLocaleString()}</span>
+          <span className="font-bold text-[#141414] font-mono">{filteredTenders.length.toLocaleString()}</span>
         </div>
       </div>
 
@@ -707,7 +707,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
         {/* Column Settings Toggle Dropdown */}
         {showColSettings && (
           <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-wrap gap-3 text-xs">
-            <span className="font-black text-slate-700 w-full mb-1">إظهار / إخفاء الأعمدة:</span>
+            <span className="font-bold text-slate-700 w-full mb-1">إظهار / إخفاء الأعمدة:</span>
             {Object.keys(visibleColumns).map(colKey => (
               <label key={colKey} className="flex items-center gap-2 cursor-pointer font-medium text-slate-800">
                 <input
@@ -833,7 +833,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                         )}
 
                         {visibleColumns.tenderCode && (
-                          <td className="p-3 font-mono font-black text-[#141414]">
+                          <td className="p-3 font-mono font-bold text-[#141414]">
                             {item.tenderCode || '-'}
                           </td>
                         )}
@@ -878,13 +878,13 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                         )}
 
                         {visibleColumns.bidValue && (
-                          <td className="p-3 text-left font-mono font-black text-slate-900 whitespace-nowrap">
+                          <td className="p-3 text-left font-mono font-bold text-slate-900 whitespace-nowrap">
                             {bid > 0 ? `${bid.toLocaleString()} ⃁` : '-'}
                           </td>
                         )}
 
                         {visibleColumns.winningBidValue && (
-                          <td className="p-3 text-left font-mono text-[#141414] font-black whitespace-nowrap">
+                          <td className="p-3 text-left font-mono text-[#141414] font-bold whitespace-nowrap">
                             {win > 0 ? (
                               <div className="flex flex-col items-start gap-0.5">
                                 <span>{win.toLocaleString()} ⃁</span>
@@ -913,8 +913,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                         {visibleColumns.boqStatus && (
                           <td className="p-3 text-center whitespace-nowrap">
                             {item.boqStatus === 'تم' ? (
-                              <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-black text-[10px] border border-[#e0e0e0]">
-                                ✓ تم
+                              <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-bold text-[10px] border border-[#e0e0e0]">
+                                تم
                               </span>
                             ) : (
                               <span className="text-slate-400 text-[10px]">-</span>
@@ -1031,7 +1031,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <ChevronRight className="w-4 h-4" />
           </button>
 
-          <span className="px-4 py-1.5 font-mono font-black bg-[#f3f3f3] text-[#141414] rounded-xl border border-[#e0e0e0]">
+          <span className="px-4 py-1.5 font-mono font-bold bg-[#f3f3f3] text-[#141414] rounded-xl border border-[#e0e0e0]">
             {currentPage} / {totalPages}
           </span>
 
@@ -1063,10 +1063,10 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             <div className="flex items-start justify-between border-b border-slate-100 pb-4">
               <div>
-                <span className="px-3 py-1 rounded-xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-black">
+                <span className="px-3 py-1 rounded-xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-bold">
                   {selectedItem.company || 'مؤسسة خالد السليم للتجارة (كاس)'}
                 </span>
-                <h3 className="text-xl font-black text-slate-900 mt-2 leading-relaxed">
+                <h3 className="text-xl font-bold text-slate-900 mt-2 leading-relaxed">
                   {selectedItem.title}
                 </h3>
                 <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 font-mono">
@@ -1086,28 +1086,28 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <span className="text-slate-500 font-bold block mb-1">الجهة الحكومية:</span>
-                <span className="font-black text-slate-900 block truncate">{selectedItem.entity || '-'}</span>
+                <span className="font-bold text-slate-900 block truncate">{selectedItem.entity || '-'}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <span className="text-slate-500 font-bold block mb-1">المسؤول:</span>
-                <span className="font-black text-slate-900 block truncate">{selectedItem.managerName || '-'}</span>
+                <span className="font-bold text-slate-900 block truncate">{selectedItem.managerName || '-'}</span>
                 {selectedItem.managerPhone && <span className="font-mono text-[#141414] font-bold text-[11px] block mt-0.5">{selectedItem.managerPhone}</span>}
               </div>
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <span className="text-slate-500 font-bold block mb-1">المدينة:</span>
-                <span className="font-black text-slate-900 block truncate">{selectedItem.city || '-'}</span>
+                <span className="font-bold text-slate-900 block truncate">{selectedItem.city || '-'}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <span className="text-slate-500 font-bold block mb-1">تاريخ البدء:</span>
-                <span className="font-mono font-black text-slate-900 block">{selectedItem.startDate || '-'}</span>
+                <span className="font-mono font-bold text-slate-900 block">{selectedItem.startDate || '-'}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <span className="text-slate-500 font-bold block mb-1">تاريخ انتهاء التقديم:</span>
-                <span className="font-mono font-black text-slate-900 block">{selectedItem.deadlineDate || '-'}</span>
+                <span className="font-mono font-bold text-slate-900 block">{selectedItem.deadlineDate || '-'}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <span className="text-slate-500 font-bold block mb-1">مدة التنفيذ:</span>
-                <span className="font-black text-slate-900 block truncate">{selectedItem.executionDuration || '-'}</span>
+                <span className="font-bold text-slate-900 block truncate">{selectedItem.executionDuration || '-'}</span>
               </div>
             </div>
 
@@ -1115,13 +1115,13 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <div className="p-5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs shadow-inner">
               <div>
                 <span className="text-slate-500 font-bold block mb-1">قيمة العرض المقدم (كاس):</span>
-                <span className="text-lg font-black font-mono text-slate-900 block">
+                <span className="text-lg font-bold font-mono text-slate-900 block">
                   {selectedItem.bidValue ? `${selectedItem.bidValue.toLocaleString()} ⃁` : 'غير محدد'}
                 </span>
               </div>
               <div>
                 <span className="text-slate-500 font-bold block mb-1">المبلغ الحاصل على المنافسة:</span>
-                <span className="text-lg font-black font-mono text-[#141414] block">
+                <span className="text-lg font-bold font-mono text-[#141414] block">
                   {selectedItem.winningBidValue ? `${selectedItem.winningBidValue.toLocaleString()} ⃁` : 'غير محدد'}
                 </span>
               </div>
@@ -1135,7 +1135,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
             {selectedItem.notes && (
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 text-xs">
-                <span className="font-black text-slate-700 block mb-1">الملاحظات والتفاصيل:</span>
+                <span className="font-bold text-slate-700 block mb-1">الملاحظات والتفاصيل:</span>
                 <p className="text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">{selectedItem.notes}</p>
               </div>
             )}
@@ -1159,7 +1159,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                       setIsDetailModalOpen(false);
                       onConvertToBOQ(selectedItem);
                     }}
-                    className="px-5 py-2.5 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-black text-xs flex items-center gap-2 shadow-lg transition"
+                    className="px-5 py-2.5 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-2 shadow-lg transition"
                   >
                     <Calculator className="w-4 h-4" />
                     <span>تحويل لمحرر جداول الكميات (BOQ)</span>
@@ -1185,7 +1185,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <div className="absolute top-0 right-0 left-0 h-1.5 bg-[#141414] rounded-t-3xl" />
 
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-[#141414]" />
                 <span>{isAddModalOpen ? 'إضافة منافسة جديدة إلى السجل' : 'تعديل بيانات المنافسة'}</span>
               </h3>
@@ -1374,7 +1374,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
               <button
                 type="button"
                 onClick={isAddModalOpen ? handleSaveAdd : handleSaveEdit}
-                className="px-6 py-2.5 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-black text-xs flex items-center gap-2 shadow-lg transition"
+                className="px-6 py-2.5 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-2 shadow-lg transition"
               >
                 <Check className="w-4 h-4" />
                 <span>{isAddModalOpen ? 'حفظ وإضافة المنافسة' : 'حفظ التعديلات'}</span>
@@ -1391,7 +1391,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <div className="absolute top-0 right-0 left-0 h-1.5 bg-[#141414] rounded-t-3xl" />
 
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <FileUp className="w-5 h-5 text-[#141414]" />
                 <span>استيراد ملف إكسل المنافسات</span>
               </h3>
@@ -1410,7 +1410,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <div className="p-8 border-2 border-dashed border-slate-200 rounded-3xl text-center bg-slate-50 hover:bg-slate-100/60 transition-colors">
               <Upload className="w-10 h-10 mx-auto text-[#141414] mb-3" />
               <label className="block text-xs font-bold text-slate-700 cursor-pointer">
-                <span className="bg-[#141414] hover:bg-[#262626] text-[#ffffff] px-5 py-2.5 rounded-2xl inline-block shadow-lg font-black">
+                <span className="bg-[#141414] hover:bg-[#262626] text-[#ffffff] px-5 py-2.5 rounded-2xl inline-block shadow-lg font-bold">
                   اختر ملف Excel من جهازك
                 </span>
                 <input

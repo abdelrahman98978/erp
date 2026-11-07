@@ -1550,7 +1550,7 @@ export const HRPage: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-base sm:text-lg font-black text-[#141414] m-0 tracking-tight whitespace-nowrap">
+              <h1 className="text-base sm:text-lg font-bold text-[#141414] m-0 tracking-tight whitespace-nowrap">
                 إدارة الموارد البشرية ومسيرات الرواتب (WPS)
               </h1>
               <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[10px] font-bold whitespace-nowrap">
@@ -1619,7 +1619,7 @@ export const HRPage: React.FC = () => {
             <Users className="w-4 h-4 text-[#141414]" />
           </div>
           <div className="mt-2 flex items-baseline justify-between gap-2">
-            <span className="text-2xl font-black text-[#141414] font-mono tabular-nums">
+            <span className="text-2xl font-bold text-[#141414] font-mono tabular-nums">
               {employeesList.length}
             </span>
             <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] text-[10px] font-bold">
@@ -1634,7 +1634,7 @@ export const HRPage: React.FC = () => {
             <ShieldCheck className="w-4 h-4 text-[#141414]" />
           </div>
           <div className="mt-2 flex items-baseline justify-between gap-2">
-            <span className="text-xl sm:text-2xl font-black text-[#141414] font-mono tabular-nums">
+            <span className="text-xl sm:text-2xl font-bold text-[#141414] font-mono tabular-nums">
               {totalMonthlyPayroll.toLocaleString('en-US')} ⃁
             </span>
             <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070] text-[10px] font-semibold">
@@ -1649,7 +1649,7 @@ export const HRPage: React.FC = () => {
             <CalendarMinus className="w-4 h-4 text-[#141414]" />
           </div>
           <div className="mt-2 flex items-baseline justify-between gap-2">
-            <span className="text-2xl font-black text-[#141414] font-mono tabular-nums">
+            <span className="text-2xl font-bold text-[#141414] font-mono tabular-nums">
               {activeRequestsCount}
             </span>
             <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#707070] text-[10px] font-semibold">
@@ -1664,7 +1664,7 @@ export const HRPage: React.FC = () => {
             <Fingerprint className="w-4 h-4 text-[#ffffff]" />
           </div>
           <div className="mt-2 flex items-baseline justify-between gap-2">
-            <span className="text-2xl font-black text-[#ffffff] font-mono tabular-nums">
+            <span className="text-2xl font-bold text-[#ffffff] font-mono tabular-nums">
               100%
             </span>
             <span className="px-2 py-0.5 rounded-full bg-[#262626] text-[#ffffff] text-[10px] font-semibold">
@@ -1934,25 +1934,25 @@ export const HRPage: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
             <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
               <span className="text-[11.5px] font-bold text-[#707070] block">إجمالي التواقيع والاتفاقيات المعتمدة</span>
-              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{employeesList.length} توقيعاً</div>
+              <div className="text-2xl font-bold font-mono text-[#141414] mt-1">{employeesList.length} توقيعاً</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">100% نسبة التوثيق</span>
             </div>
 
             <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
               <span className="text-[11.5px] font-bold text-[#707070] block">اتفاقيات عدم الإفشاء (NDA) ومواثيق الأقسام</span>
-              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{employeesList.length} وثيقة</div>
+              <div className="text-2xl font-bold font-mono text-[#141414] mt-1">{employeesList.length} وثيقة</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">سارية ومطابقة لنظام PDPL</span>
             </div>
 
             <div className="bg-[#141414] text-[#ffffff] rounded-[20px] p-4 border border-[#141414]">
               <span className="text-[11.5px] font-bold text-[#a3a3a3] block">التفويض البيومتري E-Sign</span>
-              <div className="text-2xl font-extrabold font-mono text-[#ffffff] mt-1">{employeesList.length} مفوض</div>
+              <div className="text-2xl font-bold font-mono text-[#ffffff] mt-1">{employeesList.length} مفوض</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#262626] text-[#ffffff] border border-[#3d3d3d]">مرسوم ملكي م/18</span>
             </div>
 
             <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
               <span className="text-[11.5px] font-bold text-[#707070] block">الأقسام المغطاة بمواثيق مخصصة</span>
-              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">6 أقسام</div>
+              <div className="text-2xl font-bold font-mono text-[#141414] mt-1">6 أقسام</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">سياسات محددة لكل إدارة</span>
             </div>
           </div>
@@ -1961,7 +1961,7 @@ export const HRPage: React.FC = () => {
           <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
             <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
               <div>
-                <h3 className="text-sm font-extrabold text-[#141414] m-0 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                   <FileSignature className="w-4 h-4 text-[#141414]" />
                   <span>حافظة التواقيع والاتفاقيات ومستندات إبراء الذمة لكل موظف</span>
                 </h3>
@@ -2079,25 +2079,25 @@ export const HRPage: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
             <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
               <span className="text-[11.5px] font-bold text-[#707070] block">إجمالي القرارات الصادرة</span>
-              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{promotions.length} ترقية</div>
+              <div className="text-2xl font-bold font-mono text-[#141414] mt-1">{promotions.length} ترقية</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">قرارات إدارية نافذة</span>
             </div>
 
             <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
               <span className="text-[11.5px] font-bold text-[#707070] block">متوسط نسبة الزيادة</span>
-              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">+22.3%</div>
+              <div className="text-2xl font-bold font-mono text-[#141414] mt-1">+22.3%</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">حوافز الجدارة والأداء</span>
             </div>
 
             <div className="bg-[#141414] text-[#ffffff] rounded-[20px] p-4 border border-[#141414]">
               <span className="text-[11.5px] font-bold text-[#a3a3a3] block">الترقيات الإشرافية والإدارية</span>
-              <div className="text-2xl font-extrabold font-mono text-[#ffffff] mt-1">{promotions.filter(p => p.new_grade.includes('مدير') || p.new_grade.includes('قائد')).length} موظف</div>
+              <div className="text-2xl font-bold font-mono text-[#ffffff] mt-1">{promotions.filter(p => p.new_grade.includes('مدير') || p.new_grade.includes('قائد')).length} موظف</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#262626] text-[#ffffff] border border-[#3d3d3d]">ترقية قيادية</span>
             </div>
 
             <div className="bg-[#ffffff] rounded-[20px] p-4 border border-[#e0e0e0]">
               <span className="text-[11.5px] font-bold text-[#707070] block">المؤهلون للترقية الدورية</span>
-              <div className="text-2xl font-extrabold font-mono text-[#141414] mt-1">{employeesList.length} مرشح</div>
+              <div className="text-2xl font-bold font-mono text-[#141414] mt-1">{employeesList.length} مرشح</div>
               <span className="inline-block mt-1.5 text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">تقييم ممتاز 2026</span>
             </div>
           </div>
@@ -2106,7 +2106,7 @@ export const HRPage: React.FC = () => {
           <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
             <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
               <div>
-                <h2 className="text-sm font-extrabold text-[#141414] m-0">سجل الترقيات وتعديل الدرجات والصلاحيات الإدارية</h2>
+                <h2 className="text-sm font-bold text-[#141414] m-0">سجل الترقيات وتعديل الدرجات والصلاحيات الإدارية</h2>
                 <p className="text-xs text-[#707070] mt-0.5">تتبع تاريخي لقرارات الترقية وتعديل الرواتب والأدوار الوظيفية في منظومة الـ ERP</p>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -2160,10 +2160,10 @@ export const HRPage: React.FC = () => {
                       <td className="p-3.5 font-mono">
                         <span className="text-[#707070] line-through">{promo.previous_salary.toLocaleString()}</span>
                         <span className="text-[#141414] font-bold mx-1">←</span>
-                        <span className="text-[#141414] font-extrabold">{promo.new_salary.toLocaleString()} ⃁</span>
+                        <span className="text-[#141414] font-bold">{promo.new_salary.toLocaleString()} ⃁</span>
                       </td>
                       <td className="p-3.5 font-mono">
-                        <div className="font-extrabold text-[#141414]">+{promo.increment_amount.toLocaleString()} ⃁</div>
+                        <div className="font-bold text-[#141414]">+{promo.increment_amount.toLocaleString()} ⃁</div>
                         <span className="inline-block px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-[10px] font-bold">{promo.increment_percentage}</span>
                       </td>
                       <td className="p-3.5">
@@ -2194,7 +2194,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-extrabold text-[#141414]">طلبات الإجازات والأرصدة السنوية (المادة 109 و117)</h2>
+              <h2 className="text-sm font-bold text-[#141414]">طلبات الإجازات والأرصدة السنوية (المادة 109 و117)</h2>
               <p className="text-xs text-[#707070] mt-0.5">احتساب استحقاق 21/30 يوماً سنوياً، وشرائح الإجازة المرضية والاضطرارية مع خصم الرصيد آلياً عند الاعتماد</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2238,7 +2238,7 @@ export const HRPage: React.FC = () => {
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{vac.balance} يوم</td>
                     <td className="p-3.5 font-mono text-[#707070]">{vac.from_date}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{vac.to_date}</td>
-                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">{vac.days_count} أيام</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{vac.days_count} أيام</td>
                     <td className="p-3.5 text-[#707070]">{vac.notes}</td>
                     <td className="p-3.5">
                       <Badge
@@ -2281,7 +2281,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-extrabold text-[#141414]">طلبات السلف وجدولة الأقساط الشهرية (المادة 92)</h2>
+              <h2 className="text-sm font-bold text-[#141414]">طلبات السلف وجدولة الأقساط الشهرية (المادة 92)</h2>
               <p className="text-xs text-[#707070] mt-0.5">استقطاع آلي للأقساط من مسير الرواتب الشهري مع مراعاة عدم تجاوز سقف 50% من الأجر</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2325,7 +2325,7 @@ export const HRPage: React.FC = () => {
                       <td className="p-3.5 font-mono font-bold text-[#141414]">{adv.id}</td>
                       <td className="p-3.5 font-bold text-[#141414]">{adv.employee_name}</td>
                       <td className="p-3.5">{adv.payment_method}</td>
-                      <td className="p-3.5 font-mono font-extrabold text-[#141414]">{adv.amount.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{adv.amount.toLocaleString()} ⃁</td>
                       <td className="p-3.5 font-mono font-bold text-[#141414]">{monthly.toLocaleString()} ⃁/شهر</td>
                       <td className="p-3.5 font-mono text-[#141414] font-bold">{rem.toLocaleString()} ⃁</td>
                       <td className="p-3.5 font-mono text-[#707070]">{adv.date}</td>
@@ -2341,7 +2341,7 @@ export const HRPage: React.FC = () => {
                             اعتماد وصرف
                           </button>
                         ) : (
-                          <span className="text-[11px] text-[#141414] font-semibold">مجدول بالمسير ✓</span>
+                          <span className="text-[11px] text-[#141414] font-semibold">مجدول بالمسير </span>
                         )}
                       </td>
                     </tr>
@@ -2358,7 +2358,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-extrabold text-[#141414]">سجل الجزاءات والخصومات الإدارية (لائحة تنظيم العمل)</h2>
+              <h2 className="text-sm font-bold text-[#141414]">سجل الجزاءات والخصومات الإدارية (لائحة تنظيم العمل)</h2>
               <p className="text-xs text-[#707070] mt-0.5">تطبيق جدول المخالفات والجزاءات التأديبية وربطها بالاستقطاع الشهري في مسير الرواتب</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2397,7 +2397,7 @@ export const HRPage: React.FC = () => {
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{sanc.id}</td>
                     <td className="p-3.5 font-bold text-[#141414]">{sanc.employee_name}</td>
                     <td className="p-3.5 font-semibold text-[#141414]">{sanc.sanction_type}</td>
-                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">{sanc.amount.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{sanc.amount.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-[#707070]">{sanc.date}</td>
                     <td className="p-3.5"><Badge text={sanc.deduct_from_salary ? 'نعم - آلي' : 'إنذار فقط'} type={sanc.deduct_from_salary ? 'danger' : 'shade'} /></td>
                     <td className="p-3.5 text-[#707070] max-w-xs leading-relaxed">{sanc.reason}</td>
@@ -2415,7 +2415,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-extrabold text-[#141414]">طلبات الاستئذان والخروج أثناء الدوام</h2>
+              <h2 className="text-sm font-bold text-[#141414]">طلبات الاستئذان والخروج أثناء الدوام</h2>
               <p className="text-xs text-[#707070] mt-0.5">توثيق ساعات الاستئذان الشخصي والرسمي ومتابعة رصيد الساعات الشهرية</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2454,7 +2454,7 @@ export const HRPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-[#141414]">{perm.employee_name}</td>
                     <td className="p-3.5 font-semibold text-[#141414]">{perm.permission_type}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{perm.date}</td>
-                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">{perm.time}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{perm.time}</td>
                     <td className="p-3.5 text-[#707070]">{perm.reason}</td>
                     <td className="p-3.5"><Badge text={perm.status} type="success" /></td>
                   </tr>
@@ -2470,7 +2470,7 @@ export const HRPage: React.FC = () => {
         <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs font-sans">
           <div className="p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-extrabold text-[#141414]">سجل المكافآت والحوافز والعمولات الاستثنائية</h2>
+              <h2 className="text-sm font-bold text-[#141414]">سجل المكافآت والحوافز والعمولات الاستثنائية</h2>
               <p className="text-xs text-[#707070] mt-0.5">تُدرج المكافآت المعتمدة تلقائياً ضمن مسير الرواتب الشهري (WPS) وقيد الاستحقاق المحاسبي</p>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -2508,7 +2508,7 @@ export const HRPage: React.FC = () => {
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{rew.id}</td>
                     <td className="p-3.5 font-bold text-[#141414]">{rew.employee_name}</td>
                     <td className="p-3.5 font-semibold text-[#141414]">{rew.reward_type}</td>
-                    <td className="p-3.5 font-mono font-extrabold text-[#141414]">+{rew.net_reward.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">+{rew.net_reward.toLocaleString()} ⃁</td>
                     <td className="p-3.5 text-[#707070]">{rew.payout_timing}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{rew.date}</td>
                     <td className="p-3.5"><Badge text={rew.status} type="success" /></td>
@@ -2589,26 +2589,26 @@ export const HRPage: React.FC = () => {
             <div data-slot="stat-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="mobbin-card p-5">
                 <span className="text-xs text-[#707070] font-semibold block">صافي الرواتب المحولة (WPS)</span>
-                <div className="text-xl font-extrabold font-mono text-[#141414] mt-1.5">{totalNet.toFixed(2)} ⃁</div>
+                <div className="text-xl font-bold font-mono text-[#141414] mt-1.5">{totalNet.toFixed(2)} ⃁</div>
               </div>
               <div className="mobbin-card p-5">
                 <span className="text-xs text-[#707070] font-semibold block">استقطاع الموظفين GOSI (9.75%)</span>
-                <div className="text-xl font-extrabold font-mono text-[#141414] mt-1.5">-{totalGosiEmp.toFixed(2)} ⃁</div>
+                <div className="text-xl font-bold font-mono text-[#141414] mt-1.5">-{totalGosiEmp.toFixed(2)} ⃁</div>
               </div>
               <div className="mobbin-card p-5">
                 <span className="text-xs text-[#707070] font-semibold block">حصة المنشأة GOSI (11.75%)</span>
-                <div className="text-xl font-extrabold font-mono text-[#141414] mt-1.5">{totalGosiEmpr.toFixed(2)} ⃁</div>
+                <div className="text-xl font-bold font-mono text-[#141414] mt-1.5">{totalGosiEmpr.toFixed(2)} ⃁</div>
               </div>
               <div className="mobbin-card p-5">
                 <span className="text-xs text-[#707070] font-semibold block">إجمالي استرداد السلف والجزاءات</span>
-                <div className="text-xl font-extrabold font-mono text-[#141414] mt-1.5">-{totalDeductions.toFixed(2)} ⃁</div>
+                <div className="text-xl font-bold font-mono text-[#141414] mt-1.5">-{totalDeductions.toFixed(2)} ⃁</div>
               </div>
             </div>
 
             <div className="bg-[#ffffff] rounded-[24px] border border-[#e0e0e0] overflow-hidden shadow-xs">
               <div className="flex items-center justify-between p-4 border-b border-[#f0f0f0] bg-[#ffffff] flex-wrap gap-3">
                 <div>
-                  <h2 className="text-sm font-extrabold text-[#141414]">
+                  <h2 className="text-sm font-bold text-[#141414]">
                     مسير الرواتب المعتمد وحماية الأجور (WPS) — مطابق لسقف المادة (92)
                   </h2>
                   <p className="text-xs text-[#707070] mt-0.5">
@@ -2680,7 +2680,7 @@ export const HRPage: React.FC = () => {
                               <span className="block text-[10px] text-[#141414] font-bold font-sans">سقف 50% (م92)</span>
                             )}
                           </td>
-                          <td className="p-3.5 font-mono font-extrabold text-[#141414]">{rec.netSalary.toFixed(2)} ⃁</td>
+                          <td className="p-3.5 font-mono font-bold text-[#141414]">{rec.netSalary.toFixed(2)} ⃁</td>
                           <td className="p-3.5 text-center">
                             <button
                               type="button"
@@ -2912,7 +2912,7 @@ export const HRPage: React.FC = () => {
                   <div data-slot="stat-grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div className="mobbin-card p-4">
                       <span className="text-[11px] text-[#707070] font-semibold block">صافي مكافأة نهاية الخدمة</span>
-                      <div className="text-lg font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-lg font-bold font-mono text-[#141414] mt-1">
                         {finalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ⃁
                       </div>
                       <span className="text-[10px] text-[#707070]">نسبة الاستحقاق: {Math.round(payoutPct * 100)}%</span>
@@ -2920,7 +2920,7 @@ export const HRPage: React.FC = () => {
 
                     <div className="mobbin-card p-4">
                       <span className="text-[11px] text-[#707070] font-semibold block">تعويض رصيد الإجازات ({eosUnusedLeaveDays} يوم)</span>
-                      <div className="text-lg font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-lg font-bold font-mono text-[#141414] mt-1">
                         +{leaveEncashment.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ⃁
                       </div>
                       <span className="text-[10px] text-[#707070]">المادة (111) من نظام العمل</span>
@@ -2928,7 +2928,7 @@ export const HRPage: React.FC = () => {
 
                     <div className="mobbin-card p-4">
                       <span className="text-[11px] text-[#707070] font-semibold block">خصم السلف المتبقية</span>
-                      <div className="text-lg font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-lg font-bold font-mono text-[#141414] mt-1">
                         -{eosRemainingAdvance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ⃁
                       </div>
                       <span className="text-[10px] text-[#707070]">استرداد ذمم الموظف</span>
@@ -2936,7 +2936,7 @@ export const HRPage: React.FC = () => {
 
                     <div className="mobbin-card-soft p-4">
                       <span className="text-[11px] text-[#141414] font-bold block">صافي المخالصة المستحق للصرف</span>
-                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-xl font-bold font-mono text-[#141414] mt-1">
                         {netFinalClearance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ⃁
                       </div>
                       <span className="text-[10px] text-[#707070] font-semibold">المادة (88): يصرف خلال أسبوع</span>
@@ -3218,7 +3218,7 @@ export const HRPage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="p-4 bg-white rounded-2xl border border-[#e0e0e0]">
                       <span className="text-[11px] text-[#707070] font-bold block">تحمل المنشأة الشهري ({gosiCalc.employerRatePercent}%)</span>
-                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-xl font-bold font-mono text-[#141414] mt-1">
                         ⃁ {totalEmployer.toFixed(2)}
                       </div>
                       <span className="text-[10px] text-[#707070]">تتحمله الشركة كمصروف تشغيلي</span>
@@ -3226,7 +3226,7 @@ export const HRPage: React.FC = () => {
 
                     <div className="p-4 bg-white rounded-2xl border border-[#e0e0e0]">
                       <span className="text-[11px] text-[#707070] font-bold block">استقطاع الموظف ({gosiCalc.employeeRatePercent}%)</span>
-                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-xl font-bold font-mono text-[#141414] mt-1">
                         ⃁ {totalEmployee.toFixed(2)}
                       </div>
                       <span className="text-[10px] text-[#707070]">يخصم شهرياً من مسير الرواتب</span>
@@ -3234,7 +3234,7 @@ export const HRPage: React.FC = () => {
 
                     <div className="p-4 bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] rounded-2xl">
                       <span className="text-[11px] text-[#707070] font-bold block">إجمالي سداد الفاتورة لـ GOSI</span>
-                      <div className="text-xl font-extrabold font-mono text-[#141414] mt-1">
+                      <div className="text-xl font-bold font-mono text-[#141414] mt-1">
                         ⃁ {grandTotal.toFixed(2)}
                       </div>
                       <span className="text-[10px] text-[#707070]">سداد الفاتورة الموحدة للفرع</span>

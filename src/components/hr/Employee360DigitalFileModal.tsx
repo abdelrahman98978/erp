@@ -171,7 +171,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             />
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-lg font-black text-[#141414] truncate m-0">{employee.name}</h3>
+                <h3 className="text-lg font-bold text-[#141414] truncate m-0">{employee.name}</h3>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e5e5e5] text-[11px] font-mono font-bold text-[#141414]">
                   {employee.employee_code || employee.id}
                 </span>
@@ -210,25 +210,25 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
         <div className="px-6 py-3.5 bg-[#fafafa] border-b border-[#efefef] grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">إجمالي الراتب الشهري</div>
-            <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
+            <div className="text-sm font-bold text-[#141414] tabular-nums mt-0.5">
               <span className="text-xs font-bold">⃁</span> {salary.toLocaleString()}
             </div>
           </div>
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">صافي الإيداع (WPS)</div>
-            <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
+            <div className="text-sm font-bold text-[#141414] tabular-nums mt-0.5">
               <span className="text-xs font-bold">⃁</span> {netSalary.toLocaleString()}
             </div>
           </div>
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">رصيد الإجازات السنوي</div>
-            <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
+            <div className="text-sm font-bold text-[#141414] tabular-nums mt-0.5">
               {employee.leave_balance ?? 21} <span className="text-[11px] font-bold text-[#707070]">يوم</span>
             </div>
           </div>
           <div className="bg-white rounded-[16px] p-3 border border-[#ececec]">
             <div className="text-[10px] font-bold text-[#707070]">مكافأة نهاية الخدمة</div>
-            <div className="text-sm font-black text-[#141414] tabular-nums mt-0.5">
+            <div className="text-sm font-bold text-[#141414] tabular-nums mt-0.5">
               <span className="text-xs font-bold">⃁</span> {estimatedEos.toLocaleString()}
             </div>
           </div>
@@ -269,7 +269,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-[#fafafa] rounded-[20px] p-4 border border-[#ececec] space-y-2.5">
-                  <div className="text-xs font-black text-[#141414] flex items-center justify-between gap-1.5">
+                  <div className="text-xs font-bold text-[#141414] flex items-center justify-between gap-1.5">
                     <span className="flex items-center gap-1.5">
                       <Shield className="w-3.5 h-3.5 text-[#707070]" />
                       <span>بيانات الهوية والاتصال (PDPL)</span>
@@ -305,7 +305,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 </div>
 
                 <div className="bg-[#fafafa] rounded-[20px] p-4 border border-[#ececec] space-y-2.5">
-                  <div className="text-xs font-black text-[#141414] flex items-center gap-1.5">
+                  <div className="text-xs font-bold text-[#141414] flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-[#707070]" />
                     <span>التسكين الوظيفي والبنكي</span>
                   </div>
@@ -338,7 +338,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               {/* Career Ladder Summary */}
               <div className="bg-white rounded-[20px] p-4 border border-[#ececec]">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-xs font-black text-[#141414] flex items-center gap-1.5">
+                  <div className="text-xs font-bold text-[#141414] flex items-center gap-1.5">
                     <Award className="w-4 h-4 text-[#141414]" />
                     <span>السلم الوظيفي وصلاحيات النظام</span>
                   </div>
@@ -357,7 +357,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                   </div>
                   <div className="p-3 rounded-[14px] bg-[#fafafa] border border-[#efefef]">
                     <div className="text-[10px] text-[#707070]">نسبة الانضباط</div>
-                    <div className="font-black text-[#141414] tabular-nums mt-0.5">98.4%</div>
+                    <div className="font-bold text-[#141414] tabular-nums mt-0.5">98.4%</div>
                   </div>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
               <div className="bg-[#fafafa] rounded-[20px] p-5 border border-[#ececec]">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-sm font-black text-[#141414] m-0">تفاصيل مسير الأجور وحماية الأجور (WPS)</h4>
+                    <h4 className="text-sm font-bold text-[#141414] m-0">تفاصيل مسير الأجور وحماية الأجور (WPS)</h4>
                     <p className="text-[11px] text-[#707070] mt-0.5 m-0">توزيع البدلات والاستقطاعات التأمينية المعتمدة شهرياً</p>
                   </div>
                   <span className="px-2.5 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold">
@@ -380,19 +380,19 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="bg-white p-3.5 rounded-[16px] border border-[#eaeaea]">
                     <div className="text-[10px] font-bold text-[#707070]">الراتب الأساسي (70%)</div>
-                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">⃁ {basicSalary.toLocaleString()}</div>
+                    <div className="text-base font-bold text-[#141414] tabular-nums mt-1">⃁ {basicSalary.toLocaleString()}</div>
                   </div>
                   <div className="bg-white p-3.5 rounded-[16px] border border-[#eaeaea]">
                     <div className="text-[10px] font-bold text-[#707070]">بدل السكن والنقل (30%)</div>
-                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">⃁ {housingAndTransport.toLocaleString()}</div>
+                    <div className="text-base font-bold text-[#141414] tabular-nums mt-1">⃁ {housingAndTransport.toLocaleString()}</div>
                   </div>
                   <div className="bg-white p-3.5 rounded-[16px] border border-[#eaeaea]">
                     <div className="text-[10px] font-bold text-[#707070]">استقطاع التأمينات ({gosiCalc.employeeRatePercent}%)</div>
-                    <div className="text-base font-black text-[#707070] tabular-nums mt-1">-⃁ {gosiEmployee.toLocaleString()}</div>
+                    <div className="text-base font-bold text-[#707070] tabular-nums mt-1">-⃁ {gosiEmployee.toLocaleString()}</div>
                   </div>
                   <div className="bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] p-3.5 rounded-[16px]">
                     <div className="text-[10px] font-bold text-[#707070]">صافي الراتب المحول</div>
-                    <div className="text-base font-black text-[#141414] tabular-nums mt-1">⃁ {netSalary.toLocaleString()}</div>
+                    <div className="text-base font-bold text-[#141414] tabular-nums mt-1">⃁ {netSalary.toLocaleString()}</div>
                   </div>
                 </div>
               </div>
@@ -402,7 +402,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
           {activeTab === 'documents' && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-black text-[#141414] m-0">المستندات الرقمية والاتفاقيات الموثقة</h4>
+                <h4 className="text-sm font-bold text-[#141414] m-0">المستندات الرقمية والاتفاقيات الموثقة</h4>
                 <button
                   type="button"
                   onClick={handleUploadDoc}
@@ -449,7 +449,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             <div className="bg-[#fafafa] rounded-[20px] p-5 border border-[#ececec] space-y-4">
               <div className="flex items-center justify-between border-b border-[#e8e8e8] pb-3">
                 <div>
-                  <h4 className="text-sm font-black text-[#141414] flex items-center gap-1.5 m-0">
+                  <h4 className="text-sm font-bold text-[#141414] flex items-center gap-1.5 m-0">
                     <Scale className="w-4 h-4 text-[#141414]" />
                     <span>اتفاقية التبرئة القانونية وميثاق استخدام النظام</span>
                   </h4>
@@ -471,13 +471,13 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 </div>
                 <div className="bg-white p-3.5 rounded-[16px] border border-dashed border-[#d0d0d0] flex flex-col items-center justify-center text-center">
                   <Fingerprint className="w-7 h-7 text-[#141414] mb-1" />
-                  <div className="text-xs font-black text-[#141414]">توقيع بيومتري إلكتروني موثق</div>
+                  <div className="text-xs font-bold text-[#141414]">توقيع بيومتري إلكتروني موثق</div>
                   <div className="text-[10px] text-[#707070] font-mono mt-0.5">{employee.name}</div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-black text-[#141414]">البنود الموقعة لـ ({policy.departmentName}):</div>
+                <div className="text-xs font-bold text-[#141414]">البنود الموقعة لـ ({policy.departmentName}):</div>
                 {policy.clauses.map((clause, idx) => (
                   <div key={clause.id} className="bg-white p-3 rounded-[14px] border border-[#eaeaea] text-xs">
                     <div className="flex justify-between font-bold text-[#141414]">
@@ -495,7 +495,7 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
             <div className="space-y-4">
               <div className="bg-[#fafafa] rounded-[20px] p-4 border border-[#ececec] space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-black text-[#141414] m-0">تقييم الأداء الربعي والمستهدفات (KPIs)</h4>
+                  <h4 className="text-sm font-bold text-[#141414] m-0">تقييم الأداء الربعي والمستهدفات (KPIs)</h4>
                   <span className="px-2.5 py-0.5 rounded-full bg-[#141414] text-[#ffffff] text-[10px] font-bold">
                     ممتاز (4.9 / 5)
                   </span>
@@ -503,22 +503,22 @@ export const Employee360DigitalFileModal: React.FC<Employee360DigitalFileModalPr
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="bg-white p-3 rounded-[14px] border border-[#eaeaea] flex justify-between items-center">
                     <span>إنجاز مستهدفات العقود والتشغيل</span>
-                    <span className="font-black text-[#141414] tabular-nums">114%</span>
+                    <span className="font-bold text-[#141414] tabular-nums">114%</span>
                   </div>
                   <div className="bg-white p-3 rounded-[14px] border border-[#eaeaea] flex justify-between items-center">
                     <span>مؤشر جودة الخدمة والالتزام</span>
-                    <span className="font-black text-[#141414] tabular-nums">97.2%</span>
+                    <span className="font-bold text-[#141414] tabular-nums">97.2%</span>
                   </div>
                 </div>
               </div>
 
               <div className="bg-white rounded-[20px] p-4 border border-[#ececec] space-y-2">
-                <h4 className="text-sm font-black text-[#141414] m-0">حساب مستحقات نهاية الخدمة الفعلي (المادة 84 / 85)</h4>
+                <h4 className="text-sm font-bold text-[#141414] m-0">حساب مستحقات نهاية الخدمة الفعلي (المادة 84 / 85)</h4>
                 <p className="text-xs text-[#707070] m-0">
                   مدة الخدمة المحتسبة من تاريخ المباشرة ({employee.hire_date || '2023-01-15'}):{' '}
                   <strong>{eosCalc.serviceYears} سنة و {eosCalc.serviceMonths} شهر</strong> ({eosCalc.legalArticleNote})
                 </p>
-                <div className="pt-2 flex items-center justify-between border-t border-[#efefef] text-sm font-black text-[#141414]">
+                <div className="pt-2 flex items-center justify-between border-t border-[#efefef] text-sm font-bold text-[#141414]">
                   <span>إجمالي الاستحقاق التراكمي المقدر:</span>
                   <span className="tabular-nums text-base">⃁ {estimatedEos.toLocaleString()}</span>
                 </div>

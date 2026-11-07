@@ -498,7 +498,7 @@ export const UniversalDocumentExtractorModal: React.FC<UniversalDocumentExtracto
                             onClick={() => setPreviewRecord(rec)}
                             className="flex items-center gap-2 group text-right cursor-pointer"
                           >
-                            <img
+                            <img loading="lazy" decoding="async"
                               src={rec.attachmentUrl}
                               alt={rec.sourceFileName}
                               className="w-9 h-11 object-cover rounded border border-[#e0e0e0] group-hover:border-[#141414]"
@@ -620,7 +620,7 @@ export const UniversalDocumentExtractorModal: React.FC<UniversalDocumentExtracto
               </button>
             </div>
             <div className="p-5 bg-[#f3f3f3] flex flex-col items-center max-h-[75vh] overflow-y-auto">
-              <img
+              <img loading="lazy" decoding="async"
                 src={previewRecord.attachmentUrl}
                 alt={previewRecord.sourceFileName}
                 className="max-h-[52vh] w-auto rounded-[16px] border border-[#e0e0e0] bg-[#ffffff]"

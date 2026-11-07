@@ -26,37 +26,37 @@ const ACTION_BUTTON_PATTERNS: Array<{
   {
     keywords: ['دفع', 'سداد', 'حوالة', 'تحويل بنكي', 'صرف', 'سند صرف'],
     processingLabel: 'جاري التحقق وتنفيذ الدفعة...',
-    completedLabel: 'تم الدفع والتحويل بنجاح ✓',
+    completedLabel: 'تم الدفع والتحويل بنجاح ',
   },
   {
     keywords: ['تحصيل', 'قبض', 'سند قبض', 'إيداع'],
     processingLabel: 'جاري توثيق التحصيل والترحيل...',
-    completedLabel: 'تم التحصيل وإصدار السند ✓',
+    completedLabel: 'تم التحصيل وإصدار السند ',
   },
   {
     keywords: ['zatca', 'زاتكا', 'فاتورة ضريبية', 'تشفير', 'إقرار'],
     processingLabel: 'جاري التوقيع التشفيري ZATCA...',
-    completedLabel: 'معتمدة ومشفرة في زاتكا ✓',
+    completedLabel: 'معتمدة ومشفرة في زاتكا ',
   },
   {
     keywords: ['wps', 'حماية الأجور', 'صرف الرواتب', 'مسير الرواتب'],
     processingLabel: 'جاري تدقيق وإرسال ملف WPS...',
-    completedLabel: 'تم اعتماد وصرف المسير ✓',
+    completedLabel: 'تم اعتماد وصرف المسير ',
   },
   {
     keywords: ['مساند', 'إنجاز', 'تأشيرة', 'تفويض', 'نقل كفالة', 'نقل الخدمات'],
     processingLabel: 'جاري المزامنة مع البوابة الحكومية...',
-    completedLabel: 'تم التوثيق الرسمي ✓',
+    completedLabel: 'تم التوثيق الرسمي ',
   },
   {
     keywords: ['ترحيل', 'قيد', 'تسوية', 'إقفال'],
     processingLabel: 'جاري الترحيل لدفتر الأستاذ العام...',
-    completedLabel: 'تم الترحيل المحاسبي ✓',
+    completedLabel: 'تم الترحيل المحاسبي ',
   },
   {
     keywords: ['اعتماد', 'موافقة', 'تعميد', 'تأكيد', 'توثيق', 'إصدار', 'حفظ', 'إرسال', 'مزامنة'],
     processingLabel: 'جاري المعالجة والاعتماد...',
-    completedLabel: 'تم التنفيذ بنجاح ✓',
+    completedLabel: 'تم التنفيذ بنجاح ',
   },
 ];
 
@@ -293,6 +293,7 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   return (
     <div
+      data-slot="app-shell"
       className="app-container"
       data-theme={theme}
       dir={currentLanguage.dir}

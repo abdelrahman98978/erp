@@ -244,7 +244,7 @@ export const SponsorshipTransferPage: React.FC = () => {
       {criticalAlertsCount > 0 && (
         <div className="rounded-2xl p-4 bg-[#fff1f2] text-[#141414] flex items-center justify-between flex-wrap gap-4 border border-[#fecdd3]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white border border-[#fecdd3] flex items-center justify-center font-black shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-white border border-[#fecdd3] flex items-center justify-center font-bold shrink-0">
               <AlertTriangle className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
@@ -350,7 +350,7 @@ export const SponsorshipTransferPage: React.FC = () => {
             <Hourglass className="w-4 h-4" />
             <span>المتابعة اليومية للعملاء</span>
             {urgentFollowupsCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#141414] text-[#ffffff] animate-pulse">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#141414] text-[#ffffff] animate-pulse">
                 {urgentFollowupsCount} عاجل
               </span>
             )}
@@ -778,7 +778,7 @@ export const SponsorshipTransferPage: React.FC = () => {
                       )}
                       {item.fromStatus && item.toStatus && (
                         <span>
-                          الحالة: <span className="line-through">{item.fromStatus}</span> ➔ <strong className="text-[#141414]">{item.toStatus}</strong>
+                          الحالة: <span className="line-through">{item.fromStatus}</span> <strong className="text-[#141414]">{item.toStatus}</strong>
                         </span>
                       )}
                     </div>
@@ -819,12 +819,12 @@ export const SponsorshipTransferPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
                     <div className="bg-[#f3f3f3]/40 p-2.5 rounded-xl border border-[#e0e0e0]">
                       <div className="text-[10.5px] text-[#707070] font-bold">عاملات تابعة له</div>
-                      <div className="text-base font-extrabold text-[#141414] mt-1">{officeWorkers.length}</div>
+                      <div className="text-base font-bold text-[#141414] mt-1">{officeWorkers.length}</div>
                     </div>
 
                     <div className="bg-[#f3f3f3]/40 p-2.5 rounded-xl border border-[#e0e0e0]">
                       <div className="text-[10.5px] text-[#707070] font-bold">عمليات نفذها</div>
-                      <div className="text-base font-extrabold text-[#141414] mt-1">{officeTransfers.length}</div>
+                      <div className="text-base font-bold text-[#141414] mt-1">{officeTransfers.length}</div>
                     </div>
                   </div>
 
@@ -849,7 +849,7 @@ export const SponsorshipTransferPage: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1.5 rounded-xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] text-xs font-bold font-mono">
-                ✓ 100% متوافق مع BRD
+                100% متوافق مع BRD
               </span>
             </div>
           </div>

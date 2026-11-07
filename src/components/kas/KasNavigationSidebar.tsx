@@ -139,7 +139,7 @@ export const KasNavigationSidebar: React.FC<KasNavigationSidebarProps> = ({
       {/* Brand & Entity Header */}
       <div className="p-4 border-b border-[#e0e0e0] bg-[#ffffff]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#141414] text-[#ffffff] flex items-center justify-center font-black text-base shadow-lg shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#141414] text-[#ffffff] flex items-center justify-center font-bold text-base shadow-lg shrink-0">
             {i18n.t("company.kasCode", "KAS")}
           </div>
           <div className="min-w-0 flex-1">

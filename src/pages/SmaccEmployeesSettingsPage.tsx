@@ -642,7 +642,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
           {eosbCalc.result > 0 && (
             <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-center mt-3">
               <span className="text-xs text-zinc-600 block">إجمالي المستحق لمكافأة نهاية الخدمة:</span>
-              <span className="text-2xl font-mono font-black text-[#141414] mt-1 block">{eosbCalc.result.toLocaleString()} ⃁</span>
+              <span className="text-2xl font-mono font-bold text-[#141414] mt-1 block">{eosbCalc.result.toLocaleString()} ⃁</span>
             </div>
           )}
         </div>

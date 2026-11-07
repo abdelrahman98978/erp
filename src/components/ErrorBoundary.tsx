@@ -136,14 +136,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <AlertTriangle className="w-8 h-8" />
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[11px] font-black mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold mb-3">
               <ShieldCheck className="w-3.5 h-3.5 text-[#141414]" />
               <span>
                 رادار مراقبة الأخطاء نشط {this.state.lastIncident ? `• ${this.state.lastIncident.id}` : ''}
               </span>
             </div>
 
-            <h2 className="text-xl font-black text-[#141414] mb-2">
+            <h2 className="text-xl font-bold text-[#141414] mb-2">
               تنبيه استعادة جلسة العرض المؤسسية
             </h2>
 
@@ -169,7 +169,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <button
                 type="button"
                 onClick={this.handleReset}
-                className="h-11 px-6 rounded-xl border border-[#e0e0e0] bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] text-sm font-black inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm"
+                className="h-11 px-6 rounded-xl border border-[#e0e0e0] bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] text-sm font-bold inline-flex items-center gap-2 cursor-pointer transition-all shadow-sm"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>استعادة الشاشة فوراً</span>

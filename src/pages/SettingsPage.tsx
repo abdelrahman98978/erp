@@ -146,8 +146,8 @@ export const SettingsPage: React.FC = () => {
         credId: cred.id,
         success: true,
         message: result.isRealHardware
-          ? `✓ تم التحقق بنجاح من مستشعر العتاد (${result.authenticatorType || 'Hardware'})!`
-          : '✓ تم التحقق من البصمة بنجاح!'
+          ? `تم التحقق بنجاح من مستشعر العتاد (${result.authenticatorType || 'Hardware'})!`
+          : 'تم التحقق من البصمة بنجاح!'
       });
       const updated = await getStoredBiometricCredentials('admin');
       setDeviceBiometrics(updated);
@@ -1025,7 +1025,7 @@ export const SettingsPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center text-center">
                   <div className="w-16 h-16 rounded-full bg-white p-2 border border-zinc-200 flex items-center justify-center mb-3 shadow-sm">
-                    <img src={logoLightUrl} alt="Logo Light" className="max-h-full max-w-full object-contain" />
+                    <img loading="lazy" decoding="async" src={logoLightUrl} alt="Logo Light" className="max-h-full max-w-full object-contain" />
                   </div>
                   <label className="text-xs font-bold text-[#141414] mb-1">شعار المنظومة الرئيسي</label>
                   <input 
@@ -1038,7 +1038,7 @@ export const SettingsPage: React.FC = () => {
 
                 <div className="p-4 rounded-2xl border border-zinc-200 bg-[#f3f3f3] text-[#141414] flex flex-col items-center justify-center text-center">
                   <div className="w-16 h-16 rounded-full bg-zinc-800 p-2 border border-[#e0e0e0] flex items-center justify-center mb-3 shadow-sm">
-                    <img src={logoDarkUrl} alt="Logo Dark" className="max-h-full max-w-full object-contain" />
+                    <img loading="lazy" decoding="async" src={logoDarkUrl} alt="Logo Dark" className="max-h-full max-w-full object-contain" />
                   </div>
                   <label className="text-xs font-bold text-[#141414] mb-1">شعار النمط الليلي (Dark Mode)</label>
                   <input 
@@ -1051,7 +1051,7 @@ export const SettingsPage: React.FC = () => {
 
                 <div className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center text-center">
                   <div className="w-12 h-12 rounded-xl bg-white p-2 border border-zinc-200 flex items-center justify-center mb-3 shadow-sm">
-                    <img src={faviconUrl} alt="Favicon" className="max-h-full max-w-full object-contain" />
+                    <img loading="lazy" decoding="async" src={faviconUrl} alt="Favicon" className="max-h-full max-w-full object-contain" />
                   </div>
                   <label className="text-xs font-bold text-[#141414] mb-1">أيقونة المتصفح (Favicon)</label>
                   <input 

@@ -798,7 +798,7 @@ export const SmaccModulesPage: React.FC = () => {
                       <td className="p-3.5 text-zinc-700">{order.serviceType}</td>
                       <td className="p-3.5 font-mono font-bold text-[#141414]">{order.totalAmount.toLocaleString()} ⃁</td>
                       <td className="p-3.5">
-                        <span className="pill-tag-mint" style={{ fontSize: '10px' }}>✓ {order.paymentStatus}</span>
+                        <span className="pill-tag-mint" style={{ fontSize: '10px' }}>{order.paymentStatus}</span>
                       </td>
                       <td className="p-3.5">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${order.orderStatus.includes('توثيق') || order.orderStatus === 'مكتمل' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-zinc-100 text-zinc-700'}`}>

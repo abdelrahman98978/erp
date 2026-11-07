@@ -370,7 +370,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 status="verified"
               />
               <div className="text-right">
-                <div className="text-sm font-black">خالد السليم للاستقدام والتشغيل</div>
+                <div className="text-sm font-bold">خالد السليم للاستقدام والتشغيل</div>
                 <div className="text-[11px] text-[#141414] font-semibold mt-0.5">مجلس الإدارة والمدير التنفيذي للمجموعة</div>
               </div>
             </div>
@@ -542,11 +542,11 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
             <div className="grid grid-cols-3 gap-3 text-center">
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <div className="text-[11px] text-[#707070]">دقة مزامنة البيانات</div>
-                <div className="text-lg font-black text-[#141414] font-mono mt-1">99.8%</div>
+                <div className="text-lg font-bold text-[#141414] font-mono mt-1">99.8%</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <div className="text-[11px] text-[#707070]">حالة اتصال الـ Gateway</div>
-                <div className="text-lg font-black text-[#141414] mt-1">متصل حياً</div>
+                <div className="text-lg font-bold text-[#141414] mt-1">متصل حياً</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <div className="text-[11px] text-[#707070]">الكيان النشط</div>

@@ -207,7 +207,7 @@ export const UniversalNotificationToaster: React.FC<UniversalNotificationToaster
 
             {/* Title & Message Body */}
             <h5
-              className={`font-extrabold text-[12.5px] m-0 leading-snug ${
+              className={`font-bold text-[12.5px] m-0 leading-snug ${
                 isCritical ? 'text-[#ffffff]' : 'text-[#141414]'
               }`}
             >

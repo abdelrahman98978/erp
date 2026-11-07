@@ -196,7 +196,7 @@ export const ModuleVisibilityManager: React.FC = () => {
           )}
 
           <div className="flex-1 min-w-0 text-right">
-            <div className={`text-xs truncate ${depth === 0 ? 'font-extrabold text-[#141414]' : 'font-semibold text-[#262626]'}`}>
+            <div className={`text-xs truncate ${depth === 0 ? 'font-bold text-[#141414]' : 'font-semibold text-[#262626]'}`}>
               {item.title}
             </div>
             <div className="text-[10.5px] text-[#8a8a8a] truncate">
@@ -241,7 +241,7 @@ export const ModuleVisibilityManager: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap border-b border-[#f0f0f0] pb-4">
         <div>
-          <h3 className="text-sm font-black text-[#141414] m-0">إظهار وإخفاء الأقسام والواجهات</h3>
+          <h3 className="text-sm font-bold text-[#141414] m-0">إظهار وإخفاء الأقسام والواجهات</h3>
           <p className="text-[11.5px] text-[#707070] mt-1 mb-0 leading-relaxed">
             أخفِ قسماً رئيسياً كاملاً، أو صفحات فرعية بعينها، أو أجزاء من الواجهة. يختفي العنصر من القائمة الجانبية
             وبطاقات الصلاحيات والبحث السريع، ويُمنع فتحه مباشرة.
@@ -323,7 +323,7 @@ export const ModuleVisibilityManager: React.FC = () => {
       {/* UI parts */}
       {!query && (
         <div className="space-y-2 pt-2">
-          <div className="flex items-center gap-2 text-xs font-extrabold text-[#141414]">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#141414]">
             <Layers className="w-4 h-4" />
             أجزاء الواجهة المشتركة
           </div>

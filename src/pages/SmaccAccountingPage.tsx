@@ -776,7 +776,7 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowBatchExtractor(true)}
-              className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-black text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+              className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-bold text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
             >
               <UploadCloud className="w-4 h-4" />
               <span>استيراد فواتير / مستندات / نظام محاسبي منفصل (100 صورة / PDF / Word / Excel)</span>
@@ -909,7 +909,7 @@ export const SmaccAccountingPage: React.FC = () => {
               </span>
             </div>
             <div>
-              <div className="text-xs font-extrabold text-[#141414] leading-snug">{div.title}</div>
+              <div className="text-xs font-bold text-[#141414] leading-snug">{div.title}</div>
               <div className="text-[10.5px] text-[#707070] mt-0.5 line-clamp-1">{div.subtitle}</div>
             </div>
           </button>
@@ -1246,7 +1246,7 @@ export const SmaccAccountingPage: React.FC = () => {
                     <td className="p-3 font-medium text-[#141414]">{row.desc}</td>
                     <td className="p-3 font-mono font-bold text-[#141414]">{row.debit > 0 ? `${row.debit.toLocaleString()} ⃁` : '-'}</td>
                     <td className="p-3 font-mono font-bold text-[#141414]">{row.credit > 0 ? `${row.credit.toLocaleString()} ⃁` : '-'}</td>
-                    <td className="p-3 font-mono font-extrabold text-[#141414] text-left pl-4">{row.cumulative.toLocaleString()} ⃁</td>
+                    <td className="p-3 font-mono font-bold text-[#141414] text-left pl-4">{row.cumulative.toLocaleString()} ⃁</td>
                   </tr>
                 ))}
               </tbody>
@@ -1339,7 +1339,7 @@ export const SmaccAccountingPage: React.FC = () => {
             </div>
             <div className="flex justify-between items-center p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] rounded-2xl">
               <span className="font-bold text-base">صافي أرباح الفترة التشغيلية (Net Profit):</span>
-              <span className="font-mono font-extrabold text-[#141414] text-lg">
+              <span className="font-mono font-bold text-[#141414] text-lg">
                 {netProfit.toLocaleString()} ⃁
               </span>
             </div>
@@ -1715,7 +1715,7 @@ export const SmaccAccountingPage: React.FC = () => {
                 <span>إجمالي المدين: <strong className="text-[#141414] font-mono">{totalDebit.toFixed(2)} ⃁</strong></span>
                 <span>إجمالي الدائن: <strong className="text-[#141414] font-mono">{totalCredit.toFixed(2)} ⃁</strong></span>
                 <span className={`pill-tag-${isJournalBalanced ? 'mint' : 'shade'}`}>
-                  {isJournalBalanced ? '✓ القيد متوازن' : '✕ غير متوازن'}
+                  {isJournalBalanced ? 'القيد متوازن' : 'غير متوازن'}
                 </span>
               </div>
             </div>
@@ -1871,8 +1871,8 @@ export const SmaccAccountingPage: React.FC = () => {
                     ))}
                     <tr className="bg-zinc-50 font-bold border-t-2 border-[#141414]">
                       <td colSpan={2} className="p-2 font-sans text-left pl-4">الإجمالي المتوازن:</td>
-                      <td className="p-2 font-extrabold text-[#141414]">{selectedJournalForPreview.total_debit.toLocaleString()} ⃁</td>
-                      <td className="p-2 font-extrabold text-[#141414]">{selectedJournalForPreview.total_credit.toLocaleString()} ⃁</td>
+                      <td className="p-2 font-bold text-[#141414]">{selectedJournalForPreview.total_debit.toLocaleString()} ⃁</td>
+                      <td className="p-2 font-bold text-[#141414]">{selectedJournalForPreview.total_credit.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>
                 </table>

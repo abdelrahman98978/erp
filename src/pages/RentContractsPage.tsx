@@ -785,7 +785,7 @@ export const RentContractsPage: React.FC = () => {
                         className="button-primary-pill disabled:opacity-50"
                         style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
                       >
-                        {ord.status === 'تم التحويل لعقد نشط' ? 'تم التحويل ✓' : 'تحويل لعقد'}
+                        {ord.status === 'تم التحويل لعقد نشط' ? 'تم التحويل ' : 'تحويل لعقد'}
                       </button>
                     </td>
                   </tr>

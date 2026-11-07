@@ -32,7 +32,7 @@ export const DualBrandingDocumentGenerator: React.FC<DualBrandingDocumentGenerat
         {/* Left Side: Group Logo & Company Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ textAlign: 'center' }}>
-            <img src="/logo.png" alt={i18n.t("brand.groupLogo", "شعار المجموعة")} style={{ width: '48px', height: '48px', borderRadius: '50%', border: '1px solid #e0e0e0' }} />
+            <img loading="lazy" decoding="async" src="/logo.png" alt={i18n.t("brand.groupLogo", "شعار المجموعة")} style={{ width: '48px', height: '48px', borderRadius: '50%', border: '1px solid #e0e0e0' }} />
             <div style={{ fontSize: '10px', fontWeight: '800', color: '#141414', marginTop: '2px' }}>خالد السليم</div>
           </div>
 

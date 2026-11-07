@@ -209,7 +209,7 @@ export const ShelterNotificationDrawer: React.FC<ShelterNotificationDrawerProps>
                 onClick={() => setCategoryFilter('EXPIRING')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
                   categoryFilter === 'EXPIRING'
-                    ? 'bg-[#141414] text-[#ffffff] font-black'
+                    ? 'bg-[#141414] text-[#ffffff] font-bold'
                     : 'text-[#141414] hover:bg-[#eaeaea]'
                 }`}
               >
@@ -296,7 +296,7 @@ export const ShelterNotificationDrawer: React.FC<ShelterNotificationDrawerProps>
                   {/* Top Bar inside Card */}
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`px-2.5 py-1 rounded-xl text-xs font-black border flex items-center gap-1.5 ${style.badge}`}>
+                      <span className={`px-2.5 py-1 rounded-xl text-xs font-bold border flex items-center gap-1.5 ${style.badge}`}>
                         <IconComp className="w-3.5 h-3.5" />
                         <span>{alert.title}</span>
                       </span>

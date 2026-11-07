@@ -351,7 +351,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
               <div className="px-3 py-2.5 border-b border-[#e5e5e5] mb-2.5 flex items-center justify-between sticky top-0 bg-[#ffffff]/95 backdrop-blur-sm z-10">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-[#141414]" />
-                  <span className="text-xs font-extrabold text-[#141414]">
+                  <span className="text-xs font-bold text-[#141414]">
                     منظومة التصدير المؤسسي الموحدة (12 صيغة)
                   </span>
                 </div>
@@ -372,7 +372,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
                       <Eye className="w-4 h-4" />
                     </div>
                     <div className="text-right min-w-0">
-                      <div className="text-xs font-extrabold text-[#ffffff] flex items-center gap-1.5">
+                      <div className="text-xs font-bold text-[#ffffff] flex items-center gap-1.5">
                         <span>معاينة وتخصيص الوثيقة قبل التصدير</span>
                       </div>
                       <p className="text-[10.5px] text-[#a1a1aa] mt-0.5 truncate">
@@ -380,7 +380,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
                       </p>
                     </div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full bg-[#ffffff] text-[#141414] text-[10px] font-extrabold shrink-0 inline-flex items-center gap-1">
+                  <span className="px-2.5 py-1 rounded-full bg-[#ffffff] text-[#141414] text-[10px] font-bold shrink-0 inline-flex items-center gap-1">
                     <SlidersHorizontal className="w-3 h-3" />
                     <span>تخصيص</span>
                   </span>
@@ -389,7 +389,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 
               {/* Section 1: Executive & Office Documents (6 Formats) */}
               <div className="mb-2">
-                <div className="px-3 py-1 text-[10px] font-extrabold text-[#707070] uppercase tracking-wider">
+                <div className="px-3 py-1 text-[10px] font-bold text-[#707070] uppercase tracking-wider">
                   المستندات التنفيذية والتقارير المعتمدة (6 صيغ)
                 </div>
                 <div className="space-y-1 mt-1">
@@ -408,7 +408,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
-                            <span className="text-xs font-extrabold text-[#141414] transition-colors">
+                            <span className="text-xs font-bold text-[#141414] transition-colors">
                               {fmt.title}
                             </span>
                             {fmt.badge && (
@@ -429,7 +429,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 
               {/* Section 2: Data Interchange & Integration (6 Formats) */}
               <div className="mb-2 pt-2 border-t border-[#e5e5e5]">
-                <div className="px-3 py-1 text-[10px] font-extrabold text-[#707070] uppercase tracking-wider">
+                <div className="px-3 py-1 text-[10px] font-bold text-[#707070] uppercase tracking-wider">
                   تكامل البيانات والأنظمة المحاسبية والبنكية (6 صيغ)
                 </div>
                 <div className="space-y-1 mt-1">
@@ -448,7 +448,7 @@ export const ExportDropdown: React.FC<ExportDropdownProps> = ({
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
-                            <span className="text-xs font-extrabold text-[#141414] transition-colors">
+                            <span className="text-xs font-bold text-[#141414] transition-colors">
                               {fmt.title}
                             </span>
                             {fmt.badge && (

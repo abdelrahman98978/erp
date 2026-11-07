@@ -412,7 +412,7 @@ export const ShelterPage: React.FC = () => {
               title="الانتقال إلى واجهة منظومة الإيواء والسكن المستقلة بكامل شاشتها"
             >
               <Hotel className="w-3.5 h-3.5 ml-1 text-white" />
-              <span>البوابة المستقلة للإيواء والسكن 🡵</span>
+              <span>البوابة المستقلة للإيواء والسكن </span>
             </button>
             <button
               onClick={() => setShowAddModal(true)}

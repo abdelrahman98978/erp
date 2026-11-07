@@ -594,15 +594,15 @@ export const DataImportWizardPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-              <div className="text-2xl font-black text-[#141414] font-mono">{validationResult.valid.length}</div>
+              <div className="text-2xl font-bold text-[#141414] font-mono">{validationResult.valid.length}</div>
               <div className="text-xs font-bold text-[#141414] mt-1">سجل صالح للاستيراد</div>
             </div>
             <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-              <div className="text-2xl font-black text-[#141414] font-mono">{validationResult.warnings.length}</div>
+              <div className="text-2xl font-bold text-[#141414] font-mono">{validationResult.warnings.length}</div>
               <div className="text-xs font-bold text-[#141414] mt-1">تحذيرات (يمكن تجاوزها)</div>
             </div>
             <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-              <div className="text-2xl font-black text-[#141414] font-mono">{validationResult.errors.length}</div>
+              <div className="text-2xl font-bold text-[#141414] font-mono">{validationResult.errors.length}</div>
               <div className="text-xs font-bold text-[#141414] mt-1">أخطاء (لن تُستورد)</div>
             </div>
           </div>
@@ -659,7 +659,7 @@ export const DataImportWizardPage: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-black text-[#141414] mb-1">
+            <h3 className="text-lg font-bold text-[#141414] mb-1">
               {importResult.failed === 0 ? 'تم الاستيراد بنجاح!' : 'اكتمل الاستيراد مع بعض الملاحظات'}
             </h3>
             <p className="text-xs text-[#707070]">

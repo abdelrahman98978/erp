@@ -368,7 +368,7 @@ export const TravelPage: React.FC = () => {
                         className="button-primary-pill disabled:opacity-50"
                         style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
                       >
-                        {r.status === 'تم الاستقبال بنجاح' ? 'تم الاستلام ✓' : 'تأكيد النقل'}
+                        {r.status === 'تم الاستقبال بنجاح' ? 'تم الاستلام ' : 'تأكيد النقل'}
                       </button>
                     </td>
                   </tr>
@@ -642,7 +642,7 @@ export const TravelPage: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
                 <div>
-                  <h2 className="text-base font-extrabold text-[#141414]">مجموعة السليم للاستقدام - إدارة الحركة والترحيل</h2>
+                  <h2 className="text-base font-bold text-[#141414]">مجموعة السليم للاستقدام - إدارة الحركة والترحيل</h2>
                   <div className="text-[11px] text-[#707070]">أمر تفويج واستقبال عمالة من صالة القدوم الدولية</div>
                   <div className="text-[10px] text-[#141414] font-mono font-bold mt-0.5">ORDER ID: #{selectedFlightForPrint.id}-ARRIV</div>
                 </div>

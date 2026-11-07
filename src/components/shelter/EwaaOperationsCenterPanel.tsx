@@ -397,7 +397,7 @@ export const EwaaOperationsCenterPanel: React.FC<EwaaOperationsCenterPanelProps>
                     <span className={`text-[11px] font-bold leading-snug ${isActive ? 'text-[#ffffff]' : 'text-[#707070]'}`}>
                       {card.label_ar}
                     </span>
-                    <span className="text-lg font-black font-mono mt-1.5">{card.count}</span>
+                    <span className="text-lg font-bold font-mono mt-1.5">{card.count}</span>
                   </button>
                 );
               })}

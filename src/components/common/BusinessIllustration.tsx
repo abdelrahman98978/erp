@@ -130,7 +130,7 @@ export const BusinessIllustration: React.FC<BusinessIllustrationProps> = ({
         }}
         title={meta.titleAr}
       >
-        <img
+        <img loading="lazy" decoding="async"
           src={meta.funkywaysSvgUrl}
           alt={meta.titleAr}
           onError={() => setImgFailed(true)}

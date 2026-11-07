@@ -1538,7 +1538,7 @@ export const TendersBOQPage: React.FC = () => {
         <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm space-y-4">
           <div className="p-5 border-b border-slate-100 bg-white flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h3 className="text-base font-black text-slate-900 m-0 flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 m-0 flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-[#141414]" />
                 <span>سجل مناقصات وعقود التوريد المعتمدة</span>
               </h3>
@@ -1576,7 +1576,7 @@ export const TendersBOQPage: React.FC = () => {
 
               <button
                 onClick={() => setShowNewTenderModal(true)}
-                className="px-4 py-2 bg-[#141414] hover:bg-[#262626] text-white text-xs font-black rounded-2xl shadow-md transition flex items-center gap-1.5"
+                className="px-4 py-2 bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold rounded-2xl shadow-md transition flex items-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ إنشاء منافسة جديدة</span>
@@ -1683,7 +1683,7 @@ export const TendersBOQPage: React.FC = () => {
                       <td className="p-4 font-mono text-center font-bold">{t.itemsCount} بنود</td>
                       <td className="p-4 font-mono font-bold text-slate-900">{t.subtotal.toLocaleString()} ⃁</td>
                       <td className="p-4 font-mono text-[#141414]">{t.vatAmount.toLocaleString()} ⃁</td>
-                      <td className="p-4 font-mono font-black text-[#141414] bg-[#f3f3f3]">{t.grandTotal.toLocaleString()} ⃁</td>
+                      <td className="p-4 font-mono font-bold text-[#141414] bg-[#f3f3f3]">{t.grandTotal.toLocaleString()} ⃁</td>
                       <td className="p-4"><Badge text={t.status} type="success" /></td>
                       <td className="p-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
@@ -1909,7 +1909,7 @@ export const TendersBOQPage: React.FC = () => {
 
                 <button
                   onClick={() => setShowNewSupplierModal(true)}
-                  className="px-4 py-2 bg-[#141414] hover:bg-[#262626] text-white text-xs font-black rounded-2xl shadow-md transition flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#141414] hover:bg-[#262626] text-white text-xs font-bold rounded-2xl shadow-md transition flex items-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
                   <span>+ إضافة مورد معتمد جديد</span>
@@ -1952,19 +1952,19 @@ export const TendersBOQPage: React.FC = () => {
             {/* Summary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
               <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-                <div className="text-xl font-black font-mono text-[#141414]">{suppliers.filter(s => s.status === 'معتمد').length}</div>
+                <div className="text-xl font-bold font-mono text-[#141414]">{suppliers.filter(s => s.status === 'معتمد').length}</div>
                 <div className="text-[11px] font-bold text-[#141414] mt-0.5">موردين معتمدين</div>
               </div>
               <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-                <div className="text-xl font-black font-mono text-[#141414]">{suppliers.filter(s => s.status === 'تحت التقييم').length}</div>
+                <div className="text-xl font-bold font-mono text-[#141414]">{suppliers.filter(s => s.status === 'تحت التقييم').length}</div>
                 <div className="text-[11px] font-bold text-[#141414] mt-0.5">تحت التقييم</div>
               </div>
               <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-                <div className="text-xl font-black font-mono text-[#141414]">{suppliers.reduce((s, sup) => s + sup.totalDeals, 0)}</div>
+                <div className="text-xl font-bold font-mono text-[#141414]">{suppliers.reduce((s, sup) => s + sup.totalDeals, 0)}</div>
                 <div className="text-[11px] font-bold text-[#141414] mt-0.5">إجمالي التعاملات</div>
               </div>
               <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
-                <div className="text-xl font-black font-mono text-[#141414]">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
+                <div className="text-xl font-bold font-mono text-[#141414]">{suppliers.reduce((s, sup) => s + sup.totalValue, 0).toLocaleString()}</div>
                 <div className="text-[11px] font-bold text-[#141414] mt-0.5">إجمالي القيمة (⃁)</div>
               </div>
             </div>

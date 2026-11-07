@@ -139,7 +139,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
         <div className="w-16 h-16 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center mx-auto mb-4">
           <Lock className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-black text-[#141414] mb-2">
+        <h2 className="text-xl font-bold text-[#141414] mb-2">
           403 Access Denied - منطقة محظورة للآدمن فقط
         </h2>
         <p className="text-xs text-zinc-600 leading-relaxed mb-6">
@@ -167,7 +167,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             <AlertTriangle className="w-4 h-4 text-[#141414]" />
             <span>وضع الطوارئ الفوري مفعّل (Emergency Lockdown Active) - تم تجميد تسجيلات الدخول وتعيين النظام على القراءة فقط.</span>
           </div>
-          <button className="bg-white text-[#141414] px-3 py-1 rounded-full text-xs font-black hover:bg-[#eaeaea]" onClick={() => setEmergencyLockdown(false)}>
+          <button className="bg-white text-[#141414] px-3 py-1 rounded-full text-xs font-bold hover:bg-[#eaeaea]" onClick={() => setEmergencyLockdown(false)}>
             إلغاء الإغلاق
           </button>
         </div>
@@ -461,19 +461,19 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-[#707070]">حجم قاعدة البيانات الحالية</span>
-              <div className="text-xl font-black text-[#141414] mt-1 font-mono">1.42 GB</div>
+              <div className="text-xl font-bold text-[#141414] mt-1 font-mono">1.42 GB</div>
               <span className="text-[11px] text-[#141414] font-semibold mt-1 block">آخر نسخة: اليوم 03:00 ص</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-[#707070]">مساحة التخزين السحابي (S3)</span>
-              <div className="text-xl font-black text-[#141414] mt-1 font-mono">48.6 GB / 500 GB</div>
+              <div className="text-xl font-bold text-[#141414] mt-1 font-mono">48.6 GB / 500 GB</div>
               <span className="text-[11px] text-[#707070] mt-1 block">مستندات وجوازات مفحوصة</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-[#707070]">نسبة نجاح الـ Cache (Redis)</span>
-              <div className="text-xl font-black text-[#141414] mt-1 font-mono">96.4%</div>
+              <div className="text-xl font-bold text-[#141414] mt-1 font-mono">96.4%</div>
               <span className="text-[11px] text-[#141414] mt-1 block">استجابة فائقة السرعة</span>
             </div>
           </div>
@@ -576,13 +576,13 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-[#707070]">رصيد بوابة الـ SMS الرسمية</span>
-              <div className="text-xl font-black text-[#141414] mt-1 font-mono">42,500 رسالة</div>
+              <div className="text-xl font-bold text-[#141414] mt-1 font-mono">42,500 رسالة</div>
               <span className="text-[11px] text-[#707070] mt-1 block">مزود الخدمة: Unifonic / Mobily</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200">
               <span className="text-xs font-semibold text-[#707070]">حالة الربط المصرفي (بنك الرياض B2B)</span>
-              <div className="text-xl font-black text-[#141414] mt-1">متصل ومفعل</div>
+              <div className="text-xl font-bold text-[#141414] mt-1">متصل ومفعل</div>
               <span className="text-[11px] text-[#141414] mt-1 block">الرواتب والتحويلات المباشرة</span>
             </div>
           </div>

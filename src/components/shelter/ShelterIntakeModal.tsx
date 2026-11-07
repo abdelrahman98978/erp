@@ -264,7 +264,7 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
           ) : (
             /* New Worker Registration Section */
             <div className="space-y-4 p-4 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0]">
-              <h3 className="text-xs font-black text-[#141414] flex items-center gap-2">
+              <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2">
                 <UserPlus className="w-4 h-4 text-[#141414]" />
                 <span>البيانات الأساسية للعاملة الجديدة:</span>
               </h3>
@@ -363,7 +363,7 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
 
           {/* Intake Parameters */}
           <div className="space-y-3">
-            <h3 className="text-xs font-black text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
+            <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2 border-b border-[#e0e0e0] pb-2">
               <Hotel className="w-4 h-4 text-[#141414]" />
               <span>تفاصيل الدخول وتخصيص السكن:</span>
             </h3>
@@ -448,7 +448,7 @@ const ShelterIntakeModalContent: React.FC<ShelterIntakeModalProps> = ({
           {/* DEDICATED FIRST SPONSOR SECTION (Crucial BRD Requirement) */}
           <div className="space-y-3 p-4 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0]">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-black text-[#141414] flex items-center gap-2">
+              <h3 className="text-xs font-bold text-[#141414] flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-[#141414]" />
                 <span>قسم بيانات الكفيل الأول (المتنازل أو المستقدم الأصلي):</span>
               </h3>

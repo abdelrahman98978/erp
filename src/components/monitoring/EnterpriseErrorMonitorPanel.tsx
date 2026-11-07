@@ -326,7 +326,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
                   درع الحماية الذاتي نشط • {summary.uptimePercent}
                 </span>
               </div>
-              <h2 className="text-lg sm:text-xl font-black text-[#141414] m-0">
+              <h2 className="text-lg sm:text-xl font-bold text-[#141414] m-0">
                 رادار مراقبة وتشخيص الأخطاء المباشر ومحرك الإصلاح الذاتي
               </h2>
               <p className="text-xs text-[#707070] mt-1 m-0">
@@ -377,7 +377,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
               <span>مؤشر سلامة واستقرار النظام</span>
               <ShieldCheck className="w-4 h-4 text-[#141414]" />
             </div>
-            <div className="text-2xl font-black text-[#141414] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#141414] font-mono mt-1">
               {summary.healthScore}%
             </div>
             <div className="text-[11px] text-[#707070] mt-0.5">
@@ -390,7 +390,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
               <span>أخطاء تم إصلاحها ذاتياً</span>
               <Sparkles className="w-4 h-4 text-[#141414]" />
             </div>
-            <div className="text-2xl font-black text-[#141414] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#141414] font-mono mt-1">
               {summary.autoHealedCount} / {summary.totalIncidents}
             </div>
             <div className="text-[11px] text-[#707070] mt-0.5">
@@ -403,7 +403,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
               <span>تنبيهات مفتوحة قيد المعالجة</span>
               <AlertTriangle className="w-4 h-4 text-[#141414]" />
             </div>
-            <div className="text-2xl font-black text-[#141414] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#141414] font-mono mt-1">
               {summary.openIncidents}
             </div>
             <div className="text-[11px] text-[#707070] mt-0.5">
@@ -418,7 +418,7 @@ export const EnterpriseErrorMonitorPanel: React.FC<EnterpriseErrorMonitorPanelPr
               <span>متوسط سرعة الاستشفاء الذاتي</span>
               <Zap className="w-4 h-4 text-[#141414]" />
             </div>
-            <div className="text-2xl font-black text-[#141414] font-mono mt-1">
+            <div className="text-2xl font-bold text-[#141414] font-mono mt-1">
               {summary.avgRecoveryMs} ms
             </div>
             <div className="text-[11px] text-[#707070] mt-0.5">

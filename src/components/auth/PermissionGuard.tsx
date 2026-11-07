@@ -25,7 +25,7 @@ export const Unauthorized403View: React.FC<{ message?: string }> = ({
           <span className="inline-block px-3 py-1 bg-[#f3f3f3] text-[#141414] text-xs font-bold rounded-full border border-[#e0e0e0]">
             خطأ 403 — وصول غير مصرح (Forbidden)
           </span>
-          <h2 className="text-xl font-black text-slate-900">
+          <h2 className="text-xl font-bold text-slate-900">
             رفض الوصول وفق سياسة العزل الأمني
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed">

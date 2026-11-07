@@ -314,7 +314,7 @@ export const OfficesPage: React.FC = () => {
                     setViewMode(sub.mode);
                   }
                 }}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                   isActive
                     ? 'bg-[#141414] text-[#ffffff] shadow-sm'
                     : 'bg-[#f3f3f3] hover:bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
@@ -695,7 +695,7 @@ export const OfficesPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-2xl bg-[#141414] hover:bg-[#262626] text-[#ffffff] border border-[#141414] font-black text-xs shadow-md transition"
+                  className="px-6 py-2.5 rounded-2xl bg-[#141414] hover:bg-[#262626] text-[#ffffff] border border-[#141414] font-bold text-xs shadow-md transition"
                 >
                   حفظ واعتماد الوكالة
                 </button>

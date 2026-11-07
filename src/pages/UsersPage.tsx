@@ -318,8 +318,8 @@ export const UsersPage: React.FC = () => {
         credId: cred.id,
         success: true,
         message: result.isRealHardware
-          ? `✓ تمت المصادقة بنجاح عبر مستشعر الأمان الحيوي (${result.authenticatorType || 'Hardware'})!`
-          : '✓ تم فحص البصمة والمطابقة التشفيرية بنجاح!'
+          ? `تمت المصادقة بنجاح عبر مستشعر الأمان الحيوي (${result.authenticatorType || 'Hardware'})!`
+          : 'تم فحص البصمة والمطابقة التشفيرية بنجاح!'
       });
       if (userForBiometrics) {
         const updated = await getStoredBiometricCredentials(userForBiometrics.username);

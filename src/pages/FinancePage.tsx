@@ -813,7 +813,7 @@ export const FinancePage: React.FC = () => {
               <span>إيرادات عقود التأجير والتشغيل:</span>
               <span className="font-mono">115,471.20 ⃁</span>
             </div>
-            <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-black text-[#141414] border border-[#e0e0e0]">
+            <div className="flex justify-between py-2.5 bg-[#f3f3f3] px-3 rounded-xl font-bold text-[#141414] border border-[#e0e0e0]">
               <span>إجمالي الإيرادات التشغيلية:</span>
               <span className="font-mono">525,471.20 ⃁</span>
             </div>
@@ -2665,7 +2665,7 @@ export const FinancePage: React.FC = () => {
                   <p className="text-xs text-[#707070]">المملكة العربية السعودية - الرياض</p>
                 </div>
                 <div className="text-left">
-                  <div className="text-base font-extrabold text-[#141414] font-mono border-2 border-[#141414] px-3 py-1 rounded-xl">
+                  <div className="text-base font-bold text-[#141414] font-mono border-2 border-[#141414] px-3 py-1 rounded-xl">
                     سند {selectedVoucherForPrint.type}
                   </div>
                   <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">{selectedVoucherForPrint.voucher_no}</div>
@@ -2679,12 +2679,12 @@ export const FinancePage: React.FC = () => {
                   <span className="font-bold text-zinc-700">
                     {selectedVoucherForPrint.type === 'قبض' ? 'استلمنا من المكرم / السادة:' : 'صرفنا إلى المكرم / السادة:'}
                   </span>
-                  <span className="font-extrabold text-sm text-[#141414]">{selectedVoucherForPrint.payee_payer}</span>
+                  <span className="font-bold text-sm text-[#141414]">{selectedVoucherForPrint.payee_payer}</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
                   <span className="font-bold text-zinc-700">المبلغ وقدره:</span>
-                  <span className="font-mono font-extrabold text-base text-[#141414]">
+                  <span className="font-mono font-bold text-base text-[#141414]">
                     {selectedVoucherForPrint.amount.toLocaleString()} ⃁
                   </span>
                 </div>
@@ -2765,7 +2765,7 @@ export const FinancePage: React.FC = () => {
                   <p className="text-xs text-[#707070] font-mono mt-0.5">دفتر القيود اليومية العامة</p>
                 </div>
                 <div className="text-left">
-                  <div className="text-sm font-extrabold text-[#141414] font-mono border border-[#141414] px-3 py-1 rounded-xl">
+                  <div className="text-sm font-bold text-[#141414] font-mono border border-[#141414] px-3 py-1 rounded-xl">
                     قيد يومية: {selectedJournalForPrint.ref_no}
                   </div>
                   <div className="text-xs font-mono text-[#707070] mt-1">التاريخ: {selectedJournalForPrint.date}</div>

@@ -646,11 +646,11 @@ export const KasSuitePortalPage: React.FC<KasSuitePortalPageProps> = ({ onReturn
                 <div className="flex items-center gap-3">
                   <div className="px-4 py-2 rounded-xl bg-[#f3f3f3]/40 border border-[#e0e0e0] text-center">
                     <div className="text-[10px] text-[#707070] font-bold">الإجمالي قبل الضريبة</div>
-                    <div className="text-base font-black text-[#141414] font-mono">245,000 ⃁</div>
+                    <div className="text-base font-bold text-[#141414] font-mono">245,000 ⃁</div>
                   </div>
                   <div className="px-4 py-2 rounded-xl bg-[#f3f3f3] border border-[#e0e0e0] text-center">
                     <div className="text-[10px] text-[#141414] font-bold">الإجمالي شامل الضريبة 15%</div>
-                    <div className="text-base font-black text-[#141414] font-mono">281,750 ⃁</div>
+                    <div className="text-base font-bold text-[#141414] font-mono">281,750 ⃁</div>
                   </div>
                 </div>
               </div>

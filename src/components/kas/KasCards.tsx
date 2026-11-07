@@ -119,7 +119,7 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
               <Icon className="w-5 h-5" />
             </div>
             <div className="min-w-0">
-              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 block truncate leading-tight">
+              <span className="text-xs sm:text-sm font-bold text-zinc-800 block truncate leading-tight">
                 {title}
               </span>
               {subtitle && (
@@ -131,7 +131,7 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
           </div>
 
           {trend && (
-            <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full border shrink-0 ${
+            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
               trend.isPositive 
                 ? 'bg-[#f3f3f3]  text-[#141414]  border-[#e0e0e0] ' 
                 : 'bg-[#f3f3f3]  text-[#141414]  border-[#e0e0e0] '
@@ -144,7 +144,7 @@ export const KasKpiCard: React.FC<KasKpiCardProps> = ({
 
         {/* Big Bold Value */}
         <div className="flex items-baseline justify-between pt-1">
-          <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight ${style.valueColor}`}>
+          <div className={`text-2xl sm:text-3xl font-bold font-mono tracking-tight ${style.valueColor}`}>
             {value}
           </div>
         </div>
@@ -215,7 +215,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
       {/* Header Info */}
       <div className="space-y-2 pt-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-xs font-black text-[#141414] bg-[#f3f3f3] px-3 py-1 rounded-full border border-[#e0e0e0] flex items-center gap-1.5">
+          <span className="font-mono text-xs font-bold text-[#141414] bg-[#f3f3f3] px-3 py-1 rounded-full border border-[#e0e0e0] flex items-center gap-1.5">
             <Hash className="w-3.5 h-3.5" />
             {tender.referenceNumber}
           </span>
@@ -224,7 +224,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
           </span>
         </div>
 
-        <h3 className="text-base font-black text-slate-900 line-clamp-2 leading-snug group-hover:text-[#141414] transition-colors pt-1">
+        <h3 className="text-base font-bold text-slate-900 line-clamp-2 leading-snug group-hover:text-[#141414] transition-colors pt-1">
           {tender.title}
         </h3>
 
@@ -238,7 +238,7 @@ export const KasTenderCard: React.FC<KasTenderCardProps> = ({
       <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 space-y-2 text-xs">
         <div className="flex items-baseline justify-between">
           <span className="text-[#707070]">القيمة شاملة الضريبة:</span>
-          <span className="text-lg font-black font-mono text-[#141414]">
+          <span className="text-lg font-bold font-mono text-[#141414]">
             {tender.grandTotal.toLocaleString()} <span className="text-xs font-sans">⃁</span>
           </span>
         </div>
@@ -346,7 +346,7 @@ export const KasSupplierCard: React.FC<KasSupplierCardProps> = ({
           <span className="pill-tag-mint text-[10px] font-bold">
             {supplier.category}
           </span>
-          <h2 className="text-base font-black text-slate-900 mt-1.5 group-hover:text-[#141414] transition-colors">
+          <h2 className="text-base font-bold text-slate-900 mt-1.5 group-hover:text-[#141414] transition-colors">
             {supplier.name}
           </h2>
           <div className="flex items-center gap-2 text-xs text-[#707070] mt-0.5">
@@ -461,7 +461,7 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
 
       {/* Header */}
       <div className="flex items-center justify-between pt-1">
-        <span className="font-mono text-xs font-black text-[#141414] bg-[#f3f3f3] px-3 py-1 rounded-full border border-[#e0e0e0] flex items-center gap-1">
+        <span className="font-mono text-xs font-bold text-[#141414] bg-[#f3f3f3] px-3 py-1 rounded-full border border-[#e0e0e0] flex items-center gap-1">
           <Hash className="w-3.5 h-3.5" />
           {invoice.invoiceNumber}
         </span>
@@ -471,7 +471,7 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
       </div>
 
       <div>
-        <h4 className="text-base font-black text-slate-900 leading-snug line-clamp-1 group-hover:text-[#141414] transition-colors">
+        <h4 className="text-base font-bold text-slate-900 leading-snug line-clamp-1 group-hover:text-[#141414] transition-colors">
           {invoice.clientName}
         </h4>
         {invoice.project && (
@@ -485,7 +485,7 @@ export const KasInvoiceCard: React.FC<KasInvoiceCardProps> = ({
       <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 space-y-2 text-xs">
         <div className="flex items-baseline justify-between">
           <span className="text-[#707070]">الإجمالي شامل الضريبة:</span>
-          <span className="text-lg font-black font-mono text-[#141414]">
+          <span className="text-lg font-bold font-mono text-[#141414]">
             {grandTotal.toLocaleString()} <span className="text-xs font-sans">⃁</span>
           </span>
         </div>

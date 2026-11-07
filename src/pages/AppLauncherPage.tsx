@@ -971,7 +971,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
             </div>
             <div className="space-y-0.5">
               <div className="text-xs font-semibold text-[#707070]">مرحباً بعودتك</div>
-              <h1 className="font-black text-base sm:text-lg text-[#141414] leading-tight m-0">
+              <h1 className="font-bold text-base sm:text-lg text-[#141414] leading-tight m-0">
                 {currentUser?.full_name || 'الشيخ خالد بن عبدالعزيز السليم'}
               </h1>
               <div className="text-xs font-medium text-[#707070]">
@@ -1063,7 +1063,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
                       </span>
                     </div>
                     <h2
-                      className={`text-sm sm:text-base font-extrabold font-display mb-1.5 leading-snug line-clamp-1 ${style.titleColor}`}
+                      className={`text-sm sm:text-base font-bold font-display mb-1.5 leading-snug line-clamp-1 ${style.titleColor}`}
                     >
                       {title}
                     </h2>

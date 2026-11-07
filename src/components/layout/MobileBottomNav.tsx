@@ -300,6 +300,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       )}
 
       <nav
+        data-slot="mobile-bottom-nav"
         dir={currentLanguage.dir}
         aria-label="شريط التنقل السفلي للهاتف"
         className="fixed bottom-0 inset-x-0 z-[95] lg:hidden bg-[#ffffff]/95 backdrop-blur-xl border-t border-[#e0e0e0] shadow-[0_-8px_24px_rgba(20,20,20,0.06)] select-none"

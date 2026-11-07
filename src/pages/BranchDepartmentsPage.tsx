@@ -667,7 +667,7 @@ export const BranchDepartmentsPage: React.FC = () => {
               }`}
             >
               <div className="flex justify-between items-center mb-3">
-                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black font-mono border ${
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${
                   isSelected
                     ? 'bg-[#f3f3f3] text-[#141414] border-[#e0e0e0]'
                     : 'bg-zinc-100  text-zinc-600  border-zinc-200 '
@@ -679,7 +679,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 </span>
               </div>
 
-              <h2 className="font-black text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h2>
+              <h2 className="font-bold text-sm mb-1 line-clamp-1 leading-snug">{e.name}</h2>
               <div className={`text-xs mt-2 flex items-center justify-between font-medium ${
                 isSelected ? 'text-[#141414]' : 'text-[#707070] '
               }`}>
@@ -700,7 +700,7 @@ export const BranchDepartmentsPage: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] font-mono font-black text-xs border border-[#e0e0e0]">
+                <span className="px-3 py-1 rounded-full bg-[#f3f3f3] text-[#141414] font-mono font-bold text-xs border border-[#e0e0e0]">
                   {selectedEntity.code}
                 </span>
                 <span className="pill-tag-mint text-xs">
@@ -710,7 +710,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                   إجمالي الكادر: {selectedEntity.staff_count || 0} موظف
                 </span>
               </div>
-              <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <span>{selectedEntity.name}</span>
                 <span className="text-xs font-normal text-[#707070] font-medium">({selectedEntity.location})</span>
               </h3>
@@ -724,7 +724,7 @@ export const BranchDepartmentsPage: React.FC = () => {
 
             <button
               onClick={() => setShowAddDeptModal(true)}
-              className="button-primary-pill text-xs font-black flex items-center gap-2 shadow-lg self-start md:self-center cursor-pointer"
+              className="button-primary-pill text-xs font-bold flex items-center gap-2 shadow-lg self-start md:self-center cursor-pointer"
               style={{ padding: '8px 22px', minHeight: '38px' }}
             >
               <Plus className="w-4 h-4" />
@@ -738,7 +738,7 @@ export const BranchDepartmentsPage: React.FC = () => {
       {selectedEntity && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-[#141414]" />
               <span>الأقسام التخصصية والوحدات المفعلة داخل ({selectedEntity.name})</span>
             </h3>
@@ -758,12 +758,12 @@ export const BranchDepartmentsPage: React.FC = () => {
                     <div className="w-12 h-12 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center justify-center font-bold shadow-xs">
                       <Building2 className="w-6 h-6" />
                     </div>
-                    <span className="pill-tag-mint text-xs font-black">
+                    <span className="pill-tag-mint text-xs font-bold">
                       {dept.kpi}
                     </span>
                   </div>
 
-                  <h4 className="font-black text-base text-slate-900 mb-2 group-hover:text-[#141414] transition-colors">
+                  <h4 className="font-bold text-base text-slate-900 mb-2 group-hover:text-[#141414] transition-colors">
                     {dept.name}
                   </h4>
                   <p className="text-xs text-zinc-600 leading-relaxed font-medium mb-4">
@@ -796,7 +796,7 @@ export const BranchDepartmentsPage: React.FC = () => {
             <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-[#f3f3f3] via-[#f3f3f3] to-[#f3f3f3] rounded-t-3xl" />
 
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-[#141414]" />
                 <span>إضافة قسم تخصصي لـ ({selectedEntity.name})</span>
               </h3>
@@ -885,7 +885,7 @@ export const BranchDepartmentsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   إضافة فرع أو شركة مجموعة جديدة
                 </h3>
               </div>
@@ -894,7 +894,7 @@ export const BranchDepartmentsPage: React.FC = () => {
                 onClick={() => setShowAddEntityModal(false)} 
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 

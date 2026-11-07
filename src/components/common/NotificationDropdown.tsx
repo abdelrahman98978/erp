@@ -238,7 +238,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-xs sm:text-sm truncate text-[#141414]">
+                <span className="font-bold text-xs sm:text-sm truncate text-[#141414]">
                   مركز التنبيهات والإشعارات
                 </span>
                 {unreadCount > 0 && (
@@ -372,7 +372,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                           {meta.label}
                         </span>
                         <h4
-                          className={`text-xs font-extrabold truncate m-0 ${
+                          className={`text-xs font-bold truncate m-0 ${
                             !notif.read ? 'text-[#141414]' : 'text-[#707070]'
                           }`}
                         >
@@ -417,7 +417,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                           }}
                           className="px-2.5 py-1 rounded-full bg-[#ffffff] hover:bg-[#e5e5e5] border border-[#e0e0e0] text-[10px] font-bold text-[#141414] cursor-pointer"
                         >
-                          تحديد كمقروء ✓
+                          تحديد كمقروء 
                         </button>
                       )}
                     </div>
@@ -455,7 +455,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             </button>
           ) : (
             <span className="text-[10.5px] font-semibold text-[#707070]">
-              جميع التنبيهات مقروءة ✓
+              جميع التنبيهات مقروءة 
             </span>
           )}
         </div>

@@ -422,12 +422,12 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                   </td>
                   <td className="p-4">
                     <span className={cand.medicalStatus === 'FIT' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
-                      {cand.medicalStatus === 'FIT' ? '✓ لائق طبياً' : 'قيد الفحص'}
+                      {cand.medicalStatus === 'FIT' ? 'لائق طبياً' : 'قيد الفحص'}
                     </span>
                   </td>
                   <td className="p-4">
                     <span className="pill-tag-mint text-xs font-bold">
-                      {cand.visaStatus === 'ISSUED' ? '✓ صادرة' : cand.visaStatus === 'READY' ? 'جاهز للتفييز' : 'قيد المعالجة'}
+                      {cand.visaStatus === 'ISSUED' ? 'صادرة' : cand.visaStatus === 'READY' ? 'جاهز للتفييز' : 'قيد المعالجة'}
                     </span>
                   </td>
                   <td className="p-4">
@@ -440,7 +440,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                   </td>
                   <td className="p-4">
                     <span className={cand.paymentStatus === 'PAID' ? 'pill-tag-mint text-xs' : 'pill-tag-shade text-xs'}>
-                      {cand.paymentStatus === 'PAID' ? '✓ مسدد' : 'مستحق'}
+                      {cand.paymentStatus === 'PAID' ? 'مسدد' : 'مستحق'}
                     </span>
                   </td>
                   <td className="p-4">
@@ -486,7 +486,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   سداد مجمع لعمولات الوكالة
                 </h3>
               </div>
@@ -494,7 +494,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                 onClick={() => setShowBatchPayoutModal(false)}
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -509,11 +509,11 @@ export const ForeignAgencyPortalPage: React.FC = () => {
               </div>
               <div className="flex justify-between text-xs pt-2 border-t border-[#e0e0e0]">
                 <span className="text-zinc-600">إجمالي المبلغ بالدولار:</span>
-                <span className="font-extrabold text-sm text-slate-900">${totalUsdBalance.toLocaleString()} USD</span>
+                <span className="font-bold text-sm text-slate-900">${totalUsdBalance.toLocaleString()} USD</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-zinc-600">المعادل بالريال السعودي (3.75):</span>
-                <span className="font-extrabold text-sm text-[#141414]">{(totalUsdBalance * 3.75).toLocaleString()} ⃁</span>
+                <span className="font-bold text-sm text-[#141414]">{(totalUsdBalance * 3.75).toLocaleString()} ⃁</span>
               </div>
             </div>
 
@@ -550,7 +550,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <UploadCloud className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   إضافة مرشحة جديدة / رفع سيرة
                 </h3>
               </div>
@@ -559,7 +559,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
                 onClick={() => setShowUploadModal(false)}
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 

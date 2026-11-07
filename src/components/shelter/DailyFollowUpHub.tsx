@@ -445,7 +445,7 @@ export const DailyFollowUpHub: React.FC<DailyFollowUpHubProps> = ({ onRefresh, o
                 onClick={() => setShowContactModal(false)}
                 className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3] flex items-center justify-center cursor-pointer"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -550,7 +550,7 @@ export const DailyFollowUpHub: React.FC<DailyFollowUpHubProps> = ({ onRefresh, o
                 onClick={() => setShowApprovalModal(false)}
                 className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3] flex items-center justify-center cursor-pointer"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -626,7 +626,7 @@ export const DailyFollowUpHub: React.FC<DailyFollowUpHubProps> = ({ onRefresh, o
                 onClick={() => setShowReturnModal(false)}
                 className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#707070] hover:text-[#141414] hover:bg-[#f3f3f3] flex items-center justify-center cursor-pointer"
               >
-                ✕
+                
               </button>
             </div>
 

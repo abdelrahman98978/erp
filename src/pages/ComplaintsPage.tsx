@@ -502,7 +502,7 @@ export const ComplaintsPage: React.FC = () => {
                         className="button-primary-pill disabled:opacity-50"
                         style={{ fontSize: '11px', padding: '2px 10px', minHeight: '26px' }}
                       >
-                        {c.status === 'تم التحويل والإيداع' ? 'تم الصرف ✓' : 'إصدار تحويل'}
+                        {c.status === 'تم التحويل والإيداع' ? 'تم الصرف ' : 'إصدار تحويل'}
                       </button>
                     </td>
                   </tr>

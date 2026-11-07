@@ -195,7 +195,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         {/* Brand / Logo */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full border border-[#e0e0e0] p-0.5 bg-white shadow-xs flex items-center justify-center shrink-0">
-            <img
+            <img loading="lazy" decoding="async"
               src="/logo.png"
               alt="Logo"
               className="w-full h-full object-contain rounded-full"
@@ -353,12 +353,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
             {/* Brand Title & Subtitle — Simple, Executive & Institutional */}
             <div className="space-y-3 sm:mt-8">
-              <div className="text-3xl sm:text-4xl font-black tracking-tight text-[#141414]">
+              <div className="text-3xl sm:text-4xl font-bold tracking-tight text-[#141414]">
                 خالد السليم <span className="text-[#c8c8c8] font-light mx-1.5">|</span>{' '}
-                <span className="font-extrabold">Al-Sulaim</span>
+                <span className="font-bold">Al-Sulaim</span>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-extrabold text-[#141414] tracking-tight leading-snug font-display">
+              <h1 className="text-2xl sm:text-4xl font-bold text-[#141414] tracking-tight leading-snug font-display">
                 نستثمر في الفرص.. نصنع المستقبل
               </h1>
 
@@ -420,7 +420,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
                 {/* Centered Welcome Title */}
                 <div className="text-center space-y-1 pt-1">
-                  <h2 className="text-2xl font-extrabold text-[#141414] tracking-tight">
+                  <h2 className="text-2xl font-bold text-[#141414] tracking-tight">
                     مرحباً بعودتك
                   </h2>
                   <p className="text-xs font-medium text-[#707070]">
@@ -592,7 +592,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       {/* 3. Official Corporate Values & Trust Banner */}
       <section id="values" className="w-full bg-[#f3f3f3] border-y border-[#e0e0e0] py-4 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-bold text-[#707070]">
-          <div className="flex items-center gap-2 text-[#141414] font-extrabold tracking-wider">
+          <div className="flex items-center gap-2 text-[#141414] font-bold tracking-wider">
             <span>KSHG</span>
             <span className="text-[#141414]">•</span>
             <span className="text-zinc-900">مجموعة خالد السليم القابضة</span>
@@ -627,12 +627,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
       <section id="companies" className="max-w-7xl mx-auto px-4 sm:px-8 py-16 sm:py-24">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 sm:mb-14 gap-4 text-right">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[11px] font-extrabold mb-2.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] text-[11px] font-bold mb-2.5">
               <span>COMPANIES & WORKSPACES</span>
               <span>•</span>
               <span>قطاعات الأعمال المستقلة</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-zinc-950 font-display">
+            <h2 className="text-2xl sm:text-4xl font-bold text-zinc-950 font-display">
               الشركات التابعة ومساحات العمل المستقلة
             </h2>
           </div>
@@ -665,11 +665,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   
                   {/* Top Bar inside Image: Code & Sector Badge */}
                   <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
-                    <span className="text-[10px] bg-white/95 backdrop-blur-xs border border-zinc-200/90 px-2 py-0.5 rounded-md text-zinc-900 font-mono font-extrabold shadow-xs">
+                    <span className="text-[10px] bg-white/95 backdrop-blur-xs border border-zinc-200/90 px-2 py-0.5 rounded-md text-zinc-900 font-mono font-bold shadow-xs">
                       {comp.code.split(' ')[0]} {comp.code.split(' ')[1]}
                     </span>
                     <span 
-                      className="text-[9.5px] font-extrabold px-2 py-0.5 rounded-md text-white shadow-xs"
+                      className="text-[9.5px] font-bold px-2 py-0.5 rounded-md text-white shadow-xs"
                       style={{ backgroundColor: comp.themeColor }}
                     >
                       {comp.badge}
@@ -718,7 +718,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                   {/* Active Metric Badge */}
                   <div>
                     <span 
-                      className="text-[11px] font-extrabold px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5"
+                      className="text-[11px] font-bold px-2.5 py-1 rounded-lg inline-flex items-center gap-1.5"
                       style={{ background: `${comp.themeColor}14`, color: comp.themeColor }}
                     >
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: comp.themeColor }} />
@@ -751,7 +751,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-12 sm:mb-16 text-right">
             <span className="eyebrow-cap text-[#707070] text-xs tracking-widest font-bold">CAPABILITIES & INFRASTRUCTURE</span>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-950 mt-2 font-display">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-zinc-950 mt-2 font-display">
               بنية تحتية موحدة بمقاييس عالمية
             </h2>
             <p className="text-sm text-[#707070] mt-2">
@@ -910,7 +910,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full border border-[#e0e0e0] p-0.5 bg-white shrink-0 flex items-center justify-center">
-                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain rounded-full" />
+                <img loading="lazy" decoding="async" src="/logo.png" alt="Logo" className="w-full h-full object-contain rounded-full" />
               </div>
               <span className="font-bold text-base text-zinc-950 font-display">مجموعة خالد السليم</span>
             </div>

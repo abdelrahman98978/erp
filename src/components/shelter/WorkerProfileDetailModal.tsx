@@ -131,7 +131,7 @@ const WorkerProfileDetailModalContent: React.FC<
             }`}
           >
             <Briefcase className="w-4 h-4" />
-            <span>بيانات الكفيل الأول {firstSponsor ? '✓' : ''}</span>
+            <span>بيانات الكفيل الأول {firstSponsor ? '' : ''}</span>
           </button>
 
           <button
@@ -170,28 +170,28 @@ const WorkerProfileDetailModalContent: React.FC<
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
                   <div className="text-[11px] text-[#707070] font-bold">الراتب الشهري</div>
-                  <div className="text-base font-black text-[#141414] mt-1 font-mono">
+                  <div className="text-base font-bold text-[#141414] mt-1 font-mono">
                     {worker.requestedSalary?.toLocaleString('ar-SA')} ⃁
                   </div>
                 </div>
 
                 <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
                   <div className="text-[11px] text-[#707070] font-bold">العمر / الميلاد</div>
-                  <div className="text-base font-black text-[#141414] mt-1">
+                  <div className="text-base font-bold text-[#141414] mt-1">
                     {worker.age ? `${worker.age} سنة` : 'غير محدد'}
                   </div>
                 </div>
 
                 <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
                   <div className="text-[11px] text-[#707070] font-bold">الديانة</div>
-                  <div className="text-base font-black text-[#141414] mt-1">
+                  <div className="text-base font-bold text-[#141414] mt-1">
                     {worker.religion || 'غير محدد'}
                   </div>
                 </div>
 
                 <div className="bg-[#f3f3f3]/40 p-3.5 rounded-xl border border-[#e0e0e0]">
                   <div className="text-[11px] text-[#707070] font-bold">رقم الإقامة</div>
-                  <div className="text-base font-black text-[#141414] mt-1 font-mono">
+                  <div className="text-base font-bold text-[#141414] mt-1 font-mono">
                     {worker.iqamaNumber || 'لا توجد إقامة بعد'}
                   </div>
                 </div>
@@ -208,7 +208,7 @@ const WorkerProfileDetailModalContent: React.FC<
                     {worker.skills && worker.skills.length > 0 ? (
                       worker.skills.map((skill, idx) => (
                         <span key={idx} className="px-3 py-1 rounded-xl text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
-                          ✓ {skill}
+                          {skill}
                         </span>
                       ))
                     ) : (

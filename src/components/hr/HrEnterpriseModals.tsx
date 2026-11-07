@@ -68,7 +68,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
         <div className="px-5 py-4 bg-[#141414] text-[#ffffff] flex items-center justify-between print:hidden">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-[#ffffff]" />
-            <h3 className="font-extrabold text-sm text-[#ffffff] m-0">
+            <h3 className="font-bold text-sm text-[#ffffff] m-0">
               قسيمة راتب إلكترونية معتمدة (WPS Payslip) — {payrollMonth}
             </h3>
           </div>
@@ -88,7 +88,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
               <div className="text-[11px] font-bold text-[#707070]">
                 المملكة العربية السعودية — نظام حماية الأجور (مدد)
               </div>
-              <div className="text-base font-extrabold text-[#141414] mt-0.5">
+              <div className="text-base font-bold text-[#141414] mt-0.5">
                 {companyName}
               </div>
               <div className="text-xs font-bold text-[#141414] mt-0.5">
@@ -174,7 +174,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Earnings */}
             <div className="rounded-[20px] border border-[#e0e0e0] bg-[#ffffff] p-4 space-y-2.5">
-              <div className="font-extrabold text-xs text-[#141414] border-b border-[#e5e5e5] pb-2 flex justify-between">
+              <div className="font-bold text-xs text-[#141414] border-b border-[#e5e5e5] pb-2 flex justify-between">
                 <span>1. الاستحقاقات والبدلات</span>
                 <span className="font-mono text-[#141414]">+⃁ {gross.toFixed(2)}</span>
               </div>
@@ -226,7 +226,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
 
             {/* Deductions */}
             <div className="rounded-[20px] border border-[#e0e0e0] bg-[#f3f3f3]/60 p-4 space-y-2.5">
-              <div className="font-extrabold text-xs text-[#141414] border-b border-[#e0e0e0] pb-2 flex justify-between">
+              <div className="font-bold text-xs text-[#141414] border-b border-[#e0e0e0] pb-2 flex justify-between">
                 <span>2. الاستقطاعات النظامية</span>
                 <span className="font-mono text-[#141414]">
                   -⃁ {totalDeductions.toFixed(2)}
@@ -275,7 +275,7 @@ export const EmployeePayslipModal: React.FC<PayslipModalProps> = ({
                 {(record.gosiEmployerShare || 0).toFixed(2)})
               </span>
             </div>
-            <div className="text-2xl font-extrabold font-mono text-[#ffffff]">
+            <div className="text-2xl font-bold font-mono text-[#ffffff]">
               ⃁{' '}
               {record.netSalary.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
@@ -362,7 +362,7 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
         <div className="px-5 py-4 bg-[#141414] text-[#ffffff] flex items-center justify-between print:hidden">
           <div className="flex items-center gap-2.5">
             <FileText className="w-4 h-4 text-[#ffffff]" />
-            <h3 className="font-extrabold text-sm text-[#ffffff] m-0">
+            <h3 className="font-bold text-sm text-[#ffffff] m-0">
               {letterType === 'SALARY_CERTIFICATE'
                 ? 'إصدار خطاب تعريف بالراتب مصدق إلكترونياً'
                 : 'شهادة مخالصة نهائية وإبراء ذمة وشهادة خبرة'}
@@ -397,7 +397,7 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
             <div className="flex items-center justify-between border-b-2 border-[#141414] pb-4 flex-wrap gap-3">
               <div>
                 <div className="text-xs font-bold text-[#707070]">المملكة العربية السعودية</div>
-                <div className="text-base font-extrabold text-[#141414] mt-0.5">
+                <div className="text-base font-bold text-[#141414] mt-0.5">
                   {companyName}
                 </div>
                 <div className="text-xs font-bold text-[#141414] mt-0.5">
@@ -438,7 +438,7 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
             </div>
 
             <div className="text-center">
-              <h2 className="text-base font-extrabold text-[#141414] underline underline-offset-8">
+              <h2 className="text-base font-bold text-[#141414] underline underline-offset-8">
                 {letterType === 'SALARY_CERTIFICATE'
                   ? 'شهادة تعريف بالراتب والبيانات الوظيفية'
                   : 'سند مخالصة نهائية وإخلاء طرف وشهادة خبرة'}
@@ -495,7 +495,7 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                       <td className="p-2.5">⃁ {basic.toLocaleString()}</td>
                       <td className="p-2.5">⃁ {housing.toLocaleString()}</td>
                       <td className="p-2.5">⃁ {transport.toLocaleString()}</td>
-                      <td className="p-2.5 font-extrabold">⃁ {employee.salary.toLocaleString()}</td>
+                      <td className="p-2.5 font-bold">⃁ {employee.salary.toLocaleString()}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -536,7 +536,7 @@ export const HrOfficialLetterModal: React.FC<OfficialLetterModalProps> = ({
                         خصم السلف المتبقية:{' '}
                         <strong>-⃁ {clearanceSummary.advanceDeduction.toFixed(2)}</strong>
                       </div>
-                      <div className="font-extrabold">
+                      <div className="font-bold">
                         صافي المخالصة المستحق:{' '}
                         <strong>⃁ {clearanceSummary.netFinalPayable.toFixed(2)}</strong>
                       </div>

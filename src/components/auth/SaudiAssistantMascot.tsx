@@ -196,7 +196,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
         <div className="flex items-center justify-between gap-2 mb-1.5 pb-1.5 border-b border-zinc-100">
           <div className="flex items-center gap-1.5">
             <span className="live-pulse-dot" />
-            <span className="text-[11px] font-extrabold text-zinc-900 flex items-center gap-1">
+            <span className="text-[11px] font-bold text-zinc-900 flex items-center gap-1">
               <span>{persona === 'noura' ? 'نُورة • المرشدة الرقمية' : 'فارس • المرشد الرقمي'}</span>
             </span>
           </div>
@@ -213,7 +213,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
                   e.stopPropagation();
                   switchPersona('faris');
                 }}
-                className={`px-2 py-0.5 rounded-full text-[9.5px] font-extrabold transition-all cursor-pointer ${
+                className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold transition-all cursor-pointer ${
                   persona === 'faris'
                     ? 'bg-white text-zinc-950 shadow-xs border border-zinc-200/80'
                     : 'text-[#707070] hover:text-zinc-800'
@@ -227,7 +227,7 @@ export const SaudiAssistantMascot: React.FC<SaudiAssistantMascotProps> = ({
                   e.stopPropagation();
                   switchPersona('noura');
                 }}
-                className={`px-2 py-0.5 rounded-full text-[9.5px] font-extrabold transition-all cursor-pointer ${
+                className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold transition-all cursor-pointer ${
                   persona === 'noura'
                     ? 'bg-white text-[#141414] shadow-xs border border-[#e0e0e0]'
                     : 'text-[#707070] hover:text-zinc-800'

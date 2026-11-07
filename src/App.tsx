@@ -325,7 +325,7 @@ const MainContent: React.FC = () => {
     if (isHrefBlocked(activeTab)) {
       return (
         <div className="max-w-md mx-auto mt-16 text-center bg-white border border-[#ececec] rounded-3xl p-8" dir="rtl">
-          <div className="text-sm font-black text-[#141414]">هذه الصفحة مخفية</div>
+          <div className="text-sm font-bold text-[#141414]">هذه الصفحة مخفية</div>
           <p className="text-xs text-[#707070] mt-2 mb-5 leading-relaxed">
             تم إخفاء هذا القسم من إعدادات «إظهار وإخفاء الأقسام». يمكن لمدير النظام إظهاره مجدداً.
           </p>

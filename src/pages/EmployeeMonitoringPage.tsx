@@ -274,7 +274,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-zinc-900">
+            <span className="text-3xl font-bold text-zinc-900">
               {metrics.teamMoodScore}
             </span>
             <span className="text-xs font-bold text-[#141414]">
@@ -303,7 +303,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-zinc-900">
+            <span className="text-3xl font-bold text-zinc-900">
               {metrics.activeRatio}%
             </span>
             <span className="text-xs font-bold text-[#141414]">
@@ -332,7 +332,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#141414]">
+            <span className="text-3xl font-bold text-[#141414]">
               {metrics.totalRageClicks}
             </span>
             <span className="text-xs text-[#707070]">
@@ -359,7 +359,7 @@ export const EmployeeMonitoringPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-[#141414]">
+            <span className="text-3xl font-bold text-[#141414]">
               {metrics.securityAlertsCount}
             </span>
             <span className="text-xs font-bold text-[#141414]">

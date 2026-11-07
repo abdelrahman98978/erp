@@ -185,7 +185,7 @@ export const ExecutiveWelcomeScreen: React.FC<ExecutiveWelcomeScreenProps> = ({
             {greetingText}
           </p>
 
-          <h1 className="welcome-reveal-2 text-2xl sm:text-3xl font-black text-[#141414] tracking-tight m-0">
+          <h1 className="welcome-reveal-2 text-2xl sm:text-3xl font-bold text-[#141414] tracking-tight m-0">
             {displayName}
           </h1>
 

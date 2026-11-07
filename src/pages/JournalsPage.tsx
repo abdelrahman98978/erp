@@ -705,7 +705,7 @@ export const JournalsPage: React.FC = () => {
                   <p className="text-xs text-[#707070]">سجل القيود المحاسبية المعتمدة (Double-Entry Ledger)</p>
                 </div>
                 <div className="text-left">
-                  <div className="text-sm font-extrabold text-[#141414] font-mono border-2 border-[#141414] px-3 py-1 rounded-xl">
+                  <div className="text-sm font-bold text-[#141414] font-mono border-2 border-[#141414] px-3 py-1 rounded-xl">
                     قيد محاسبي: {selectedJournal.entry_number}
                   </div>
                   <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">التاريخ: {selectedJournal.entry_date}</div>
@@ -748,8 +748,8 @@ export const JournalsPage: React.FC = () => {
                     </tr>
                     <tr className="bg-zinc-50 font-bold border-t-2 border-[#141414] text-xs font-sans">
                       <td colSpan={3} className="p-3 text-left pl-4">الإجمالي المتوازن:</td>
-                      <td className="p-3 text-[#141414] font-mono font-extrabold">{selectedJournal.total_debit.toLocaleString()} ⃁</td>
-                      <td className="p-3 text-[#141414] font-mono font-extrabold">{selectedJournal.total_credit.toLocaleString()} ⃁</td>
+                      <td className="p-3 text-[#141414] font-mono font-bold">{selectedJournal.total_debit.toLocaleString()} ⃁</td>
+                      <td className="p-3 text-[#141414] font-mono font-bold">{selectedJournal.total_credit.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>
                 </table>

@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
       )}
 
       {/* Mobbin Clean Top Bar: #ffffff surface, 1px #f0f0f0 hairline, zero shadow, zero collision */}
-      <header className="h-16 bg-[#ffffff] border-b border-[#f0f0f0] px-3 sm:px-5 flex items-center justify-between sticky top-0 z-[90] gap-4">
+      <header data-slot="header" className="h-16 bg-[#ffffff] border-b border-[#f0f0f0] px-3 sm:px-5 flex items-center justify-between sticky top-0 z-[90] gap-4">
         {/* Right Section: Sidebar Toggle, App Launcher Pill, Branch Switcher, Active Title */}
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <button

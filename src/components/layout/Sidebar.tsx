@@ -389,6 +389,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div
+      data-slot="sidebar"
       className={`h-full w-full flex flex-col bg-[#ffffff] border-[#f0f0f0] select-none transition-all duration-200 ${
         isRtl ? 'border-l' : 'border-r'
       }`}

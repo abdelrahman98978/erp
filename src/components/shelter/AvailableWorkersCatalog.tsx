@@ -319,7 +319,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
                         <DollarSign className="w-3 h-3 text-[#141414]" />
                         <span>الراتب الشهري</span>
                       </div>
-                      <div className="text-xs font-black text-[#141414] mt-1 font-mono">
+                      <div className="text-xs font-bold text-[#141414] mt-1 font-mono">
                         {worker.requestedSalary?.toLocaleString('ar-SA') || '1,500'} <span className="text-[10px] text-[#707070]">⃁</span>
                       </div>
                     </div>
@@ -329,7 +329,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
                         <History className="w-3 h-3 text-[#141414]" />
                         <span>تجارب سابقة</span>
                       </div>
-                      <div className="text-xs font-black mt-1">
+                      <div className="text-xs font-bold mt-1">
                         {worker.clientTrialsCount === 0 ? (
                           <span className="text-[#141414]">جديدة (0)</span>
                         ) : (

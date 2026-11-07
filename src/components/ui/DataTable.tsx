@@ -244,7 +244,7 @@ export function DataTable<T extends { id: string | number }>({
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {selectedIds.size > 0 && (
             <div className="inline-flex items-center gap-1.5 bg-[#f3f3f3] text-[#141414] px-3 py-1.5 rounded-full text-xs font-bold border border-[#e0e0e0]">
-              <span className="text-[#141414] font-black">محدد ({selectedIds.size})</span>
+              <span className="text-[#141414] font-bold">محدد ({selectedIds.size})</span>
               <button
                 type="button"
                 onClick={() => handleExport('excel')}
@@ -286,7 +286,7 @@ export function DataTable<T extends { id: string | number }>({
                 className="px-1.5 py-0.5 rounded-full text-[#141414] hover:text-[#141414] text-[11px] cursor-pointer"
                 title="إلغاء التحديد"
               >
-                ✕
+                
               </button>
             </div>
           )}
@@ -501,7 +501,7 @@ export function DataTable<T extends { id: string | number }>({
                   <div className="flex flex-col items-center justify-center gap-3">
                     <BusinessIllustration type="empty-search" size="md" />
                     <div className="space-y-1">
-                      <div className="text-sm font-black text-[#141414]">
+                      <div className="text-sm font-bold text-[#141414]">
                         لا توجد نتائج مطابقة لخيارات البحث أو التصفية
                       </div>
                       <div className="text-xs text-[#707070]">
@@ -522,7 +522,7 @@ export function DataTable<T extends { id: string | number }>({
                         <button
                           type="button"
                           onClick={onAddClick}
-                          className="px-4 py-1.5 rounded-full text-xs font-black bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] transition-colors cursor-pointer"
+                          className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] transition-colors cursor-pointer"
                         >
                           + {addLabel}
                         </button>

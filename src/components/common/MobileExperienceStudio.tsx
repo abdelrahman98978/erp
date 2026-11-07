@@ -545,7 +545,7 @@ export const MobileExperienceStudio: React.FC = () => {
               {/* 5. Open on Real Physical Phone (QR Code + Copy URL) */}
               <div className="mt-4 pt-3.5 border-t border-[#e5e5e5] flex items-center gap-3 bg-[#f3f3f3] p-3 rounded-[18px]">
                 {qrCodeImageUrl && (
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={qrCodeImageUrl}
                     alt="QR Code لفتح التطبيق على الهاتف"
                     className="w-16 h-16 rounded-[12px] bg-[#ffffff] border border-[#e0e0e0] p-1 shrink-0"
@@ -621,7 +621,7 @@ export const MobileExperienceStudio: React.FC = () => {
                       <span className="w-2 h-2 rounded-full bg-[#0066ff] animate-pulse" />
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] text-[#141414] font-extrabold">5G</span>
+                      <span className="text-[10px] text-[#141414] font-bold">5G</span>
                       <Wifi className="w-3.5 h-3.5 text-[#141414]" />
                       <div className="w-5 h-2.5 rounded-sm border border-[#141414] p-0.5 flex items-center">
                         <div className="w-full h-full bg-[#141414] rounded-[1px]" />

@@ -365,7 +365,7 @@ export const AgentImportsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <UploadCloud className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-bold text-slate-900 text-base">
                   تسجيل دفعة استيراد سير جديدة
                 </h3>
               </div>
@@ -374,7 +374,7 @@ export const AgentImportsPage: React.FC = () => {
                 onClick={() => setShowAddBatchModal(false)}
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 
@@ -469,7 +469,7 @@ export const AgentImportsPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-[#141414]" />
                 <div>
-                  <h3 className="font-extrabold text-slate-900 text-base">
+                  <h3 className="font-bold text-slate-900 text-base">
                     فحص السير الذاتية - الدفعة ({selectedBatch.batch_code})
                   </h3>
                   <p className="text-[11px] text-[#707070]">{selectedBatch.office_name} • {selectedBatch.country}</p>
@@ -480,7 +480,7 @@ export const AgentImportsPage: React.FC = () => {
                 onClick={() => setSelectedBatch(null)}
                 className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center"
               >
-                ✕
+                
               </button>
             </div>
 

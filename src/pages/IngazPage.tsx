@@ -616,7 +616,7 @@ export const IngazPage: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
                 <div>
-                  <h2 className="text-base font-extrabold text-[#141414]">المملكة العربية السعودية - وزارة الخارجية</h2>
+                  <h2 className="text-base font-bold text-[#141414]">المملكة العربية السعودية - وزارة الخارجية</h2>
                   <div className="text-[11px] text-zinc-600 font-bold">منصة التأشيرات الإلكترونية (إنجاز) • تصديق الغرفة التجارية</div>
                   <div className="text-[10px] text-[#141414] font-mono font-bold mt-0.5">ENJAZ REF: {selectedDelegationForPrint.delegation_number}</div>
                 </div>

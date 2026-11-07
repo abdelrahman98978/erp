@@ -796,7 +796,7 @@ export const RecruitmentContractsPage: React.FC = () => {
           />
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold tracking-wider bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
                 MUSANED RECRUITMENT PIPELINE
               </span>
               <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] flex items-center gap-1">
@@ -804,7 +804,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                 مباشر وموثق
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#141414] m-0 font-display">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#141414] m-0 font-display">
               عقود الاستقدام المباشرة
             </h1>
             <p className="text-sm text-[#141414] m-0 mt-1 font-normal">
@@ -817,7 +817,7 @@ export const RecruitmentContractsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
-            className="px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-[#f3f3f3] hover:bg-zinc-800 text-[#141414] border border-[#e0e0e0] flex items-center gap-1.5 transition-all cursor-pointer"
+            className="px-4 py-2.5 rounded-2xl text-xs font-bold bg-[#f3f3f3] hover:bg-zinc-800 text-[#141414] border border-[#e0e0e0] flex items-center gap-1.5 transition-all cursor-pointer"
           >
             <FileText className="w-4 h-4 text-[#141414]" />
             <span>استخلاص عقود ومستندات (PDF / Word / Excel / صور)</span>
@@ -847,7 +847,7 @@ export const RecruitmentContractsPage: React.FC = () => {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-[#141414] text-[#ffffff] bg-[#141414] text-[#ffffff] border border-[#e0e0e0] shadow-lg flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold bg-[#141414] text-[#ffffff] bg-[#141414] text-[#ffffff] border border-[#e0e0e0] shadow-lg flex items-center gap-2 hover:-translate-y-0.5 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 shrink-0" />
             <span>إضافة عقد استقدام</span>
@@ -875,7 +875,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <FileSignature className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
+          <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mt-2.5 tracking-tight font-display">
             {contracts.length || 115} <span className="text-lg font-bold text-[#707070]">عقد</span>
           </div>
           <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
@@ -894,7 +894,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <RefreshCw className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
+          <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mt-2.5 tracking-tight font-display">
             {contracts.filter(c => c.stage !== 'مكتمل' && c.stage !== 'مرتجع').length || 27} <span className="text-lg font-bold text-[#707070]">عقد</span>
           </div>
           <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
@@ -918,7 +918,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <Zap className="w-4 h-4 fill-current" />
             </div>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-[#141414] mt-2.5 tracking-tight font-display">
+          <div className="text-3xl sm:text-4xl font-bold text-[#141414] mt-2.5 tracking-tight font-display">
             {((contracts.reduce((sum, c) => sum + (c.total_amount || c.amount || 0), 0) || 1610000) / 1000000).toFixed(2)}M <span className="text-base font-bold text-[#141414]">⃁</span>
           </div>
           <div className="mt-3.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
@@ -937,7 +937,7 @@ export const RecruitmentContractsPage: React.FC = () => {
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-zinc-900 mt-2.5 tracking-tight font-display">
+          <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mt-2.5 tracking-tight font-display">
             98.5%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2.5">
@@ -1324,7 +1324,7 @@ export const RecruitmentContractsPage: React.FC = () => {
                           <span>تسوية وصرف استرداد</span>
                         </button>
                       ) : (
-                        <span className="text-[10px] font-bold text-[#141414]">تم الصرف المالي ✓</span>
+                        <span className="text-[10px] font-bold text-[#141414]">تم الصرف المالي </span>
                       )}
                     </td>
                   </tr>

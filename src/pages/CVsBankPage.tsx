@@ -929,7 +929,7 @@ export const CVsBankPage: React.FC = () => {
                     status={cv.status === 'متاح' ? 'online' : 'verified'}
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-black text-[#141414] leading-snug truncate">
+                    <h3 className="text-sm font-bold text-[#141414] leading-snug truncate">
                       {cv.maid_name_ar || cv.maid_name}
                     </h3>
                     <div className="text-[11px] text-[#707070] truncate font-sans">
@@ -1178,7 +1178,7 @@ export const CVsBankPage: React.FC = () => {
               </div>
 
               <div className="p-3 bg-[#f3f3f3] rounded-2xl border border-[#e0e0e0] text-[11px] text-[#141414]">
-                ✓ سيتم قفل السيرة الذاتية وتغيير حالتها إلى "محجوز" وإصدار ملف التعاقد في قائمة العقود فورياً.
+                سيتم قفل السيرة الذاتية وتغيير حالتها إلى "محجوز" وإصدار ملف التعاقد في قائمة العقود فورياً.
               </div>
 
               <div className="pt-3 border-t border-zinc-100 flex items-center justify-end gap-2">
@@ -1228,7 +1228,7 @@ export const CVsBankPage: React.FC = () => {
                 {/* Worker Identity Row */}
                 <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-black text-[#141414]">
+                    <h2 className="text-base font-bold text-[#141414]">
                       {selectedCVForPrint.maid_name_ar}
                     </h2>
                     <div className="text-xs text-[#707070] font-mono">
@@ -1274,7 +1274,7 @@ export const CVsBankPage: React.FC = () => {
                   <div className="flex flex-wrap gap-1.5">
                     {selectedCVForPrint.skills.map((sk, idx) => (
                       <span key={idx} className="bg-white border border-zinc-300 text-zinc-800 px-2.5 py-1 rounded-lg text-xs font-medium">
-                        ✓ {sk}
+                        {sk}
                       </span>
                     ))}
                   </div>

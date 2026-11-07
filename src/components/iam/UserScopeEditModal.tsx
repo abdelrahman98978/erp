@@ -267,7 +267,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     <span className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] ${
                       checked ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-transparent'
                     }`}>
-                      ✓
+                      
                     </span>
                   </div>
                 );
@@ -297,7 +297,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     <span className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] ${
                       checked ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-transparent'
                     }`}>
-                      ✓
+                      
                     </span>
                   </div>
                 );
@@ -327,7 +327,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     <span className={`w-3.5 h-3.5 rounded flex items-center justify-center text-[9px] ${
                       checked ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-transparent'
                     }`}>
-                      ✓
+                      
                     </span>
                   </div>
                 );

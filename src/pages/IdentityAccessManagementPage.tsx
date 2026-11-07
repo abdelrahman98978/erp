@@ -299,11 +299,11 @@ export const IdentityAccessManagementPage: React.FC = () => {
           <div className="flex items-start gap-4">
             <BusinessIllustration type="iam-security" size="sm" />
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs font-black tracking-wider text-[#141414] uppercase bg-[#f3f3f3]/80 px-3 py-1 rounded-full w-max border border-[#e0e0e0]">
+              <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-[#141414] uppercase bg-[#f3f3f3]/80 px-3 py-1 rounded-full w-max border border-[#e0e0e0]">
                 <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>نظام الأمان والرقابة المركزية (IAM & Multi-Company Governance)</span>
               </div>
-              <h1 className="text-2xl lg:text-4xl font-black tracking-tight text-[#141414] flex items-center gap-3">
+              <h1 className="text-2xl lg:text-4xl font-bold tracking-tight text-[#141414] flex items-center gap-3">
                 إدارة الهوية والصلاحيات متعددة الشركات والأقسام
               </h1>
               <p className="text-slate-300 text-sm max-w-3xl leading-relaxed">
@@ -318,12 +318,12 @@ export const IdentityAccessManagementPage: React.FC = () => {
               <Building2 className="w-5 h-5 text-[#141414]" />
               <div className="text-right">
                 <div className="text-[10px] text-slate-300">الشركة الحالية النشطة</div>
-                <div className="text-sm font-black text-[#141414]">{activeCompany?.commercialName}</div>
+                <div className="text-sm font-bold text-[#141414]">{activeCompany?.commercialName}</div>
               </div>
             </div>
             <button
               onClick={loadAllIamData}
-              className="px-4 py-2.5 bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-black text-xs rounded-2xl transition border border-[#e0e0e0] flex items-center justify-center gap-1.5 shadow-lg cursor-pointer"
+              className="px-4 py-2.5 bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-bold text-xs rounded-2xl transition border border-[#e0e0e0] flex items-center justify-center gap-1.5 shadow-lg cursor-pointer"
               title="تحديث البيانات اللحظية"
             >
               <RefreshCw className="w-4 h-4 text-[#141414] shrink-0" />
@@ -354,7 +354,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as IamTab)}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#141414] text-[#ffffff] font-black shadow-lg'
+                    ? 'bg-[#141414] text-[#ffffff] font-bold shadow-lg'
                     : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-zinc-800'
                 }`}
               >
@@ -463,7 +463,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                             <div className="font-bold text-slate-900 flex items-center gap-1.5">
                               {u.fullName}
                               {u.accountType === 'Group Super Admin' && (
-                                <span className="px-1.5 py-0.5 bg-[#f3f3f3] text-[#141414] text-[10px] font-black rounded border border-[#e0e0e0]">
+                                <span className="px-1.5 py-0.5 bg-[#f3f3f3] text-[#141414] text-[10px] font-bold rounded border border-[#e0e0e0]">
                                   SUPER ADMIN
                                 </span>
                               )}
@@ -508,7 +508,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                       </td>
 
                       <td className="py-4 px-6 text-center">
-                        <span className={`px-2.5 py-1 rounded-full font-black text-[10px] ${
+                        <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
                           u.status === 'نشط'
                             ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                             : 'bg-[#f3f3f3]  text-[#141414]  border border-[#e0e0e0] '
@@ -565,8 +565,8 @@ export const IdentityAccessManagementPage: React.FC = () => {
 
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{comp.code}</span>
-                  <h3 className="text-base font-black text-slate-900 mt-0.5">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{comp.code}</span>
+                  <h3 className="text-base font-bold text-slate-900 mt-0.5">
                     {comp.commercialName}
                   </h3>
                   <p className="text-xs text-slate-500">{comp.legalName}</p>
@@ -605,7 +605,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {activeTab === 'memberships' && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Layers className="w-5 h-5 text-[#141414]" />
               العضويات المؤسسية ونطاق عزل البيانات (Multi-Company & Department Scope)
             </h3>
@@ -673,7 +673,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {activeTab === 'access-requests' && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Send className="w-5 h-5 text-[#141414]" />
               طلبات الصلاحيات والوصول الاستثنائي (Access Requests)
             </h3>
@@ -726,7 +726,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                           اعتماد الطلب
                         </button>
                       ) : (
-                        <span className="text-[11px] text-[#141414] font-bold">معتمد ✓</span>
+                        <span className="text-[11px] text-[#141414] font-bold">معتمد </span>
                       )}
                     </td>
                   </tr>
@@ -743,7 +743,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {activeTab === 'delegations' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <ArrowLeftRight className="w-5 h-5 text-[#141414]" />
               سجل التفويضات المؤقتة والإجازات
             </h3>
@@ -793,7 +793,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <ShieldAlert className="w-5 h-5 text-[#141414]" />
                 قواعد فصل المهام المتعارضة (Separation of Duties - SoD)
               </h3>
@@ -814,12 +814,12 @@ export const IdentityAccessManagementPage: React.FC = () => {
             {sodRules.map((rule) => (
               <div key={rule.id} className="bg-white border border-[#e0e0e0] rounded-3xl p-5 shadow-sm space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="font-mono text-xs font-black text-[#141414]">{rule.code}</span>
-                  <span className="px-2 py-0.5 bg-[#f3f3f3] text-[#141414] text-[10px] font-black rounded-md border border-[#e0e0e0]">
+                  <span className="font-mono text-xs font-bold text-[#141414]">{rule.code}</span>
+                  <span className="px-2 py-0.5 bg-[#f3f3f3] text-[#141414] text-[10px] font-bold rounded-md border border-[#e0e0e0]">
                     مستوى الخطر: {rule.riskLevel}
                   </span>
                 </div>
-                <h4 className="text-sm font-black text-slate-900">{rule.name}</h4>
+                <h4 className="text-sm font-bold text-slate-900">{rule.name}</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">{rule.description}</p>
                 <div className="p-2.5 bg-slate-50 rounded-xl space-y-1 text-[11px] font-mono">
                   <div className="text-slate-700">الصلاحية 1: <span className="text-[#141414] font-bold">{rule.permissionA}</span></div>
@@ -837,7 +837,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {activeTab === 'access-reviews' && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-[#141414]" />
               حملات المراجعة الدورية للصلاحيات (Quarterly Access Reviews)
             </h3>
@@ -881,7 +881,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {activeTab === 'sessions' && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Smartphone className="w-5 h-5 text-[#141414]" />
               الجلسات النشطة والأجهزة المتصلة (Active Sessions)
             </h3>
@@ -949,7 +949,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
       {activeTab === 'audit-logs' && (
         <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <Activity className="w-5 h-5 text-[#141414]" />
               سجل التدقيق الأمني والامتثال (Immutable Audit Trail)
             </h3>
@@ -977,7 +977,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     <td className="py-3 px-4 text-[#141414]">{log.action}</td>
                     <td className="py-3 px-4 text-slate-600">{log.resource}</td>
                     <td className="py-3 px-4 text-center">
-                      <span className={`px-2 py-0.5 rounded font-black text-[10px] ${
+                      <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${
                         log.result === 'SUCCESS'
                           ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
                           : log.result === 'FORBIDDEN'
@@ -1000,7 +1000,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50" dir="rtl">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-              <h3 className="text-base font-black text-slate-900">إنشاء تفويض صلاحيات مؤقت</h3>
+              <h3 className="text-base font-bold text-slate-900">إنشاء تفويض صلاحيات مؤقت</h3>
               <button type="button" onClick={() => setShowNewDelegationModal(false)} className="text-slate-400 hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
@@ -1038,7 +1038,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
               </div>
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
                 <button type="button" onClick={() => setShowNewDelegationModal(false)} className="px-4 py-2 bg-slate-100 rounded-xl font-bold">إلغاء</button>
-                <button type="submit" className="px-5 py-2 bg-[#141414] text-[#ffffff] rounded-xl font-black">اعتماد التفويض</button>
+                <button type="submit" className="px-5 py-2 bg-[#141414] text-[#ffffff] rounded-xl font-bold">اعتماد التفويض</button>
               </div>
             </form>
           </div>
@@ -1050,7 +1050,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50" dir="rtl">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-              <h3 className="text-base font-black text-slate-900">إضافة قاعدة فصل مهام رقابية (SoD)</h3>
+              <h3 className="text-base font-bold text-slate-900">إضافة قاعدة فصل مهام رقابية (SoD)</h3>
               <button type="button" onClick={() => setShowNewSoDModal(false)} className="text-slate-400 hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
@@ -1080,7 +1080,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
               </div>
               <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
                 <button type="button" onClick={() => setShowNewSoDModal(false)} className="px-4 py-2 bg-slate-100 rounded-xl font-bold">إلغاء</button>
-                <button type="submit" className="px-5 py-2 bg-[#141414] text-white rounded-xl font-black">حفظ القاعدة</button>
+                <button type="submit" className="px-5 py-2 bg-[#141414] text-white rounded-xl font-bold">حفظ القاعدة</button>
               </div>
             </form>
           </div>
@@ -1092,7 +1092,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200" dir="rtl">
           <div className="bg-white border border-slate-200 rounded-3xl max-w-xl w-full p-6 lg:p-8 shadow-2xl space-y-6">
             <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <Users className="w-5 h-5 text-[#141414]" />
                 إضافة مستخدم وموظف جديد للمنظومة
               </h3>
@@ -1184,7 +1184,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#141414] hover:bg-[#262626] text-[#ffffff] rounded-2xl shadow transition font-black"
+                  className="px-6 py-2.5 bg-[#141414] hover:bg-[#262626] text-[#ffffff] rounded-2xl shadow transition font-bold"
                 >
                   إنشاء الحساب فوراً
                 </button>

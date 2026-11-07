@@ -45,7 +45,7 @@ export const CompanyLogo: React.FC<CompanyLogoProps> = ({
         className={`inline-flex items-center justify-center overflow-hidden bg-white/95 rounded-xl p-1 shadow-sm border border-slate-200/60 transition-transform duration-200 hover:scale-105 ${className}`}
         style={{ width: size, height: size, minWidth: size, minHeight: size, ...style }}
       >
-        <img
+        <img loading="lazy" decoding="async"
           src={logoPath}
           alt={String(companyId)}
           className="w-full h-full object-contain"

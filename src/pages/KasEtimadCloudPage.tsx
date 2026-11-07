@@ -807,13 +807,13 @@ export const KasEtimadCloudPage: React.FC = () => {
   // Status Badge Helper
   const getStatusPill = (status: string) => {
     if (status.includes('تمت الترسية') || status === 'مدفوع' || status === 'مقبول' || status === 'مكتمل' || status === 'مكتملة' || status === 'ساري' || status === 'مغلق فائز') {
-      return <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">✓ {status}</span>;
+      return <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">{status}</span>;
     }
     if (status.includes('رفع العرض') || status === 'مدفوع جزئيًا' || status === 'مرسل' || status === 'قيد التقدم' || status === 'مفتوحة' || status === 'مفتوح' || status === 'مؤهل' || status === 'عرض سعر مرسل') {
       return <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">{status}</span>;
     }
     if (status.includes('لاغي') || status === 'ملغي' || status === 'مرفوض' || status === 'غير مدفوع' || status === 'متأخر' || status === 'حرج' || status === 'مغلق خاسر') {
-      return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">✕ {status}</span>;
+      return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">{status}</span>;
     }
     return <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">● {status}</span>;
   };
@@ -1571,7 +1571,7 @@ export const KasEtimadCloudPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border shadow-sm">
             <div>
-              <h3 className="text-base font-black text-foreground flex items-center gap-2">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-[#141414]" />
                 <span>سجل الفواتير الإلكترونية ZATCA المرحلة 2 (شركة كاس للتجارة)</span>
               </h3>
@@ -1609,7 +1609,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
               <button
                 onClick={() => setShowAddInvoiceModal(true)}
-                className="px-4 py-2 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-black text-xs flex items-center gap-1.5 shadow-md"
+                className="px-4 py-2 rounded-2xl bg-[#141414] hover:bg-[#262626] text-white font-bold text-xs flex items-center gap-1.5 shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ إنشاء فاتورة جديدة</span>
@@ -2393,7 +2393,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     >
                       <div className="flex items-center justify-between">
                         <span className={`w-6 h-6 rounded-full flex items-center justify-center font-bold font-mono text-xs ${
-                          isToday ? 'bg-[#141414] text-white' : isSelected ? 'font-black text-[#ffffff]' : 'text-foreground'
+                          isToday ? 'bg-[#141414] text-white' : isSelected ? 'font-bold text-[#ffffff]' : 'text-foreground'
                         }`}>
                           {isValidDay ? dayNum : ''}
                         </span>
@@ -2583,7 +2583,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                     <td className="p-3 text-left">15%</td>
                     <td className="p-3 text-left font-bold text-[#141414]">{(stats.totalExpenses * 0.15).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                   </tr>
-                  <tr className="bg-[#f3f3f3] font-extrabold text-foreground border-t-2 border-[#e0e0e0]">
+                  <tr className="bg-[#f3f3f3] font-bold text-foreground border-t-2 border-[#e0e0e0]">
                     <td className="p-3 text-sm">صافي ضريبة القيمة المضافة المستحقة للسداد للهيئة (1 - 2)</td>
                     <td className="p-3 text-left">{(stats.totalInvoicesAmount - stats.totalExpenses).toLocaleString()}</td>
                     <td className="p-3 text-left">15%</td>
@@ -2658,7 +2658,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <UserCheck className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-extrabold text-foreground">
+                <h3 className="text-base font-bold text-foreground">
                   أعضاء الطاقم وفريق عمل منظومة كاس
                 </h3>
               </div>
@@ -2813,7 +2813,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <Settings className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-extrabold text-foreground">
+                <h3 className="text-base font-bold text-foreground">
                   إعدادات وتصنيفات المنافسات الحكومية (منصة اعتماد)
                 </h3>
               </div>
@@ -2886,7 +2886,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="p-3.5">
-                          <span className="pill-tag-shade font-mono font-black text-xs">
+                          <span className="pill-tag-shade font-mono font-bold text-xs">
                             {cat.code}
                           </span>
                         </td>
@@ -3918,7 +3918,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="flex items-center justify-between border-b pb-4">
               <div>
                 <div className="text-xs text-slate-500 font-bold tracking-wider">مؤسسة خالد عبدالعزيز السليم للتجارة والمقاولات (كاس)</div>
-                <h3 className="text-xl font-extrabold text-slate-900 mt-1">فاتورة ضريبية إلكترونية ZATCA</h3>
+                <h3 className="text-xl font-bold text-slate-900 mt-1">فاتورة ضريبية إلكترونية ZATCA</h3>
                 <div className="text-xs text-slate-500 font-mono mt-0.5">الرقم الضريبي: 310245879600003</div>
               </div>
               <div className="p-2 border rounded-xl bg-slate-50 text-center">
@@ -3976,7 +3976,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <span>ضريبة القيمة المضافة (15%):</span>
                 <span>{(selectedDetail.taxAmount || ((selectedDetail.amount || selectedDetail.totalItemsValue || 0) * 0.15)).toLocaleString()} ⃁</span>
               </div>
-              <div className="flex justify-between font-mono font-extrabold text-sm border-t pt-2 text-slate-900">
+              <div className="flex justify-between font-mono font-bold text-sm border-t pt-2 text-slate-900">
                 <span>المبلغ الإجمالي المستحق:</span>
                 <span>{((selectedDetail.amount || selectedDetail.totalItemsValue || selectedDetail.totalAmount || 0) * 1.15).toLocaleString()} ⃁</span>
               </div>
@@ -4384,7 +4384,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <Tag className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-extrabold text-foreground">
+                <h3 className="text-base font-bold text-foreground">
                   {editingCategory ? 'تعديل بيانات التصنيف' : 'إضافة تصنيف منافسة حكومية جديد'}
                 </h3>
               </div>
@@ -4466,7 +4466,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center">
                   <UserCheck className="w-4 h-4" />
                 </div>
-                <h3 className="text-base font-extrabold text-foreground">
+                <h3 className="text-base font-bold text-foreground">
                   {editingStaff ? 'تعديل بيانات عضو الطاقم' : 'إضافة عضو جديد في الطاقم'}
                 </h3>
               </div>
