@@ -450,8 +450,8 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
     padding-bottom: 6px;
   }
 
-  /* Full screen touch modals with safe-area scroll containment */
-  .fixed.inset-0 > div {
+  /* Full screen touch modals with safe-area scroll containment (excluding bottom sheets) */
+  .fixed.inset-0:not([data-mobile-sheet="true"]) > div {
     max-width: calc(100vw - 16px) !important;
     max-height: calc(100dvh - 24px - var(--safe-top) - var(--safe-bottom)) !important;
     margin: 8px !important;
@@ -523,11 +523,12 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
   }
 }
 
-/* Touch Device & Mobile iOS Auto-Zoom Prevention Optimizations */
+/* Touch Device & Mobile iOS/Android 44px Ergonomic Touch Target & Auto-Zoom Prevention */
 @media (hover: none) and (pointer: coarse) {
   button, .button-primary-pill, .button-outline-on-light, .button-white-pill, select, input {
-    min-height: 40px;
+    min-height: 44px;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   input, select, textarea {
@@ -535,6 +536,7 @@ html[dir="ltr"] .submenu-list, [dir="ltr"] .submenu-list {
   }
 
   .nav-item, .submenu-item {
+    min-height: 44px;
     padding: 11px 12px;
   }
 }

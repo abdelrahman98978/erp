@@ -172,7 +172,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <button
             type="button"
-            className="w-9 h-9 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] flex items-center justify-center shrink-0 cursor-pointer transition-colors"
+            className="w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] flex items-center justify-center shrink-0 cursor-pointer transition-colors motion-spring-press"
             onClick={onToggleSidebar}
             title="القائمة الجانبية"
             aria-label="القائمة الجانبية"
@@ -189,6 +189,13 @@ export const Header: React.FC<HeaderProps> = ({
             <Grid className="w-3.5 h-3.5 shrink-0" />
             <span>شاشات القسم</span>
           </button>
+
+          {/* Mobile & Tablet Active Screen Title (< 768px) */}
+          <div className="block md:hidden min-w-0 flex-1 overflow-hidden">
+            <h1 className="text-xs font-bold text-[#141414] m-0 truncate">
+              {resolvedTabTitle}
+            </h1>
+          </div>
 
           {/* Active Branch Switcher — Responsive width with safe truncation & zero overflow */}
           <div className="relative hidden md:block min-w-0 shrink">

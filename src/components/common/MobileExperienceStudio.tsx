@@ -281,23 +281,23 @@ export const MobileExperienceStudio: React.FC = () => {
 
   return (
     <>
-      {/* Always-visible Floating Launcher Button on Desktop so user can open Mobile Version anytime — Mobbin Light Mode */}
+      {/* Always-visible Floating Launcher Button — Positioned above MobileBottomNav on phones (<1024px) */}
       {!isOpen && (
         <div
-          className="fixed bottom-5 left-5 z-[9990] flex items-center gap-2"
+          className="fixed bottom-[76px] lg:bottom-5 left-3 lg:left-5 z-[90] flex items-center gap-2"
           dir="rtl"
         >
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-[#141414] transition-all duration-200 active:scale-95 cursor-pointer"
+            className="group flex items-center gap-2.5 px-3.5 sm:px-4 py-2.5 min-h-[44px] rounded-full bg-[#ffffff] text-[#141414] border border-[#e0e0e0] shadow-[0_8px_24px_rgba(20,20,20,0.08)] hover:border-[#141414] transition-all duration-200 motion-spring-press cursor-pointer"
             title="فتح نسخة الهاتف التفاعلية وإشعاراتها والعمل في الخلفية"
           >
             <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] group-hover:bg-[#262626] group-hover:text-[#ffffff] transition-colors">
               <Smartphone className="w-4 h-4" />
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#0066ff] ring-2 ring-[#ffffff]" />
             </div>
-            <div className="text-right">
+            <div className="hidden sm:block text-right">
               <div className="text-xs font-bold tracking-tight flex items-center gap-1.5 text-[#141414]">
                 <span>نسخة الهاتف الجوال</span>
                 <span className="px-2 py-0.5 text-[9px] font-bold rounded-full bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]">
@@ -343,8 +343,9 @@ export const MobileExperienceStudio: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
+                    className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#f3f3f3] hover:bg-[#e5e5e5] text-[#141414] flex items-center justify-center transition-colors cursor-pointer"
                     title="إغلاق معاينة الهاتف"
+                    aria-label="إغلاق معاينة الهاتف"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -592,19 +593,19 @@ export const MobileExperienceStudio: React.FC = () => {
             {/* Left Panel: Real-Time Pixel-Perfect Phone Hardware Frame */}
             <div className="flex flex-col items-center justify-center">
               <div
-                className="relative rounded-[48px] bg-slate-950 p-3 shadow-[0_25px_80px_-15px_rgba(0,0,0,0.9)] border-[4px] border-slate-700/90 transition-all duration-300"
+                className="relative rounded-[48px] bg-[#141414] p-3 shadow-[0_25px_80px_-15px_rgba(20,20,20,0.65)] border-[4px] border-[#262626] transition-all duration-300"
                 style={{
                   width: `${selectedDevice.width + 24}px`,
                 }}
               >
                 {/* Hardware Side Buttons Decoration */}
-                <div className="absolute -left-[6px] top-28 w-[3px] h-10 bg-slate-600 rounded-l-md" />
-                <div className="absolute -left-[6px] top-44 w-[3px] h-14 bg-slate-600 rounded-l-md" />
-                <div className="absolute -right-[6px] top-36 w-[3px] h-16 bg-slate-600 rounded-r-md" />
+                <div className="absolute -left-[6px] top-28 w-[3px] h-10 bg-[#262626] rounded-l-md" />
+                <div className="absolute -left-[6px] top-44 w-[3px] h-14 bg-[#262626] rounded-l-md" />
+                <div className="absolute -right-[6px] top-36 w-[3px] h-16 bg-[#262626] rounded-r-md" />
 
-                {/* Phone Screen Viewport */}
+                {/* Phone Screen Viewport — Mobbin Gallery-White Native Status Bar & Frame */}
                 <div
-                  className="relative rounded-[38px] overflow-hidden bg-slate-900 flex flex-col"
+                  className="relative rounded-[38px] overflow-hidden bg-[#ffffff] flex flex-col"
                   style={{
                     width: `${selectedDevice.width}px`,
                     height: `${selectedDevice.height}px`,
@@ -612,17 +613,17 @@ export const MobileExperienceStudio: React.FC = () => {
                 >
                   {/* Native Phone Status Bar + Dynamic Island */}
                   <div
-                    className="h-9 bg-slate-950 text-white px-6 flex items-center justify-between text-[11px] font-bold select-none shrink-0 border-b border-[#e0e0e0]"
+                    className="h-9 bg-[#ffffff] text-[#141414] px-6 flex items-center justify-between text-[11px] font-bold select-none shrink-0 border-b border-[#f0f0f0]"
                     dir="ltr"
                   >
                     <span>{currentTime}</span>
-                    <div className="w-24 h-4 bg-[#f3f3f3] rounded-full border border-[#e0e0e0] flex items-center justify-end px-2">
-                      <span className="w-2 h-2 rounded-full bg-[#f3f3f3] animate-pulse" />
+                    <div className="w-24 h-4 bg-[#141414] rounded-full flex items-center justify-end px-2">
+                      <span className="w-2 h-2 rounded-full bg-[#0066ff] animate-pulse" />
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[10px] text-[#141414] font-extrabold">5G</span>
-                      <Wifi className="w-3.5 h-3.5 text-white" />
-                      <div className="w-5 h-2.5 rounded-sm border border-white/80 p-0.5 flex items-center">
+                      <Wifi className="w-3.5 h-3.5 text-[#141414]" />
+                      <div className="w-5 h-2.5 rounded-sm border border-[#141414] p-0.5 flex items-center">
                         <div className="w-full h-full bg-[#141414] rounded-[1px]" />
                       </div>
                     </div>
@@ -633,17 +634,17 @@ export const MobileExperienceStudio: React.FC = () => {
                     ref={iframeRef}
                     src={iframeSrc}
                     title="معاينة نسخة الهاتف الجوال"
-                    className="w-full flex-1 border-0 bg-slate-950"
+                    className="w-full flex-1 border-0 bg-[#ffffff]"
                   />
 
                   {/* iOS / Android Home Indicator Bar */}
-                  <div className="h-5 bg-slate-950 flex items-center justify-center shrink-0">
-                    <div className="w-32 h-1 rounded-full bg-white/40" />
+                  <div className="h-5 bg-[#ffffff] border-t border-[#f0f0f0] flex items-center justify-center shrink-0">
+                    <div className="w-32 h-1 rounded-full bg-[#141414]/30" />
                   </div>
                 </div>
               </div>
 
-              <div className="mt-2.5 flex items-center gap-3 text-xs text-slate-400">
+              <div className="mt-3 px-4 py-1.5 rounded-full bg-[#ffffff] border border-[#e0e0e0] shadow-sm flex items-center gap-3 text-xs text-[#707070]">
                 <span>
                   المقاس الفعلي: <strong className="text-[#141414]">{selectedDevice.width}px × {selectedDevice.height}px</strong>
                 </span>
@@ -651,7 +652,7 @@ export const MobileExperienceStudio: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => window.open(iframeSrc.replace('?mobileFrame=1', ''), '_blank')}
-                  className="text-[#141414] hover:text-[#141414] underline flex items-center gap-1"
+                  className="text-[#141414] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <span>فتح في تبويب مستقل</span>
                   <ExternalLink className="w-3 h-3" />

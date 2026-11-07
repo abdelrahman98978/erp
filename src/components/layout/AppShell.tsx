@@ -425,7 +425,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       {/* Mobile Backdrop Overlay */}
       {!isDesktop && mobileDrawerOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[998] transition-opacity duration-300"
+          className="fixed inset-0 bg-[#141414]/60 backdrop-blur-sm z-[998] transition-opacity duration-300"
           onClick={() => setMobileDrawerOpen(false)}
           aria-hidden="true"
         />
