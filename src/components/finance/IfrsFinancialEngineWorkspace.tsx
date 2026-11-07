@@ -158,12 +158,224 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const [simCollectionAccelDays, setSimCollectionAccelDays] = useState<number>(15);
   const [simDebtPaydownPct, setSimDebtPaydownPct] = useState<number>(20);
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ENTERPRISE ACCOUNTING SYSTEM CONTROLS: HIDE / EDIT / DELETE / JOURNAL POSTING / UNDO
+  // ═══════════════════════════════════════════════════════════════════════════
+  const [showKpiStrip, setShowKpiStrip] = useState<boolean>(true);
+  const [showCustomizationPanel, setShowCustomizationPanel] = useState<boolean>(false);
+  const [showDupontAltman, setShowDupontAltman] = useState<boolean>(true);
+  const [showWhatIfSimulator, setShowWhatIfSimulator] = useState<boolean>(true);
+  const [hideZeroBalanceRows, setHideZeroBalanceRows] = useState<boolean>(false);
+  const [hideHealthyChecks, setHideHealthyChecks] = useState<boolean>(false);
+
+  // Granular Hidden Items
+  const [hiddenRowSeqs, setHiddenRowSeqs] = useState<number[]>([]);
+  const [hiddenRatioIds, setHiddenRatioIds] = useState<string[]>([]);
+  const [hiddenCheckIds, setHiddenCheckIds] = useState<number[]>([]);
+
+  // Multi-select in Trial Balance
+  const [selectedRowSeqs, setSelectedRowSeqs] = useState<number[]>([]);
+  const [bulkClassifyCode, setBulkClassifyCode] = useState<string>('A-10');
+
+  // Undo History Stack for safe editing and deletion
+  const [undoStack, setUndoStack] = useState<TrialBalanceEntry[][]>([]);
+
+  // Native Journal Entry Posting Modal (قيد يومية محاسبي يرحل مباشرة للميزان والقوائم)
+  const [showJournalModal, setShowJournalModal] = useState<boolean>(false);
+  const [jeDebitSeq, setJeDebitSeq] = useState<number>(1);
+  const [jeCreditSeq, setJeCreditSeq] = useState<number>(2);
+  const [jeAmount, setJeAmount] = useState<number>(25000);
+  const [jeDescription, setJeDescription] = useState<string>('قيد تسوية وإثبات عمليات تشغيلية');
+
+  // Editable overrides & custom ratios in Financial Ratios
+  const [ratioOverrides, setRatioOverrides] = useState<
+    Record<string, { target2026?: string; target2027?: string; actionPlan?: string; benchmark?: string }>
+  >({});
+  const [customRatios, setCustomRatios] = useState<
+    Array<{
+      id: string;
+      category: string;
+      name: string;
+      formula: string;
+      formattedValue: string;
+      benchmark: string;
+      target2026: string;
+      target2027: string;
+      actionPlan: string;
+    }>
+  >([]);
+  const [showAddRatioForm, setShowAddRatioForm] = useState<boolean>(false);
+  const [newRatioName, setNewRatioName] = useState<string>('');
+  const [newRatioCategory, setNewRatioCategory] = useState<string>('السيولة');
+  const [newRatioFormula, setNewRatioFormula] = useState<string>('');
+  const [newRatioValue, setNewRatioValue] = useState<string>('1.50x');
+  const [newRatioTarget, setNewRatioTarget] = useState<string>('2.00x');
+  const [newRatioPlan, setNewRatioPlan] = useState<string>('');
+
+  const pushUndoSnapshot = (currentEntries: TrialBalanceEntry[]) => {
+    setUndoStack((prev) => [currentEntries.map((r) => ({ ...r })), ...prev.slice(0, 14)]);
+  };
+
+  const handleUndoLastAction = () => {
+    if (undoStack.length === 0) return;
+    const [latest, ...rest] = undoStack;
+    setEntries(latest);
+    setUndoStack(rest);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, latest);
+    addNotification({
+      title: 'تراجع عن آخر عملية محاسبية',
+      message: 'تمت استعادة البيانات السابقة لميزان المراجعة والقوائم المالية بنجاح.',
+      type: 'info',
+    });
+  };
+
+  const totalHiddenItemsCount =
+    hiddenRowSeqs.length +
+    hiddenRatioIds.length +
+    hiddenCheckIds.length +
+    (!showKpiStrip ? 1 : 0) +
+    (!showDupontAltman ? 1 : 0) +
+    (!showWhatIfSimulator ? 1 : 0) +
+    (!showClosingBalanceCols ? 1 : 0) +
+    (!showOpeningCols ? 1 : 0) +
+    (!showMovementCols ? 1 : 0) +
+    (hideZeroBalanceRows ? 1 : 0) +
+    (hideHealthyChecks ? 1 : 0);
+
+  const handleRestoreAllHidden = () => {
+    setHiddenRowSeqs([]);
+    setHiddenRatioIds([]);
+    setHiddenCheckIds([]);
+    setShowKpiStrip(true);
+    setShowDupontAltman(true);
+    setShowWhatIfSimulator(true);
+    setHideZeroBalanceRows(false);
+    setHideHealthyChecks(false);
+    setShowClosingBalanceCols(true);
+    setShowOpeningCols(true);
+    setShowMovementCols(true);
+    addNotification({
+      title: 'استعادة وإظهار كافة العناصر',
+      message: 'تم إظهار كافة الأقسام، الحسابات، الأعمدة، المؤشرات، والفحوصات الرقابية المخفية.',
+      type: 'success',
+    });
+  };
+
+  const handlePostJournalEntry = () => {
+    if (!jeAmount || jeAmount <= 0 || jeDebitSeq === jeCreditSeq) {
+      addNotification({
+        title: 'تنبيه في القيد المحاسبي',
+        message: 'يرجى اختيار حساب مدين وحساب دائن مختلفين وإدخال مبلغ أكبر من الصفر.',
+        type: 'warning',
+      });
+      return;
+    }
+    pushUndoSnapshot(entries);
+    const next = entries.map((r) => {
+      if (r.seq === jeDebitSeq) {
+        return { ...r, periodDebit: r.periodDebit + jeAmount };
+      }
+      if (r.seq === jeCreditSeq) {
+        return { ...r, periodCredit: r.periodCredit + jeAmount };
+      }
+      return r;
+    });
+    setEntries(next);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
+    setShowJournalModal(false);
+    addNotification({
+      title: 'تم ترحيل قيد اليومية بنجاح',
+      message: `تم ترحيل مبلغ (${jeAmount.toLocaleString()} ر.س) — ${jeDescription} وتحديث الميزان والقوائم المالية آلياً.`,
+      type: 'success',
+    });
+  };
+
+  const handleBulkHideSelectedRows = () => {
+    if (selectedRowSeqs.length === 0) return;
+    setHiddenRowSeqs((prev) => Array.from(new Set([...prev, ...selectedRowSeqs])));
+    addNotification({
+      title: 'إخفاء الحسابات المحددة',
+      message: `تم إخفاء (${selectedRowSeqs.length}) حساباً من العرض الحالي.`,
+      type: 'info',
+    });
+    setSelectedRowSeqs([]);
+  };
+
+  const handleBulkDeleteSelectedRows = () => {
+    if (selectedRowSeqs.length === 0) return;
+    pushUndoSnapshot(entries);
+    const next = entries.filter((r) => !selectedRowSeqs.includes(r.seq));
+    setEntries(next);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
+    addNotification({
+      title: 'حذف الحسابات المحددة',
+      message: `تم حذف (${selectedRowSeqs.length}) حساباً (يمكنك التراجع بضغطة زر).`,
+      type: 'info',
+    });
+    setSelectedRowSeqs([]);
+  };
+
+  const handleBulkClassifySelectedRows = () => {
+    if (selectedRowSeqs.length === 0 || !bulkClassifyCode) return;
+    pushUndoSnapshot(entries);
+    const next = entries.map((r) =>
+      selectedRowSeqs.includes(r.seq) ? { ...r, manualCode: bulkClassifyCode } : r
+    );
+    setEntries(next);
+    ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
+    addNotification({
+      title: 'توجيه محاسبي جماعي',
+      message: `تم اعتماد بند القوائم (${bulkClassifyCode}) لعدد (${selectedRowSeqs.length}) حساباً دفعة واحدة.`,
+      type: 'success',
+    });
+    setSelectedRowSeqs([]);
+  };
+
+  const handleAddCustomRatio = () => {
+    if (!newRatioName.trim()) return;
+    setCustomRatios((prev) => [
+      ...prev,
+      {
+        id: `custom-ratio-${Date.now()}`,
+        category: newRatioCategory,
+        name: newRatioName.trim(),
+        formula: newRatioFormula.trim() || 'معادلة مالية مخصصة',
+        formattedValue: newRatioValue.trim() || '1.00x',
+        benchmark: newRatioTarget.trim() || '1.50x',
+        target2026: newRatioTarget.trim() || '1.50x',
+        target2027: newRatioTarget.trim() || '2.00x',
+        actionPlan: newRatioPlan.trim() || 'خطة تحسين مالية قابلة للتعديل',
+      },
+    ]);
+    setNewRatioName('');
+    setNewRatioFormula('');
+    setNewRatioPlan('');
+    setShowAddRatioForm(false);
+    addNotification({
+      title: 'إضافة مؤشر مالي جديد',
+      message: `تمت إضافة المؤشر (${newRatioName.trim()}) إلى منظومة التحليل المالي.`,
+      type: 'success',
+    });
+  };
+
   // Recompute full IFRS engine whenever entries or settings change
   const engine = useMemo(() => computeIfrsEngine(entries, settings), [entries, settings]);
 
   // Filtered Trial Balance rows
   const filteredRows = useMemo(() => {
     return engine.rows.filter((r) => {
+      if (hiddenRowSeqs.includes(r.seq)) return false;
+      if (
+        hideZeroBalanceRows &&
+        r.openingDebit === 0 &&
+        r.openingCredit === 0 &&
+        r.periodDebit === 0 &&
+        r.periodCredit === 0 &&
+        r.closingDebit === 0 &&
+        r.closingCredit === 0
+      ) {
+        return false;
+      }
       if (tbFilter === 'unclassified' && r.approvedCode) return false;
       if (tbFilter === 'classified' && !r.approvedCode) return false;
       if (tbFilter === 'warnings' && !r.auditNote) return false;
@@ -180,7 +392,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       }
       return true;
     });
-  }, [engine.rows, tbFilter, tbCodeFilter, tbSearch]);
+  }, [engine.rows, tbFilter, tbCodeFilter, tbSearch, hiddenRowSeqs, hideZeroBalanceRows]);
 
   // What-If Simulated Financial Ratios Calculation
   const simulatedPlan = useMemo(() => {
@@ -283,6 +495,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   };
 
   const handleDeleteAccountRow = (seq: number, name: string) => {
+    pushUndoSnapshot(entries);
     const next = entries.filter((item) => item.seq !== seq);
     setEntries(next);
     ifrsFinancialEngineService.saveTrialBalance(activeCompanyId, next);
@@ -509,7 +722,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     const raw = ifrsFinancialEngineService.resetTrialBalance(activeCompanyId, false);
     setEntries(raw);
     addNotification({
-      title: 'تصفير الأرصدة (الوضع الخام كما في بببب.xlsx)',
+      title: 'تصفير الأرصدة (الوضع الخام كما في الدليل المحاسبي العام)',
       message: 'تمت إعادة الحسابات الـ 211 إلى الوضع الخام بدون أرصدة مع إبقاء الـ 57 حساباً غير مصنفة للمراجعة اليدوية.',
       type: 'info',
     });
@@ -764,61 +977,76 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-2">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#ffffff] text-[#141414]">
-                IFRS / IAS 1 / IAS 7 / IFRS 18 ENGINE
+                النظام المحاسبي المالي المعتمد (IFRS / SOCPA)
               </span>
               <span className="px-2.5 py-0.5 rounded-full text-[11px] bg-[#262626] text-[#ffffff] border border-[#404040]">
-                211 حساباً مستورداً من ملف بببب.xlsx • 34 فحصاً معيارياً • 5 قوائم مالية • 16 نسبة مالية وخطة استراتيجية
+                الدليل والشجرة • قيود اليومية • ميزان المراجعة • القوائم المالية الختامية • الرقابة والتحليل المالي
               </span>
             </div>
             <h2 className="text-lg md:text-xl font-bold text-[#ffffff] m-0">
-              منظومة إعداد القوائم المالية من ميزان المراجعة وخطة النسب المالية — {settings.companyName}
+              النظام المحاسبي المتكامل والقوائم المالية والتحليل المالي — {settings.companyName}
             </h2>
             <p className="text-xs text-[#adadad] mt-1">
-              تاريخ القوائم: <span className="font-mono text-[#ffffff]">{settings.reportingDate}</span> | العملة:{' '}
-              <span className="font-bold text-[#ffffff]">{settings.currency}</span> | الحكم العام:{' '}
+              الفترة المالية المنتهية في: <span className="font-mono text-[#ffffff]">{settings.reportingDate}</span> | العملة:{' '}
+              <span className="font-bold text-[#ffffff]">{settings.currency}</span> | حالة المطابقة والاتزان المحاسبي:{' '}
               <span className="font-bold text-[#ffffff]">{engine.diagnostics.overallVerdict}</span>
             </p>
           </div>
 
-          {/* Macro-Equivalent Action Buttons (FS_Engine Buttons) */}
+          {/* Core Accounting System Actions */}
           <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
-              onClick={handleFreezeSuggestedMappings}
+              onClick={() => setShowJournalModal((v) => !v)}
               className="px-3.5 py-2 rounded-full bg-[#ffffff] text-[#141414] hover:bg-[#f3f3f3] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
-              title="نسخ التصنيف المقترح (H) إلى التصنيف اليدوي المعتمد (G) لجميع الحسابات غير المصنفة"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ تسجيل قيد يومية محاسبي</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleFreezeSuggestedMappings}
+              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all"
+              title="توجيه وتصنيف كافة الحسابات تلقائياً لبنود القوائم المالية"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>اعتماد التصنيف المقترح (211 حساباً)</span>
+              <span>التوجيه المحاسبي التلقائي للحسابات</span>
             </button>
             <button
               type="button"
-              onClick={handleLoadBalancedSample}
-              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all"
+              onClick={() => setShowCustomizationPanel((v) => !v)}
+              className={`px-3.5 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
+                showCustomizationPanel
+                  ? 'bg-[#ffffff] text-[#141414] font-bold'
+                  : 'bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040]'
+              }`}
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>تحميل أرصدة تشغيلية متزنة</span>
+              <Sliders className="w-3.5 h-3.5" />
+              <span>تخصيص العرض والإخفاء ({totalHiddenItemsCount})</span>
             </button>
-            <button
-              type="button"
-              onClick={handleLoadRawZeroBalances}
-              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>الوضع الخام (تصفير الأرصدة)</span>
-            </button>
+            {undoStack.length > 0 && (
+              <button
+                type="button"
+                onClick={handleUndoLastAction}
+                className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>تراجع ({undoStack.length})</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => window.print()}
               className="px-3.5 py-2 rounded-full bg-[#0066ff] text-[#ffffff] hover:opacity-95 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>تصدير PDF / طباعة القوائم</span>
+              <span>طباعة / تصدير التقارير المالية</span>
             </button>
           </div>
         </div>
 
         {/* 6 Live Summary Strip Cards */}
+        {showKpiStrip && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           {[
             { label: 'الإيرادات (IFRS 15)', val: fmt(engine.incomeStatement.revenues), sub: 'صافي المبيعات والعقود' },
@@ -835,17 +1063,18 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           ))}
         </div>
+        )}
 
         {/* Navigation Pill Bar */}
         <div className="flex items-center gap-1.5 bg-[#1f1f1f] p-1.5 rounded-full border border-[#303030] overflow-x-auto">
           {[
-            { id: 'ratios-plan', label: '1. النسب المالية وخطة التحسين (16 نسبة + محاكي What-If)', icon: Target },
-            { id: 'statements', label: '2. القوائم المالية الخمس (المركز المالي • الدخل • الملكية • التدفقات)', icon: Landmark },
-            { id: 'trial-balance', label: `3. ميزان المراجعة الذكي (${entries.length} حساباً)`, icon: Scale },
-            { id: 'diagnostics', label: `4. مركز الفحوصات وكشف الأخطاء (34 فحصاً IFRS)`, icon: ShieldCheck },
-            { id: 'coa-tree', label: '5. الدليل والشجرة القابلة للتوسع وحقول الأصول', icon: FolderTree },
-            { id: 'mapping-settings', label: '6. جدول التصنيفات (A-01..R-10) والإعدادات', icon: Sliders },
-            { id: 'overview', label: '7. دليل التشغيل وحوكمة IFRS 18', icon: BookOpen },
+            { id: 'statements', label: 'القوائم المالية الختامية (المركز المالي • الدخل • الملكية • التدفقات)', icon: Landmark },
+            { id: 'trial-balance', label: `ميزان المراجعة العام والأرصدة (${entries.length} حساب)`, icon: Scale },
+            { id: 'coa-tree', label: 'دليل وشجرة الحسابات وحقول الأصول', icon: FolderTree },
+            { id: 'ratios-plan', label: 'التحليل المالي ومؤشرات الأداء (16 مؤشراً)', icon: Target },
+            { id: 'diagnostics', label: 'الرقابة المالية والتدقيق الآلي للحسابات', icon: ShieldCheck },
+            { id: 'mapping-settings', label: 'قواعد التوجيه المحاسبي وإعدادات النظام', icon: Sliders },
+            { id: 'overview', label: 'السياسات المحاسبية وحوكمة المعايير', icon: BookOpen },
           ].map((tab) => {
             const IconComp = tab.icon;
             const active = activeSubTab === tab.id;
@@ -868,6 +1097,199 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
         </div>
       </div>
 
+      {/* Quick Journal Entry Posting Modal (تسجيل قيد يومية محاسبي مباشر) */}
+      {showJournalModal && (
+        <div className="bg-white rounded-3xl border border-[#141414] p-5 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#e0e0e0] pb-3">
+            <div>
+              <h3 className="text-sm font-bold text-[#141414] m-0">
+                تسجيل وترحيل قيد يومية محاسبي إلى ميزان المراجعة والقوائم المالية
+              </h3>
+              <p className="text-xs text-[#707070] m-0 mt-0.5">
+                يتم إثبات الحركة المدينة والدائنة وترحيلها فوراً إلى أرصدة الحسابات والقوائم المالية الختامية
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowJournalModal(false)}
+              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+            <div className="space-y-1">
+              <label className="font-bold text-[#141414] block">من حـ/ (الطرف المدين):</label>
+              <select
+                value={jeDebitSeq}
+                onChange={(e) => setJeDebitSeq(Number(e.target.value))}
+                className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 font-semibold text-[#141414]"
+              >
+                {entries.map((r) => (
+                  <option key={r.seq} value={r.seq}>
+                    {r.erpCode} — {r.accountName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="font-bold text-[#141414] block">إلى حـ/ (الطرف الدائن):</label>
+              <select
+                value={jeCreditSeq}
+                onChange={(e) => setJeCreditSeq(Number(e.target.value))}
+                className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 font-semibold text-[#141414]"
+              >
+                {entries.map((r) => (
+                  <option key={r.seq} value={r.seq}>
+                    {r.erpCode} — {r.accountName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <label className="font-bold text-[#141414] block">مبلغ القيد ({settings.currency}):</label>
+              <input
+                type="number"
+                value={jeAmount}
+                onChange={(e) => setJeAmount(parseFloat(e.target.value) || 0)}
+                className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 font-mono font-bold text-[#141414]"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="font-bold text-[#141414] block">البيان / الشرح المحاسبي:</label>
+              <input
+                type="text"
+                value={jeDescription}
+                onChange={(e) => setJeDescription(e.target.value)}
+                className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-xl px-3 py-2 text-[#141414]"
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setShowJournalModal(false)}
+              className="px-4 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] text-xs font-semibold cursor-pointer"
+            >
+              إلغاء
+            </button>
+            <button
+              type="button"
+              onClick={handlePostJournalEntry}
+              className="px-5 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer"
+            >
+              اعتماد وترحيل القيد المحاسبي
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Universal Accounting View & Hide/Show Control Bar */}
+      {(showCustomizationPanel || totalHiddenItemsCount > 0) && (
+        <div className="bg-white rounded-3xl border border-[#e0e0e0] p-4 shadow-xs space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-bold text-[#141414]">
+                لوحة التحكم في إظهار وإخفاء عناصر النظام المحاسبي:
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowKpiStrip((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  showKpiStrip ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {showKpiStrip ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>شريط الملخص المالي العلوي</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setHideZeroBalanceRows((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  !hideZeroBalanceRows ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {!hideZeroBalanceRows ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>الحسابات ذات الرصيد الصفري</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowClosingBalanceCols((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  showClosingBalanceCols ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {showClosingBalanceCols ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>الرصيد النهائي (مدين / دائن)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowOpeningCols((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  showOpeningCols ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {showOpeningCols ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>أرصدة أول المدة</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowMovementCols((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  showMovementCols ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {showMovementCols ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>حركات السنة</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDupontAltman((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  showDupontAltman ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {showDupontAltman ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>بطاقات التحليل المتقدم (DuPont/Altman)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowWhatIfSimulator((v) => !v)}
+                className={`px-3 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer ${
+                  showWhatIfSimulator ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#707070] border border-[#e0e0e0]'
+                }`}
+              >
+                {showWhatIfSimulator ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                <span>محاكي التخطيط المالي</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {totalHiddenItemsCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleRestoreAllHidden}
+                  className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>إظهار واستعادة كل المخفي ({totalHiddenItemsCount})</span>
+                </button>
+              )}
+              {showCustomizationPanel && (
+                <button
+                  type="button"
+                  onClick={() => setShowCustomizationPanel(false)}
+                  className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                  title="إغلاق شريط التخصيص"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ═══════════════════════════════════════════════════════════════════════════
           SECTION 1: FINANCIAL RATIOS & STRATEGIC IMPROVEMENT PLAN (خطة النسب المالية)
          ═══════════════════════════════════════════════════════════════════════════ */}
@@ -886,7 +1308,40 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 تحتسب كل نسبة آلياً من القوائم المالية الخمس مع المعيار المرجعي الإرشادي، التقييم التلقائي، وخطة العمل التنفيذية لتحقيق مستهدفات 2026–2027
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => setShowDupontAltman((v) => !v)}
+                className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+              >
+                {showDupontAltman ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                <span>{showDupontAltman ? 'إخفاء بطاقات DuPont/Altman' : 'إظهار بطاقات DuPont/Altman'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowWhatIfSimulator((v) => !v)}
+                className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+              >
+                {showWhatIfSimulator ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                <span>{showWhatIfSimulator ? 'إخفاء محاكي التخطيط' : 'إظهار محاكي التخطيط'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowAddRatioForm((v) => !v)}
+                className="px-3 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ إضافة مؤشر مالي جديد</span>
+              </button>
+              {hiddenRatioIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setHiddenRatioIds([])}
+                  className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#141414] text-xs font-bold cursor-pointer"
+                >
+                  إظهار المؤشرات المخفية ({hiddenRatioIds.length})
+                </button>
+              )}
               <button
                 type="button"
                 onClick={handleExportRatiosPlan}
@@ -908,7 +1363,66 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           </div>
 
+          {showAddRatioForm && (
+            <div className="bg-[#f3f3f3] p-4 rounded-3xl border border-[#141414] space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold text-[#141414] m-0">+ إضافة مؤشر أو نسبة مالية جديدة للنظام المحاسبي</h4>
+                <button type="button" onClick={() => setShowAddRatioForm(false)} className="text-[#707070] hover:text-[#141414] cursor-pointer">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                <input
+                  type="text"
+                  placeholder="اسم المؤشر (مثال: تغطية الفوائد)"
+                  value={newRatioName}
+                  onChange={(e) => setNewRatioName(e.target.value)}
+                  className="bg-white border border-[#e0e0e0] rounded-xl px-3 py-1.5 text-xs"
+                />
+                <select
+                  value={newRatioCategory}
+                  onChange={(e) => setNewRatioCategory(e.target.value)}
+                  className="bg-white border border-[#e0e0e0] rounded-xl px-3 py-1.5 text-xs font-semibold"
+                >
+                  <option value="السيولة">السيولة</option>
+                  <option value="الربحية">الربحية</option>
+                  <option value="المديونية">المديونية</option>
+                  <option value="الكفاءة التشغيلية">الكفاءة التشغيلية</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="معادلة الاحتساب"
+                  value={newRatioFormula}
+                  onChange={(e) => setNewRatioFormula(e.target.value)}
+                  className="bg-white border border-[#e0e0e0] rounded-xl px-3 py-1.5 text-xs"
+                />
+                <input
+                  type="text"
+                  placeholder="القيمة الحالية (مثال: 4.5x)"
+                  value={newRatioValue}
+                  onChange={(e) => setNewRatioValue(e.target.value)}
+                  className="bg-white border border-[#e0e0e0] rounded-xl px-3 py-1.5 text-xs font-mono"
+                />
+                <input
+                  type="text"
+                  placeholder="المستهدف (مثال: 6.0x)"
+                  value={newRatioTarget}
+                  onChange={(e) => setNewRatioTarget(e.target.value)}
+                  className="bg-white border border-[#e0e0e0] rounded-xl px-3 py-1.5 text-xs font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCustomRatio}
+                  className="bg-[#141414] text-[#ffffff] rounded-xl px-4 py-1.5 text-xs font-bold cursor-pointer"
+                >
+                  حفظ وإضافة المؤشر
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* DuPont 3-Step ROE & Altman Z-Score & Cash Conversion Cycle Executive Cards */}
+          {showDupontAltman && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* DuPont ROE Analysis */}
             <div className="bg-white p-5 rounded-3xl border border-[#e0e0e0] space-y-3">
@@ -1000,7 +1514,10 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           </div>
 
+          )}
+
           {/* Interactive What-If Financial Ratios Plan Simulator */}
+          {showWhatIfSimulator && (
           <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-5">
             <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
               <div>
@@ -1154,6 +1671,8 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           </div>
 
+          )}
+
           {/* Complete 16 Financial Ratios Matrix Table with Action Plan */}
           <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between">
@@ -1176,11 +1695,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     <th className="p-3 font-mono">مستهدف 2026</th>
                     <th className="p-3 font-mono">مستهدف 2027</th>
                     <th className="p-3">التقييم التلقائي</th>
-                    <th className="p-3">التفسير وخطة العمل التنفيذية لتحسين النسبة</th>
+                    <th className="p-3">التفسير وخطة العمل التنفيذية لتحسين المؤشر (قابل للتعديل)</th>
+                    <th className="p-3 text-center">إخفاء</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#e0e0e0]">
-                  {engine.ratios.map((ratio) => (
+                  {engine.ratios
+                    .filter((r) => !hiddenRatioIds.includes(r.id))
+                    .map((ratio) => (
                     <tr key={ratio.id} className="hover:bg-[#f3f3f3]/50">
                       <td className="p-3 font-semibold text-[#707070] whitespace-nowrap">{ratio.category}</td>
                       <td className="p-3 font-bold text-[#141414] whitespace-nowrap">{ratio.name}</td>
@@ -1226,12 +1748,72 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       </td>
                       <td className="p-3 max-w-md">
                         <div className="text-[#141414] font-medium">{ratio.meaning}</div>
-                        <div className="text-[11px] text-[#707070] mt-0.5">
-                          <strong className="text-[#141414]">خطة التحسين:</strong> {ratio.actionPlan}
+                        <div className="mt-1 flex items-center gap-1">
+                          <strong className="text-[11px] text-[#141414] shrink-0">خطة التحسين:</strong>
+                          <input
+                            type="text"
+                            value={ratioOverrides[ratio.id]?.actionPlan ?? ratio.actionPlan}
+                            onChange={(e) =>
+                              setRatioOverrides((prev) => ({
+                                ...prev,
+                                [ratio.id]: { ...prev[ratio.id], actionPlan: e.target.value },
+                              }))
+                            }
+                            className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-lg px-2 py-0.5 text-[11px] text-[#141414]"
+                          />
                         </div>
+                      </td>
+                      <td className="p-3 text-center">
+                        <button
+                          type="button"
+                          onClick={() => setHiddenRatioIds((prev) => [...prev, ratio.id])}
+                          className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                          title="إخفاء هذا المؤشر"
+                        >
+                          <EyeOff className="w-3.5 h-3.5" />
+                        </button>
                       </td>
                     </tr>
                   ))}
+                  {customRatios
+                    .filter((cr) => !hiddenRatioIds.includes(cr.id))
+                    .map((cr) => (
+                      <tr key={cr.id} className="bg-[#fafafa] hover:bg-[#f3f3f3]/50">
+                        <td className="p-3 font-semibold text-[#707070]">{cr.category}</td>
+                        <td className="p-3 font-bold text-[#141414]">{cr.name}</td>
+                        <td className="p-3 text-[#707070]">{cr.formula}</td>
+                        <td className="p-3 font-mono font-bold text-sm text-[#141414]">{cr.formattedValue}</td>
+                        <td className="p-3 font-mono text-[#707070]">{cr.benchmark}</td>
+                        <td className="p-3 font-mono font-semibold text-[#141414]">{cr.target2026}</td>
+                        <td className="p-3 font-mono font-semibold text-[#141414]">{cr.target2027}</td>
+                        <td className="p-3">
+                          <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#141414] text-[#ffffff]">
+                            مخصص
+                          </span>
+                        </td>
+                        <td className="p-3 text-xs text-[#141414]">{cr.actionPlan}</td>
+                        <td className="p-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setHiddenRatioIds((prev) => [...prev, cr.id])}
+                              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                              title="إخفاء"
+                            >
+                              <EyeOff className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setCustomRatios((prev) => prev.filter((x) => x.id !== cr.id))}
+                              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                              title="حذف"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -2196,6 +2778,29 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                   {showNetBalanceCol ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                   <span>{showNetBalanceCol ? 'إخفاء صافي الرصيد' : 'إظهار صافي الرصيد النهائي'}</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setHideZeroBalanceRows((v) => !v)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
+                    hideZeroBalanceRows
+                      ? 'bg-[#141414] text-[#ffffff]'
+                      : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
+                  }`}
+                >
+                  {hideZeroBalanceRows ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>{hideZeroBalanceRows ? 'إظهار الحسابات الصفرية' : 'إخفاء الحسابات الصفرية'}</span>
+                </button>
+
+                {hiddenRowSeqs.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setHiddenRowSeqs([])}
+                    className="px-3 py-1.5 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer"
+                  >
+                    إظهار الحسابات المخفية ({hiddenRowSeqs.length})
+                  </button>
+                )}
               </div>
 
               <span className="text-[11px] font-bold text-[#141414]">
@@ -2205,6 +2810,59 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               </span>
             </div>
           </div>
+
+          {/* Multi-Select Bulk Action Bar */}
+          {selectedRowSeqs.length > 0 && (
+            <div className="bg-[#141414] text-[#ffffff] p-3.5 rounded-2xl flex items-center justify-between flex-wrap gap-3">
+              <div className="flex items-center gap-2 text-xs font-bold">
+                <CheckCircle2 className="w-4 h-4 text-[#ffffff]" />
+                <span>تم تحديد ({selectedRowSeqs.length}) حساب محاسبي</span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <select
+                  value={bulkClassifyCode}
+                  onChange={(e) => setBulkClassifyCode(e.target.value)}
+                  className="bg-[#262626] text-[#ffffff] border border-[#404040] rounded-full px-3 py-1 text-xs"
+                >
+                  {IFRS_MAPPING_CODES.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.code} - {c.nameAr}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={handleBulkClassifySelectedRows}
+                  className="px-3 py-1 rounded-full bg-[#ffffff] text-[#141414] text-xs font-bold cursor-pointer"
+                >
+                  توجيه وتصنيف المحدد
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBulkHideSelectedRows}
+                  className="px-3 py-1 rounded-full bg-[#262626] hover:bg-[#363636] text-[#ffffff] border border-[#404040] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                  <span>إخفاء المحدد</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBulkDeleteSelectedRows}
+                  className="px-3 py-1 rounded-full bg-[#262626] hover:bg-[#363636] text-[#ffffff] border border-[#404040] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>حذف المحدد</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRowSeqs([])}
+                  className="px-2.5 py-1 rounded-full text-xs text-[#adadad] hover:text-[#ffffff] cursor-pointer"
+                >
+                  إلغاء التحديد
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Totals Bar */}
           <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 bg-[#f3f3f3] p-3.5 rounded-2xl border border-[#e0e0e0] text-xs">
@@ -2239,8 +2897,26 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#f3f3f3] text-[#141414] font-bold border-b border-[#e0e0e0] sticky top-0 z-10">
                   <tr>
+                    <th className="p-2.5 text-center">
+                      <input
+                        type="checkbox"
+                        aria-label="تحديد كل الحسابات المعروضة"
+                        checked={
+                          filteredRows.length > 0 &&
+                          filteredRows.every((r) => selectedRowSeqs.includes(r.seq))
+                        }
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedRowSeqs(filteredRows.map((r) => r.seq));
+                          } else {
+                            setSelectedRowSeqs([]);
+                          }
+                        }}
+                        className="accent-[#141414] cursor-pointer"
+                      />
+                    </th>
                     <th className="p-2.5">#</th>
-                    <th className="p-2.5">كود ERP</th>
+                    <th className="p-2.5">رقم الحساب</th>
                     <th className="p-2.5">اسم الحساب (قابل للتعديل)</th>
                     <th className="p-2.5">التصنيف اليدوي المعتمد (رئيسي أو موسع 314 بنداً)</th>
                     <th className="p-2.5">المعيار</th>
@@ -2275,8 +2951,31 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                           !row.approvedCode ? 'bg-[#f3f3f3]/70' : ''
                         }`}
                       >
+                        <td className="p-2 text-center">
+                          <input
+                            type="checkbox"
+                            aria-label={`تحديد الحساب ${row.seq}`}
+                            checked={selectedRowSeqs.includes(row.seq)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedRowSeqs((prev) => [...prev, row.seq]);
+                              } else {
+                                setSelectedRowSeqs((prev) => prev.filter((id) => id !== row.seq));
+                              }
+                            }}
+                            className="accent-[#141414] cursor-pointer"
+                          />
+                        </td>
                         <td className="p-2 font-mono text-[#707070]">{row.seq}</td>
-                        <td className="p-2 font-mono text-[11px] text-[#707070]">{row.erpCode}</td>
+                        <td className="p-2 font-mono text-[11px] text-[#707070] w-24">
+                          <input
+                            type="text"
+                            aria-label={`رقم الحساب ${row.seq}`}
+                            value={row.erpCode}
+                            onChange={(e) => handleUpdateRow(row.seq, { erpCode: e.target.value })}
+                            className="w-20 bg-transparent border-b border-transparent focus:border-[#141414] focus:outline-none font-mono text-[11px] text-[#141414]"
+                          />
+                        </td>
                         <td className="p-2 font-semibold text-[#141414] min-w-[200px]">
                           <input
                             type="text"
@@ -2402,14 +3101,24 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                           <span className="text-[11px] font-medium text-[#141414]">{row.statusText}</span>
                         </td>
                         <td className="p-2 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteAccountRow(row.seq, row.accountName)}
-                            className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
-                            title="حذف الحساب"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => setHiddenRowSeqs((prev) => [...prev, row.seq])}
+                              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                              title="إخفاء الحساب من العرض"
+                            >
+                              <EyeOff className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAccountRow(row.seq, row.accountName)}
+                              className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                              title="حذف الحساب"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -2417,7 +3126,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 </tbody>
                 <tfoot className="bg-[#141414] text-[#ffffff] font-bold sticky bottom-0">
                   <tr>
-                    <td colSpan={5} className="p-3">
+                    <td colSpan={6} className="p-3">
                       إجمالي ميزان المراجعة ({filteredRows.length} حساباً معروضاً من أصل {engine.rows.length})
                     </td>
                     {showOpeningCols && <td className="p-3 font-mono">{fmt(engine.totals.openingDebit)}</td>}
@@ -2457,10 +3166,27 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 مركز الفحوصات وكشف الأخطاء المعياري (34 فحصاً IFRS / IAS + جدول تفصيل الأخطاء على مستوى الحسابات)
               </h3>
               <p className="text-xs text-[#707070] mt-1">
-                يطابق ورقتي (الفحوصات) و(تفصيل_الأخطاء) من المرجع، حيث يعرض كل فحص معياري وشرح المشكلة وطريقة الحل وأي حساب به ملاحظة
+                يطابق منظومة الرقابة المالية والتدقيق الآلي للحسابات، حيث يعرض كل فحص معياري وشرح المشكلة وطريقة الحل وأي حساب به ملاحظة
               </p>
             </div>
-            <div className="flex items-center gap-3 text-xs font-bold">
+            <div className="flex items-center gap-2 flex-wrap text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setHideHealthyChecks((v) => !v)}
+                className="px-3 py-1.5 rounded-full bg-[#f3f3f3] hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] flex items-center gap-1 cursor-pointer"
+              >
+                {hideHealthyChecks ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                <span>{hideHealthyChecks ? 'إظهار الفحوصات السليمة' : 'إخفاء الفحوصات السليمة'}</span>
+              </button>
+              {hiddenCheckIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setHiddenCheckIds([])}
+                  className="px-3 py-1.5 rounded-full bg-[#f3f3f3] text-[#141414] border border-[#141414] cursor-pointer"
+                >
+                  إظهار الفحوصات المخفية ({hiddenCheckIds.length})
+                </button>
+              )}
               <span className="px-3 py-1.5 rounded-full bg-[#141414] text-[#ffffff]">
                 الأخطاء الجوهرية: {engine.diagnostics.criticalErrorsCount}
               </span>
@@ -2473,7 +3199,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
           <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
               <h4 className="text-sm font-bold text-[#141414] m-0">
-                أولاً: جدول الفحوصات المعيارية الـ 34 (ورقة الفحوصات — IFRS / IAS / SOCPA)
+                أولاً: جدول الفحوصات المعيارية الـ 34 (سجل الفحوصات الرقابية — IFRS / IAS / SOCPA)
               </h4>
             </div>
             <div className="overflow-x-auto">
@@ -2488,10 +3214,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     <th className="p-3">ماذا تعني المشكلة؟</th>
                     <th className="p-3">كيف تحلها؟</th>
                     <th className="p-3">الخطورة</th>
+                    <th className="p-3 text-center">إخفاء</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#e0e0e0]">
-                  {engine.diagnostics.checks.map((c) => (
+                  {engine.diagnostics.checks
+                    .filter((c) => !hiddenCheckIds.includes(c.id))
+                    .filter((c) => !(hideHealthyChecks && c.status === 'سليم'))
+                    .map((c) => (
                     <tr key={c.id} className="hover:bg-[#f3f3f3]/50">
                       <td className="p-3 font-mono font-bold text-[#707070]">{c.id}</td>
                       <td className="p-3 font-bold text-[#141414]">{c.title}</td>
@@ -2511,6 +3241,16 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       <td className="p-3 text-[#707070] max-w-xs">{c.meaning}</td>
                       <td className="p-3 text-[#141414] font-medium max-w-xs">{c.resolution}</td>
                       <td className="p-3 font-semibold text-[#707070]">{c.severity}</td>
+                      <td className="p-3 text-center">
+                        <button
+                          type="button"
+                          onClick={() => setHiddenCheckIds((prev) => [...prev, c.id])}
+                          className="p-1 text-[#707070] hover:text-[#141414] cursor-pointer"
+                          title="إخفاء هذا الفحص الرقابي"
+                        >
+                          <EyeOff className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -2518,12 +3258,12 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           </div>
 
-          {/* Account-Level Error Details (ورقة تفصيل_الأخطاء) */}
+          {/* Account-Level Error Details (سجل تدقيق الحسابات) */}
           <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-2">
               <div>
                 <h4 className="text-sm font-bold text-[#141414] m-0">
-                  ثانياً: تفصيل الأخطاء والملاحظات على مستوى الحسابات (ورقة تفصيل_الأخطاء)
+                  ثانياً: تفصيل الأخطاء والملاحظات على مستوى الحسابات (سجل تدقيق الحسابات)
                 </h4>
                 <p className="text-xs text-[#707070] mt-0.5">
                   يعرض تلقائياً أي حساب في ميزان المراجعة غير مصنف أو رصيده النهائي عكس طبيعته المحاسبية أو يجمع بين مدين ودائن
@@ -2598,7 +3338,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               {[
                 {
                   id: 'excel-tree-319',
-                  label: '1. شجرة الحسابات المرجعية الكاملة من الإكسل (319 عقدة معيارية + الحسابات الفرعية بالمستوى 4)',
+                  label: '1. شجرة الحسابات المرجعية الكاملة القياسية المعتمدة (319 عقدة معيارية + الحسابات الفرعية بالمستوى 4)',
                 },
                 {
                   id: 'company-coa-tree',
@@ -2606,7 +3346,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 },
                 {
                   id: 'linked-coa-sheet',
-                  label: `3. ورقة دليل_الحسابات المرتبط بميزان المراجعة (${engine.rows.length} حساباً)`,
+                  label: `3. دليل الحسابات العام المرتبط بميزان المراجعة (${engine.rows.length} حساباً)`,
                 },
               ].map((st) => (
                 <button
@@ -3238,7 +3978,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           )}
 
-          {/* 5C: LINKED CHART OF ACCOUNTS SHEET (ورقة دليل_الحسابات من الإكسل) */}
+          {/* 5C: LINKED CHART OF ACCOUNTS SHEET (دليل الحسابات العام القياسية المعتمدة) */}
           {coaSubView === 'linked-coa-sheet' && (
             <div className="bg-white p-6 rounded-3xl border border-[#e0e0e0] space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#e0e0e0] pb-4">
@@ -3312,7 +4052,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════════════
-          SECTION 6: ALL EXCEL REFERENCE SHEETS & MAPPING SETTINGS (الأقسام المرجعية الكاملة من الإكسل)
+          SECTION 6: ALL EXCEL REFERENCE SHEETS & MAPPING SETTINGS (الأقسام المرجعية الكاملة القياسية المعتمدة)
          ═══════════════════════════════════════════════════════════════════════════ */}
       {activeSubTab === 'mapping-settings' && (
         <div className="space-y-6">
@@ -3435,13 +4175,13 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           )}
 
-          {/* 6.2 Extended 314 Sub-Classifications (ورقة دليل_التصنيف_الموسع) */}
+          {/* 6.2 Extended 314 Sub-Classifications (دليل التوجيه المحاسبي الموسع_الموسع) */}
           {refGuideSubTab === 'extended-314' && (
             <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
               <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
                 <div>
                   <h4 className="text-sm font-bold text-[#141414] m-0">
-                    دليل التصنيف الموسع الكامل من الإكسل (ورقة دليل_التصنيف_الموسع — {EXTENDED_IFRS_CLASSIFICATIONS.length} بنداً معيارياً)
+                    دليل التصنيف الموسع الكامل القياسية المعتمدة (دليل التوجيه المحاسبي الموسع_الموسع — {EXTENDED_IFRS_CLASSIFICATIONS.length} بنداً معيارياً)
                   </h4>
                   <p className="text-xs text-[#707070] mt-0.5">
                     يغطي كافة الحسابات الفرعية والتفصيلية (A-01-01 إلى R-10-06) مع الكود الأب بالقوائم المالية ومرجع المعيار الدولي IFRS / IAS
@@ -3538,13 +4278,13 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             </div>
           )}
 
-          {/* 6.4 Auto-Classification Keywords (ورقة كلمات_البحث) */}
+          {/* 6.4 Auto-Classification Keywords (قواعد التوجيه المحاسبي الذكي) */}
           {refGuideSubTab === 'search-keywords-257' && (
             <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
               <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] flex items-center justify-between flex-wrap gap-3">
                 <div>
                   <h4 className="text-sm font-bold text-[#141414] m-0">
-                    قاموس كلمات البحث للتصنيف التلقائي واكتشاف الأعمدة (ورقة كلمات_البحث — {EXCEL_SEARCH_KEYWORDS.length} قاعدة)
+                    قاموس كلمات البحث للتصنيف التلقائي واكتشاف الأعمدة (قواعد التوجيه المحاسبي الذكي — {EXCEL_SEARCH_KEYWORDS.length} قاعدة)
                   </h4>
                   <p className="text-xs text-[#707070] mt-0.5">
                     يستخدمها المحرك لاقتراح البند المعياري تلقائياً بمجرد قراءة اسم الحساب العربي أو الإنجليزي
@@ -3601,7 +4341,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
                 <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
                   <h4 className="text-sm font-bold text-[#141414] m-0">
-                    أولاً: شرح الحركات والأرصدة في ميزان المراجعة (ورقة شرح_الحركات_والأرصدة — P/Q, R/S, T/U)
+                    أولاً: شرح الحركات والأرصدة في ميزان المراجعة (قواعد احتساب الأرصدة والحركات — P/Q, R/S, T/U)
                   </h4>
                 </div>
                 <div className="p-4 space-y-2 text-xs">
@@ -3620,7 +4360,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
                 <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
                   <h4 className="text-sm font-bold text-[#141414] m-0">
-                    ثانياً: ضوابط حوكمة شجرة الحسابات ومعيار IFRS 18 (ورقة حوكمة_الحسابات)
+                    ثانياً: ضوابط حوكمة شجرة الحسابات ومعيار IFRS 18 (ضوابط حوكمة الحسابات)
                   </h4>
                 </div>
                 <div className="overflow-x-auto">
@@ -3648,7 +4388,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <div className="bg-white rounded-3xl border border-[#e0e0e0] overflow-hidden shadow-xs">
                 <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0]">
                   <h4 className="text-sm font-bold text-[#141414] m-0">
-                    ثالثاً: رسائل النظام التحذيرية والإرشادية (ورقة رسائل_النظام)
+                    ثالثاً: رسائل النظام التحذيرية والإرشادية (تنبيهات الرقابة المحاسبية)
                   </h4>
                 </div>
                 <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
@@ -3678,7 +4418,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <li>استخدم زر <strong>(اعتماد التصنيف المقترح)</strong> لتصنيف الحسابات غير المصنفة آلياً باستخدام قاموس الـ 257 كلمة مفتاحية.</li>
               <li>افتح تبويب <strong>(مركز الفحوصات وكشف الأخطاء)</strong> لمراجعة الـ 34 فحصاً معيارياً وجدول تفصيل الأخطاء على مستوى الحسابات.</li>
               <li>استعرض <strong>القوائم المالية الخمس</strong> واضغط على أي قسم في المركز المالي أو قائمة الدخل لتوسيع البنود الفرعية وإضافة حقول مخصصة للأصول.</li>
-              <li>افتح تبويب <strong>(الدليل والشجرة القابلة للتوسع)</strong> لاستعراض شجرة الإكسل الكاملة (319 عقدة + المستوى الرابع للحسابات) أو شجرة الشركة التشغيلية.</li>
+              <li>افتح تبويب <strong>(الدليل والشجرة القابلة للتوسع)</strong> لاستعراض شجرة الحسابات القياسية الكاملة (319 عقدة + المستوى الرابع للحسابات) أو شجرة الشركة التشغيلية.</li>
               <li>استخدم <strong>(محاكي خطة النسب المالية What-If)</strong> لاختبار خطة تحسين السيولة والربحية وتصدير التقارير إلى Excel أو PDF.</li>
             </ol>
           </div>
