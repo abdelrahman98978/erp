@@ -81,6 +81,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
     'balance-sheet' | 'income-statement' | 'equity-changes' | 'cash-flow'
   >(initialStatementView);
 
+  React.useEffect(() => {
+    setActiveSubTab(initialSection);
+  }, [initialSection]);
+
+  React.useEffect(() => {
+    setActiveStatementView(initialStatementView);
+  }, [initialStatementView]);
+
   const [entries, setEntries] = useState<TrialBalanceEntry[]>(() =>
     ifrsFinancialEngineService.getTrialBalance(activeCompanyId)
   );
@@ -88,6 +96,11 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const [settings, setSettings] = useState<IfrsGeneralSettings>(() =>
     ifrsFinancialEngineService.getSettings(activeCompanyId, activeCompany.name)
   );
+
+  React.useEffect(() => {
+    setEntries(ifrsFinancialEngineService.getTrialBalance(activeCompanyId));
+    setSettings(ifrsFinancialEngineService.getSettings(activeCompanyId, activeCompany.name));
+  }, [activeCompanyId, activeCompany.name]);
 
   const [tbSearch, setTbSearch] = useState('');
   const [tbFilter, setTbFilter] = useState<'all' | 'unclassified' | 'warnings' | 'classified'>('all');
