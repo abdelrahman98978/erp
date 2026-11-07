@@ -90,6 +90,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
   const [tbSearch, setTbSearch] = useState('');
   const [tbFilter, setTbFilter] = useState<'all' | 'unclassified' | 'warnings' | 'classified'>('all');
   const [tbCodeFilter, setTbCodeFilter] = useState<string>('ALL');
+  const [tbSectionFilter, setTbSectionFilter] = useState<string>('ALL');
 
   // Column visibility toggles in Trial Balance (including Closing Debit & Credit hide/show)
   const [showClosingBalanceCols, setShowClosingBalanceCols] = useState<boolean>(true);
@@ -381,20 +382,32 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
       if (tbFilter === 'unclassified' && r.approvedCode) return false;
       if (tbFilter === 'classified' && !r.approvedCode) return false;
       if (tbFilter === 'warnings' && !r.auditNote) return false;
-      if (tbCodeFilter !== 'ALL' && r.approvedCode !== tbCodeFilter) return false;
+      if (tbSectionFilter !== 'ALL' && r.sectionAr !== tbSectionFilter) return false;
+      if (
+        tbCodeFilter !== 'ALL' &&
+        r.approvedCode !== tbCodeFilter &&
+        r.approvedSubCode !== tbCodeFilter &&
+        r.manualCode !== tbCodeFilter
+      ) {
+        return false;
+      }
       if (tbSearch.trim()) {
         const q = tbSearch.trim().toLowerCase();
         return (
           r.accountName.toLowerCase().includes(q) ||
           r.erpCode.toLowerCase().includes(q) ||
           r.approvedCode.toLowerCase().includes(q) ||
+          (r.approvedSubCode || '').toLowerCase().includes(q) ||
           r.manualCode.toLowerCase().includes(q) ||
-          r.approvedItemName.toLowerCase().includes(q)
+          r.approvedItemName.toLowerCase().includes(q) ||
+          (r.approvedSubItemName || '').toLowerCase().includes(q) ||
+          (r.sectionAr || '').toLowerCase().includes(q) ||
+          (r.ifrsRef || '').toLowerCase().includes(q)
         );
       }
       return true;
     });
-  }, [engine.rows, tbFilter, tbCodeFilter, tbSearch, hiddenRowSeqs, hideZeroBalanceRows]);
+  }, [engine.rows, tbFilter, tbSectionFilter, tbCodeFilter, tbSearch, hiddenRowSeqs, hideZeroBalanceRows]);
 
   // What-If Simulated Financial Ratios Calculation
   const simulatedPlan = useMemo(() => {
@@ -760,9 +773,13 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
         'م': r.seq,
         'رقم الحساب ERP': r.erpCode,
         'اسم الحساب': r.accountName,
-        'التصنيف المختار (رئيسي/فرعي)': r.manualCode || r.approvedCode,
-        'البند المعتمد بالقوائم': r.approvedCode,
+        'كود البند الرئيسي (34)': r.approvedCode,
         'اسم البند في القوائم': r.approvedItemName,
+        'كود التصنيف الفرعي الموسع (314)': r.approvedSubCode || r.manualCode || r.approvedCode,
+        'اسم البند الفرعي الموسع': r.approvedSubItemName || r.approvedItemName,
+        'القسم في القوائم': r.sectionAr,
+        'مرجع المعيار (IFRS / IAS)': r.ifrsRef,
+        'نوع التدفق النقدي': r.cashFlowType,
         'الطبيعة': r.naturalBalance,
       };
       if (showOpeningCols) {
@@ -1213,10 +1230,15 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
         'التصنيف الرئيسي': acc.category,
         'الطبيعة المحاسبية': acc.nature,
         'المستوى الشجري': `المستوى ${acc.level}`,
-        'كود القوائم (IFRS)': acc.ifrsCode || suggestIfrsCode(acc.nameAr),
+        'كود البند الرئيسي (34)': acc.ifrsCode || suggestIfrsCode(acc.nameAr),
+        'اسم البند الرئيسي': acc.ifrsItemName || '-',
+        'كود التصنيف الفرعي الموسع (314)': acc.ifrsSubCode || acc.ifrsCode || '-',
+        'اسم البند الفرعي الموسع': acc.ifrsSubItemName || '-',
+        'القسم في القوائم': acc.ifrsSection || acc.statementType,
+        'مرجع المعيار (IFRS / IAS)': acc.ifrsRef || '-',
+        'نوع التدفق النقدي': acc.cashFlowType || '-',
         'الرصيد الافتتاحي': acc.openingBalance,
         'الرصيد الحالي (ر.س)': acc.balance,
-        'القائمة الختامية': acc.statementType,
       }));
     }
     if (coaSubView === 'linked-coa-sheet') {
@@ -1224,8 +1246,12 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
         'م': r.seq,
         'رقم الحساب ERP': r.erpCode,
         'اسم الحساب': r.accountName,
-        'التصنيف المختار': r.manualCode || r.approvedCode || '-',
+        'كود البند الرئيسي (34)': r.approvedCode || '-',
         'البند المالي المعتمد': r.approvedItemName || 'غير مصنف',
+        'كود التصنيف الفرعي الموسع (314)': r.approvedSubCode || r.manualCode || '-',
+        'اسم البند الفرعي الموسع': r.approvedSubItemName || '-',
+        'القسم في القوائم': r.sectionAr || '-',
+        'مرجع المعيار (IFRS / IAS)': r.ifrsRef || '-',
         'الرصيد النهائي مدين': r.closingDebit,
         'الرصيد النهائي دائن': r.closingCredit,
         'حالة الربط': r.approvedCode ? 'مرتبط' : 'غير مصنف',
@@ -3295,17 +3321,41 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 </select>
 
                 <select
+                  aria-label="فلترة بقسم القائمة المالية"
+                  value={tbSectionFilter}
+                  onChange={(e) => setTbSectionFilter(e.target.value)}
+                  className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 px-3 text-xs font-semibold text-[#141414]"
+                >
+                  <option value="ALL">كل أقسام القوائم (6 أقسام Excel)</option>
+                  <option value="مركز مالي - أصول غير متداولة">مركز مالي - أصول غير متداولة (A-01..A-05)</option>
+                  <option value="مركز مالي - أصول متداولة">مركز مالي - أصول متداولة (A-06..A-10)</option>
+                  <option value="مركز مالي - التزامات">مركز مالي - التزامات (L-01..L-09)</option>
+                  <option value="مركز مالي - حقوق الملكية">مركز مالي - حقوق الملكية (E-01..E-04)</option>
+                  <option value="دخل شامل آخر">دخل شامل آخر (O-01)</option>
+                  <option value="قائمة الدخل">قائمة الدخل (R-01..R-10)</option>
+                </select>
+
+                <select
                   aria-label="فلترة ببند القوائم المالية"
                   value={tbCodeFilter}
                   onChange={(e) => setTbCodeFilter(e.target.value)}
                   className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-full py-1.5 px-3 text-xs font-semibold text-[#141414]"
                 >
-                  <option value="ALL">كل بنود القوائم (A-01..R-10)</option>
-                  {IFRS_MAPPING_CODES.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.code} - {c.nameAr}
-                    </option>
-                  ))}
+                  <option value="ALL">كل بنود القوائم (34 رئيسي + 314 موسع)</option>
+                  <optgroup label="البنود الرئيسية (34 رمزاً)">
+                    {IFRS_MAPPING_CODES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.code} - {c.nameAr}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="البنود الفرعية الموسعة (314 بنداً)">
+                    {EXTENDED_IFRS_CLASSIFICATIONS.filter((x) => x.level === 3).map((x) => (
+                      <option key={x.code} value={x.code}>
+                        {x.code} - {x.nameAr}
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
               </div>
 
@@ -3623,10 +3673,10 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                             className="w-full bg-transparent border-b border-transparent focus:border-[#141414] focus:outline-none text-xs font-semibold text-[#141414]"
                           />
                         </td>
-                        <td className="p-2 min-w-[230px]">
+                        <td className="p-2 min-w-[260px]">
                           <select
                             aria-label={`تصنيف الحساب ${row.accountName}`}
-                            value={row.manualCode || row.approvedCode}
+                            value={row.manualCode || row.approvedSubCode || row.approvedCode}
                             onChange={(e) => handleUpdateRow(row.seq, { manualCode: e.target.value })}
                             className={`w-full rounded-lg py-1 px-2 text-[11px] font-semibold border ${
                               row.approvedCode
@@ -3650,8 +3700,23 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                               ))}
                             </optgroup>
                           </select>
+                          {row.approvedCode && (
+                            <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#f3f3f3] text-[#141414] font-bold">
+                                {row.approvedCode}: {row.approvedItemName}
+                              </span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f3f3f3] text-[#707070]">
+                                {row.sectionAr}
+                              </span>
+                            </div>
+                          )}
                         </td>
-                        <td className="p-2 font-mono text-[11px] text-[#707070] whitespace-nowrap">{ifrsRef}</td>
+                        <td className="p-2 font-mono text-[11px] text-[#707070] whitespace-nowrap">
+                          <div>{row.ifrsRef || ifrsRef}</div>
+                          {row.cashFlowType && (
+                            <div className="text-[10px] font-sans text-[#707070]">{row.cashFlowType}</div>
+                          )}
+                        </td>
                         {showOpeningCols && (
                           <td className="p-2">
                             <input

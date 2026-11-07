@@ -57,19 +57,19 @@ const MOCK_VOUCHERS: Voucher[] = [
 ];
 
 const TRIAL_BALANCE_DATA = [
-  { code: '1101', name: 'الصندوق الرئيسي (Cash)', type: 'أصول', opening_debit: 150000, opening_credit: 0, period_debit: 45000, period_credit: 40800, balance: 154200 },
-  { code: '1102', name: 'بنك الرياض - حساب الاستقدام', type: 'أصول', opening_debit: 380000, opening_credit: 0, period_debit: 82000, period_credit: 41500, balance: 420500 },
-  { code: '1103', name: 'بنك الراجحي - الحساب التشغيلي', type: 'أصول', opening_debit: 220000, opening_credit: 0, period_debit: 110300, period_credit: 55000, balance: 275300 },
-  { code: '1104', name: 'أمانات مساند المعلقة (90 يوماً)', type: 'أصول', opening_debit: 160000, opening_credit: 0, period_debit: 54500, period_credit: 30000, balance: 184500 },
-  { code: '1201', name: 'الأصول الثابتة (مباني وسيارات)', type: 'أصول', opening_debit: 882500, opening_credit: 0, period_debit: 0, period_credit: 0, balance: 882500 },
-  { code: '2101', name: 'مستحقات الموردين والوكلاء الخارجيين', type: 'خصوم', opening_debit: 0, opening_credit: 175000, period_debit: 25000, period_credit: 39375, balance: -189375 },
-  { code: '2102', name: 'مخصص مكافأة نهاية الخدمة (EOSB)', type: 'خصوم', opening_debit: 0, opening_credit: 88000, period_debit: 0, period_credit: 6200, balance: -94200 },
-  { code: '2103', name: 'أمانات ضريبة القيمة المضافة (ZATCA 15%)', type: 'خصوم', opening_debit: 0, opening_credit: 110000, period_debit: 12000, period_credit: 26000, balance: -124000 },
-  { code: '3101', name: 'رأس المال المدفوع', type: 'حقوق ملكية', opening_debit: 0, opening_credit: 1205000, period_debit: 0, period_credit: 0, balance: -1205000 },
-  { code: '4101', name: 'إيرادات وساطة عقود الاستقدام', type: 'إيرادات', opening_debit: 0, opening_credit: 320000, period_debit: 0, period_credit: 90000, balance: -410000 },
-  { code: '4102', name: 'إيرادات عقود التأجير والتشغيل', type: 'إيرادات', opening_debit: 0, opening_credit: 85000, period_debit: 0, period_credit: 30471.2, balance: -115471.2 },
-  { code: '5101', name: 'مصروفات تشغيل ومراكز إيواء', type: 'مصروفات', opening_debit: 75000, opening_credit: 0, period_debit: 15000, period_credit: 0, balance: 90000 },
-  { code: '5102', name: 'رواتب وأجور الكوادر الإدارية', type: 'مصروفات', opening_debit: 110000, opening_credit: 0, period_debit: 20500, period_credit: 0, balance: 130500 },
+  { code: '1101', name: 'الصندوق الرئيسي (Cash)', type: 'أصول', ifrsCode: 'A-10', ifrsSubCode: 'A-10-01', ifrsItemName: 'النقد وما في حكمه', ifrsSubItemName: 'النقد في الصناديق الرئيسية', ifrsSection: 'مركز مالي - أصول متداولة', ifrsRef: 'IAS 7', cashFlowType: 'نقد وما في حكمه', opening_debit: 150000, opening_credit: 0, period_debit: 45000, period_credit: 40800, balance: 154200 },
+  { code: '1102', name: 'بنك الرياض - حساب الاستقدام', type: 'أصول', ifrsCode: 'A-10', ifrsSubCode: 'A-10-08', ifrsItemName: 'النقد وما في حكمه', ifrsSubItemName: 'حسابات جارية تشغيلية لدى البنوك المحلية', ifrsSection: 'مركز مالي - أصول متداولة', ifrsRef: 'IAS 7', cashFlowType: 'نقد وما في حكمه', opening_debit: 380000, opening_credit: 0, period_debit: 82000, period_credit: 41500, balance: 420500 },
+  { code: '1103', name: 'بنك الراجحي - الحساب التشغيلي', type: 'أصول', ifrsCode: 'A-10', ifrsSubCode: 'A-10-08', ifrsItemName: 'النقد وما في حكمه', ifrsSubItemName: 'حسابات جارية تشغيلية لدى البنوك المحلية', ifrsSection: 'مركز مالي - أصول متداولة', ifrsRef: 'IAS 7', cashFlowType: 'نقد وما في حكمه', opening_debit: 220000, opening_credit: 0, period_debit: 110300, period_credit: 55000, balance: 275300 },
+  { code: '1104', name: 'أمانات مساند المعلقة (90 يوماً)', type: 'أصول', ifrsCode: 'A-07', ifrsSubCode: 'A-07-05', ifrsItemName: 'ذمم مدينة تجارية', ifrsSubItemName: 'ذمم مدينة من عقود خدمات التوسط والعمالة (مساند)', ifrsSection: 'مركز مالي - أصول متداولة', ifrsRef: 'IFRS 9 / IFRS 15', cashFlowType: 'تشغيلي - رأس مال عامل', opening_debit: 160000, opening_credit: 0, period_debit: 54500, period_credit: 30000, balance: 184500 },
+  { code: '1201', name: 'الأصول الثابتة (مباني وسيارات)', type: 'أصول', ifrsCode: 'A-01', ifrsSubCode: 'A-01-04', ifrsItemName: 'ممتلكات وآلات ومعدات (إجمالي)', ifrsSubItemName: 'وسائل نقل وانتقال وأسطول مركبات', ifrsSection: 'مركز مالي - أصول غير متداولة', ifrsRef: 'IAS 16', cashFlowType: 'استثماري', opening_debit: 882500, opening_credit: 0, period_debit: 0, period_credit: 0, balance: 882500 },
+  { code: '2101', name: 'مستحقات الموردين والوكلاء الخارجيين', type: 'خصوم', ifrsCode: 'L-04', ifrsSubCode: 'L-04-02', ifrsItemName: 'ذمم دائنة تجارية', ifrsSubItemName: 'موردون خارجيون ووكالات توظيف خارجية', ifrsSection: 'مركز مالي - التزامات', ifrsRef: 'IAS 1.69', cashFlowType: 'تشغيلي - رأس مال عامل', opening_debit: 0, opening_credit: 175000, period_debit: 25000, period_credit: 39375, balance: -189375 },
+  { code: '2102', name: 'مخصص مكافأة نهاية الخدمة (EOSB)', type: 'خصوم', ifrsCode: 'L-03', ifrsSubCode: 'L-03-01', ifrsItemName: 'مخصص مكافأة نهاية الخدمة', ifrsSubItemName: 'مخصص مكافأة نهاية الخدمة للموظفين (EOSB)', ifrsSection: 'مركز مالي - التزامات', ifrsRef: 'IAS 19', cashFlowType: 'تشغيلي', opening_debit: 0, opening_credit: 88000, period_debit: 0, period_credit: 6200, balance: -94200 },
+  { code: '2103', name: 'أمانات ضريبة القيمة المضافة (ZATCA 15%)', type: 'خصوم', ifrsCode: 'L-05', ifrsSubCode: 'L-05-09', ifrsItemName: 'مصروفات مستحقة وأرصدة دائنة أخرى', ifrsSubItemName: 'ضريبة القيمة المضافة المستحقة للهيئة (VAT Output)', ifrsSection: 'مركز مالي - التزامات', ifrsRef: 'IAS 37 / ZATCA', cashFlowType: 'تشغيلي - رأس مال عامل', opening_debit: 0, opening_credit: 110000, period_debit: 12000, period_credit: 26000, balance: -124000 },
+  { code: '3101', name: 'رأس المال المدفوع', type: 'حقوق ملكية', ifrsCode: 'E-01', ifrsSubCode: 'E-01-01', ifrsItemName: 'رأس المال', ifrsSubItemName: 'رأس المال المدفوع', ifrsSection: 'مركز مالي - حقوق الملكية', ifrsRef: 'IAS 1.78(e)', cashFlowType: 'تمويلي', opening_debit: 0, opening_credit: 1205000, period_debit: 0, period_credit: 0, balance: -1205000 },
+  { code: '4101', name: 'إيرادات وساطة عقود الاستقدام', type: 'إيرادات', ifrsCode: 'R-01', ifrsSubCode: 'R-01-07', ifrsItemName: 'الإيرادات التشغيلية', ifrsSubItemName: 'إيرادات خدمات التوسط في الاستقدام (مساند)', ifrsSection: 'قائمة الدخل', ifrsRef: 'IFRS 15', cashFlowType: 'تشغيلي', opening_debit: 0, opening_credit: 320000, period_debit: 0, period_credit: 90000, balance: -410000 },
+  { code: '4102', name: 'إيرادات عقود التأجير والتشغيل', type: 'إيرادات', ifrsCode: 'R-01', ifrsSubCode: 'R-01-15', ifrsItemName: 'الإيرادات التشغيلية', ifrsSubItemName: 'إيرادات تأجير الموارد البشرية وتشغيل الكوادر', ifrsSection: 'قائمة الدخل', ifrsRef: 'IFRS 15', cashFlowType: 'تشغيلي', opening_debit: 0, opening_credit: 85000, period_debit: 0, period_credit: 30471.2, balance: -115471.2 },
+  { code: '5101', name: 'مصروفات تشغيل ومراكز إيواء', type: 'مصروفات', ifrsCode: 'R-02', ifrsSubCode: 'R-02-07', ifrsItemName: 'تكلفة الإيرادات', ifrsSubItemName: 'تكلفة عقود التوسط والاستقدام المباشرة', ifrsSection: 'قائمة الدخل', ifrsRef: 'IAS 2 / IAS 1.99', cashFlowType: 'تشغيلي', opening_debit: 75000, opening_credit: 0, period_debit: 15000, period_credit: 0, balance: 90000 },
+  { code: '5102', name: 'رواتب وأجور الكوادر الإدارية', type: 'مصروفات', ifrsCode: 'R-04', ifrsSubCode: 'R-04-01', ifrsItemName: 'مصروفات عمومية وإدارية', ifrsSubItemName: 'رواتب وأجور الإدارة والموظفين الإداريين', ifrsSection: 'قائمة الدخل', ifrsRef: 'IAS 1.99', cashFlowType: 'تشغيلي', opening_debit: 110000, opening_credit: 0, period_debit: 20500, period_credit: 0, balance: 130500 },
 ];
 
 const SUPPLIERS_ACCOUNTS = [
@@ -673,6 +673,8 @@ export const FinancePage: React.FC = () => {
                     <th className="p-3">رمز الحساب</th>
                     <th className="p-3">اسم الحساب المحاسبي</th>
                     <th className="p-3">النوع</th>
+                    <th className="p-3">التصنيف المعتمد (Excel IFRS 34 / 314)</th>
+                    <th className="p-3">المعيار والتدفق</th>
                     <th className="p-3 font-mono">افتتاحي مدين</th>
                     <th className="p-3 font-mono">افتتاحي دائن</th>
                     <th className="p-3 font-mono">حركة مدين</th>
@@ -700,6 +702,18 @@ export const FinancePage: React.FC = () => {
                         <td className="p-3">
                           <Badge text={row.type} type="purple" />
                         </td>
+                        <td className="p-3">
+                          <div className="font-mono font-bold text-[11px] text-[#141414]">
+                            {row.ifrsSubCode} — {row.ifrsSubItemName}
+                          </div>
+                          <div className="text-[10.5px] text-[#707070] mt-0.5">
+                            {row.ifrsCode} ({row.ifrsItemName}) • {row.ifrsSection}
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          <span className="font-mono text-[11px] font-bold text-[#141414] block">{row.ifrsRef}</span>
+                          <span className="text-[10px] text-[#707070]">{row.cashFlowType}</span>
+                        </td>
                         <td className="p-3 font-mono">{row.opening_debit.toLocaleString()}</td>
                         <td className="p-3 font-mono">{row.opening_credit.toLocaleString()}</td>
                         <td className="p-3 font-mono text-[#141414] font-bold">{row.period_debit.toLocaleString()}</td>
@@ -720,7 +734,7 @@ export const FinancePage: React.FC = () => {
                 </tbody>
                 <tfoot className="bg-[#141414] text-[#ffffff] font-bold">
                   <tr>
-                    <td colSpan={3} className="p-3">الإجمالي الكلي لميزان المراجعة (متزن ✔)</td>
+                    <td colSpan={5} className="p-3">الإجمالي الكلي لميزان المراجعة (متزن ✔)</td>
                     <td className="p-3 font-mono">
                       {TRIAL_BALANCE_DATA.reduce((s, r) => s + r.opening_debit, 0).toLocaleString()} ⃁
                     </td>
@@ -1743,12 +1757,19 @@ export const FinancePage: React.FC = () => {
           {/* Filters & Search */}
           <div className="flex items-center justify-between flex-wrap gap-3 bg-zinc-50 p-3 rounded-2xl border border-zinc-200">
             <div className="flex items-center gap-1.5 flex-wrap">
-              {['ALL', 'أصول', 'خصوم', 'حقوق ملكية', 'إيرادات', 'مصروفات'].map((cat) => {
-                const isActive = coaCategoryFilter === cat;
+              {[
+                { key: 'ALL', label: 'جميع الحسابات' },
+                { key: 'أصول', label: '1. أصول (A-01..A-10)' },
+                { key: 'خصوم', label: '2. خصوم (L-01..L-09)' },
+                { key: 'حقوق ملكية', label: '3. حقوق ملكية و OCI (E-01..O-01)' },
+                { key: 'إيرادات', label: '4. إيرادات (R-01 / R-05 / R-07)' },
+                { key: 'مصروفات', label: '5. مصروفات وتكاليف (R-02..R-10)' },
+              ].map((cat) => {
+                const isActive = coaCategoryFilter === cat.key;
                 return (
                   <button
-                    key={cat}
-                    onClick={() => setCoaCategoryFilter(cat)}
+                    key={cat.key}
+                    onClick={() => setCoaCategoryFilter(cat.key)}
                     style={{
                       padding: '4px 14px',
                       borderRadius: '9999px',
@@ -1762,7 +1783,7 @@ export const FinancePage: React.FC = () => {
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    {cat === 'ALL' ? 'جميع الحسابات' : cat}
+                    {cat.label}
                   </button>
                 );
               })}
@@ -1772,8 +1793,8 @@ export const FinancePage: React.FC = () => {
               type="text"
               value={coaSearchQuery}
               onChange={(e) => setCoaSearchQuery(e.target.value)}
-              placeholder="بحث برقم الحساب أو الاسم..."
-              className="bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414] w-60"
+              placeholder="بحث برقم الحساب، الاسم، أو كود التصنيف (A-01, R-01)..."
+              className="bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414] w-72"
             />
           </div>
 
@@ -1783,11 +1804,12 @@ export const FinancePage: React.FC = () => {
               <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
                 <tr>
                   <th className="p-3">رقم الحساب</th>
-                  <th className="p-3">اسم الحساب (عربي)</th>
-                  <th className="p-3">Account Name (EN)</th>
+                  <th className="p-3">اسم الحساب (عربي / EN)</th>
                   <th className="p-3">التصنيف المحاسبي</th>
+                  <th className="p-3">التصنيف الرئيسي بالقوائم (34 رمزاً)</th>
+                  <th className="p-3">التصنيف الفرعي الموسع (314 بنداً)</th>
+                  <th className="p-3">المعيار والتدفق النقدي</th>
                   <th className="p-3 font-mono">الرصيد التراكمي</th>
-                  <th className="p-3">طبيعة الحساب</th>
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
               </thead>
@@ -1796,10 +1818,17 @@ export const FinancePage: React.FC = () => {
                   .getAccountsByCompany(activeCompany.id as any)
                   .filter((acc) => {
                     const matchesCategory = coaCategoryFilter === 'ALL' || acc.category === coaCategoryFilter;
+                    const q = coaSearchQuery.toLowerCase();
                     const matchesSearch =
-                      acc.code.includes(coaSearchQuery) ||
-                      acc.nameAr.includes(coaSearchQuery) ||
-                      acc.nameEn.toLowerCase().includes(coaSearchQuery.toLowerCase());
+                      !q ||
+                      acc.code.toLowerCase().includes(q) ||
+                      acc.nameAr.toLowerCase().includes(q) ||
+                      acc.nameEn.toLowerCase().includes(q) ||
+                      (acc.ifrsCode || '').toLowerCase().includes(q) ||
+                      (acc.ifrsSubCode || '').toLowerCase().includes(q) ||
+                      (acc.ifrsItemName || '').toLowerCase().includes(q) ||
+                      (acc.ifrsSubItemName || '').toLowerCase().includes(q) ||
+                      (acc.ifrsSection || '').toLowerCase().includes(q);
                     return matchesCategory && matchesSearch;
                   })
                   .map((account) => (
@@ -1808,11 +1837,13 @@ export const FinancePage: React.FC = () => {
                       className="hover:bg-zinc-50 transition-colors"
                     >
                       <td className="p-3 font-mono font-bold text-[#141414]">{account.code}</td>
-                      <td className="p-3 font-bold text-[#141414]">{account.nameAr}</td>
-                      <td className="p-3 font-mono text-[#707070]">{account.nameEn}</td>
+                      <td className="p-3">
+                        <div className="font-bold text-[#141414]">{account.nameAr}</div>
+                        <div className="font-mono text-[10.5px] text-[#707070]">{account.nameEn}</div>
+                      </td>
                       <td className="p-3">
                         <Badge
-                          text={account.category}
+                          text={`${account.category} (${account.nature})`}
                           type={
                             account.category === 'أصول'
                               ? 'info'
@@ -1824,11 +1855,24 @@ export const FinancePage: React.FC = () => {
                           }
                         />
                       </td>
+                      <td className="p-3">
+                        <span className="font-mono font-bold text-[#141414] bg-[#f3f3f3] px-2 py-0.5 rounded text-[11px]">
+                          {account.ifrsCode} — {account.ifrsItemName}
+                        </span>
+                        <div className="text-[10px] text-[#707070] mt-0.5">{account.ifrsSection}</div>
+                      </td>
+                      <td className="p-3">
+                        <span className="font-mono font-semibold text-[#141414] text-[11px] block">
+                          {account.ifrsSubCode}
+                        </span>
+                        <span className="text-[10.5px] text-[#707070]">{account.ifrsSubItemName}</span>
+                      </td>
+                      <td className="p-3">
+                        <span className="font-mono font-bold text-[11px] text-[#141414] block">{account.ifrsRef}</span>
+                        <span className="text-[10px] text-[#707070]">{account.cashFlowType}</span>
+                      </td>
                       <td className="p-3 font-mono font-bold text-[#141414]">
                         {account.balance.toLocaleString()} {account.currency}
-                      </td>
-                      <td className="p-3 text-zinc-600 font-medium">
-                        {account.category === 'أصول' || account.category === 'مصروفات' ? 'مدين بطبيعته' : 'دائن بطبيعته'}
                       </td>
                       <td className="p-3 text-center">
                         <button

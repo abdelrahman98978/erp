@@ -1,5 +1,6 @@
 import { CompanyId } from '../../types';
 import { normalizeCompanyId } from '../../contexts/CompanyContext';
+import { resolveIfrsClassificationMetadata } from './ifrsFinancialEngineService';
 
 export interface CustomFieldDefinition {
   key: string;
@@ -30,6 +31,12 @@ export interface AccountItem {
   isHeader?: boolean;
   notes?: string;
   ifrsCode?: string;
+  ifrsSubCode?: string;
+  ifrsItemName?: string;
+  ifrsSubItemName?: string;
+  ifrsSection?: string;
+  ifrsRef?: string;
+  cashFlowType?: string;
   costCenter?: string;
   customFields?: Record<string, string>;
 }
@@ -46,68 +53,100 @@ export const DEFAULT_CUSTOM_ASSET_FIELDS: CustomFieldDefinition[] = [
   { key: 'salvageValue', label: 'القيمة التخريدية (⃁)', section: 'أصول', fieldType: 'number', defaultValue: '0' },
 ];
 
-// ─── Standard Multi-Level Saudi Chart of Accounts Matrix (SMACC & IFRS Compliant) ─────────────────────
+export function enrichAccountWithIfrsClassification<T extends Partial<AccountItem>>(acc: T): T {
+  const meta = resolveIfrsClassificationMetadata(acc.ifrsSubCode || acc.ifrsCode, acc.nameAr);
+  return {
+    ...acc,
+    ifrsCode: acc.ifrsCode || meta.primaryCode,
+    ifrsSubCode: acc.ifrsSubCode || meta.subCode,
+    ifrsItemName: acc.ifrsItemName || meta.primaryNameAr,
+    ifrsSubItemName: acc.ifrsSubItemName || meta.subNameAr,
+    ifrsSection: acc.ifrsSection || meta.sectionAr,
+    ifrsRef: acc.ifrsRef || meta.ifrsRef,
+    cashFlowType: acc.cashFlowType || meta.cashFlowType,
+  };
+}
+
+// ─── Standard Multi-Level Saudi Chart of Accounts Matrix (Complete 34 IFRS Excel Classifications + Extended Sub-Classifications) ─────
 const STANDARD_SMACC_COA: Omit<AccountItem, 'id' | 'companyId'>[] = [
   // ═══ 1. الأصول (Assets) ═══
-  { code: '1', nameAr: 'الأصول (Assets)', nameEn: 'Assets', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 1, balance: 2850000, openingBalance: 2400000, currentDebit: 850000, currentCredit: 400000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-01' },
+  { code: '1', nameAr: 'الأصول (Assets)', nameEn: 'Assets', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 1, balance: 2850000, openingBalance: 2400000, currentDebit: 850000, currentCredit: 400000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-01', ifrsSubCode: 'A-01' },
 
-  // 11. الأصول المتداولة
-  { code: '11', nameAr: 'الأصول المتداولة (Current Assets)', nameEn: 'Current Assets', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '1', balance: 1967500, openingBalance: 1600000, currentDebit: 750000, currentCredit: 382500, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-10' },
+  // 11. الأصول المتداولة (A-06 .. A-10)
+  { code: '11', nameAr: 'الأصول المتداولة (Current Assets)', nameEn: 'Current Assets', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '1', balance: 1967500, openingBalance: 1600000, currentDebit: 750000, currentCredit: 382500, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-10', ifrsSubCode: 'A-10' },
 
-  // 1101. النقد وما في حكمه
-  { code: '1101', nameAr: 'النقدية وما في حكمها (Cash & Cash Equivalents)', nameEn: 'Cash & Equivalents', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 230000, openingBalance: 190000, currentDebit: 120000, currentCredit: 80000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-10' },
-  { code: '110101', nameAr: 'الصندوق الرئيسي (الخزينة المركزية)', nameEn: 'Main Treasury Cash Box', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1101', balance: 185000, openingBalance: 150000, currentDebit: 95000, currentCredit: 60000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10', customFields: { assetLocation: 'الرياض - الإدارة المالية' } },
-  { code: '110102', nameAr: 'عهد الفروع النقدية المؤقتة', nameEn: 'Branch Petty Cash', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1101', balance: 45000, openingBalance: 40000, currentDebit: 25000, currentCredit: 20000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10', customFields: { assetLocation: 'فروع المملكة' } },
+  // 1101. النقد وما في حكمه (A-10)
+  { code: '1101', nameAr: 'النقدية وما في حكمها (Cash & Cash Equivalents)', nameEn: 'Cash & Equivalents', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 230000, openingBalance: 190000, currentDebit: 120000, currentCredit: 80000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-10', ifrsSubCode: 'A-10-01' },
+  { code: '110101', nameAr: 'الصندوق الرئيسي (الخزينة المركزية)', nameEn: 'Main Treasury Cash Box', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1101', balance: 185000, openingBalance: 150000, currentDebit: 95000, currentCredit: 60000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10', ifrsSubCode: 'A-10-01', customFields: { assetLocation: 'الرياض - الإدارة المالية' } },
+  { code: '110102', nameAr: 'عهد الفروع النقدية المؤقتة', nameEn: 'Branch Petty Cash', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1101', balance: 45000, openingBalance: 40000, currentDebit: 25000, currentCredit: 20000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10', ifrsSubCode: 'A-10-02', customFields: { assetLocation: 'فروع المملكة' } },
 
-  // 1102. البنوك والحسابات المصرفية
-  { code: '1102', nameAr: 'الحسابات المصرفية (Bank Accounts)', nameEn: 'Banks', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 742500, openingBalance: 610000, currentDebit: 320000, currentCredit: 187500, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-10' },
-  { code: '110201', nameAr: 'مصرف الراجحي - الحساب التشغيلي الرئيسي', nameEn: 'Al Rajhi Bank - Operating', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1102', balance: 420000, openingBalance: 350000, currentDebit: 190000, currentCredit: 120000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10' },
-  { code: '110202', nameAr: 'بنك الرياض - حساب عقود الاستقدام', nameEn: 'Riyad Bank - Recruitment', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1102', balance: 322500, openingBalance: 260000, currentDebit: 130000, currentCredit: 67500, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10' },
+  // 1102. البنوك والحسابات المصرفية (A-10-08)
+  { code: '1102', nameAr: 'الحسابات المصرفية التشغيلية (Bank Accounts)', nameEn: 'Operating Bank Accounts', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 742500, openingBalance: 610000, currentDebit: 320000, currentCredit: 187500, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-10', ifrsSubCode: 'A-10-08' },
+  { code: '110201', nameAr: 'مصرف الراجحي - الحساب التشغيلي الرئيسي', nameEn: 'Al Rajhi Bank - Operating', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1102', balance: 420000, openingBalance: 350000, currentDebit: 190000, currentCredit: 120000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10', ifrsSubCode: 'A-10-08' },
+  { code: '110202', nameAr: 'بنك الرياض - حساب عقود الاستقدام', nameEn: 'Riyad Bank - Recruitment', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 4, parentCode: '1102', balance: 322500, openingBalance: 260000, currentDebit: 130000, currentCredit: 67500, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-10', ifrsSubCode: 'A-10-08' },
 
-  // 1103. حسابات الضمان والأمانات الحكومية والمدينون
-  { code: '1103', nameAr: 'حسابات ضمان منصة مساند (Musaned Escrow Accounts)', nameEn: 'Musaned Escrow Accounts', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 345000, openingBalance: 240000, currentDebit: 195000, currentCredit: 90000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-07' },
-  { code: '1104', nameAr: 'ذمم العملاء التجارية والمدينون (Trade Receivables)', nameEn: 'Trade Receivables', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 430000, openingBalance: 380000, currentDebit: 85000, currentCredit: 35000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-07' },
-  { code: '1105', nameAr: 'مصروفات مدفوعة مقدماً وسلف موظفين (Prepayments)', nameEn: 'Prepayments & Advances', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 220000, openingBalance: 180000, currentDebit: 65000, currentCredit: 25000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-09' },
+  // 1103..1108. الذمم المدينة، المخصص، المخزون، والمدفوعات المقدمة (A-06, A-07, A-08, A-09)
+  { code: '1103', nameAr: 'حسابات ضمان منصة مساند (Musaned Escrow Accounts)', nameEn: 'Musaned Escrow Accounts', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 345000, openingBalance: 240000, currentDebit: 195000, currentCredit: 90000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-07', ifrsSubCode: 'A-07-05' },
+  { code: '1104', nameAr: 'ذمم العملاء التجارية والمدينون (Trade Receivables)', nameEn: 'Trade Receivables', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 430000, openingBalance: 380000, currentDebit: 85000, currentCredit: 35000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-07', ifrsSubCode: 'A-07-01' },
+  { code: '1105', nameAr: 'مصروفات مدفوعة مقدماً وسلف موظفين وضمانات (Prepayments)', nameEn: 'Prepayments & Advances', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 220000, openingBalance: 180000, currentDebit: 65000, currentCredit: 25000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-09', ifrsSubCode: 'A-09-01' },
+  { code: '1106', nameAr: 'مخصص خسائر ائتمانية متوقعة للذمم المدينة (IFRS 9 ECL)', nameEn: 'Expected Credit Loss Allowance', category: 'أصول', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 15000, openingBalance: 12000, currentDebit: 0, currentCredit: 3000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-08', ifrsSubCode: 'A-08-01' },
+  { code: '1107', nameAr: 'مخزون مستلزمات التشغيل والإعاشة والإيواء (IAS 2)', nameEn: 'Operating & Shelter Inventory', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 18000, openingBalance: 15000, currentDebit: 8000, currentCredit: 5000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-06', ifrsSubCode: 'A-06-05' },
+  { code: '1108', nameAr: 'ضريبة القيمة المضافة للمدخلات القابلة للاسترداد (Input VAT)', nameEn: 'Recoverable Input VAT', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 32000, openingBalance: 24000, currentDebit: 18000, currentCredit: 10000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-09', ifrsSubCode: 'A-09-10' },
+  { code: '1109', nameAr: 'المستحق من أطراف ذات علاقة وشركات شقيقة - متداول', nameEn: 'Due from Related Parties', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '11', balance: 95000, openingBalance: 80000, currentDebit: 25000, currentCredit: 10000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-09', ifrsSubCode: 'A-09-08' },
 
-  // 12. الأصول غير المتداولة (الثابتة وغير الملموسة وحق الاستخدام)
-  { code: '12', nameAr: 'الأصول غير المتداولة (Fixed & Non-Current Assets)', nameEn: 'Non-Current Assets', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '1', balance: 882500, openingBalance: 800000, currentDebit: 100000, currentCredit: 17500, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-01' },
-  { code: '1201', nameAr: 'أسطول السيارات وحافلات نقل الكوادر', nameEn: 'Vehicles & Buses Fleet', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 520000, openingBalance: 480000, currentDebit: 60000, currentCredit: 20000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-01', customFields: { depreciationRate: '20%', usefulLifeYears: '5', assetLocation: 'الرياض - الحركة والنقل', acquisitionDate: '2024-03-10', salvageValue: '45000' } },
-  { code: '1202', nameAr: 'أجهزة وأنظمة تقنية المعلومات والخوادم', nameEn: 'IT Hardware & Cloud Servers', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 142500, openingBalance: 120000, currentDebit: 30000, currentCredit: 7500, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-01', customFields: { depreciationRate: '25%', usefulLifeYears: '4', assetLocation: 'المقر الرئيسي - تقنية المعلومات', acquisitionDate: '2024-06-01', salvageValue: '5000' } },
-  { code: '1203', nameAr: 'تجهيزات ومباني مراكز الإيواء والتسكين', nameEn: 'Shelter Center Leasehold & Facilities', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 220000, openingBalance: 200000, currentDebit: 30000, currentCredit: 10000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-01', customFields: { depreciationRate: '10%', usefulLifeYears: '10', assetLocation: 'مركز الإيواء - الرياض', acquisitionDate: '2023-11-20', salvageValue: '15000' } },
-  { code: '1204', nameAr: 'أصول حق الاستخدام - عقود إيجار المقرات (IFRS 16)', nameEn: 'Right-of-Use Assets (IFRS 16)', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 310000, openingBalance: 350000, currentDebit: 0, currentCredit: 40000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-05', customFields: { depreciationRate: '20%', usefulLifeYears: '5', assetLocation: 'فروع الرياض وجدة والدمام', acquisitionDate: '2024-01-01', salvageValue: '0' } },
+  // 12. الأصول غير المتداولة (A-01 .. A-05)
+  { code: '12', nameAr: 'الأصول غير المتداولة (Fixed & Non-Current Assets)', nameEn: 'Non-Current Assets', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '1', balance: 882500, openingBalance: 800000, currentDebit: 100000, currentCredit: 17500, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'A-01', ifrsSubCode: 'A-01' },
+  { code: '1201', nameAr: 'أسطول السيارات وحافلات نقل الكوادر (بالتكلفة)', nameEn: 'Vehicles & Buses Fleet', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 520000, openingBalance: 480000, currentDebit: 60000, currentCredit: 20000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-01', ifrsSubCode: 'A-01-04', customFields: { depreciationRate: '20%', usefulLifeYears: '5', assetLocation: 'الرياض - الحركة والنقل', acquisitionDate: '2024-03-10', salvageValue: '45000' } },
+  { code: '1202', nameAr: 'أجهزة وأنظمة تقنية المعلومات والخوادم والشبكات', nameEn: 'IT Hardware & Cloud Servers', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 142500, openingBalance: 120000, currentDebit: 30000, currentCredit: 7500, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-01', ifrsSubCode: 'A-01-06', customFields: { depreciationRate: '25%', usefulLifeYears: '4', assetLocation: 'المقر الرئيسي - تقنية المعلومات', acquisitionDate: '2024-06-01', salvageValue: '5000' } },
+  { code: '1203', nameAr: 'تجهيزات وأثاث مكتبي ومباني مراكز الإيواء', nameEn: 'Shelter Center Leasehold & Furniture', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 220000, openingBalance: 200000, currentDebit: 30000, currentCredit: 10000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-01', ifrsSubCode: 'A-01-05', customFields: { depreciationRate: '10%', usefulLifeYears: '10', assetLocation: 'مركز الإيواء - الرياض', acquisitionDate: '2023-11-20', salvageValue: '15000' } },
+  { code: '1204', nameAr: 'أصول حق الاستخدام - عقود إيجار المقرات (IFRS 16)', nameEn: 'Right-of-Use Assets (IFRS 16)', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 310000, openingBalance: 350000, currentDebit: 0, currentCredit: 40000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-05', ifrsSubCode: 'A-05-01', customFields: { depreciationRate: '20%', usefulLifeYears: '5', assetLocation: 'فروع الرياض وجدة والدمام', acquisitionDate: '2024-01-01', salvageValue: '0' } },
+  { code: '1205', nameAr: 'مجمع إهلاك السيارات والممتلكات والآلات (IAS 16)', nameEn: 'Accumulated Depreciation - PPE', category: 'أصول', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 156000, openingBalance: 117000, currentDebit: 0, currentCredit: 39000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-02', ifrsSubCode: 'A-02-03' },
+  { code: '1206', nameAr: 'أصول غير ملموسة وتراخيص الأنظمة السحابية (IAS 38)', nameEn: 'Intangible Assets & Software Licenses', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 85000, openingBalance: 70000, currentDebit: 20000, currentCredit: 5000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-03', ifrsSubCode: 'A-03-01' },
+  { code: '1207', nameAr: 'استثمارات وأصول مالية طويلة الأجل (IFRS 9 / IAS 28)', nameEn: 'Long-Term Financial Investments', category: 'أصول', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '12', balance: 150000, openingBalance: 150000, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'A-04', ifrsSubCode: 'A-04-04' },
 
-  // ═══ 2. الخصوم والالتزامات (Liabilities) ═══
-  { code: '2', nameAr: 'الخصوم والالتزامات (Liabilities)', nameEn: 'Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 1, balance: 875000, openingBalance: 760000, currentDebit: 210000, currentCredit: 325000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'L-04' },
-  { code: '21', nameAr: 'الالتزامات المتداولة (Current Liabilities)', nameEn: 'Current Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '2', balance: 541000, openingBalance: 470000, currentDebit: 190000, currentCredit: 261000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'L-04' },
-  { code: '2101', nameAr: 'مستحقات الوكلاء الخارجيين والمكاتب الدولية', nameEn: 'Foreign Recruitment Agencies Payables', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 189375, openingBalance: 175000, currentDebit: 85000, currentCredit: 99375, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-04' },
-  { code: '2102', nameAr: 'أمانات ضريبة القيمة المضافة لهيئة الزكاة (VAT 15%)', nameEn: 'ZATCA VAT Output Liability', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 124000, openingBalance: 110000, currentDebit: 45000, currentCredit: 59000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-05' },
-  { code: '2103', nameAr: 'أمانات التأمينات الاجتماعية والرواتب المستحقة (GOSI & WPS)', nameEn: 'GOSI & Accrued Payroll', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 127625, openingBalance: 105000, currentDebit: 60000, currentCredit: 82625, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-05' },
-  { code: '2104', nameAr: 'مخصص الزكاة الشرعية المستحقة (Zakat Provision)', nameEn: 'Zakat Payable Provision', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 100000, openingBalance: 80000, currentDebit: 0, currentCredit: 20000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-08' },
-  { code: '22', nameAr: 'الالتزامات غير المتداولة (Non-Current Liabilities)', nameEn: 'Non-Current Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '2', balance: 334000, openingBalance: 290000, currentDebit: 20000, currentCredit: 64000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'L-03' },
-  { code: '2201', nameAr: 'مخصص مكافأة نهاية الخدمة للموظفين (IAS 19 EOSB)', nameEn: 'Employees End of Service Benefits', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '22', balance: 194000, openingBalance: 150000, currentDebit: 20000, currentCredit: 64000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-03' },
-  { code: '2202', nameAr: 'التزامات عقود الإيجار طويلة الأجل (IFRS 16)', nameEn: 'Long-Term Lease Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '22', balance: 140000, openingBalance: 140000, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-02' },
+  // ═══ 2. الخصوم والالتزامات (Liabilities — L-01 .. L-09) ═══
+  { code: '2', nameAr: 'الخصوم والالتزامات (Liabilities)', nameEn: 'Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 1, balance: 875000, openingBalance: 760000, currentDebit: 210000, currentCredit: 325000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'L-04', ifrsSubCode: 'L-04' },
+  { code: '21', nameAr: 'الالتزامات المتداولة (Current Liabilities)', nameEn: 'Current Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '2', balance: 541000, openingBalance: 470000, currentDebit: 190000, currentCredit: 261000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'L-04', ifrsSubCode: 'L-04' },
+  { code: '2101', nameAr: 'مستحقات الوكلاء الخارجيين والمكاتب الدولية (Foreign Agencies)', nameEn: 'Foreign Recruitment Agencies Payables', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 189375, openingBalance: 175000, currentDebit: 85000, currentCredit: 99375, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-04', ifrsSubCode: 'L-04-02' },
+  { code: '2102', nameAr: 'أمانات ضريبة القيمة المضافة لهيئة الزكاة (VAT 15%)', nameEn: 'ZATCA VAT Output Liability', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 124000, openingBalance: 110000, currentDebit: 45000, currentCredit: 59000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-05', ifrsSubCode: 'L-05-09' },
+  { code: '2103', nameAr: 'أمانات التأمينات الاجتماعية والرواتب المستحقة (GOSI & WPS)', nameEn: 'GOSI & Accrued Payroll', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 127625, openingBalance: 105000, currentDebit: 60000, currentCredit: 82625, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-05', ifrsSubCode: 'L-05-01' },
+  { code: '2104', nameAr: 'مخصص الزكاة الشرعية المستحقة (Zakat Provision)', nameEn: 'Zakat Payable Provision', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 100000, openingBalance: 80000, currentDebit: 0, currentCredit: 20000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-08', ifrsSubCode: 'L-08-01' },
+  { code: '2105', nameAr: 'قروض قصيرة الأجل وتسهيلات مرابحة متداولة (Short-Term Loans)', nameEn: 'Short-Term Murabaha & Facilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 60000, openingBalance: 50000, currentDebit: 15000, currentCredit: 25000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-06', ifrsSubCode: 'L-06-03' },
+  { code: '2106', nameAr: 'مخصصات ضمان عقود ومطالبات عملاء (IAS 37 Provisions)', nameEn: 'Contract Warranty & Claims Provisions', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 35000, openingBalance: 30000, currentDebit: 5000, currentCredit: 10000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-07', ifrsSubCode: 'L-07-02' },
+  { code: '2107', nameAr: 'المستحق لأطراف ذات علاقة وجاري الشركاء (IAS 24)', nameEn: 'Due to Related Parties & Partners', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '21', balance: 110000, openingBalance: 95000, currentDebit: 10000, currentCredit: 25000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-09', ifrsSubCode: 'L-09-04' },
+  { code: '22', nameAr: 'الالتزامات غير المتداولة (Non-Current Liabilities)', nameEn: 'Non-Current Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '2', balance: 334000, openingBalance: 290000, currentDebit: 20000, currentCredit: 64000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'L-03', ifrsSubCode: 'L-03' },
+  { code: '2201', nameAr: 'مخصص مكافأة نهاية الخدمة للموظفين (IAS 19 EOSB)', nameEn: 'Employees End of Service Benefits', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '22', balance: 194000, openingBalance: 150000, currentDebit: 20000, currentCredit: 64000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-03', ifrsSubCode: 'L-03-01' },
+  { code: '2202', nameAr: 'التزامات عقود الإيجار طويلة الأجل (IFRS 16)', nameEn: 'Long-Term Lease Liabilities', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '22', balance: 140000, openingBalance: 140000, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-02', ifrsSubCode: 'L-02-01' },
+  { code: '2203', nameAr: 'تمويل المرابحة والقروض البنكية طويلة الأجل (Al Rajhi Financing)', nameEn: 'Long-Term Murabaha Financing', category: 'خصوم', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 3, parentCode: '22', balance: 340000, openingBalance: 420000, currentDebit: 80000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'L-01', ifrsSubCode: 'L-01-04' },
 
-  // ═══ 3. حقوق الملكية (Equity) ═══
-  { code: '3', nameAr: 'حقوق الملكية ورأس المال (Equity)', nameEn: 'Equity', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 1, balance: 2285000, openingBalance: 1910000, currentDebit: 0, currentCredit: 375000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'E-01' },
-  { code: '31', nameAr: 'رأس المال المدفوع', nameEn: 'Paid-in Capital', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 1500000, openingBalance: 1500000, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-01' },
-  { code: '32', nameAr: 'الاحتياطي النظامي (Statutory Reserve)', nameEn: 'Statutory Reserve', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 150000, openingBalance: 120000, currentDebit: 0, currentCredit: 30000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-02' },
-  { code: '33', nameAr: 'الأرباح المبقاة والمدورة (Retained Earnings)', nameEn: 'Retained Earnings', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 635000, openingBalance: 290000, currentDebit: 0, currentCredit: 345000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-03' },
+  // ═══ 3. حقوق الملكية والدخل الشامل الآخر (Equity & OCI — E-01 .. E-04, O-01) ═══
+  { code: '3', nameAr: 'حقوق الملكية ورأس المال (Equity)', nameEn: 'Equity', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 1, balance: 2285000, openingBalance: 1910000, currentDebit: 0, currentCredit: 375000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'E-01', ifrsSubCode: 'E-01' },
+  { code: '31', nameAr: 'رأس المال المدفوع', nameEn: 'Paid-in Capital', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 1500000, openingBalance: 1500000, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-01', ifrsSubCode: 'E-01-01' },
+  { code: '32', nameAr: 'الاحتياطي النظامي (Statutory Reserve)', nameEn: 'Statutory Reserve', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 150000, openingBalance: 120000, currentDebit: 0, currentCredit: 30000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-02', ifrsSubCode: 'E-02-01' },
+  { code: '33', nameAr: 'الأرباح المبقاة والمدورة (Retained Earnings)', nameEn: 'Retained Earnings', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 635000, openingBalance: 290000, currentDebit: 0, currentCredit: 345000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-03', ifrsSubCode: 'E-03-01' },
+  { code: '34', nameAr: 'توزيعات الأرباح ومسحوبات الشركاء للسنة (Dividends & Drawings)', nameEn: 'Dividends & Partner Drawings', category: 'حقوق ملكية', nature: 'مدين', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 0, openingBalance: 0, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'E-04', ifrsSubCode: 'E-04-02' },
+  { code: '35', nameAr: 'فائض إعادة قياس منافع نهاية الخدمة (OCI — IAS 19)', nameEn: 'Other Comprehensive Income (OCI)', category: 'حقوق ملكية', nature: 'دائن', statementType: 'قائمة المركز المالي (ميزانية)', level: 2, parentCode: '3', balance: 0, openingBalance: 0, currentDebit: 0, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'O-01', ifrsSubCode: 'O-01-02' },
 
-  // ═══ 4. الإيرادات التشغيلية (Revenues) ═══
-  { code: '4', nameAr: 'الإيرادات التشغيلية والمبيعات (Revenues)', nameEn: 'Revenues', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 1, balance: 4890000, openingBalance: 0, currentDebit: 35000, currentCredit: 4925000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'R-01' },
-  { code: '41', nameAr: 'إيرادات عقود التوسط والاستقدام (مساند)', nameEn: 'Recruitment Commission Revenue', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 3450000, openingBalance: 0, currentDebit: 25000, currentCredit: 3475000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-01' },
-  { code: '42', nameAr: 'إيرادات عقود التأجير والتشغيل المرن', nameEn: 'Flexible Rental Contracts Revenue', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 1240000, openingBalance: 0, currentDebit: 10000, currentCredit: 1250000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-01' },
-  { code: '43', nameAr: 'إيرادات نقل الكفالة والإيواء والخدمات الأخرى', nameEn: 'Sponsorship Transfer & Ancillary Revenue', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 200000, openingBalance: 0, currentDebit: 0, currentCredit: 200000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-05' },
+  // ═══ 4. الإيرادات التشغيلية والتمويلية والأخرى (Revenues — R-01, R-05, R-08) ═══
+  { code: '4', nameAr: 'الإيرادات التشغيلية والمبيعات (Revenues)', nameEn: 'Revenues', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 1, balance: 4890000, openingBalance: 0, currentDebit: 35000, currentCredit: 4925000, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'R-01', ifrsSubCode: 'R-01' },
+  { code: '41', nameAr: 'إيرادات عقود التوسط والاستقدام (مساند — IFRS 15)', nameEn: 'Recruitment Commission Revenue', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 3450000, openingBalance: 0, currentDebit: 25000, currentCredit: 3475000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-01', ifrsSubCode: 'R-01-07' },
+  { code: '42', nameAr: 'إيرادات عقود التأجير والتشغيل المرن (Flexible Rental)', nameEn: 'Flexible Rental Contracts Revenue', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 1240000, openingBalance: 0, currentDebit: 10000, currentCredit: 1250000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-01', ifrsSubCode: 'R-01-15' },
+  { code: '43', nameAr: 'إيرادات نقل الكفالة والإيواء والخدمات الأخرى (Other Income)', nameEn: 'Sponsorship Transfer & Ancillary Revenue', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 200000, openingBalance: 0, currentDebit: 0, currentCredit: 200000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-05', ifrsSubCode: 'R-05-02' },
+  { code: '44', nameAr: 'إيرادات الودائع البنكية وعوائد التمويل (Finance Income)', nameEn: 'Bank Deposit & Finance Income', category: 'إيرادات', nature: 'دائن', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '4', balance: 45000, openingBalance: 0, currentDebit: 0, currentCredit: 45000, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-08', ifrsSubCode: 'R-08-01' },
 
-  // ═══ 5. المصروفات التشغيلية والإدارية (Expenses) ═══
-  { code: '5', nameAr: 'المصروفات والأعباء التشغيلية (Expenses)', nameEn: 'Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 1, balance: 2160000, openingBalance: 0, currentDebit: 2160000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'R-02' },
-  { code: '51', nameAr: 'تكلفة الإيرادات المباشرة (المكاتب الخارجية والتأشيرات والطيران)', nameEn: 'Direct Cost of Revenues', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 1150000, openingBalance: 0, currentDebit: 1150000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-02' },
-  { code: '52', nameAr: 'رواتب وأجور الموظفين والكادر الإداري', nameEn: 'Salaries, Wages & Benefits', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 640000, openingBalance: 0, currentDebit: 640000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-04' },
-  { code: '53', nameAr: 'مصروفات تشغيل مراكز الإيواء والإعاشة والفحص الطبي', nameEn: 'Shelter Operations & Catering Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 210000, openingBalance: 0, currentDebit: 210000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-02' },
-  { code: '54', nameAr: 'إيجارات مقرات الفروع والخدمات والتسويق', nameEn: 'Rent, Utilities & Marketing Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 160000, openingBalance: 0, currentDebit: 160000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-03' },
+  // ═══ 5. المصروفات التشغيلية والإدارية والتمويلية والزكاة (Expenses — R-02, R-03, R-04, R-06, R-07, R-09, R-10) ═══
+  { code: '5', nameAr: 'المصروفات والأعباء التشغيلية (Expenses)', nameEn: 'Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 1, balance: 2160000, openingBalance: 0, currentDebit: 2160000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: true, ifrsCode: 'R-02', ifrsSubCode: 'R-02' },
+  { code: '51', nameAr: 'تكلفة الإيرادات المباشرة (المكاتب الخارجية والتأشيرات والطيران)', nameEn: 'Direct Cost of Revenues', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 1150000, openingBalance: 0, currentDebit: 1150000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-02', ifrsSubCode: 'R-02-07' },
+  { code: '52', nameAr: 'رواتب وأجور الموظفين والمصروفات العمومية والإدارية (G&A)', nameEn: 'Salaries, Wages & G&A Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 640000, openingBalance: 0, currentDebit: 640000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-04', ifrsSubCode: 'R-04-01' },
+  { code: '53', nameAr: 'مصروفات تشغيل مراكز الإيواء والإعاشة والفحص الطبي', nameEn: 'Shelter Operations & Catering Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 210000, openingBalance: 0, currentDebit: 210000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-02', ifrsSubCode: 'R-02-08' },
+  { code: '54', nameAr: 'عمولات المبيعات والمسوقات والدعاية والتسويق (Selling & Marketing)', nameEn: 'Selling & Marketing Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 160000, openingBalance: 0, currentDebit: 160000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-03', ifrsSubCode: 'R-03-02' },
+  { code: '55', nameAr: 'مصروف الإهلاك والإطفاء السنوي للأصول وحق الاستخدام (D&A)', nameEn: 'Depreciation & Amortization Expense', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 78000, openingBalance: 0, currentDebit: 78000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-10', ifrsSubCode: 'R-10-02' },
+  { code: '56', nameAr: 'تكاليف التمويل وفوائد المرابحة وعقود الإيجار (Finance Costs)', nameEn: 'Murabaha & Lease Finance Costs', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 32000, openingBalance: 0, currentDebit: 32000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-07', ifrsSubCode: 'R-07-02' },
+  { code: '57', nameAr: 'مصروفات وغرامات وتسويات غير تشغيلية أخرى (Other Expenses)', nameEn: 'Other Non-Operating Expenses', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 18000, openingBalance: 0, currentDebit: 18000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-06', ifrsSubCode: 'R-06-05' },
+  { code: '58', nameAr: 'مصروف الزكاة الشرعية وضريبة الدخل للفترة (Zakat & Income Tax)', nameEn: 'Zakat & Income Tax Expense', category: 'مصروفات', nature: 'مدين', statementType: 'قائمة الدخل (أرباح وخسائر)', level: 2, parentCode: '5', balance: 65000, openingBalance: 0, currentDebit: 65000, currentCredit: 0, currency: 'SAR', isActive: true, isHeader: false, ifrsCode: 'R-09', ifrsSubCode: 'R-09-01' },
 ];
 
-const STORAGE_KEY_PREFIX = 'ALSULAIM_COA_V3_';
+const STORAGE_KEY_PREFIX = 'ALSULAIM_COA_V4_';
 const CUSTOM_FIELDS_KEY_PREFIX = 'ALSULAIM_COA_FIELDS_V1_';
 
 export const chartOfAccountsService = {
@@ -120,18 +159,21 @@ export const chartOfAccountsService = {
     try {
       const stored = localStorage.getItem(key);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored) as AccountItem[];
+        return parsed.map((a) => enrichAccountWithIfrsClassification(a));
       }
     } catch (e) {
       // fallback
     }
 
-    // Seed default SMACC chart
-    const seeded: AccountItem[] = STANDARD_SMACC_COA.map((item, idx) => ({
-      ...item,
-      id: `${norm.toLowerCase()}-${item.code}-${idx}`,
-      companyId: norm === 'all' ? 'SAF' : norm,
-    }));
+    // Seed default SMACC chart enriched with Excel IFRS classifications
+    const seeded: AccountItem[] = STANDARD_SMACC_COA.map((item, idx) =>
+      enrichAccountWithIfrsClassification({
+        ...item,
+        id: `${norm.toLowerCase()}-${item.code}-${idx}`,
+        companyId: norm === 'all' ? 'SAF' : norm,
+      })
+    );
     try {
       localStorage.setItem(key, JSON.stringify(seeded));
     } catch (e) {
@@ -230,7 +272,7 @@ export const chartOfAccountsService = {
         ? opBal + curDeb - curCred
         : opBal + curCred - curDeb;
 
-    const created: AccountItem = {
+    const created: AccountItem = enrichAccountWithIfrsClassification({
       ...newAcc,
       id: `${norm.toLowerCase()}-${newAcc.code}-${Date.now()}`,
       companyId: norm === 'all' ? 'SAF' : norm,
@@ -238,7 +280,7 @@ export const chartOfAccountsService = {
       currentDebit: curDeb,
       currentCredit: curCred,
       balance: computedBal,
-    };
+    });
 
     const updated = [...current, created].sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
     this.saveAccountsForCompany(companyId, updated);
@@ -256,7 +298,7 @@ export const chartOfAccountsService = {
     }
 
     const existing = current[index];
-    const next = { ...existing, ...updates };
+    const next = enrichAccountWithIfrsClassification({ ...existing, ...updates });
     if (
       updates.openingBalance !== undefined ||
       updates.currentDebit !== undefined ||

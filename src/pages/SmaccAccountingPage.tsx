@@ -37,6 +37,8 @@ import { ExportDropdown } from '../components/common/ExportDropdown';
 import { BusinessIllustration } from '../components/common/BusinessIllustration';
 import { CorporateAvatar } from '../components/common/CorporateAvatar';
 import { chartOfAccountsService, AccountItem } from '../services/accounting/chartOfAccountsService';
+import { IFRS_MAPPING_CODES } from '../services/accounting/ifrsFinancialEngineService';
+import { EXTENDED_IFRS_CLASSIFICATIONS } from '../services/accounting/ifrsExtendedReferenceData';
 import { realErpDataStore } from '../services/realErpDataStore';
 import { IfrsFinancialEngineWorkspace } from '../components/finance/IfrsFinancialEngineWorkspace';
 
@@ -49,6 +51,13 @@ export interface SmaccAccountNode {
   balance: number;
   level: number;
   parentCode?: string;
+  ifrsCode?: string;
+  ifrsSubCode?: string;
+  ifrsItemName?: string;
+  ifrsSubItemName?: string;
+  ifrsSection?: string;
+  ifrsRef?: string;
+  cashFlowType?: string;
   children?: SmaccAccountNode[];
 }
 
@@ -287,6 +296,13 @@ export const SmaccAccountingPage: React.FC = () => {
         balance: a.balance || 0,
         level: a.level || 1,
         parentCode: a.parentCode,
+        ifrsCode: a.ifrsCode,
+        ifrsSubCode: a.ifrsSubCode,
+        ifrsItemName: a.ifrsItemName,
+        ifrsSubItemName: a.ifrsSubItemName,
+        ifrsSection: a.ifrsSection,
+        ifrsRef: a.ifrsRef,
+        cashFlowType: a.cashFlowType,
         children: []
       });
     });
@@ -325,6 +341,7 @@ export const SmaccAccountingPage: React.FC = () => {
     type: 'أصول' | 'خصوم' | 'حقوق ملكية' | 'إيرادات' | 'مصروفات';
     nature: 'مدين' | 'دائن';
     parentCode: string;
+    ifrsSubCode: string;
     openingBalance: string;
   }>({
     code: '',
@@ -333,6 +350,7 @@ export const SmaccAccountingPage: React.FC = () => {
     type: 'أصول',
     nature: 'مدين',
     parentCode: '11',
+    ifrsSubCode: 'A-10-08',
     openingBalance: '0',
   });
 
@@ -414,7 +432,8 @@ export const SmaccAccountingPage: React.FC = () => {
       openingBalance: parseFloat(newAccount.openingBalance) || 0,
       currency: 'SAR',
       isActive: true,
-      isHeader: false
+      isHeader: false,
+      ifrsSubCode: newAccount.ifrsSubCode,
     });
 
     if (created) {
@@ -422,7 +441,7 @@ export const SmaccAccountingPage: React.FC = () => {
       setIsAccountModalOpen(false);
       addNotification({
         title: 'إضافة حساب جديد',
-        message: `تمت إضافة الحساب (${newAccount.name} - #${newAccount.code}) في شجرة الحسابات بنجاح.`,
+        message: `تمت إضافة الحساب (${newAccount.name} - #${newAccount.code}) بالتصنيف المعتمد (${created.ifrsSubCode}) في شجرة الحسابات بنجاح.`,
         type: 'success',
       });
       setNewAccount({
@@ -432,6 +451,7 @@ export const SmaccAccountingPage: React.FC = () => {
         type: 'أصول',
         nature: 'مدين',
         parentCode: '11',
+        ifrsSubCode: 'A-10-08',
         openingBalance: '0',
       });
     } else {
@@ -654,9 +674,25 @@ export const SmaccAccountingPage: React.FC = () => {
     const hasChildren = node.children && node.children.length > 0;
 
     if (searchQuery) {
-      const match = node.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    node.name.toLowerCase().includes(searchQuery.toLowerCase());
-      if (!match && !node.children?.some(c => c.name.includes(searchQuery) || c.code.includes(searchQuery))) {
+      const q = searchQuery.toLowerCase();
+      const match =
+        node.code.toLowerCase().includes(q) ||
+        node.name.toLowerCase().includes(q) ||
+        (node.ifrsCode || '').toLowerCase().includes(q) ||
+        (node.ifrsSubCode || '').toLowerCase().includes(q) ||
+        (node.ifrsItemName || '').toLowerCase().includes(q) ||
+        (node.ifrsSubItemName || '').toLowerCase().includes(q) ||
+        (node.ifrsSection || '').toLowerCase().includes(q);
+      if (
+        !match &&
+        !node.children?.some(
+          c =>
+            c.name.toLowerCase().includes(q) ||
+            c.code.toLowerCase().includes(q) ||
+            (c.ifrsCode || '').toLowerCase().includes(q) ||
+            (c.ifrsSubCode || '').toLowerCase().includes(q)
+        )
+      ) {
         return null;
       }
     }
@@ -689,13 +725,20 @@ export const SmaccAccountingPage: React.FC = () => {
           </td>
           <td className="p-3">
             <span className="pill-tag-shade text-[10px] py-0.5 px-2">
-              {node.type}
+              {node.type} ({node.nature})
             </span>
           </td>
-          <td className="p-3 text-xs">
-            <span className={node.nature === 'مدين' ? 'text-[#141414] font-bold' : 'text-[#141414] font-bold'}>
-              {node.nature}
+          <td className="p-3">
+            <span className="font-mono font-bold text-[11px] bg-[#f3f3f3] text-[#141414] px-2 py-0.5 rounded">
+              {node.ifrsCode} — {node.ifrsItemName}
             </span>
+            <div className="text-[10px] text-[#707070] mt-0.5">{node.ifrsSection}</div>
+          </td>
+          <td className="p-3">
+            <span className="font-mono font-semibold text-[11px] text-[#141414] block">
+              {node.ifrsSubCode} — {node.ifrsSubItemName}
+            </span>
+            <span className="text-[10px] font-mono text-[#707070]">{node.ifrsRef} • {node.cashFlowType}</span>
           </td>
           <td className="p-3 font-mono font-bold text-xs text-left pl-4">
             <span className={node.balance >= 0 ? 'text-[#141414]' : 'text-[#141414]'}>
@@ -714,6 +757,7 @@ export const SmaccAccountingPage: React.FC = () => {
                     type: node.type,
                     nature: node.nature,
                     parentCode: node.code,
+                    ifrsSubCode: node.ifrsSubCode || node.ifrsCode || 'A-10-08',
                     openingBalance: '0',
                   });
                   setIsAccountModalOpen(true);
@@ -934,7 +978,7 @@ export const SmaccAccountingPage: React.FC = () => {
               <input
                 type="text"
                 aria-label="البحث بالرمز أو اسم الحساب"
-                placeholder="البحث بالرمز أو اسم الحساب..."
+                placeholder="البحث بالرمز، الاسم، أو كود التصنيف (A-01, R-01)..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
@@ -951,6 +995,7 @@ export const SmaccAccountingPage: React.FC = () => {
                     type: 'أصول',
                     nature: 'مدين',
                     parentCode: '11',
+                    ifrsSubCode: 'A-10-08',
                     openingBalance: '0',
                   });
                   setIsAccountModalOpen(true);
@@ -970,6 +1015,13 @@ export const SmaccAccountingPage: React.FC = () => {
                     'النوع': a.category,
                     'الطبيعة': a.nature,
                     'المستوى': a.level,
+                    'كود البند الرئيسي (34)': a.ifrsCode || '-',
+                    'اسم البند الرئيسي': a.ifrsItemName || '-',
+                    'كود التصنيف الفرعي الموسع (314)': a.ifrsSubCode || '-',
+                    'اسم البند الفرعي الموسع': a.ifrsSubItemName || '-',
+                    'القسم في القوائم': a.ifrsSection || '-',
+                    'مرجع المعيار (IFRS / IAS)': a.ifrsRef || '-',
+                    'نوع التدفق النقدي': a.cashFlowType || '-',
                     'الرصيد': a.balance || 0
                   }));
                   exportData(flattened, `دليل_الحسابات_${activeCompany.code}`, 'excel');
@@ -991,8 +1043,9 @@ export const SmaccAccountingPage: React.FC = () => {
                 <tr>
                   <th className="p-3">رمز الحساب الهرمي</th>
                   <th className="p-3">اسم الحساب في الدليل</th>
-                  <th className="p-3">التصنيف المحاسبي</th>
-                  <th className="p-3">طبيعة الحساب</th>
+                  <th className="p-3">التصنيف والطبيعة</th>
+                  <th className="p-3">البند الرئيسي بالقوائم (34 رمزاً)</th>
+                  <th className="p-3">التصنيف الفرعي الموسع (314 بنداً)</th>
                   <th className="p-3 text-left pl-4">الرصيد الدفتري الحالي</th>
                   <th className="p-3 text-center">الإجراءات</th>
                 </tr>
@@ -1333,6 +1386,12 @@ export const SmaccAccountingPage: React.FC = () => {
                     'رمز الحساب': a.code,
                     'اسم الحساب': a.nameAr,
                     'النوع': a.category,
+                    'كود البند الرئيسي (34)': a.ifrsCode || '-',
+                    'اسم البند الرئيسي': a.ifrsItemName || '-',
+                    'كود التصنيف الفرعي الموسع (314)': a.ifrsSubCode || '-',
+                    'اسم البند الفرعي الموسع': a.ifrsSubItemName || '-',
+                    'القسم في القوائم': a.ifrsSection || '-',
+                    'مرجع المعيار (IFRS / IAS)': a.ifrsRef || '-',
                     'الرصيد النهائي مدين': a.nature === 'مدين' ? a.balance : 0,
                     'الرصيد النهائي دائن': a.nature === 'دائن' ? a.balance : 0,
                   }));
@@ -1354,8 +1413,9 @@ export const SmaccAccountingPage: React.FC = () => {
                 <tr>
                   <th className="p-3">رمز الحساب</th>
                   <th className="p-3">اسم الحساب</th>
-                  <th className="p-3">النوع</th>
-                  <th className="p-3">طبيعة الحساب</th>
+                  <th className="p-3">النوع والطبيعة</th>
+                  <th className="p-3">التصنيف المعتمد (Excel IFRS 34 / 314)</th>
+                  <th className="p-3">المعيار والتدفق</th>
                   {showSmaccClosingCols && (
                     <th className="p-3 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين</th>
                   )}
@@ -1369,8 +1429,23 @@ export const SmaccAccountingPage: React.FC = () => {
                   <tr key={a.code} className="hover:bg-zinc-50">
                     <td className="p-3 font-mono font-bold text-[#141414]">{a.code}</td>
                     <td className="p-3 font-semibold text-[#141414]">{a.nameAr}</td>
-                    <td className="p-3"><span className="pill-tag-shade text-[10px]">{a.category}</span></td>
-                    <td className="p-3 font-bold text-[#141414]">{a.nature}</td>
+                    <td className="p-3">
+                      <span className="pill-tag-shade text-[10px]">
+                        {a.category} ({a.nature})
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <div className="font-mono font-bold text-[11px] text-[#141414]">
+                        {a.ifrsSubCode} — {a.ifrsSubItemName}
+                      </div>
+                      <div className="text-[10px] text-[#707070] mt-0.5">
+                        {a.ifrsCode} ({a.ifrsItemName}) • {a.ifrsSection}
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <span className="font-mono font-bold text-[11px] text-[#141414] block">{a.ifrsRef}</span>
+                      <span className="text-[10px] text-[#707070]">{a.cashFlowType}</span>
+                    </td>
                     {showSmaccClosingCols && (
                       <td className="p-3 font-mono font-bold text-[#141414] bg-[#fafafa]">
                         {a.nature === 'مدين' ? `${(a.balance || 0).toLocaleString()} ⃁` : '-'}
@@ -1386,7 +1461,7 @@ export const SmaccAccountingPage: React.FC = () => {
               </tbody>
               <tfoot className="bg-[#141414] text-[#ffffff] font-bold">
                 <tr>
-                  <td colSpan={4} className="p-3">إجمالي الأرصدة النهائية في الدليل السريع</td>
+                  <td colSpan={5} className="p-3">إجمالي الأرصدة النهائية في الدليل السريع</td>
                   {showSmaccClosingCols && (
                     <td className="p-3 font-mono">
                       {rawAccounts.filter(a => a.nature === 'مدين').reduce((s, a) => s + (a.balance || 0), 0).toLocaleString()} ⃁
@@ -1796,6 +1871,31 @@ export const SmaccAccountingPage: React.FC = () => {
               onChange={e => setNewAccount({ ...newAccount, openingBalance: e.target.value })}
               className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
             />
+          </div>
+          <div className="md:col-span-2">
+            <label className="text-xs text-zinc-700 block mb-1 font-semibold">
+              التصنيف المعياري في القوائم المالية (34 بنداً رئيسياً و 314 بنداً موسعاً — Excel IFRS)
+            </label>
+            <select
+              value={newAccount.ifrsSubCode}
+              onChange={e => setNewAccount({ ...newAccount, ifrsSubCode: e.target.value })}
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
+            >
+              <optgroup label="البنود الرئيسية للقوائم (34 رمزاً A-01..R-10)">
+                {IFRS_MAPPING_CODES.map(c => (
+                  <option key={c.code} value={c.code}>
+                    {c.code} — {c.nameAr} ({c.sectionAr})
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="دليل التصنيف الموسع التفصيلي (314 بنداً فرعياً)">
+                {EXTENDED_IFRS_CLASSIFICATIONS.filter(x => x.level === 3).map(x => (
+                  <option key={x.code} value={x.code}>
+                    {x.code} — {x.nameAr} [{x.ifrsRef}]
+                  </option>
+                ))}
+              </optgroup>
+            </select>
           </div>
         </div>
       </SmaccFormModal>

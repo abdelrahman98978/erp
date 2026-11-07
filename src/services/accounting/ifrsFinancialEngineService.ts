@@ -1,5 +1,6 @@
 import { CompanyId } from '../../types';
 import { normalizeCompanyId } from '../../contexts/CompanyContext';
+import { EXTENDED_IFRS_CLASSIFICATIONS, ExtendedIfrsClassificationItem } from './ifrsExtendedReferenceData';
 
 export interface IfrsMappingCode {
   code: string;
@@ -39,6 +40,10 @@ export interface ComputedTrialBalanceRow extends TrialBalanceEntry {
   approvedCode: string; // Primary code A-01..R-10
   approvedSubCode: string;
   approvedItemName: string;
+  approvedSubItemName?: string;
+  sectionAr?: string;
+  ifrsRef?: string;
+  cashFlowType?: string;
   naturalBalance: 'D' | 'C' | '-';
   openingNet: number; // Debit - Credit
   closingDebit: number;
@@ -130,6 +135,32 @@ export const IFRS_MAPPING_CODES: IfrsMappingCode[] = [
 export const IFRS_MAPPING_MAP: Record<string, IfrsMappingCode> = Object.fromEntries(
   IFRS_MAPPING_CODES.map((m) => [m.code, m])
 );
+
+export const EXTENDED_IFRS_MAP: Record<string, ExtendedIfrsClassificationItem> = Object.fromEntries(
+  EXTENDED_IFRS_CLASSIFICATIONS.map((item) => [item.code, item])
+);
+
+export function resolveIfrsClassificationMetadata(
+  codeOrSubCode?: string,
+  fallbackAccountName?: string
+) {
+  const raw = (codeOrSubCode || '').trim() || (fallbackAccountName ? suggestIfrsSubCode(fallbackAccountName) : '');
+  const primaryCode = extractPrimaryIfrsCode(raw) || (fallbackAccountName ? suggestIfrsCode(fallbackAccountName) : 'R-04');
+  const primaryMeta = IFRS_MAPPING_MAP[primaryCode] || IFRS_MAPPING_MAP['R-04'];
+  const subMeta = EXTENDED_IFRS_MAP[raw] || EXTENDED_IFRS_MAP[primaryCode];
+
+  return {
+    primaryCode,
+    subCode: subMeta?.code || primaryCode,
+    primaryNameAr: primaryMeta?.nameAr || 'مصروفات عمومية وإدارية',
+    subNameAr: subMeta?.nameAr || primaryMeta?.nameAr || 'مصروفات عمومية وإدارية',
+    sectionAr: primaryMeta?.sectionAr || 'قائمة الدخل',
+    naturalBalance: (subMeta?.naturalBalance || primaryMeta?.naturalBalance || 'D') as 'D' | 'C' | '-',
+    ifrsRef: subMeta?.ifrsRef || primaryMeta?.ifrsRef || 'IAS 1',
+    cashFlowType: primaryMeta?.cashFlowType || 'تشغيلي',
+    optionLabel: subMeta?.manualOption || primaryMeta?.optionLabel || `${primaryCode} (${primaryMeta?.nameAr || ''})`,
+  };
+}
 
 // ─── 2. Ordered Auto-Classification Keyword Rules (257+ Rules from File + Recruitment Extensions) ─────
 export const AUTO_CLASSIFICATION_KEYWORDS: Array<{ keyword: string; code: string }> = [
@@ -292,17 +323,89 @@ export function suggestIfrsCode(accountName: string): string {
   return 'R-04';
 }
 
+export function suggestIfrsSubCode(accountName: string): string {
+  const clean = (accountName || '').trim().toLowerCase();
+  if (!clean) return '';
+  // Specific Extended Sub-Classification Rules from Excel (دليل_التصنيف_الموسع)
+  if (clean.includes('مخصص اهلاك') || clean.includes('مخصص إهلاك') || clean.includes('مجمع إهلاك') || clean.includes('مجمع اهلاك')) {
+    if (clean.includes('سيار') || clean.includes('تويوتا') || clean.includes('ايسوزو') || clean.includes('بكب') || clean.includes('شاحن')) return 'A-02-03';
+    if (clean.includes('مبان')) return 'A-02-01';
+    if (clean.includes('أثاث') || clean.includes('اثاث')) return 'A-02-04';
+    if (clean.includes('حاسب') || clean.includes('كمبيوتر')) return 'A-02-05';
+    return 'A-02-08';
+  }
+  if (clean.includes('تويوتا') || clean.includes('ايسوزو') || clean.includes('سيارة') || clean.includes('سيارات') || clean.includes('مركبات') || clean.includes('حافل')) return 'A-01-04';
+  if (clean.includes('مكاتب') || clean.includes('ادراج') || clean.includes('كراسي') || clean.includes('طاولة') || clean.includes('اثاث') || clean.includes('أثاث')) return 'A-01-05';
+  if (clean.includes('كمبيوتر') || clean.includes('لاب توب') || clean.includes('أي باد') || clean.includes('طابعة') || clean.includes('سيرفر') || clean.includes('خوادم')) return 'A-01-06';
+  if (clean.includes('تليفون') || clean.includes('جوالات') || clean.includes('واي فاي') || clean.includes('اتصالات') && !clean.includes('مصروف') && !clean.includes('فاتور')) return 'A-01-07';
+  if (clean.includes('كاميرات') || clean.includes('أمن وسلامة')) return 'A-01-14';
+  if (clean.includes('ثلاجات') || clean.includes('ثلاجة') || clean.includes('مكيفات')) return 'A-01-08';
+  if (clean.includes('تغطية خطاب ضمان')) return 'A-09-11';
+  if (clean.includes('النقديه') || clean.includes('صندوق') || clean.includes('خزين')) return 'A-10-01';
+  if (clean.includes('عهد الفروع النقدية') || clean.includes('عهدة نقدية')) return 'A-10-02';
+  if (clean.includes('جارى الشريك') || clean.includes('جاري الشريك')) return 'L-09-04';
+  if (clean.includes('بنك') || clean.includes('مصرف')) return 'A-10-08';
+  if (clean.includes('حساب مساند') || clean.includes('ضمان منصة مساند') || clean.includes('أمانات مساند')) return 'A-07-05';
+  if (clean.includes('عملاء')) return 'A-07-01';
+  if (clean.includes('إيجارات مدفوعة مقدماً') || clean.includes('ايجارات مدفوعة مقدما')) return 'A-09-02';
+  if (clean.includes('تأمين') && clean.includes('مقدم')) return 'A-09-03';
+  if (clean.includes('مدفوعة مقدما') || clean.includes('مدفوعة مقدماً') || clean.includes('مدفوعه مقدما') || clean.includes('مصروف مقدم') || clean.includes('فوائد التمويل المؤجلة')) return 'A-09-01';
+  if (clean.includes('سلف') || clean.includes('عهد')) return 'A-09-06';
+  if (clean.includes('ضريبة القيمة المضافة للمدخلات')) return 'A-09-10';
+  if (clean.includes('المستحق من -')) return 'A-09-08';
+  if (clean.includes('تمويل الراجحي') || clean.includes('مرابحة طويل')) return 'L-01-04';
+  if (clean.includes('رواتب مستحقة') || clean.includes('رواتب واجور مستحقة')) return 'L-05-01';
+  if (clean.includes('ضريبة القيمة المضافة')) return 'L-05-09';
+  if (clean.includes('المستحق الى - خالد السليم')) return 'L-09-04';
+  if (clean.includes('المستحق الى -') || clean.includes('المستحق إلى -')) return 'L-09-03';
+  if (clean.includes('راس المال') || clean.includes('رأس المال')) return 'E-01-01';
+  if (clean.includes('احتياطي نظامي')) return 'E-02-01';
+  if (clean.includes('أرباح محتجزة') || clean.includes('أرباح مبقاة')) return 'E-03-01';
+  if (clean.includes('ارباح وخسائر العام') || clean.includes('أرباح وخسائر العام')) return 'E-03-05';
+  if (clean.includes('مردودات مبيعات') || clean.includes('مردودات ايرادات')) return 'R-01-13';
+  if (clean.includes('ايرادات مبيعات') || clean.includes('إيرادات وساطة') || clean.includes('ايرادات التفاويض') || clean.includes('إيرادات عقود التوسط')) return 'R-01-07';
+  if (clean.includes('نقل كفالة') && (clean.includes('ايراد') || clean.includes('إيراد'))) return 'R-01-12';
+  if (clean.includes('تأجير') && (clean.includes('ايراد') || clean.includes('إيراد'))) return 'R-01-15';
+  if (clean.includes('مردودات  مشتريات') || clean.includes('مردودات مشتريات') || clean.includes('خصم تذاكر على وكلاء') || clean.includes('خصم وكالات على وكلاء')) return 'R-02-12';
+  if (clean.includes('خصومات على العملاء') || clean.includes('خصم غرامات الغاء على الوكلاء')) return 'R-05-02';
+  if (clean.includes('إيرادات اخرى') || clean.includes('ايرادات اخرى')) return 'R-05-06';
+  if (clean.includes('عمولة مبيعات')) return 'R-03-02';
+  if (clean.includes('دعاية واعلان') || clean.includes('تسويق')) return 'R-03-03';
+  if (clean.includes('سكن العاملات') || clean.includes('طعام واعاشة العاملات') || clean.includes('تشغيل مراكز الإيواء')) return 'R-02-08';
+  if (clean.includes('نقل جماعى العاملات') || clean.includes('تذاكر سفر العاملات') || clean.includes('تذاكر سائقين')) return 'R-02-06';
+  if (clean.includes('التفويض الاليكترونى') || clean.includes('رسوم مساند') || clean.includes('عقود السفارة') || clean.includes('عمولات المناديب')) return 'R-02-05';
+  if (clean.includes('مشتريات') || clean.includes('نقل كفالة العاملات') || clean.includes('متنوعة العاملات')) return 'R-02-07';
+  if (clean.includes('رواتب الموظفين') || clean.includes('اجازة الموظفين') || clean.includes('نهاية خدمة الموظفين') || clean.includes('متنوعه الموظفين')) return 'R-04-01';
+  if (clean.includes('تامينات اجتماعية')) return 'R-04-10';
+  if (clean.includes('التاشيرات الموظفين') || clean.includes('اقامات الموظفين') || clean.includes('حكومية أخرى')) return 'R-04-05';
+  if (clean.includes('تجهيزات سكن الموظفين') || clean.includes('ايجارات العقارات')) return 'R-04-02';
+  if (clean.includes('تذاكر سفر الموظفين')) return 'R-04-11';
+  if (clean.includes('وقود') || clean.includes('زيوت سيارات') || clean.includes('قطع غيار السيارات') || clean.includes('سيارات متنوعة')) return 'R-04-15';
+  if (clean.includes('تصديقات وتراخيص') || clean.includes('جوب اوردر')) return 'R-04-08';
+  if (clean.includes('كهرباء') || clean.includes('مياه')) return 'R-04-04';
+  if (clean.includes('الهواتف') || clean.includes('هاتف ارضي وانترنت')) return 'R-04-03';
+  if (clean.includes('مصاريف بنكية') || clean.includes('تعديل خطاب الضمان')) return 'R-04-17';
+  if (clean.includes('ضيافة') || clean.includes('هدايا') || clean.includes('الثرية')) return 'R-04-16';
+  if (clean.includes('مستلزمات كمبيوتر')) return 'R-04-13';
+  if (clean.includes('صيانة') || clean.includes('صيانه')) return 'R-04-09';
+  if (clean.includes('غرامات')) return 'R-06-05';
+
+  const primary = suggestIfrsCode(accountName);
+  if (primary === 'L-04') return 'L-04-02';
+  return primary;
+}
+
 export function extractPrimaryIfrsCode(manualOrAutoCode: string): string {
   if (!manualOrAutoCode) return '';
   const match = manualOrAutoCode.trim().match(/^([A-Z]-\d{2})/);
   return match ? match[1] : '';
 }
 
-// ─── 3. The 211 Real Accounts from User's File (بببب.xlsx) with Realistic Balanced Figures ──────
+// ─── 3. The 211 Real Accounts from User's File with Complete Excel Classifications (التصنيفات + دليل_التصنيف_الموسع) ──────
 interface RawImportedAccountSeed {
   seq: number;
   name: string;
-  fileManualCode: string; // What was already classified in the uploaded sheet (or '' if unclassified in sheet)
+  fileManualCode: string;
   openingDebit: number;
   openingCredit: number;
   periodDebit: number;
@@ -310,217 +413,217 @@ interface RawImportedAccountSeed {
 }
 
 const RAW_211_ACCOUNTS_NAMES_AND_CODES: Array<{ name: string; fileCode: string }> = [
-  { name: 'سيارة بك اب', fileCode: 'A-01' },
-  { name: 'تويوتا يارس رقم - د س ق 4847', fileCode: 'A-01' },
-  { name: 'تويوتا يارس رقم - د س ق 4846', fileCode: 'A-01' },
-  { name: 'تويوتا يارس رقم - د س ق 4849', fileCode: 'A-01' },
-  { name: 'تويوتا يارس رقم - د س ق 4850', fileCode: 'A-01' },
-  { name: 'تويوتا يارس رقم - د س ق 4845', fileCode: 'A-01' },
-  { name: 'تويوتا هاي ايس رقم - ب س أ 5979', fileCode: 'A-01' },
-  { name: 'تويوتا هاي ايس رقم - ب ر ه 1650', fileCode: 'A-01' },
-  { name: 'تويوتا ثلاجة رقم - ب ر س 9269', fileCode: 'A-01' },
-  { name: 'ايسوزو بكب غماره رقم - ب ط ك 1895', fileCode: 'A-01' },
-  { name: 'ايسوزو شاحنه رقم - ب ط ك 1894', fileCode: 'A-01' },
-  { name: 'ايسوزو بكب غمارتين رقم - ب ط ك 1896', fileCode: 'A-01' },
-  { name: 'ثلاجات', fileCode: 'A-01' },
-  { name: 'مكيفات كرافت.', fileCode: 'A-01' },
-  { name: 'مكاتب', fileCode: 'A-01' },
-  { name: 'وحدة ادراج', fileCode: 'A-01' },
-  { name: 'كراسي', fileCode: 'A-01' },
-  { name: 'طاولة حديد وزجاج', fileCode: 'A-01' },
-  { name: 'اثاث مطبخ', fileCode: 'A-01' },
-  { name: 'ثلاجة صغيرة', fileCode: 'A-01' },
-  { name: 'كمبيوتر ولاب توب .', fileCode: 'A-01' },
-  { name: 'كمبيوتر.', fileCode: 'A-01' },
-  { name: 'لاب توب dell.', fileCode: 'A-01' },
-  { name: 'لاب توب hp.', fileCode: 'A-01' },
-  { name: 'أي باد ميكروسوفت.', fileCode: 'A-01' },
-  { name: 'طابعة canon.', fileCode: 'A-01' },
-  { name: 'تليفون ارضي.', fileCode: 'A-01' },
-  { name: 'جوالات سامسونج.', fileCode: 'A-01' },
-  { name: 'جهاز واي فاي مقوي.', fileCode: 'A-01' },
-  { name: 'كاميرات هاي فيجن.', fileCode: 'A-01' },
-  { name: 'جهاز سيرفر كاميرات.', fileCode: 'A-01' },
-  { name: 'تغطية خطاب ضمان بنك الرياض رقم /', fileCode: '' },
-  { name: 'النقديه بالصندوق (الكاش)', fileCode: 'A-10' },
-  { name: 'بنك الراجحى حـ / 98', fileCode: 'A-10' },
-  { name: 'بنك الرياض حـ / 209940', fileCode: 'A-10' },
-  { name: 'بنك الاهلى حـ / ', fileCode: 'A-10' },
-  { name: 'بنك الانماء حـ / 10000 (جارى الشريك)', fileCode: '' },
-  { name: 'بنك ساب حـ / 8001 (جارى الشريك)', fileCode: '' },
-  { name: 'حساب مساند', fileCode: '' },
-  { name: 'عملاء الاستقدام', fileCode: 'A-07' },
-  { name: 'إيجارات مدفوعة مقدماً', fileCode: 'A-09' },
-  { name: 'تأمين اجتماعى مدفوع مقدما ', fileCode: 'A-09' },
-  { name: 'تأمين طبي مدفوع مقدما ', fileCode: 'A-09' },
-  { name: 'مصروفات اخرى مدفوعه مقدما ', fileCode: 'A-09' },
-  { name: 'مصروف مقدم عمولة اصدار خطاب ضمان', fileCode: 'A-09' },
-  { name: 'فوائد التمويل المؤجلة / مصروفات تمويلية مقدماً.', fileCode: '' },
-  { name: 'سلف اكرم', fileCode: 'A-09' },
-  { name: 'سلف عبد الرحمن ', fileCode: 'A-09' },
-  { name: 'سلف اسلام عرفة ', fileCode: 'A-09' },
-  { name: 'سلف مستشار هاني ', fileCode: 'A-09' },
-  { name: 'عهد منصور', fileCode: 'A-09' },
-  { name: 'ضريبة القيمة المضافة للمدخلات (ضريبة المشتريات)', fileCode: 'A-09' },
-  { name: 'المستحق من - خالد السليم', fileCode: 'A-09' },
-  { name: 'المستحق من - مكتب ياقوت', fileCode: 'A-09' },
-  { name: 'المستحق من - مكتب توباز', fileCode: 'A-09' },
-  { name: 'المستحق من - مكتب الرواد', fileCode: 'A-09' },
-  { name: 'المستحق من - مكتب التمور', fileCode: 'A-09' },
-  { name: 'المستحق من - معرض السيارات', fileCode: 'A-09' },
-  { name: 'المستحق من - مؤسسة التجارة', fileCode: 'A-09' },
-  { name: 'المستحق من - مؤسسة بنايات زكية', fileCode: 'A-09' },
-  { name: 'المستحق من - مؤسسة اللمسة الخارقه', fileCode: 'A-09' },
-  { name: 'المستحق من - مؤسسة كاس لتنظيم المعارض', fileCode: 'A-09' },
-  { name: 'المستحق من - وكالة الاميال للسفر والسياحة', fileCode: 'A-09' },
-  { name: 'المستحق من - وكالة الدعاية والاعلان', fileCode: 'A-09' },
-  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4847', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4846', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4849', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4850', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4845', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا هاي ايس رقم - ب ر ه 1650', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا ثلاجة رقم - ب ر س 9269', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك ايسوزو بكب غماره رقم - ب ط ك 1895', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك ايسوزو شاحنه رقم - ب ط ك 1894', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك ايسوزو بكب غمارتين رقم - ب ط ك 1896', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك سيارة بك اب', fileCode: 'A-02' },
-  { name: 'مخصص اهلاك تويوتا هاي ايس رقم - ب س أ 5979', fileCode: 'A-02' },
-  { name: 'تمويل الراجحي', fileCode: '' },
-  { name: 'LIGER KING FOREION EMPLOYMENT AGENT PLC', fileCode: '' },
-  { name: 'nural', fileCode: '' },
-  { name: 'Real Foreign Employment Agency', fileCode: '' },
-  { name: 'YAKOMSAN PRIVATE EMPLOYMENT AGENT', fileCode: '' },
-  { name: 'AL-ALAMIA INTERNATIONAL MANPOWER SERVICES', fileCode: '' },
-  { name: 'YOSHI PROMOTIONS, INC', fileCode: '' },
-  { name: 'EXERTION FORCE INTERNATIONALCO. LTD', fileCode: '' },
-  { name: 'KHALEEJ AGENCIES LIMITED', fileCode: '' },
-  { name: 'Premier Recruitment Limited', fileCode: '' },
-  { name: 'M/S AL JAHAN INTERNATIONAL', fileCode: '' },
-  { name: 'M/S. BD Star International', fileCode: '' },
-  { name: 'M/S. Bright International', fileCode: '' },
-  { name: 'M/S. Masum Brothers Syndicate', fileCode: '' },
-  { name: 'M/S. Mohona Overseas', fileCode: '' },
-  { name: 'PROTIK TRAVELS & TOURISM', fileCode: '' },
-  { name: 'TOUSHI INTERNATIONAL LTD', fileCode: '' },
-  { name: 'INTERNATIONAL SERVICES PROVIDER-BURUNDI', fileCode: '' },
-  { name: 'GOLDEN HANDS LTD', fileCode: '' },
-  { name: 'S. S. J. Travels', fileCode: '' },
-  { name: 'BIN IBRAHIM INTERNATIONAL AGENCIES LIMITED', fileCode: '' },
-  { name: 'مندوب اوغندا', fileCode: '' },
-  { name: 'مندوب كينيا', fileCode: '' },
-  { name: 'RAWAFED FOREIGN EMPLOYMENT AGENT PL', fileCode: '' },
-  { name: 'M/S MARVELLOUS OVERSEAS', fileCode: '' },
-  { name: 'M\\S MUJIB TRAVELS&TOURISM LTD', fileCode: '' },
-  { name: 'Landbase Human Resources CO', fileCode: '' },
-  { name: 'AL NUHIMAN FOREIGN EMPLOYMENT PLC', fileCode: '' },
-  { name: 'احمد حلمى عبدالمقصود محمد', fileCode: '' },
-  { name: 'رواتب مستحقة للعاملات', fileCode: 'L-05' },
-  { name: 'ضريبة القيمة المضافة للمخرجات (ضريبة المبيعات)', fileCode: 'L-05' },
-  { name: 'تسوية ضريبة القيمة المضافة  - هيئة الزكاة والضرائب', fileCode: '' },
-  { name: 'رواتب واجور مستحقة للموظفين.', fileCode: 'L-05' },
-  { name: 'المستحق الى - خالد السليم', fileCode: '' },
-  { name: 'المستحق الى - مكتب ياقوت', fileCode: '' },
-  { name: 'المستحق الى - مكتب توباز', fileCode: '' },
-  { name: 'المستحق الى - مكتب الرواد', fileCode: '' },
-  { name: 'المستحق الى - معرض السيارات', fileCode: '' },
-  { name: 'المستحق الى - مؤسسة التجارة', fileCode: '' },
-  { name: 'المستحق الى - مؤسسة بنايات زكية', fileCode: '' },
-  { name: 'المستحق الى - مؤسسة اللمسة الخارقه', fileCode: '' },
-  { name: 'المستحق الى - مؤسسة كاس لتنظيم المعارض', fileCode: '' },
-  { name: 'المستحق الى - وكالة الاميال للسفر والسياحة', fileCode: '' },
-  { name: 'راس المال ', fileCode: 'E-01' },
-  { name: 'أرباح محتجزة من سنوات سابقة', fileCode: 'E-03' },
-  { name: 'ارباح وخسائر العام ', fileCode: '' },
-  { name: 'مصروفات المشتريات الرئيسى', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول الفلبين', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول اثيوبيا', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول بوروندى', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول كينيا', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول اوغندا', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول بنجلاديش', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - وصول تنزانيا', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - التفاويض الرجالى', fileCode: 'R-02' },
-  { name: 'مصروفات مشتريات - عقود التأجير', fileCode: 'R-02' },
-  { name: 'مردودات مبيعات الفلبين', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات اثيوبيا', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات بوروندى', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات كينيا', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات اوغند', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات بنجلاديش', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات تنزانيا', fileCode: 'R-01' },
-  { name: 'مردودات مبيعات التفاويض الرجالى', fileCode: 'R-01' },
-  { name: 'مصروف التفويض الاليكترونى', fileCode: '' },
-  { name: 'مصروف رسوم مساند', fileCode: '' },
-  { name: 'مصروف عقود السفارة', fileCode: '' },
-  { name: 'مصروف عمولات المناديب', fileCode: '' },
-  { name: 'مصروف تذاكر سائقين الهند', fileCode: '' },
-  { name: 'مصروف رواتب الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف مستحقات اجازة الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف مكافأة نهاية خدمة الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف تامينات اجتماعية الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف اصدار التاشيرات الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف تجهيزات سكن الموظفين', fileCode: 'R-04' },
-  { name: 'مصروفات متنوعه الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف اقامات الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف تذاكر سفر الموظفين', fileCode: 'R-04' },
-  { name: 'مصروف وقود وشريحة وقود سيارات', fileCode: 'R-04' },
-  { name: 'مصروف زيوت سيارات', fileCode: 'R-04' },
-  { name: 'مصروف صيانة وقطع غيار السيارات', fileCode: 'R-04' },
-  { name: 'مصروف ايجارات العقارات', fileCode: 'R-04' },
-  { name: 'مصروف تصديقات وتراخيص واشتراكات', fileCode: 'R-04' },
-  { name: 'مصاريف حكومية أخرى', fileCode: 'R-04' },
-  { name: 'مصروف فواتير كهرباء', fileCode: 'R-04' },
-  { name: 'مصروف فواتير مياه', fileCode: 'R-04' },
-  { name: 'مصروف فواتير الهواتف والجوالات', fileCode: 'R-04' },
-  { name: 'هاتف ارضي وانترنت ', fileCode: 'R-04' },
-  { name: 'مصاريف بنكية متنوعة', fileCode: 'R-04' },
-  { name: 'مصروف جوب اوردر ', fileCode: 'R-04' },
-  { name: 'مصروف  تعديل خطاب الضمان', fileCode: 'R-04' },
-  { name: 'عمولة مبيعات الموظفين', fileCode: 'R-03' },
-  { name: 'عمولة مبيعات المسوقات', fileCode: 'R-03' },
-  { name: 'مصروف دعاية واعلان', fileCode: 'R-03' },
-  { name: 'مصروف نقل كفالة العاملات', fileCode: 'R-02' },
-  { name: 'مصروفات متنوعة العاملات', fileCode: 'R-02' },
-  { name: 'مصروف سكن العاملات', fileCode: 'R-02' },
-  { name: 'مصروف طعام واعاشة العاملات', fileCode: 'R-02' },
-  { name: 'مصروف نقل جماعى العاملات', fileCode: 'R-02' },
-  { name: 'مصروف تذاكر سفر العاملات', fileCode: 'R-02' },
-  { name: 'مصروف ضيافة ومجاملات بوفية', fileCode: 'R-04' },
-  { name: 'مصروف مستلزمات كمبيوتر', fileCode: 'R-04' },
-  { name: 'مصروف صيانة اجهزة مكتبية', fileCode: 'R-04' },
-  { name: 'مصروف هدايا واكراميات', fileCode: 'R-04' },
-  { name: 'مصروف غرامات ومخالفات عمومية', fileCode: 'R-04' },
-  { name: 'مصروف غرامات الغاء العقود للعملاء', fileCode: 'R-04' },
-  { name: 'مصروف صيانه متنوعة', fileCode: 'R-04' },
-  { name: 'مصاريف الثرية متنوعة', fileCode: 'R-04' },
-  { name: 'مصروفات سيارات متنوعة', fileCode: 'R-04' },
-  { name: 'مردودات ايرادات نقل كفالة.', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات الفلبين', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات اثيوبيا', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات بوروندى', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات كينيا', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات اوغندا', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات بنجلاديش', fileCode: 'R-01' },
-  { name: 'ايرادات مبيعات تنزانيا', fileCode: 'R-01' },
-  { name: 'ايرادات التفاويض الرجالى', fileCode: 'R-01' },
-  { name: 'مردودات  مشتريات - بدايل الفلبين', fileCode: 'R-02' },
-  { name: 'مردودات  مشتريات - بدايل اثيوبيا', fileCode: 'R-02' },
-  { name: 'مردودات  مشتريات - بدايل كينيا', fileCode: 'R-02' },
-  { name: 'مردودات  مشتريات - بدايل اوغندا', fileCode: 'R-02' },
-  { name: 'مردودات  مشتريات - بدايل بنجلاديش', fileCode: 'R-02' },
-  { name: 'مردودات  مشتريات - بدايل تنزانيا', fileCode: 'R-02' },
-  { name: 'إيرادات اخرى متنوعه', fileCode: 'R-05' },
-  { name: 'إيرادات نقل كفالة العاملات', fileCode: 'R-01' },
-  { name: 'خصومات على العملاء (غرامات دائنه)', fileCode: '' },
-  { name: 'خصم غرامات الغاء على الوكلاء', fileCode: '' },
-  { name: 'خصم تذاكر على وكلاء الفلبين', fileCode: '' },
-  { name: 'خصم تذاكر على وكلاء اثيوبيا', fileCode: '' },
-  { name: 'خصم تذاكر على وكلاء كينيا', fileCode: '' },
-  { name: 'خصم تذاكر على وكلاء اوغندا', fileCode: '' },
-  { name: 'خصم تذاكر على وكلاء بنجلاديش', fileCode: '' },
-  { name: 'خصم تذاكر على وكلاء تنزانيا', fileCode: '' },
-  { name: 'خصم وكالات على وكلاء بنجلاديش', fileCode: '' },
+  { name: 'سيارة بك اب', fileCode: 'A-01-04' },
+  { name: 'تويوتا يارس رقم - د س ق 4847', fileCode: 'A-01-04' },
+  { name: 'تويوتا يارس رقم - د س ق 4846', fileCode: 'A-01-04' },
+  { name: 'تويوتا يارس رقم - د س ق 4849', fileCode: 'A-01-04' },
+  { name: 'تويوتا يارس رقم - د س ق 4850', fileCode: 'A-01-04' },
+  { name: 'تويوتا يارس رقم - د س ق 4845', fileCode: 'A-01-04' },
+  { name: 'تويوتا هاي ايس رقم - ب س أ 5979', fileCode: 'A-01-04' },
+  { name: 'تويوتا هاي ايس رقم - ب ر ه 1650', fileCode: 'A-01-04' },
+  { name: 'تويوتا ثلاجة رقم - ب ر س 9269', fileCode: 'A-01-04' },
+  { name: 'ايسوزو بكب غماره رقم - ب ط ك 1895', fileCode: 'A-01-04' },
+  { name: 'ايسوزو شاحنه رقم - ب ط ك 1894', fileCode: 'A-01-04' },
+  { name: 'ايسوزو بكب غمارتين رقم - ب ط ك 1896', fileCode: 'A-01-04' },
+  { name: 'ثلاجات', fileCode: 'A-01-08' },
+  { name: 'مكيفات كرافت.', fileCode: 'A-01-08' },
+  { name: 'مكاتب', fileCode: 'A-01-05' },
+  { name: 'وحدة ادراج', fileCode: 'A-01-05' },
+  { name: 'كراسي', fileCode: 'A-01-05' },
+  { name: 'طاولة حديد وزجاج', fileCode: 'A-01-05' },
+  { name: 'اثاث مطبخ', fileCode: 'A-01-05' },
+  { name: 'ثلاجة صغيرة', fileCode: 'A-01-08' },
+  { name: 'كمبيوتر ولاب توب .', fileCode: 'A-01-06' },
+  { name: 'كمبيوتر.', fileCode: 'A-01-06' },
+  { name: 'لاب توب dell.', fileCode: 'A-01-06' },
+  { name: 'لاب توب hp.', fileCode: 'A-01-06' },
+  { name: 'أي باد ميكروسوفت.', fileCode: 'A-01-06' },
+  { name: 'طابعة canon.', fileCode: 'A-01-06' },
+  { name: 'تليفون ارضي.', fileCode: 'A-01-07' },
+  { name: 'جوالات سامسونج.', fileCode: 'A-01-07' },
+  { name: 'جهاز واي فاي مقوي.', fileCode: 'A-01-07' },
+  { name: 'كاميرات هاي فيجن.', fileCode: 'A-01-14' },
+  { name: 'جهاز سيرفر كاميرات.', fileCode: 'A-01-14' },
+  { name: 'تغطية خطاب ضمان بنك الرياض رقم /', fileCode: 'A-09-11' },
+  { name: 'النقديه بالصندوق (الكاش)', fileCode: 'A-10-01' },
+  { name: 'بنك الراجحى حـ / 98', fileCode: 'A-10-08' },
+  { name: 'بنك الرياض حـ / 209940', fileCode: 'A-10-08' },
+  { name: 'بنك الاهلى حـ / ', fileCode: 'A-10-08' },
+  { name: 'بنك الانماء حـ / 10000 (جارى الشريك)', fileCode: 'L-09-04' },
+  { name: 'بنك ساب حـ / 8001 (جارى الشريك)', fileCode: 'L-09-04' },
+  { name: 'حساب مساند', fileCode: 'A-07-05' },
+  { name: 'عملاء الاستقدام', fileCode: 'A-07-01' },
+  { name: 'إيجارات مدفوعة مقدماً', fileCode: 'A-09-02' },
+  { name: 'تأمين اجتماعى مدفوع مقدما ', fileCode: 'A-09-03' },
+  { name: 'تأمين طبي مدفوع مقدما ', fileCode: 'A-09-03' },
+  { name: 'مصروفات اخرى مدفوعه مقدما ', fileCode: 'A-09-01' },
+  { name: 'مصروف مقدم عمولة اصدار خطاب ضمان', fileCode: 'A-09-01' },
+  { name: 'فوائد التمويل المؤجلة / مصروفات تمويلية مقدماً.', fileCode: 'A-09-01' },
+  { name: 'سلف اكرم', fileCode: 'A-09-06' },
+  { name: 'سلف عبد الرحمن ', fileCode: 'A-09-06' },
+  { name: 'سلف اسلام عرفة ', fileCode: 'A-09-06' },
+  { name: 'سلف مستشار هاني ', fileCode: 'A-09-06' },
+  { name: 'عهد منصور', fileCode: 'A-09-06' },
+  { name: 'ضريبة القيمة المضافة للمدخلات (ضريبة المشتريات)', fileCode: 'A-09-10' },
+  { name: 'المستحق من - خالد السليم', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مكتب ياقوت', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مكتب توباز', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مكتب الرواد', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مكتب التمور', fileCode: 'A-09-08' },
+  { name: 'المستحق من - معرض السيارات', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مؤسسة التجارة', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مؤسسة بنايات زكية', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مؤسسة اللمسة الخارقه', fileCode: 'A-09-08' },
+  { name: 'المستحق من - مؤسسة كاس لتنظيم المعارض', fileCode: 'A-09-08' },
+  { name: 'المستحق من - وكالة الاميال للسفر والسياحة', fileCode: 'A-09-08' },
+  { name: 'المستحق من - وكالة الدعاية والاعلان', fileCode: 'A-09-08' },
+  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4847', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4846', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4849', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4850', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا يارس رقم - د س ق 4845', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا هاي ايس رقم - ب ر ه 1650', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا ثلاجة رقم - ب ر س 9269', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك ايسوزو بكب غماره رقم - ب ط ك 1895', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك ايسوزو شاحنه رقم - ب ط ك 1894', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك ايسوزو بكب غمارتين رقم - ب ط ك 1896', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك سيارة بك اب', fileCode: 'A-02-03' },
+  { name: 'مخصص اهلاك تويوتا هاي ايس رقم - ب س أ 5979', fileCode: 'A-02-03' },
+  { name: 'تمويل الراجحي', fileCode: 'L-01-04' },
+  { name: 'LIGER KING FOREION EMPLOYMENT AGENT PLC', fileCode: 'L-04-02' },
+  { name: 'nural', fileCode: 'L-04-02' },
+  { name: 'Real Foreign Employment Agency', fileCode: 'L-04-02' },
+  { name: 'YAKOMSAN PRIVATE EMPLOYMENT AGENT', fileCode: 'L-04-02' },
+  { name: 'AL-ALAMIA INTERNATIONAL MANPOWER SERVICES', fileCode: 'L-04-02' },
+  { name: 'YOSHI PROMOTIONS, INC', fileCode: 'L-04-02' },
+  { name: 'EXERTION FORCE INTERNATIONALCO. LTD', fileCode: 'L-04-02' },
+  { name: 'KHALEEJ AGENCIES LIMITED', fileCode: 'L-04-02' },
+  { name: 'Premier Recruitment Limited', fileCode: 'L-04-02' },
+  { name: 'M/S AL JAHAN INTERNATIONAL', fileCode: 'L-04-02' },
+  { name: 'M/S. BD Star International', fileCode: 'L-04-02' },
+  { name: 'M/S. Bright International', fileCode: 'L-04-02' },
+  { name: 'M/S. Masum Brothers Syndicate', fileCode: 'L-04-02' },
+  { name: 'M/S. Mohona Overseas', fileCode: 'L-04-02' },
+  { name: 'PROTIK TRAVELS & TOURISM', fileCode: 'L-04-02' },
+  { name: 'TOUSHI INTERNATIONAL LTD', fileCode: 'L-04-02' },
+  { name: 'INTERNATIONAL SERVICES PROVIDER-BURUNDI', fileCode: 'L-04-02' },
+  { name: 'GOLDEN HANDS LTD', fileCode: 'L-04-02' },
+  { name: 'S. S. J. Travels', fileCode: 'L-04-02' },
+  { name: 'BIN IBRAHIM INTERNATIONAL AGENCIES LIMITED', fileCode: 'L-04-02' },
+  { name: 'مندوب اوغندا', fileCode: 'L-04-02' },
+  { name: 'مندوب كينيا', fileCode: 'L-04-02' },
+  { name: 'RAWAFED FOREIGN EMPLOYMENT AGENT PL', fileCode: 'L-04-02' },
+  { name: 'M/S MARVELLOUS OVERSEAS', fileCode: 'L-04-02' },
+  { name: 'M\\S MUJIB TRAVELS&TOURISM LTD', fileCode: 'L-04-02' },
+  { name: 'Landbase Human Resources CO', fileCode: 'L-04-02' },
+  { name: 'AL NUHIMAN FOREIGN EMPLOYMENT PLC', fileCode: 'L-04-02' },
+  { name: 'احمد حلمى عبدالمقصود محمد', fileCode: 'L-04-02' },
+  { name: 'رواتب مستحقة للعاملات', fileCode: 'L-05-01' },
+  { name: 'ضريبة القيمة المضافة للمخرجات (ضريبة المبيعات)', fileCode: 'L-05-09' },
+  { name: 'تسوية ضريبة القيمة المضافة  - هيئة الزكاة والضرائب', fileCode: 'L-05-09' },
+  { name: 'رواتب واجور مستحقة للموظفين.', fileCode: 'L-05-01' },
+  { name: 'المستحق الى - خالد السليم', fileCode: 'L-09-04' },
+  { name: 'المستحق الى - مكتب ياقوت', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - مكتب توباز', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - مكتب الرواد', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - معرض السيارات', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - مؤسسة التجارة', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - مؤسسة بنايات زكية', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - مؤسسة اللمسة الخارقه', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - مؤسسة كاس لتنظيم المعارض', fileCode: 'L-09-03' },
+  { name: 'المستحق الى - وكالة الاميال للسفر والسياحة', fileCode: 'L-09-03' },
+  { name: 'راس المال ', fileCode: 'E-01-01' },
+  { name: 'أرباح محتجزة من سنوات سابقة', fileCode: 'E-03-01' },
+  { name: 'ارباح وخسائر العام ', fileCode: 'E-03-05' },
+  { name: 'مصروفات المشتريات الرئيسى', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول الفلبين', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول اثيوبيا', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول بوروندى', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول كينيا', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول اوغندا', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول بنجلاديش', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - وصول تنزانيا', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - التفاويض الرجالى', fileCode: 'R-02-07' },
+  { name: 'مصروفات مشتريات - عقود التأجير', fileCode: 'R-02-07' },
+  { name: 'مردودات مبيعات الفلبين', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات اثيوبيا', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات بوروندى', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات كينيا', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات اوغند', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات بنجلاديش', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات تنزانيا', fileCode: 'R-01-13' },
+  { name: 'مردودات مبيعات التفاويض الرجالى', fileCode: 'R-01-13' },
+  { name: 'مصروف التفويض الاليكترونى', fileCode: 'R-02-05' },
+  { name: 'مصروف رسوم مساند', fileCode: 'R-02-05' },
+  { name: 'مصروف عقود السفارة', fileCode: 'R-02-05' },
+  { name: 'مصروف عمولات المناديب', fileCode: 'R-02-05' },
+  { name: 'مصروف تذاكر سائقين الهند', fileCode: 'R-02-06' },
+  { name: 'مصروف رواتب الموظفين', fileCode: 'R-04-01' },
+  { name: 'مصروف مستحقات اجازة الموظفين', fileCode: 'R-04-01' },
+  { name: 'مصروف مكافأة نهاية خدمة الموظفين', fileCode: 'R-04-01' },
+  { name: 'مصروف تامينات اجتماعية الموظفين', fileCode: 'R-04-10' },
+  { name: 'مصروف اصدار التاشيرات الموظفين', fileCode: 'R-04-05' },
+  { name: 'مصروف تجهيزات سكن الموظفين', fileCode: 'R-04-02' },
+  { name: 'مصروفات متنوعه الموظفين', fileCode: 'R-04-01' },
+  { name: 'مصروف اقامات الموظفين', fileCode: 'R-04-05' },
+  { name: 'مصروف تذاكر سفر الموظفين', fileCode: 'R-04-11' },
+  { name: 'مصروف وقود وشريحة وقود سيارات', fileCode: 'R-04-15' },
+  { name: 'مصروف زيوت سيارات', fileCode: 'R-04-15' },
+  { name: 'مصروف صيانة وقطع غيار السيارات', fileCode: 'R-04-15' },
+  { name: 'مصروف ايجارات العقارات', fileCode: 'R-04-02' },
+  { name: 'مصروف تصديقات وتراخيص واشتراكات', fileCode: 'R-04-08' },
+  { name: 'مصاريف حكومية أخرى', fileCode: 'R-04-05' },
+  { name: 'مصروف فواتير كهرباء', fileCode: 'R-04-04' },
+  { name: 'مصروف فواتير مياه', fileCode: 'R-04-04' },
+  { name: 'مصروف فواتير الهواتف والجوالات', fileCode: 'R-04-03' },
+  { name: 'هاتف ارضي وانترنت ', fileCode: 'R-04-03' },
+  { name: 'مصاريف بنكية متنوعة', fileCode: 'R-04-17' },
+  { name: 'مصروف جوب اوردر ', fileCode: 'R-04-08' },
+  { name: 'مصروف  تعديل خطاب الضمان', fileCode: 'R-04-17' },
+  { name: 'عمولة مبيعات الموظفين', fileCode: 'R-03-02' },
+  { name: 'عمولة مبيعات المسوقات', fileCode: 'R-03-02' },
+  { name: 'مصروف دعاية واعلان', fileCode: 'R-03-03' },
+  { name: 'مصروف نقل كفالة العاملات', fileCode: 'R-02-07' },
+  { name: 'مصروفات متنوعة العاملات', fileCode: 'R-02-07' },
+  { name: 'مصروف سكن العاملات', fileCode: 'R-02-08' },
+  { name: 'مصروف طعام واعاشة العاملات', fileCode: 'R-02-08' },
+  { name: 'مصروف نقل جماعى العاملات', fileCode: 'R-02-06' },
+  { name: 'مصروف تذاكر سفر العاملات', fileCode: 'R-02-06' },
+  { name: 'مصروف ضيافة ومجاملات بوفية', fileCode: 'R-04-16' },
+  { name: 'مصروف مستلزمات كمبيوتر', fileCode: 'R-04-13' },
+  { name: 'مصروف صيانة اجهزة مكتبية', fileCode: 'R-04-09' },
+  { name: 'مصروف هدايا واكراميات', fileCode: 'R-04-16' },
+  { name: 'مصروف غرامات ومخالفات عمومية', fileCode: 'R-06-05' },
+  { name: 'مصروف غرامات الغاء العقود للعملاء', fileCode: 'R-06-05' },
+  { name: 'مصروف صيانه متنوعة', fileCode: 'R-04-09' },
+  { name: 'مصاريف الثرية متنوعة', fileCode: 'R-04-16' },
+  { name: 'مصروفات سيارات متنوعة', fileCode: 'R-04-15' },
+  { name: 'مردودات ايرادات نقل كفالة.', fileCode: 'R-01-13' },
+  { name: 'ايرادات مبيعات الفلبين', fileCode: 'R-01-07' },
+  { name: 'ايرادات مبيعات اثيوبيا', fileCode: 'R-01-07' },
+  { name: 'ايرادات مبيعات بوروندى', fileCode: 'R-01-07' },
+  { name: 'ايرادات مبيعات كينيا', fileCode: 'R-01-07' },
+  { name: 'ايرادات مبيعات اوغندا', fileCode: 'R-01-07' },
+  { name: 'ايرادات مبيعات بنجلاديش', fileCode: 'R-01-07' },
+  { name: 'ايرادات مبيعات تنزانيا', fileCode: 'R-01-07' },
+  { name: 'ايرادات التفاويض الرجالى', fileCode: 'R-01-07' },
+  { name: 'مردودات  مشتريات - بدايل الفلبين', fileCode: 'R-02-12' },
+  { name: 'مردودات  مشتريات - بدايل اثيوبيا', fileCode: 'R-02-12' },
+  { name: 'مردودات  مشتريات - بدايل كينيا', fileCode: 'R-02-12' },
+  { name: 'مردودات  مشتريات - بدايل اوغندا', fileCode: 'R-02-12' },
+  { name: 'مردودات  مشتريات - بدايل بنجلاديش', fileCode: 'R-02-12' },
+  { name: 'مردودات  مشتريات - بدايل تنزانيا', fileCode: 'R-02-12' },
+  { name: 'إيرادات اخرى متنوعه', fileCode: 'R-05-06' },
+  { name: 'إيرادات نقل كفالة العاملات', fileCode: 'R-01-12' },
+  { name: 'خصومات على العملاء (غرامات دائنه)', fileCode: 'R-05-02' },
+  { name: 'خصم غرامات الغاء على الوكلاء', fileCode: 'R-05-02' },
+  { name: 'خصم تذاكر على وكلاء الفلبين', fileCode: 'R-02-12' },
+  { name: 'خصم تذاكر على وكلاء اثيوبيا', fileCode: 'R-02-12' },
+  { name: 'خصم تذاكر على وكلاء كينيا', fileCode: 'R-02-12' },
+  { name: 'خصم تذاكر على وكلاء اوغندا', fileCode: 'R-02-12' },
+  { name: 'خصم تذاكر على وكلاء بنجلاديش', fileCode: 'R-02-12' },
+  { name: 'خصم تذاكر على وكلاء تنزانيا', fileCode: 'R-02-12' },
+  { name: 'خصم وكالات على وكلاء بنجلاديش', fileCode: 'R-02-12' },
 ];
 
 /**
@@ -739,9 +842,12 @@ export function computeIfrsEngine(
   // 1. Compute row-level metrics
   const rows: ComputedTrialBalanceRow[] = entries.map((entry) => {
     const suggestedCode = suggestIfrsCode(entry.accountName);
+    const suggestedSubCode = suggestIfrsSubCode(entry.accountName);
     const primaryManual = extractPrimaryIfrsCode(entry.manualCode);
     const approvedCode = primaryManual || '';
+    const approvedSubCode = entry.manualCode || (approvedCode ? suggestedSubCode : '');
     const mapping = approvedCode ? IFRS_MAPPING_MAP[approvedCode] : undefined;
+    const subMapping = approvedSubCode ? EXTENDED_IFRS_MAP[approvedSubCode] : undefined;
     const naturalBalance = mapping?.naturalBalance || '-';
 
     const openingNet = (entry.openingDebit || 0) - (entry.openingCredit || 0);
@@ -760,14 +866,21 @@ export function computeIfrsEngine(
       entry.periodDebit !== 0 ||
       entry.periodCredit !== 0;
 
+    const isContraAccount =
+      entry.accountName.includes('مردودات') ||
+      entry.accountName.includes('خصم تذاكر') ||
+      entry.accountName.includes('خصم وكالات') ||
+      approvedSubCode === 'R-01-13' ||
+      approvedSubCode === 'R-02-12';
+
     if (!approvedCode) {
-      auditNote = `غير مصنف - المقترح التلقائي (${suggestedCode}) | اختر التصنيف المعتمد`;
+      auditNote = `غير مصنف - المقترح التلقائي (${suggestedSubCode || suggestedCode}) | اختر التصنيف المعتمد`;
       if (hasAnyNumber) hasError = true;
       else hasWarning = true;
-    } else if (naturalBalance === 'D' && closingNet < -tolerance) {
+    } else if (!isContraAccount && naturalBalance === 'D' && closingNet < -tolerance) {
       auditNote = `رصيد دائن عكس الطبيعة المدينة (${approvedCode}) - راجع IAS 1.32`;
       hasWarning = true;
-    } else if (naturalBalance === 'C' && closingNet > tolerance) {
+    } else if (!isContraAccount && naturalBalance === 'C' && closingNet > tolerance) {
       auditNote = `رصيد مدين عكس الطبيعة الدائنة (${approvedCode}) - راجع IAS 1.32`;
       hasWarning = true;
     }
@@ -784,8 +897,12 @@ export function computeIfrsEngine(
       ...entry,
       suggestedCode,
       approvedCode,
-      approvedSubCode: entry.manualCode || approvedCode,
+      approvedSubCode: approvedSubCode || approvedCode,
       approvedItemName: mapping?.nameAr || 'غير مصنف',
+      approvedSubItemName: subMapping?.nameAr || mapping?.nameAr || 'غير مصنف',
+      sectionAr: mapping?.sectionAr || '',
+      ifrsRef: subMapping?.ifrsRef || mapping?.ifrsRef || '',
+      cashFlowType: mapping?.cashFlowType || '',
       naturalBalance,
       openingNet,
       closingDebit,
@@ -1944,8 +2061,8 @@ export function computeIfrsEngine(
   };
 }
 
-const STORAGE_TB_KEY = 'ALSULAIM_IFRS_TB_V1_';
-const STORAGE_SETTINGS_KEY = 'ALSULAIM_IFRS_SETTINGS_V1_';
+const STORAGE_TB_KEY = 'ALSULAIM_IFRS_TB_V2_';
+const STORAGE_SETTINGS_KEY = 'ALSULAIM_IFRS_SETTINGS_V2_';
 
 export const ifrsFinancialEngineService = {
   getTrialBalance(companyId: CompanyId): TrialBalanceEntry[] {
