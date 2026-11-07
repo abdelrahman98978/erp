@@ -448,7 +448,7 @@ export const UsersPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -502,19 +502,19 @@ export const UsersPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المستخدمين</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{users.length} مستخدمين</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{users.length} مستخدمين</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>حسابات معتمدة</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المصادقة الثنائية (2FA)</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>المصادقة الثنائية (2FA)</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {users.filter(u => u.two_factor_enabled).length} مفعلين
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>حماية فائقة</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>البصمة البيومترية</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {users.filter(u => u.biometric_enabled).length} مسجلين
@@ -524,7 +524,7 @@ export const UsersPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>الصلاحيات النشطة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>6 أدوار</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>6 أدوار</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>RBAC Matrix</span>
         </div>
       </div>
@@ -574,7 +574,7 @@ export const UsersPage: React.FC = () => {
                         status={u.status === 'نشط' ? 'online' : 'none'}
                       />
                       <div>
-                        <div className="font-bold text-black">{u.name}</div>
+                        <div className="font-bold text-[#141414]">{u.name}</div>
                         <div className="text-[11px] text-[#707070] font-mono">@{u.username} • {u.email}</div>
                       </div>
                     </div>
@@ -681,7 +681,7 @@ export const UsersPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateUser} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleCreateUser} className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموظف الثلاثي *</label>
@@ -691,7 +691,7 @@ export const UsersPage: React.FC = () => {
                     value={newUser.name}
                     onChange={e => setNewUser({ ...newUser, name: e.target.value })}
                     placeholder="مثال: خالد محمد العتيبي"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -702,7 +702,7 @@ export const UsersPage: React.FC = () => {
                     value={newUser.username}
                     onChange={e => setNewUser({ ...newUser, username: e.target.value })}
                     placeholder="مثال: khaled_ops"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -713,7 +713,7 @@ export const UsersPage: React.FC = () => {
                   <select
                     value={newUser.role}
                     onChange={e => setNewUser({ ...newUser, role: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="Administrator">Administrator (مدير نظام عام)</option>
                     <option value="HR Director">HR Director (مدير موارد بشرية)</option>
@@ -730,7 +730,7 @@ export const UsersPage: React.FC = () => {
                   <select
                     value={newUser.branch}
                     onChange={e => setNewUser({ ...newUser, branch: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="الفرع الرئيسي">الفرع الرئيسي - الرياض</option>
                     <option value="فرع الرياض - اليرموك">فرع الرياض - اليرموك</option>
@@ -748,7 +748,7 @@ export const UsersPage: React.FC = () => {
                     value={newUser.phone}
                     onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
                     placeholder="05XXXXXXXX"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -758,7 +758,7 @@ export const UsersPage: React.FC = () => {
                     value={newUser.email}
                     onChange={e => setNewUser({ ...newUser, email: e.target.value })}
                     placeholder="user@alsulaim.sa"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -769,9 +769,9 @@ export const UsersPage: React.FC = () => {
                     type="checkbox"
                     checked={newUser.two_factor_enabled}
                     onChange={e => setNewUser({ ...newUser, two_factor_enabled: e.target.checked })}
-                    className="rounded text-black focus:ring-0"
+                    className="rounded text-[#141414] focus:ring-0"
                   />
-                  <span className="text-xs font-semibold text-black">تفعيل التحقق الثنائي (2FA) عند أول تسجيل دخول</span>
+                  <span className="text-xs font-semibold text-[#141414]">تفعيل التحقق الثنائي (2FA) عند أول تسجيل دخول</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -820,10 +820,10 @@ export const UsersPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSaveRoleChange} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleSaveRoleChange} className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200">
                 <span className="text-[11px] text-[#707070] font-semibold block">المستخدم المحدد:</span>
-                <div className="font-bold text-sm text-black mt-0.5">{userToEditRole.name}</div>
+                <div className="font-bold text-sm text-[#141414] mt-0.5">{userToEditRole.name}</div>
                 <div className="text-[11px] text-[#707070] font-mono">@{userToEditRole.username} • {userToEditRole.email}</div>
               </div>
 
@@ -832,7 +832,7 @@ export const UsersPage: React.FC = () => {
                 <select
                   value={editRoleForm.role}
                   onChange={e => setEditRoleForm({ ...editRoleForm, role: e.target.value })}
-                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
+                  className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:outline-none"
                 >
                   <option value="Administrator">Administrator (مدير نظام عام - كافة الصلاحيات)</option>
                   <option value="Branch Manager">Branch Manager (مدير فرع)</option>
@@ -849,7 +849,7 @@ export const UsersPage: React.FC = () => {
                 <select
                   value={editRoleForm.user_type}
                   onChange={e => setEditRoleForm({ ...editRoleForm, user_type: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="الإدارة العليا والتنفيذية">الإدارة العليا والتنفيذية</option>
                   <option value="إدارة العمليات والتشغيل">إدارة العمليات والتشغيل</option>
@@ -865,7 +865,7 @@ export const UsersPage: React.FC = () => {
                 <select
                   value={editRoleForm.branch}
                   onChange={e => setEditRoleForm({ ...editRoleForm, branch: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="الفرع الرئيسي">الفرع الرئيسي - الرياض</option>
                   <option value="فرع الرياض - اليرموك">فرع الرياض - اليرموك</option>
@@ -910,16 +910,16 @@ export const UsersPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
+            <div className="p-6 space-y-4 bg-white text-[#141414]">
               {selectedUser.two_factor_enabled ? (
                 <div className="space-y-4 text-center">
                   <div className="w-16 h-16 rounded-full bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] mx-auto flex items-center justify-center">
                     <ShieldCheck className="w-8 h-8" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-sm text-black">المصادقة الثنائية مفعلة بنجاح</h4>
+                    <h4 className="font-bold text-sm text-[#141414]">المصادقة الثنائية مفعلة بنجاح</h4>
                     <p className="text-xs text-[#707070] mt-1">
-                      الوسيلة الحالية: <span className="font-bold text-black">{selectedUser.two_factor_method || 'Google Authenticator'}</span>
+                      الوسيلة الحالية: <span className="font-bold text-[#141414]">{selectedUser.two_factor_method || 'Google Authenticator'}</span>
                     </p>
                     {selectedUser.biometric_enabled && (
                       <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full bg-[#f3f3f3] text-[#141414] text-[11px] font-bold border border-[#e0e0e0]">
@@ -958,7 +958,7 @@ export const UsersPage: React.FC = () => {
                         <label
                           onClick={() => setSelectedMethod('Google Authenticator')}
                           className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
-                            selectedMethod === 'Google Authenticator' ? 'border-black bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
+                            selectedMethod === 'Google Authenticator' ? 'border-[#141414] bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
                           }`}
                         >
                           <input
@@ -969,7 +969,7 @@ export const UsersPage: React.FC = () => {
                             className="mt-1 accent-black"
                           />
                           <div>
-                            <span className="font-bold text-xs text-black flex items-center gap-1">
+                            <span className="font-bold text-xs text-[#141414] flex items-center gap-1">
                               <Smartphone className="w-3.5 h-3.5" />
                               <span>تطبيق المصادقة (Google / Microsoft Authenticator)</span>
                             </span>
@@ -1002,7 +1002,7 @@ export const UsersPage: React.FC = () => {
                         <label
                           onClick={() => setSelectedMethod('SMS')}
                           className={`flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all ${
-                            selectedMethod === 'SMS' ? 'border-black bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
+                            selectedMethod === 'SMS' ? 'border-[#141414] bg-zinc-50' : 'border-zinc-200 hover:bg-zinc-50'
                           }`}
                         >
                           <input
@@ -1013,7 +1013,7 @@ export const UsersPage: React.FC = () => {
                             className="mt-1 accent-black"
                           />
                           <div>
-                            <span className="font-bold text-xs text-black flex items-center gap-1">
+                            <span className="font-bold text-xs text-[#141414] flex items-center gap-1">
                               <MessageSquare className="w-3.5 h-3.5" />
                               <span>رسالة نصية قصيرة (SMS OTP)</span>
                             </span>
@@ -1041,11 +1041,11 @@ export const UsersPage: React.FC = () => {
                           </p>
                           
                           <div className="w-36 h-36 mx-auto mb-3 bg-zinc-100 border border-zinc-300 rounded-2xl flex flex-col items-center justify-center">
-                            <QrCode className="w-20 h-20 text-black" />
+                            <QrCode className="w-20 h-20 text-[#141414]" />
                             <span className="text-[9px] text-[#707070] font-mono mt-1 font-bold">ALSALIM 2FA KEY</span>
                           </div>
 
-                          <div className="bg-zinc-100 p-2 rounded-xl text-xs font-mono font-bold text-black inline-block">
+                          <div className="bg-zinc-100 p-2 rounded-xl text-xs font-mono font-bold text-[#141414] inline-block">
                             SECRET KEY: JBSW-Y3DP-EHPK-3PXP
                           </div>
                         </div>
@@ -1061,8 +1061,8 @@ export const UsersPage: React.FC = () => {
                         </div>
                       ) : (
                         <div>
-                          <MessageSquare className="w-10 h-10 text-black mx-auto mb-2" />
-                          <p className="text-xs font-bold text-black">
+                          <MessageSquare className="w-10 h-10 text-[#141414] mx-auto mb-2" />
+                          <p className="text-xs font-bold text-[#141414]">
                             سيتم إرسال رمز التحقق عند تسجيل الدخول القادم عبر {selectedMethod} إلى ({selectedUser.phone}).
                           </p>
                         </div>
@@ -1078,7 +1078,7 @@ export const UsersPage: React.FC = () => {
                           placeholder="123456"
                           value={otpCode}
                           onChange={e => setOtpCode(e.target.value)}
-                          className="text-center text-lg font-mono font-bold tracking-widest w-44 mx-auto block bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 focus:border-black focus:outline-none"
+                          className="text-center text-lg font-mono font-bold tracking-widest w-44 mx-auto block bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 focus:border-[#141414] focus:outline-none"
                         />
                       </div>
 
@@ -1127,12 +1127,12 @@ export const UsersPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto space-y-5 bg-white text-black flex-1">
+            <div className="p-6 overflow-y-auto space-y-5 bg-white text-[#141414] flex-1">
               {/* User Context & Hardware Readiness Banner */}
               <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between flex-wrap gap-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-sm text-black">{userForBiometrics.name}</span>
+                    <span className="font-bold text-sm text-[#141414]">{userForBiometrics.name}</span>
                     <span className="text-xs text-[#707070] font-mono">(@{userForBiometrics.username})</span>
                     <Badge text={userForBiometrics.role} type="purple" />
                   </div>
@@ -1157,7 +1157,7 @@ export const UsersPage: React.FC = () => {
               {/* Registered Biometric Credentials List */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-bold text-xs text-black flex items-center gap-2 m-0">
+                  <h4 className="font-bold text-xs text-[#141414] flex items-center gap-2 m-0">
                     <Fingerprint className="w-4 h-4 text-[#141414]" />
                     <span>البصمات والمفاتيح المسجلة ({userCredentials.length})</span>
                   </h4>
@@ -1194,7 +1194,7 @@ export const UsersPage: React.FC = () => {
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-bold text-xs text-black">{cred.biometricType}</span>
+                                  <span className="font-bold text-xs text-[#141414]">{cred.biometricType}</span>
                                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                                     cred.status === 'نشط' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-zinc-200 text-zinc-600'
                                   }`}>
@@ -1302,12 +1302,12 @@ export const UsersPage: React.FC = () => {
                       onClick={() => setEnrollBioType(opt.id as any)}
                       className={`p-2.5 rounded-xl border text-right transition-all cursor-pointer ${
                         enrollBioType === opt.id
-                          ? 'bg-white border-black ring-2 ring-black/10 shadow-sm'
+                          ? 'bg-white border-[#141414] ring-2 ring-black/10 shadow-sm'
                           : 'bg-white/60 border-zinc-200 hover:bg-white hover:border-zinc-300'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs text-black">{opt.label}</span>
+                        <span className="font-bold text-xs text-[#141414]">{opt.label}</span>
                         <opt.icon className="w-3.5 h-3.5 text-[#141414]" />
                       </div>
                       <span className="text-[10px] text-[#707070] block">{opt.desc}</span>

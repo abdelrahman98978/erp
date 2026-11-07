@@ -175,7 +175,7 @@ export const BranchCommunicationPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -210,7 +210,7 @@ export const BranchCommunicationPage: React.FC = () => {
             className="button-white-pill"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <Plus className="w-3.5 h-3.5 ml-1 text-black" />
+            <Plus className="w-3.5 h-3.5 ml-1 text-[#141414]" />
             <span>طلب مناقلة بين الفروع</span>
           </button>
         </div>
@@ -220,8 +220,8 @@ export const BranchCommunicationPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Col: Channel Selector */}
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
-          <h2 className="text-sm font-bold text-black mb-3 flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-black" />
+          <h2 className="text-sm font-bold text-[#141414] mb-3 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4 text-[#141414]" />
             <span>قنوات التواصل الرسمية</span>
           </h2>
 
@@ -241,8 +241,8 @@ export const BranchCommunicationPage: React.FC = () => {
                   padding: '12px',
                   borderRadius: '16px',
                   border: '1px solid',
-                  borderColor: activeChannel === ch.name ? '#000000' : '#f4f4f5',
-                  backgroundColor: activeChannel === ch.name ? '#000000' : '#fafafa',
+                  borderColor: activeChannel === ch.name ? '#141414' : '#f4f4f5',
+                  backgroundColor: activeChannel === ch.name ? '#141414' : '#fafafa',
                   color: activeChannel === ch.name ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -252,7 +252,7 @@ export const BranchCommunicationPage: React.FC = () => {
                 }}
               >
                 <div>
-                  <div className="font-bold text-xs" style={{ color: activeChannel === ch.name ? '#ffffff' : '#000000' }}>{ch.name}</div>
+                  <div className="font-bold text-xs" style={{ color: activeChannel === ch.name ? '#ffffff' : '#141414' }}>{ch.name}</div>
                   <div className="text-[11px] mt-0.5" style={{ color: activeChannel === ch.name ? '#a1a1aa' : '#71717a' }}>{ch.desc}</div>
                 </div>
                 <span
@@ -284,7 +284,7 @@ export const BranchCommunicationPage: React.FC = () => {
           <div>
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
               <div>
-                <h2 className="text-sm font-bold text-black m-0">{activeChannel}</h2>
+                <h2 className="text-sm font-bold text-[#141414] m-0">{activeChannel}</h2>
                 <span className="text-[11px] text-[#707070]">سجل الرسائل الحية المحفوظ في قاعدة البيانات</span>
               </div>
               <span className="pill-tag-mint" style={{ fontSize: '10px' }}>مباشر Live</span>
@@ -310,7 +310,7 @@ export const BranchCommunicationPage: React.FC = () => {
                         />
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-black">{msg.sender_name}</span>
+                            <span className="font-bold text-[#141414]">{msg.sender_name}</span>
                             <span className="text-[10px] text-[#707070]">({msg.sender_role})</span>
                           </div>
                           <span className="text-[10px] text-[#707070] font-mono">{msg.sender_branch}</span>
@@ -333,7 +333,7 @@ export const BranchCommunicationPage: React.FC = () => {
               placeholder={`أرسل رسالة فورية إلى (${activeChannel})...`}
               value={newMessageText}
               onChange={e => setNewMessageText(e.target.value)}
-              className="flex-1 bg-zinc-50 border border-zinc-200 rounded-full px-4 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+              className="flex-1 bg-zinc-50 border border-zinc-200 rounded-full px-4 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414]"
               style={{ minHeight: '40px' }}
             />
             <button
@@ -351,8 +351,8 @@ export const BranchCommunicationPage: React.FC = () => {
       {/* Inter-Branch Transfer Requests Table */}
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
-            <ArrowLeftRight className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+            <ArrowLeftRight className="w-4 h-4 text-[#141414]" />
             <span>سجل طلبات المناقلات والتنسيق بين الفروع (Inter-Branch Transfers Log)</span>
           </h3>
           <span className="pill-tag-mint text-[11px]">{transfers.length} طلب مناقلة</span>
@@ -375,10 +375,10 @@ export const BranchCommunicationPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {transfers.map(t => (
                 <tr key={t.id} className="hover:bg-zinc-50 transition-colors">
-                  <td className="p-3.5 font-mono font-bold text-black">{t.request_no}</td>
-                  <td className="p-3.5 font-bold text-black">{t.from_branch}</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{t.request_no}</td>
+                  <td className="p-3.5 font-bold text-[#141414]">{t.from_branch}</td>
                   <td className="p-3.5 font-bold text-zinc-800">{t.to_branch}</td>
-                  <td className="p-3.5 font-semibold text-black">{t.req_type}</td>
+                  <td className="p-3.5 font-semibold text-[#141414]">{t.req_type}</td>
                   <td className="p-3.5 text-zinc-600 text-xs">{t.details}</td>
                   <td className="p-3.5">
                     <Badge text={t.status} type={t.status === 'تم القبول والتحويل' ? 'success' : t.status === 'مرفوض' ? 'danger' : 'warning'} />
@@ -427,13 +427,13 @@ export const BranchCommunicationPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateTransfer} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleCreateTransfer} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع الهدف (المحوّل إليه) *</label>
                 <select
                   value={transferForm.to_branch}
                   onChange={e => setTransferForm({ ...transferForm, to_branch: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>فرع جدة - طريق الملك</option>
                   <option>فرع الخبر - المنطقة الشرقية</option>
@@ -447,7 +447,7 @@ export const BranchCommunicationPage: React.FC = () => {
                 <select
                   value={transferForm.req_type}
                   onChange={e => setTransferForm({ ...transferForm, req_type: e.target.value as any })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="مناقلة عمالة">مناقلة عمالة ونقل سكن</option>
                   <option value="طلب سيولة تشغيلية">طلب سيولة مالية سريعة</option>
@@ -463,7 +463,7 @@ export const BranchCommunicationPage: React.FC = () => {
                   placeholder="اكتب التفاصيل هنا (أرقام الجوازات، الأعداد المطلوبة، أو المبلغ المحول)..."
                   value={transferForm.details}
                   onChange={e => setTransferForm({ ...transferForm, details: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>

@@ -494,6 +494,101 @@ a {
   background: #707070;
 }
 
+/* ─── StyleSeed & Mobbin Calibrated Motion Seeds (/ui-motion) ─── */
+@keyframes mobbinSilkEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobbinSnapEnter {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mobbinPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mobbinPulseBeat {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.78;
+  }
+}
+
+@keyframes mobbinWiggle {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@keyframes mobbinShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.motion-silk-enter,
+div.fixed.inset-0 > div:not(.fixed) {
+  animation: mobbinSilkEnter 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-snap-enter {
+  animation: mobbinSnapEnter 140ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.motion-spring-press {
+  transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-spring-press:active {
+  transform: scale(0.97);
+}
+
+.motion-pop-in {
+  animation: mobbinPopIn 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-pulse-beat {
+  animation: mobbinPulseBeat 1.8s ease-in-out infinite;
+}
+
+.motion-wiggle {
+  animation: mobbinWiggle 220ms ease-in-out;
+}
+
+.motion-shimmer {
+  background: linear-gradient(90deg, #f3f3f3 25%, #e8e8e8 50%, #f3f3f3 75%);
+  background-size: 200% 100%;
+  animation: mobbinShimmer 1.6s linear infinite;
+}
+
 /* Accessibility: Respect user reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   html {

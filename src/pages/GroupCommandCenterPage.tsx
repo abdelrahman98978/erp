@@ -37,7 +37,7 @@ export const GroupCommandCenterPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -85,7 +85,7 @@ export const GroupCommandCenterPage: React.FC = () => {
             className="button-white-pill"
             style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <UserCheck className="w-4 h-4 ml-1 text-black" />
+            <UserCheck className="w-4 h-4 ml-1 text-[#141414]" />
             <span>+ تفعيل محاكاة موظف (Act As Employee)</span>
           </button>
         </div>
@@ -94,18 +94,18 @@ export const GroupCommandCenterPage: React.FC = () => {
       {/* Group Consolidated Overview Cards */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <div style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي إيرادات المجموعة YTD</div>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>28,500,000 ⃁</div>
+          <div style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>إجمالي إيرادات المجموعة YTD</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>28,500,000 ⃁</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>+14.2% مقارنة بالعام الماضي</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي كادر المجموعة (HR)</div>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>450 موظف</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>450 موظف</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>موزعين على 18 فرعاً</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <div style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الطلبات السارية في الشركات</div>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>1,240 طلب</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>استقدام وتأجير وتشغيل</span>
@@ -113,7 +113,7 @@ export const GroupCommandCenterPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <div style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مرشحو مسار ATS الدولي</div>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>3,410 مرشح</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>3,410 مرشح</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>من 5 مكاتب خارجية</span>
         </div>
       </div>
@@ -121,8 +121,8 @@ export const GroupCommandCenterPage: React.FC = () => {
       {/* Group Companies Comparison Matrix */}
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="p-4 border-b border-zinc-100 bg-white">
-          <h2 className="text-sm font-bold text-black flex items-center gap-2 m-0">
-            <Building2 className="w-4 h-4 text-black" />
+          <h2 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+            <Building2 className="w-4 h-4 text-[#141414]" />
             <span>مصفوفة أداء الكيانات الخمسة المعتمدة (Consolidated 5-Companies Matrix)</span>
           </h2>
         </div>
@@ -143,7 +143,7 @@ export const GroupCommandCenterPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {companies.map((c) => (
                 <tr key={c.id} className="hover:bg-zinc-50 transition-colors">
-                  <td className="p-3.5 font-bold text-black">
+                  <td className="p-3.5 font-bold text-[#141414]">
                     <div className="flex items-center gap-2.5">
                       <CorporateAvatar size="sm" archetype="saudi-executive" status="verified" name={c.name} />
                       <span>{c.name}</span>
@@ -180,8 +180,8 @@ export const GroupCommandCenterPage: React.FC = () => {
       {/* Audit Log Trail Section */}
       <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
-            <ShieldCheck className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+            <ShieldCheck className="w-4 h-4 text-[#141414]" />
             <span>سجلات التدقيق والحماية المركزية (Group Security Audit Trail)</span>
           </h3>
           <span className="text-[11px] text-[#707070] font-semibold">سجلات غير قابلة للتعديل أو الحذف</span>
@@ -197,8 +197,8 @@ export const GroupCommandCenterPage: React.FC = () => {
                 <CorporateAvatar size="sm" archetype="saudi-executive" status="verified" name={log.actorName} />
                 <div>
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-bold text-black">{log.actorName}</span>
-                    <span className="bg-zinc-200 text-black px-2 py-0.5 rounded-full text-[10px] font-bold">
+                    <span className="font-bold text-[#141414]">{log.actorName}</span>
+                    <span className="bg-zinc-200 text-[#141414] px-2 py-0.5 rounded-full text-[10px] font-bold">
                       {log.actionType}
                     </span>
                     <span className="text-[11px] text-[#707070] font-mono">IP: {log.ipAddress}</span>
@@ -228,7 +228,7 @@ export const GroupCommandCenterPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleExecuteImpersonation} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleExecuteImpersonation} className="p-6 space-y-4 bg-white text-[#141414]">
               <p className="text-xs text-[#707070] leading-relaxed m-0">
                 سيتم تسجيل هذا الدخول بالكامل في سجلات التدقيق (Audit Log) مع تسجيل السبب والتوقيت ورفع بصمة العملية.
               </p>
@@ -240,7 +240,7 @@ export const GroupCommandCenterPage: React.FC = () => {
                 <select
                   value={selectedTargetCompany}
                   onChange={(e) => setSelectedTargetCompany(e.target.value as CompanyId)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="SAF">شركة السفير الماسي</option>
                   <option value="YAQ">شركة ياقوت نجد</option>
@@ -257,7 +257,7 @@ export const GroupCommandCenterPage: React.FC = () => {
                   type="text"
                   value={selectedEmpName}
                   onChange={(e) => setSelectedEmpName(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -270,7 +270,7 @@ export const GroupCommandCenterPage: React.FC = () => {
                   value={impersonationReason}
                   onChange={(e) => setImpersonationReason(e.target.value)}
                   rows={3}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] leading-relaxed focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>

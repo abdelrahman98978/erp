@@ -206,7 +206,7 @@ export const AgentImportsPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -299,12 +299,12 @@ export const AgentImportsPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {filteredBatches.map((row) => (
                 <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.batch_code}</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{row.batch_code}</td>
                   <td className="p-3.5">
                     <div className="flex items-center gap-2.5">
                       <CorporateAvatar name={row.office_name} role={row.country} size="sm" status="verified" />
                       <div>
-                        <div className="font-bold text-black">{row.office_name}</div>
+                        <div className="font-bold text-[#141414]">{row.office_name}</div>
                         <div className="text-[#707070] text-[11px]">{row.country}</div>
                       </div>
                     </div>

@@ -153,7 +153,7 @@ export const LegalCompliancePage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -200,17 +200,17 @@ export const LegalCompliancePage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>إجمالي الإقرارات الموقعة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{undertakings.length} موظفاً</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '4px' }}>{undertakings.length} موظفاً</div>
           <span className="pill-tag-mint text-[11px] mt-2">توثيق رقمي نافذ</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>نسبة الامتثال المؤسسي</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>100%</div>
+          <span style={{ fontSize: '12px', color: '#141414', fontWeight: 550 }}>نسبة الامتثال المؤسسي</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '4px' }}>100%</div>
           <span className="pill-tag-mint text-[11px] mt-2">مطابقة نظام PDPL ومكافحة الجرائم</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>الأقسام المغطاة بمواثيق خاصة</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px' }}>6 أقسام</div>
           <span className="pill-tag-mint text-[11px] mt-2">بنود قانونية مخصصة</span>
@@ -218,7 +218,7 @@ export const LegalCompliancePage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>التفويض البيومتري E-Sign</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>{undertakings.length} مفعل</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '4px' }}>{undertakings.length} مفعل</div>
           <span className="pill-tag-shade text-[11px] mt-2">مرسوم ملكي م/18</span>
         </div>
       </div>
@@ -243,8 +243,8 @@ export const LegalCompliancePage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -281,7 +281,7 @@ export const LegalCompliancePage: React.FC = () => {
                 aria-label="تصفية حسب القسم أو الإدارة"
                 value={selectedDeptFilter}
                 onChange={(e) => setSelectedDeptFilter(e.target.value)}
-                className="bg-zinc-50 border border-zinc-200 rounded-full px-3 py-1.5 text-xs text-black focus:outline-none"
+                className="bg-zinc-50 border border-zinc-200 rounded-full px-3 py-1.5 text-xs text-[#141414] focus:outline-none"
               >
                 <option value="all">جميع الأقسام والإدارات</option>
                 <option value="استقدام">التشغيل والاستقدام</option>
@@ -315,8 +315,8 @@ export const LegalCompliancePage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {filteredUndertakings.map((item) => (
                   <tr key={item.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">
-                      <span className="bg-zinc-100 px-2 py-0.5 rounded text-[11px] font-mono text-black border border-zinc-200">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">
+                      <span className="bg-zinc-100 px-2 py-0.5 rounded text-[11px] font-mono text-[#141414] border border-zinc-200">
                         {item.compliance_hash}
                       </span>
                     </td>
@@ -330,7 +330,7 @@ export const LegalCompliancePage: React.FC = () => {
                           status="verified"
                         />
                         <div>
-                          <div className="font-bold text-black">{item.employee_name}</div>
+                          <div className="font-bold text-[#141414]">{item.employee_name}</div>
                           <div className="text-[11px] text-[#707070] font-mono">هوية: {item.national_id} • @{item.username}</div>
                         </div>
                       </div>
@@ -368,7 +368,7 @@ export const LegalCompliancePage: React.FC = () => {
                           style={{ padding: '3px 8px', fontSize: '11px', minHeight: '26px' }}
                           title="طباعة وثيقة التعهد المعتمدة"
                         >
-                          <Printer className="w-3 h-3 ml-1 text-black" />
+                          <Printer className="w-3 h-3 ml-1 text-[#141414]" />
                           <span>طباعة</span>
                         </button>
                         <button
@@ -396,7 +396,7 @@ export const LegalCompliancePage: React.FC = () => {
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
                 <div className="flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-[#141414]" />
-                  <h3 className="text-sm font-bold text-black m-0">{policy.departmentName}</h3>
+                  <h3 className="text-sm font-bold text-[#141414] m-0">{policy.departmentName}</h3>
                 </div>
                 <span className="pill-tag-mint text-[10px]">ميثاق معتمد</span>
               </div>
@@ -414,7 +414,7 @@ export const LegalCompliancePage: React.FC = () => {
                 </div>
 
                 <div className="pt-2 border-t border-zinc-100 space-y-2">
-                  <span className="text-[11px] font-bold text-black block">البنود القانونية للميثاق:</span>
+                  <span className="text-[11px] font-bold text-[#141414] block">البنود القانونية للميثاق:</span>
                   {policy.clauses.map((clause, cIdx) => (
                     <div key={clause.id} className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-200 text-xs">
                       <div className="font-bold text-zinc-900 flex items-center justify-between">
@@ -435,7 +435,7 @@ export const LegalCompliancePage: React.FC = () => {
       {activeSubTab === 'audit' && (
         <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div className="border-b border-zinc-100 pb-4 mb-4">
-            <h3 className="text-base font-bold text-black m-0 flex items-center gap-2">
+            <h3 className="text-base font-bold text-[#141414] m-0 flex items-center gap-2">
               <Scale className="w-5 h-5 text-[#141414]" />
               <span>المرجعيات التشريعية والنظامية في المملكة العربية السعودية</span>
             </h3>
@@ -446,7 +446,7 @@ export const LegalCompliancePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] space-y-2">
-              <h4 className="font-bold text-xs text-black flex items-center gap-1.5">
+              <h4 className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-[#141414]" />
                 <span>1. نظام التعاملات الإلكترونية (مرسوم ملكي م/18)</span>
               </h4>
@@ -503,14 +503,14 @@ export const LegalCompliancePage: React.FC = () => {
             </div>
 
             {/* Certificate Body (Print Optimized) */}
-            <div className="p-8 overflow-y-auto space-y-5 bg-white text-black border-4 border-double border-zinc-300 m-4 rounded-2xl">
+            <div className="p-8 overflow-y-auto space-y-5 bg-white text-[#141414] border-4 border-double border-zinc-300 m-4 rounded-2xl">
               {/* Certificate Header */}
-              <div className="text-center border-b-2 border-black pb-4">
+              <div className="text-center border-b-2 border-[#141414] pb-4">
                 <div className="text-xs font-bold text-[#707070] uppercase tracking-widest">المملكة العربية السعودية</div>
-                <div className="text-lg font-bold text-black mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
+                <div className="text-lg font-bold text-[#141414] mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
                 <div className="text-sm font-bold text-[#141414] mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية</div>
                 <div className="text-[11px] font-mono text-[#707070] mt-1">
-                  رقم الاعتماد الرقمي: <span className="font-bold text-black">{selectedUndertaking.compliance_hash}</span>
+                  رقم الاعتماد الرقمي: <span className="font-bold text-[#141414]">{selectedUndertaking.compliance_hash}</span>
                 </div>
               </div>
 
@@ -547,9 +547,9 @@ export const LegalCompliancePage: React.FC = () => {
                   <div className="text-[#707070] text-[11px]">التوقيع الإلكتروني المعتمد:</div>
                   <div className="border border-zinc-200 rounded-lg p-2 bg-zinc-50 inline-block min-w-[140px]">
                     <Fingerprint className="w-8 h-8 text-[#141414] mx-auto" />
-                    <span className="text-[10px] font-bold text-black block mt-1">توقيع رقمي موثق ومطابق</span>
+                    <span className="text-[10px] font-bold text-[#141414] block mt-1">توقيع رقمي موثق ومطابق</span>
                   </div>
-                  <div className="text-[10px] font-bold text-black">{selectedUndertaking.employee_name}</div>
+                  <div className="text-[10px] font-bold text-[#141414]">{selectedUndertaking.employee_name}</div>
                 </div>
               </div>
             </div>

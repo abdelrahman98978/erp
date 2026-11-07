@@ -200,7 +200,7 @@ export const ActivityLogPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -285,17 +285,17 @@ export const ActivityLogPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي العمليات المسجلة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{activities.length} حركة</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{activities.length} حركة</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل تدقيق مشفر</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الاعتمادات المالية المنجزة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{financialApprovalsCount} عملية</div>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>الاعتمادات المالية المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{financialApprovalsCount} عملية</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>سندات صرف وقبض</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الموظفون المنفذون للعمليات</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{activeActorsCount} موظفاً</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>كافة الأقسام والفروع</span>
@@ -303,7 +303,7 @@ export const ActivityLogPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مستوى الامتثال الأمني</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>100%</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>100%</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>الأمن السيبراني</span>
         </div>
       </div>
@@ -324,8 +324,8 @@ export const ActivityLogPage: React.FC = () => {
                   fontSize: '11.5px',
                   fontWeight: isActive ? 550 : 420,
                   border: '1px solid',
-                  borderColor: isActive ? '#000000' : '#e4e4e7',
-                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  borderColor: isActive ? '#141414' : '#e4e4e7',
+                  backgroundColor: isActive ? '#141414' : '#ffffff',
                   color: isActive ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -342,7 +342,7 @@ export const ActivityLogPage: React.FC = () => {
             aria-label="تصفية حسب مستوى الخطورة"
             value={selectedSeverity}
             onChange={(e) => setSelectedSeverity(e.target.value)}
-            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
           >
             <option value="الكل">مستوى الخطورة: الكل</option>
             <option value="عادي">عادي</option>
@@ -354,7 +354,7 @@ export const ActivityLogPage: React.FC = () => {
             aria-label="تصفية حسب نوع الإجراء"
             value={selectedAction}
             onChange={(e) => setSelectedAction(e.target.value)}
-            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
           >
             {actions.map(a => (
               <option key={a} value={a}>{a}</option>
@@ -367,7 +367,7 @@ export const ActivityLogPage: React.FC = () => {
             placeholder="بحث في السجلات..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:border-[#141414] focus:outline-none"
           />
         </div>
       </div>
@@ -391,7 +391,7 @@ export const ActivityLogPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {filteredActivities.map((row) => (
                 <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{row.id}</td>
                   <td className="p-3.5">
                     <div className="flex items-center gap-2.5">
                       <CorporateAvatar
@@ -401,7 +401,7 @@ export const ActivityLogPage: React.FC = () => {
                         status="online"
                       />
                       <div>
-                        <div className="font-bold text-black">{row.user_name}</div>
+                        <div className="font-bold text-[#141414]">{row.user_name}</div>
                         <div className="text-[10px] text-[#707070]">{row.role}</div>
                       </div>
                     </div>

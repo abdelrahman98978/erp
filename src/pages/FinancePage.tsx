@@ -317,7 +317,7 @@ export const FinancePage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -366,7 +366,7 @@ export const FinancePage: React.FC = () => {
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Plus className="w-4 h-4 ml-1 text-black" />
+              <Plus className="w-4 h-4 ml-1 text-[#141414]" />
               <span>قيد يومية جديد</span>
             </button>
             <button
@@ -403,7 +403,7 @@ export const FinancePage: React.FC = () => {
         {/* Category 1: القوائم والمركز المالي */}
         <div className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-100">
-            <PieChart className="w-4 h-4 text-black" />
+            <PieChart className="w-4 h-4 text-[#141414]" />
             <span className="text-xs font-bold text-zinc-900">1. القوائم والمركز المالي</span>
           </div>
           <div className="space-y-1.5">
@@ -422,7 +422,7 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setActiveTab(t.id as any)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs transition-all ${
                     isActive
-                      ? 'bg-black text-white font-bold shadow-sm'
+                      ? 'bg-[#141414] text-white font-bold shadow-sm'
                       : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 font-medium'
                   }`}
                 >
@@ -437,7 +437,7 @@ export const FinancePage: React.FC = () => {
         {/* Category 2: القيود والعمليات اليومية */}
         <div className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-100">
-            <Receipt className="w-4 h-4 text-black" />
+            <Receipt className="w-4 h-4 text-[#141414]" />
             <span className="text-xs font-bold text-zinc-900">2. القيود والعمليات اليومية</span>
           </div>
           <div className="space-y-1.5">
@@ -455,7 +455,7 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setActiveTab(t.id as any)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs transition-all ${
                     isActive
-                      ? 'bg-black text-white font-bold shadow-sm'
+                      ? 'bg-[#141414] text-white font-bold shadow-sm'
                       : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 font-medium'
                   }`}
                 >
@@ -470,7 +470,7 @@ export const FinancePage: React.FC = () => {
         {/* Category 3: الاستقدام والشركاء والزكاة */}
         <div className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-100">
-            <Globe className="w-4 h-4 text-black" />
+            <Globe className="w-4 h-4 text-[#141414]" />
             <span className="text-xs font-bold text-zinc-900">3. الاستقدام والشركاء والزكاة</span>
           </div>
           <div className="space-y-1.5">
@@ -488,7 +488,7 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setActiveTab(t.id as any)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs transition-all ${
                     isActive
-                      ? 'bg-black text-white font-bold shadow-sm'
+                      ? 'bg-[#141414] text-white font-bold shadow-sm'
                       : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 font-medium'
                   }`}
                 >
@@ -503,7 +503,7 @@ export const FinancePage: React.FC = () => {
         {/* Category 4: الهيكل المحاسبي والإقفال */}
         <div className="card-pricing p-4 bg-white rounded-2xl border border-zinc-200 shadow-sm flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-100">
-            <FolderTree className="w-4 h-4 text-black" />
+            <FolderTree className="w-4 h-4 text-[#141414]" />
             <span className="text-xs font-bold text-zinc-900">4. الهيكل المحاسبي والضرائب</span>
           </div>
           <div className="space-y-1.5">
@@ -521,7 +521,7 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setActiveTab(t.id as any)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs transition-all ${
                     isActive
-                      ? 'bg-black text-white font-bold shadow-sm'
+                      ? 'bg-[#141414] text-white font-bold shadow-sm'
                       : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 font-medium'
                   }`}
                 >
@@ -540,12 +540,12 @@ export const FinancePage: React.FC = () => {
           <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
             <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
               <div className="flex items-center justify-between mb-2">
-                <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الإيرادات المحققة</span>
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black">
+                <span style={{ fontSize: '13px', fontWeight: 550, color: '#141414' }}>إجمالي الإيرادات المحققة</span>
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#141414]">
                   <TrendingUp className="w-4 h-4" />
                 </div>
               </div>
-              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>525,471.20 ⃁</div>
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', letterSpacing: '-0.02em' }}>525,471.20 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-mint">نمو شهري +14.8%</span>
                 <span className="text-[11px] text-zinc-600">عقود استقدام وتأجير</span>
@@ -559,14 +559,14 @@ export const FinancePage: React.FC = () => {
                   <TrendingDown className="w-4 h-4" />
                 </div>
               </div>
-              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>220,500.00 ⃁</div>
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', letterSpacing: '-0.02em' }}>220,500.00 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-shade">مصاريف الفترة</span>
                 <span className="text-[11px] text-[#707070]">تأشيرات، رواتب، إعاشة</span>
               </div>
             </div>
 
-            <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+            <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
               <div className="flex items-center justify-between mb-2">
                 <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>صافي الأرباح التشغيلية</span>
                 <div className="w-8 h-8 rounded-full bg-[#f3f3f3] flex items-center justify-center text-[#141414]">
@@ -587,7 +587,7 @@ export const FinancePage: React.FC = () => {
                   <ShieldCheck className="w-4 h-4" />
                 </div>
               </div>
-              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', letterSpacing: '-0.02em' }}>184,500.00 ⃁</div>
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', letterSpacing: '-0.02em' }}>184,500.00 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-shade">فترة الضمان</span>
                 <span className="text-[11px] text-[#707070]">حساب وسيط محمي</span>
@@ -602,8 +602,8 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <Scale className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                <Scale className="w-4 h-4 text-[#141414]" />
                 <span>ميزان المراجعة بالأرصدة والمجاميع (Trial Balance)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">مطابقة الأرصدة الافتتاحية وحركات الفترة والرصيد النهائي لجميع الحسابات</p>
@@ -648,7 +648,7 @@ export const FinancePage: React.FC = () => {
                   <th className="p-3 font-mono">افتتاحي دائن</th>
                   <th className="p-3 font-mono">حركة مدين</th>
                   <th className="p-3 font-mono">حركة دائن</th>
-                  <th className="p-3 font-mono font-bold text-black">الرصيد النهائي</th>
+                  <th className="p-3 font-mono font-bold text-[#141414]">الرصيد النهائي</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -658,8 +658,8 @@ export const FinancePage: React.FC = () => {
                     onClick={() => setSelectedAccountForDrilldown(row)}
                     className="hover:bg-zinc-50 cursor-pointer transition-colors"
                   >
-                    <td className="p-3 font-mono font-bold text-black">{row.code}</td>
-                    <td className="p-3 font-bold text-black">{row.name}</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{row.code}</td>
+                    <td className="p-3 font-bold text-[#141414]">{row.name}</td>
                     <td className="p-3">
                       <Badge text={row.type} type="purple" />
                     </td>
@@ -667,7 +667,7 @@ export const FinancePage: React.FC = () => {
                     <td className="p-3 font-mono">{row.opening_credit.toLocaleString()}</td>
                     <td className="p-3 font-mono text-[#141414] font-bold">{row.period_debit.toLocaleString()}</td>
                     <td className="p-3 font-mono text-[#141414] font-bold">{row.period_credit.toLocaleString()}</td>
-                    <td className="p-3 font-mono font-bold text-black">
+                    <td className="p-3 font-mono font-bold text-[#141414]">
                       {Math.abs(row.balance).toLocaleString()} {row.balance >= 0 ? 'مدين' : 'دائن'}
                     </td>
                   </tr>
@@ -683,8 +683,8 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                <Landmark className="w-4 h-4 text-[#141414]" />
                 <span>قائمة المركز المالي الموحدة (Balance Sheet)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">مطابقة الأصول مع الخصوم وحقوق الملكية كما في نهاية الفترة المالية</p>
@@ -712,7 +712,7 @@ export const FinancePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
-              <div className="flex justify-between items-center font-bold text-black border-b border-zinc-200 pb-2 text-sm">
+              <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
                 <span>1. الأصول (Assets)</span>
                 <span className="font-mono">2,132,971.20 ⃁</span>
               </div>
@@ -720,26 +720,26 @@ export const FinancePage: React.FC = () => {
                 <div className="font-bold text-zinc-700">الأصول المتداولة:</div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>النقدية والصناديق والبنوك:</span>
-                  <span className="font-bold font-mono text-black">850,000.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">850,000.00 ⃁</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>أمانات مساند المعلقة (90 يوماً):</span>
-                  <span className="font-bold font-mono text-black">184,500.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">184,500.00 ⃁</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>المدينون وأرصدة العملاء:</span>
-                  <span className="font-bold font-mono text-black">215,971.20 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">215,971.20 ⃁</span>
                 </div>
                 <div className="font-bold text-zinc-700 pt-2">الأصول غير المتداولة:</div>
                 <div className="flex justify-between py-1 text-zinc-600">
                   <span>صافي الأصول الثابتة:</span>
-                  <span className="font-bold font-mono text-black">882,500.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">882,500.00 ⃁</span>
                 </div>
               </div>
             </div>
 
             <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
-              <div className="flex justify-between items-center font-bold text-black border-b border-zinc-200 pb-2 text-sm">
+              <div className="flex justify-between items-center font-bold text-[#141414] border-b border-zinc-200 pb-2 text-sm">
                 <span>2. الخصوم وحقوق الملكية (Liabilities & Equity)</span>
                 <span className="font-mono">2,132,971.20 ⃁</span>
               </div>
@@ -747,20 +747,20 @@ export const FinancePage: React.FC = () => {
                 <div className="font-bold text-zinc-700">الخصوم المتداولة:</div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>مستحقات الموردين والوكلاء:</span>
-                  <span className="font-bold font-mono text-black">189,375.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">189,375.00 ⃁</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>مخصص مكافأة نهاية الخدمة:</span>
-                  <span className="font-bold font-mono text-black">94,200.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">94,200.00 ⃁</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>ضريبة القيمة المضافة ZATCA 15%:</span>
-                  <span className="font-bold font-mono text-black">124,000.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">124,000.00 ⃁</span>
                 </div>
                 <div className="font-bold text-zinc-700 pt-2">حقوق الملكية:</div>
                 <div className="flex justify-between py-1 border-b border-zinc-200/60 text-zinc-600">
                   <span>رأس المال المدفوع:</span>
-                  <span className="font-bold font-mono text-black">1,205,000.00 ⃁</span>
+                  <span className="font-bold font-mono text-[#141414]">1,205,000.00 ⃁</span>
                 </div>
                 <div className="flex justify-between py-1 text-zinc-600">
                   <span>الأرباح الصافية المرحلة:</span>
@@ -777,8 +777,8 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-[#141414]" />
                 <span>قائمة الدخل والأرباح والخسائر (Income Statement / P&L)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">تحليل الإيرادات، التكاليف المباشرة، والمصروفات الإدارية وصافي الربح</p>
@@ -846,7 +846,7 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                 <Coins className="w-4 h-4 text-[#141414]" />
                 <span>قائمة التدفقات النقدية (Cash Flow Statement)</span>
               </h3>
@@ -947,11 +947,11 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div className="flex items-center gap-3">
-              <h3 className="text-sm font-bold text-black m-0">سجل القيود اليومية المحاسبية</h3>
+              <h3 className="text-sm font-bold text-[#141414] m-0">سجل القيود اليومية المحاسبية</h3>
               <select
                 value={selectedBranch}
                 onChange={(e) => setSelectedBranch(e.target.value)}
-                className="bg-zinc-50 border border-zinc-200 rounded-full py-1 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="bg-zinc-50 border border-zinc-200 rounded-full py-1 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               >
                 <option value="ALL">جميع الفروع</option>
                 <option value="الرياض">فرع الرياض</option>
@@ -989,11 +989,11 @@ export const FinancePage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {filteredJournals.map((j) => (
                   <tr key={j.id} className="hover:bg-zinc-50">
-                    <td className="p-3 font-mono font-bold text-black">{j.ref_no}</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{j.ref_no}</td>
                     <td className="p-3 text-[#707070] font-mono">{j.date}</td>
-                    <td className="p-3 font-bold text-black">{j.branch}</td>
+                    <td className="p-3 font-bold text-[#141414]">{j.branch}</td>
                     <td className="p-3 text-zinc-700">{j.description}</td>
-                    <td className="p-3 font-mono font-bold text-black">{j.amount.toLocaleString()} ⃁</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{j.amount.toLocaleString()} ⃁</td>
                     <td className="p-3">
                       <Badge text={j.status} type="success" />
                     </td>
@@ -1060,7 +1060,7 @@ export const FinancePage: React.FC = () => {
             <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-zinc-100">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-black m-0">{currentSectionTitle}</h3>
+                  <h3 className="text-base font-bold text-[#141414] m-0">{currentSectionTitle}</h3>
                   <span
                     className={`text-[10.5px] px-2.5 py-0.5 rounded-full font-bold ${
                       voucherFilterType === 'قبض'
@@ -1219,8 +1219,8 @@ export const FinancePage: React.FC = () => {
                   onClick={() => setVoucherFilterType('all')}
                   className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
                     voucherFilterType === 'all'
-                      ? 'bg-black text-white shadow-sm'
-                      : 'text-zinc-600 hover:text-black'
+                      ? 'bg-[#141414] text-white shadow-sm'
+                      : 'text-zinc-600 hover:text-[#141414]'
                   }`}
                 >
                   الكل ({vouchers.length})
@@ -1259,7 +1259,7 @@ export const FinancePage: React.FC = () => {
                   placeholder="بحث برقم السند، المستفيد، الخزينة..."
                   value={voucherSearchQuery}
                   onChange={(e) => setVoucherSearchQuery(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-8 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-8 pl-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414]"
                 />
               </div>
             </div>
@@ -1283,7 +1283,7 @@ export const FinancePage: React.FC = () => {
                   {displayedVouchers.length > 0 ? (
                     displayedVouchers.map((v) => (
                       <tr key={v.id} className="hover:bg-zinc-50 transition-colors">
-                        <td className="p-3 font-mono font-bold text-black">{v.voucher_no}</td>
+                        <td className="p-3 font-mono font-bold text-[#141414]">{v.voucher_no}</td>
                         <td className="p-3">
                           <Badge
                             text={v.type === 'قبض' ? 'سند قبض' : 'سند صرف'}
@@ -1291,14 +1291,14 @@ export const FinancePage: React.FC = () => {
                           />
                         </td>
                         <td className="p-3 text-[#707070] font-mono">{v.date}</td>
-                        <td className="p-3 font-bold text-black">
+                        <td className="p-3 font-bold text-[#141414]">
                           <div className="flex items-center gap-2">
                             <CorporateAvatar name={v.payee_payer} isClient={v.type === 'قبض'} departmentId="finance" size="sm" status="verified" />
                             <span>{v.payee_payer}</span>
                           </div>
                         </td>
                         <td className="p-3 text-zinc-600">{v.treasury}</td>
-                        <td className="p-3 font-mono font-bold text-black">{v.amount.toLocaleString()} ⃁</td>
+                        <td className="p-3 font-mono font-bold text-[#141414]">{v.amount.toLocaleString()} ⃁</td>
                         <td className="p-3">
                           <Badge text={v.status} type="success" />
                         </td>
@@ -1335,7 +1335,7 @@ export const FinancePage: React.FC = () => {
       {activeTab === 'suppliers-agents' && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
-            <h3 className="text-sm font-bold text-black m-0">كشوفات حسابات الموردين والوكلاء الخارجيين بالدولار ($ / ⃁)</h3>
+            <h3 className="text-sm font-bold text-[#141414] m-0">كشوفات حسابات الموردين والوكلاء الخارجيين بالدولار ($ / ⃁)</h3>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => exportData('external-offices', SUPPLIERS_ACCOUNTS, 'excel', `حسابات الوكلاء الخارجيين - ${activeCompany.name}`)}
@@ -1363,14 +1363,14 @@ export const FinancePage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {SUPPLIERS_ACCOUNTS.map((s) => (
                   <tr key={s.id} className="hover:bg-zinc-50">
-                    <td className="p-3 font-bold text-black">
+                    <td className="p-3 font-bold text-[#141414]">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={s.name} role={s.country} departmentId="finance" size="sm" status="verified" />
                         <span>{s.name}</span>
                       </div>
                     </td>
                     <td className="p-3 text-zinc-600">{s.country}</td>
-                    <td className="p-3 font-bold text-black">{s.cv_count} سيرة ذاتية</td>
+                    <td className="p-3 font-bold text-[#141414]">{s.cv_count} سيرة ذاتية</td>
                     <td className="p-3 font-mono font-bold text-[#141414]">${s.balance_usd.toLocaleString()}</td>
                     <td className="p-3 font-mono font-bold text-[#141414]">{s.balance_sar.toLocaleString()} ⃁</td>
                     <td className="p-3">
@@ -1387,8 +1387,8 @@ export const FinancePage: React.FC = () => {
       {/* TAB 8: EOSB & ZAKAT CALCULATOR */}
       {activeTab === 'eosb-zakat' && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
-          <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2 pb-3 border-b border-zinc-100">
-            <Calculator className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2 pb-3 border-b border-zinc-100">
+            <Calculator className="w-4 h-4 text-[#141414]" />
             <span>حاسبة مخصص مكافأة نهاية الخدمة (EOSB) والزكاة الشرعية (نظام العمل السعودي)</span>
           </h3>
 
@@ -1401,7 +1401,7 @@ export const FinancePage: React.FC = () => {
                   type="number"
                   value={eosbCalc.salary}
                   onChange={(e) => setEosbCalc({ ...eosbCalc, salary: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-black focus:border-black focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -1412,7 +1412,7 @@ export const FinancePage: React.FC = () => {
                   step="0.5"
                   value={eosbCalc.years}
                   onChange={(e) => setEosbCalc({ ...eosbCalc, years: e.target.value })}
-                  className="w-full px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-black focus:border-black focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -1421,7 +1421,7 @@ export const FinancePage: React.FC = () => {
                 <select
                   value={eosbCalc.reason}
                   onChange={(e) => setEosbCalc({ ...eosbCalc, reason: e.target.value as any })}
-                  className="w-full px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-black focus:border-black focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="resignation">استقالة من الموظف (المادة 85)</option>
                   <option value="termination">إنهاء عقد من المنشأة / انتهاء المدة (المادة 84)</option>
@@ -1447,7 +1447,7 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                 <Clock className="w-4 h-4 text-[#141414]" />
                 <span>تقرير أعمار الذمم والتقادم المالي (Accounts Aging Report)</span>
               </h3>
@@ -1567,8 +1567,8 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <FolderTree className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                <FolderTree className="w-4 h-4 text-[#141414]" />
                 <span>شجرة الحسابات والدليل المحاسبي الموحد (Chart of Accounts)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">
@@ -1603,8 +1603,8 @@ export const FinancePage: React.FC = () => {
                       fontSize: '11.5px',
                       fontWeight: isActive ? 550 : 420,
                       border: '1px solid',
-                      borderColor: isActive ? '#000000' : '#e4e4e7',
-                      backgroundColor: isActive ? '#000000' : '#ffffff',
+                      borderColor: isActive ? '#141414' : '#e4e4e7',
+                      backgroundColor: isActive ? '#141414' : '#ffffff',
                       color: isActive ? '#ffffff' : '#27272a',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
@@ -1621,7 +1621,7 @@ export const FinancePage: React.FC = () => {
               value={coaSearchQuery}
               onChange={(e) => setCoaSearchQuery(e.target.value)}
               placeholder="بحث برقم الحساب أو الاسم..."
-              className="bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black w-60"
+              className="bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414] w-60"
             />
           </div>
 
@@ -1655,8 +1655,8 @@ export const FinancePage: React.FC = () => {
                       key={account.id}
                       className="hover:bg-zinc-50 transition-colors"
                     >
-                      <td className="p-3 font-mono font-bold text-black">{account.code}</td>
-                      <td className="p-3 font-bold text-black">{account.nameAr}</td>
+                      <td className="p-3 font-mono font-bold text-[#141414]">{account.code}</td>
+                      <td className="p-3 font-bold text-[#141414]">{account.nameAr}</td>
                       <td className="p-3 font-mono text-[#707070]">{account.nameEn}</td>
                       <td className="p-3">
                         <Badge
@@ -1672,7 +1672,7 @@ export const FinancePage: React.FC = () => {
                           }
                         />
                       </td>
-                      <td className="p-3 font-mono font-bold text-black">
+                      <td className="p-3 font-mono font-bold text-[#141414]">
                         {account.balance.toLocaleString()} {account.currency}
                       </td>
                       <td className="p-3 text-zinc-600 font-medium">
@@ -1706,7 +1706,7 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-[#141414]" />
                 <span>الموازنة التقديرية مقابل الفعلي (Budget vs. Actual Variance)</span>
               </h3>
@@ -1725,8 +1725,8 @@ export const FinancePage: React.FC = () => {
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-zinc-100">
             <div>
-              <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                <Lock className="w-4 h-4 text-[#141414]" />
                 <span>إقفال الفترات والسنوات المالية (Fiscal Period Locks)</span>
               </h3>
               <p className="text-xs text-[#707070] mt-1">
@@ -1765,7 +1765,7 @@ export const FinancePage: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-bold text-xs text-black">{period.name}</span>
+                    <span className="font-bold text-xs text-[#141414]">{period.name}</span>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold ${
                         isClosed ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'
@@ -1808,7 +1808,7 @@ export const FinancePage: React.FC = () => {
                 <span className="pill-tag-mint text-[11px]">BANK RECONCILIATION</span>
                 <span className="pill-tag-shade text-[11px]">مطابقة الكشف البنكي مع الدفاتر</span>
               </div>
-              <h3 className="text-base font-bold text-black mt-1 mb-0 flex items-center gap-2">
+              <h3 className="text-base font-bold text-[#141414] mt-1 mb-0 flex items-center gap-2">
                 <Landmark className="w-5 h-5 text-[#141414]" />
                 <span>مذكرة التسوية والمطابقة البنكية الآلية</span>
               </h3>
@@ -1828,7 +1828,7 @@ export const FinancePage: React.FC = () => {
                   });
                 }}
                 className="button-white-pill"
-                style={{ padding: '6px 16px', fontSize: '11.5px', background: '#000000', color: '#ffffff' }}
+                style={{ padding: '6px 16px', fontSize: '11.5px', background: '#141414', color: '#ffffff' }}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-[#141414]" />
                 <span>مطابقة آلية لكافة الحركات (Auto-Match)</span>
@@ -1866,7 +1866,7 @@ export const FinancePage: React.FC = () => {
               <select
                 value={selectedBankCode}
                 onChange={(e) => setSelectedBankCode(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
               >
                 <option value="1102">1102 - بنك الرياض (حساب الاستقدام الرئيسي)</option>
                 <option value="1103">1103 - بنك الراجحي (الحساب التشغيلي)</option>
@@ -1881,7 +1881,7 @@ export const FinancePage: React.FC = () => {
                 type="date"
                 value={reconciliationDate}
                 onChange={(e) => setReconciliationDate(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               >
               </input>
             </div>
@@ -1893,7 +1893,7 @@ export const FinancePage: React.FC = () => {
                 step="0.01"
                 value={bankStatementBalance}
                 onChange={(e) => setBankStatementBalance(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                className="w-full bg-white border border-zinc-200 rounded-full py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -1906,7 +1906,7 @@ export const FinancePage: React.FC = () => {
               <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
                 <div className="flex items-center gap-2">
                   <ArrowUpRight className="w-4 h-4 text-[#141414]" />
-                  <h4 className="text-xs font-bold text-black m-0">1. شيكات وحوالات صادرة لم تصرف من البنك (-)</h4>
+                  <h4 className="text-xs font-bold text-[#141414] m-0">1. شيكات وحوالات صادرة لم تصرف من البنك (-)</h4>
                 </div>
                 <span className="pill-tag-shade text-[10px]">تخصم من رصيد البنك</span>
               </div>
@@ -1937,11 +1937,11 @@ export const FinancePage: React.FC = () => {
                           type="checkbox"
                           checked={isCleared}
                           onChange={() => {}}
-                          className="rounded text-black"
+                          className="rounded text-[#141414]"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-xs text-black">{item.no}</span>
+                            <span className="font-mono font-bold text-xs text-[#141414]">{item.no}</span>
                             <span className="text-[10px] text-[#707070]">{item.date}</span>
                           </div>
                           <p className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</p>
@@ -1962,7 +1962,7 @@ export const FinancePage: React.FC = () => {
               <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
                 <div className="flex items-center gap-2">
                   <ArrowDownLeft className="w-4 h-4 text-[#141414]" />
-                  <h4 className="text-xs font-bold text-black m-0">2. إيداعات ومقبوضات قيد التحصيل (+)</h4>
+                  <h4 className="text-xs font-bold text-[#141414] m-0">2. إيداعات ومقبوضات قيد التحصيل (+)</h4>
                 </div>
                 <span className="pill-tag-mint text-[10px]">تضاف لرصيد البنك</span>
               </div>
@@ -1993,11 +1993,11 @@ export const FinancePage: React.FC = () => {
                           type="checkbox"
                           checked={isCleared}
                           onChange={() => {}}
-                          className="rounded text-black"
+                          className="rounded text-[#141414]"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-xs text-black">{item.no}</span>
+                            <span className="font-mono font-bold text-xs text-[#141414]">{item.no}</span>
                             <span className="text-[10px] text-[#707070]">{item.date}</span>
                           </div>
                           <p className="text-[11px] text-zinc-600 mt-0.5">{item.desc}</p>
@@ -2111,7 +2111,7 @@ export const FinancePage: React.FC = () => {
                 <span className="pill-tag-mint text-[11px]">ZATCA VAT RETURN 15%</span>
                 <span className="pill-tag-shade text-[11px]">هيئة الزكاة والضريبة والجمارك</span>
               </div>
-              <h3 className="text-base font-bold text-black mt-1 mb-0 flex items-center gap-2">
+              <h3 className="text-base font-bold text-[#141414] mt-1 mb-0 flex items-center gap-2">
                 <Receipt className="w-5 h-5 text-[#141414]" />
                 <span>الإقرار الضريبي لضريبة القيمة المضافة (ZATCA Phase 2)</span>
               </h3>
@@ -2126,7 +2126,7 @@ export const FinancePage: React.FC = () => {
                 <select
                   value={vatPeriod}
                   onChange={(e) => setVatPeriod(e.target.value)}
-                  className="bg-transparent text-xs font-bold text-black focus:outline-none"
+                  className="bg-transparent text-xs font-bold text-[#141414] focus:outline-none"
                 >
                   <option value="Q1-2026">الربع الأول 2026 (يناير - مارس)</option>
                   <option value="Q2-2026">الربع الثاني 2026 (أبريل - يونيو)</option>
@@ -2194,7 +2194,7 @@ export const FinancePage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
             {/* 1. Output VAT (ضريبة المبيعات والمخرجات) */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
-              <h4 className="font-bold text-xs text-black pb-2 border-b border-zinc-100 flex items-center justify-between">
+              <h4 className="font-bold text-xs text-[#141414] pb-2 border-b border-zinc-100 flex items-center justify-between">
                 <span>1. ضريبة المخرجات على المبيعات والخدمات (Output VAT)</span>
                 <span className="pill-tag-mint text-[10.5px]">المجموع: 96,820.68 ⃁</span>
               </h4>
@@ -2202,23 +2202,23 @@ export const FinancePage: React.FC = () => {
               <div className="space-y-2">
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-black block">عقود التأجير وعمولات الاستقدام (15%)</span>
+                    <span className="font-bold text-[#141414] block">عقود التأجير وعمولات الاستقدام (15%)</span>
                     <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 525,471.20 ⃁</span>
                   </div>
-                  <span className="font-mono font-bold text-black text-xs">78,820.68 ⃁</span>
+                  <span className="font-mono font-bold text-[#141414] text-xs">78,820.68 ⃁</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-black block">مبيعات الشركات والجهات الخاضعة (15%)</span>
+                    <span className="font-bold text-[#141414] block">مبيعات الشركات والجهات الخاضعة (15%)</span>
                     <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 120,000.00 ⃁</span>
                   </div>
-                  <span className="font-mono font-bold text-black text-xs">18,000.00 ⃁</span>
+                  <span className="font-mono font-bold text-[#141414] text-xs">18,000.00 ⃁</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-black block">خدمات وصادرات معفاة / بنسبة الصفر (0%)</span>
+                    <span className="font-bold text-[#141414] block">خدمات وصادرات معفاة / بنسبة الصفر (0%)</span>
                     <span className="text-[10px] text-[#707070] font-mono">المبلغ: 65,000.00 ⃁</span>
                   </div>
                   <span className="font-mono font-bold text-[#707070] text-xs">0.00 ⃁</span>
@@ -2228,7 +2228,7 @@ export const FinancePage: React.FC = () => {
 
             {/* 2. Input VAT (ضريبة المشتريات والمدخلات) */}
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 space-y-3">
-              <h4 className="font-bold text-xs text-black pb-2 border-b border-zinc-100 flex items-center justify-between">
+              <h4 className="font-bold text-xs text-[#141414] pb-2 border-b border-zinc-100 flex items-center justify-between">
                 <span>2. ضريبة المدخلات على المشتريات والمصروفات (Input VAT)</span>
                 <span className="pill-tag-shade text-[10.5px]">المجموع: 45,825.00 ⃁</span>
               </h4>
@@ -2236,7 +2236,7 @@ export const FinancePage: React.FC = () => {
               <div className="space-y-2">
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-black block">مشتريات تشغيلية ومراكز إيواء وضيافة (15%)</span>
+                    <span className="font-bold text-[#141414] block">مشتريات تشغيلية ومراكز إيواء وضيافة (15%)</span>
                     <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 220,500.00 ⃁</span>
                   </div>
                   <span className="font-mono font-bold text-[#141414] text-xs">33,075.00 ⃁</span>
@@ -2244,7 +2244,7 @@ export const FinancePage: React.FC = () => {
 
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-black block">رسوم استيراد وتأشيرات خاضعة بالجمارك (15%)</span>
+                    <span className="font-bold text-[#141414] block">رسوم استيراد وتأشيرات خاضعة بالجمارك (15%)</span>
                     <span className="text-[10px] text-[#707070] font-mono">المبلغ الخاضع: 85,000.00 ⃁</span>
                   </div>
                   <span className="font-mono font-bold text-[#141414] text-xs">12,750.00 ⃁</span>
@@ -2252,7 +2252,7 @@ export const FinancePage: React.FC = () => {
 
                 <div className="p-3 bg-zinc-50 rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="font-bold text-black block">مصروفات معفاة من الخصم الضريبي</span>
+                    <span className="font-bold text-[#141414] block">مصروفات معفاة من الخصم الضريبي</span>
                     <span className="text-[10px] text-[#707070] font-mono">رواتب وكوادر إدارية</span>
                   </div>
                   <span className="font-mono font-bold text-[#707070] text-xs">0.00 ⃁</span>
@@ -2325,11 +2325,11 @@ export const FinancePage: React.FC = () => {
               <div className="grid grid-cols-3 gap-3 bg-zinc-50 p-3 rounded-2xl border border-zinc-200 text-xs">
                 <div>
                   <span className="text-[#707070] block font-bold">رمز الحساب:</span>
-                  <span className="font-mono font-bold text-black">{selectedAccountForDrilldown.code}</span>
+                  <span className="font-mono font-bold text-[#141414]">{selectedAccountForDrilldown.code}</span>
                 </div>
                 <div>
                   <span className="text-[#707070] block font-bold">النوع:</span>
-                  <span className="font-bold text-black">{selectedAccountForDrilldown.type || 'أصول'}</span>
+                  <span className="font-bold text-[#141414]">{selectedAccountForDrilldown.type || 'أصول'}</span>
                 </div>
                 <div>
                   <span className="text-[#707070] block font-bold">الرصيد التراكمي:</span>
@@ -2345,11 +2345,11 @@ export const FinancePage: React.FC = () => {
                   {journals.map((j) => (
                     <div key={j.id} className="p-3 bg-white hover:bg-zinc-50 flex items-center justify-between">
                       <div>
-                        <span className="font-bold text-black">{j.ref_no}</span>
+                        <span className="font-bold text-[#141414]">{j.ref_no}</span>
                         <p className="text-[11px] text-[#707070] mt-0.5">{j.description}</p>
                       </div>
                       <div className="text-left font-mono">
-                        <span className="font-bold text-black block">{j.amount.toLocaleString()} ⃁</span>
+                        <span className="font-bold text-[#141414] block">{j.amount.toLocaleString()} ⃁</span>
                         <span className="text-[10px] text-[#707070]">{j.date}</span>
                       </div>
                     </div>
@@ -2361,7 +2361,7 @@ export const FinancePage: React.FC = () => {
                 <button
                   onClick={() => exportData('journals', journals, 'excel', `كشف_حساب_${selectedAccountForDrilldown.code}`)}
                   className="button-white-pill"
-                  style={{ padding: '6px 16px', fontSize: '11.5px', background: '#000000', color: '#ffffff' }}
+                  style={{ padding: '6px 16px', fontSize: '11.5px', background: '#141414', color: '#ffffff' }}
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5 ml-1" />
                   <span>تصدير كشف الحساب</span>
@@ -2396,7 +2396,7 @@ export const FinancePage: React.FC = () => {
                 <select
                   value={voucherForm.type}
                   onChange={(e) => setVoucherForm({ ...voucherForm, type: e.target.value as any })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="قبض">سند قبض (مقبوضات نقدية/بنكية)</option>
                   <option value="صرف">سند صرف (مصروفات/مستحقات)</option>
@@ -2410,7 +2410,7 @@ export const FinancePage: React.FC = () => {
                   value={voucherForm.payee_payer}
                   onChange={(e) => setVoucherForm({ ...voucherForm, payee_payer: e.target.value })}
                   placeholder="اسم العميل، المورد، أو الموظف..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -2420,7 +2420,7 @@ export const FinancePage: React.FC = () => {
                 <select
                   value={voucherForm.treasury}
                   onChange={(e) => setVoucherForm({ ...voucherForm, treasury: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>بنك الراجحي - الحساب التشغيلي</option>
                   <option>بنك الرياض - حساب الاستقدام</option>
@@ -2437,7 +2437,7 @@ export const FinancePage: React.FC = () => {
                   value={voucherForm.amount}
                   onChange={(e) => setVoucherForm({ ...voucherForm, amount: e.target.value })}
                   placeholder="0.00"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none font-mono font-bold"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none font-mono font-bold"
                   required
                 />
               </div>
@@ -2481,7 +2481,7 @@ export const FinancePage: React.FC = () => {
                 <select
                   value={journalForm.branch}
                   onChange={(e) => setJournalForm({ ...journalForm, branch: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>فرع الرياض الرئيسي</option>
                   <option>فرع جدة</option>
@@ -2498,7 +2498,7 @@ export const FinancePage: React.FC = () => {
                   value={journalForm.description}
                   onChange={(e) => setJournalForm({ ...journalForm, description: e.target.value })}
                   placeholder="مثال: قيد إثبات استحقاق فاتورة رقم..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -2511,7 +2511,7 @@ export const FinancePage: React.FC = () => {
                   value={journalForm.amount}
                   onChange={(e) => setJournalForm({ ...journalForm, amount: e.target.value })}
                   placeholder="0.00"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none font-mono font-bold"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none font-mono font-bold"
                   required
                 />
               </div>
@@ -2577,7 +2577,7 @@ export const FinancePage: React.FC = () => {
                 <select
                   value={newAdjustment.type}
                   onChange={(e) => setNewAdjustment({ ...newAdjustment, type: e.target.value as any })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="fee">مصاريف ورسوم بنكية (-)</option>
                   <option value="interest">أرباح وعوائد بنكية (+)</option>
@@ -2591,7 +2591,7 @@ export const FinancePage: React.FC = () => {
                   placeholder="مثال: رسوم كشف حساب / رسوم نقاط بيع POS..."
                   value={newAdjustment.desc}
                   onChange={(e) => setNewAdjustment({ ...newAdjustment, desc: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -2604,7 +2604,7 @@ export const FinancePage: React.FC = () => {
                   placeholder="0.00"
                   value={newAdjustment.amount}
                   onChange={(e) => setNewAdjustment({ ...newAdjustment, amount: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -2634,7 +2634,7 @@ export const FinancePage: React.FC = () => {
       {/* Printable Official Voucher Modal */}
       {selectedVoucherForPrint && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-[#141414] font-sans">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
                 <Printer className="w-4 h-4 text-[#141414]" />
@@ -2658,14 +2658,14 @@ export const FinancePage: React.FC = () => {
             {/* Official Printable Voucher Content */}
             <div className="p-8 space-y-6 bg-white border border-zinc-300 m-4 rounded-2xl">
               {/* Header */}
-              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+              <div className="flex items-center justify-between border-b-2 border-[#141414] pb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
+                  <h2 className="text-lg font-bold text-[#141414] m-0">{activeCompany.name}</h2>
                   <p className="text-xs text-zinc-600 mt-0.5 font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
                   <p className="text-xs text-[#707070]">المملكة العربية السعودية - الرياض</p>
                 </div>
                 <div className="text-left">
-                  <div className="text-base font-extrabold text-black font-mono border-2 border-black px-3 py-1 rounded-xl">
+                  <div className="text-base font-extrabold text-[#141414] font-mono border-2 border-[#141414] px-3 py-1 rounded-xl">
                     سند {selectedVoucherForPrint.type}
                   </div>
                   <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">{selectedVoucherForPrint.voucher_no}</div>
@@ -2679,7 +2679,7 @@ export const FinancePage: React.FC = () => {
                   <span className="font-bold text-zinc-700">
                     {selectedVoucherForPrint.type === 'قبض' ? 'استلمنا من المكرم / السادة:' : 'صرفنا إلى المكرم / السادة:'}
                   </span>
-                  <span className="font-extrabold text-sm text-black">{selectedVoucherForPrint.payee_payer}</span>
+                  <span className="font-extrabold text-sm text-[#141414]">{selectedVoucherForPrint.payee_payer}</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
@@ -2691,7 +2691,7 @@ export const FinancePage: React.FC = () => {
 
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
                   <span className="font-bold text-zinc-700">الحساب المالي / الخزينة:</span>
-                  <span className="font-semibold text-black">{selectedVoucherForPrint.treasury}</span>
+                  <span className="font-semibold text-[#141414]">{selectedVoucherForPrint.treasury}</span>
                 </div>
 
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex justify-between items-center">
@@ -2737,7 +2737,7 @@ export const FinancePage: React.FC = () => {
       {/* Printable Official Journal Modal */}
       {selectedJournalForPrint && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
+          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-[#141414] font-sans">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-[#141414]" />
@@ -2759,13 +2759,13 @@ export const FinancePage: React.FC = () => {
             </div>
 
             <div className="p-8 space-y-6 bg-white border border-zinc-300 m-4 rounded-2xl">
-              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+              <div className="flex items-center justify-between border-b-2 border-[#141414] pb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
+                  <h2 className="text-lg font-bold text-[#141414] m-0">{activeCompany.name}</h2>
                   <p className="text-xs text-[#707070] font-mono mt-0.5">دفتر القيود اليومية العامة</p>
                 </div>
                 <div className="text-left">
-                  <div className="text-sm font-extrabold text-black font-mono border border-black px-3 py-1 rounded-xl">
+                  <div className="text-sm font-extrabold text-[#141414] font-mono border border-[#141414] px-3 py-1 rounded-xl">
                     قيد يومية: {selectedJournalForPrint.ref_no}
                   </div>
                   <div className="text-xs font-mono text-[#707070] mt-1">التاريخ: {selectedJournalForPrint.date}</div>
@@ -2775,7 +2775,7 @@ export const FinancePage: React.FC = () => {
 
               <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-xs">
                 <span className="font-bold text-zinc-700 block mb-1">البيان والشرح المحاسبي:</span>
-                <span className="text-black font-medium">{selectedJournalForPrint.description}</span>
+                <span className="text-[#141414] font-medium">{selectedJournalForPrint.description}</span>
               </div>
 
               {/* Journal Lines Table */}
@@ -2793,7 +2793,7 @@ export const FinancePage: React.FC = () => {
                     <tr>
                       <td className="p-2.5 font-bold">1102</td>
                       <td className="p-2.5 font-sans">بنك الرياض - حساب الاستقدام</td>
-                      <td className="p-2.5 font-bold text-black">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
+                      <td className="p-2.5 font-bold text-[#141414]">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
                       <td className="p-2.5 text-[#707070]">0.00</td>
                     </tr>
                     <tr>
@@ -2802,9 +2802,9 @@ export const FinancePage: React.FC = () => {
                       <td className="p-2.5 text-[#707070]">0.00</td>
                       <td className="p-2.5 font-bold text-[#141414]">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
                     </tr>
-                    <tr className="bg-zinc-50 font-bold border-t-2 border-black">
+                    <tr className="bg-zinc-50 font-bold border-t-2 border-[#141414]">
                       <td colSpan={2} className="p-2.5 font-sans text-left pl-4">الإجمالي المتوازن:</td>
-                      <td className="p-2.5 text-black">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
+                      <td className="p-2.5 text-[#141414]">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
                       <td className="p-2.5 text-[#141414]">{selectedJournalForPrint.amount.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>

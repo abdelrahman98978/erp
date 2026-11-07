@@ -177,7 +177,7 @@ export const DataImportWizardPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -229,7 +229,7 @@ export const DataImportWizardPage: React.FC = () => {
               onClick={() => setStep(step === 'history' ? 'select-type' : 'history')}
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <History className="w-4 h-4 ml-1 text-black" />
+              <History className="w-4 h-4 ml-1 text-[#141414]" />
               <span>{step === 'history' ? 'العودة للمعالج' : 'سجل الاستيرادات'}</span>
             </button>
             {step !== 'select-type' && step !== 'history' && (
@@ -260,12 +260,12 @@ export const DataImportWizardPage: React.FC = () => {
                 >
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                      isCurrent || isCompleted ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-500'
+                      isCurrent || isCompleted ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-500'
                     }`}
                   >
                     {isCompleted ? <Check className="w-4 h-4" /> : idx + 1}
                   </div>
-                  <span className={`text-xs font-semibold ${isCurrent ? 'text-black font-bold' : 'text-[#707070]'}`}>
+                  <span className={`text-xs font-semibold ${isCurrent ? 'text-[#141414] font-bold' : 'text-[#707070]'}`}>
                     {s.label}
                   </span>
                 </div>
@@ -301,8 +301,8 @@ export const DataImportWizardPage: React.FC = () => {
                       fontSize: '11.5px',
                       fontWeight: isActive ? 550 : 420,
                       border: '1px solid',
-                      borderColor: isActive ? '#000000' : '#e4e4e7',
-                      backgroundColor: isActive ? '#000000' : '#ffffff',
+                      borderColor: isActive ? '#141414' : '#e4e4e7',
+                      backgroundColor: isActive ? '#141414' : '#ffffff',
                       color: isActive ? '#ffffff' : '#27272a',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
@@ -321,7 +321,7 @@ export const DataImportWizardPage: React.FC = () => {
                 placeholder="ابحث باسم القسم أو الحقول..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+                className="w-full bg-white border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414]"
               />
             </div>
           </div>
@@ -331,17 +331,17 @@ export const DataImportWizardPage: React.FC = () => {
               <div
                 key={tmpl.entityKey}
                 onClick={() => handleSelectTemplate(tmpl)}
-                className={`card-pricing p-4 bg-white rounded-2xl border border-zinc-200 cursor-pointer hover:border-black transition-all flex flex-col justify-between relative ${
-                  openFormatMenu === tmpl.entityKey ? 'z-30 border-black shadow-lg' : 'z-10'
+                className={`card-pricing p-4 bg-white rounded-2xl border border-zinc-200 cursor-pointer hover:border-[#141414] transition-all flex flex-col justify-between relative ${
+                  openFormatMenu === tmpl.entityKey ? 'z-30 border-[#141414] shadow-lg' : 'z-10'
                 }`}
               >
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-8 h-8 rounded-xl bg-zinc-100 flex items-center justify-center text-black font-bold">
+                    <div className="w-8 h-8 rounded-xl bg-zinc-100 flex items-center justify-center text-[#141414] font-bold">
                       <Layers className="w-4 h-4" />
                     </div>
                     <div>
-                      <h2 className="text-xs font-bold text-black m-0">{tmpl.displayName}</h2>
+                      <h2 className="text-xs font-bold text-[#141414] m-0">{tmpl.displayName}</h2>
                       <span className="text-[10px] text-[#707070]">
                         {tmpl.fields.filter(f => f.required).length} حقول مطلوبة
                       </span>
@@ -430,7 +430,7 @@ export const DataImportWizardPage: React.FC = () => {
       {step === 'upload' && selectedTemplate && (
         <div className="card-pricing p-8 bg-white rounded-3xl border border-zinc-200 space-y-6">
           <div className="text-center">
-            <h3 className="text-base font-bold text-black mb-1">
+            <h3 className="text-base font-bold text-[#141414] mb-1">
               رفع ملف استيراد {selectedTemplate.displayName}
             </h3>
             <p className="text-xs text-[#707070]">
@@ -444,11 +444,11 @@ export const DataImportWizardPage: React.FC = () => {
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer transition-all ${
-              isDragging ? 'border-black bg-zinc-50' : 'border-zinc-300 bg-zinc-50/50 hover:bg-zinc-50'
+              isDragging ? 'border-[#141414] bg-zinc-50' : 'border-zinc-300 bg-zinc-50/50 hover:bg-zinc-50'
             }`}
           >
             <UploadCloud className="w-12 h-12 text-[#707070] mx-auto mb-3" />
-            <p className="text-xs font-bold text-black mb-1">
+            <p className="text-xs font-bold text-[#141414] mb-1">
               {isDragging ? 'أفلت الملف هنا' : 'اسحب الملف هنا أو اضغط للاختيار'}
             </p>
             <p className="text-[11px] text-[#707070] font-mono">
@@ -477,7 +477,7 @@ export const DataImportWizardPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <Info className="w-4 h-4 text-[#707070]" />
               <div>
-                <div className="text-xs font-bold text-black">تحتاج قالب جاهز؟</div>
+                <div className="text-xs font-bold text-[#141414]">تحتاج قالب جاهز؟</div>
                 <div className="text-[11px] text-[#707070]">حمّل قالب Excel يحتوي على الأعمدة المطلوبة والبيانات النموذجية</div>
               </div>
             </div>
@@ -497,7 +497,7 @@ export const DataImportWizardPage: React.FC = () => {
       {step === 'mapping' && parsedData && selectedTemplate && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2 border-b border-zinc-100 pb-3">
-            <h3 className="text-sm font-bold text-black m-0">
+            <h3 className="text-sm font-bold text-[#141414] m-0">
               تعيين الأعمدة — ربط أعمدة الملف بحقول النظام
             </h3>
             <div className="flex items-center gap-2 text-xs">
@@ -527,7 +527,7 @@ export const DataImportWizardPage: React.FC = () => {
                   return (
                     <tr key={field.systemField} className="hover:bg-zinc-50">
                       <td className="p-3.5">
-                        <div className="font-bold text-black flex items-center gap-1">
+                        <div className="font-bold text-[#141414] flex items-center gap-1">
                           <span>{field.label}</span>
                           {field.required && <span className="text-[#141414] font-bold">*</span>}
                         </div>
@@ -546,7 +546,7 @@ export const DataImportWizardPage: React.FC = () => {
                         <select
                           value={mapping?.fileColumn || ''}
                           onChange={e => handleMappingChange(field.systemField, e.target.value)}
-                          className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                         >
                           <option value="">— لم يتم التعيين —</option>
                           {parsedData.headers.map(h => (
@@ -588,7 +588,7 @@ export const DataImportWizardPage: React.FC = () => {
       {/* STEP 4: Review */}
       {step === 'review' && validationResult && selectedTemplate && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
-          <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0">
+          <h3 className="text-sm font-bold text-[#141414] border-b border-zinc-100 pb-3 m-0">
             نتائج التحقق من البيانات
           </h3>
 
@@ -659,7 +659,7 @@ export const DataImportWizardPage: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-black text-black mb-1">
+            <h3 className="text-lg font-black text-[#141414] mb-1">
               {importResult.failed === 0 ? 'تم الاستيراد بنجاح!' : 'اكتمل الاستيراد مع بعض الملاحظات'}
             </h3>
             <p className="text-xs text-[#707070]">
@@ -689,8 +689,8 @@ export const DataImportWizardPage: React.FC = () => {
       {/* HISTORY VIEW */}
       {step === 'history' && (
         <div className="card-pricing p-6 bg-white rounded-3xl border border-zinc-200 space-y-4">
-          <h3 className="text-sm font-bold text-black border-b border-zinc-100 pb-3 m-0 flex items-center gap-2">
-            <History className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] border-b border-zinc-100 pb-3 m-0 flex items-center gap-2">
+            <History className="w-4 h-4 text-[#141414]" />
             <span>سجل عمليات الاستيراد السابقة</span>
           </h3>
 
@@ -712,7 +712,7 @@ export const DataImportWizardPage: React.FC = () => {
                     <td className="p-3.5 font-mono text-[11px]">
                       {new Date(entry.timestamp).toLocaleDateString('ar-SA')}
                     </td>
-                    <td className="p-3.5 font-bold text-black">{entry.templateName}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{entry.templateName}</td>
                     <td className="p-3.5 font-bold text-[#141414] font-mono">{entry.imported}</td>
                     <td className="p-3.5 font-bold text-[#141414] font-mono">{entry.failed}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{(entry.duration / 1000).toFixed(1)}s</td>

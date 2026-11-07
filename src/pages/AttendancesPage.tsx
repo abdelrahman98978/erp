@@ -109,7 +109,7 @@ export const AttendancesPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -172,16 +172,16 @@ export const AttendancesPage: React.FC = () => {
       {/* Stats Cards Bar */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الموظفون الحاضرون اليوم</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalPresent} موظفاً</div>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>الموظفون الحاضرون اليوم</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalPresent} موظفاً</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>حضور مكتمل</span>
         </div>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>حالات التأخير المسجلة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalLate} حالات</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalLate} حالات</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>بحاجة لمراجعة</span>
         </div>
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>معدل الانضباط العام</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>98.4%</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>ممتاز</span>
@@ -227,14 +227,14 @@ export const AttendancesPage: React.FC = () => {
                   <td colSpan={7} className="p-8 text-center text-[#707070]">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <BusinessIllustration type="empty-search" size="md" />
-                      <span className="font-bold text-black">لا توجد سجلات حضور مطابقة للبحث</span>
+                      <span className="font-bold text-[#141414]">لا توجد سجلات حضور مطابقة للبحث</span>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredAttendances.map((row, idx) => (
                   <tr key={`${row.id}-${idx}`} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-bold text-black">
+                    <td className="p-3.5 font-bold text-[#141414]">
                       <div className="flex items-center gap-2.5">
                         <CorporateAvatar
                           name={row.emp_name}
@@ -250,7 +250,7 @@ export const AttendancesPage: React.FC = () => {
                     <td className="p-3.5 font-mono text-[#707070]">{row.date}</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{row.check_in}</td>
                     <td className="p-3.5 font-mono font-bold text-zinc-800">{row.check_out}</td>
-                    <td className="p-3.5 font-mono font-bold text-black">{row.work_hours} س</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{row.work_hours} س</td>
                     <td className="p-3.5">
                       <Badge text={row.status} type={row.status === 'حاضر' ? 'success' : row.status === 'متأخر' ? 'warning' : 'danger'} />
                     </td>
@@ -276,14 +276,14 @@ export const AttendancesPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
+            <div className="p-6 space-y-4 bg-white text-[#141414]">
               <p className="text-xs text-zinc-600">
                 اختر ملف إكسيل (.xlsx / .csv) المصدَر من جهاز البصمة الإلكترونية للمعالجة التلقائية.
               </p>
 
               <div className="border border-dashed border-zinc-300 p-8 text-center rounded-2xl bg-zinc-50 flex flex-col items-center justify-center">
-                <CloudUpload className="w-10 h-10 text-black mb-2" />
-                <div className="text-xs font-bold text-black">اسحب وأسقط ملف البصمة هنا</div>
+                <CloudUpload className="w-10 h-10 text-[#141414] mb-2" />
+                <div className="text-xs font-bold text-[#141414]">اسحب وأسقط ملف البصمة هنا</div>
                 <span className="text-[11px] text-[#707070] mt-1">أو قم باختيار الملف من جهازك</span>
               </div>
 
@@ -314,7 +314,7 @@ export const AttendancesPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleManualSubmit} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleManualSubmit} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الموظف *</label>
                 <input
@@ -322,7 +322,7 @@ export const AttendancesPage: React.FC = () => {
                   placeholder="الاسم الثلاثي..."
                   value={manualForm.emp_name}
                   onChange={e => setManualForm({ ...manualForm, emp_name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -334,7 +334,7 @@ export const AttendancesPage: React.FC = () => {
                     type="time"
                     value={manualForm.check_in}
                     onChange={e => setManualForm({ ...manualForm, check_in: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -344,7 +344,7 @@ export const AttendancesPage: React.FC = () => {
                     type="time"
                     value={manualForm.check_out}
                     onChange={e => setManualForm({ ...manualForm, check_out: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>

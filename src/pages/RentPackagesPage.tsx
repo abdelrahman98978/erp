@@ -237,7 +237,7 @@ export const RentPackagesPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -294,8 +294,8 @@ export const RentPackagesPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -329,14 +329,14 @@ export const RentPackagesPage: React.FC = () => {
                   <div className="flex items-center gap-2.5 mb-2">
                     <CorporateAvatar name={pkg.name || (pkg as any).package_name || 'باقة تأجير'} category={pkg.category} profession="عاملة منزلية" isCandidate size="sm" />
                     <div>
-                      <h2 className="text-base font-bold text-black">{pkg.name || (pkg as any).package_name || (pkg as any).title || 'باقة تأجير مرنة'}</h2>
+                      <h2 className="text-base font-bold text-[#141414]">{pkg.name || (pkg as any).package_name || (pkg as any).title || 'باقة تأجير مرنة'}</h2>
                       <p className="text-xs text-[#707070]">{pkg.terms_summary || ''}</p>
                     </div>
                   </div>
 
                   <div className="py-3 px-4 bg-zinc-50 rounded-2xl mb-4 border border-zinc-100 flex justify-between items-baseline">
                     <div>
-                      <span className="text-2xl font-mono font-bold text-black">{monthlyRate.toLocaleString()}</span>
+                      <span className="text-2xl font-mono font-bold text-[#141414]">{monthlyRate.toLocaleString()}</span>
                       <span className="text-xs text-[#707070] mr-1">⃁ / شهر</span>
                     </div>
                     {discountPct > 0 && (
@@ -386,7 +386,7 @@ export const RentPackagesPage: React.FC = () => {
       {/* TAB 2: PRICING CALCULATOR */}
       {activeTab === 'calculator' && (
         <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
-          <h2 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-[#141414] mb-4 flex items-center gap-2">
             <Calculator className="w-5 h-5" />
             <span>حاسبة تسعير عقود التأجير والتشغيل الذكية (Smart Quoting Engine)</span>
           </h2>
@@ -401,7 +401,7 @@ export const RentPackagesPage: React.FC = () => {
                       key={m}
                       type="button"
                       onClick={() => setCalcDuration(m)}
-                      className={`p-2.5 rounded-2xl text-xs font-bold transition-all ${calcDuration === m ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'}`}
+                      className={`p-2.5 rounded-2xl text-xs font-bold transition-all ${calcDuration === m ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-700 hover:bg-zinc-200'}`}
                     >
                       {m} {m === 1 ? 'شهر' : m === 3 ? 'أشهر' : m === 6 ? 'أشهر' : 'سنة'}
                     </button>
@@ -417,7 +417,7 @@ export const RentPackagesPage: React.FC = () => {
                   max={50}
                   value={calcWorkersCount}
                   onChange={(e) => setCalcWorkersCount(Math.max(1, Number(e.target.value)))}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -427,18 +427,18 @@ export const RentPackagesPage: React.FC = () => {
                   type="number"
                   value={calcBaseRate}
                   onChange={(e) => setCalcBaseRate(Number(e.target.value))}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="bg-zinc-50 p-6 rounded-3xl border border-zinc-200 flex flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-black border-b border-zinc-200 pb-2 mb-4">تفاصيل عرض السعر المبدئي</h3>
+                <h3 className="text-sm font-bold text-[#141414] border-b border-zinc-200 pb-2 mb-4">تفاصيل عرض السعر المبدئي</h3>
                 <div className="space-y-2 text-xs text-zinc-600">
                   <div className="flex justify-between">
                     <span>المبلغ الإجمالي الأساسي:</span>
-                    <span className="font-mono font-bold text-black">{calcSubtotal.toLocaleString()} ⃁</span>
+                    <span className="font-mono font-bold text-[#141414]">{calcSubtotal.toLocaleString()} ⃁</span>
                   </div>
                   <div className="flex justify-between text-[#141414] font-bold">
                     <span>الخصم المطبق ({calcDuration >= 12 ? '20%' : calcDuration >= 3 ? '10%' : '0%'}):</span>
@@ -446,14 +446,14 @@ export const RentPackagesPage: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>المبلغ الخاضع للضريبة:</span>
-                    <span className="font-mono font-bold text-black">{calcTotalAfterDiscount.toLocaleString()} ⃁</span>
+                    <span className="font-mono font-bold text-[#141414]">{calcTotalAfterDiscount.toLocaleString()} ⃁</span>
                   </div>
                   <div className="flex justify-between">
                     <span>ضريبة القيمة المضافة (15% ZATCA):</span>
-                    <span className="font-mono font-bold text-black">{calcVat.toLocaleString()} ⃁</span>
+                    <span className="font-mono font-bold text-[#141414]">{calcVat.toLocaleString()} ⃁</span>
                   </div>
 
-                  <div className="flex justify-between text-base py-3 font-bold text-black mt-2">
+                  <div className="flex justify-between text-base py-3 font-bold text-[#141414] mt-2">
                     <span>الإجمالي النهائي شامل الضريبة:</span>
                     <span className="font-mono text-[#141414] text-lg font-black">{calcGrandTotal.toLocaleString()} ⃁</span>
                   </div>
@@ -495,7 +495,7 @@ export const RentPackagesPage: React.FC = () => {
       {activeTab === 'terms' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-base font-bold text-black">بنود وشروط وثيقة عقد الإيجار والتشغيل المعتمدة</h2>
+            <h2 className="text-base font-bold text-[#141414]">بنود وشروط وثيقة عقد الإيجار والتشغيل المعتمدة</h2>
             <button
               type="button"
               onClick={() => setShowAddClauseModal(true)}
@@ -511,10 +511,10 @@ export const RentPackagesPage: React.FC = () => {
               <div key={term.id} className="card-pricing" style={{ padding: '20px', borderRadius: '20px', background: '#ffffff' }}>
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
-                    <span style={{ width: '24px', height: '24px', borderRadius: '9999px', background: '#000000', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold' }}>
+                    <span style={{ width: '24px', height: '24px', borderRadius: '9999px', background: '#141414', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold' }}>
                       {term.clause_no}
                     </span>
-                    <h3 className="text-sm font-bold text-black">{term.title}</h3>
+                    <h3 className="text-sm font-bold text-[#141414]">{term.title}</h3>
                   </div>
                   {term.is_mandatory && <Badge text="بند إلزامي نظاماً" type="purple" />}
                 </div>
@@ -542,7 +542,7 @@ export const RentPackagesPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreatePackage} className="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1 bg-white text-black">
+            <form onSubmit={handleCreatePackage} className="p-6 space-y-4 overflow-y-auto custom-scrollbar flex-1 bg-white text-[#141414]">
               <div>
                 <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم الباقة</label>
                 <input
@@ -551,7 +551,7 @@ export const RentPackagesPage: React.FC = () => {
                   placeholder="مثال: باقة نصف سنوية (6 أشهر)"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -561,7 +561,7 @@ export const RentPackagesPage: React.FC = () => {
                   <select
                     value={formData.category}
                     onChange={(e: any) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="أفراد وعائلات">أفراد وعائلات</option>
                     <option value="شركات وقطاع تجاري">شركات وقطاع تجاري</option>
@@ -575,7 +575,7 @@ export const RentPackagesPage: React.FC = () => {
                     type="number"
                     value={formData.duration_months}
                     onChange={(e) => setFormData({ ...formData, duration_months: Number(e.target.value) })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -587,7 +587,7 @@ export const RentPackagesPage: React.FC = () => {
                     type="number"
                     value={formData.monthly_rate}
                     onChange={(e) => setFormData({ ...formData, monthly_rate: Number(e.target.value) })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
@@ -597,7 +597,7 @@ export const RentPackagesPage: React.FC = () => {
                     type="number"
                     value={formData.discount_percentage}
                     onChange={(e) => setFormData({ ...formData, discount_percentage: Number(e.target.value) })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -608,7 +608,7 @@ export const RentPackagesPage: React.FC = () => {
                   rows={3}
                   value={formData.featuresText}
                   onChange={(e) => setFormData({ ...formData, featuresText: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -639,8 +639,8 @@ export const RentPackagesPage: React.FC = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in border border-zinc-200">
             <div className="p-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50">
-              <h3 className="text-sm font-bold text-black m-0">إضافة بند شرطي جديد في عقد التأجير</h3>
-              <button onClick={() => setShowAddClauseModal(false)} className="text-[#707070] hover:text-black">
+              <h3 className="text-sm font-bold text-[#141414] m-0">إضافة بند شرطي جديد في عقد التأجير</h3>
+              <button onClick={() => setShowAddClauseModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -675,7 +675,7 @@ export const RentPackagesPage: React.FC = () => {
                   value={newClauseForm.title}
                   onChange={(e) => setNewClauseForm({ ...newClauseForm, title: e.target.value })}
                   placeholder="مثال: شرط تسوية المستحقات عند الإنهاء المبكر"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -687,7 +687,7 @@ export const RentPackagesPage: React.FC = () => {
                   value={newClauseForm.text}
                   onChange={(e) => setNewClauseForm({ ...newClauseForm, text: e.target.value })}
                   placeholder="اكتب الصياغة القانونية والالتزامات المترتبة على الطرفين..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 

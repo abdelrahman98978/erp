@@ -187,7 +187,7 @@ export const IngazPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -257,8 +257,8 @@ export const IngazPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -277,7 +277,7 @@ export const IngazPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div>
-              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                 سجل تصديقات الغرفة التجارية الإلكترونية
               </h2>
               <p className="text-xs text-[#707070] mt-0.5">توثيق طلبات الاستقدام وتفاويض المكاتب الخارجية بالغرف التجارية السعودية</p>
@@ -307,8 +307,8 @@ export const IngazPage: React.FC = () => {
                   { id: 'COC-2026-994', chamber: 'غرفة الشرقية', name: 'شركة دار الرواد', doc: 'خطاب تفويض بنغلاديش دكا', cr: '2050119284', fee: 35, date: '2026-08-27', status: 'مصدق إلكترونياً' },
                 ].map((c) => (
                   <tr key={c.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{c.id}</td>
-                    <td className="p-3.5 font-bold text-black">{c.chamber}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{c.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{c.chamber}</td>
                     <td className="p-3.5 font-bold text-zinc-800">{c.name}</td>
                     <td className="p-3.5 text-zinc-600">{c.doc}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{c.cr}</td>
@@ -328,7 +328,7 @@ export const IngazPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div>
-              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                 سجل التأشيرات الصادرة والجاهزة للتفويض والربط
               </h2>
               <p className="text-xs text-[#707070] mt-0.5">تأشيرات الاستقدام الصادرة من وزارة الخارجية ومنصة مساند الجاهزة للربط الفوري</p>
@@ -359,10 +359,10 @@ export const IngazPage: React.FC = () => {
                   { visa: '1300448192', sponsor: 'بندر صالح الهويريني', nat_id: '1055774494', job: 'عاملة منزلية', country: 'الفلبين (مانيلا)', issue: '2026-08-12', exp: 'متبقي 102 يوماً', status: 'مفوضة وجاهزة' },
                 ].map((v) => (
                   <tr key={v.visa} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{v.visa}</td>
-                    <td className="p-3.5 font-bold text-black">{v.sponsor}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{v.visa}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{v.sponsor}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{v.nat_id}</td>
-                    <td className="p-3.5 font-semibold text-black">{v.job}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{v.job}</td>
                     <td className="p-3.5 text-zinc-600">{v.country}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{v.issue}</td>
                     <td className="p-3.5 font-semibold text-[#141414]">{v.exp}</td>
@@ -413,12 +413,12 @@ export const IngazPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {filteredDelegations.map((row) => (
                   <tr key={row.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{row.delegation_number}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{row.delegation_number}</td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={row.client_name} isClient size="sm" />
                         <div>
-                          <div className="font-bold text-black">{row.client_name}</div>
+                          <div className="font-bold text-[#141414]">{row.client_name}</div>
                           <div className="text-[#707070] font-mono text-[11px]">هوية: {row.sponsor_id}</div>
                         </div>
                       </div>
@@ -427,7 +427,7 @@ export const IngazPage: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={row.profession} profession={row.profession} isCandidate size="sm" />
                         <div>
-                          <div className="font-mono font-bold text-black">{row.visa_number}</div>
+                          <div className="font-mono font-bold text-[#141414]">{row.visa_number}</div>
                           <div className="text-[#707070] text-[11px]">{row.profession} • {row.nationality}</div>
                         </div>
                       </div>
@@ -484,7 +484,7 @@ export const IngazPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateDelegation} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleCreateDelegation} className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم المستفيد / العميل *</label>
@@ -493,7 +493,7 @@ export const IngazPage: React.FC = () => {
                     required
                     value={formData.client_name}
                     onChange={e => setFormData({ ...formData, client_name: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     placeholder="اسم الكفيل"
                   />
                 </div>
@@ -504,7 +504,7 @@ export const IngazPage: React.FC = () => {
                     required
                     value={formData.sponsor_id}
                     onChange={e => setFormData({ ...formData, sponsor_id: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     placeholder="10xxxxxxxx"
                   />
                 </div>
@@ -518,7 +518,7 @@ export const IngazPage: React.FC = () => {
                     required
                     value={formData.visa_number}
                     onChange={e => setFormData({ ...formData, visa_number: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                     placeholder="1300xxxxxx"
                   />
                 </div>
@@ -527,7 +527,7 @@ export const IngazPage: React.FC = () => {
                   <select
                     value={formData.foreign_office}
                     onChange={e => setFormData({ ...formData, foreign_office: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option>DAMAS FOREIGN AGENCY</option>
                     <option>PLATINUM BROTHERS INT'L</option>
@@ -544,7 +544,7 @@ export const IngazPage: React.FC = () => {
                     type="text"
                     value={formData.profession}
                     onChange={e => setFormData({ ...formData, profession: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -552,7 +552,7 @@ export const IngazPage: React.FC = () => {
                   <select
                     value={formData.nationality}
                     onChange={e => setFormData({ ...formData, nationality: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option>اثيوبيا</option>
                     <option>الفلبين</option>
@@ -567,7 +567,7 @@ export const IngazPage: React.FC = () => {
                     type="number"
                     value={formData.fee_amount}
                     onChange={e => setFormData({ ...formData, fee_amount: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -601,11 +601,11 @@ export const IngazPage: React.FC = () => {
             <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2">
                 <Stamp className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-bold text-black text-base">شهادة تفويض إلكتروني وتصديق الغرفة التجارية</h3>
+                <h3 className="font-bold text-[#141414] text-base">شهادة تفويض إلكتروني وتصديق الغرفة التجارية</h3>
               </div>
               <button
                 onClick={() => setSelectedDelegationForPrint(null)}
-                className="p-1 rounded-full text-[#707070] hover:text-black"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -616,7 +616,7 @@ export const IngazPage: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between border-b-2 border-zinc-900 pb-4">
                 <div>
-                  <h2 className="text-base font-extrabold text-black">المملكة العربية السعودية - وزارة الخارجية</h2>
+                  <h2 className="text-base font-extrabold text-[#141414]">المملكة العربية السعودية - وزارة الخارجية</h2>
                   <div className="text-[11px] text-zinc-600 font-bold">منصة التأشيرات الإلكترونية (إنجاز) • تصديق الغرفة التجارية</div>
                   <div className="text-[10px] text-[#141414] font-mono font-bold mt-0.5">ENJAZ REF: {selectedDelegationForPrint.delegation_number}</div>
                 </div>
@@ -640,7 +640,7 @@ export const IngazPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
                   <span className="text-[10px] text-[#707070] font-bold block">بيانات صاحب العمل (المفوض)</span>
-                  <div className="font-bold text-sm text-black">{selectedDelegationForPrint.client_name}</div>
+                  <div className="font-bold text-sm text-[#141414]">{selectedDelegationForPrint.client_name}</div>
                   <div className="text-zinc-600 text-[11px] font-mono">رقم الهوية: {selectedDelegationForPrint.sponsor_id}</div>
                 </div>
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 space-y-1">
@@ -652,11 +652,11 @@ export const IngazPage: React.FC = () => {
 
               {/* Delegated Agency Details */}
               <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
-                <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">المكتب الخارجي المفوض بإنجاز المعاملة</h4>
+                <h4 className="font-bold text-xs text-[#141414] border-b border-zinc-200 pb-1">المكتب الخارجي المفوض بإنجاز المعاملة</h4>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div><span className="text-[#707070]">اسم الوكالة المفوضة:</span> <strong className="text-black">{selectedDelegationForPrint.foreign_office}</strong></div>
-                  <div><span className="text-[#707070]">الدولة المعتمدة:</span> <strong className="text-black">{selectedDelegationForPrint.nationality}</strong></div>
-                  <div><span className="text-[#707070]">تاريخ التفويض:</span> <span className="font-mono text-black">{selectedDelegationForPrint.created_at}</span></div>
+                  <div><span className="text-[#707070]">اسم الوكالة المفوضة:</span> <strong className="text-[#141414]">{selectedDelegationForPrint.foreign_office}</strong></div>
+                  <div><span className="text-[#707070]">الدولة المعتمدة:</span> <strong className="text-[#141414]">{selectedDelegationForPrint.nationality}</strong></div>
+                  <div><span className="text-[#707070]">تاريخ التفويض:</span> <span className="font-mono text-[#141414]">{selectedDelegationForPrint.created_at}</span></div>
                   <div><span className="text-[#707070]">جهة التوثيق:</span> <strong className="text-[#141414] font-bold">الغرفة التجارية الصناعية بالرياض</strong></div>
                 </div>
               </div>
@@ -669,13 +669,13 @@ export const IngazPage: React.FC = () => {
               {/* Chamber Seal & Digital Verification */}
               <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
                 <div className="text-center space-y-3">
-                  <div className="font-bold text-black text-xs">ختم وتصديق الغرفة التجارية الإلكتروني</div>
+                  <div className="font-bold text-[#141414] text-xs">ختم وتصديق الغرفة التجارية الإلكتروني</div>
                   <div className="w-24 h-24 mx-auto border-2 border-dashed border-[#e0e0e0] rounded-full flex items-center justify-center bg-[#f3f3f3]">
                     <span className="text-[10px] font-bold text-[#141414] text-center leading-tight">الغرفة التجارية<br />تصديق إلكتروني<br />معتمد 2026</span>
                   </div>
                 </div>
                 <div className="text-center space-y-3">
-                  <div className="font-bold text-black text-xs">توقيع المفوض / صاحب العمل</div>
+                  <div className="font-bold text-[#141414] text-xs">توقيع المفوض / صاحب العمل</div>
                   <div className="w-full h-16 border-b-2 border-zinc-400 mt-8 flex items-end justify-center">
                     <span className="text-[11px] text-[#707070]">توثيق إلكتروني مؤكد عبر مساند</span>
                   </div>

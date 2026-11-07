@@ -161,7 +161,7 @@ export const ShelterNavigationSidebar: React.FC<ShelterNavigationSidebarProps> =
       <div className="p-4 border-b border-[#e0e0e0] bg-[#ffffff]">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#141414] text-[#ffffff] flex items-center justify-center font-black text-base shadow-lg shrink-0">
-            <Hotel className="w-5 h-5 text-black" />
+            <Hotel className="w-5 h-5 text-[#141414]" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">

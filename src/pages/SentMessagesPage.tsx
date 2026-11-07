@@ -219,7 +219,7 @@ export const SentMessagesPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -259,17 +259,17 @@ export const SentMessagesPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>رصيد الرسائل (SMS Gateway)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>48,250 نقطة</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>48,250 نقطة</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>Unifonic / Taqnyat</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>واتساب للأعمال (WhatsApp API)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>99.8% تسليم</div>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>واتساب للأعمال (WhatsApp API)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>99.8% تسليم</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>Meta Verified</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الرسائل المرسلة اليوم</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{messages.length}</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إشعارات مساند و ZATCA</span>
@@ -277,7 +277,7 @@ export const SentMessagesPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>متوسط تكلفة الرسالة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>0.13 ⃁</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>0.13 ⃁</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>وفر 35% عبر واتساب</span>
         </div>
       </div>
@@ -300,8 +300,8 @@ export const SentMessagesPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -357,7 +357,7 @@ export const SentMessagesPage: React.FC = () => {
                   placeholder="ابحث بالاسم، الرقم، النص..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-8 pl-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-8 pl-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
               <button className="button-outline-on-light" onClick={() => exportData('sent_messages', filteredMessages, 'excel')} style={{ padding: '5px 12px', fontSize: '12px', minHeight: '32px' }}>
@@ -398,12 +398,12 @@ export const SentMessagesPage: React.FC = () => {
                   </tr>
                 ) : filteredMessages.map(row => (
                   <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{row.id}</td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={row.recipient_name} size="xs" departmentId="crm" />
                         <div>
-                          <div className="font-bold text-black">{row.recipient_name}</div>
+                          <div className="font-bold text-[#141414]">{row.recipient_name}</div>
                           <div className="text-[11px] text-[#707070] font-mono">{row.phone}</div>
                         </div>
                       </div>
@@ -414,7 +414,7 @@ export const SentMessagesPage: React.FC = () => {
                         type={row.channel === 'WhatsApp' ? 'success' : 'info'}
                       />
                     </td>
-                    <td className="p-3.5 font-semibold text-black">{row.template}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{row.template}</td>
                     <td className="p-3.5 max-w-xs truncate text-zinc-600" title={row.content}>{row.content}</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{(row.cost_sar ?? 0.12).toFixed(2)} ⃁</td>
                     <td className="p-3.5 font-mono text-[#707070] text-[11px]">{row.sent_at}</td>
@@ -451,8 +451,8 @@ export const SentMessagesPage: React.FC = () => {
       {/* TAB 2: COMPOSE */}
       {activeTab === 'compose' && (
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h2 className="text-base font-bold text-black mb-4 flex items-center gap-2">
-            <Send className="w-4 h-4 text-black" />
+          <h2 className="text-base font-bold text-[#141414] mb-4 flex items-center gap-2">
+            <Send className="w-4 h-4 text-[#141414]" />
             <span>إرسال رسالة فورية أو تعميم</span>
           </h2>
 
@@ -463,12 +463,12 @@ export const SentMessagesPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSendMessage} className="space-y-4 bg-white text-black">
+          <form onSubmit={handleSendMessage} className="space-y-4 bg-white text-[#141414]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">قناة الإرسال *</label>
                 <div className="flex gap-2">
-                  <label className={`flex items-center gap-2 p-2.5 border rounded-2xl cursor-pointer text-xs flex-1 transition-all ${composeChannel === 'WhatsApp' ? 'border-black bg-zinc-50 font-bold' : 'border-zinc-200 bg-white'}`}>
+                  <label className={`flex items-center gap-2 p-2.5 border rounded-2xl cursor-pointer text-xs flex-1 transition-all ${composeChannel === 'WhatsApp' ? 'border-[#141414] bg-zinc-50 font-bold' : 'border-zinc-200 bg-white'}`}>
                     <input
                       type="radio"
                       name="channel"
@@ -478,7 +478,7 @@ export const SentMessagesPage: React.FC = () => {
                     />
                     <span>واتساب للأعمال</span>
                   </label>
-                  <label className={`flex items-center gap-2 p-2.5 border rounded-2xl cursor-pointer text-xs flex-1 transition-all ${composeChannel === 'SMS' ? 'border-black bg-zinc-50 font-bold' : 'border-zinc-200 bg-white'}`}>
+                  <label className={`flex items-center gap-2 p-2.5 border rounded-2xl cursor-pointer text-xs flex-1 transition-all ${composeChannel === 'SMS' ? 'border-[#141414] bg-zinc-50 font-bold' : 'border-zinc-200 bg-white'}`}>
                     <input
                       type="radio"
                       name="channel"
@@ -496,7 +496,7 @@ export const SentMessagesPage: React.FC = () => {
                 <select
                   value={selectedTemplateId}
                   onChange={handleTemplateSelect}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="">-- رسالة حرة مخصصة --</option>
                   {templates.map(t => (
@@ -512,7 +512,7 @@ export const SentMessagesPage: React.FC = () => {
                   placeholder="مثال: فهد عبدالرحمن الشمري"
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -523,7 +523,7 @@ export const SentMessagesPage: React.FC = () => {
                   placeholder="+9665XXXXXXXX"
                   value={recipientPhone}
                   onChange={(e) => setRecipientPhone(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -536,7 +536,7 @@ export const SentMessagesPage: React.FC = () => {
                 value={messageBody}
                 onChange={(e) => setMessageBody(e.target.value)}
                 placeholder="اكتب نص الرسالة هنا..."
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] leading-relaxed focus:border-[#141414] focus:outline-none"
                 required
               />
               <div className="flex justify-between text-[11px] text-[#707070] mt-1">
@@ -576,13 +576,13 @@ export const SentMessagesPage: React.FC = () => {
                   <span className="font-mono font-bold text-xs text-[#707070]">{tmp.id}</span>
                   <Badge text={tmp.category} type="info" />
                 </div>
-                <h3 className="text-sm font-bold text-black mb-2">{tmp.title}</h3>
+                <h3 className="text-sm font-bold text-[#141414] mb-2">{tmp.title}</h3>
                 <div className="bg-zinc-50 p-3 rounded-xl text-xs text-zinc-700 leading-relaxed mb-3 border border-zinc-100">
                   {tmp.text}
                 </div>
                 <div className="flex flex-wrap gap-1 mb-4">
                   {tmp.variables.map(v => (
-                    <span key={v} className="bg-zinc-100 text-black px-2 py-0.5 rounded text-[11px] font-mono font-bold">
+                    <span key={v} className="bg-zinc-100 text-[#141414] px-2 py-0.5 rounded text-[11px] font-mono font-bold">
                       {`{{${v}}}`}
                     </span>
                   ))}
@@ -610,8 +610,8 @@ export const SentMessagesPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm font-bold text-black flex items-center gap-2">
-                <Server className="w-4 h-4 text-black" />
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
+                <Server className="w-4 h-4 text-[#141414]" />
                 <span>بوابة SMS المعتمدة (Taqnyat / Unifonic)</span>
               </h3>
               <Badge text="متصل ومفعل" type="success" />
@@ -628,7 +628,7 @@ export const SentMessagesPage: React.FC = () => {
 
           <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm font-bold text-black flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2">
                 <PhoneCall className="w-4 h-4 text-[#141414]" />
                 <span>واتساب للأعمال (Meta Cloud API)</span>
               </h3>

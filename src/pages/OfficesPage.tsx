@@ -242,7 +242,7 @@ export const OfficesPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -277,7 +277,7 @@ export const OfficesPage: React.FC = () => {
             <button
               onClick={() => setShowAddModal(true)}
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-[#141414]"
-              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#141414', fontWeight: '700' }}
             >
               <Plus className="w-4 h-4 text-[#141414]" />
               <span>+ إضافة مكتب خارجي</span>
@@ -331,7 +331,7 @@ export const OfficesPage: React.FC = () => {
         {/* Card 1: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الوكلاء الدوليين</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {offices.length} وكالات
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>مرخصة لدى مساند</span>
@@ -339,15 +339,15 @@ export const OfficesPage: React.FC = () => {
 
         {/* Card 2: Pistachio Band Card */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>إجمالي السير المرفوعة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>إجمالي السير المرفوعة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {totalCvs} سيرة
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>جاهزة للتعاقد الفوري</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>عقود الاستقدام المنجزة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {totalContracts} عقد
@@ -358,7 +358,7 @@ export const OfficesPage: React.FC = () => {
         {/* Card 4: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>أرصدة المحافظ والحسابات</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             ${totalBalanceUsd.toLocaleString()}
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -746,7 +746,7 @@ export const OfficesPage: React.FC = () => {
 
               <div className="flex justify-between items-center gap-2 pt-3 border-t border-slate-100 flex-wrap">
                 <button
-                  className="px-4 py-2 rounded-2xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-black font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+                  className="px-4 py-2 rounded-2xl bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-[#141414] font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
                   onClick={() => {
                     addNotification({
                       title: 'تسوية رصيد معتمد',
@@ -799,7 +799,7 @@ export const OfficesPage: React.FC = () => {
             <div className="p-6 space-y-4 text-xs font-sans">
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200">
                 <div className="text-[#707070] mb-1">الوكالة المعتمدة:</div>
-                <div className="font-bold text-sm text-black">{selectedOfficeCredentials.name}</div>
+                <div className="font-bold text-sm text-[#141414]">{selectedOfficeCredentials.name}</div>
                 <div className="text-[11px] text-[#707070] font-mono mt-0.5">الدولة: {selectedOfficeCredentials.nationality} | كود الحساب: {selectedOfficeCredentials.account_code}</div>
               </div>
 
@@ -810,7 +810,7 @@ export const OfficesPage: React.FC = () => {
                     type="text"
                     readOnly
                     value={`agent.${(selectedOfficeCredentials.account_code || 'ext').toLowerCase()}@alsulaim-portal.com`}
-                    className="w-full bg-slate-100 border border-slate-200 rounded-xl py-2 px-3 font-mono font-bold text-black"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-xl py-2 px-3 font-mono font-bold text-[#141414]"
                   />
                 </div>
                 <div>

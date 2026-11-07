@@ -206,7 +206,7 @@ export const SettingsPage: React.FC = () => {
   const [logoDarkUrl, setLogoDarkUrl] = useState('/logo.png');
   const [faviconUrl, setFaviconUrl] = useState('/logo.png');
   const [watermarkText, setWatermarkText] = useState('مجموعة خالد السليم - نسخة إلكترونية معتمدة');
-  const [brandColorPrimary, setBrandColorPrimary] = useState('#000000');
+  const [brandColorPrimary, setBrandColorPrimary] = useState('#141414');
   const [brandColorAccent, setBrandColorAccent] = useState('#10B981');
 
   // Section 6: Quick Links State
@@ -436,7 +436,7 @@ export const SettingsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -481,7 +481,7 @@ export const SettingsPage: React.FC = () => {
               onClick={handleSaveSettings}
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Save className="w-3.5 h-3.5 ml-1 text-black" />
+              <Save className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>حفظ جميع التعديلات</span>
             </button>
           </div>
@@ -506,8 +506,8 @@ export const SettingsPage: React.FC = () => {
                     fontSize: '12px',
                     fontWeight: isActive ? 550 : 420,
                     border: '1px solid',
-                    borderColor: isActive ? '#000000' : 'transparent',
-                    backgroundColor: isActive ? '#000000' : 'transparent',
+                    borderColor: isActive ? '#141414' : 'transparent',
+                    backgroundColor: isActive ? '#141414' : 'transparent',
                     color: isActive ? '#ffffff' : '#27272a',
                     cursor: 'pointer',
                     display: 'flex',
@@ -536,7 +536,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-5">
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                 <div>
-                  <h2 className="text-sm font-bold text-black m-0">
+                  <h2 className="text-sm font-bold text-[#141414] m-0">
                     إعدادات أمان المصادقة الثنائية (Two-Factor Authentication 2FA Policy)
                   </h2>
                   <p className="text-xs text-[#707070] mt-1">
@@ -547,15 +547,15 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={require2FAAdmin}
                     onChange={e => setRequire2FAAdmin(e.target.checked)}
-                    className="rounded text-black focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-black block">
+                    <span className="font-bold text-xs text-[#141414] block">
                       إلزامية المصادقة الثنائية (2FA) لجميع المديرين والمشرفين (Admins Only)
                     </span>
                     <span className="text-[11px] text-[#707070] block mt-0.5">
@@ -564,15 +564,15 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={allowOptional2FA}
                     onChange={e => setAllowOptional2FA(e.target.checked)}
-                    className="rounded text-black focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-black block">
+                    <span className="font-bold text-xs text-[#141414] block">
                       السماح للموظفين بتفعيل الـ 2FA اختيارياً
                     </span>
                     <span className="text-[11px] text-[#707070] block mt-0.5">
@@ -599,15 +599,15 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={allowFaceId}
                     onChange={e => setAllowFaceId(e.target.checked)}
-                    className="rounded text-black focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-black block">
+                    <span className="font-bold text-xs text-[#141414] block">
                       تفعيل الدخول ببصمة الوجه ثلاثية الأبعاد (Face ID)
                     </span>
                     <span className="text-[11px] text-[#707070] block mt-0.5">
@@ -622,7 +622,7 @@ export const SettingsPage: React.FC = () => {
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">صلاحية رمز التحقق OTP بالدقائق</label>
                   <select 
                     aria-label="صلاحية رمز التحقق OTP بالدقائق"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                     value={otpExpiryMinutes} 
                     onChange={e => setOtpExpiryMinutes(Number(e.target.value))}
                   >
@@ -636,7 +636,7 @@ export const SettingsPage: React.FC = () => {
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">وسيلة الإرسال الافتراضية للرموز</label>
                   <select 
                     aria-label="وسيلة الإرسال الافتراضية للرموز"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                     value={defaultOtpChannel}
                     onChange={e => setDefaultOtpChannel(e.target.value)}
                   >
@@ -692,7 +692,7 @@ export const SettingsPage: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <Fingerprint className="w-4 h-4 text-[#141414]" />
                             <div>
-                              <span className="font-bold text-xs text-black block">{cred.biometricType}</span>
+                              <span className="font-bold text-xs text-[#141414] block">{cred.biometricType}</span>
                               <span className="text-[10px] text-[#707070] font-mono">ID: {cred.credentialId.slice(0, 14)}... • {new Date(cred.enrolledAt).toLocaleDateString('ar-SA')}</span>
                             </div>
                           </div>
@@ -764,7 +764,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
                 <div>
-                  <h3 className="text-sm font-bold text-black m-0">
+                  <h3 className="text-sm font-bold text-[#141414] m-0">
                     مصفوفة الصلاحيات والأدوار (Role-Based Access Control - RBAC Matrix)
                   </h3>
                   <p className="text-xs text-[#707070] mt-1">
@@ -790,14 +790,14 @@ export const SettingsPage: React.FC = () => {
                   <tbody className="divide-y divide-zinc-100">
                     {rolesPermissions.map((row, idx) => (
                       <tr key={idx} className="hover:bg-zinc-50">
-                        <td className="p-3.5 font-bold text-black">{row.role}</td>
+                        <td className="p-3.5 font-bold text-[#141414]">{row.role}</td>
                         <td className="p-3.5 text-center">
                           <input 
                             type="checkbox" 
                             checked={row.r} 
                             disabled={row.locked} 
                             onChange={() => handleToggleRolePerm(idx, 'r')}
-                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                            className="rounded text-[#141414] focus:ring-0 cursor-pointer" 
                           />
                         </td>
                         <td className="p-3.5 text-center">
@@ -806,7 +806,7 @@ export const SettingsPage: React.FC = () => {
                             checked={row.c} 
                             disabled={row.locked} 
                             onChange={() => handleToggleRolePerm(idx, 'c')}
-                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                            className="rounded text-[#141414] focus:ring-0 cursor-pointer" 
                           />
                         </td>
                         <td className="p-3.5 text-center">
@@ -815,7 +815,7 @@ export const SettingsPage: React.FC = () => {
                             checked={row.e} 
                             disabled={row.locked} 
                             onChange={() => handleToggleRolePerm(idx, 'e')}
-                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                            className="rounded text-[#141414] focus:ring-0 cursor-pointer" 
                           />
                         </td>
                         <td className="p-3.5 text-center">
@@ -824,7 +824,7 @@ export const SettingsPage: React.FC = () => {
                             checked={row.d} 
                             disabled={row.locked} 
                             onChange={() => handleToggleRolePerm(idx, 'd')}
-                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                            className="rounded text-[#141414] focus:ring-0 cursor-pointer" 
                           />
                         </td>
                         <td className="p-3.5 text-center">
@@ -833,7 +833,7 @@ export const SettingsPage: React.FC = () => {
                             checked={row.a} 
                             disabled={row.locked} 
                             onChange={() => handleToggleRolePerm(idx, 'a')}
-                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                            className="rounded text-[#141414] focus:ring-0 cursor-pointer" 
                           />
                         </td>
                         <td className="p-3.5 text-center">
@@ -842,7 +842,7 @@ export const SettingsPage: React.FC = () => {
                             checked={row.x} 
                             disabled={row.locked} 
                             onChange={() => handleToggleRolePerm(idx, 'x')}
-                            className="rounded text-black focus:ring-0 cursor-pointer" 
+                            className="rounded text-[#141414] focus:ring-0 cursor-pointer" 
                           />
                         </td>
                       </tr>
@@ -857,7 +857,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'general' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">البيانات الأساسية للمنظومة والهوية الرسمية</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">البيانات الأساسية للمنظومة والهوية الرسمية</h3>
                 <p className="text-xs text-[#707070] mt-1">تعديل الأسماء الرسمية، أرقام السجلات والتراخيص، والعنوان المعتمد للتقارير والسندات.</p>
               </div>
 
@@ -868,7 +868,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={siteNameAr} 
                     onChange={e => setSiteNameAr(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -877,7 +877,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={siteNameEn} 
                     onChange={e => setSiteNameEn(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-sans focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-sans focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -886,7 +886,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={crNumber} 
                     onChange={e => setCrNumber(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -895,7 +895,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={taxNumber} 
                     onChange={e => setTaxNumber(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -904,7 +904,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={nationalAddress} 
                     onChange={e => setNationalAddress(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -913,7 +913,7 @@ export const SettingsPage: React.FC = () => {
                     type="email" 
                     value={officialEmail} 
                     onChange={e => setOfficialEmail(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -922,7 +922,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={supportPhone} 
                     onChange={e => setSupportPhone(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -931,7 +931,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={portalSlogan} 
                     onChange={e => setPortalSlogan(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
               </div>
@@ -942,7 +942,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'contacts' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">قنوات التواصل والشبكات الاجتماعية والموقع الجغرافي</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">قنوات التواصل والشبكات الاجتماعية والموقع الجغرافي</h3>
                 <p className="text-xs text-[#707070] mt-1">تحديد روابط السوشيال ميديا وربط الخريطة الحية للمقر الرئيسي وفروعه.</p>
               </div>
 
@@ -953,7 +953,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={whatsappNumber} 
                     onChange={e => setWhatsappNumber(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -962,7 +962,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={supportHotline} 
                     onChange={e => setSupportHotline(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -971,7 +971,7 @@ export const SettingsPage: React.FC = () => {
                     type="url" 
                     value={twitterUrl} 
                     onChange={e => setTwitterUrl(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -980,7 +980,7 @@ export const SettingsPage: React.FC = () => {
                     type="url" 
                     value={instagramUrl} 
                     onChange={e => setInstagramUrl(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -989,7 +989,7 @@ export const SettingsPage: React.FC = () => {
                     type="url" 
                     value={linkedinUrl} 
                     onChange={e => setLinkedinUrl(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -998,7 +998,7 @@ export const SettingsPage: React.FC = () => {
                     type="url" 
                     value={tiktokUrl} 
                     onChange={e => setTiktokUrl(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -1007,7 +1007,7 @@ export const SettingsPage: React.FC = () => {
                     type="url" 
                     value={googleMapsEmbedUrl} 
                     onChange={e => setGoogleMapsEmbedUrl(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
               </div>
@@ -1018,7 +1018,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'media' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">الشعارات والهوية البصرية والعلامة المائية</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">الشعارات والهوية البصرية والعلامة المائية</h3>
                 <p className="text-xs text-[#707070] mt-1">تحديد مسارات الشعارات المعتمدة للمنصة، الأيقونات المصغرة، ونصوص الختم والطباعة.</p>
               </div>
 
@@ -1027,7 +1027,7 @@ export const SettingsPage: React.FC = () => {
                   <div className="w-16 h-16 rounded-full bg-white p-2 border border-zinc-200 flex items-center justify-center mb-3 shadow-sm">
                     <img src={logoLightUrl} alt="Logo Light" className="max-h-full max-w-full object-contain" />
                   </div>
-                  <label className="text-xs font-bold text-black mb-1">شعار المنظومة الرئيسي</label>
+                  <label className="text-xs font-bold text-[#141414] mb-1">شعار المنظومة الرئيسي</label>
                   <input 
                     type="text" 
                     value={logoLightUrl} 
@@ -1053,7 +1053,7 @@ export const SettingsPage: React.FC = () => {
                   <div className="w-12 h-12 rounded-xl bg-white p-2 border border-zinc-200 flex items-center justify-center mb-3 shadow-sm">
                     <img src={faviconUrl} alt="Favicon" className="max-h-full max-w-full object-contain" />
                   </div>
-                  <label className="text-xs font-bold text-black mb-1">أيقونة المتصفح (Favicon)</label>
+                  <label className="text-xs font-bold text-[#141414] mb-1">أيقونة المتصفح (Favicon)</label>
                   <input 
                     type="text" 
                     value={faviconUrl} 
@@ -1070,7 +1070,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={watermarkText} 
                     onChange={e => setWatermarkText(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div>
@@ -1086,7 +1086,7 @@ export const SettingsPage: React.FC = () => {
                       type="text" 
                       value={brandColorPrimary} 
                       onChange={e => setBrandColorPrimary(e.target.value)} 
-                      className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                      className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414]" 
                     />
                   </div>
                 </div>
@@ -1098,7 +1098,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'quick-links' && (
             <div className="space-y-5">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">إدارة الروابط السريعة الحكومية والخدمية (Quick Links Bar)</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">إدارة الروابط السريعة الحكومية والخدمية (Quick Links Bar)</h3>
                 <p className="text-xs text-[#707070] mt-1">الروابط المباشرة الظاهرة في القائمة والشريط العلوي لتسريع وصول الموظفين للبوابات الحكومية.</p>
               </div>
 
@@ -1112,7 +1112,7 @@ export const SettingsPage: React.FC = () => {
                     placeholder="مثال: مساند توثيق"
                     value={newLinkName}
                     onChange={e => setNewLinkName(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-white border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <div className="md:col-span-2">
@@ -1123,7 +1123,7 @@ export const SettingsPage: React.FC = () => {
                     placeholder="https://example.com"
                     value={newLinkUrl}
                     onChange={e => setNewLinkUrl(e.target.value)}
-                    className="w-full bg-white border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" 
+                    className="w-full bg-white border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
                 <button type="submit" className="button-primary-pill w-full flex items-center justify-center gap-1 text-xs py-2">
@@ -1147,7 +1147,7 @@ export const SettingsPage: React.FC = () => {
                   <tbody className="divide-y divide-zinc-100">
                     {quickLinks.map((link) => (
                       <tr key={link.id} className="hover:bg-zinc-50">
-                        <td className="p-3.5 font-bold text-black">{link.name}</td>
+                        <td className="p-3.5 font-bold text-[#141414]">{link.name}</td>
                         <td className="p-3.5 font-mono text-[#707070] text-[11px]">
                           <a href={link.url} target="_blank" rel="noreferrer" className="text-[#141414] hover:underline flex items-center gap-1">
                             <span>{link.url}</span>
@@ -1177,20 +1177,20 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'login-config' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">إعدادات بوابة تسجيل دخول العملاء والموقع الخارجي</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">إعدادات بوابة تسجيل دخول العملاء والموقع الخارجي</h3>
                 <p className="text-xs text-[#707070] mt-1">تحديد بوابات الدخول المعتمدة للعملاء والزوار وطرق التحقق من الهوية.</p>
               </div>
 
               <div className="space-y-3">
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={allowNafathSso}
                     onChange={e => setAllowNafathSso(e.target.checked)}
-                    className="rounded text-black focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-black block">
+                    <span className="font-bold text-xs text-[#141414] block">
                       تفعيل تسجيل الدخول بالنفاذ الوطني الموحد (Nafath SSO)
                     </span>
                     <span className="text-[11px] text-[#707070] block mt-0.5">
@@ -1199,15 +1199,15 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={allowOtpLogin}
                     onChange={e => setAllowOtpLogin(e.target.checked)}
-                    className="rounded text-black focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-black block">
+                    <span className="font-bold text-xs text-[#141414] block">
                       السماح بالدخول برقم الجوال ورمز التحقق الفوري (SMS OTP Login)
                     </span>
                     <span className="text-[11px] text-[#707070] block mt-0.5">
@@ -1216,15 +1216,15 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-black transition-colors">
+                <label className="flex items-center gap-3 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 cursor-pointer hover:border-[#141414] transition-colors">
                   <input
                     type="checkbox"
                     checked={allowGuestBrowsing}
                     onChange={e => setAllowGuestBrowsing(e.target.checked)}
-                    className="rounded text-black focus:ring-0 w-4 h-4"
+                    className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                   />
                   <div>
-                    <span className="font-bold text-xs text-black block">
+                    <span className="font-bold text-xs text-[#141414] block">
                       السماح للزوار بتصفح السير الذاتية وحجز الموعد دون تسجيل مسبق
                     </span>
                     <span className="text-[11px] text-[#707070] block mt-0.5">
@@ -1240,7 +1240,7 @@ export const SettingsPage: React.FC = () => {
                   type="number" 
                   value={sessionTimeoutMinutes} 
                   onChange={e => setSessionTimeoutMinutes(Number(e.target.value))}
-                  className="w-full md:w-60 bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                  className="w-full md:w-60 bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414]" 
                 />
               </div>
             </div>
@@ -1250,7 +1250,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'seo' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">تهيئة محركات البحث والإحصائيات (SEO & Analytics Tags)</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">تهيئة محركات البحث والإحصائيات (SEO & Analytics Tags)</h3>
                 <p className="text-xs text-[#707070] mt-1">تحديد وسوم الميتا تاغ، ومعرفات Google Analytics وميتا بيكسل لتحسين الظهور الرقمي.</p>
               </div>
 
@@ -1261,7 +1261,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={metaTitle} 
                     onChange={e => setMetaTitle(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
 
@@ -1271,7 +1271,7 @@ export const SettingsPage: React.FC = () => {
                     rows={2} 
                     value={metaDescription} 
                     onChange={e => setMetaDescription(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
 
@@ -1281,7 +1281,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={metaKeywords} 
                     onChange={e => setMetaKeywords(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                   />
                 </div>
 
@@ -1292,7 +1292,7 @@ export const SettingsPage: React.FC = () => {
                       type="text" 
                       value={ga4MeasurementId} 
                       onChange={e => setGa4MeasurementId(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414]" 
                     />
                   </div>
                   <div>
@@ -1301,7 +1301,7 @@ export const SettingsPage: React.FC = () => {
                       type="text" 
                       value={gtmId} 
                       onChange={e => setGtmId(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414]" 
                     />
                   </div>
                   <div>
@@ -1310,7 +1310,7 @@ export const SettingsPage: React.FC = () => {
                       type="text" 
                       value={metaPixelId} 
                       onChange={e => setMetaPixelId(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black" 
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414]" 
                     />
                   </div>
                 </div>
@@ -1322,7 +1322,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'zoho' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">إعدادات الشات المباشر (Zoho SalesIQ Live Chat)</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">إعدادات الشات المباشر (Zoho SalesIQ Live Chat)</h3>
                 <p className="text-xs text-[#707070] mt-1">تضمين ويدجت المحادثة الحية لدعم العملاء على مدار الساعة.</p>
               </div>
 
@@ -1334,7 +1334,7 @@ export const SettingsPage: React.FC = () => {
                   className="rounded text-[#141414] focus:ring-0 w-4 h-4"
                 />
                 <div>
-                  <span className="font-bold text-xs text-black block">
+                  <span className="font-bold text-xs text-[#141414] block">
                     تفعيل نافذة المحادثة الفورية في الموقع الخارجي وبوابة العملاء
                   </span>
                   <span className="text-[11px] text-zinc-600 block mt-0.5">
@@ -1359,7 +1359,7 @@ export const SettingsPage: React.FC = () => {
                   <select 
                     value={chatDepartment} 
                     onChange={e => setChatDepartment(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414]"
                   >
                     <option>قسم خدمة العملاء والمبيعات</option>
                     <option>قسم الدعم الفني والشكاوى</option>
@@ -1372,7 +1372,7 @@ export const SettingsPage: React.FC = () => {
                     type="text" 
                     value={welcomeMessage} 
                     onChange={e => setWelcomeMessage(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black" 
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414]" 
                   />
                 </div>
               </div>
@@ -1383,7 +1383,7 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'stipulations' && (
             <div className="space-y-4">
               <div className="border-b border-zinc-100 pb-3">
-                <h3 className="text-sm font-bold text-black m-0">السياسات والشروط وبنود ضمان مساند</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">السياسات والشروط وبنود ضمان مساند</h3>
                 <p className="text-xs text-[#707070] mt-1">صياغة وتعديل الشروط الملحقة بعقود الاستقدام والتأجير وسياسة الضمان 90 يوماً.</p>
               </div>
 
@@ -1393,7 +1393,7 @@ export const SettingsPage: React.FC = () => {
                   rows={4} 
                   value={musanedWarrantyTerms} 
                   onChange={e => setMusanedWarrantyTerms(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                 />
               </div>
 
@@ -1403,7 +1403,7 @@ export const SettingsPage: React.FC = () => {
                   rows={3} 
                   value={rentalGuaranteeTerms} 
                   onChange={e => setRentalGuaranteeTerms(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                 />
               </div>
 
@@ -1413,7 +1413,7 @@ export const SettingsPage: React.FC = () => {
                   rows={3} 
                   value={privacyPolicyText} 
                   onChange={e => setPrivacyPolicyText(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-black focus:border-black focus:outline-none" 
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" 
                 />
               </div>
             </div>
@@ -1423,8 +1423,8 @@ export const SettingsPage: React.FC = () => {
           {activeSection === 'ecommerce' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
-                  <ShoppingBag className="w-4 h-4 text-black" />
+                <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
+                  <ShoppingBag className="w-4 h-4 text-[#141414]" />
                   <span>إعدادات وتراخيص ربط المتاجر الإلكترونية وبوابات الدفع (E-Commerce Connectors)</span>
                 </h3>
                 <p className="text-xs text-[#707070] mt-1">
@@ -1440,7 +1440,7 @@ export const SettingsPage: React.FC = () => {
                       S
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">منصة سلة (Salla API v2 Hub)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">منصة سلة (Salla API v2 Hub)</h4>
                       <p className="text-[11px] text-[#707070] m-0">تزامن باقات التأجير، استلام الطلبات، وتوليد الفواتير</p>
                     </div>
                   </div>
@@ -1469,7 +1469,7 @@ export const SettingsPage: React.FC = () => {
                       type="text"
                       value={sallaStoreId}
                       onChange={e => setSallaStoreId(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1478,7 +1478,7 @@ export const SettingsPage: React.FC = () => {
                       type="password"
                       value={sallaApiKey}
                       onChange={e => setSallaApiKey(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -1501,7 +1501,7 @@ export const SettingsPage: React.FC = () => {
                       Z
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">منصة زد (Zid E-Commerce)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">منصة زد (Zid E-Commerce)</h4>
                       <p className="text-[11px] text-[#707070] m-0">مزامنة الكتالوج، الخدمات، وعقود العمالة المهنية</p>
                     </div>
                   </div>
@@ -1530,7 +1530,7 @@ export const SettingsPage: React.FC = () => {
                       type="text"
                       value={zidStoreId}
                       onChange={e => setZidStoreId(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1539,7 +1539,7 @@ export const SettingsPage: React.FC = () => {
                       type="password"
                       value={zidManagerToken}
                       onChange={e => setZidManagerToken(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1553,7 +1553,7 @@ export const SettingsPage: React.FC = () => {
                       Sh
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">متجر شوبيفاي (Shopify GraphQL Store)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">متجر شوبيفاي (Shopify GraphQL Store)</h4>
                       <p className="text-[11px] text-[#707070] m-0">البوابة الدولية للمجموعة واستيراد الحجوزات</p>
                     </div>
                   </div>
@@ -1582,7 +1582,7 @@ export const SettingsPage: React.FC = () => {
                       type="text"
                       value={shopifyStoreUrl}
                       onChange={e => setShopifyStoreUrl(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1591,7 +1591,7 @@ export const SettingsPage: React.FC = () => {
                       type="password"
                       value={shopifyAdminToken}
                       onChange={e => setShopifyAdminToken(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1605,7 +1605,7 @@ export const SettingsPage: React.FC = () => {
                       <CreditCard className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">بوابة الدفع الإلكتروني (Moyasar Gateway)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">بوابة الدفع الإلكتروني (Moyasar Gateway)</h4>
                       <p className="text-[11px] text-[#707070] m-0">سداد الفواتير وعقود التأجير بمدى، فيزا، ماستركارد، و Apple Pay</p>
                     </div>
                   </div>
@@ -1634,7 +1634,7 @@ export const SettingsPage: React.FC = () => {
                       type="text"
                       value={moyasarPublishableKey}
                       onChange={e => setMoyasarPublishableKey(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1643,7 +1643,7 @@ export const SettingsPage: React.FC = () => {
                       type="password"
                       value={moyasarSecretKey}
                       onChange={e => setMoyasarSecretKey(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1656,7 +1656,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3 flex-wrap gap-2">
                 <div>
-                  <h3 className="text-sm font-bold text-black m-0">
+                  <h3 className="text-sm font-bold text-[#141414] m-0">
                     النسخ الاحتياطي الشامل وإدارة البيانات الحقيقية وقواعد البيانات
                   </h3>
                   <p className="text-xs text-[#707070] mt-1">
@@ -1670,11 +1670,11 @@ export const SettingsPage: React.FC = () => {
               <div className="card-pricing p-5 rounded-3xl bg-zinc-50 border border-zinc-200 space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center font-bold">
+                    <div className="w-10 h-10 rounded-2xl bg-[#141414] text-white flex items-center justify-center font-bold">
                       <HardDrive className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">نمط تشغيل المنظومة والبيانات (Data Mode)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">نمط تشغيل المنظومة والبيانات (Data Mode)</h4>
                       <p className="text-xs text-[#707070] m-0">
                         الوضع الحالي:{' '}
                         <strong className={dataMode === 'production_real' ? 'text-[#141414] font-bold' : 'text-[#141414] font-bold'}>
@@ -1687,7 +1687,7 @@ export const SettingsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleToggleDataMode('production_real')}
-                      className={`button-primary-pill ${dataMode === 'production_real' ? 'bg-black text-white' : 'button-outline-on-light'}`}
+                      className={`button-primary-pill ${dataMode === 'production_real' ? 'bg-[#141414] text-white' : 'button-outline-on-light'}`}
                       style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '32px' }}
                     >
                       تفعيل وضع الإنتاج الحقيقي
@@ -1695,7 +1695,7 @@ export const SettingsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleToggleDataMode('demo_preview')}
-                      className={`button-primary-pill ${dataMode === 'demo_preview' ? 'bg-black text-white' : 'button-outline-on-light'}`}
+                      className={`button-primary-pill ${dataMode === 'demo_preview' ? 'bg-[#141414] text-white' : 'button-outline-on-light'}`}
                       style={{ padding: '6px 14px', fontSize: '11.5px', minHeight: '32px' }}
                     >
                       وضع المعاينة التجريبي
@@ -1716,7 +1716,7 @@ export const SettingsPage: React.FC = () => {
                       <Download className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">تصدير نسخة احتياطية شاملة (Export Backup)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">تصدير نسخة احتياطية شاملة (Export Backup)</h4>
                       <p className="text-[11px] text-[#707070] m-0">توليد ملف JSON يحتوي على كافة الجداول والسجلات والقيود</p>
                     </div>
                   </div>
@@ -1744,7 +1744,7 @@ export const SettingsPage: React.FC = () => {
                       <UploadCloud className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-black m-0">استعادة قاعدة البيانات (Restore Backup)</h4>
+                      <h4 className="font-bold text-sm text-[#141414] m-0">استعادة قاعدة البيانات (Restore Backup)</h4>
                       <p className="text-[11px] text-[#707070] m-0">استرجاع الجداول والبيانات من ملف نسخة سابقة</p>
                     </div>
                   </div>
@@ -1768,7 +1768,7 @@ export const SettingsPage: React.FC = () => {
 
               {/* Automated Schedule & Policy */}
               <div className="card-pricing p-5 rounded-3xl bg-white border border-zinc-200 space-y-3">
-                <h4 className="font-bold text-sm text-black m-0">جدولة النسخ الاحتياطي التلقائي للأرشفة</h4>
+                <h4 className="font-bold text-sm text-[#141414] m-0">جدولة النسخ الاحتياطي التلقائي للأرشفة</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                   <label className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer">
                     <input
@@ -1777,7 +1777,7 @@ export const SettingsPage: React.FC = () => {
                       value="daily"
                       checked={backupSchedule === 'daily'}
                       onChange={() => setBackupSchedule('daily')}
-                      className="text-black"
+                      className="text-[#141414]"
                     />
                     <div>
                       <span className="font-bold block">نسخ يومي تلقائي (Daily)</span>
@@ -1791,7 +1791,7 @@ export const SettingsPage: React.FC = () => {
                       value="weekly"
                       checked={backupSchedule === 'weekly'}
                       onChange={() => setBackupSchedule('weekly')}
-                      className="text-black"
+                      className="text-[#141414]"
                     />
                     <div>
                       <span className="font-bold block">نسخ أسبوعي (Weekly)</span>
@@ -1805,7 +1805,7 @@ export const SettingsPage: React.FC = () => {
                       value="monthly"
                       checked={backupSchedule === 'monthly'}
                       onChange={() => setBackupSchedule('monthly')}
-                      className="text-black"
+                      className="text-[#141414]"
                     />
                     <div>
                       <span className="font-bold block">نسخ شهري (Monthly)</span>

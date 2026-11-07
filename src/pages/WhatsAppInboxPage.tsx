@@ -145,7 +145,7 @@ export const WhatsAppInboxPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -178,7 +178,7 @@ export const WhatsAppInboxPage: React.FC = () => {
           <button
             onClick={() => setShowNewChatModal(true)}
             className="button-white-pill flex items-center gap-1.5 shadow-sm"
-            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', color: '#000000', backgroundColor: '#ffffff', fontWeight: 'bold' }}
+            style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', color: '#141414', backgroundColor: '#ffffff', fontWeight: 'bold' }}
           >
             <Plus className="w-4 h-4 text-[#141414]" />
             <span>+ محادثة جديدة مع عميل</span>
@@ -207,7 +207,7 @@ export const WhatsAppInboxPage: React.FC = () => {
         {/* Card 1: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المحادثات المسجلة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {chats.length} محادثات
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل الرسائل المعتمد</span>
@@ -215,15 +215,15 @@ export const WhatsAppInboxPage: React.FC = () => {
 
         {/* Card 2: Pistachio Band Card */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المحادثات النشطة الفورية</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>المحادثات النشطة الفورية</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {chats.filter(c => c.status === 'نشط').length} نشطة
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>استجابة فورية أقل من دقيقة</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>رسائل الإشعارات المرسلة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             1,420 رسالة
@@ -234,7 +234,7 @@ export const WhatsAppInboxPage: React.FC = () => {
         {/* Card 4: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>معدل الرضا وسرعة الإغلاق</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             99.2%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -246,7 +246,7 @@ export const WhatsAppInboxPage: React.FC = () => {
 
       {/* Preset Quick Templates Bar */}
       <div className="card-pricing flex items-center gap-2 overflow-x-auto" style={{ padding: '12px 16px', borderRadius: '16px', background: '#ffffff' }}>
-        <div className="flex items-center gap-1 text-xs font-bold text-black whitespace-nowrap ml-2">
+        <div className="flex items-center gap-1 text-xs font-bold text-[#141414] whitespace-nowrap ml-2">
           <Sparkles className="w-3.5 h-3.5" />
           <span>قوالب سريعة:</span>
         </div>
@@ -275,7 +275,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 placeholder="ابحث بالاسم أو الرقم..."
                 value={searchFilter}
                 onChange={e => setSearchFilter(e.target.value)}
-                className="w-full pl-3 pr-8 py-1.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-sans text-black focus:outline-none focus:border-black"
+                className="w-full pl-3 pr-8 py-1.5 bg-zinc-50 border border-zinc-200 rounded-full text-xs font-sans text-[#141414] focus:outline-none focus:border-[#141414]"
               />
             </div>
           </div>
@@ -293,7 +293,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                   onClick={() => setActiveChat(chat)}
                   className={`p-3.5 transition-all cursor-pointer flex items-start gap-2.5 ${
                     activeChat.id === chat.id
-                      ? 'bg-zinc-100 border-r-4 border-black'
+                      ? 'bg-zinc-100 border-r-4 border-[#141414]'
                       : 'hover:bg-zinc-100/50'
                   }`}
                 >
@@ -305,14 +305,14 @@ export const WhatsAppInboxPage: React.FC = () => {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-1">
-                      <span className="font-bold text-xs text-black truncate">{chat.client_name}</span>
+                      <span className="font-bold text-xs text-[#141414] truncate">{chat.client_name}</span>
                       <span className="text-[10px] font-mono text-[#707070] shrink-0">{chat.time}</span>
                     </div>
                     <div className="text-xs text-[#707070] truncate">{chat.last_message}</div>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-[11px] font-mono text-[#141414] font-bold">{chat.phone}</span>
                       {chat.unread_count > 0 && (
-                        <span className="bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                        <span className="bg-[#141414] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                           {chat.unread_count}
                         </span>
                       )}
@@ -336,7 +336,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                 status="online"
               />
               <div>
-                <h2 className="font-bold text-xs text-black">{activeChat.client_name}</h2>
+                <h2 className="font-bold text-xs text-[#141414]">{activeChat.client_name}</h2>
                 <span className="text-[11px] font-mono text-[#141414] font-bold">{activeChat.phone}</span>
               </div>
             </div>
@@ -366,8 +366,8 @@ export const WhatsAppInboxPage: React.FC = () => {
                 <div
                   className={`max-w-[80%] p-3.5 rounded-2xl text-xs leading-relaxed ${
                     msg.sender === 'system'
-                      ? 'bg-black text-white rounded-br-sm shadow-sm'
-                      : 'bg-white text-black rounded-bl-sm border border-zinc-200'
+                      ? 'bg-[#141414] text-white rounded-br-sm shadow-sm'
+                      : 'bg-white text-[#141414] rounded-bl-sm border border-zinc-200'
                   }`}
                 >
                   {msg.text}
@@ -385,7 +385,7 @@ export const WhatsAppInboxPage: React.FC = () => {
               placeholder="اكتب ردك للعميل أو اختر قالباً جاهزاً من الأعلى..."
               value={replyText}
               onChange={e => setReplyText(e.target.value)}
-              className="flex-1 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-full text-xs text-black focus:outline-none focus:border-black"
+              className="flex-1 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-full text-xs text-[#141414] focus:outline-none focus:border-[#141414]"
             />
             <button
               type="submit"
@@ -431,7 +431,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                         setNewChatPhone(selected.phone);
                       }
                     }}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     defaultValue=""
                   >
                     <option value="" disabled>-- اختر من قائمة العملاء --</option>
@@ -451,7 +451,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                   placeholder="مثال: خالد بن فهد العتيبي"
                   value={newChatName}
                   onChange={e => setNewChatName(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -463,7 +463,7 @@ export const WhatsAppInboxPage: React.FC = () => {
                   placeholder="05XXXXXXXX أو +9665XXXXXXXX"
                   value={newChatPhone}
                   onChange={e => setNewChatPhone(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>

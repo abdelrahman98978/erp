@@ -267,11 +267,11 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
       {/* Header & Presets Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-zinc-100">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center shadow-xs">
+          <div className="w-10 h-10 rounded-2xl bg-[#141414] text-white flex items-center justify-center shadow-xs">
             <ShieldCheck className="w-5 h-5 text-[#141414]" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-black m-0 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#141414] m-0 flex items-center gap-2">
               مصفوفة الصلاحيات الدقيقة للوحدات والعمليات (Roles & Permissions Matrix)
               <span className="pill-tag-mint" style={{ fontSize: '10px' }}>12 عملية معتمدة</span>
             </h3>
@@ -315,12 +315,12 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
               onClick={() => handleApplyPreset(preset.id)}
               className={`p-3 rounded-2xl border-2 cursor-pointer transition-all ${
                 selectedPreset === preset.id
-                  ? 'border-black bg-zinc-50 shadow-xs'
+                  ? 'border-[#141414] bg-zinc-50 shadow-xs'
                   : 'border-zinc-200 bg-white hover:border-zinc-300'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-bold text-black">{preset.name}</span>
+                <span className="text-xs font-bold text-[#141414]">{preset.name}</span>
                 {selectedPreset === preset.id && (
                   <span className="w-2 h-2 rounded-full bg-[#141414]" />
                 )}
@@ -352,7 +352,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
             <tbody className="divide-y divide-zinc-200 font-medium">
               {rows.map((row, idx) => (
                 <tr key={row.moduleId} className={`hover:bg-zinc-50 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-zinc-50/50'}`}>
-                  <td className="py-3 px-4 font-bold text-black sticky right-0 bg-inherit z-10 border-l border-zinc-200">
+                  <td className="py-3 px-4 font-bold text-[#141414] sticky right-0 bg-inherit z-10 border-l border-zinc-200">
                     <div className="text-xs">{row.moduleName}</div>
                     <div className="text-[10px] text-[#707070] font-mono font-normal">module: {row.moduleId}</div>
                   </td>
@@ -366,7 +366,7 @@ export const RolesPermissionsMatrixWidget: React.FC = () => {
                           onClick={() => handleToggleAction(row.moduleId, action)}
                           className={`w-6 h-6 rounded-lg inline-flex items-center justify-center transition-all ${
                             enabled
-                              ? 'bg-black text-white shadow-xs hover:bg-zinc-800'
+                              ? 'bg-[#141414] text-white shadow-xs hover:bg-zinc-800'
                               : 'bg-zinc-100 text-[#141414] hover:bg-zinc-200 hover:text-zinc-600'
                           }`}
                           title={`${row.moduleName} - ${ACTION_LABELS[action].ar}: ${enabled ? 'مفعل' : 'محظور'}`}

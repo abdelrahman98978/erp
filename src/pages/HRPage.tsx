@@ -2797,7 +2797,7 @@ export const HRPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Inputs Column */}
                 <div className="space-y-3.5 md:col-span-1 p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
-                  <h3 className="font-bold text-xs text-black border-b border-zinc-200 pb-2 m-0">بيانات الموظف واحتساب التصفية</h3>
+                  <h3 className="font-bold text-xs text-[#141414] border-b border-zinc-200 pb-2 m-0">بيانات الموظف واحتساب التصفية</h3>
 
                   <div>
                     <label className="block text-xs font-bold text-zinc-700 mb-1">اختيار موظف لتصفية مستحقاته تلقائياً</label>
@@ -2805,7 +2805,7 @@ export const HRPage: React.FC = () => {
                       aria-label="اختيار موظف لتصفية مستحقاته تلقائياً"
                       value={selectedEosEmpId}
                       onChange={(e) => handleSelectEosEmployee(e.target.value)}
-                      className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                     >
                       {employeesList.map((emp) => (
                         <option key={emp.id} value={emp.id}>
@@ -2823,7 +2823,7 @@ export const HRPage: React.FC = () => {
                         aria-label="الأجر الفعلي الأخير شامل البدلات"
                         value={eosSalary}
                         onChange={e => setEosSalary(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                       />
                       <span className="absolute left-3 top-2 text-xs text-[#707070]">⃁</span>
                     </div>
@@ -2838,7 +2838,7 @@ export const HRPage: React.FC = () => {
                         min="0"
                         value={eosYears}
                         onChange={e => setEosYears(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                       />
                     </div>
                     <div>
@@ -2850,7 +2850,7 @@ export const HRPage: React.FC = () => {
                         max="11"
                         value={eosMonths}
                         onChange={e => setEosMonths(Math.min(11, Math.max(0, Number(e.target.value))))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -2864,7 +2864,7 @@ export const HRPage: React.FC = () => {
                         min="0"
                         value={eosUnusedLeaveDays}
                         onChange={(e) => setEosUnusedLeaveDays(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414]"
                       />
                     </div>
                     <div>
@@ -2886,7 +2886,7 @@ export const HRPage: React.FC = () => {
                       aria-label="سبب انتهاء العلاقة العمالية"
                       value={eosReason}
                       onChange={e => setEosReason(e.target.value as any)}
-                      className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-semibold focus:border-black focus:outline-none"
+                      className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-semibold focus:border-[#141414] focus:outline-none"
                     >
                       <option value="termination">إنهاء العقد من صاحب العمل / انتهاء المدة (المادة 84)</option>
                       <option value="resignation">استقالة العامل برغبته (المادة 85)</option>
@@ -2957,7 +2957,7 @@ export const HRPage: React.FC = () => {
                   {/* Accounting Provision Action */}
                   <div className="p-4 bg-zinc-50 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between flex-wrap gap-2">
                     <div>
-                      <span className="font-bold text-xs text-black block">قيد تسوية وصرف مخالصة نهاية الخدمة</span>
+                      <span className="font-bold text-xs text-[#141414] block">قيد تسوية وصرف مخالصة نهاية الخدمة</span>
                       <span className="text-[11px] text-[#707070]">حساب مدين: مخصص نهاية الخدمة وتعويض الإجازات (51050) | دائن: السلف (11040) والبنك (11020)</span>
                     </div>
                     <button
@@ -3127,7 +3127,7 @@ export const HRPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Inputs */}
                 <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-4">
-                  <h3 className="font-bold text-xs text-black border-b border-zinc-200 pb-2 m-0">بيانات الاشتراك الخاضع للتقاعد</h3>
+                  <h3 className="font-bold text-xs text-[#141414] border-b border-zinc-200 pb-2 m-0">بيانات الاشتراك الخاضع للتقاعد</h3>
 
                   <div>
                     <label className="block text-xs font-bold text-zinc-700 mb-1">فئة المشترك *</label>
@@ -3135,14 +3135,14 @@ export const HRPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setGosiEmpType('saudi')}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${gosiEmpType === 'saudi' ? 'bg-black text-white border-black' : 'bg-white text-zinc-700 border-zinc-200'}`}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${gosiEmpType === 'saudi' ? 'bg-[#141414] text-white border-[#141414]' : 'bg-white text-zinc-700 border-zinc-200'}`}
                       >
                         سعودي ({(gosiCalc.employeeRatePercent + gosiCalc.employerRatePercent).toFixed(1)}%)
                       </button>
                       <button
                         type="button"
                         onClick={() => setGosiEmpType('non_saudi')}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${gosiEmpType === 'non_saudi' ? 'bg-black text-white border-black' : 'bg-white text-zinc-700 border-zinc-200'}`}
+                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-colors ${gosiEmpType === 'non_saudi' ? 'bg-[#141414] text-white border-[#141414]' : 'bg-white text-zinc-700 border-zinc-200'}`}
                       >
                         غير سعودي (2%)
                       </button>
@@ -3156,7 +3156,7 @@ export const HRPage: React.FC = () => {
                           type="checkbox"
                           checked={gosiPostJuly2024}
                           onChange={(e) => setGosiPostJuly2024(e.target.checked)}
-                          className="rounded text-black"
+                          className="rounded text-[#141414]"
                         />
                         <span>مشترك جديد بعد 3 يوليو 2024 (نسب متدرجة)</span>
                       </label>
@@ -3167,7 +3167,7 @@ export const HRPage: React.FC = () => {
                             aria-label="سنة الاحتساب للتأمينات"
                             value={gosiYear}
                             onChange={(e) => setGosiYear(Number(e.target.value))}
-                            className="bg-zinc-50 border border-zinc-200 rounded-lg px-2 py-1 text-xs font-mono font-bold text-black"
+                            className="bg-zinc-50 border border-zinc-200 rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#141414]"
                           >
                             <option value={2024}>2024 (معاشات 9.5%)</option>
                             <option value={2025}>2025 (معاشات 10.0%)</option>
@@ -3188,7 +3188,7 @@ export const HRPage: React.FC = () => {
                         aria-label="الراتب الأساسي للتأمينات"
                         value={gosiBasic}
                         onChange={e => setGosiBasic(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                       />
                       <span className="absolute left-3 top-2 text-xs text-[#707070]">⃁</span>
                     </div>
@@ -3202,14 +3202,14 @@ export const HRPage: React.FC = () => {
                         aria-label="بدل السكن الخاضع للتأمينات"
                         value={gosiHousing}
                         onChange={e => setGosiHousing(Math.max(0, Number(e.target.value)))}
-                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                        className="w-full bg-white border border-zinc-200 rounded-xl py-2 px-3 text-xs font-mono font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                       />
                       <span className="absolute left-3 top-2 text-xs text-[#707070]">⃁</span>
                     </div>
                   </div>
 
                   <div className="p-3 bg-zinc-100 rounded-xl text-[11px] text-zinc-600">
-                    الأجر الخاضع للاشتراك المحسوب: <strong className="font-mono text-black">⃁ {wage.toLocaleString()}</strong> (الحد الأقصى ⃁ 45,000).
+                    الأجر الخاضع للاشتراك المحسوب: <strong className="font-mono text-[#141414]">⃁ {wage.toLocaleString()}</strong> (الحد الأقصى ⃁ 45,000).
                   </div>
                 </div>
 
@@ -3254,19 +3254,19 @@ export const HRPage: React.FC = () => {
                       </thead>
                       <tbody className="divide-y divide-zinc-100 font-mono">
                         <tr>
-                          <td className="p-3 font-sans font-medium text-black">فرع المعاشات (التقاعد)</td>
+                          <td className="p-3 font-sans font-medium text-[#141414]">فرع المعاشات (التقاعد)</td>
                           <td className="p-3 text-center font-bold">{isSaudi ? `${(annuitiesRatePct * 2).toFixed(1)}%` : 'غير منطبق'}</td>
                           <td className="p-3 text-center text-[#141414] font-bold">⃁ {annuitiesEmployer.toFixed(2)} ({annuitiesRatePct}%)</td>
                           <td className="p-3 text-left text-[#141414] font-bold">⃁ {annuitiesEmployee.toFixed(2)} ({annuitiesRatePct}%)</td>
                         </tr>
                         <tr>
-                          <td className="p-3 font-sans font-medium text-black">فرع الأخطار المهنية</td>
+                          <td className="p-3 font-sans font-medium text-[#141414]">فرع الأخطار المهنية</td>
                           <td className="p-3 text-center font-bold">2%</td>
                           <td className="p-3 text-center text-[#141414] font-bold">⃁ {hazardEmployer.toFixed(2)} (2%)</td>
                           <td className="p-3 text-left text-[#707070]">⃁ 0.00 (0%)</td>
                         </tr>
                         <tr>
-                          <td className="p-3 font-sans font-medium text-black">نظام التعطل عن العمل (ساند)</td>
+                          <td className="p-3 font-sans font-medium text-[#141414]">نظام التعطل عن العمل (ساند)</td>
                           <td className="p-3 text-center font-bold">{isSaudi ? '1.5%' : 'غير منطبق'}</td>
                           <td className="p-3 text-center text-[#141414] font-bold">⃁ {sanedEmployer.toFixed(2)} (0.75%)</td>
                           <td className="p-3 text-left text-[#141414] font-bold">⃁ {sanedEmployee.toFixed(2)} (0.75%)</td>
@@ -3316,8 +3316,8 @@ export const HRPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {maidsFleet.map(w => (
                   <tr key={w.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{w.id}</td>
-                    <td className="p-3.5 font-bold text-black">{w.name}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{w.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{w.name}</td>
                     <td className="p-3.5">
                       <div>{w.job}</div>
                       <div className="text-[11px] text-[#707070]">{w.nationality}</div>
@@ -3389,9 +3389,9 @@ export const HRPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddEmployee} className="p-6 space-y-4 bg-white text-black overflow-y-auto flex-1">
+            <form onSubmit={handleAddEmployee} className="p-6 space-y-4 bg-white text-[#141414] overflow-y-auto flex-1">
               <div className="border-b border-zinc-100 pb-2">
-                <h4 className="text-xs font-bold text-black flex items-center gap-1.5">
+                <h4 className="text-xs font-bold text-[#141414] flex items-center gap-1.5">
                   <Briefcase className="w-3.5 h-3.5 text-[#141414]" />
                   <span>1. البيانات الشخصية والمهنية</span>
                 </h4>
@@ -3406,7 +3406,7 @@ export const HRPage: React.FC = () => {
                     placeholder="مثال: خالد إبراهيم السليم"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
@@ -3418,7 +3418,7 @@ export const HRPage: React.FC = () => {
                     placeholder="10XXXXXXXX"
                     value={nationalId}
                     onChange={(e) => setNationalId(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -3431,7 +3431,7 @@ export const HRPage: React.FC = () => {
                     required
                     value={jobTitle}
                     onChange={(e) => setJobTitle(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
@@ -3440,7 +3440,7 @@ export const HRPage: React.FC = () => {
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="التشغيل والاستقدام">التشغيل والاستقدام</option>
                     <option value="إدارة الإيواء">إدارة الإيواء</option>
@@ -3456,7 +3456,7 @@ export const HRPage: React.FC = () => {
                   <select
                     value={grade}
                     onChange={(e) => setGrade(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="الدرجة الأولى (مساعد)">الدرجة الأولى (مساعد)</option>
                     <option value="الدرجة الثانية (أخصائي)">الدرجة الثانية (أخصائي)</option>
@@ -3474,7 +3474,7 @@ export const HRPage: React.FC = () => {
                     type="text"
                     value={branch}
                     onChange={(e) => setBranch(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
@@ -3485,7 +3485,7 @@ export const HRPage: React.FC = () => {
                     required
                     value={salary}
                     onChange={(e) => setSalary(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -3513,7 +3513,7 @@ export const HRPage: React.FC = () => {
                         <select
                           value={assignedRole}
                           onChange={(e) => setAssignedRole(e.target.value)}
-                          className="w-full bg-white border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
+                          className="w-full bg-white border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-[#141414] focus:outline-none"
                         >
                           <option value="Administrator">Administrator (مدير نظام - كامل الصلاحيات)</option>
                           <option value="Branch Manager">Branch Manager (مدير فرع)</option>
@@ -3579,14 +3579,14 @@ export const HRPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleExecutePromotion} className="p-6 space-y-4 bg-white text-black overflow-y-auto flex-1">
+            <form onSubmit={handleExecutePromotion} className="p-6 space-y-4 bg-white text-[#141414] overflow-y-auto flex-1">
               {/* Employee Selection Header */}
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">الموظف المراد ترقيته *</label>
                 <select
                   value={promoEmpId}
                   onChange={(e) => handleSelectPromoEmployee(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                 >
                   {employeesList.map(e => (
                     <option key={e.id} value={e.id}>
@@ -3625,7 +3625,7 @@ export const HRPage: React.FC = () => {
                     required
                     value={promoNewTitle}
                     onChange={(e) => setPromoNewTitle(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
@@ -3634,7 +3634,7 @@ export const HRPage: React.FC = () => {
                   <select
                     value={promoNewGrade}
                     onChange={(e) => setPromoNewGrade(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="الدرجة الثانية (أخصائي)">الدرجة الثانية (أخصائي)</option>
                     <option value="الدرجة الثالثة (أخصائي أول)">الدرجة الثالثة (أخصائي أول)</option>
@@ -3651,7 +3651,7 @@ export const HRPage: React.FC = () => {
                   <select
                     value={promoNewDepartment}
                     onChange={(e) => setPromoNewDepartment(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="التشغيل والاستقدام">التشغيل والاستقدام</option>
                     <option value="إدارة الإيواء">إدارة الإيواء</option>
@@ -3669,7 +3669,7 @@ export const HRPage: React.FC = () => {
                     required
                     value={promoNewSalary}
                     onChange={(e) => setPromoNewSalary(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
 
@@ -3680,7 +3680,7 @@ export const HRPage: React.FC = () => {
                     required
                     value={promoEffectiveDate}
                     onChange={(e) => setPromoEffectiveDate(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -3695,7 +3695,7 @@ export const HRPage: React.FC = () => {
                   <select
                     value={promoSystemRole}
                     onChange={(e) => setPromoSystemRole(e.target.value)}
-                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black font-bold focus:outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:outline-none"
                   >
                     <option value="Administrator">Administrator (مدير نظام عام)</option>
                     <option value="Branch Manager">Branch Manager (مدير فرع)</option>
@@ -3715,7 +3715,7 @@ export const HRPage: React.FC = () => {
                   <select
                     value={promoPerformanceRating}
                     onChange={(e) => setPromoPerformanceRating(e.target.value as any)}
-                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-black focus:outline-none"
+                    className="w-full bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl py-2 px-3 text-xs text-[#141414] focus:outline-none"
                   >
                     <option value="استثنائي (5/5)">استثنائي (5/5) - أداء فائق وتجاوز الأهداف</option>
                     <option value="ممتاز (5/5)">ممتاز (5/5) - تحقيق كامل المستهدفات</option>
@@ -3732,7 +3732,7 @@ export const HRPage: React.FC = () => {
                   value={promoReason}
                   onChange={(e) => setPromoReason(e.target.value)}
                   placeholder="مثال: نظراً لتحقيق مستهدفات قياسية وتطوير الأداء وتولي مهام إشرافية موسعة..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -3773,14 +3773,14 @@ export const HRPage: React.FC = () => {
             </div>
 
             {/* Certificate Body (Print Optimized) */}
-            <div className="p-8 overflow-y-auto space-y-5 bg-white text-black border-4 border-double border-zinc-300 m-4 rounded-2xl">
+            <div className="p-8 overflow-y-auto space-y-5 bg-white text-[#141414] border-4 border-double border-zinc-300 m-4 rounded-2xl">
               {/* Header */}
-              <div className="text-center border-b-2 border-black pb-4">
+              <div className="text-center border-b-2 border-[#141414] pb-4">
                 <div className="text-xs font-bold text-[#707070] uppercase tracking-widest">المملكة العربية السعودية</div>
-                <div className="text-lg font-bold text-black mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
+                <div className="text-lg font-bold text-[#141414] mt-1">مجموعة خالد السليم التجارية للاستقدام والتشغيل</div>
                 <div className="text-sm font-bold text-[#141414] mt-0.5">شهادة إقرار وتعهد قانوني واستخدام الأنظمة الرقمية (NDA)</div>
                 <div className="text-[11px] font-mono text-[#707070] mt-1">
-                  رقم الاعتماد الرقمي: <span className="font-bold text-black">{selectedEmpForAgreement.compliance_hash || `SA-COMPLIANCE-${selectedEmpForAgreement.employee_code}`}</span>
+                  رقم الاعتماد الرقمي: <span className="font-bold text-[#141414]">{selectedEmpForAgreement.compliance_hash || `SA-COMPLIANCE-${selectedEmpForAgreement.employee_code}`}</span>
                 </div>
               </div>
 
@@ -3819,7 +3819,7 @@ export const HRPage: React.FC = () => {
                     <Fingerprint className="w-8 h-8 text-[#141414] mx-auto" />
                     <span className="text-[10px] font-bold text-[#141414] block mt-1">توقيع رقمي موثق ومطابق</span>
                   </div>
-                  <div className="text-[10px] font-bold text-black">{selectedEmpForAgreement.name}</div>
+                  <div className="text-[10px] font-bold text-[#141414]">{selectedEmpForAgreement.name}</div>
                 </div>
               </div>
             </div>
@@ -3882,7 +3882,7 @@ export const HRPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreateVacation} className="p-5 space-y-3.5 text-xs text-black">
+            <form onSubmit={handleCreateVacation} className="p-5 space-y-3.5 text-xs text-[#141414]">
               <div>
                 <label className="block font-bold text-zinc-700 mb-1">الموظف *</label>
                 <select
@@ -3966,7 +3966,7 @@ export const HRPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreateAdvance} className="p-5 space-y-3.5 text-xs text-black">
+            <form onSubmit={handleCreateAdvance} className="p-5 space-y-3.5 text-xs text-[#141414]">
               <div>
                 <label className="block font-bold text-zinc-700 mb-1">الموظف *</label>
                 <select
@@ -4046,7 +4046,7 @@ export const HRPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreateSanction} className="p-5 space-y-3.5 text-xs text-black">
+            <form onSubmit={handleCreateSanction} className="p-5 space-y-3.5 text-xs text-[#141414]">
               <div>
                 <label className="block font-bold text-zinc-700 mb-1">الموظف *</label>
                 <select
@@ -4127,7 +4127,7 @@ export const HRPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreatePermission} className="p-5 space-y-3.5 text-xs text-black">
+            <form onSubmit={handleCreatePermission} className="p-5 space-y-3.5 text-xs text-[#141414]">
               <div>
                 <label className="block font-bold text-zinc-700 mb-1">الموظف *</label>
                 <select
@@ -4208,7 +4208,7 @@ export const HRPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreateReward} className="p-5 space-y-3.5 text-xs text-black">
+            <form onSubmit={handleCreateReward} className="p-5 space-y-3.5 text-xs text-[#141414]">
               <div>
                 <label className="block font-bold text-zinc-700 mb-1">الموظف المستحق *</label>
                 <select

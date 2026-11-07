@@ -143,7 +143,7 @@ export const ClientsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -209,7 +209,7 @@ export const ClientsPage: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي العملاء الموثقين</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {clients.length > 0 ? clients.length : 241} عميلاً
@@ -218,8 +218,8 @@ export const ClientsPage: React.FC = () => {
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>عملاء العقود السارية</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>198 عميلاً</div>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>عملاء العقود السارية</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>198 عميلاً</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>استقدام وتأجير</span>
         </div>
 
@@ -240,7 +240,7 @@ export const ClientsPage: React.FC = () => {
             <button
               onClick={() => setActiveFilter('all')}
               className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                activeFilter === 'all' ? 'bg-black text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+                activeFilter === 'all' ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
               }`}
             >
               جميع العملاء ({clients.length})
@@ -291,7 +291,7 @@ export const ClientsPage: React.FC = () => {
               placeholder="ابحث برقم العميل، الاسم، الجوال..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black focus:border-black outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] focus:border-[#141414] outline-none"
             />
           </div>
         </div>
@@ -321,14 +321,14 @@ export const ClientsPage: React.FC = () => {
                   <td colSpan={7} className="py-10 text-center text-[#707070]">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <BusinessIllustration type="empty-search" size="md" />
-                      <span className="font-bold text-black">لا يوجد عملاء مطابقين لمعايير البحث</span>
+                      <span className="font-bold text-[#141414]">لا يوجد عملاء مطابقين لمعايير البحث</span>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filteredClients.map((c: any) => (
                   <tr key={c.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">
                       {c.client_no || c.client_number || `#${String(c.id).slice(0, 8)}`}
                     </td>
                     <td className="p-3.5">
@@ -340,7 +340,7 @@ export const ClientsPage: React.FC = () => {
                           status={c.status === 'محظور' ? undefined : 'verified'}
                         />
                         <div>
-                          <div className="font-bold text-black">{c.name}</div>
+                          <div className="font-bold text-[#141414]">{c.name}</div>
                           <div className="text-[11px] text-[#707070] font-mono mt-0.5">
                             {c.phone} • هوية: {c.national_id || 'غير مسجلة'}
                           </div>
@@ -432,7 +432,7 @@ export const ClientsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddClient} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddClient} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل بالكامل *</label>
                 <input
@@ -440,7 +440,7 @@ export const ClientsPage: React.FC = () => {
                   placeholder="الاسم الثلاثي أو اسم الشركة..."
                   value={addForm.name}
                   onChange={e => setAddForm({ ...addForm, name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -453,7 +453,7 @@ export const ClientsPage: React.FC = () => {
                     placeholder="+9665..."
                     value={addForm.phone}
                     onChange={e => setAddForm({ ...addForm, phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -464,7 +464,7 @@ export const ClientsPage: React.FC = () => {
                     placeholder="10 أرقام..."
                     value={addForm.national_id}
                     onChange={e => setAddForm({ ...addForm, national_id: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -475,7 +475,7 @@ export const ClientsPage: React.FC = () => {
                 <select
                   value={addForm.type}
                   onChange={e => setAddForm({ ...addForm, type: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="شخص">فرد (مواطن / مقيم)</option>
                   <option value="شركة">شركة / منشأة تجارية</option>
@@ -488,7 +488,7 @@ export const ClientsPage: React.FC = () => {
                 <select
                   value={addForm.branch}
                   onChange={e => setAddForm({ ...addForm, branch: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>فرع الرياض الرئيسي</option>
                   <option>فرع جدة</option>
@@ -525,14 +525,14 @@ export const ClientsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleUpdateClient} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleUpdateClient} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل *</label>
                 <input
                   type="text"
                   value={editingClient.name}
                   onChange={e => setEditingClient({ ...editingClient, name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -544,7 +544,7 @@ export const ClientsPage: React.FC = () => {
                     type="text"
                     value={editingClient.phone}
                     onChange={e => setEditingClient({ ...editingClient, phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -553,7 +553,7 @@ export const ClientsPage: React.FC = () => {
                     type="text"
                     value={editingClient.national_id || ''}
                     onChange={e => setEditingClient({ ...editingClient, national_id: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -564,7 +564,7 @@ export const ClientsPage: React.FC = () => {
                   type="text"
                   value={editingClient.branch || ''}
                   onChange={e => setEditingClient({ ...editingClient, branch: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 

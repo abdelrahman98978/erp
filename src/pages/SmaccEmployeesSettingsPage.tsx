@@ -199,7 +199,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -241,7 +241,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               borderRadius: '9999px',
               fontWeight: activeTab === 'employees' ? 550 : 420,
               backgroundColor: activeTab === 'employees' ? '#ffffff' : 'transparent',
-              color: activeTab === 'employees' ? '#000000' : '#ffffff',
+              color: activeTab === 'employees' ? '#141414' : '#ffffff',
               transition: 'all 0.15s ease',
               border: 'none',
               cursor: 'pointer',
@@ -256,7 +256,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               borderRadius: '9999px',
               fontWeight: activeTab === 'settings' ? 550 : 420,
               backgroundColor: activeTab === 'settings' ? '#ffffff' : 'transparent',
-              color: activeTab === 'settings' ? '#000000' : '#ffffff',
+              color: activeTab === 'settings' ? '#141414' : '#ffffff',
               transition: 'all 0.15s ease',
               border: 'none',
               cursor: 'pointer',
@@ -271,7 +271,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               borderRadius: '9999px',
               fontWeight: activeTab === 'numbering' ? 550 : 420,
               backgroundColor: activeTab === 'numbering' ? '#ffffff' : 'transparent',
-              color: activeTab === 'numbering' ? '#000000' : '#ffffff',
+              color: activeTab === 'numbering' ? '#141414' : '#ffffff',
               transition: 'all 0.15s ease',
               border: 'none',
               cursor: 'pointer',
@@ -293,7 +293,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 placeholder="البحث في الموظفين..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414]"
               />
             </div>
 
@@ -351,16 +351,16 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                   filteredEmployees.map(emp => (
                     <tr key={emp.id} className="hover:bg-zinc-50 transition-colors">
                       <td className="p-3.5 font-mono text-[#707070] text-[11px]">{emp.id}</td>
-                      <td className="p-3.5 font-bold text-black">
+                      <td className="p-3.5 font-bold text-[#141414]">
                         <div className="flex items-center gap-2.5">
                           <CorporateAvatar name={emp.name} role={emp.jobTitle} departmentId="hr" size="sm" status="verified" />
                           <span>{emp.name}</span>
                         </div>
                       </td>
                       <td className="p-3.5 font-mono text-[#707070]">{emp.nationalId}</td>
-                      <td className="p-3.5 text-black font-semibold">{emp.jobTitle}</td>
+                      <td className="p-3.5 text-[#141414] font-semibold">{emp.jobTitle}</td>
                       <td className="p-3.5 text-zinc-600">{emp.department}</td>
-                      <td className="p-3.5 font-bold font-mono text-black">{emp.basicSalary.toLocaleString()} ⃁</td>
+                      <td className="p-3.5 font-bold font-mono text-[#141414]">{emp.basicSalary.toLocaleString()} ⃁</td>
                       <td className="p-3.5 text-[#707070] font-mono">{(emp.housingAllowance + emp.transportAllowance).toLocaleString()} ⃁</td>
                       <td className="p-3.5 font-bold font-mono text-[#141414]">{emp.totalSalary.toLocaleString()} ⃁</td>
                       <td className="p-3.5">
@@ -379,7 +379,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       {activeTab === 'settings' && (
         <form onSubmit={handleSaveSettings} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
           <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
-            <h3 className="font-bold text-black text-base m-0">إعدادات المنشأة والنظام الضريبي</h3>
+            <h3 className="font-bold text-[#141414] text-base m-0">إعدادات المنشأة والنظام الضريبي</h3>
             <span className="pill-tag-mint text-xs">حفظ دائم في قاعدة البيانات</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -389,7 +389,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={companySettings.companyName}
                 onChange={e => setCompanySettings({ ...companySettings, companyName: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -398,7 +398,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={companySettings.taxNumber}
                 onChange={e => setCompanySettings({ ...companySettings, taxNumber: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -416,7 +416,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="date"
                 value={companySettings.fiscalYearStart}
                 onChange={e => setCompanySettings({ ...companySettings, fiscalYearStart: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -425,7 +425,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={companySettings.mainBranch}
                 onChange={e => setCompanySettings({ ...companySettings, mainBranch: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -453,7 +453,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
       {activeTab === 'numbering' && (
         <form onSubmit={handleSaveSettings} className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
           <div className="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
-            <h3 className="font-bold text-black text-base m-0">الترقيم التلقائي وتفويضات الاعتماد</h3>
+            <h3 className="font-bold text-[#141414] text-base m-0">الترقيم التلقائي وتفويضات الاعتماد</h3>
             <span className="pill-tag-mint text-xs">قواعد التسلسل الرقمي</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -463,7 +463,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={numberingRules.voucherPrefix}
                 onChange={e => setNumberingRules({ ...numberingRules, voucherPrefix: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -472,7 +472,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={numberingRules.journalPrefix}
                 onChange={e => setNumberingRules({ ...numberingRules, journalPrefix: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -481,7 +481,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={numberingRules.invoicePrefix}
                 onChange={e => setNumberingRules({ ...numberingRules, invoicePrefix: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -490,7 +490,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="text"
                 value={numberingRules.invoiceStart}
                 onChange={e => setNumberingRules({ ...numberingRules, invoiceStart: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               />
             </div>
           </div>
@@ -522,7 +522,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               placeholder="مثال: تركي سالم العتيبي"
               value={newEmp.name}
               onChange={e => setNewEmp({ ...newEmp, name: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -533,7 +533,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               placeholder="10xxxxxxxx"
               value={newEmp.nationalId}
               onChange={e => setNewEmp({ ...newEmp, nationalId: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -542,7 +542,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               type="text"
               value={newEmp.jobTitle}
               onChange={e => setNewEmp({ ...newEmp, jobTitle: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -550,7 +550,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
             <select
               value={newEmp.department}
               onChange={e => setNewEmp({ ...newEmp, department: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             >
               <option value="قسم العمليات التشغيلية">قسم العمليات التشغيلية</option>
               <option value="إدارة الاستقدام والمتابعة">إدارة الاستقدام والمتابعة</option>
@@ -567,7 +567,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               placeholder="0.00"
               value={newEmp.basicSalary}
               onChange={e => setNewEmp({ ...newEmp, basicSalary: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -577,7 +577,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               placeholder="0.00"
               value={newEmp.housingAllowance}
               onChange={e => setNewEmp({ ...newEmp, housingAllowance: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -587,7 +587,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               placeholder="0.00"
               value={newEmp.transportAllowance}
               onChange={e => setNewEmp({ ...newEmp, transportAllowance: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -596,7 +596,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
               type="text"
               value={newEmp.bankName}
               onChange={e => setNewEmp({ ...newEmp, bankName: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
         </div>
@@ -617,7 +617,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="number"
                 value={eosbCalc.years}
                 onChange={e => setEosbCalc({ ...eosbCalc, years: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
               />
             </div>
             <div>
@@ -626,7 +626,7 @@ export const SmaccEmployeesSettingsPage: React.FC = () => {
                 type="number"
                 value={eosbCalc.lastSalary}
                 onChange={e => setEosbCalc({ ...eosbCalc, lastSalary: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
               />
             </div>
           </div>

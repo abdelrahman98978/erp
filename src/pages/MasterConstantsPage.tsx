@@ -221,7 +221,7 @@ export const MasterConstantsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -266,7 +266,7 @@ export const MasterConstantsPage: React.FC = () => {
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Plus className="w-4 h-4 ml-1 text-black" />
+              <Plus className="w-4 h-4 ml-1 text-[#141414]" />
               <span>+ إضافة بند جديد</span>
             </button>
             <ExportDropdown
@@ -300,8 +300,8 @@ export const MasterConstantsPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -327,7 +327,7 @@ export const MasterConstantsPage: React.FC = () => {
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder="بحث سريع في القائمة الحالية..."
-          className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-4 text-xs text-black focus:outline-none focus:border-black"
+          className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-4 text-xs text-[#141414] focus:outline-none focus:border-[#141414]"
         />
       </div>
 
@@ -342,12 +342,12 @@ export const MasterConstantsPage: React.FC = () => {
               {item.icon ? (
                 <span className="text-2xl">{item.icon}</span>
               ) : (
-                <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-[#141414] text-white flex items-center justify-center text-xs font-bold">
                   <Check className="w-4 h-4" />
                 </div>
               )}
               <div>
-                <h2 className="text-xs font-bold text-black m-0">{item.title}</h2>
+                <h2 className="text-xs font-bold text-[#141414] m-0">{item.title}</h2>
                 {item.subtext && <p className="text-[11px] text-[#707070] m-0 mt-0.5">{item.subtext}</p>}
                 {item.code && (
                   <span className="text-[10px] text-[#707070] font-mono block mt-0.5">
@@ -392,7 +392,7 @@ export const MasterConstantsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddItem} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddItem} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم البند / العنوان *</label>
                 <input
@@ -401,7 +401,7 @@ export const MasterConstantsPage: React.FC = () => {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="مثال: إندونيسيا، رعاية صحية، مطار دبي"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -412,7 +412,7 @@ export const MasterConstantsPage: React.FC = () => {
                   value={newCode}
                   onChange={(e) => setNewCode(e.target.value)}
                   placeholder="مثال: IDN, HEALTH_CARE, DXB"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                 />
               </div>
 

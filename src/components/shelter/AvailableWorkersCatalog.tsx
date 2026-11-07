@@ -389,7 +389,7 @@ export const AvailableWorkersCatalog: React.FC<AvailableWorkersCatalogProps> = (
                     onClick={() => onBookTransfer(worker)}
                     className="px-3 py-1.5 rounded-xl text-xs font-bold text-[#ffffff] bg-[#141414] hover:bg-[#262626] shadow-md transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-black" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#141414]" />
                     <span>حجز لعميل</span>
                   </button>
                 </div>

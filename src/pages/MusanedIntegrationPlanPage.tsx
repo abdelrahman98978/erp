@@ -80,7 +80,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -151,7 +151,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
               className="button-white-pill"
               style={{ fontSize: '12px', padding: '8px 18px', minHeight: '38px' }}
             >
-              <Printer className="w-4 h-4 ml-1.5 text-black" />
+              <Printer className="w-4 h-4 ml-1.5 text-[#141414]" />
               <span>طباعة الوثيقة / PDF</span>
             </button>
             <a
@@ -171,8 +171,8 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
       {/* KPI Cards */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '20px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#000000' }}>أقسام الوثيقة المعمارية (v2)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
+          <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#141414' }}>أقسام الوثيقة المعمارية (v2)</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '4px' }}>
             49 قسماً
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '10.5px', marginTop: '8px' }}>
@@ -180,7 +180,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           </span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '20px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#a1a1aa' }}>الشركات المعتمدة للربط</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '4px' }}>
             4 شركات
@@ -192,7 +192,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>جداول قاعدة البيانات مع RLS</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '4px' }}>
             17 جدولاً
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '10.5px', marginTop: '8px' }}>
@@ -202,7 +202,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '20px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '12.5px', fontWeight: 550, color: '#71717a' }}>موجات الإطلاق المتدرجة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '4px' }}>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '4px' }}>
             7 موجات
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '10.5px', marginTop: '8px' }}>
@@ -215,7 +215,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
       <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
-            <h2 className="text-base font-bold text-black m-0 flex items-center gap-2">
+            <h2 className="text-base font-bold text-[#141414] m-0 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-[#141414]" />
               <span>مصفوفة تكامل مساند للشركات الأربع (4-Company Multi-Tenancy Matrix)</span>
             </h2>
@@ -234,60 +234,60 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
               <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-bold font-mono text-[10px]">RC01: SAF</span>
               <span className="w-2 h-2 rounded-full bg-[#141414] inline-block" />
             </div>
-            <h3 className="font-bold text-black text-xs m-0">شركة السفير الماسي للاستقدام</h3>
+            <h3 className="font-bold text-[#141414] text-xs m-0">شركة السفير الماسي للاستقدام</h3>
             <div className="text-[11px] text-[#707070] space-y-1 pt-1 font-mono">
-              <div>Estab ID: <strong className="text-black">EST-SAF-001</strong></div>
+              <div>Estab ID: <strong className="text-[#141414]">EST-SAF-001</strong></div>
               <div>Connection: <strong className="text-[#141414]">Active (TLS 1.3)</strong></div>
-              <div>Ledger: <strong className="text-black">SAF-LEDGER-01</strong></div>
-              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-SAF</strong></div>
+              <div>Ledger: <strong className="text-[#141414]">SAF-LEDGER-01</strong></div>
+              <div>Webhook Secret: <strong className="text-[#141414]">HMAC-SHA256-SAF</strong></div>
               <div>DLQ Status: <strong className="text-[#141414]">0 Quarantine</strong></div>
             </div>
           </div>
 
           {/* Company 2 */}
-          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-[#141414] transition-colors">
             <div className="flex items-center justify-between">
               <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-bold font-mono text-[10px]">RC02: YAQ</span>
               <span className="w-2 h-2 rounded-full bg-[#141414] inline-block" />
             </div>
-            <h3 className="font-bold text-black text-xs m-0">شركة ياقوت نجد للاستقدام</h3>
+            <h3 className="font-bold text-[#141414] text-xs m-0">شركة ياقوت نجد للاستقدام</h3>
             <div className="text-[11px] text-[#707070] space-y-1 pt-1 font-mono">
-              <div>Estab ID: <strong className="text-black">EST-YAQ-002</strong></div>
+              <div>Estab ID: <strong className="text-[#141414]">EST-YAQ-002</strong></div>
               <div>Connection: <strong className="text-[#141414]">Active (TLS 1.3)</strong></div>
-              <div>Ledger: <strong className="text-black">YAQ-LEDGER-02</strong></div>
-              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-YAQ</strong></div>
+              <div>Ledger: <strong className="text-[#141414]">YAQ-LEDGER-02</strong></div>
+              <div>Webhook Secret: <strong className="text-[#141414]">HMAC-SHA256-YAQ</strong></div>
               <div>DLQ Status: <strong className="text-[#141414]">0 Quarantine</strong></div>
             </div>
           </div>
 
           {/* Company 3 */}
-          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-[#141414] transition-colors">
             <div className="flex items-center justify-between">
               <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-bold font-mono text-[10px]">RC03: TOP</span>
               <span className="w-2 h-2 rounded-full bg-[#141414] inline-block" />
             </div>
-            <h3 className="font-bold text-black text-xs m-0">شركة توباز للاستقدام والتشغيل</h3>
+            <h3 className="font-bold text-[#141414] text-xs m-0">شركة توباز للاستقدام والتشغيل</h3>
             <div className="text-[11px] text-[#707070] space-y-1 pt-1 font-mono">
-              <div>Estab ID: <strong className="text-black">EST-TOP-003</strong></div>
+              <div>Estab ID: <strong className="text-[#141414]">EST-TOP-003</strong></div>
               <div>Connection: <strong className="text-[#141414]">Active (TLS 1.3)</strong></div>
-              <div>Ledger: <strong className="text-black">TOP-LEDGER-03</strong></div>
-              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-TOP</strong></div>
+              <div>Ledger: <strong className="text-[#141414]">TOP-LEDGER-03</strong></div>
+              <div>Webhook Secret: <strong className="text-[#141414]">HMAC-SHA256-TOP</strong></div>
               <div>DLQ Status: <strong className="text-[#141414]">0 Quarantine</strong></div>
             </div>
           </div>
 
           {/* Company 4 */}
-          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-black transition-colors">
+          <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2 hover:border-[#141414] transition-colors">
             <div className="flex items-center justify-between">
               <span className="px-2 py-0.5 rounded-full bg-[#f3f3f3] text-[#141414] font-bold font-mono text-[10px]">RC04: DAR</span>
               <span className="w-2 h-2 rounded-full bg-[#141414] inline-block" />
             </div>
-            <h3 className="font-bold text-black text-xs m-0">شركة دار الرواد / كاس</h3>
+            <h3 className="font-bold text-[#141414] text-xs m-0">شركة دار الرواد / كاس</h3>
             <div className="text-[11px] text-[#707070] space-y-1 pt-1 font-mono">
-              <div>Estab ID: <strong className="text-black">EST-DAR-004</strong></div>
+              <div>Estab ID: <strong className="text-[#141414]">EST-DAR-004</strong></div>
               <div>Connection: <strong className="text-[#141414]">Active (TLS 1.3)</strong></div>
-              <div>Ledger: <strong className="text-black">DAR-LEDGER-04</strong></div>
-              <div>Webhook Secret: <strong className="text-black">HMAC-SHA256-DAR</strong></div>
+              <div>Ledger: <strong className="text-[#141414]">DAR-LEDGER-04</strong></div>
+              <div>Webhook Secret: <strong className="text-[#141414]">HMAC-SHA256-DAR</strong></div>
               <div>DLQ Status: <strong className="text-[#141414]">0 Quarantine</strong></div>
             </div>
           </div>
@@ -321,7 +321,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
         {filteredSections.map((sec) => (
           <div
             key={sec.id}
-            className="card-pricing transition-all hover:border-black hover:shadow-md cursor-pointer flex flex-col justify-between"
+            className="card-pricing transition-all hover:border-[#141414] hover:shadow-md cursor-pointer flex flex-col justify-between"
             style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
           >
             <div>
@@ -331,7 +331,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
                     width: '28px',
                     height: '28px',
                     borderRadius: '8px',
-                    background: '#000000',
+                    background: '#141414',
                     color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
@@ -347,7 +347,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
                   {sec.category}
                 </span>
               </div>
-              <h3 className="text-sm font-bold text-black m-0 leading-snug">
+              <h3 className="text-sm font-bold text-[#141414] m-0 leading-snug">
                 {sec.title}
               </h3>
             </div>
@@ -365,13 +365,13 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
 
       {/* Core Technical Highlights Box */}
       <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-        <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: '0 0 16px 0' }}>
+        <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: '0 0 16px 0' }}>
           أبرز محاور المعمارية والربط اللحظي (Highlights & Standards)
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-[#141414] mb-1.5 flex items-center gap-1.5">
               <Lock className="w-4 h-4 text-[#141414]" />
               <span>الأمن السيبراني ونظام حماية البيانات (PDPL)</span>
             </h3>
@@ -381,7 +381,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-[#141414] mb-1.5 flex items-center gap-1.5">
               <DollarSign className="w-4 h-4 text-[#141414]" />
               <span>محرك التسويات والمطابقة المالية (Reconciliation Engine)</span>
             </h3>
@@ -391,7 +391,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-[#141414] mb-1.5 flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#141414]" />
               <span>التأمين الإلزامي 24 شهراً ومطالبات التعويض</span>
             </h3>
@@ -401,7 +401,7 @@ export const MusanedIntegrationPlanPage: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl bg-zinc-50 border border-zinc-200">
-            <h3 className="font-bold text-black mb-1.5 flex items-center gap-1.5">
+            <h3 className="font-bold text-[#141414] mb-1.5 flex items-center gap-1.5">
               <Activity className="w-4 h-4 text-[#141414]" />
               <span>محرك الأحداث والـ Webhooks ورسائل DLQ</span>
             </h3>

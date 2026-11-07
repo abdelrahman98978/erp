@@ -232,7 +232,7 @@ export function DataTable<T extends { id: string | number }>({
                 className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
                   density === opt.id
                     ? 'bg-[#f3f3f3] text-[#141414] shadow-2xs'
-                    : 'text-zinc-600 hover:text-black'
+                    : 'text-zinc-600 hover:text-[#141414]'
                 }`}
               >
                 {opt.label}
@@ -376,7 +376,7 @@ export function DataTable<T extends { id: string | number }>({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
-                    color: '#000000',
+                    color: '#141414',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -404,7 +404,7 @@ export function DataTable<T extends { id: string | number }>({
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      color: '#000000',
+                      color: '#141414',
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f4f5')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
@@ -522,7 +522,7 @@ export function DataTable<T extends { id: string | number }>({
                         <button
                           type="button"
                           onClick={onAddClick}
-                          className="px-4 py-1.5 rounded-full text-xs font-black bg-[#f3f3f3] text-[#141414] hover:bg-black transition-colors cursor-pointer"
+                          className="px-4 py-1.5 rounded-full text-xs font-black bg-[#f3f3f3] text-[#141414] hover:bg-[#141414] transition-colors cursor-pointer"
                         >
                           + {addLabel}
                         </button>
@@ -571,7 +571,7 @@ export function DataTable<T extends { id: string | number }>({
                         padding: cellPadding,
                         fontSize: cellFontSize,
                         fontWeight: 420,
-                        color: '#000000',
+                        color: '#141414',
                       }}
                     >
                       {typeof col.accessor === 'function'
@@ -603,8 +603,8 @@ export function DataTable<T extends { id: string | number }>({
       >
         <div>
           إجمالي العناصر المعروضة:{' '}
-          <strong style={{ color: '#000000' }}>{filteredData.length}</strong> من أصل{' '}
-          <strong style={{ color: '#000000' }}>{data.length}</strong>
+          <strong style={{ color: '#141414' }}>{filteredData.length}</strong> من أصل{' '}
+          <strong style={{ color: '#141414' }}>{data.length}</strong>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {searchQuery && (

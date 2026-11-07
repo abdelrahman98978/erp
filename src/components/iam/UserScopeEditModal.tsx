@@ -168,7 +168,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 required
-                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-black"
+                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-[#141414]"
               />
             </div>
 
@@ -179,7 +179,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                 value={jobTitle}
                 onChange={e => setJobTitle(e.target.value)}
                 required
-                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-black"
+                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-[#141414]"
               />
             </div>
 
@@ -188,7 +188,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
               <select
                 value={accountType}
                 onChange={e => setAccountType(e.target.value as AccountType)}
-                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-black"
+                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-[#141414]"
               >
                 <option value="Group Super Admin">Group Super Admin (مدير عام المجموعة)</option>
                 <option value="Board / Group Executive">Board / Group Executive (إدارة عليا)</option>
@@ -205,7 +205,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
               <select
                 value={status}
                 onChange={e => setStatus(e.target.value as any)}
-                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-black"
+                className="w-full bg-white border border-zinc-300 rounded-xl p-2 text-xs font-bold text-[#141414]"
               >
                 <option value="نشط">نشط (Active)</option>
                 <option value="معلق">معلق (Suspended)</option>
@@ -216,7 +216,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
 
           {/* Section 2: Data Scope Level (0 to 6) */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-black">
+            <label className="block text-xs font-bold text-[#141414]">
               مستوى نطاق البيانات (Data Scope Level 0–6) — حسب المعيار المؤسسي:
             </label>
             <div className="space-y-2">
@@ -247,7 +247,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
 
           {/* Section 3: Company Access */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-black">
+            <label className="block text-xs font-bold text-[#141414]">
               الشركات المصرح بها للمستخدم (Company Access Scope):
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -259,13 +259,13 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     onClick={() => handleToggleCompany(c.code)}
                     className={`p-3 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
                       checked 
-                        ? 'border-black bg-zinc-50 font-bold text-black' 
+                        ? 'border-[#141414] bg-zinc-50 font-bold text-[#141414]' 
                         : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300'
                     }`}
                   >
                     <span className="text-xs">{c.name}</span>
                     <span className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] ${
-                      checked ? 'bg-black text-white' : 'bg-zinc-100 text-transparent'
+                      checked ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-transparent'
                     }`}>
                       ✓
                     </span>
@@ -277,7 +277,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
 
           {/* Section 4: Branch Access */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-black">
+            <label className="block text-xs font-bold text-[#141414]">
               الفروع المصرح بها (Branch Access Scope):
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -289,13 +289,13 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     onClick={() => handleToggleBranch(b.id)}
                     className={`p-3 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
                       checked 
-                        ? 'border-black bg-zinc-50 font-bold text-black' 
+                        ? 'border-[#141414] bg-zinc-50 font-bold text-[#141414]' 
                         : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300'
                     }`}
                   >
                     <span className="text-xs">{b.name}</span>
                     <span className={`w-4 h-4 rounded-md flex items-center justify-center text-[10px] ${
-                      checked ? 'bg-black text-white' : 'bg-zinc-100 text-transparent'
+                      checked ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-transparent'
                     }`}>
                       ✓
                     </span>
@@ -307,7 +307,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
 
           {/* Section 5: Department Access */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-black">
+            <label className="block text-xs font-bold text-[#141414]">
               الأقسام المصرح بها (Department Access Scope):
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -319,13 +319,13 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                     onClick={() => handleToggleDepartment(d.id)}
                     className={`p-2.5 rounded-xl border cursor-pointer flex items-center justify-between transition-all ${
                       checked 
-                        ? 'border-black bg-zinc-50 font-bold text-black' 
+                        ? 'border-[#141414] bg-zinc-50 font-bold text-[#141414]' 
                         : 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300'
                     }`}
                   >
                     <span className="text-[11px] truncate">{d.name}</span>
                     <span className={`w-3.5 h-3.5 rounded flex items-center justify-center text-[9px] ${
-                      checked ? 'bg-black text-white' : 'bg-zinc-100 text-transparent'
+                      checked ? 'bg-[#141414] text-white' : 'bg-zinc-100 text-transparent'
                     }`}>
                       ✓
                     </span>
@@ -351,7 +351,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                   placeholder="مثال: تغطية مهام قسم المالية أثناء الإجازة الرسمية"
                   value={overrideReason}
                   onChange={e => setOverrideReason(e.target.value)}
-                  className="w-full bg-white border border-[#e0e0e0] rounded-xl p-2 text-xs text-black"
+                  className="w-full bg-white border border-[#e0e0e0] rounded-xl p-2 text-xs text-[#141414]"
                 />
               </div>
               <div>
@@ -360,7 +360,7 @@ export const UserScopeEditModal: React.FC<UserScopeEditModalProps> = ({
                   type="date"
                   value={overrideExpiry}
                   onChange={e => setOverrideExpiry(e.target.value)}
-                  className="w-full bg-white border border-[#e0e0e0] rounded-xl p-2 text-xs text-black"
+                  className="w-full bg-white border border-[#e0e0e0] rounded-xl p-2 text-xs text-[#141414]"
                 />
               </div>
             </div>

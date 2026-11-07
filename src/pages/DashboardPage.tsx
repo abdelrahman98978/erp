@@ -169,7 +169,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
-          background: '#000000',
+          background: '#141414',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
@@ -265,7 +265,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                     style={{
                       border: 'none',
                       backgroundColor: isActive ? '#ffffff' : 'transparent',
-                      color: isActive ? '#000000' : '#ffffff',
+                      color: isActive ? '#141414' : '#ffffff',
                       fontWeight: isActive ? 600 : 420,
                       padding: '3px 12px',
                       borderRadius: '9999px',
@@ -334,15 +334,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div
           onClick={() => onNavigate('shelter', 'إدارة الإيواء')}
-          className="card-pricing flex items-center justify-between cursor-pointer hover:border-black transition-all"
+          className="card-pricing flex items-center justify-between cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px 20px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-200 text-black flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-200 text-[#141414] flex items-center justify-center">
               <Home className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-black m-0">إدارة الإيواء</h3>
+              <h3 className="text-xs font-bold text-[#141414] m-0">إدارة الإيواء</h3>
               <p className="text-[11px] text-[#707070] m-0">الداخل والخارج والجاهز للنقل ومرحلة الترحيل</p>
             </div>
           </div>
@@ -351,15 +351,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
         <div
           onClick={() => onNavigate('finance-home', 'لوحة التحكم المالية')}
-          className="card-pricing flex items-center justify-between cursor-pointer hover:border-black transition-all"
+          className="card-pricing flex items-center justify-between cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px 20px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-200 text-black flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-200 text-[#141414] flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-[#141414]" />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-black m-0">لوحة التحكم المالية</h3>
+              <h3 className="text-xs font-bold text-[#141414] m-0">لوحة التحكم المالية</h3>
               <p className="text-[11px] text-[#707070] m-0">ملخص الحسابات والفواتير والحركات المالية</p>
             </div>
           </div>
@@ -368,15 +368,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
         <div
           onClick={() => onNavigate('reports', 'مركز التقارير')}
-          className="card-pricing flex items-center justify-between cursor-pointer hover:border-black transition-all"
+          className="card-pricing flex items-center justify-between cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px 20px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-200 text-black flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-zinc-50 border border-zinc-200 text-[#141414] flex items-center justify-center">
               <PieChart className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-black m-0">مركز التقارير</h3>
+              <h3 className="text-xs font-bold text-[#141414] m-0">مركز التقارير</h3>
               <p className="text-[11px] text-[#707070] m-0">تقارير العقود والطلبات والإيواء والتصدير</p>
             </div>
           </div>
@@ -389,25 +389,25 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 1. جميع عقود الاستقدام */}
         <div
           onClick={() => onNavigate('recruitment-contracts', 'عقود الاستقدام')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">جميع عقود الاستقدام</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <Handshake className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.recruitmentContracts.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
-            <div className="w-3/4 h-full bg-black rounded-full" />
+            <div className="w-3/4 h-full bg-[#141414] rounded-full" />
           </div>
           <div className="text-[10px] text-[#707070] flex flex-wrap gap-1">
-            <span>قبل الوصول: <strong className="text-black font-mono">{stats.recruitmentContracts.beforeArrival}</strong></span>
+            <span>قبل الوصول: <strong className="text-[#141414] font-mono">{stats.recruitmentContracts.beforeArrival}</strong></span>
             <span>|</span>
-            <span>وصول: <strong className="text-black font-mono">{stats.recruitmentContracts.arrivalStage}</strong></span>
+            <span>وصول: <strong className="text-[#141414] font-mono">{stats.recruitmentContracts.arrivalStage}</strong></span>
             <span>|</span>
             <span>ضمان: <strong className="text-[#141414] font-mono">{stats.recruitmentContracts.underGuarantee}</strong></span>
           </div>
@@ -416,16 +416,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 2. طلبات الاستقدام (الحجوزات) */}
         <div
           onClick={() => onNavigate('orders', 'طلبات الاستقدام')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">طلبات الاستقدام</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <ShoppingCart className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.orders.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -436,32 +436,32 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
             <span>|</span>
             <span>إجراء: <strong className="text-[#141414] font-mono">{stats.orders.inProgress}</strong></span>
             <span>|</span>
-            <span>مكتملة: <strong className="text-black font-mono">{stats.orders.completed}</strong></span>
+            <span>مكتملة: <strong className="text-[#141414] font-mono">{stats.orders.completed}</strong></span>
           </div>
         </div>
 
         {/* 3. عقود الإيجار */}
         <div
           onClick={() => onNavigate('rent-contracts', 'عقود التأجير')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">عقود الإيجار</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <FileCheck className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.rentContracts.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
-            <div className="w-1/2 h-full bg-black rounded-full" />
+            <div className="w-1/2 h-full bg-[#141414] rounded-full" />
           </div>
           <div className="text-[10px] text-[#707070] flex flex-wrap gap-1">
             <span>نشطة: <strong className="text-[#141414] font-mono">{stats.rentContracts.active}</strong></span>
             <span>|</span>
-            <span>مرسلة: <strong className="text-black font-mono">{stats.rentContracts.sent}</strong></span>
+            <span>مرسلة: <strong className="text-[#141414] font-mono">{stats.rentContracts.sent}</strong></span>
             <span>|</span>
             <span>مكتملة: <strong className="text-zinc-600 font-mono">{stats.rentContracts.completed}</strong></span>
           </div>
@@ -470,16 +470,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 4. سير عاملات الإيجار */}
         <div
           onClick={() => onNavigate('cvs-rental', 'سير عاملات الإيجار')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">سير عاملات الإيجار</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.rentMaids.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -495,20 +495,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 5. السير الذاتية */}
         <div
           onClick={() => onNavigate('create-cv', 'بنك السير الذاتية')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">السير الذاتية (CVs)</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <UserPlus className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.cvs.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
-            <div className="w-2/3 h-full bg-black rounded-full" />
+            <div className="w-2/3 h-full bg-[#141414] rounded-full" />
           </div>
           <div className="text-[10px] text-[#707070] flex flex-wrap gap-1">
             <span>متاحة: <strong className="text-[#141414] font-mono">{stats.cvs.available}</strong></span>
@@ -520,16 +520,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 6. العملاء */}
         <div
           onClick={() => onNavigate('clients', 'جميع العملاء')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">العملاء</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <Users className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.clients.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -545,16 +545,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 7. تفاويض إنجاز */}
         <div
           onClick={() => onNavigate('ingaz', 'تفاويض الإنجاز')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">تفاويض إنجاز</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <FileText className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.ingaz.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -570,16 +570,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 8. الشكاوى */}
         <div
           onClick={() => onNavigate('complaints', 'إدارة الشكاوى')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">الشكاوى</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <Headphones className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.complaints.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -595,16 +595,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 9. طلبات نقل الكفالة */}
         <div
           onClick={() => onNavigate('sponsorship-transfer', 'نقل الكفالة')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">طلبات نقل الكفالة</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <Repeat className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.sponsorshipTransfers.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
@@ -620,23 +620,23 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         {/* 10. داخل الإيواء */}
         <div
           onClick={() => onNavigate('shelter', 'إدارة الإيواء')}
-          className="card-pricing cursor-pointer hover:border-black transition-all"
+          className="card-pricing cursor-pointer hover:border-[#141414] transition-all"
           style={{ padding: '18px', borderRadius: '16px', background: '#ffffff' }}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-[#707070]">داخل الإيواء</span>
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-black flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 text-[#141414] flex items-center justify-center">
               <Hotel className="w-3.5 h-3.5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-black mb-2 font-mono">
+          <div className="text-2xl font-black text-[#141414] mb-2 font-mono">
             {stats.shelter.total}
           </div>
           <div className="w-full h-1 bg-zinc-100 rounded-full overflow-hidden mb-2">
-            <div className="w-3/4 h-full bg-black rounded-full" />
+            <div className="w-3/4 h-full bg-[#141414] rounded-full" />
           </div>
           <div className="text-[10px] text-[#707070] flex flex-wrap gap-1">
-            <span>بالداخل: <strong className="text-black font-mono">{stats.shelter.inside}</strong></span>
+            <span>بالداخل: <strong className="text-[#141414] font-mono">{stats.shelter.inside}</strong></span>
             <span>|</span>
             <span>بالخارج: <strong className="text-zinc-600 font-mono">{stats.shelter.outside}</strong></span>
           </div>
@@ -649,7 +649,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         <div className="md:col-span-2 card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
+              <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
                 <Handshake className="w-4 h-4 text-[#141414]" />
                 <span>أحدث عقود الاستقدام المعتمدة (مساند)</span>
               </h3>
@@ -684,15 +684,15 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
                 {(filteredContracts.length > 0 ? filteredContracts : MOCK_RECRUITMENT_CONTRACTS).slice(0, 6).map((contract) => (
                   <tr key={contract.id} className="hover:bg-zinc-50 transition-colors">
                     <td className="p-3.5">
-                      <strong className="font-mono text-black">{contract.contract_number}</strong>
+                      <strong className="font-mono text-[#141414]">{contract.contract_number}</strong>
                       <div className="text-[10px] text-[#707070] font-mono">مساند: {contract.musaned_number}</div>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{contract.client_name}</div>
+                      <div className="font-bold text-[#141414]">{contract.client_name}</div>
                       <div className="text-[11px] text-[#707070] font-mono">{contract.client_phone}</div>
                     </td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{contract.maid_name}</div>
+                      <div className="font-bold text-[#141414]">{contract.maid_name}</div>
                       <div className="text-[11px] text-[#707070] font-mono">{contract.nationality} • {contract.maid_passport}</div>
                     </td>
                     <td className="p-3.5 text-zinc-700 font-semibold">{contract.external_office}</td>
@@ -734,7 +734,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
         <div className="space-y-4">
           {/* Quick Musaned Status Tracker */}
           <div className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
-            <h4 className="text-xs font-bold text-black mb-3 flex items-center gap-2 m-0">
+            <h4 className="text-xs font-bold text-[#141414] mb-3 flex items-center gap-2 m-0">
               <Radio className="w-4 h-4 text-[#141414]" />
               <span>حالة الربط مع المنصات الحكومية</span>
             </h4>
@@ -743,7 +743,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <div className="flex items-center justify-between p-2.5 bg-zinc-50 rounded-xl border border-zinc-100">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#141414] inline-block"></span>
-                  <span className="text-xs font-bold text-black">منصة مساند الحكومية</span>
+                  <span className="text-xs font-bold text-[#141414]">منصة مساند الحكومية</span>
                 </div>
                 <span className="text-[11px] text-[#141414] font-bold">متصل وموثق</span>
               </div>
@@ -751,7 +751,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <div className="flex items-center justify-between p-2.5 bg-zinc-50 rounded-xl border border-zinc-100">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#141414] inline-block"></span>
-                  <span className="text-xs font-bold text-black">هيئة الزكاة (ZATCA Phase 2)</span>
+                  <span className="text-xs font-bold text-[#141414]">هيئة الزكاة (ZATCA Phase 2)</span>
                 </div>
                 <span className="text-[11px] text-[#141414] font-bold">Fatoora نشط</span>
               </div>
@@ -759,7 +759,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <div className="flex items-center justify-between p-2.5 bg-zinc-50 rounded-xl border border-zinc-100">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#141414] inline-block"></span>
-                  <span className="text-xs font-bold text-black">منصة إنجاز والتأشيرات</span>
+                  <span className="text-xs font-bold text-[#141414]">منصة إنجاز والتأشيرات</span>
                 </div>
                 <span className="text-[11px] text-[#141414] font-bold">جاهز للتفويض</span>
               </div>
@@ -768,14 +768,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
 
           {/* Quick Actions Portal */}
           <div className="card-pricing" style={{ padding: '20px', borderRadius: '24px', background: '#ffffff' }}>
-            <h4 className="text-xs font-bold text-black mb-3 m-0">
+            <h4 className="text-xs font-bold text-[#141414] mb-3 m-0">
               إجراءات تشغيلية سريعة
             </h4>
             <div className="space-y-2">
               <button
                 type="button"
                 onClick={() => onNavigate('create-cv', 'إضافة سيرة ذاتية')}
-                className="w-full text-right p-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-black cursor-pointer flex items-center gap-2 transition-colors"
+                className="w-full text-right p-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-[#141414] cursor-pointer flex items-center gap-2 transition-colors"
               >
                 <UserPlus className="w-3.5 h-3.5 text-[#141414]" />
                 <span>إضافة سيرة ذاتية جديدة للبنك (136 حقل)</span>
@@ -784,16 +784,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
               <button
                 type="button"
                 onClick={() => onNavigate('sponsorship-transfer', 'طلبات نقل الكفالة')}
-                className="w-full text-right p-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-black cursor-pointer flex items-center gap-2 transition-colors"
+                className="w-full text-right p-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-[#141414] cursor-pointer flex items-center gap-2 transition-colors"
               >
-                <Repeat className="w-3.5 h-3.5 text-black" />
+                <Repeat className="w-3.5 h-3.5 text-[#141414]" />
                 <span>تسجيل طلب نقل كفالة وتنازل</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigate('whatsapp-inbox', 'محادثات واتساب')}
-                className="w-full text-right p-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-black cursor-pointer flex items-center gap-2 transition-colors"
+                className="w-full text-right p-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-xs font-bold text-[#141414] cursor-pointer flex items-center gap-2 transition-colors"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-[#141414]" />
                 <span>فتح شات الواتساب والمحادثات الحية</span>

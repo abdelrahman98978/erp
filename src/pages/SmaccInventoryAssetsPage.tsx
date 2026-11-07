@@ -358,7 +358,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -393,7 +393,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             onClick={() => setIsAssetModalOpen(true)}
             style={{ fontSize: '12.5px', padding: '6px 18px', minHeight: '38px' }}
           >
-            <Plus className="w-4 h-4 ml-1 text-black" />
+            <Plus className="w-4 h-4 ml-1 text-[#141414]" />
             <span>إضافة أصل ثابت</span>
           </button>
           <ExportDropdown
@@ -423,8 +423,8 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -447,7 +447,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="flex items-center gap-3">
-              <h2 className="text-sm font-bold text-black m-0">سجل الأصول الثابتة المعتمدة بالمجموعة</h2>
+              <h2 className="text-sm font-bold text-[#141414] m-0">سجل الأصول الثابتة المعتمدة بالمجموعة</h2>
               <span className="pill-tag-mint text-[11px]">{assets.length} أصل مسجل</span>
             </div>
             <div className="flex gap-2">
@@ -496,8 +496,8 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                   ) : (
                     filteredAssets.map(asset => (
                       <tr key={asset.id} className="hover:bg-zinc-50 transition-colors">
-                        <td className="p-3.5 font-mono text-black font-bold">{asset.code}</td>
-                        <td className="p-3.5 font-bold text-black">
+                        <td className="p-3.5 font-mono text-[#141414] font-bold">{asset.code}</td>
+                        <td className="p-3.5 font-bold text-[#141414]">
                           <div className="flex items-center gap-2">
                             <CorporateAvatar name={asset.name} role={asset.category} departmentId="finance" size="xs" status="verified" />
                             <span>{asset.name}</span>
@@ -505,8 +505,8 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                         </td>
                         <td className="p-3.5 text-zinc-600">{asset.category}</td>
                         <td className="p-3.5 text-[#707070] font-mono">{asset.purchaseDate}</td>
-                        <td className="p-3.5 font-bold font-mono text-black">{asset.cost.toLocaleString()} ⃁</td>
-                        <td className="p-3.5 text-black font-bold font-mono">{asset.depreciationRate}%</td>
+                        <td className="p-3.5 font-bold font-mono text-[#141414]">{asset.cost.toLocaleString()} ⃁</td>
+                        <td className="p-3.5 text-[#141414] font-bold font-mono">{asset.depreciationRate}%</td>
                         <td className="p-3.5 text-zinc-600 font-mono">{asset.accumulatedDepreciation.toLocaleString()} ⃁</td>
                         <td className="p-3.5 font-bold font-mono text-[#141414]">{asset.bookValue.toLocaleString()} ⃁</td>
                         <td className="p-3.5 text-center">
@@ -546,7 +546,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 placeholder="البحث في أصناف المخزون..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black placeholder-zinc-400 focus:outline-none focus:border-black"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] placeholder-zinc-400 focus:outline-none focus:border-[#141414]"
               />
             </div>
 
@@ -595,13 +595,13 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                   ) : (
                     filteredItems.map(item => (
                       <tr key={item.id} className="hover:bg-zinc-50 transition-colors">
-                        <td className="p-3.5 font-mono text-black font-bold">{item.sku}</td>
-                        <td className="p-3.5 font-bold text-black">{item.name}</td>
+                        <td className="p-3.5 font-mono text-[#141414] font-bold">{item.sku}</td>
+                        <td className="p-3.5 font-bold text-[#141414]">{item.name}</td>
                         <td className="p-3.5 text-zinc-600">{item.category}</td>
                         <td className="p-3.5">{item.unit}</td>
                         <td className="p-3.5 text-[#707070] font-mono">{item.costPrice.toLocaleString()} ⃁</td>
                         <td className="p-3.5 font-bold font-mono text-[#141414]">{item.salePrice.toLocaleString()} ⃁</td>
-                        <td className="p-3.5 font-bold text-black">{item.currentStock} {item.unit}</td>
+                        <td className="p-3.5 font-bold text-[#141414]">{item.currentStock} {item.unit}</td>
                         <td className="p-3.5">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.currentStock > 0 ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'}`}>
                             {item.status}
@@ -622,7 +622,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
         <div className="space-y-4">
           <div className="card-pricing" style={{ padding: '16px 20px', borderRadius: '16px', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
             <div className="flex items-center gap-3">
-              <h3 className="text-sm font-bold text-black m-0">سجل أذونات الصرف والإضافة المخزنية</h3>
+              <h3 className="text-sm font-bold text-[#141414] m-0">سجل أذونات الصرف والإضافة المخزنية</h3>
               <span className="pill-tag-mint text-[11px]">{vouchers.length} إذن مسجل</span>
             </div>
             <button
@@ -658,14 +658,14 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                   ) : (
                     filteredVouchers.map(v => (
                       <tr key={v.id} className="hover:bg-zinc-50">
-                        <td className="p-3.5 font-mono font-bold text-black">{v.voucherNo}</td>
+                        <td className="p-3.5 font-mono font-bold text-[#141414]">{v.voucherNo}</td>
                         <td className="p-3.5">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${v.type === 'إضافة' ? 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]' : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0]'}`}>
                             {v.type === 'إضافة' ? 'إضافة (+)' : 'صرف (-)'}
                           </span>
                         </td>
                         <td className="p-3.5 font-mono text-[#707070]">{v.date}</td>
-                        <td className="p-3.5 font-bold text-black">{v.item}</td>
+                        <td className="p-3.5 font-bold text-[#141414]">{v.item}</td>
                         <td className="p-3.5 font-bold font-mono">{v.qty}</td>
                         <td className="p-3.5 text-zinc-600">{v.reason}</td>
                       </tr>
@@ -694,7 +694,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder={`AST-00${assets.length + 1}`}
               value={newAsset.code}
               onChange={e => setNewAsset({ ...newAsset, code: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -705,7 +705,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="مثال: سيارة تويوتا هايلوكس 2026"
               value={newAsset.name}
               onChange={e => setNewAsset({ ...newAsset, name: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -713,7 +713,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             <select
               value={newAsset.category}
               onChange={e => setNewAsset({ ...newAsset, category: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             >
               <option value="وسائل النقل والسيارات">وسائل النقل والسيارات</option>
               <option value="معدات وإلكترونيات">معدات وإلكترونيات</option>
@@ -727,7 +727,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               type="date"
               value={newAsset.purchaseDate}
               onChange={e => setNewAsset({ ...newAsset, purchaseDate: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -738,7 +738,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="0.00"
               value={newAsset.cost}
               onChange={e => setNewAsset({ ...newAsset, cost: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -747,7 +747,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               type="number"
               value={newAsset.depreciationRate}
               onChange={e => setNewAsset({ ...newAsset, depreciationRate: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
             />
           </div>
         </div>
@@ -769,7 +769,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder={`INV-10${items.length + 1}`}
               value={newItem.sku}
               onChange={e => setNewItem({ ...newItem, sku: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -780,7 +780,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="مثال: عقد استقدام سائق خاص"
               value={newItem.name}
               onChange={e => setNewItem({ ...newItem, name: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black placeholder-zinc-400 focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] placeholder-zinc-400 focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -788,7 +788,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             <select
               value={newItem.category}
               onChange={e => setNewItem({ ...newItem, category: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             >
               <option value="خدمات استقدام">خدمات استقدام</option>
               <option value="تأجير تشغيلي">تأجير تشغيلي</option>
@@ -802,7 +802,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               type="text"
               value={newItem.unit}
               onChange={e => setNewItem({ ...newItem, unit: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -812,7 +812,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="0.00"
               value={newItem.costPrice}
               onChange={e => setNewItem({ ...newItem, costPrice: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -823,7 +823,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="0.00"
               value={newItem.salePrice}
               onChange={e => setNewItem({ ...newItem, salePrice: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold text-[#141414] focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -832,7 +832,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               type="number"
               value={newItem.currentStock}
               onChange={e => setNewItem({ ...newItem, currentStock: Number(e.target.value) })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
         </div>
@@ -852,7 +852,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             <select
               value={newStockVoucher.type}
               onChange={e => setNewStockVoucher({ ...newStockVoucher, type: e.target.value as any })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             >
               <option value="إضافة">إذن إضافة مخزنية (+)</option>
               <option value="صرف">إذن صرف مخزني (-)</option>
@@ -864,7 +864,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               <select
                 value={newStockVoucher.item}
                 onChange={e => setNewStockVoucher({ ...newStockVoucher, item: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               >
                 {items.map(it => (
                   <option key={it.id} value={it.name}>{it.sku} - {it.name} (رصيد: {it.currentStock})</option>
@@ -877,7 +877,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
                 placeholder="اسم الصنف..."
                 value={newStockVoucher.item}
                 onChange={e => setNewStockVoucher({ ...newStockVoucher, item: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               />
             )}
           </div>
@@ -889,7 +889,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               min="1"
               value={newStockVoucher.qty}
               onChange={e => setNewStockVoucher({ ...newStockVoucher, qty: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div>
@@ -898,7 +898,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               type="date"
               value={newStockVoucher.date}
               onChange={e => setNewStockVoucher({ ...newStockVoucher, date: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
           <div className="md:col-span-2">
@@ -908,7 +908,7 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
               placeholder="مثال: توريد دفعة عقود جديدة / تسليم للعميل"
               value={newStockVoucher.reason}
               onChange={e => setNewStockVoucher({ ...newStockVoucher, reason: e.target.value })}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
             />
           </div>
         </div>
@@ -927,22 +927,22 @@ export const SmaccInventoryAssetsPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <span className="text-[#707070] block">التصنيف المحاسبي</span>
-                <strong className="text-black text-sm mt-0.5 block">{selectedAssetDetail.category}</strong>
+                <strong className="text-[#141414] text-sm mt-0.5 block">{selectedAssetDetail.category}</strong>
               </div>
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <span className="text-[#707070] block">تاريخ الشراء والتشغيل</span>
-                <strong className="text-black font-mono text-sm mt-0.5 block">{selectedAssetDetail.purchaseDate}</strong>
+                <strong className="text-[#141414] font-mono text-sm mt-0.5 block">{selectedAssetDetail.purchaseDate}</strong>
               </div>
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <span className="text-[#707070] block">التكلفة الرأسمالية</span>
-                <strong className="text-black font-mono text-sm mt-0.5 block">{selectedAssetDetail.cost.toLocaleString()} ⃁</strong>
+                <strong className="text-[#141414] font-mono text-sm mt-0.5 block">{selectedAssetDetail.cost.toLocaleString()} ⃁</strong>
               </div>
               <div className="p-3 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <span className="text-[#707070] block">مجمع الإهلاك ({selectedAssetDetail.depreciationRate}% سنوياً)</span>
                 <strong className="text-[#141414] font-mono text-sm mt-0.5 block">{selectedAssetDetail.accumulatedDepreciation.toLocaleString()} ⃁</strong>
               </div>
             </div>
-            <div className="p-4 rounded-2xl bg-[#000000] text-[#141414] flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] flex items-center justify-between">
               <div>
                 <span className="text-[#707070] block">صافي القيمة الدفترية الحالية (Net Book Value)</span>
                 <strong className="text-xl font-mono text-[#141414] mt-1 block">{selectedAssetDetail.bookValue.toLocaleString()} ⃁</strong>

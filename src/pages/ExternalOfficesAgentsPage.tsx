@@ -321,7 +321,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          backgroundColor: '#000000',
+          backgroundColor: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -359,7 +359,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
             className="button-white-pill"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <Plus className="w-4 h-4 ml-1 text-black" />
+            <Plus className="w-4 h-4 ml-1 text-[#141414]" />
             <span>إضافة وكالة</span>
           </button>
           <button
@@ -367,7 +367,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
             className="button-white-pill"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <Users className="w-4 h-4 ml-1 text-black" />
+            <Users className="w-4 h-4 ml-1 text-[#141414]" />
             <span>إضافة مستخدم</span>
           </button>
           <button
@@ -375,7 +375,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
             className="button-white-pill"
             style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
           >
-            <UploadCloud className="w-4 h-4 ml-1 text-black" />
+            <UploadCloud className="w-4 h-4 ml-1 text-[#141414]" />
             <span>رفع وثيقة</span>
           </button>
           <button
@@ -409,8 +409,8 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -443,7 +443,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
             {offices.map((office) => (
               <div
                 key={office.id}
-                className="card-pricing hover:border-black transition-colors"
+                className="card-pricing hover:border-[#141414] transition-colors"
                 style={{
                   borderRadius: '24px',
                   background: '#ffffff',
@@ -457,7 +457,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2.5">
                       <CorporateAvatar name={office.managerName} role={office.officeName} size="sm" status="verified" />
-                      <h2 className="font-bold text-black text-base">{office.officeName}</h2>
+                      <h2 className="font-bold text-[#141414] text-base">{office.officeName}</h2>
                     </div>
                     <Badge text={office.country} type="purple" />
                   </div>
@@ -465,11 +465,11 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                   <div className="text-xs text-zinc-600 space-y-2 mb-4">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="w-3.5 h-3.5 text-[#707070]" />
-                      <span>الترخيص: <strong className="font-mono text-black">{office.licenseNumber}</strong></span>
+                      <span>الترخيص: <strong className="font-mono text-[#141414]">{office.licenseNumber}</strong></span>
                     </div>
                     <div className="flex items-center gap-2">
                       <UserCheck className="w-3.5 h-3.5 text-[#707070]" />
-                      <span>المدير: <strong className="text-black">{office.managerName}</strong></span>
+                      <span>المدير: <strong className="text-[#141414]">{office.managerName}</strong></span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-[#707070]" />
@@ -483,7 +483,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 </div>
 
                 <div className="flex justify-between border-t border-zinc-100 pt-3 text-xs bg-zinc-50 -mx-6 -mb-6 p-4 rounded-b-3xl">
-                  <div>السير المتاحة: <strong className="text-black font-mono font-bold">{office.activeCandidatesCount}</strong></div>
+                  <div>السير المتاحة: <strong className="text-[#141414] font-mono font-bold">{office.activeCandidatesCount}</strong></div>
                   <div>العمالة الواصلة: <strong className="text-[#141414] font-mono font-bold">{office.arrivedCountCount}</strong></div>
                 </div>
               </div>
@@ -496,7 +496,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
       {activeTab === 'users' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h3 className="text-sm font-bold text-black m-0">مستخدمي الوكلاء والمكاتب الخارجية ({officeUsers.length})</h3>
+            <h3 className="text-sm font-bold text-[#141414] m-0">مستخدمي الوكلاء والمكاتب الخارجية ({officeUsers.length})</h3>
             <button
               onClick={() => setShowAddUserModal(true)}
               className="button-primary-pill text-xs py-1.5 px-4"
@@ -520,8 +520,8 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {officeUsers.map((u, idx) => (
                   <tr key={u.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-bold font-mono text-black">{idx + 1}</td>
-                    <td className="p-3.5 font-bold text-black">
+                    <td className="p-3.5 font-bold font-mono text-[#141414]">{idx + 1}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={u.name} role={u.linked_office} size="sm" />
                         <span>{u.name}</span>
@@ -531,7 +531,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                       <div className="font-mono">{u.phone}</div>
                       <div className="text-[11px] text-[#707070]">{u.email}</div>
                     </td>
-                    <td className="p-3.5 font-semibold text-black">{u.linked_office}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{u.linked_office}</td>
                     <td className="p-3.5 text-zinc-600">{u.nationality}</td>
                     <td className="p-3.5"><Badge text={u.status} type="success" /></td>
                   </tr>
@@ -546,7 +546,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
       {activeTab === 'files' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h3 className="text-sm font-bold text-black m-0">وثائق وتراخيص المكاتب الخارجية ({officeFiles.length})</h3>
+            <h3 className="text-sm font-bold text-[#141414] m-0">وثائق وتراخيص المكاتب الخارجية ({officeFiles.length})</h3>
             <button
               onClick={() => setShowAddFileModal(true)}
               className="button-primary-pill text-xs py-1.5 px-4"
@@ -571,8 +571,8 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {officeFiles.map((f, idx) => (
                   <tr key={f.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-bold font-mono text-black">{idx + 1}</td>
-                    <td className="p-3.5 font-bold text-black">{f.office_name}</td>
+                    <td className="p-3.5 font-bold font-mono text-[#141414]">{idx + 1}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{f.office_name}</td>
                     <td className="p-3.5 font-semibold text-zinc-800">{f.file_title}</td>
                     <td className="p-3.5"><Badge text={f.file_type} type="purple" /></td>
                     <td className="p-3.5 font-mono text-[#707070]">{f.upload_date}</td>
@@ -600,8 +600,8 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
-              <h3 className="text-sm font-bold text-black m-0">تسجيل وكالة / مكتب خارجي معتمد</h3>
-              <button onClick={() => setShowAddOfficeModal(false)} className="text-[#707070] hover:text-black">
+              <h3 className="text-sm font-bold text-[#141414] m-0">تسجيل وكالة / مكتب خارجي معتمد</h3>
+              <button onClick={() => setShowAddOfficeModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -614,7 +614,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                   placeholder="مثال: Nile International Bureau"
                   value={officeForm.officeName}
                   onChange={e => setOfficeForm({ ...officeForm, officeName: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -631,7 +631,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                       else if (c === 'أوغندا') code = 'UG';
                       setOfficeForm({ ...officeForm, country: c, countryCode: code });
                     }}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="الفلبين">الفلبين</option>
                     <option value="إثيوبيا">إثيوبيا</option>
@@ -648,7 +648,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     placeholder="POEA-2026-..."
                     value={officeForm.licenseNumber}
                     onChange={e => setOfficeForm({ ...officeForm, licenseNumber: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -660,7 +660,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     placeholder="اسم مدير المكتب..."
                     value={officeForm.managerName}
                     onChange={e => setOfficeForm({ ...officeForm, managerName: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -669,7 +669,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     type="number"
                     value={officeForm.activeCandidatesCount}
                     onChange={e => setOfficeForm({ ...officeForm, activeCandidatesCount: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -681,7 +681,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     placeholder="+..."
                     value={officeForm.phone}
                     onChange={e => setOfficeForm({ ...officeForm, phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -691,7 +691,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     placeholder="agency@..."
                     value={officeForm.email}
                     onChange={e => setOfficeForm({ ...officeForm, email: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -720,8 +720,8 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
-              <h3 className="text-sm font-bold text-black m-0">إضافة مستخدم وكيل خارجي</h3>
-              <button onClick={() => setShowAddUserModal(false)} className="text-[#707070] hover:text-black">
+              <h3 className="text-sm font-bold text-[#141414] m-0">إضافة مستخدم وكيل خارجي</h3>
+              <button onClick={() => setShowAddUserModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -734,7 +734,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                   placeholder="مثال: John Dela Cruz"
                   value={userForm.name}
                   onChange={e => setUserForm({ ...userForm, name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
               <div>
@@ -742,7 +742,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 <select
                   value={userForm.linked_office}
                   onChange={e => setUserForm({ ...userForm, linked_office: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   {offices.map(o => (
                     <option key={o.id} value={o.officeName}>{o.officeName} ({o.country})</option>
@@ -758,7 +758,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     placeholder="+..."
                     value={userForm.phone}
                     onChange={e => setUserForm({ ...userForm, phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -769,7 +769,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                     placeholder="user@agency.com"
                     value={userForm.email}
                     onChange={e => setUserForm({ ...userForm, email: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -798,8 +798,8 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
-              <h3 className="text-sm font-bold text-black m-0">رفع وثيقة أو ترخيص معتمد للمكتب</h3>
-              <button onClick={() => setShowAddFileModal(false)} className="text-[#707070] hover:text-black">
+              <h3 className="text-sm font-bold text-[#141414] m-0">رفع وثيقة أو ترخيص معتمد للمكتب</h3>
+              <button onClick={() => setShowAddFileModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -809,7 +809,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 <select
                   value={fileForm.office_name}
                   onChange={e => setFileForm({ ...fileForm, office_name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   {offices.map(o => (
                     <option key={o.id} value={o.officeName}>{o.officeName} ({o.country})</option>
@@ -824,7 +824,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                   placeholder="مثال: ترخيص وزارة العمل السنوي 2026"
                   value={fileForm.file_title}
                   onChange={e => setFileForm({ ...fileForm, file_title: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
               <div>
@@ -832,7 +832,7 @@ export const ExternalOfficesAgentsPage: React.FC = () => {
                 <select
                   value={fileForm.file_type}
                   onChange={e => setFileForm({ ...fileForm, file_type: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="PDF">مستند PDF رقمي</option>
                   <option value="Image (JPG/PNG)">صورة ترخيص رسمية</option>

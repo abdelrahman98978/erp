@@ -485,7 +485,7 @@ export const BranchDepartmentsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -531,7 +531,7 @@ export const BranchDepartmentsPage: React.FC = () => {
             <button
               onClick={() => setShowAddDeptModal(true)}
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg hover:border-[#141414]"
-              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#141414', fontWeight: '700' }}
             >
               <Plus className="w-4 h-4 text-[#141414]" />
               <span>+ إضافة قسم لـ ({selectedEntity?.code || 'الفرع'})</span>
@@ -565,7 +565,7 @@ export const BranchDepartmentsPage: React.FC = () => {
         {/* Card 1: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الكيانات والشركات</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {stats.totalEntities} كيان
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>{stats.companiesCount} شركات رئيسية</span>
@@ -573,15 +573,15 @@ export const BranchDepartmentsPage: React.FC = () => {
 
         {/* Card 2: Pistachio Band Card */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الفروع ومراكز الإيواء</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>الفروع ومراكز الإيواء</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {stats.branchesCount} فروع
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>الرياض، جدة، الخبر</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>الأقسام التخصصية المفعلة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {stats.totalDepts} قسم
@@ -592,7 +592,7 @@ export const BranchDepartmentsPage: React.FC = () => {
         {/* Card 4: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>القوة البشرية الإجمالية</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {stats.totalStaff}
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -661,7 +661,7 @@ export const BranchDepartmentsPage: React.FC = () => {
               onClick={() => setSelectedEntityId(e.id)}
               className={`p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
                 isSelected
-                  ? 'bg-[#000000] bg-gradient-to-br from-[#f3f3f3] to-black text-white border-[#e0e0e0] shadow-xl scale-[1.02]'
+                  ? 'bg-[#141414] bg-gradient-to-br from-[#f3f3f3] to-black text-white border-[#e0e0e0] shadow-xl scale-[1.02]'
                   : 'bg-white  text-slate-900  border-zinc-200  hover:border-[#141414] hover:shadow-md'
               }`}
             >

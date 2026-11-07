@@ -151,7 +151,7 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
       {/* Brand Header */}
       <div className="p-4 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-black flex items-center justify-center font-bold text-white shadow-sm text-sm tracking-wider">
+          <div className="w-9 h-9 rounded-full bg-[#141414] flex items-center justify-center font-bold text-white shadow-sm text-sm tracking-wider">
             FIN
           </div>
           <div>
@@ -171,7 +171,7 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
             placeholder="البحث في القائمة المالية..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#f3f3f3] border border-zinc-200 rounded-full py-1 pr-8 pl-3 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-black transition-all"
+            className="w-full bg-[#f3f3f3] border border-zinc-200 rounded-full py-1 pr-8 pl-3 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#141414] transition-all"
           />
         </div>
       </div>
@@ -196,8 +196,8 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
                 }}
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-black text-white shadow-sm font-semibold'
-                    : 'text-zinc-700 hover:bg-zinc-100 hover:text-black'
+                    ? 'bg-[#141414] text-white shadow-sm font-semibold'
+                    : 'text-zinc-700 hover:bg-zinc-100 hover:text-[#141414]'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -226,13 +226,13 @@ export const SmaccNavigationSidebar: React.FC<SmaccNavigationSidebarProps> = ({
                         onClick={() => onSelectTab(child.route)}
                         className={`w-full text-right px-3 py-1.5 rounded-full text-[11.5px] transition-all flex items-center justify-between ${
                           isChildActive
-                            ? 'bg-black text-white font-semibold'
-                            : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
+                            ? 'bg-[#141414] text-white font-semibold'
+                            : 'text-zinc-600 hover:text-[#141414] hover:bg-zinc-100'
                         }`}
                       >
                         <span>{child.title}</span>
                         {child.badge && (
-                          <span className="text-[9.5px] px-2 py-0.5 rounded-full bg-[#c1fbd4] text-black font-semibold">
+                          <span className="text-[9.5px] px-2 py-0.5 rounded-full bg-[#c1fbd4] text-[#141414] font-semibold">
                             {child.badge}
                           </span>
                         )}

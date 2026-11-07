@@ -377,7 +377,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -411,7 +411,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
             <button
               onClick={handleOpenAdd}
               className="button-white-pill"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#141414', fontWeight: '700' }}
             >
               <Plus className="w-4 h-4 ml-1 text-[#141414]" />
               <span>+ إضافة منافسة</span>
@@ -453,7 +453,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
         {/* Card 1: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المنافسات المسجلة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {kpis.totalTenders.toLocaleString()} سجل
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>سجل تدقيق مستمر</span>
@@ -461,15 +461,15 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
         {/* Card 2: Pistachio Band Card */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {kpis.wonCount} ترسية
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معدل الفوز {kpis.winRate}%</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي قيمة العروض المقدمة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {kpis.totalBidValue > 1000000 ? `${(kpis.totalBidValue / 1000000).toFixed(2)}M` : `${(kpis.totalBidValue / 1000).toFixed(0)}k`} ⃁
@@ -480,7 +480,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
         {/* Card 4: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>نسبة الترسية والجاهزية</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {kpis.winRate}%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -513,8 +513,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                   fontSize: '11.5px',
                   fontWeight: isActive ? 550 : 420,
                   border: '1px solid',
-                  borderColor: isActive ? '#000000' : '#e4e4e7',
-                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  borderColor: isActive ? '#141414' : '#e4e4e7',
+                  backgroundColor: isActive ? '#141414' : '#ffffff',
                   color: isActive ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -532,7 +532,7 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
 
         <div className="text-xs text-[#707070] flex items-center gap-2 font-mono px-3 py-1 bg-zinc-50 rounded-full border border-zinc-200 shrink-0">
           <span className="font-bold">السجلات:</span>
-          <span className="font-black text-black font-mono">{filteredTenders.length.toLocaleString()}</span>
+          <span className="font-black text-[#141414] font-mono">{filteredTenders.length.toLocaleString()}</span>
         </div>
       </div>
 
@@ -556,8 +556,8 @@ export const KasMonafasatSpreadsheetView: React.FC<Props> = ({ onConvertToBOQ })
                   fontSize: '11.5px',
                   fontWeight: isSelected ? 550 : 420,
                   border: '1px solid',
-                  borderColor: isSelected ? '#000000' : '#e4e4e7',
-                  backgroundColor: isSelected ? '#000000' : '#ffffff',
+                  borderColor: isSelected ? '#141414' : '#e4e4e7',
+                  backgroundColor: isSelected ? '#141414' : '#ffffff',
                   color: isSelected ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',

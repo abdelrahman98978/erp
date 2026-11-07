@@ -214,8 +214,8 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             onClick={() => setActiveSubTab('overview')}
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'overview'
-                ? 'border-black text-black'
-                : 'border-transparent text-[#707070] hover:text-black'
+                ? 'border-[#141414] text-[#141414]'
+                : 'border-transparent text-[#707070] hover:text-[#141414]'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -226,8 +226,8 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             onClick={() => setActiveSubTab('tables')}
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'tables'
-                ? 'border-black text-black'
-                : 'border-transparent text-[#707070] hover:text-black'
+                ? 'border-[#141414] text-[#141414]'
+                : 'border-transparent text-[#707070] hover:text-[#141414]'
             }`}
           >
             <Layers className="w-4 h-4" />
@@ -238,8 +238,8 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             onClick={() => setActiveSubTab('import')}
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'import'
-                ? 'border-black text-black'
-                : 'border-transparent text-[#707070] hover:text-black'
+                ? 'border-[#141414] text-[#141414]'
+                : 'border-transparent text-[#707070] hover:text-[#141414]'
             }`}
           >
             <Upload className="w-4 h-4" />
@@ -250,8 +250,8 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
             onClick={() => setActiveSubTab('credentials')}
             className={`pb-3 px-4 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
               activeSubTab === 'credentials'
-                ? 'border-black text-black'
-                : 'border-transparent text-[#707070] hover:text-black'
+                ? 'border-[#141414] text-[#141414]'
+                : 'border-transparent text-[#707070] hover:text-[#141414]'
             }`}
           >
             <Key className="w-4 h-4" />
@@ -282,7 +282,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-xs font-bold text-black m-0">حالة محرك البيانات وقاعدة البيانات</h4>
+                      <h4 className="text-xs font-bold text-[#141414] m-0">حالة محرك البيانات وقاعدة البيانات</h4>
                       <span className={`w-2 h-2 rounded-full ${connStatus.connected ? 'bg-[#141414]' : 'bg-[#141414]'}`} />
                     </div>
                     <p className="text-[11px] text-[#707070] m-0 mt-0.5">
@@ -318,7 +318,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="w-5 h-5 text-[#141414]" />
-                      <span className="text-sm font-bold text-black">نمط الإنتاج المؤسسي الفعلي (موصى به)</span>
+                      <span className="text-sm font-bold text-[#141414]">نمط الإنتاج المؤسسي الفعلي (موصى به)</span>
                     </div>
                     {currentMode === 'production_real' && (
                       <span className="pill-tag-mint" style={{ fontSize: '10px' }}>النمط النشط حالياً</span>
@@ -351,7 +351,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Cpu className="w-5 h-5 text-[#141414]" />
-                      <span className="text-sm font-bold text-black">نمط المعاينة الاستعراضي (Demo)</span>
+                      <span className="text-sm font-bold text-[#141414]">نمط المعاينة الاستعراضي (Demo)</span>
                     </div>
                     {currentMode === 'demo_preview' && (
                       <span className="pill-tag-shade" style={{ fontSize: '10px' }}>النمط النشط حالياً</span>
@@ -415,14 +415,14 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   return (
                     <div 
                       key={key} 
-                      className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between hover:border-black transition-colors"
+                      className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 flex items-center justify-between hover:border-[#141414] transition-colors"
                     >
                       <div>
-                        <div className="text-xs font-bold text-black">{info.label}</div>
+                        <div className="text-xs font-bold text-[#141414]">{info.label}</div>
                         <div className="text-[10px] text-[#707070] font-mono">table: {key}</div>
                       </div>
                       <div className="text-right">
-                        <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${count > 0 ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-600'}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold ${count > 0 ? 'bg-[#141414] text-white' : 'bg-zinc-200 text-zinc-600'}`}>
                           {count} سجل
                         </span>
                       </div>
@@ -437,13 +437,13 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
           {activeSubTab === 'import' && (
             <div className="space-y-5">
               <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200">
-                <label className="block text-xs font-bold text-black mb-2">
+                <label className="block text-xs font-bold text-[#141414] mb-2">
                   آلية التعرف وتوجيه المستندات المرفوعة:
                 </label>
                 <select
                   value={targetTable}
                   onChange={(e) => setTargetTable(e.target.value)}
-                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-bold text-black"
+                  className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-bold text-[#141414]"
                 >
                   <option value="auto">التعرف التلقائي وتوجيه المستند للقسم المعني والنظام المحاسبي المنفصل للشركة</option>
                   {Object.entries(tableLabels).map(([k, v]) => (
@@ -454,7 +454,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
 
               <div className="p-8 border-2 border-dashed border-zinc-300 rounded-2xl bg-zinc-50 text-center space-y-3">
                 <FileSpreadsheet className="w-10 h-10 text-[#141414] mx-auto" />
-                <h4 className="text-sm font-bold text-black m-0">
+                <h4 className="text-sm font-bold text-[#141414] m-0">
                   استيراد واستخلاص أي مستند مهما كانت صيغته (PDF, Word, Excel, CSV, XML, JSON, صور الفواتير)
                 </h4>
                 <p className="text-xs text-[#707070] max-w-md mx-auto">
@@ -485,7 +485,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
               {!import.meta.env.DEV ? (
                 <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-200 text-center space-y-3">
                   <Lock className="w-10 h-10 text-[#707070] mx-auto" />
-                  <h4 className="text-sm font-bold text-black m-0">
+                  <h4 className="text-sm font-bold text-[#141414] m-0">
                     إدارة بيانات الربط مقفلة في بيئة الإنتاج
                   </h4>
                   <p className="text-xs text-[#707070] max-w-md mx-auto leading-relaxed">
@@ -500,7 +500,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-black mb-1">
+                    <label className="block text-xs font-bold text-[#141414] mb-1">
                       رابط المشروع (Supabase Project URL):
                     </label>
                     <input
@@ -508,13 +508,13 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                       placeholder="https://your-project.supabase.co"
                       value={customUrl}
                       onChange={(e) => setCustomUrl(e.target.value)}
-                      className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
+                      className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-[#141414]"
                       dir="ltr"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-black mb-1">
+                    <label className="block text-xs font-bold text-[#141414] mb-1">
                       المفتاح العام (Supabase Anon / Public Key):
                     </label>
                     <input
@@ -522,7 +522,7 @@ export const ProductionDataHubModal: React.FC<ProductionDataHubModalProps> = ({ 
                       placeholder="eyJhbGciOiJIUzI1NiIsIn..."
                       value={customKey}
                       onChange={(e) => setCustomKey(e.target.value)}
-                      className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-black"
+                      className="w-full bg-white border border-zinc-300 rounded-xl p-2.5 text-xs font-mono text-[#141414]"
                       dir="ltr"
                     />
                   </div>

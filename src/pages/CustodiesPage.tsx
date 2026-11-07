@@ -125,7 +125,7 @@ export const CustodiesPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -204,12 +204,12 @@ export const CustodiesPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {filteredCustodies.map((row, idx) => (
                 <tr key={`${row.id}-${idx}`} className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.id}</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{row.id}</td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{row.item_name}</div>
+                    <div className="font-bold text-[#141414]">{row.item_name}</div>
                     <div className="text-[11px] text-[#707070] font-mono">S/N: {row.serial_number}</div>
                   </td>
-                  <td className="p-3.5 font-semibold text-black">
+                  <td className="p-3.5 font-semibold text-[#141414]">
                     <div className="flex items-center gap-2">
                       <CorporateAvatar
                         name={row.employee_name}
@@ -224,7 +224,7 @@ export const CustodiesPage: React.FC = () => {
                   <td className="p-3.5">
                     <Badge text={row.location} type="purple" />
                   </td>
-                  <td className="p-3.5 font-mono font-bold text-black">{(row.estimated_value ?? 0).toLocaleString()} ⃁</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{(row.estimated_value ?? 0).toLocaleString()} ⃁</td>
                   <td className="p-3.5 font-mono text-[#707070]">{row.received_date}</td>
                   <td className="p-3.5">
                     <Badge text={row.status} type={row.status === 'في حوزة الموظف' ? 'success' : row.status === 'تم الاسترجاع' ? 'purple' : 'warning'} />
@@ -277,7 +277,7 @@ export const CustodiesPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddCustody} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddCustody} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم الأصل / العُهدة *</label>
                 <input
@@ -285,7 +285,7 @@ export const CustodiesPage: React.FC = () => {
                   placeholder="مثال: لاب توب، سيارة، هاتف..."
                   value={addForm.item_name}
                   onChange={e => setAddForm({ ...addForm, item_name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -298,7 +298,7 @@ export const CustodiesPage: React.FC = () => {
                     placeholder="الاسم الثلاثي..."
                     value={addForm.employee_name}
                     onChange={e => setAddForm({ ...addForm, employee_name: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -309,7 +309,7 @@ export const CustodiesPage: React.FC = () => {
                     placeholder="Serial Number..."
                     value={addForm.serial_number}
                     onChange={e => setAddForm({ ...addForm, serial_number: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -322,7 +322,7 @@ export const CustodiesPage: React.FC = () => {
                     placeholder="0.00"
                     value={addForm.estimated_value}
                     onChange={e => setAddForm({ ...addForm, estimated_value: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -330,7 +330,7 @@ export const CustodiesPage: React.FC = () => {
                   <select
                     value={addForm.location}
                     onChange={e => setAddForm({ ...addForm, location: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option>فرع الرياض الرئيسي</option>
                     <option>فرع جدة</option>
@@ -370,9 +370,9 @@ export const CustodiesPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
+            <div className="p-6 space-y-4 bg-white text-[#141414]">
               <p className="text-xs text-zinc-700 leading-relaxed">
-                أقر أنا الموظف / <strong className="text-black">{selectedCustodyForDoc.employee_name}</strong> بأنني استلمت العُهدة المبينة أدنها بحالة جيدة وأتعهد بالحفاظ عليها وإعادتها فور طلب الإدارة:
+                أقر أنا الموظف / <strong className="text-[#141414]">{selectedCustodyForDoc.employee_name}</strong> بأنني استلمت العُهدة المبينة أدنها بحالة جيدة وأتعهد بالحفاظ عليها وإعادتها فور طلب الإدارة:
               </p>
 
               <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 space-y-2 text-xs">

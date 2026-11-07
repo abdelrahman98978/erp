@@ -213,16 +213,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-zinc-700">
-          <a href="#companies" className="hover:text-black transition-colors">
+          <a href="#companies" className="hover:text-[#141414] transition-colors">
             الشركات التابعة
           </a>
-          <a href="#capabilities" className="hover:text-black transition-colors">
+          <a href="#capabilities" className="hover:text-[#141414] transition-colors">
             القدرات التشغيلية
           </a>
-          <a href="#values" className="hover:text-black transition-colors">
+          <a href="#values" className="hover:text-[#141414] transition-colors">
             القيم المؤسسية
           </a>
-          <a href="#governance" className="hover:text-black transition-colors">
+          <a href="#governance" className="hover:text-[#141414] transition-colors">
             الحوكمة والربط الحكومي
           </a>
         </nav>
@@ -599,19 +599,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           </div>
 
           <div className="flex items-center gap-6 sm:gap-8 flex-wrap">
-            <span className="flex items-center gap-1.5 hover:text-black transition-colors">
+            <span className="flex items-center gap-1.5 hover:text-[#141414] transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-[#141414]"></span>
               <span>الثقة (TRUST)</span>
             </span>
-            <span className="flex items-center gap-1.5 hover:text-black transition-colors">
+            <span className="flex items-center gap-1.5 hover:text-[#141414] transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-[#141414]"></span>
               <span>النمو (GROWTH)</span>
             </span>
-            <span className="flex items-center gap-1.5 hover:text-black transition-colors">
+            <span className="flex items-center gap-1.5 hover:text-[#141414] transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-[#141414]"></span>
               <span>الاستثمار (INVESTMENT)</span>
             </span>
-            <span className="flex items-center gap-1.5 hover:text-black transition-colors">
+            <span className="flex items-center gap-1.5 hover:text-[#141414] transition-colors">
               <span className="w-1.5 h-1.5 rounded-full bg-[#141414]"></span>
               <span>الاستدامة (SUSTAINABILITY)</span>
             </span>
@@ -763,7 +763,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             {/* Card 1: Government Compliance & Integration */}
             <div
               className="white-feature-card group"
-              style={{ backgroundColor: '#ffffff', color: '#000000' }}
+              style={{ backgroundColor: '#ffffff', color: '#141414' }}
             >
               {/* Top Accent Line */}
               <div className="absolute top-0 inset-x-0 h-1 bg-[#141414]" />
@@ -775,7 +775,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 <BusinessIllustration type="zatca-einvoice" size="sm" showBackground={false} className="!w-20 !h-16" />
               </div>
 
-              <h3 className="text-xl font-bold text-black font-display mb-2.5">
+              <h3 className="text-xl font-bold text-[#141414] font-display mb-2.5">
                 الربط والامتثال الحكومي الشامل
               </h3>
 
@@ -810,7 +810,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             {/* Card 2: SMACC & Advanced Accounting */}
             <div
               className="white-feature-card group"
-              style={{ backgroundColor: '#ffffff', color: '#000000' }}
+              style={{ backgroundColor: '#ffffff', color: '#141414' }}
             >
               {/* Top Accent Line */}
               <div className="absolute top-0 inset-x-0 h-1 bg-[#141414]" />
@@ -822,7 +822,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 <BusinessIllustration type="smacc-finance" size="sm" showBackground={false} className="!w-20 !h-16" />
               </div>
 
-              <h3 className="text-xl font-bold text-black font-display mb-2.5">
+              <h3 className="text-xl font-bold text-[#141414] font-display mb-2.5">
                 المنظومة المالية والمحاسبية الموحدة
               </h3>
 
@@ -846,7 +846,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
               </div>
 
               <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-[11px] text-[#707070]">
-                <span className="font-bold text-black flex items-center gap-1.5">
+                <span className="font-bold text-[#141414] flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#141414]" />
                   <span>عزل مالي ومحاسبي 100%</span>
                 </span>
@@ -857,7 +857,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
             {/* Card 3: Institutional Advisors Faris & Noura */}
             <div
               className="white-feature-card group"
-              style={{ backgroundColor: '#ffffff', color: '#000000' }}
+              style={{ backgroundColor: '#ffffff', color: '#141414' }}
             >
               {/* Top Accent Line */}
               <div className="absolute top-0 inset-x-0 h-1 bg-[#141414]" />
@@ -869,7 +869,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
                 <BusinessIllustration type="ai-copilot" size="sm" showBackground={false} className="!w-20 !h-16" />
               </div>
 
-              <h3 className="text-xl font-bold text-black font-display mb-2.5">
+              <h3 className="text-xl font-bold text-[#141414] font-display mb-2.5">
                 المستشاران المؤسسيان (فارس ونُورة)
               </h3>
 
@@ -925,11 +925,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onSelectCompany }) => 
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-950 mb-4">الشركات والكيانات</h4>
             <div className="space-y-2.5 text-xs text-zinc-600">
-              <button type="button" onClick={() => handleSelect('SAF')} className="block hover:text-black text-right cursor-pointer">شركة السفير الماسي للاستقدام</button>
-              <button type="button" onClick={() => handleSelect('YAQ')} className="block hover:text-black text-right cursor-pointer">شركة الياقوت الشرقية للتشغيل</button>
-              <button type="button" onClick={() => handleSelect('TOP')} className="block hover:text-black text-right cursor-pointer">شركة توب تالنت الدولية للـ ATS</button>
-              <button type="button" onClick={() => handleSelect('KAS')} className="block hover:text-black text-right cursor-pointer">بوابة شركة كاس للمنافسات والتشغيل</button>
-              <button type="button" onClick={() => handleSelect('DAR')} className="block hover:text-black text-right cursor-pointer">دار الرواد لمراكز الإيواء والتسكين والرعاية</button>
+              <button type="button" onClick={() => handleSelect('SAF')} className="block hover:text-[#141414] text-right cursor-pointer">شركة السفير الماسي للاستقدام</button>
+              <button type="button" onClick={() => handleSelect('YAQ')} className="block hover:text-[#141414] text-right cursor-pointer">شركة الياقوت الشرقية للتشغيل</button>
+              <button type="button" onClick={() => handleSelect('TOP')} className="block hover:text-[#141414] text-right cursor-pointer">شركة توب تالنت الدولية للـ ATS</button>
+              <button type="button" onClick={() => handleSelect('KAS')} className="block hover:text-[#141414] text-right cursor-pointer">بوابة شركة كاس للمنافسات والتشغيل</button>
+              <button type="button" onClick={() => handleSelect('DAR')} className="block hover:text-[#141414] text-right cursor-pointer">دار الرواد لمراكز الإيواء والتسكين والرعاية</button>
             </div>
           </div>
 

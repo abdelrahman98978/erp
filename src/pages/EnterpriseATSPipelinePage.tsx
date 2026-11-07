@@ -183,7 +183,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -225,18 +225,18 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي المتقدمين النشطين</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{candidates.length} مرشحاً</div>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#141414' }}>إجمالي المتقدمين النشطين</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{candidates.length} مرشحاً</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>تم التدقيق الأمني</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>متوسط توافق الـ AI</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>92.5%</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>92.5%</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>مطابقة المعايير</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>عروض العمل المقبولة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>8 عروض</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مرحلة التأشيرة</span>
@@ -244,7 +244,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>متوسط مدة الفرز والتوظيف</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>4.5 أيام</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>4.5 أيام</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>أسرع بـ 40%</span>
         </div>
       </div>
@@ -258,8 +258,8 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
             padding: '6px 16px',
             borderRadius: '9999px',
             border: '1px solid',
-            borderColor: selectedStage === 'الكل' ? '#000000' : '#e4e4e7',
-            backgroundColor: selectedStage === 'الكل' ? '#000000' : '#ffffff',
+            borderColor: selectedStage === 'الكل' ? '#141414' : '#e4e4e7',
+            backgroundColor: selectedStage === 'الكل' ? '#141414' : '#ffffff',
             color: selectedStage === 'الكل' ? '#ffffff' : '#27272a',
             fontWeight: selectedStage === 'الكل' ? 550 : 420,
             fontSize: '12.5px',
@@ -282,8 +282,8 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isSel ? '#000000' : '#e4e4e7',
-                backgroundColor: isSel ? '#000000' : '#ffffff',
+                borderColor: isSel ? '#141414' : '#e4e4e7',
+                backgroundColor: isSel ? '#141414' : '#ffffff',
                 color: isSel ? '#ffffff' : '#27272a',
                 fontWeight: isSel ? 550 : 420,
                 fontSize: '12.5px',
@@ -325,7 +325,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                   <CorporateAvatar name={cnd.name} profession={cnd.appliedPosition} isCandidate size="md" status="verified" />
                   <div>
                     <span className="text-xs text-[#707070] font-mono font-bold">{cnd.candidateCode}</span>
-                    <h2 className="text-base font-bold text-black mt-0.5">{cnd.name}</h2>
+                    <h2 className="text-base font-bold text-[#141414] mt-0.5">{cnd.name}</h2>
                   </div>
                 </div>
 
@@ -344,7 +344,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 <div><strong>الجنسية والخبرة:</strong> {cnd.nationality} ({cnd.experienceYears} سنوات خبرة)</div>
                 <div><strong>المؤهل العلمي:</strong> {cnd.education}</div>
                 <div><strong>المكتب المصدر:</strong> {cnd.externalOfficeName || 'وكالة دولية معتمدة'}</div>
-                <div><strong>الراتب المتوقع:</strong> <span className="font-mono font-bold text-black">{cnd.expectedSalary.toLocaleString()}</span> ⃁</div>
+                <div><strong>الراتب المتوقع:</strong> <span className="font-mono font-bold text-[#141414]">{cnd.expectedSalary.toLocaleString()}</span> ⃁</div>
               </div>
 
               <div className="flex items-center justify-between mb-4">
@@ -410,14 +410,14 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
+            <div className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="text-xs text-zinc-700 block mb-1 font-semibold">تاريخ وتوقيت المقابلة (بتوقيت الرياض)</label>
                 <input
                   type="datetime-local"
                   value={interviewDate}
                   onChange={(e) => setInterviewDate(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -427,7 +427,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                   type="text"
                   value={interviewerName}
                   onChange={(e) => setInterviewerName(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -481,9 +481,9 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-[#f3f3f3] text-[#141414] flex items-center justify-center font-bold text-xs">
                   <UserPlus className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-bold text-black m-0">إضافة طلب احتياج / مرشح وظيفي جديد</h3>
+                <h3 className="text-sm font-bold text-[#141414] m-0">إضافة طلب احتياج / مرشح وظيفي جديد</h3>
               </div>
-              <button onClick={() => setShowNewCandidateModal(false)} className="text-[#707070] hover:text-black">
+              <button onClick={() => setShowNewCandidateModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -540,7 +540,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                   value={newCandidateForm.name}
                   onChange={e => setNewCandidateForm({ ...newCandidateForm, name: e.target.value })}
                   placeholder="مثال: ساندرا كروز / مريم أحمد"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
@@ -553,7 +553,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                     value={newCandidateForm.phone}
                     onChange={e => setNewCandidateForm({ ...newCandidateForm, phone: e.target.value })}
                     placeholder="+9665xxxxxxxx"
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -561,7 +561,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                   <select
                     value={newCandidateForm.nationality}
                     onChange={e => setNewCandidateForm({ ...newCandidateForm, nationality: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="الفلبين">الفلبين</option>
                     <option value="إثيوبيا">إثيوبيا</option>
@@ -581,7 +581,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                     type="text"
                     value={newCandidateForm.appliedPosition}
                     onChange={e => setNewCandidateForm({ ...newCandidateForm, appliedPosition: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -590,7 +590,7 @@ export const EnterpriseATSPipelinePage: React.FC = () => {
                     type="number"
                     value={newCandidateForm.expectedSalary}
                     onChange={e => setNewCandidateForm({ ...newCandidateForm, expectedSalary: Number(e.target.value) })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>

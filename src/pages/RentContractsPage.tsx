@@ -564,7 +564,7 @@ export const RentContractsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -629,7 +629,7 @@ export const RentContractsPage: React.FC = () => {
         {/* Card 1: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي عقود التأجير</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {rentContracts.length || 13} عقد
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>شهري وسنوي وخدمة معروف</span>
@@ -637,15 +637,15 @@ export const RentContractsPage: React.FC = () => {
 
         {/* Card 2: Pistachio Band Card */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>العقود النشطة ومسيرات الخدمة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>العقود النشطة ومسيرات الخدمة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {rentContracts.filter(c => c.status === 'نشط').length || 4} نشط
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>عمالة منزلية وسائقين</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي المبيعات الشهرية المحققة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {((rentContracts.reduce((sum, c) => sum + (c.total_amount || 0), 0) || 128500) / 1000).toFixed(1)}k ⃁
@@ -656,7 +656,7 @@ export const RentContractsPage: React.FC = () => {
         {/* Card 4: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>نسبة الجاهزية والتسليم</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             100%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -692,8 +692,8 @@ export const RentContractsPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -711,7 +711,7 @@ export const RentContractsPage: React.FC = () => {
       {activeTab === 'orders' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+            <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
               طلبات وحجوزات عقود الإيجار الواردة
             </h2>
             <span className="pill-tag-mint" style={{ fontSize: '11px' }}>3 طلبات جديدة</span>
@@ -735,11 +735,11 @@ export const RentContractsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {rentalOrders.map((ord) => (
                   <tr key={ord.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{ord.id}</td>
-                    <td className="p-3.5 font-bold text-black">{ord.client}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{ord.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{ord.client}</td>
                     <td className="p-3.5">{ord.job}</td>
                     <td className="p-3.5">{ord.nat}</td>
-                    <td className="p-3.5 font-bold text-black">{ord.dur}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{ord.dur}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{ord.date}</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{ord.deposit} ⃁</td>
                     <td className="p-3.5"><Badge text={ord.status} type={ord.status.includes('تم') ? 'success' : 'warning'} /></td>
@@ -801,7 +801,7 @@ export const RentContractsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                 سائقين خاصين بنظام التأجير والتشغيل المرن
               </h2>
               <p className="text-xs text-[#707070] mt-0.5 font-sans">
@@ -842,12 +842,12 @@ export const RentContractsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {rentalDrivers.map((d) => (
                   <tr key={d.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{d.id}</td>
-                    <td className="p-3.5 font-bold text-black">{d.name}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{d.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{d.name}</td>
                     <td className="p-3.5">{d.nat}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{d.lic}</td>
                     <td className="p-3.5"><Badge text={d.lic_status} type="success" /></td>
-                    <td className="p-3.5 font-semibold text-black">{d.car}</td>
+                    <td className="p-3.5 font-semibold text-[#141414]">{d.car}</td>
                     <td className="p-3.5 text-zinc-600">{d.client}</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{d.salary} ⃁</td>
                     <td className="p-3.5">
@@ -889,7 +889,7 @@ export const RentContractsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                 عاملات منزليات بنظام التأجير الشهري والسنوي
               </h2>
               <p className="text-xs text-[#707070] mt-0.5 font-sans">
@@ -930,12 +930,12 @@ export const RentContractsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {rentalMaids.map((m) => (
                   <tr key={m.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{m.id}</td>
-                    <td className="p-3.5 font-bold text-black">{m.name}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{m.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{m.name}</td>
                     <td className="p-3.5">{m.nat}</td>
                     <td className="p-3.5 font-mono text-zinc-600">{m.pass}</td>
                     <td className="p-3.5 text-zinc-700">{m.skill}</td>
-                    <td className="p-3.5 font-bold text-black">{m.client}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{m.client}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{m.end}</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{m.price} ⃁</td>
                     <td className="p-3.5">
@@ -949,7 +949,7 @@ export const RentContractsPage: React.FC = () => {
                         <button
                           onClick={() => handleFastCreateContractFromMaid(m)}
                           className="button-primary-pill text-[11px] font-bold flex items-center gap-1 shadow-sm"
-                          style={{ minHeight: '26px', padding: '2px 8px', backgroundColor: '#000000' }}
+                          style={{ minHeight: '26px', padding: '2px 8px', backgroundColor: '#141414' }}
                           title="إنشاء عقد تأجير مباشر لهذه العاملة"
                         >
                           <Sparkles className="w-3 h-3 text-[#141414]" />
@@ -978,7 +978,7 @@ export const RentContractsPage: React.FC = () => {
           <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
             <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-3">
               <div>
-                <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                <h2 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                   باقات تأجير العمالة المنزلية والتشغيل المرن
                 </h2>
                 <p className="text-xs text-[#707070] mt-0.5 font-sans">
@@ -1017,7 +1017,7 @@ export const RentContractsPage: React.FC = () => {
                           type={pkg.is_visible ? 'success' : 'warning'} 
                         />
                       </div>
-                      <h3 className="font-bold text-black text-sm mb-2">{pkg.title}</h3>
+                      <h3 className="font-bold text-[#141414] text-sm mb-2">{pkg.title}</h3>
                       <div className="flex items-center gap-2 text-xs text-[#707070] mb-4">
                         <Calendar className="w-3.5 h-3.5 text-[#707070]" />
                         <span>نوع الباقة: {pkg.rent_type} ({pkg.duration} - {pkg.days_count} يوم)</span>
@@ -1026,14 +1026,14 @@ export const RentContractsPage: React.FC = () => {
                       <div className="p-3 bg-zinc-100 rounded-2xl mb-4 space-y-1.5 text-xs">
                         <div className="flex justify-between">
                           <span className="text-[#707070]">السعر قبل الضريبة:</span>
-                          <strong className="font-mono text-black">{(pkg.price_before_tax ?? 0).toLocaleString()} ⃁</strong>
+                          <strong className="font-mono text-[#141414]">{(pkg.price_before_tax ?? 0).toLocaleString()} ⃁</strong>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-[#707070]">ضريبة القيمة المضافة (15%):</span>
                           <span className="font-mono text-zinc-600">{(pkg.tax ?? ((pkg.price_before_tax || 0) * 0.15)).toLocaleString()} ⃁</span>
                         </div>
                         <div className="flex justify-between pt-1 border-t border-zinc-200">
-                          <span className="font-bold text-black">الإجمالي شامل الضريبة:</span>
+                          <span className="font-bold text-[#141414]">الإجمالي شامل الضريبة:</span>
                           <strong className="font-mono font-bold text-[#141414] text-sm">{(pkg.total_price ?? ((pkg.price_before_tax || 0) * 1.15)).toLocaleString()} ⃁</strong>
                         </div>
                       </div>
@@ -1055,7 +1055,7 @@ export const RentContractsPage: React.FC = () => {
                           setShowAddModal(true);
                         }}
                         className="button-primary-pill text-[11px] font-bold flex items-center gap-1 flex-1 justify-center"
-                        style={{ minHeight: '28px', backgroundColor: '#000000' }}
+                        style={{ minHeight: '28px', backgroundColor: '#141414' }}
                       >
                         <Plus className="w-3 h-3" />
                         <span>حجز باقة</span>
@@ -1081,7 +1081,7 @@ export const RentContractsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '28px', borderRadius: '24px', background: '#ffffff' }}>
           <div className="flex items-center justify-between border-b border-zinc-100 pb-4 mb-6">
             <div>
-              <h2 className="display-sm" style={{ fontSize: '20px', fontWeight: 330, color: '#000000', margin: 0 }}>
+              <h2 className="display-sm" style={{ fontSize: '20px', fontWeight: 330, color: '#141414', margin: 0 }}>
                 بنود وضوابط وشروط عقد التأجير الموحد
               </h2>
               <p className="text-xs text-[#707070] mt-1 font-sans">
@@ -1109,7 +1109,7 @@ export const RentContractsPage: React.FC = () => {
           <div className="space-y-4 text-xs">
             {rentTerms.map((term: { title: string; body: string }, idx: number) => (
               <div key={idx} className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-2">
-                <h3 className="font-bold text-black text-sm">{term.title}</h3>
+                <h3 className="font-bold text-[#141414] text-sm">{term.title}</h3>
                 <textarea
                   rows={2}
                   value={term.body}
@@ -1118,7 +1118,7 @@ export const RentContractsPage: React.FC = () => {
                     next[idx] = { ...next[idx], body: e.target.value };
                     setRentTerms(next);
                   }}
-                  className="w-full p-2.5 rounded-xl bg-white border border-zinc-200 text-zinc-700 leading-relaxed focus:outline-none focus:border-black"
+                  className="w-full p-2.5 rounded-xl bg-white border border-zinc-200 text-zinc-700 leading-relaxed focus:outline-none focus:border-[#141414]"
                 />
               </div>
             ))}
@@ -1165,12 +1165,12 @@ export const RentContractsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {currentDisplayList.map((c) => (
                   <tr key={c.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono text-black font-bold">{c.contract_number}</td>
+                    <td className="p-3.5 font-mono text-[#141414] font-bold">{c.contract_number}</td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={c.client_name} isClient size="xs" />
                         <div>
-                          <div className="font-bold text-black">{c.client_name}</div>
+                          <div className="font-bold text-[#141414]">{c.client_name}</div>
                           <div className="text-[#707070] font-mono">{c.client_phone}</div>
                         </div>
                       </div>
@@ -1179,12 +1179,12 @@ export const RentContractsPage: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={c.maid_name} role="عاملة منزلية" isCandidate size="xs" />
                         <div>
-                          <div className="font-bold text-black">{c.maid_name}</div>
+                          <div className="font-bold text-[#141414]">{c.maid_name}</div>
                           <div className="text-[#707070]">{c.nationality}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="p-3.5 font-bold text-black">{c.duration_months} شهر</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{c.duration_months} شهر</td>
                     <td className="p-3.5 text-[#707070] font-mono">
                       {c.start_date} إلى {c.end_date}
                     </td>
@@ -1213,7 +1213,7 @@ export const RentContractsPage: React.FC = () => {
       {/* Packages Tab */}
       {activeTab === 'packages' && (
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h3 className="text-base font-bold text-black mb-4">باقات التأجير المعتمدة</h3>
+          <h3 className="text-base font-bold text-[#141414] mb-4">باقات التأجير المعتمدة</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs text-zinc-700">
               <thead className="bg-zinc-50 text-zinc-700 font-bold border-b border-zinc-200">
@@ -1233,8 +1233,8 @@ export const RentContractsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {MOCK_PACKAGES.map((pkg, idx) => (
                   <tr key={pkg.id} className="hover:bg-zinc-50">
-                    <td className="p-3 font-mono font-bold text-black">{idx + 1}</td>
-                    <td className="p-3 font-bold text-black">{pkg.title}</td>
+                    <td className="p-3 font-mono font-bold text-[#141414]">{idx + 1}</td>
+                    <td className="p-3 font-bold text-[#141414]">{pkg.title}</td>
                     <td className="p-3 text-zinc-600">{pkg.nationality}</td>
                     <td className="p-3">
                       <span className="pill-tag-shade" style={{ fontSize: '10.5px' }}>{pkg.rent_type}</span>
@@ -1274,7 +1274,7 @@ export const RentContractsPage: React.FC = () => {
             </div>
 
             <form onSubmit={handleCreateContract} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-6 overflow-y-auto space-y-4 custom-scrollbar flex-1 bg-white text-black">
+              <div className="p-6 overflow-y-auto space-y-4 custom-scrollbar flex-1 bg-white text-[#141414]">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-zinc-700 block mb-1 font-semibold">اسم العميل *</label>
@@ -1283,7 +1283,7 @@ export const RentContractsPage: React.FC = () => {
                       required
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1294,7 +1294,7 @@ export const RentContractsPage: React.FC = () => {
                       value={clientPhone}
                       onChange={(e) => setClientPhone(e.target.value)}
                       placeholder="+9665..."
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1308,7 +1308,7 @@ export const RentContractsPage: React.FC = () => {
                       value={maidName}
                       onChange={(e) => setMaidName(e.target.value)}
                       placeholder="سيتي نورعيني (سير تأجير نشطة)"
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1316,7 +1316,7 @@ export const RentContractsPage: React.FC = () => {
                     <select
                       value={nationality}
                       onChange={(e) => setNationality(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     >
                       <option>إندونيسيا</option>
                       <option>إثيوبيا</option>
@@ -1335,7 +1335,7 @@ export const RentContractsPage: React.FC = () => {
                       required
                       value={durationMonths}
                       onChange={(e) => setDurationMonths(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1345,7 +1345,7 @@ export const RentContractsPage: React.FC = () => {
                       required
                       value={monthlyCost}
                       onChange={(e) => setMonthlyCost(e.target.value)}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -1384,10 +1384,10 @@ export const RentContractsPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in dir-rtl text-right">
           <div className="w-full max-w-2xl bg-white border border-zinc-200 rounded-3xl shadow-2xl overflow-hidden p-6">
             <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
-              <h3 className="font-bold text-black text-base">طباعة عقد التأجير المعتمد</h3>
+              <h3 className="font-bold text-[#141414] text-base">طباعة عقد التأجير المعتمد</h3>
               <button
                 onClick={() => setSelectedContractForPrint(null)}
-                className="p-1 rounded-full text-[#707070] hover:text-black"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1401,13 +1401,13 @@ export const RentContractsPage: React.FC = () => {
                 {/* Contract Status Banner */}
                 <div className="p-3 bg-zinc-50 rounded-xl border border-zinc-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-black">نوع الباقة التأجيرية:</span>
+                    <span className="font-bold text-[#141414]">نوع الباقة التأجيرية:</span>
                     <span className="font-bold text-[#141414] bg-[#f3f3f3] px-2.5 py-0.5 rounded-lg border border-[#e0e0e0]">
                       {selectedContractForPrint.package_name || 'باقة التأجير المرن'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-black">حالة العقد:</span>
+                    <span className="font-bold text-[#141414]">حالة العقد:</span>
                     <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#f3f3f3] text-[#141414]">
                       {selectedContractForPrint.status} - ساري المفعول
                     </span>
@@ -1418,39 +1418,39 @@ export const RentContractsPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* First Party (Lessor Company) */}
                   <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-1.5">
-                    <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                    <h4 className="font-bold text-xs text-[#141414] border-b border-zinc-200 pb-1">
                       الطرف الأول (الشركة المؤجرة والمشغلة)
                     </h4>
-                    <div className="flex justify-between"><span className="text-[#707070]">الاسم التجاري:</span><strong className="text-black">مجموعة السليم للتشغيل والتأجير</strong></div>
-                    <div className="flex justify-between"><span className="text-[#707070]">رقم ترخيص التأجير:</span><span className="font-mono font-bold text-black">770291</span></div>
-                    <div className="flex justify-between"><span className="text-[#707070]">السجل التجاري:</span><span className="font-mono font-bold text-black">1010884920</span></div>
-                    <div className="flex justify-between"><span className="text-[#707070]">الفرع الموثق:</span><span className="font-bold text-black">{selectedContractForPrint.branch || 'الفرع الرئيسي'}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">الاسم التجاري:</span><strong className="text-[#141414]">مجموعة السليم للتشغيل والتأجير</strong></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">رقم ترخيص التأجير:</span><span className="font-mono font-bold text-[#141414]">770291</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">السجل التجاري:</span><span className="font-mono font-bold text-[#141414]">1010884920</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">الفرع الموثق:</span><span className="font-bold text-[#141414]">{selectedContractForPrint.branch || 'الفرع الرئيسي'}</span></div>
                   </div>
 
                   {/* Second Party (Lessee Client) */}
                   <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-1.5">
-                    <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                    <h4 className="font-bold text-xs text-[#141414] border-b border-zinc-200 pb-1">
                       الطرف الثاني (العميل المستأجر)
                     </h4>
-                    <div className="flex justify-between"><span className="text-[#707070]">اسم المستأجر:</span><strong className="text-black">{selectedContractForPrint.client_name}</strong></div>
-                    <div className="flex justify-between"><span className="text-[#707070]">الهوية الوطنية / الإقامة:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_national_id || '1099201844'}</span></div>
-                    <div className="flex justify-between"><span className="text-[#707070]">رقم الجوال:</span><span className="font-mono font-bold text-black">{selectedContractForPrint.client_phone}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">اسم المستأجر:</span><strong className="text-[#141414]">{selectedContractForPrint.client_name}</strong></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">الهوية الوطنية / الإقامة:</span><span className="font-mono font-bold text-[#141414]">{selectedContractForPrint.client_national_id || '1099201844'}</span></div>
+                    <div className="flex justify-between"><span className="text-[#707070]">رقم الجوال:</span><span className="font-mono font-bold text-[#141414]">{selectedContractForPrint.client_phone}</span></div>
                     <div className="flex justify-between"><span className="text-[#707070]">حالة السداد:</span><span className="font-bold text-[#141414]">{selectedContractForPrint.payment_status}</span></div>
                   </div>
                 </div>
 
                 {/* Worker & Rental Duration Details */}
                 <div className="p-3.5 bg-zinc-50 rounded-2xl border border-zinc-200 space-y-2">
-                  <h4 className="font-bold text-xs text-black border-b border-zinc-200 pb-1">
+                  <h4 className="font-bold text-xs text-[#141414] border-b border-zinc-200 pb-1">
                     بيانات العاملة وفترة التأجير المعتمدة
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
-                    <div><span className="text-[#707070] block">اسم العامل/ة:</span><strong className="text-black">{selectedContractForPrint.maid_name}</strong></div>
-                    <div><span className="text-[#707070] block">الجنسية:</span><strong className="text-black">{selectedContractForPrint.nationality}</strong></div>
-                    <div><span className="text-[#707070] block">المهنة:</span><strong className="text-black">خدمات منزلية وضيافة</strong></div>
-                    <div><span className="text-[#707070] block">مدة العقد:</span><strong className="text-black font-mono">{selectedContractForPrint.duration_months} أشهر</strong></div>
-                    <div><span className="text-[#707070] block">تاريخ البدء:</span><span className="font-mono text-black">{selectedContractForPrint.start_date}</span></div>
-                    <div><span className="text-[#707070] block">تاريخ الانتهاء:</span><span className="font-mono text-black">{selectedContractForPrint.end_date}</span></div>
+                    <div><span className="text-[#707070] block">اسم العامل/ة:</span><strong className="text-[#141414]">{selectedContractForPrint.maid_name}</strong></div>
+                    <div><span className="text-[#707070] block">الجنسية:</span><strong className="text-[#141414]">{selectedContractForPrint.nationality}</strong></div>
+                    <div><span className="text-[#707070] block">المهنة:</span><strong className="text-[#141414]">خدمات منزلية وضيافة</strong></div>
+                    <div><span className="text-[#707070] block">مدة العقد:</span><strong className="text-[#141414] font-mono">{selectedContractForPrint.duration_months} أشهر</strong></div>
+                    <div><span className="text-[#707070] block">تاريخ البدء:</span><span className="font-mono text-[#141414]">{selectedContractForPrint.start_date}</span></div>
+                    <div><span className="text-[#707070] block">تاريخ الانتهاء:</span><span className="font-mono text-[#141414]">{selectedContractForPrint.end_date}</span></div>
                     <div><span className="text-[#707070] block">التأمين الصحي:</span><strong className="text-[#141414] font-bold">مغطى بالكامل (مجلس الضمان)</strong></div>
                     <div><span className="text-[#707070] block">سياسة الاستبدال:</span><strong className="text-[#141414] font-bold">استبدال مجاني خلال 48 ساعة</strong></div>
                   </div>
@@ -1458,7 +1458,7 @@ export const RentContractsPage: React.FC = () => {
 
                 {/* Terms of Rental */}
                 <div className="p-3.5 bg-zinc-50/80 rounded-2xl border border-zinc-200 space-y-1 text-[11px] text-zinc-700 leading-relaxed">
-                  <h4 className="font-bold text-xs text-black mb-1">شروط والتزامات عقد التأجير:</h4>
+                  <h4 className="font-bold text-xs text-[#141414] mb-1">شروط والتزامات عقد التأجير:</h4>
                   <p>1. تظل العاملة على كفالة وإشراف الطرف الأول القانوني والمالي طوال فترة سريان العقد.</p>
                   <p>2. يلتزم الطرف الثاني بتوفير بيئة عمل ملائمة وسكن آمن وساعات راحة كافية وفق الأنظمة المرعية في المملكة.</p>
                   <p>3. في حال رغبة العاملة بعدم الاستمرار أو حدوث عارض صحي، تلتزم الشركة باستبدال العاملة خلال 48 ساعة دون رسوم إضافية.</p>
@@ -1478,7 +1478,7 @@ export const RentContractsPage: React.FC = () => {
                     </thead>
                     <tbody className="bg-white divide-y divide-zinc-100 font-mono">
                       <tr>
-                        <td className="p-2.5 font-sans font-medium text-black">{selectedContractForPrint.package_name || 'باقة التأجير الشهري'} ({selectedContractForPrint.duration_months} شهر)</td>
+                        <td className="p-2.5 font-sans font-medium text-[#141414]">{selectedContractForPrint.package_name || 'باقة التأجير الشهري'} ({selectedContractForPrint.duration_months} شهر)</td>
                         <td className="p-2.5 text-center">{(selectedContractForPrint.monthly_cost ?? 2500).toLocaleString()} ⃁ / شهر</td>
                         <td className="p-2.5 text-center">{(selectedContractForPrint.tax_amount ?? (selectedContractForPrint.total_amount ? Math.round(selectedContractForPrint.total_amount * 0.15 / 1.15) : 375)).toLocaleString()} ⃁</td>
                         <td className="p-2.5 text-left font-bold text-[#141414]">{(selectedContractForPrint.total_amount ?? 2875).toLocaleString()} ⃁</td>
@@ -1490,13 +1490,13 @@ export const RentContractsPage: React.FC = () => {
                 {/* Signatures & Seal Block */}
                 <div className="grid grid-cols-2 gap-6 pt-3 border-t-2 border-zinc-300">
                   <div className="text-center space-y-6">
-                    <div className="font-bold text-black text-xs">ختم وتوقيع الطرف الأول (الشركة المؤجرة)</div>
+                    <div className="font-bold text-[#141414] text-xs">ختم وتوقيع الطرف الأول (الشركة المؤجرة)</div>
                     <div className="w-24 h-24 mx-auto border-2 border-dashed border-[#e0e0e0] rounded-full flex items-center justify-center bg-[#f3f3f3]">
                       <span className="text-[10px] font-bold text-[#141414] text-center leading-tight">مجموعة السليم<br />إدارة التشغيل والتأجير<br />معتمد</span>
                     </div>
                   </div>
                   <div className="text-center space-y-6">
-                    <div className="font-bold text-black text-xs">توقيع الطرف الثاني (المستأجر)</div>
+                    <div className="font-bold text-[#141414] text-xs">توقيع الطرف الثاني (المستأجر)</div>
                     <div className="w-full h-16 border-b-2 border-zinc-400 mt-8 flex items-end justify-center">
                       <span className="text-[11px] text-[#707070]">التوقيع الإلكتروني وتأكيد الاستلام</span>
                     </div>
@@ -1516,11 +1516,11 @@ export const RentContractsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <Car className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-bold text-black text-base">تسجيل سائق جديد في أسطول التأجير</h3>
+                <h3 className="font-bold text-[#141414] text-base">تسجيل سائق جديد في أسطول التأجير</h3>
               </div>
               <button 
                 onClick={() => setShowAddDriverModal(false)}
-                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1629,11 +1629,11 @@ export const RentContractsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-bold text-black text-base">إضافة عاملة جديدة في قائمة التأجير</h3>
+                <h3 className="font-bold text-[#141414] text-base">إضافة عاملة جديدة في قائمة التأجير</h3>
               </div>
               <button 
                 onClick={() => setShowAddMaidModal(false)}
-                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1729,11 +1729,11 @@ export const RentContractsPage: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-zinc-100">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-[#141414]" />
-                <h3 className="font-bold text-black text-base">إضافة باقة تأجير جديدة</h3>
+                <h3 className="font-bold text-[#141414] text-base">إضافة باقة تأجير جديدة</h3>
               </div>
               <button 
                 onClick={() => setShowAddPackageModal(false)}
-                className="p-1 rounded-full text-[#707070] hover:text-black hover:bg-zinc-100"
+                className="p-1 rounded-full text-[#707070] hover:text-[#141414] hover:bg-zinc-100"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1807,7 +1807,7 @@ export const RentContractsPage: React.FC = () => {
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-[11px] space-y-1">
                 <div className="flex justify-between">
                   <span className="text-[#707070]">ضريبة القيمة المضافة المحسوبة (15%):</span>
-                  <span className="font-mono font-bold text-black">{((parseFloat(packageForm.price_before_tax) || 0) * 0.15).toLocaleString()} ⃁</span>
+                  <span className="font-mono font-bold text-[#141414]">{((parseFloat(packageForm.price_before_tax) || 0) * 0.15).toLocaleString()} ⃁</span>
                 </div>
                 <div className="flex justify-between font-bold text-[#141414]">
                   <span>الإجمالي شامل الضريبة:</span>

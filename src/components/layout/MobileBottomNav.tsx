@@ -350,12 +350,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             type="button"
             onClick={() => onSelectTab('dashboard', 'الرئيسية والمؤشرات التشغيلية')}
             className={`flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-              isHomeActive ? 'text-black font-extrabold' : 'text-[#707070] hover:text-black'
+              isHomeActive ? 'text-[#141414] font-extrabold' : 'text-[#707070] hover:text-[#141414]'
             }`}
           >
             <div
               className={`w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-                isHomeActive ? 'bg-black text-[#ffffff]' : ''
+                isHomeActive ? 'bg-[#141414] text-[#ffffff]' : ''
               }`}
             >
               <Home className="w-4 h-4" />
@@ -368,12 +368,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             type="button"
             onClick={() => onSelectTab(primaryOpsTab.href, primaryOpsTab.title)}
             className={`flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-              isOpsActive ? 'text-black font-extrabold' : 'text-[#707070] hover:text-black'
+              isOpsActive ? 'text-[#141414] font-extrabold' : 'text-[#707070] hover:text-[#141414]'
             }`}
           >
             <div
               className={`w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-                isOpsActive ? 'bg-black text-[#ffffff]' : ''
+                isOpsActive ? 'bg-[#141414] text-[#ffffff]' : ''
               }`}
             >
               <OpsIcon className="w-4 h-4" />
@@ -399,12 +399,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             type="button"
             onClick={onToggleNotifications}
             className={`relative flex flex-col items-center justify-center gap-1 h-full rounded-xl transition-colors ${
-              isNotificationsOpen ? 'text-black font-extrabold' : 'text-[#707070] hover:text-black'
+              isNotificationsOpen ? 'text-[#141414] font-extrabold' : 'text-[#707070] hover:text-[#141414]'
             }`}
           >
             <div
               className={`relative w-9 h-7 rounded-full flex items-center justify-center transition-all ${
-                isNotificationsOpen ? 'bg-black text-[#ffffff]' : ''
+                isNotificationsOpen ? 'bg-[#141414] text-[#ffffff]' : ''
               }`}
             >
               <Bell className="w-4 h-4" />
@@ -421,7 +421,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           <button
             type="button"
             onClick={onToggleSidebar}
-            className="flex flex-col items-center justify-center gap-1 h-full rounded-xl text-[#707070] hover:text-black transition-colors"
+            className="flex flex-col items-center justify-center gap-1 h-full rounded-xl text-[#707070] hover:text-[#141414] transition-colors"
           >
             <div className="w-9 h-7 rounded-full flex items-center justify-center">
               <Menu className="w-4 h-4" />

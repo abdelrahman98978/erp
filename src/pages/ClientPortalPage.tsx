@@ -214,7 +214,7 @@ export const ClientPortalPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -256,7 +256,7 @@ export const ClientPortalPage: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="button-white-pill text-xs font-bold flex items-center gap-2 shadow-lg"
-              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
+              style={{ minHeight: '38px', padding: '8px 20px', backgroundColor: '#ffffff', color: '#141414', fontWeight: '700' }}
             >
               <MessageCircle className="w-4 h-4 text-[#141414]" />
               <span>خدمة العملاء (واتساب)</span>
@@ -276,13 +276,13 @@ export const ClientPortalPage: React.FC = () => {
             value={nationalIdOrPhone}
             onChange={e => setNationalIdOrPhone(e.target.value)}
             placeholder="أدخل رقم العقد (MSN-...)، أو اسم العاملة، أو رقم الجواز للتحقق والتتبع المباشر..."
-            className="w-full bg-transparent text-xs text-black font-semibold placeholder:text-[#707070] focus:outline-none"
+            className="w-full bg-transparent text-xs text-[#141414] font-semibold placeholder:text-[#707070] focus:outline-none"
           />
         </div>
         {nationalIdOrPhone && (
           <button
             onClick={() => setNationalIdOrPhone('')}
-            className="text-xs text-[#707070] hover:text-black font-bold px-2 py-1"
+            className="text-xs text-[#707070] hover:text-[#141414] font-bold px-2 py-1"
           >
             مسح
           </button>
@@ -294,7 +294,7 @@ export const ClientPortalPage: React.FC = () => {
         {/* Card 1: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>العقود النشطة تحت التنفيذ</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {activeContracts.length} عقود
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>متابعة منصة مساند</span>
@@ -302,15 +302,15 @@ export const ClientPortalPage: React.FC = () => {
 
         {/* Card 2: Pistachio Band Card */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>العقود المنجزة والمسلمة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>العقود المنجزة والمسلمة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {completedContracts.length} عقود
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>100% نسبة الرضا</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي المدفوعات الموثقة</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             33,000 ⃁
@@ -321,7 +321,7 @@ export const ClientPortalPage: React.FC = () => {
         {/* Card 4: White Card */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>سريان الضمان والحماية</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             90 يوماً
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -474,11 +474,11 @@ export const ClientPortalPage: React.FC = () => {
               {/* Official Verification QR Stamp */}
               <div className="p-3 bg-zinc-50 rounded-2xl border border-dashed border-zinc-300 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center shadow-sm">
+                  <div className="w-10 h-10 rounded-xl bg-[#141414] text-white flex items-center justify-center shadow-sm">
                     <QrCode className="w-6 h-6 text-[#141414]" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold text-black">شهادة تتبع حالة العقد المعتمدة رسمياً</div>
+                    <div className="text-[11px] font-bold text-[#141414]">شهادة تتبع حالة العقد المعتمدة رسمياً</div>
                     <div className="text-[10px] text-[#707070] font-mono">MUSANED VERIFICATION: #{selectedContract.contractNumber}</div>
                   </div>
                 </div>

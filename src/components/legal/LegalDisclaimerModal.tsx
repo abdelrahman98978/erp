@@ -265,7 +265,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.strokeStyle = '#000000';
+        ctx.strokeStyle = '#141414';
         ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -435,7 +435,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
           <div className="flex items-center gap-4 flex-wrap">
             <div>
               <span className="text-[#707070] block text-[10px]">الموظف المصرح له:</span>
-              <span className="font-bold text-black">{user.name}</span>
+              <span className="font-bold text-[#141414]">{user.name}</span>
             </div>
             <div>
               <span className="text-[#707070] block text-[10px]">المسمى الوظيفي:</span>
@@ -475,16 +475,16 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
 
           {/* Department Specific Clauses */}
           <div className="space-y-3">
-            <h4 className="font-bold text-sm text-black flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-black" />
+            <h4 className="font-bold text-sm text-[#141414] flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-[#141414]" />
               <span>البنود والشروط المخصصة لـ ({policy.departmentName}):</span>
             </h4>
 
             {policy.clauses.map((clause, idx) => (
               <div key={clause.id} className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-1.5 hover:border-zinc-300 transition-colors">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="font-bold text-xs text-black flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-black text-white text-[10px] flex items-center justify-center font-mono">
+                  <span className="font-bold text-xs text-[#141414] flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-[#141414] text-white text-[10px] flex items-center justify-center font-mono">
                       {idx + 1}
                     </span>
                     <span>{clause.title}</span>
@@ -512,7 +512,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                 type="checkbox"
                 checked={agreedGeneral}
                 onChange={e => setAgreedGeneral(e.target.checked)}
-                className="mt-1 rounded text-black focus:ring-0 w-4 h-4 accent-black"
+                className="mt-1 rounded text-[#141414] focus:ring-0 w-4 h-4 accent-black"
               />
               <span className="text-xs text-zinc-800">
                 <strong>إقرار الاطلاع والالتزام:</strong> أقر بأنني اطلعت وفهمت كافة السياسات واللوائح والتعليمات المحددة أعلاه، وأتعهد بالامتثال التام لها طيلة فترة عملي واستخدامي للمنظومة.
@@ -524,7 +524,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                 type="checkbox"
                 checked={agreedDepartment}
                 onChange={e => setAgreedDepartment(e.target.checked)}
-                className="mt-1 rounded text-black focus:ring-0 w-4 h-4 accent-black"
+                className="mt-1 rounded text-[#141414] focus:ring-0 w-4 h-4 accent-black"
               />
               <span className="text-xs text-zinc-800">
                 <strong>المسؤولية القانونية والإدارية:</strong> أقر بتحمل المسؤولية الكاملة عن كافة العمليات والسجلات المنجزة تحت اسم المستخدم الخاص بي، وأبرئ ذمة المنشأة من أي تصرف أو تسريب فردي خارج النطاق المصرح به.
@@ -536,7 +536,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                 type="checkbox"
                 checked={agreedCyberLaw}
                 onChange={e => setAgreedCyberLaw(e.target.checked)}
-                className="mt-1 rounded text-black focus:ring-0 w-4 h-4 accent-black"
+                className="mt-1 rounded text-[#141414] focus:ring-0 w-4 h-4 accent-black"
               />
               <span className="text-xs text-zinc-800">
                 <strong>الامتثال لنظام مكافحة جرائم المعلوماتية:</strong> أقر بعلمي بأن الدخول غير المشروع أو إفشاء البيانات أو مسح السجلات يُعد جريمة يعاقب عليها القانون بالسجن والغرامات المالية وفق الأنظمة السعودية.
@@ -548,7 +548,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
                 type="checkbox"
                 checked={agreedPDPL}
                 onChange={e => setAgreedPDPL(e.target.checked)}
-                className="mt-1 rounded text-black focus:ring-0 w-4 h-4 accent-black"
+                className="mt-1 rounded text-[#141414] focus:ring-0 w-4 h-4 accent-black"
               />
               <span className="text-xs text-zinc-800">
                 <strong>حماية البيانات الشخصية (PDPL):</strong> أتعهد بالمحافظة على سرية بيانات العملاء والعمالة المنزلية وعدم مشاركتها مع أطراف خارجية تحت طائلة المساءلة القانونية.
@@ -560,7 +560,7 @@ export const LegalDisclaimerModal: React.FC<LegalDisclaimerModalProps> = ({
           <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
-                <h4 className="font-bold text-xs text-black flex items-center gap-1.5">
+                <h4 className="font-bold text-xs text-[#141414] flex items-center gap-1.5">
                   <Fingerprint className="w-4 h-4 text-[#141414]" />
                   <span>التوقيع الإلكتروني المعتمد للموظف (Digital E-Signature)</span>
                 </h4>

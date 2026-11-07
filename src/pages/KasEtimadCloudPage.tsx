@@ -824,7 +824,7 @@ export const KasEtimadCloudPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -901,7 +901,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 else setShowAddCompModal(true);
               }}
               className="button-white-pill"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#000000', fontWeight: '700' }}
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', backgroundColor: '#ffffff', color: '#141414', fontWeight: '700' }}
             >
               <Plus className="w-4 h-4 ml-1 text-[#141414]" />
               <span>+ إضافة سريعة</span>
@@ -966,7 +966,7 @@ export const KasEtimadCloudPage: React.FC = () => {
         {/* Card 1: White Card - Total Competitions */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي المنافسات المسجلة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {stats.totalCompetitions} منافسة
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>منصة اعتماد الحكومية</span>
@@ -974,15 +974,15 @@ export const KasEtimadCloudPage: React.FC = () => {
 
         {/* Card 2: Pistachio Band Card - Completed Awards */}
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>الترسيات والاعتمادات المنجزة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {stats.wonCompetitions} ترسية
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معدل الفوز {stats.winRate}%</span>
         </div>
 
         {/* Card 3: Pitch Black Featured Card - Active Sessions / Revenue */}
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي المبيعات والفواتير</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {(stats.totalInvoicesAmount / 1000).toFixed(0)}k ⃁
@@ -993,7 +993,7 @@ export const KasEtimadCloudPage: React.FC = () => {
         {/* Card 4: White Card - ZATCA & Security Compliance */}
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>مستوى الامتثال ومطابقة ZATCA</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             100%
           </div>
           <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden mt-2">
@@ -1045,8 +1045,8 @@ export const KasEtimadCloudPage: React.FC = () => {
                   fontSize: '11.5px',
                   fontWeight: isActive ? 550 : 420,
                   border: '1px solid',
-                  borderColor: isActive ? '#000000' : '#e4e4e7',
-                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  borderColor: isActive ? '#141414' : '#e4e4e7',
+                  backgroundColor: isActive ? '#141414' : '#ffffff',
                   color: isActive ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -1093,7 +1093,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>المنافسات</span>
                 <Award className="w-4 h-4 text-[#141414]" />
               </div>
-              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {stats.totalCompetitions}
               </div>
               <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px' }}>{stats.wonCompetitions} ترسية ({stats.winRate}%)</span>
@@ -1105,10 +1105,10 @@ export const KasEtimadCloudPage: React.FC = () => {
               style={{ padding: '16px', borderRadius: '16px' }}
             >
               <div className="flex items-center justify-between">
-                <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>إجمالي الفواتير</span>
+                <span style={{ fontSize: '12px', color: '#141414', fontWeight: 550 }}>إجمالي الفواتير</span>
                 <DollarSign className="w-4 h-4 text-[#141414]" />
               </div>
-              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.totalInvoicesAmount / 1000).toFixed(0)}k
               </div>
               <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '6px' }}>مبيعات كاس (⃁)</span>
@@ -1117,7 +1117,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div
               onClick={() => setActiveTab('invoices')}
               className="card-pricing-featured cursor-pointer hover:shadow-md transition-all"
-              style={{ padding: '16px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}
+              style={{ padding: '16px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>المحصل الفعلي</span>
@@ -1138,7 +1138,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>غير محصل</span>
                 <Clock className="w-4 h-4 text-[#141414]" />
               </div>
-              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.unpaidAmount / 1000).toFixed(0)}k
               </div>
               <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px', color: '#e11d48' }}>مستحق السداد</span>
@@ -1153,7 +1153,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>العروض التجارية</span>
                 <Send className="w-4 h-4 text-[#141414]" />
               </div>
-              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.totalProposalsValue / 1000).toFixed(0)}k
               </div>
               <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px' }}>{proposals.length} عرض معتمد</span>
@@ -1165,10 +1165,10 @@ export const KasEtimadCloudPage: React.FC = () => {
               style={{ padding: '16px', borderRadius: '16px' }}
             >
               <div className="flex items-center justify-between">
-                <span style={{ fontSize: '12px', color: '#000000', fontWeight: 550 }}>الاشتراكات</span>
+                <span style={{ fontSize: '12px', color: '#141414', fontWeight: 550 }}>الاشتراكات</span>
                 <RefreshCw className="w-4 h-4 text-[#141414]" />
               </div>
-              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {(stats.totalSubscriptionsRevenue / 1000).toFixed(0)}k
               </div>
               <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '6px' }}>إيراد دوري سنوي</span>
@@ -1177,7 +1177,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div
               onClick={() => setActiveTab('projects')}
               className="card-pricing-featured cursor-pointer hover:shadow-md transition-all"
-              style={{ padding: '16px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}
+              style={{ padding: '16px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}
             >
               <div className="flex items-center justify-between">
                 <span style={{ fontSize: '12px', color: '#a1a1aa', fontWeight: 550 }}>المشاريع</span>
@@ -1198,7 +1198,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 <span style={{ fontSize: '12px', color: '#71717a', fontWeight: 550 }}>المهام</span>
                 <CheckSquare className="w-4 h-4 text-zinc-700" />
               </div>
-              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+              <div className="display-sm" style={{ fontSize: '26px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
                 {stats.activeTasks}
               </div>
               <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '6px' }}>قيد المتابعة</span>
@@ -1211,7 +1211,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="lg:col-span-2 card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3 mb-3">
                 <div>
-                  <h2 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  <h2 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                     <Activity className="w-4 h-4 text-[#141414]" />
                     <span>حركة المبيعات والتحصيلات الشهرية (2026)</span>
                   </h2>
@@ -1219,7 +1219,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3 text-xs font-semibold">
                   <span className="flex items-center gap-1.5 text-zinc-900">
-                    <span className="w-3 h-3 rounded-full bg-black inline-block" />
+                    <span className="w-3 h-3 rounded-full bg-[#141414] inline-block" />
                     الفواتير الصادرة
                   </span>
                   <span className="flex items-center gap-1.5 text-[#141414]">
@@ -1252,7 +1252,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       </div>
                       <div className="w-full flex items-end justify-center gap-1 h-36">
                         <div 
-                          className="w-3.5 bg-black rounded-t-md transition-all group-hover:opacity-80" 
+                          className="w-3.5 bg-[#141414] rounded-t-md transition-all group-hover:opacity-80" 
                           style={{ height: `${invHeight}%` }} 
                         />
                         <div 
@@ -1260,7 +1260,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                           style={{ height: `${colHeight}%` }} 
                         />
                       </div>
-                      <span className="text-[11px] text-[#707070] font-medium truncate group-hover:text-black transition-colors">{item.month}</span>
+                      <span className="text-[11px] text-[#707070] font-medium truncate group-hover:text-[#141414] transition-colors">{item.month}</span>
                     </div>
                   );
                 })}
@@ -1271,7 +1271,7 @@ export const KasEtimadCloudPage: React.FC = () => {
             <div className="card-pricing flex flex-col justify-between" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div>
                 <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-                  <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                  <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                     <Award className="w-4 h-4 text-[#141414]" />
                     <span>مسار ترسية المنافسات</span>
                   </h3>
@@ -1287,7 +1287,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       <span className="font-mono text-zinc-900 font-bold">2 منافسة (33%)</span>
                     </div>
                     <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
-                      <div className="bg-black h-2 rounded-full" style={{ width: '33%' }} />
+                      <div className="bg-[#141414] h-2 rounded-full" style={{ width: '33%' }} />
                     </div>
                   </div>
 
@@ -1347,7 +1347,7 @@ export const KasEtimadCloudPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="card-pricing space-y-4" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-                <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                   <DollarSign className="w-4 h-4 text-[#141414]" />
                   <span>حالات الفواتير والتحصيل</span>
                 </h3>
@@ -1398,7 +1398,7 @@ export const KasEtimadCloudPage: React.FC = () => {
 
             <div className="lg:col-span-2 card-pricing space-y-4" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
               <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-                <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', margin: 0 }}>
+                <h3 className="display-sm flex items-center gap-2" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', margin: 0 }}>
                   <CheckSquare className="w-4 h-4 text-[#141414]" />
                   <span>آخر المهام وجداول التوريدات</span>
                 </h3>
@@ -1423,7 +1423,7 @@ export const KasEtimadCloudPage: React.FC = () => {
                       <div>
                         <div className="font-bold text-zinc-900 leading-relaxed">{task.taskName}</div>
                         <div className="text-[#707070] text-[11px] mt-0.5">
-                          المسؤول: <span className="text-black font-semibold">{task.assignedTo}</span> • استحقاق: <span className="font-mono">{task.dueDate}</span>
+                          المسؤول: <span className="text-[#141414] font-semibold">{task.assignedTo}</span> • استحقاق: <span className="font-mono">{task.dueDate}</span>
                         </div>
                       </div>
                     </div>

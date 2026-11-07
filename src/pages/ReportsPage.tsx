@@ -138,7 +138,7 @@ export const ReportsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -193,12 +193,12 @@ export const ReportsPage: React.FC = () => {
       {/* KPI Stats */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 550, color: '#000000' }}>إجمالي الإيرادات المحققة</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRevenue.toLocaleString()} ⃁</div>
+          <span style={{ fontSize: '13px', fontWeight: 550, color: '#141414' }}>إجمالي الإيرادات المحققة</span>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRevenue.toLocaleString()} ⃁</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>نمو شهري +14.8%</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>صافي الأرباح التشغيلية</span>
           <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalNetProfit.toLocaleString()} ⃁</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>هامش ربح مجمع 57.6%</span>
@@ -206,13 +206,13 @@ export const ReportsPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>عقود الاستقدام (مساند)</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRecruitment} عقد</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRecruitment} عقد</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>دورة الإنجاز 28 يوماً</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', fontWeight: 550, color: '#71717a' }}>عقود التأجير والتشغيل</span>
-          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRent} عقد</div>
+          <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{totalRent} عقد</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>تغطية تشغيلية كاملة</span>
         </div>
       </div>
@@ -236,8 +236,8 @@ export const ReportsPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -268,8 +268,8 @@ export const ReportsPage: React.FC = () => {
                   fontSize: '11.5px',
                   fontWeight: isActive ? 550 : 420,
                   border: '1px solid',
-                  borderColor: isActive ? '#000000' : '#e4e4e7',
-                  backgroundColor: isActive ? '#000000' : '#ffffff',
+                  borderColor: isActive ? '#141414' : '#e4e4e7',
+                  backgroundColor: isActive ? '#141414' : '#ffffff',
                   color: isActive ? '#ffffff' : '#27272a',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -287,7 +287,7 @@ export const ReportsPage: React.FC = () => {
             aria-label="تصفية حسب الشركة"
             value={selectedCompany}
             onChange={(e) => setSelectedCompany(e.target.value)}
-            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+            className="bg-zinc-50 border border-zinc-200 rounded-full py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
           >
             <option value="all">كافة شركات المجموعة الموحدة</option>
             <option value="SAF">شركة السفير الماسي (SAF RC01)</option>
@@ -303,8 +303,8 @@ export const ReportsPage: React.FC = () => {
       {activeReportTab === 'executive' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
-            <h2 className="text-sm font-bold text-black flex items-center gap-2 m-0">
-              <Building2 className="w-4 h-4 text-black" />
+            <h2 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+              <Building2 className="w-4 h-4 text-[#141414]" />
               <span>جدول الأداء المالي والتشغيلي المقارن لشركات المجموعة</span>
             </h2>
             <ExportDropdown
@@ -332,10 +332,10 @@ export const ReportsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {reportData.map((row) => (
                   <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-bold text-black">{row.name}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{row.name}</td>
                     <td className="p-3.5 font-mono">{row.recruitment_contracts} عقد</td>
                     <td className="p-3.5 font-mono">{row.rent_contracts} عقد</td>
-                    <td className="p-3.5 font-mono font-bold text-black">{(row.total_revenue ?? 0).toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{(row.total_revenue ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-[#707070]">{(row.expenses ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{(row.net_profit ?? 0).toLocaleString()} ⃁</td>
                     <td className="p-3.5">
@@ -345,7 +345,7 @@ export const ReportsPage: React.FC = () => {
                 ))}
               </tbody>
               <tfoot>
-                <tr className="bg-zinc-50 font-bold text-black border-t border-zinc-200">
+                <tr className="bg-zinc-50 font-bold text-[#141414] border-t border-zinc-200">
                   <td className="p-3.5">الإجمالي المجمع للمجموعة</td>
                   <td className="p-3.5 font-mono">{totalRecruitment} عقد</td>
                   <td className="p-3.5 font-mono">{totalRent} عقد</td>
@@ -365,7 +365,7 @@ export const ReportsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 className="text-sm font-bold text-black m-0">تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة</h3>
+              <h3 className="text-sm font-bold text-[#141414] m-0">تقرير المبيعات والتعاقدات حسب القنوات وفروع المجموعة</h3>
               <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>إجمالي المبيعات: 590,400 ⃁</span>
             </div>
             <ExportDropdown
@@ -391,11 +391,11 @@ export const ReportsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {salesReportData.map((s, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-bold text-black">{s.channel}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{s.channel}</td>
                     <td className="p-3.5 font-mono">{s.count} عقد</td>
                     <td className="p-3.5 font-mono">{s.avg.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{s.total.toLocaleString()} ⃁</td>
-                    <td className="p-3.5 font-bold text-black">{s.share}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{s.share}</td>
                     <td className="p-3.5"><Badge text={s.conv} type="success" /></td>
                   </tr>
                 ))}
@@ -410,7 +410,7 @@ export const ReportsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h3 className="text-sm font-bold text-black m-0">تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب</h3>
+              <h3 className="text-sm font-bold text-[#141414] m-0">تقرير مدد الاستقدام ودورات الإنجاز حسب الدول والمكاتب</h3>
               <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>متوسط الوصول: 28 يوماً</span>
             </div>
             <ExportDropdown
@@ -436,11 +436,11 @@ export const ReportsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {recruitmentReportData.map((item, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-bold text-black">{item.country}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{item.country}</td>
                     <td className="p-3.5 font-mono">{item.count} تأشيرة</td>
                     <td className="p-3.5 font-mono text-zinc-600">{item.visa_days}</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{item.total_days}</td>
-                    <td className="p-3.5 font-bold text-black">{item.on_time}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{item.on_time}</td>
                     <td className="p-3.5"><Badge text={item.rating} type="success" /></td>
                   </tr>
                 ))}
@@ -455,7 +455,7 @@ export const ReportsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h2 className="text-sm font-bold text-black m-0">التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح</h2>
+              <h2 className="text-sm font-bold text-[#141414] m-0">التقرير المالي التفصيلي وتكاليف التشغيل وهوامش الأرباح</h2>
               <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '4px', display: 'inline-block' }}>صافي الأرباح: 340,400 ⃁</span>
             </div>
             <ExportDropdown
@@ -482,8 +482,8 @@ export const ReportsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {financialReportData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-bold text-black">{row.item}</td>
-                    <td className="p-3.5 font-mono font-bold text-black">{row.total.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{row.item}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{row.total.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-[#707070]">{row.vat.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-[#141414]">{row.direct.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono text-zinc-600">{row.admin.toLocaleString()} ⃁</td>

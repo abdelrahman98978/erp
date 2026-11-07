@@ -186,9 +186,9 @@ export const EmployeeMonitoringPage: React.FC = () => {
     <div className="space-y-6">
       {/* 1. Cinematic Hero Header */}
       <div
-        className="card-feature-cinematic bg-[#000000] text-white"
+        className="card-feature-cinematic bg-[#141414] text-white"
         style={{
-          backgroundColor: '#000000',
+          backgroundColor: '#141414',
           background: '#f3f3f3',
           borderRadius: '18px',
           padding: '28px',

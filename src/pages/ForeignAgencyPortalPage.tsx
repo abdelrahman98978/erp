@@ -269,7 +269,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -323,7 +323,7 @@ export const ForeignAgencyPortalPage: React.FC = () => {
               className="button-white-pill flex items-center gap-1.5"
               style={{ fontSize: '12px', padding: '8px 18px', minHeight: '38px' }}
             >
-              <Plus className="w-4 h-4 text-black" />
+              <Plus className="w-4 h-4 text-[#141414]" />
               <span>إضافة / رفع سيرة جديدة</span>
             </button>
           </div>

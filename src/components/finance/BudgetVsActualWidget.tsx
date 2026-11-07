@@ -74,7 +74,7 @@ export const BudgetVsActualWidget: React.FC<{ items?: BudgetItem[] }> = ({ items
       <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-xs">
         <div className="p-4 border-b border-zinc-100 flex items-center justify-between">
           <div>
-            <h4 className="text-sm font-bold text-black m-0">تفاصيل الميزانيات المعتمدة مقابل الفعلي حسب القسم</h4>
+            <h4 className="text-sm font-bold text-[#141414] m-0">تفاصيل الميزانيات المعتمدة مقابل الفعلي حسب القسم</h4>
             <p className="text-xs text-[#707070] mt-0.5">مراقبة الانحرافات المالية والتحكم في الإنفاق التشغيلي والمنافسات</p>
           </div>
         </div>

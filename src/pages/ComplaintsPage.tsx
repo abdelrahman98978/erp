@@ -314,7 +314,7 @@ export const ComplaintsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -373,25 +373,25 @@ export const ComplaintsPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي التذاكر والشكاوى</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{complaints.length} تذكرة</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{complaints.length} تذكرة</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>معالجة 88% هذا الشهر</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>نزاعات الشركات المصعدة للإدارة</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>{interDisputes.length} نزاعات</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>مرفوعة لمكتب خالد السليم</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>نسبة الالتزام بالـ SLA</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>96.8%</div>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>نسبة الالتزام بالـ SLA</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>96.8%</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إغلاق التذاكر ضمن الموعد</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>معدل رضا العملاء (CSAT)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>4.8 / 5.0</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>4.8 / 5.0</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>بناءً على 142 تقييم</span>
         </div>
       </div>
@@ -414,8 +414,8 @@ export const ComplaintsPage: React.FC = () => {
               padding: '6px 16px',
               borderRadius: '9999px',
               border: '1px solid',
-              borderColor: activeTab === tab.id ? '#000000' : '#e4e4e7',
-              backgroundColor: activeTab === tab.id ? '#000000' : '#ffffff',
+              borderColor: activeTab === tab.id ? '#141414' : '#e4e4e7',
+              backgroundColor: activeTab === tab.id ? '#141414' : '#ffffff',
               color: activeTab === tab.id ? '#ffffff' : '#27272a',
               fontWeight: activeTab === tab.id ? 550 : 420,
               fontSize: '12.5px',
@@ -434,7 +434,7 @@ export const ComplaintsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-black">
+              <h3 className="text-sm font-bold text-[#141414]">
                 مطالبات التعويض المالي واسترجاع المبالغ للعملاء
               </h3>
               <p className="text-xs text-[#707070] mt-0.5">
@@ -461,8 +461,8 @@ export const ComplaintsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {refundClaims.map((c) => (
                   <tr key={c.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{c.id}</td>
-                    <td className="p-3.5 font-bold text-black">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{c.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={c.client} departmentId="crm" size="sm" />
                         <span>{c.client}</span>
@@ -517,7 +517,7 @@ export const ComplaintsPage: React.FC = () => {
       {activeTab === 'types' && (
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
           <div className="border-b border-zinc-100 pb-4 mb-4">
-            <h3 className="text-base font-bold text-black">
+            <h3 className="text-base font-bold text-[#141414]">
               تصنيفات الشكاوى ومصفوفة اتفاقية مستوى الخدمة (SLA Matrix)
             </h3>
             <p className="text-xs text-[#707070] mt-1">
@@ -537,7 +537,7 @@ export const ComplaintsPage: React.FC = () => {
               <div key={i} className="p-4 rounded-2xl border border-zinc-200 bg-zinc-50 flex flex-col justify-between">
                 <div>
                   <div className="flex justify-between items-start mb-2">
-                    <span className="font-bold text-black text-sm">{item.type}</span>
+                    <span className="font-bold text-[#141414] text-sm">{item.type}</span>
                     <Badge text={item.prio} type={item.prio.includes('طارئ') ? 'danger' : 'primary'} />
                   </div>
                   <div className="text-xs font-mono font-bold text-[#141414] mb-2">المهلة الزمنية (SLA): {item.sla}</div>
@@ -555,7 +555,7 @@ export const ComplaintsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="flex items-center justify-between p-4 border-b border-zinc-100 bg-white flex-wrap gap-3">
             <div>
-              <h3 className="text-sm font-bold text-black">
+              <h3 className="text-sm font-bold text-[#141414]">
                 شكاوى ونزاعات الشركات والمكاتب المرفوعة للإدارة العليا
               </h3>
               <p className="text-xs text-[#707070] mt-0.5">
@@ -587,11 +587,11 @@ export const ComplaintsPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {interDisputes.map(disp => (
                   <tr key={disp.id} className="hover:bg-zinc-50">
-                    <td className="p-3.5 font-mono font-bold text-black">{disp.dispute_no}</td>
-                    <td className="p-3.5 font-bold text-black">{disp.sender_entity}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{disp.dispute_no}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">{disp.sender_entity}</td>
                     <td className="p-3.5 font-bold text-zinc-800">{disp.target_entity}</td>
                     <td className="p-3.5">
-                      <div className="font-bold text-black">{disp.subject}</div>
+                      <div className="font-bold text-[#141414]">{disp.subject}</div>
                       <div className="text-[11px] text-[#707070]">{disp.details}</div>
                     </td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">
@@ -634,7 +634,7 @@ export const ComplaintsPage: React.FC = () => {
                 aria-label="تصفية حسب حالة التذكرة"
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value)}
-                className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               >
                 <option value="all">جميع الحالات</option>
                 <option value="جديدة">جديدة</option>
@@ -647,7 +647,7 @@ export const ComplaintsPage: React.FC = () => {
                 aria-label="تصفية حسب الأولوية"
                 value={priorityFilter}
                 onChange={e => setPriorityFilter(e.target.value)}
-                className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               >
                 <option value="all">جميع الأولويات</option>
                 <option value="عاجل طارئ">عاجل طارئ</option>
@@ -677,14 +677,14 @@ export const ComplaintsPage: React.FC = () => {
                     <td colSpan={8} className="p-8 text-center text-[#707070]">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <BusinessIllustration type="empty-search" size="md" />
-                        <span className="font-bold text-black">لا توجد تذاكر أو شكاوى مطابقة للبحث</span>
+                        <span className="font-bold text-[#141414]">لا توجد تذاكر أو شكاوى مطابقة للبحث</span>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   filteredTickets.map(ticket => (
                     <tr key={ticket.id} className="hover:bg-zinc-50 transition-colors">
-                      <td className="p-3.5 font-mono font-bold text-black">{ticket.ticket_no}</td>
+                      <td className="p-3.5 font-mono font-bold text-[#141414]">{ticket.ticket_no}</td>
                       <td className="p-3.5">
                         <div className="flex items-center gap-2.5">
                           <CorporateAvatar
@@ -693,13 +693,13 @@ export const ComplaintsPage: React.FC = () => {
                             size="sm"
                           />
                           <div>
-                            <div className="font-bold text-black">{ticket.client_name}</div>
+                            <div className="font-bold text-[#141414]">{ticket.client_name}</div>
                             <div className="text-[11px] text-[#707070] font-mono">{ticket.client_phone}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-3.5">
-                        <div className="font-bold text-black">{ticket.category}</div>
+                        <div className="font-bold text-[#141414]">{ticket.category}</div>
                         <div className="text-[11px] text-[#707070] font-mono">{ticket.contract_ref}</div>
                       </td>
                       <td className="p-3.5">
@@ -762,12 +762,12 @@ export const ComplaintsPage: React.FC = () => {
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[400px]">
             <div className="bg-zinc-50 rounded-2xl p-3 border border-zinc-200">
-              <h4 className="text-xs font-bold text-black mb-3">محادثات الدعم النشطة</h4>
+              <h4 className="text-xs font-bold text-[#141414] mb-3">محادثات الدعم النشطة</h4>
               {complaints.map(c => (
-                <div key={c.id} className="p-2.5 rounded-xl bg-white border border-zinc-200 mb-2 cursor-pointer hover:border-black transition-colors flex items-center gap-2.5">
+                <div key={c.id} className="p-2.5 rounded-xl bg-white border border-zinc-200 mb-2 cursor-pointer hover:border-[#141414] transition-colors flex items-center gap-2.5">
                   <CorporateAvatar name={c.client_name} departmentId="crm" size="sm" />
                   <div className="min-w-0 flex-1">
-                    <div className="font-bold text-xs text-black truncate">{c.client_name}</div>
+                    <div className="font-bold text-xs text-[#141414] truncate">{c.client_name}</div>
                     <div className="text-[11px] text-[#707070] font-mono truncate">{c.client_phone} • {c.ticket_no}</div>
                   </div>
                 </div>
@@ -780,7 +780,7 @@ export const ComplaintsPage: React.FC = () => {
                   <div className="flex items-center gap-2.5">
                     <CorporateAvatar name="بندر صالح الهويريني" departmentId="crm" size="sm" status="online" />
                     <div>
-                      <h4 className="text-xs font-bold text-black">بندر صالح الهويريني (+966555774494)</h4>
+                      <h4 className="text-xs font-bold text-[#141414]">بندر صالح الهويريني (+966555774494)</h4>
                       <span className="text-[11px] text-[#707070] font-mono">تذكرة TK-2026-0041 • عقد RC-2026-0014</span>
                     </div>
                   </div>
@@ -788,7 +788,7 @@ export const ComplaintsPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <div className="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl max-w-[80%] text-xs text-black">
+                  <div className="bg-zinc-50 border border-zinc-200 p-3 rounded-2xl max-w-[80%] text-xs text-[#141414]">
                     السلام عليكم، العاملة ترغب بالامتناع عن العمل وتطالب بالتحويل للإيواء أو الترحيل. نأمل المعالجة عاجلاً.
                   </div>
                   <div className="bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] p-3 rounded-2xl max-w-[80%] mr-auto text-xs">
@@ -803,7 +803,7 @@ export const ComplaintsPage: React.FC = () => {
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   placeholder="اكتب ردك المباشر للعميل عبر الواتساب..."
                 />
                 <button
@@ -823,22 +823,22 @@ export const ComplaintsPage: React.FC = () => {
       {/* Tab 4: Root Cause Analytics */}
       {activeTab === 'analytics' && (
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h3 className="text-sm font-bold text-black mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-[#141414]" />
             <span>تحليلات أسباب الشكاوى الجذرية (Root Cause Analysis - RCA)</span>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <h4 className="text-xs font-bold text-zinc-700">توزيع مسببات الشكاوى</h4>
               {[
-                { label: 'رفض عمل أو عدم رغبة العاملة', percent: 45, color: 'bg-black' },
+                { label: 'رفض عمل أو عدم رغبة العاملة', percent: 45, color: 'bg-[#141414]' },
                 { label: 'تأخير الوصول من المكتب الخارجي', percent: 25, color: 'bg-[#141414]' },
                 { label: 'تسويات واسترجاع مالي', percent: 18, color: 'bg-[#141414]' },
                 { label: 'استفسارات عامة وسلوك', percent: 12, color: 'bg-[#141414]' }
               ].map((item, idx) => (
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between text-xs font-bold">
-                    <span className="text-black">{item.label}</span>
+                    <span className="text-[#141414]">{item.label}</span>
                     <span className="font-mono text-zinc-600">{item.percent}%</span>
                   </div>
                   <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
@@ -849,7 +849,7 @@ export const ComplaintsPage: React.FC = () => {
             </div>
 
             <div className="bg-zinc-50 p-5 rounded-2xl border border-zinc-200 space-y-3">
-              <h4 className="text-xs font-bold text-black">إحصائيات الفروع والمكاتب الأكثر بلاغاً</h4>
+              <h4 className="text-xs font-bold text-[#141414]">إحصائيات الفروع والمكاتب الأكثر بلاغاً</h4>
               <p className="text-xs text-zinc-600">
                 • <strong>فرع الرياض</strong>: 52% من إجمالي التذاكر (متابعة الإيواء وتأجير العقود).
               </p>
@@ -878,13 +878,13 @@ export const ComplaintsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddInterDispute} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddInterDispute} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">الشركة / الفرع المشتكي *</label>
                 <select
                   value={disputeForm.sender_entity}
                   onChange={e => setDisputeForm({ ...disputeForm, sender_entity: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>شركة توباز (Topaz Group)</option>
                   <option>دار الرواد (Dar Al-Ruwad)</option>
@@ -899,7 +899,7 @@ export const ComplaintsPage: React.FC = () => {
                 <select
                   value={disputeForm.target_entity}
                   onChange={e => setDisputeForm({ ...disputeForm, target_entity: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>🇵🇭 مكتب بلاتينيوم الفلبيني (PLATINUM)</option>
                   <option>🇪🇹 مكتب داماس الإثيوبي (DAMAS)</option>
@@ -916,7 +916,7 @@ export const ComplaintsPage: React.FC = () => {
                   placeholder="عنوان مختصر للنزاع..."
                   value={disputeForm.subject}
                   onChange={e => setDisputeForm({ ...disputeForm, subject: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -929,7 +929,7 @@ export const ComplaintsPage: React.FC = () => {
                     placeholder="0.00 ⃁"
                     value={disputeForm.amount_claimed}
                     onChange={e => setDisputeForm({ ...disputeForm, amount_claimed: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -937,7 +937,7 @@ export const ComplaintsPage: React.FC = () => {
                   <select
                     value={disputeForm.priority}
                     onChange={e => setDisputeForm({ ...disputeForm, priority: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="عالي جداً VIP">عالي جداً VIP (خالد السليم)</option>
                     <option value="عاجل">عاجل</option>
@@ -953,7 +953,7 @@ export const ComplaintsPage: React.FC = () => {
                   placeholder="شرح أسباب البلاغ والطلب المطلوب من الإدارة العليا..."
                   value={disputeForm.details}
                   onChange={e => setDisputeForm({ ...disputeForm, details: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -985,7 +985,7 @@ export const ComplaintsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddTicket} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddTicket} className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل بالكامل *</label>
@@ -994,7 +994,7 @@ export const ComplaintsPage: React.FC = () => {
                     placeholder="اسم العميل..."
                     value={addForm.client_name}
                     onChange={e => setAddForm({ ...addForm, client_name: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -1005,7 +1005,7 @@ export const ComplaintsPage: React.FC = () => {
                     placeholder="+9665..."
                     value={addForm.client_phone}
                     onChange={e => setAddForm({ ...addForm, client_phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -1017,7 +1017,7 @@ export const ComplaintsPage: React.FC = () => {
                   <select
                     value={addForm.category}
                     onChange={e => setAddForm({ ...addForm, category: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="رفض عمل">رفض عمل</option>
                     <option value="تأخير وصول">تأخير وصول</option>
@@ -1031,7 +1031,7 @@ export const ComplaintsPage: React.FC = () => {
                   <select
                     value={addForm.priority}
                     onChange={e => setAddForm({ ...addForm, priority: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="عادي">عادي (SLA 24 ساعة)</option>
                     <option value="مهم">مهم (SLA 12 ساعة)</option>
@@ -1045,7 +1045,7 @@ export const ComplaintsPage: React.FC = () => {
                 <select
                   value={addForm.branch}
                   onChange={e => setAddForm({ ...addForm, branch: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>فرع الرياض الرئيسي</option>
                   <option>فرع جدة</option>
@@ -1063,7 +1063,7 @@ export const ComplaintsPage: React.FC = () => {
                   placeholder="اكتب التفاصيل هنا..."
                   value={addForm.description}
                   onChange={e => setAddForm({ ...addForm, description: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -1096,9 +1096,9 @@ export const ComplaintsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
+            <div className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="bg-zinc-50 p-4 rounded-2xl border border-zinc-100 space-y-2 text-xs">
-                <div><strong className="text-[#707070]">العميل:</strong> <span className="font-bold text-black">{selectedTicket.client_name} ({selectedTicket.client_phone})</span></div>
+                <div><strong className="text-[#707070]">العميل:</strong> <span className="font-bold text-[#141414]">{selectedTicket.client_name} ({selectedTicket.client_phone})</span></div>
                 <div><strong className="text-[#707070]">الشرح:</strong> <span className="text-zinc-700">{selectedTicket.description}</span></div>
                 <div><strong className="text-[#707070]">المسؤول الحالي:</strong> <span className="font-bold text-[#141414]">{selectedTicket.assigned_agent}</span></div>
               </div>

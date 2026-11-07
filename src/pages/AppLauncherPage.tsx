@@ -693,7 +693,7 @@ interface CategoryMeta {
 
 /**
  * Strict Adherence to Original Institutional Theme:
- * Primary Ink (#000000), Warm Cream Canvas (#f3f3f3), Pure White Cards (#FFFFFF),
+ * Primary Ink (#141414), Warm Cream Canvas (#f3f3f3), Pure White Cards (#FFFFFF),
  * Champagne Gold Accents (#141414 / #FAEBD7), Hairline Borders (#E4E4E7).
  */
 const CATEGORY_STYLES: Record<string, CategoryMeta> = {
@@ -1094,7 +1094,7 @@ export const AppLauncherPage: React.FC<AppLauncherPageProps> = ({ onSelectApp })
         {filteredApps.length === 0 && (
           <div className="bg-white border border-zinc-200 rounded-3xl p-12 text-center text-[#707070] flex flex-col items-center">
             <BusinessIllustration type="empty-search" size="md" className="mb-3" />
-            <p className="font-bold text-black text-sm">لم يتم العثور على أي وحدة تطابق بحثك في قسمك</p>
+            <p className="font-bold text-[#141414] text-sm">لم يتم العثور على أي وحدة تطابق بحثك في قسمك</p>
             <p className="text-xs text-[#707070] mt-1">
               جرب البحث بكلمات أخرى أو اختر "كافة الوحدات المصرحة للقسم"
             </p>

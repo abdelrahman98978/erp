@@ -245,7 +245,7 @@ export const JournalsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -317,19 +317,19 @@ export const JournalsPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي القيود المرحّلة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{journals.length} قيداً</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{journals.length} قيداً</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>100% متطابقة</span>
         </div>
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي حركات المدين (Debit)</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {journals.reduce((acc, j) => acc + (j.total_debit || 0), 0).toLocaleString()} ⃁
           </div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>مجموع المدين</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي حركات الدائن (Credit)</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {journals.reduce((acc, j) => acc + (j.total_credit || 0), 0).toLocaleString()} ⃁
@@ -338,8 +338,8 @@ export const JournalsPage: React.FC = () => {
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>حالة التوازن المحاسبي</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>حالة التوازن المحاسبي</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             متوازن تماماً
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>فارق = 0.00 ⃁</span>
@@ -367,7 +367,7 @@ export const JournalsPage: React.FC = () => {
               aria-label="تصفية حسب نوع القيد"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs font-bold text-black focus:border-black focus:outline-none"
+              className="bg-zinc-50 border border-zinc-200 rounded-2xl py-1.5 px-3 text-xs font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
             >
               <option value="ALL">جميع أنواع القيود</option>
               <option value="MANUAL">قيود يدوية (MANUAL)</option>
@@ -409,12 +409,12 @@ export const JournalsPage: React.FC = () => {
               ) : (
                 filteredJournals.map((j) => (
                   <tr key={j.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">{j.entry_number}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{j.entry_number}</td>
                     <td className="p-3.5 font-mono text-[#707070]">{j.entry_date}</td>
-                    <td className="p-3.5 font-semibold text-black max-w-xs truncate" title={j.description}>
+                    <td className="p-3.5 font-semibold text-[#141414] max-w-xs truncate" title={j.description}>
                       {j.description}
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-black">{j.total_debit.toLocaleString()} ⃁</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{j.total_debit.toLocaleString()} ⃁</td>
                     <td className="p-3.5 font-mono font-bold text-[#141414]">{j.total_credit.toLocaleString()} ⃁</td>
                     <td className="p-3.5 text-zinc-600">
                       <div>{j.branch_name}</div>
@@ -492,7 +492,7 @@ export const JournalsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSaveJournal} className="p-6 space-y-4 overflow-y-auto flex-1 bg-white text-black">
+            <form onSubmit={handleSaveJournal} className="p-6 space-y-4 overflow-y-auto flex-1 bg-white text-[#141414]">
               {/* Header Details */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -501,7 +501,7 @@ export const JournalsPage: React.FC = () => {
                     type="date"
                     value={entryDate}
                     onChange={(e) => setEntryDate(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                     required
                   />
                 </div>
@@ -511,7 +511,7 @@ export const JournalsPage: React.FC = () => {
                   <select
                     value={entryType}
                     onChange={(e) => setEntryType(e.target.value as any)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="MANUAL">قيد يومية يدوي (MANUAL)</option>
                     <option value="AUTOMATIC">قيد تسوية / تلقائي (AUTOMATIC)</option>
@@ -524,7 +524,7 @@ export const JournalsPage: React.FC = () => {
                   <select
                     value={branchName}
                     onChange={(e) => setBranchName(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option>فرع الرياض الرئيسي</option>
                     <option>فرع جدة</option>
@@ -541,7 +541,7 @@ export const JournalsPage: React.FC = () => {
                   placeholder="مثال: إثبات سداد مصاريف استقدام عمالة / تحصيل دفعة عقد إيجار..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -549,7 +549,7 @@ export const JournalsPage: React.FC = () => {
               {/* Multi-Line Journal Lines Builder */}
               <div className="border border-zinc-200 rounded-2xl p-4 bg-zinc-50 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-black">بنود وأطراف القيد المحاسبي</h4>
+                  <h4 className="text-xs font-bold text-[#141414]">بنود وأطراف القيد المحاسبي</h4>
                   <button
                     type="button"
                     onClick={handleAddLine}
@@ -569,7 +569,7 @@ export const JournalsPage: React.FC = () => {
                         <select
                           value={line.account_code}
                           onChange={(e) => handleLineChange(idx, 'account_code', e.target.value)}
-                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-1.5 px-2 text-xs text-black focus:border-black focus:outline-none"
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-1.5 px-2 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                         >
                           {accountsList.map((acc) => (
                             <option key={acc.code} value={acc.code}>
@@ -587,7 +587,7 @@ export const JournalsPage: React.FC = () => {
                           value={line.debit === 0 ? '' : line.debit}
                           onChange={(e) => handleLineChange(idx, 'debit', e.target.value)}
                           placeholder="0.00"
-                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-1.5 px-2 text-xs font-mono font-bold text-black focus:border-black focus:outline-none"
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-1.5 px-2 text-xs font-mono font-bold text-[#141414] focus:border-[#141414] focus:outline-none"
                         />
                       </div>
 
@@ -619,7 +619,7 @@ export const JournalsPage: React.FC = () => {
 
                 {/* Balance Summary Box */}
                 <div className={`p-3.5 rounded-2xl border flex items-center justify-between ${
-                  isBalanced ? 'bg-[#f3f3f3] border-[#e0e0e0] text-black' : 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]'
+                  isBalanced ? 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]' : 'bg-[#f3f3f3] border-[#e0e0e0] text-[#141414]'
                 }`}>
                   <div className="flex items-center gap-2.5">
                     {isBalanced ? (
@@ -670,7 +670,7 @@ export const JournalsPage: React.FC = () => {
       {/* View & Print Selected Journal Modal */}
       {selectedJournal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
-          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-black font-sans">
+          <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden text-[#141414] font-sans">
             <div className="p-4 bg-[#f3f3f3] border-b border-[#e0e0e0] text-[#141414] flex items-center justify-between print:hidden">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-[#141414]" />
@@ -698,14 +698,14 @@ export const JournalsPage: React.FC = () => {
 
             <div className="p-8 space-y-6 bg-white border border-zinc-300 m-4 rounded-2xl">
               {/* Header */}
-              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+              <div className="flex items-center justify-between border-b-2 border-[#141414] pb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-black m-0">{activeCompany.name}</h2>
+                  <h2 className="text-lg font-bold text-[#141414] m-0">{activeCompany.name}</h2>
                   <p className="text-xs text-zinc-600 mt-0.5 font-mono">س.ت: 1010892819 | الرقم الضريبي: 310928374900003</p>
                   <p className="text-xs text-[#707070]">سجل القيود المحاسبية المعتمدة (Double-Entry Ledger)</p>
                 </div>
                 <div className="text-left">
-                  <div className="text-sm font-extrabold text-black font-mono border-2 border-black px-3 py-1 rounded-xl">
+                  <div className="text-sm font-extrabold text-[#141414] font-mono border-2 border-[#141414] px-3 py-1 rounded-xl">
                     قيد محاسبي: {selectedJournal.entry_number}
                   </div>
                   <div className="text-xs font-mono text-zinc-600 mt-1 font-bold">التاريخ: {selectedJournal.entry_date}</div>
@@ -716,7 +716,7 @@ export const JournalsPage: React.FC = () => {
               {/* Description Box */}
               <div className="p-3.5 bg-zinc-50 rounded-xl border border-zinc-200 text-xs">
                 <span className="font-bold text-zinc-700 block mb-1">البيان والشرح المحاسبي:</span>
-                <span className="text-black font-semibold text-sm">{selectedJournal.description}</span>
+                <span className="text-[#141414] font-semibold text-sm">{selectedJournal.description}</span>
               </div>
 
               {/* Journal Line Items Table */}
@@ -733,22 +733,22 @@ export const JournalsPage: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-zinc-200 font-mono">
                     <tr>
-                      <td className="p-3 font-bold text-black">11010</td>
-                      <td className="p-3 font-sans font-semibold text-black">الصندوق الرئيسي - الخزينة</td>
+                      <td className="p-3 font-bold text-[#141414]">11010</td>
+                      <td className="p-3 font-sans font-semibold text-[#141414]">الصندوق الرئيسي - الخزينة</td>
                       <td className="p-3 font-sans text-[#707070]">{selectedJournal.cost_center_code || 'CC-OPS-01'}</td>
-                      <td className="p-3 font-bold text-black">{selectedJournal.total_debit.toLocaleString()} ⃁</td>
+                      <td className="p-3 font-bold text-[#141414]">{selectedJournal.total_debit.toLocaleString()} ⃁</td>
                       <td className="p-3 text-[#707070]">0.00 ⃁</td>
                     </tr>
                     <tr>
-                      <td className="p-3 font-bold text-black">41100</td>
-                      <td className="p-3 font-sans font-semibold text-black">إيرادات وساطة عقود الاستقدام</td>
+                      <td className="p-3 font-bold text-[#141414]">41100</td>
+                      <td className="p-3 font-sans font-semibold text-[#141414]">إيرادات وساطة عقود الاستقدام</td>
                       <td className="p-3 font-sans text-[#707070]">{selectedJournal.cost_center_code || 'CC-OPS-01'}</td>
                       <td className="p-3 text-[#707070]">0.00 ⃁</td>
                       <td className="p-3 font-bold text-[#141414]">{selectedJournal.total_credit.toLocaleString()} ⃁</td>
                     </tr>
-                    <tr className="bg-zinc-50 font-bold border-t-2 border-black text-xs font-sans">
+                    <tr className="bg-zinc-50 font-bold border-t-2 border-[#141414] text-xs font-sans">
                       <td colSpan={3} className="p-3 text-left pl-4">الإجمالي المتوازن:</td>
-                      <td className="p-3 text-black font-mono font-extrabold">{selectedJournal.total_debit.toLocaleString()} ⃁</td>
+                      <td className="p-3 text-[#141414] font-mono font-extrabold">{selectedJournal.total_debit.toLocaleString()} ⃁</td>
                       <td className="p-3 text-[#141414] font-mono font-extrabold">{selectedJournal.total_credit.toLocaleString()} ⃁</td>
                     </tr>
                   </tbody>

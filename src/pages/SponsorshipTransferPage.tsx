@@ -151,7 +151,7 @@ export const SponsorshipTransferPage: React.FC = () => {
   return (
     <div className="space-y-6 text-zinc-900 font-sans" dir="rtl">
       {/* 1. Master Cinematic Hero Header - KAS Suite Luxury Design */}
-      <div className="rounded-2xl p-6 bg-[#000000] bg-gradient-to-l from-[#f3f3f3] via-[#f3f3f3] to-[#f3f3f3] text-[#141414] border border-[#e0e0e0] shadow-xl relative overflow-hidden">
+      <div className="rounded-2xl p-6 bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] shadow-xs relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div className="flex items-start gap-4">
             <BusinessIllustration type="sponsorship-transfer" size="sm" />
@@ -202,7 +202,7 @@ export const SponsorshipTransferPage: React.FC = () => {
               }}
               className="px-4 py-2 rounded-xl text-xs font-bold bg-[#141414] text-[#ffffff] hover:bg-[#262626] shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-black" />
+              <Sparkles className="w-4 h-4 text-[#141414]" />
               <span>+ حجز نقل خدمات لعميل</span>
             </button>
 

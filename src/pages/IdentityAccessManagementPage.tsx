@@ -293,7 +293,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-4 lg:p-8 font-sans space-y-6" dir="rtl">
       {/* Top Breadcrumb & Hero Banner */}
-      <div className="bg-[#000000] bg-gradient-to-l from-[#f3f3f3] via-[#f3f3f3] to-black border border-[#e0e0e0] rounded-3xl p-6 lg:p-8 text-[#141414] shadow-2xl relative overflow-hidden">
+      <div className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-3xl p-6 lg:p-8 text-[#141414] shadow-xs relative overflow-hidden">
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#f3f3f3] rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
@@ -326,7 +326,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
               className="px-4 py-2.5 bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-black text-xs rounded-2xl transition border border-[#e0e0e0] flex items-center justify-center gap-1.5 shadow-lg cursor-pointer"
               title="تحديث البيانات اللحظية"
             >
-              <RefreshCw className="w-4 h-4 text-black shrink-0" />
+              <RefreshCw className="w-4 h-4 text-[#141414] shrink-0" />
               <span>تحديث</span>
             </button>
           </div>
@@ -358,11 +358,11 @@ export const IdentityAccessManagementPage: React.FC = () => {
                     : 'bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] hover:bg-zinc-800'
                 }`}
               >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-black' : 'text-[#141414]'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#141414]' : 'text-[#141414]'}`} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                    isActive ? 'bg-black text-[#ffffff]' : 'bg-[#f3f3f3] text-[#141414]'
+                    isActive ? 'bg-[#141414] text-[#ffffff]' : 'bg-[#f3f3f3] text-[#141414]'
                   }`}>
                     {tab.count}
                   </span>
@@ -589,7 +589,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
 
               <button
                 onClick={() => switchCompany(comp.code)}
-                className="w-full py-2.5 bg-slate-100 hover:bg-black hover:text-white text-slate-700 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-slate-100 hover:bg-[#141414] hover:text-white text-slate-700 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-2"
               >
                 <ArrowLeftRight className="w-3.5 h-3.5" />
                 التبديل إلى هذه الشركة
@@ -647,7 +647,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setSelectedUserForDetail(u)}
-                        className="px-3 py-1.5 bg-black text-[#ffffff] rounded-xl font-bold text-[11px] hover:bg-zinc-800 cursor-pointer"
+                        className="px-3 py-1.5 bg-[#141414] text-[#ffffff] rounded-xl font-bold text-[11px] hover:bg-zinc-800 cursor-pointer"
                       >
                         تعديل النطاق
                       </button>
@@ -1001,7 +1001,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <h3 className="text-base font-black text-slate-900">إنشاء تفويض صلاحيات مؤقت</h3>
-              <button type="button" onClick={() => setShowNewDelegationModal(false)} className="text-slate-400 hover:text-black">
+              <button type="button" onClick={() => setShowNewDelegationModal(false)} className="text-slate-400 hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1051,7 +1051,7 @@ export const IdentityAccessManagementPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-xs">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <h3 className="text-base font-black text-slate-900">إضافة قاعدة فصل مهام رقابية (SoD)</h3>
-              <button type="button" onClick={() => setShowNewSoDModal(false)} className="text-slate-400 hover:text-black">
+              <button type="button" onClick={() => setShowNewSoDModal(false)} className="text-slate-400 hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>

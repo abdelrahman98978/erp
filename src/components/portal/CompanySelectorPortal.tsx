@@ -31,7 +31,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -71,7 +71,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
               padding: '8px 20px',
               minHeight: '40px',
               backgroundColor: '#ffffff',
-              color: '#000000',
+              color: '#141414',
               fontWeight: '700',
               display: 'inline-flex',
               alignItems: 'center',
@@ -104,7 +104,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
           <div
             className="card-feature-cinematic"
             style={{
-              background: '#000000',
+              background: '#141414',
               borderRadius: '16px',
               padding: '28px',
               color: '#FFFFFF',
@@ -142,24 +142,24 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
 
                 {/* Live Stats 4-Grid matching Signature Tokens */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '12px', background: '#ffffff', color: '#000000' }}>
+                  <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '12px', background: '#ffffff', color: '#141414' }}>
                     <span style={{ fontSize: '11.5px', color: '#71717a', fontWeight: 550 }}>المنافسات الحكومية</span>
-                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#000000' }}>2,651 منافسة</span>
+                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#141414' }}>2,651 منافسة</span>
                     <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '4px' }}>مسجلة بشيت كاس</span>
                   </div>
                   <div className="card-pistachio-band" style={{ padding: '14px 18px', borderRadius: '12px' }}>
-                    <span style={{ fontSize: '11.5px', color: '#000000', fontWeight: 550 }}>المبيعات المعتمدة</span>
-                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#000000' }}>106,006 ⃁</span>
+                    <span style={{ fontSize: '11.5px', color: '#141414', fontWeight: 550 }}>المبيعات المعتمدة</span>
+                    <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#141414' }}>106,006 ⃁</span>
                     <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '4px' }}>فواتير ZATCA</span>
                   </div>
-                  <div className="card-pricing-featured" style={{ padding: '14px 18px', borderRadius: '12px', background: '#000000', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }}>
+                  <div className="card-pricing-featured" style={{ padding: '14px 18px', borderRadius: '12px', background: '#141414', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }}>
                     <span style={{ fontSize: '11.5px', color: '#a1a1aa', fontWeight: 550 }}>فريق العمل</span>
                     <span className="display-sm block mt-1" style={{ fontSize: '22px', fontWeight: 330, color: '#ffffff' }}>4 أعضاء</span>
                     <span className="pill-tag-mint" style={{ fontSize: '10px', marginTop: '4px' }}>طاقم إدارة المنافسات</span>
                   </div>
-                  <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '12px', background: '#ffffff', color: '#000000' }}>
+                  <div className="card-pricing" style={{ padding: '14px 18px', borderRadius: '12px', background: '#ffffff', color: '#141414' }}>
                     <span style={{ fontSize: '11.5px', color: '#71717a', fontWeight: 550 }}>الرقم الضريبي</span>
-                    <span className="block mt-1 font-mono font-bold text-xs" style={{ color: '#000000' }}>310245879600003</span>
+                    <span className="block mt-1 font-mono font-bold text-xs" style={{ color: '#141414' }}>310245879600003</span>
                     <span className="pill-tag-shade" style={{ fontSize: '10px', marginTop: '4px' }}>هيئة الزكاة والضريبة</span>
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                     padding: '12px 24px',
                     fontSize: '13px',
                     backgroundColor: '#ffffff',
-                    color: '#000000',
+                    color: '#141414',
                     fontWeight: '700',
                     display: 'flex',
                     alignItems: 'center',
@@ -220,7 +220,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: '20px',
-                  border: isCurrent ? '2px solid #000000' : '1px solid #e4e4e7',
+                  border: isCurrent ? '2px solid #141414' : '1px solid #e4e4e7',
                   boxShadow: isCurrent ? '0 10px 25px rgba(0,0,0,0.1)' : undefined,
                   transition: 'all 0.2s ease',
                 }}
@@ -232,7 +232,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                       <div style={{ width: '48px', height: '48px', borderRadius: '9999px', background: '#f4f4f5', border: '1px solid #e4e4e7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <CompanyLogo companyId={comp.id as CompanyId} size={36} />
                       </div>
-                      <span className="pill-tag-shade" style={{ fontSize: '11px', fontWeight: 700, background: '#000000', color: '#ffffff' }}>
+                      <span className="pill-tag-shade" style={{ fontSize: '11px', fontWeight: 700, background: '#141414', color: '#ffffff' }}>
                         {comp.code}
                       </span>
                     </div>
@@ -243,7 +243,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   </div>
 
                   {/* Company Titles */}
-                  <h3 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#000000', letterSpacing: '-0.01em', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+                  <h3 className="display-sm" style={{ fontSize: '18px', fontWeight: 330, color: '#141414', letterSpacing: '-0.01em', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                     {comp.name}
                   </h3>
                   <div className="text-xs text-[#707070] mt-1 font-sans font-medium">
@@ -254,7 +254,7 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                   <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-zinc-50 border border-zinc-200 mt-4 text-xs">
                     <div>
                       <span className="text-[11px] text-[#707070] block font-medium">الفروع النشطة</span>
-                      <span className="text-sm font-bold text-black block mt-0.5">{comp.branchesCount} فروع</span>
+                      <span className="text-sm font-bold text-[#141414] block mt-0.5">{comp.branchesCount} فروع</span>
                     </div>
                     <div>
                       <span className="text-[11px] text-[#707070] block font-medium">إجمالي الكادر</span>
@@ -282,8 +282,8 @@ export const CompanySelectorPortal: React.FC<CompanySelectorPortalProps> = ({ on
                     fontSize: '12px',
                     fontWeight: 600,
                     border: '1px solid',
-                    borderColor: isCurrent ? '#000000' : '#000000',
-                    backgroundColor: isCurrent ? '#000000' : '#000000',
+                    borderColor: isCurrent ? '#141414' : '#141414',
+                    backgroundColor: isCurrent ? '#141414' : '#141414',
                     color: '#ffffff',
                     cursor: 'pointer',
                     display: 'flex',

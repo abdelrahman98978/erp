@@ -158,7 +158,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -212,8 +212,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -235,8 +235,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
       {activeTab === 'project' && (
         <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
           <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between flex-wrap gap-2">
-            <h2 className="text-sm font-bold text-black flex items-center gap-2 m-0">
-              <Clock className="w-4 h-4 text-black" />
+            <h2 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+              <Clock className="w-4 h-4 text-[#141414]" />
               <span>مزامنة مشاريع الاستقدام والتوسع اللوجستي (Project Timeline)</span>
             </h2>
             <button
@@ -265,8 +265,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               <tbody className="divide-y divide-zinc-100">
                 {projectTasks.map((t) => (
                   <tr key={t.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">{t.id}</td>
-                    <td className="p-3.5 font-bold text-black">
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">{t.id}</td>
+                    <td className="p-3.5 font-bold text-[#141414]">
                       {t.taskName} {t.milestone && <span className="bg-[#f3f3f3] text-[#141414] text-[10px] px-2 py-0.5 rounded-full font-bold ml-1">Milestone</span>}
                     </td>
                     <td className="p-3.5 text-zinc-600">
@@ -312,7 +312,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                 </span>
                 <span className="text-[10px] text-[#707070] font-medium">RLS: {dash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}</span>
               </div>
-              <h3 className="text-xs font-bold text-black mb-1">
+              <h3 className="text-xs font-bold text-[#141414] mb-1">
                 {dash.title}
               </h3>
               <div className="text-[11px] text-[#707070] mb-4 font-mono">
@@ -350,8 +350,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
       {/* Tab 3: Visio Org Chart */}
       {activeTab === 'visio' && (
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h3 className="text-sm font-bold text-black mb-1 flex items-center gap-2">
-            <GitFork className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] mb-1 flex items-center gap-2">
+            <GitFork className="w-4 h-4 text-[#141414]" />
             <span>الهيكل التنظيمي الخريطي الموحد (Visio Interactive Group Org Chart)</span>
           </h3>
           <p className="text-xs text-[#707070] mb-6">
@@ -378,22 +378,22 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-3xl">
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
-                <div className="text-xs font-bold text-black">شركة السفير الماسي</div>
+                <div className="text-xs font-bold text-[#141414]">شركة السفير الماسي</div>
                 <div className="text-[10px] text-[#707070] mt-0.5">5 فروع | 120 موظف</div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
-                <div className="text-xs font-bold text-black">شركة ياقوت نجد</div>
+                <div className="text-xs font-bold text-[#141414]">شركة ياقوت نجد</div>
                 <div className="text-[10px] text-[#707070] mt-0.5">4 فروع | 95 موظف</div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
-                <div className="text-xs font-bold text-black">شركة توباز للاستقدام</div>
+                <div className="text-xs font-bold text-[#141414]">شركة توباز للاستقدام</div>
                 <div className="text-[10px] text-[#707070] mt-0.5">6 فروع | 160 موظف</div>
               </div>
 
               <div className="p-3 bg-zinc-50 rounded-2xl border border-zinc-200 text-center">
-                <div className="text-xs font-bold text-black">دار الرواد</div>
+                <div className="text-xs font-bold text-[#141414]">دار الرواد</div>
                 <div className="text-[10px] text-[#707070] mt-0.5">3 فروع | 75 موظف</div>
               </div>
             </div>
@@ -406,8 +406,8 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-zinc-200 font-sans">
             <div className="flex justify-between items-center pb-3 mb-4 border-b border-zinc-100">
-              <h3 className="text-sm font-bold text-black m-0">مزامنة مشروع جديد في Microsoft Project</h3>
-              <button onClick={() => setShowAddProjectModal(false)} className="text-[#707070] hover:text-black">
+              <h3 className="text-sm font-bold text-[#141414] m-0">مزامنة مشروع جديد في Microsoft Project</h3>
+              <button onClick={() => setShowAddProjectModal(false)} className="text-[#707070] hover:text-[#141414]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -420,7 +420,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                   placeholder="مثال: حملة استقدام الربع الرابع 2026"
                   value={projectForm.taskName}
                   onChange={e => setProjectForm({ ...projectForm, taskName: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -429,7 +429,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                   <select
                     value={projectForm.companyId}
                     onChange={e => setProjectForm({ ...projectForm, companyId: e.target.value as CompanyId })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="SAF">شركة السفير الماسي (SAF)</option>
                     <option value="YAQ">شركة ياقوت نجد (YAQ)</option>
@@ -444,7 +444,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                     placeholder="اسم المسؤول..."
                     value={projectForm.assignedResource}
                     onChange={e => setProjectForm({ ...projectForm, assignedResource: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -455,7 +455,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                     type="date"
                     value={projectForm.startDate}
                     onChange={e => setProjectForm({ ...projectForm, startDate: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -464,7 +464,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                     type="date"
                     value={projectForm.endDate}
                     onChange={e => setProjectForm({ ...projectForm, endDate: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
               </div>
@@ -477,7 +477,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                     max="100"
                     value={projectForm.progressPercent}
                     onChange={e => setProjectForm({ ...projectForm, progressPercent: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-black font-bold focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl py-2 px-3 text-xs text-[#141414] font-bold focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div className="pt-4 flex items-center gap-2">
@@ -486,7 +486,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
                     id="milestone"
                     checked={projectForm.milestone}
                     onChange={e => setProjectForm({ ...projectForm, milestone: e.target.checked })}
-                    className="rounded text-black"
+                    className="rounded text-[#141414]"
                   />
                   <label htmlFor="milestone" className="text-xs text-zinc-700 font-semibold cursor-pointer">
                     محطة رئيسية (Milestone)
@@ -519,11 +519,11 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-zinc-200 space-y-5">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-black text-[#ffffff] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-[#141414] text-[#ffffff] flex items-center justify-center">
                   <BarChart3 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-black m-0">{selectedPowerBiDash.title}</h3>
+                  <h3 className="text-sm font-bold text-[#141414] m-0">{selectedPowerBiDash.title}</h3>
                   <span className="text-[11px] text-[#707070] font-mono">
                     Dataset: {selectedPowerBiDash.datasetName} • RLS: {selectedPowerBiDash.rlsApplied ? 'مفعل بالأدوار' : 'عام'}
                   </span>
@@ -545,7 +545,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               </div>
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <div className="text-[11px] text-[#707070]">حالة اتصال الـ Gateway</div>
-                <div className="text-lg font-black text-black mt-1">متصل حياً</div>
+                <div className="text-lg font-black text-[#141414] mt-1">متصل حياً</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200">
                 <div className="text-[11px] text-[#707070]">الكيان النشط</div>
@@ -553,7 +553,7 @@ export const MicrosoftIntegrationCenterPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#000000] text-[#141414] space-y-3">
+            <div className="p-5 rounded-2xl bg-[#f3f3f3] border border-[#e0e0e0] text-[#141414] space-y-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-[#141414] font-bold">مؤشرات الأداء المباشرة (Power BI Live Stream)</span>
                 <span className="font-mono text-[11px] text-[#707070]">{new Date().toISOString().slice(0, 10)}</span>

@@ -37,7 +37,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         <span
           className="eyebrow-cap"
           style={{
-            color: isFeatured ? '#000000' : 'var(--color-shade-50)',
+            color: isFeatured ? '#141414' : 'var(--color-shade-50)',
             fontWeight: 600,
             fontSize: '13px',
           }}
@@ -49,8 +49,8 @@ export const StatCard: React.FC<StatCardProps> = ({
             width: '36px',
             height: '36px',
             borderRadius: '9999px',
-            backgroundColor: isFeatured ? '#000000' : '#f4f4f5',
-            color: isFeatured ? '#ffffff' : '#000000',
+            backgroundColor: isFeatured ? '#141414' : '#f4f4f5',
+            color: isFeatured ? '#ffffff' : '#141414',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -64,7 +64,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       <div
         className="display-md"
         style={{
-          color: '#000000',
+          color: '#141414',
           fontSize: '32px',
           fontWeight: 330,
           lineHeight: '1.14',

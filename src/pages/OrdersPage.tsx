@@ -358,7 +358,7 @@ export const OrdersPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -410,7 +410,7 @@ export const OrdersPage: React.FC = () => {
 
       {/* SLA Metric Cards */}
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>إجمالي الطلبات المسجلة</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {orders.length} طلبات
@@ -419,8 +419,8 @@ export const OrdersPage: React.FC = () => {
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>طلبات بانتظار التعاقد</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>طلبات بانتظار التعاقد</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>
             {orders.filter(o => o.contract_status !== 'تم التعاقد').length} طلب
           </div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>جاهز للتحويل لعقد</span>
@@ -511,7 +511,7 @@ export const OrdersPage: React.FC = () => {
               placeholder="ابحث برقم الطلب، العميل، العاملة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-black focus:border-black outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-full py-1.5 pr-9 pl-3 text-xs text-[#141414] focus:border-[#141414] outline-none"
             />
           </div>
         </div>
@@ -546,12 +546,12 @@ export const OrdersPage: React.FC = () => {
               ) : (
                 filteredOrders.map((ord) => (
                   <tr key={ord.id} className="hover:bg-zinc-50 transition-colors">
-                    <td className="p-3.5 font-mono font-bold text-black">#{ord.id}</td>
+                    <td className="p-3.5 font-mono font-bold text-[#141414]">#{ord.id}</td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={ord.client_name} isClient size="sm" />
                         <div>
-                          <div className="font-bold text-black">{ord.client_name}</div>
+                          <div className="font-bold text-[#141414]">{ord.client_name}</div>
                           <div className="text-[#707070] font-mono">{ord.client_phone}</div>
                         </div>
                       </div>
@@ -560,7 +560,7 @@ export const OrdersPage: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <CorporateAvatar name={ord.maid_name} profession={ord.request_type || 'عاملة منزلية'} isCandidate size="sm" />
                         <div>
-                          <div className="font-bold text-black">{ord.maid_name}</div>
+                          <div className="font-bold text-[#141414]">{ord.maid_name}</div>
                           <div className="text-[#707070]">{ord.nationality}</div>
                         </div>
                       </div>
@@ -570,7 +570,7 @@ export const OrdersPage: React.FC = () => {
                       <Badge text={ord.request_type} type="purple" />
                     </td>
                     <td className="p-3.5">
-                      <span className="font-mono font-bold text-black flex items-center gap-1">
+                      <span className="font-mono font-bold text-[#141414] flex items-center gap-1">
                         <Clock className="w-3 h-3 text-[#141414]" />
                         {ord.deadline}
                       </span>
@@ -652,7 +652,7 @@ export const OrdersPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddOrder} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleAddOrder} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل *</label>
                 <input
@@ -660,7 +660,7 @@ export const OrdersPage: React.FC = () => {
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
                   placeholder="اسم العميل الرباعي..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -672,7 +672,7 @@ export const OrdersPage: React.FC = () => {
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
                   placeholder="+9665..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -683,7 +683,7 @@ export const OrdersPage: React.FC = () => {
                   <select
                     value={nationality}
                     onChange={(e) => setNationality(e.target.value)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option>الفلبين</option>
                     <option>إندونيسيا</option>
@@ -698,7 +698,7 @@ export const OrdersPage: React.FC = () => {
                   <select
                     value={requestType}
                     onChange={(e) => setRequestType(e.target.value as any)}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="حسب المواصفات">حسب المواصفات</option>
                     <option value="معينة">معينة بالاسم</option>
@@ -712,7 +712,7 @@ export const OrdersPage: React.FC = () => {
                 <select
                   value={officeName}
                   onChange={(e) => setOfficeName(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="PLATINUM BROTHERS INT'L">PLATINUM BROTHERS INT'L (الفلبين)</option>
                   <option value="DAMAS FOREIGN AGENCY">DAMAS FOREIGN AGENCY (إثيوبيا)</option>
@@ -726,7 +726,7 @@ export const OrdersPage: React.FC = () => {
                 <select
                   value={branch}
                   onChange={(e) => setBranch(e.target.value)}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option>فرع الرياض الرئيسي</option>
                   <option>فرع جدة</option>
@@ -774,14 +774,14 @@ export const OrdersPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleUpdateOrder} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleUpdateOrder} className="p-6 space-y-4 bg-white text-[#141414]">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم العميل *</label>
                 <input
                   type="text"
                   value={editingOrder.client_name}
                   onChange={(e) => setEditingOrder({ ...editingOrder, client_name: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -793,7 +793,7 @@ export const OrdersPage: React.FC = () => {
                     type="text"
                     value={editingOrder.client_phone}
                     onChange={(e) => setEditingOrder({ ...editingOrder, client_phone: e.target.value })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs font-mono text-[#141414] focus:border-[#141414] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -801,7 +801,7 @@ export const OrdersPage: React.FC = () => {
                   <select
                     value={editingOrder.status}
                     onChange={(e) => setEditingOrder({ ...editingOrder, status: e.target.value as any })}
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   >
                     <option value="جديد">جديد</option>
                     <option value="تحت الإجراء">تحت الإجراء</option>
@@ -817,7 +817,7 @@ export const OrdersPage: React.FC = () => {
                   type="text"
                   value={editingOrder.deadline}
                   onChange={(e) => setEditingOrder({ ...editingOrder, deadline: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 

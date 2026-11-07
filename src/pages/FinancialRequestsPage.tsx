@@ -229,7 +229,7 @@ export const FinancialRequestsPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -310,8 +310,8 @@ export const FinancialRequestsPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -364,9 +364,9 @@ export const FinancialRequestsPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {currentDisplayList.map((r) => (
                 <tr key={r.id} className="hover:bg-zinc-50">
-                  <td className="p-3.5 font-mono font-bold text-black">{r.request_number}</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{r.request_number}</td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">{r.paid_to}</div>
+                    <div className="font-bold text-[#141414]">{r.paid_to}</div>
                     <div className="text-[11px] text-[#707070]">{r.accounting_name}</div>
                   </td>
                   <td className="p-3.5"><Badge text={r.request_type} type="purple" /></td>
@@ -375,7 +375,7 @@ export const FinancialRequestsPage: React.FC = () => {
                   <td className="p-3.5 text-zinc-600">{r.payment_method}</td>
                   <td className="p-3.5"><Badge text={r.escalation} type={r.escalation === 'شديد الأهمية' ? 'danger' : 'warning'} /></td>
                   <td className="p-3.5"><Badge text={r.status} type={r.status === 'تم السداد' ? 'success' : 'warning'} /></td>
-                  <td className="p-3.5 font-semibold text-black">
+                  <td className="p-3.5 font-semibold text-[#141414]">
                     <div className="flex items-center gap-2">
                       <CorporateAvatar
                         name={r.applicant}
@@ -429,15 +429,15 @@ export const FinancialRequestsPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateRequest} className="p-6 space-y-4 overflow-y-auto flex-1 bg-white text-black">
+            <form onSubmit={handleCreateRequest} className="p-6 space-y-4 overflow-y-auto flex-1 bg-white text-[#141414]">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">المدفوع له *</label>
-                  <input type="text" required value={paidTo} onChange={(e) => setPaidTo(e.target.value)} placeholder="جهة الصرف أو المستفيد" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" />
+                  <input type="text" required value={paidTo} onChange={(e) => setPaidTo(e.target.value)} placeholder="جهة الصرف أو المستفيد" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">الفرع *</label>
-                  <select value={branch} onChange={(e) => setBranch(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none">
+                  <select value={branch} onChange={(e) => setBranch(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none">
                     <option>الفرع الرئيسي - الرياض</option>
                     <option>فرع جدة</option>
                     <option>فرع الدمام</option>
@@ -447,7 +447,7 @@ export const FinancialRequestsPage: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">نوع الطلب *</label>
-                  <select value={requestType} onChange={(e) => setRequestType(e.target.value as any)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none">
+                  <select value={requestType} onChange={(e) => setRequestType(e.target.value as any)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none">
                     <option value="سداد مساند">سداد مساند</option>
                     <option value="رسوم إقامة">رسوم إقامة</option>
                     <option value="فحص طبي">فحص طبي</option>
@@ -461,11 +461,11 @@ export const FinancialRequestsPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">المبلغ المطلوب (⃁) *</label>
-                  <input type="number" required value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono font-bold focus:border-black focus:outline-none" />
+                  <input type="number" required value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono font-bold focus:border-[#141414] focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">طريقة الدفع *</label>
-                  <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as any)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none">
+                  <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value as any)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none">
                     <option value="تحويل بنكي">تحويل بنكي</option>
                     <option value="نقداً من الصندوق">نقداً من الصندوق</option>
                     <option value="بطاقة مدى">بطاقة مدى</option>
@@ -474,7 +474,7 @@ export const FinancialRequestsPage: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">الأولوية / التصعيد *</label>
-                  <select value={escalation} onChange={(e) => setEscalation(e.target.value as any)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none">
+                  <select value={escalation} onChange={(e) => setEscalation(e.target.value as any)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none">
                     <option value="عادي">عادي</option>
                     <option value="هام">هام</option>
                     <option value="شديد الأهمية">شديد الأهمية VIP</option>
@@ -490,18 +490,18 @@ export const FinancialRequestsPage: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="سبب الصرف وتفاصيل المعاملة..."
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">اسم البنك المستفيد</label>
-                  <input type="text" value={bankName} onChange={(e) => setBankName(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none" />
+                  <input type="text" value={bankName} onChange={(e) => setBankName(e.target.value)} className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">رقم الآيبان (IBAN)</label>
-                  <input type="text" value={iban} onChange={(e) => setIban(e.target.value)} placeholder="SA..." className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black font-mono focus:border-black focus:outline-none" />
+                  <input type="text" value={iban} onChange={(e) => setIban(e.target.value)} placeholder="SA..." className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] font-mono focus:border-[#141414] focus:outline-none" />
                 </div>
               </div>
 

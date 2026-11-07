@@ -28,7 +28,7 @@ export interface GroupDispatchMemo {
 
 const GROUP_COMPANIES = [
   { id: 'topaz', name: 'شركة توباز (Topaz Group)', icon: Award, color: '#0f6b6e' },
-  { id: 'ruwad', name: 'دار الرواد (Dar Al-Ruwad)', icon: Building2, color: '#000000' },
+  { id: 'ruwad', name: 'دار الرواد (Dar Al-Ruwad)', icon: Building2, color: '#141414' },
   { id: 'saffir', name: 'السفير (Al-Saffir)', icon: Building2, color: '#535f74' },
   { id: 'masi', name: 'الماسي (Al-Masi Luxury)', icon: Sparkles, color: '#181c1c' },
   { id: 'ayal', name: 'الأيال للسفر والسياحة (Al-Ayal Travel)', icon: Plane, color: '#6f3b18' },
@@ -169,7 +169,7 @@ export const GroupDispatchPage: React.FC = () => {
       <div
         className="card-feature-cinematic"
         style={{
-          background: '#000000',
+          background: '#141414',
           borderRadius: '16px',
           padding: '28px',
           color: '#FFFFFF',
@@ -204,7 +204,7 @@ export const GroupDispatchPage: React.FC = () => {
               onClick={() => setShowDispatchModal(true)}
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Plus className="w-4 h-4 ml-1 text-black" />
+              <Plus className="w-4 h-4 ml-1 text-[#141414]" />
               <span>+ توجيه معاملة جديدة</span>
             </button>
             <ExportDropdown 
@@ -225,8 +225,8 @@ export const GroupDispatchPage: React.FC = () => {
             padding: '6px 16px',
             borderRadius: '9999px',
             border: '1px solid',
-            borderColor: selectedEntity === 'all' ? '#000000' : '#e4e4e7',
-            backgroundColor: selectedEntity === 'all' ? '#000000' : '#ffffff',
+            borderColor: selectedEntity === 'all' ? '#141414' : '#e4e4e7',
+            backgroundColor: selectedEntity === 'all' ? '#141414' : '#ffffff',
             color: selectedEntity === 'all' ? '#ffffff' : '#27272a',
             fontWeight: selectedEntity === 'all' ? 550 : 420,
             fontSize: '12.5px',
@@ -252,8 +252,8 @@ export const GroupDispatchPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isSelected ? '#000000' : '#e4e4e7',
-                backgroundColor: isSelected ? '#000000' : '#ffffff',
+                borderColor: isSelected ? '#141414' : '#e4e4e7',
+                backgroundColor: isSelected ? '#141414' : '#ffffff',
                 color: isSelected ? '#ffffff' : '#27272a',
                 fontWeight: isSelected ? 550 : 420,
                 fontSize: '12.5px',
@@ -274,8 +274,8 @@ export const GroupDispatchPage: React.FC = () => {
       {/* Data Table */}
       <div className="card-pricing" style={{ padding: 0, borderRadius: '24px', background: '#ffffff', overflow: 'hidden' }}>
         <div className="p-4 border-b border-zinc-100 bg-white flex items-center justify-between">
-          <h3 className="text-sm font-bold text-black flex items-center gap-2 m-0">
-            <Send className="w-4 h-4 text-black" />
+          <h3 className="text-sm font-bold text-[#141414] flex items-center gap-2 m-0">
+            <Send className="w-4 h-4 text-[#141414]" />
             <span>سجل المراسلات والمعاملات الرسمية بين شركات المجموعة</span>
           </h3>
           <span className="pill-tag-mint" style={{ fontSize: '11px' }}>
@@ -299,16 +299,16 @@ export const GroupDispatchPage: React.FC = () => {
             <tbody className="divide-y divide-zinc-100">
               {filteredDispatches.map(row => (
                 <tr key={row.id} className="hover:bg-zinc-50 transition-colors">
-                  <td className="p-3.5 font-mono font-bold text-black">{row.dispatch_no}</td>
+                  <td className="p-3.5 font-mono font-bold text-[#141414]">{row.dispatch_no}</td>
                   <td className="p-3.5">
-                    <div className="font-bold text-black">من: {row.source_entity}</div>
+                    <div className="font-bold text-[#141414]">من: {row.source_entity}</div>
                     <div className="text-[11px] text-[#707070]">إلى: {row.target_entity}</div>
                   </td>
                   <td className="p-3.5">
                     <span className="bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded-full text-[10px] font-bold inline-block mb-1">
                       {row.dispatch_type}
                     </span>
-                    <div className="font-bold text-black text-xs">{row.subject}</div>
+                    <div className="font-bold text-[#141414] text-xs">{row.subject}</div>
                   </td>
                   <td className="p-3.5">
                     <span
@@ -378,12 +378,12 @@ export const GroupDispatchPage: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateDispatch} className="p-6 space-y-4 bg-white text-black">
+            <form onSubmit={handleCreateDispatch} className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">الجهة المُرسِلة *</label>
                   <select
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     value={formData.source_entity}
                     onChange={e => setFormData({ ...formData, source_entity: e.target.value })}
                   >
@@ -394,7 +394,7 @@ export const GroupDispatchPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">الجهة المُستلِمة *</label>
                   <select
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     value={formData.target_entity}
                     onChange={e => setFormData({ ...formData, target_entity: e.target.value })}
                   >
@@ -407,7 +407,7 @@ export const GroupDispatchPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">نوع الخطاب / المعاملة *</label>
                   <select
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     value={formData.dispatch_type}
                     onChange={e => setFormData({ ...formData, dispatch_type: e.target.value as any })}
                   >
@@ -422,7 +422,7 @@ export const GroupDispatchPage: React.FC = () => {
                 <div>
                   <label className="block text-xs font-semibold text-zinc-700 mb-1">درجة الأولوية</label>
                   <select
-                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                    className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                     value={formData.priority}
                     onChange={e => setFormData({ ...formData, priority: e.target.value as any })}
                   >
@@ -438,7 +438,7 @@ export const GroupDispatchPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">موضوع الخطاب / المعاملة *</label>
                 <input
                   type="text"
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   placeholder="مثال: طلب اصدار وتأكيد حجوزات طيران..."
                   value={formData.subject}
                   onChange={e => setFormData({ ...formData, subject: e.target.value })}
@@ -453,7 +453,7 @@ export const GroupDispatchPage: React.FC = () => {
                   placeholder="اكتب التوجيهات والقرارات التفصيلية هنا..."
                   value={formData.details}
                   onChange={e => setFormData({ ...formData, details: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] leading-relaxed focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -495,7 +495,7 @@ export const GroupDispatchPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 bg-white text-black">
+            <div className="p-6 space-y-4 bg-white text-[#141414]">
               <div className="grid grid-cols-2 gap-3 p-3.5 bg-zinc-50 rounded-2xl border border-zinc-100 text-xs">
                 <div><strong>من:</strong> {selectedMemo.source_entity}</div>
                 <div><strong>إلى:</strong> {selectedMemo.target_entity}</div>
@@ -504,7 +504,7 @@ export const GroupDispatchPage: React.FC = () => {
               </div>
 
               <div>
-                <h4 className="text-xs font-bold text-black mb-1">الموضوع: {selectedMemo.subject}</h4>
+                <h4 className="text-xs font-bold text-[#141414] mb-1">الموضوع: {selectedMemo.subject}</h4>
                 <p className="text-xs text-zinc-600 leading-relaxed bg-zinc-50 p-3 rounded-2xl border border-zinc-100">
                   {selectedMemo.details}
                 </p>

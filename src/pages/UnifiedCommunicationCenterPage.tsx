@@ -142,7 +142,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#000000',
+          background: '#141414',
           color: '#FFF',
           padding: '28px',
           borderRadius: '16px',
@@ -182,17 +182,17 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
       <div className="stat-card-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>إجمالي الخطابات والتعميمات</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>{correspondenceList.length} مراسلة</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>{correspondenceList.length} مراسلة</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>موثقة إلكترونياً</span>
         </div>
 
         <div className="card-pistachio-band" style={{ padding: '24px', borderRadius: '16px' }}>
-          <span style={{ fontSize: '13px', color: '#000000', fontWeight: 550 }}>المراسلات العاجلة</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>2 خطابات</div>
+          <span style={{ fontSize: '13px', color: '#141414', fontWeight: 550 }}>المراسلات العاجلة</span>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>2 خطابات</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>إجراء فوري</span>
         </div>
 
-        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#000000', color: '#ffffff' }}>
+        <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#a1a1aa', fontWeight: 550 }}>التوجيهات للمكاتب الدولية</span>
           <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#ffffff', marginTop: '6px', letterSpacing: '-0.02em' }}>18 توجيهاً</div>
           <span className="pill-tag-mint" style={{ fontSize: '11px', marginTop: '10px' }}>الفلبين، إثيوبيا</span>
@@ -200,7 +200,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
 
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '16px', background: '#ffffff' }}>
           <span style={{ fontSize: '13px', color: '#71717a', fontWeight: 550 }}>نسبة الاعتماد والتنفيذ</span>
-          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#000000', marginTop: '6px', letterSpacing: '-0.02em' }}>98.5%</div>
+          <div className="display-sm" style={{ fontSize: '32px', fontWeight: 330, color: '#141414', marginTop: '6px', letterSpacing: '-0.02em' }}>98.5%</div>
           <span className="pill-tag-shade" style={{ fontSize: '11px', marginTop: '10px' }}>حوكمة متكاملة</span>
         </div>
       </div>
@@ -222,8 +222,8 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 padding: '6px 16px',
                 borderRadius: '9999px',
                 border: '1px solid',
-                borderColor: isActive ? '#000000' : '#e4e4e7',
-                backgroundColor: isActive ? '#000000' : '#ffffff',
+                borderColor: isActive ? '#141414' : '#e4e4e7',
+                backgroundColor: isActive ? '#141414' : '#ffffff',
                 color: isActive ? '#ffffff' : '#27272a',
                 fontWeight: isActive ? 550 : 420,
                 fontSize: '12.5px',
@@ -287,14 +287,14 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 >
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <span className="font-mono font-bold text-xs text-black">{memo.memo_no}</span>
+                      <span className="font-mono font-bold text-xs text-[#141414]">{memo.memo_no}</span>
                       <Badge
                         text={memo.priority}
                         type={memo.priority === 'عاجل جداً' ? 'danger' : memo.priority === 'سري وهام' ? 'warning' : 'info'}
                       />
                     </div>
 
-                    <h2 className="text-sm font-bold text-black mb-2">{memo.subject}</h2>
+                    <h2 className="text-sm font-bold text-[#141414] mb-2">{memo.subject}</h2>
 
                     <div className="bg-zinc-50 p-2.5 rounded-xl text-xs text-zinc-600 mb-3 flex items-center gap-2.5">
                       <CorporateAvatar name={memo.sender_entity} role={memo.recipient_entity} size="sm" status="verified" />
@@ -309,7 +309,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                     </p>
 
                     {memo.attachment_name && (
-                      <div className="flex items-center gap-1 text-xs text-black font-semibold mb-3">
+                      <div className="flex items-center gap-1 text-xs text-[#141414] font-semibold mb-3">
                         <Paperclip className="w-3.5 h-3.5 text-[#707070]" />
                         <span>مرفق: {memo.attachment_name}</span>
                       </div>
@@ -340,12 +340,12 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
       {/* TAB 2: COMPOSE MEMO */}
       {activeTab === 'compose' && (
         <div className="card-pricing" style={{ padding: '24px', borderRadius: '24px', background: '#ffffff' }}>
-          <h2 className="text-base font-bold text-black mb-4 flex items-center gap-2">
-            <PenSquare className="w-4 h-4 text-black" />
+          <h2 className="text-base font-bold text-[#141414] mb-4 flex items-center gap-2">
+            <PenSquare className="w-4 h-4 text-[#141414]" />
             <span>تحرير خطاب رسمي أو تعميم تنفيذي</span>
           </h2>
 
-          <form onSubmit={handleCreateMemo} className="space-y-4 bg-white text-black">
+          <form onSubmit={handleCreateMemo} className="space-y-4 bg-white text-[#141414]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">الجهة المصدرة للخطاب *</label>
@@ -353,7 +353,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                   type="text"
                   value={formData.sender_entity}
                   onChange={(e) => setFormData({ ...formData, sender_entity: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -365,7 +365,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                   placeholder="مثال: شركة توباز للاستقدام / وكالة مانيلا"
                   value={formData.recipient_entity}
                   onChange={(e) => setFormData({ ...formData, recipient_entity: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                   required
                 />
               </div>
@@ -375,7 +375,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 <select
                   value={formData.category}
                   onChange={(e: any) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="خطاب رسمي">خطاب رسمي</option>
                   <option value="تعميم إداري">تعميم إداري</option>
@@ -390,7 +390,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 <select
                   value={formData.priority}
                   onChange={(e: any) => setFormData({ ...formData, priority: e.target.value })}
-                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                  className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 >
                   <option value="عادي">عادي</option>
                   <option value="عاجل جداً">عاجل جداً</option>
@@ -406,7 +406,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 placeholder="اكتب عنوان وموضوع الخطاب..."
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
                 required
               />
             </div>
@@ -418,7 +418,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 placeholder="اكتب نص الخطاب هنا بالتفصيل..."
                 value={formData.body}
                 onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black leading-relaxed focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] leading-relaxed focus:border-[#141414] focus:outline-none"
                 required
               />
             </div>
@@ -430,7 +430,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
                 placeholder="مثال: ملحق_العقود_المعتمدة.pdf"
                 value={formData.attachment_name}
                 onChange={(e) => setFormData({ ...formData, attachment_name: e.target.value })}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-black focus:border-black focus:outline-none"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl py-2 px-3 text-xs text-[#141414] focus:border-[#141414] focus:outline-none"
               />
             </div>
 
@@ -460,9 +460,9 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
       {activeTab === 'letterhead-preview' && selectedMemo && (
         <div className="bg-white rounded-3xl border border-zinc-200 p-8 max-w-3xl mx-auto shadow-sm">
           {/* Header of Letter */}
-          <div className="flex justify-between items-center border-b-2 border-black pb-4 mb-6">
+          <div className="flex justify-between items-center border-b-2 border-[#141414] pb-4 mb-6">
             <div>
-              <h2 className="text-base font-black text-black m-0">مجموعة شركات خالد السليم للاستقدام والتشغيل</h2>
+              <h2 className="text-base font-black text-[#141414] m-0">مجموعة شركات خالد السليم للاستقدام والتشغيل</h2>
               <div className="text-xs text-[#707070] mt-0.5">المملكة العربية السعودية | المركز الرئيسي - الرياض</div>
             </div>
             <div className="text-left font-mono text-xs text-zinc-600">
@@ -474,7 +474,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
 
           {/* Memo Title & Recipient */}
           <div className="mb-5">
-            <div className="text-sm font-bold text-black">
+            <div className="text-sm font-bold text-[#141414]">
               السادة / {selectedMemo.recipient_entity} المحترمون
             </div>
             <div className="text-xs text-[#707070] mt-1">
@@ -482,7 +482,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-50 p-3 rounded-2xl text-xs font-bold text-black mb-5 border border-zinc-200">
+          <div className="bg-zinc-50 p-3 rounded-2xl text-xs font-bold text-[#141414] mb-5 border border-zinc-200">
             الموضوع: {selectedMemo.subject}
           </div>
 
@@ -505,7 +505,7 @@ export const UnifiedCommunicationCenterPage: React.FC = () => {
               <CorporateAvatar name={selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'} size="sm" status="verified" />
               <div className="text-right">
                 <div className="text-xs text-[#707070]">المعتمد:</div>
-                <div className="text-sm font-black text-black mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
+                <div className="text-sm font-black text-[#141414] mt-0.5">{selectedMemo.approved_by || 'الإدارة التنفيذية للمجموعة'}</div>
               </div>
             </div>
           </div>
