@@ -1755,25 +1755,25 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
 
   return (
     <div data-slot="ifrs-financial-engine-workspace" className="space-y-6 text-right dir-rtl">
-      {/* Top IFRS Executive Command Header */}
-      <div className="bg-[#141414] text-[#ffffff] rounded-3xl p-6 border border-[#262626] shadow-sm space-y-5">
+      {/* Top IFRS Executive Command Header — Mobbin Gallery-White Surface */}
+      <div className="bg-white text-[#141414] rounded-3xl p-6 border border-[#e0e0e0] shadow-xs space-y-5">
         <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#ffffff] text-[#141414]">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-[#141414] text-[#ffffff]">
                 النظام المحاسبي المالي المعتمد (IFRS / SOCPA)
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] bg-[#262626] text-[#ffffff] border border-[#404040]">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] bg-[#f3f3f3] text-[#141414] border border-[#e0e0e0] font-semibold">
                 الدليل والشجرة • قيود اليومية • ميزان المراجعة • القوائم المالية الختامية • الرقابة والتحليل المالي
               </span>
             </div>
-            <h2 className="text-lg md:text-xl font-bold text-[#ffffff] m-0">
+            <h2 className="text-lg md:text-xl font-bold text-[#141414] m-0">
               النظام المحاسبي المتكامل والقوائم المالية والتحليل المالي — {settings.companyName}
             </h2>
-            <p className="text-xs text-[#adadad] mt-1">
-              الفترة المالية المنتهية في: <span className="font-mono text-[#ffffff]">{settings.reportingDate}</span> | العملة:{' '}
-              <span className="font-bold text-[#ffffff]">{settings.currency}</span> | حالة المطابقة والاتزان المحاسبي:{' '}
-              <span className="font-bold text-[#ffffff]">{engine.diagnostics.overallVerdict}</span>
+            <p className="text-xs text-[#707070] mt-1">
+              الفترة المالية المنتهية في: <span className="font-mono font-bold text-[#141414]">{settings.reportingDate}</span> | العملة:{' '}
+              <span className="font-bold text-[#141414]">{settings.currency}</span> | حالة المطابقة والاتزان المحاسبي:{' '}
+              <span className="font-bold text-[#141414]">{engine.diagnostics.overallVerdict}</span>
             </p>
           </div>
 
@@ -1782,7 +1782,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             <button
               type="button"
               onClick={() => setShowJournalModal((v) => !v)}
-              className="px-3.5 py-2 rounded-full bg-[#ffffff] text-[#141414] hover:bg-[#f3f3f3] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+              className="px-3.5 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>+ تسجيل قيد يومية محاسبي</span>
@@ -1790,7 +1790,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             <button
               type="button"
               onClick={handleFreezeSuggestedMappings}
-              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all"
+              className="px-3.5 py-2 rounded-full bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all"
               title="توجيه وتصنيف كافة الحسابات تلقائياً لبنود القوائم المالية"
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -1801,8 +1801,8 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               onClick={() => setShowCustomizationPanel((v) => !v)}
               className={`px-3.5 py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
                 showCustomizationPanel
-                  ? 'bg-[#ffffff] text-[#141414] font-bold'
-                  : 'bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040]'
+                  ? 'bg-[#141414] text-[#ffffff] font-bold'
+                  : 'bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] border border-[#e0e0e0]'
               }`}
             >
               <Sliders className="w-3.5 h-3.5" />
@@ -1812,7 +1812,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <button
                 type="button"
                 onClick={handleUndoLastAction}
-                className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+                className="px-3.5 py-2 rounded-full bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>تراجع ({undoStack.length})</span>
@@ -1821,7 +1821,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             <button
               type="button"
               onClick={() => handleExportActiveWorkspace('excel')}
-              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+              className="px-3.5 py-2 rounded-full bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>تصدير Excel</span>
@@ -1829,7 +1829,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             <button
               type="button"
               onClick={() => handleExportActiveWorkspace('pdf')}
-              className="px-3.5 py-2 rounded-full bg-[#262626] text-[#ffffff] hover:bg-[#363636] border border-[#404040] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+              className="px-3.5 py-2 rounded-full bg-[#f3f3f3] text-[#141414] hover:bg-[#e0e0e0] border border-[#e0e0e0] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>تصدير PDF</span>
@@ -1848,7 +1848,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               dataProvider={() => getActiveWorkspaceExportBundle().rows}
               customTitle={getActiveWorkspaceExportBundle().title}
               buttonLabel="جميع صيغ التصدير والمعاينة"
-              variant="outline-dark"
+              variant="outline-light"
             />
           </div>
         </div>
@@ -1864,17 +1864,17 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
             { label: 'إجمالي حقوق الملكية', val: fmt(engine.balanceSheet.current.totalEquity), sub: `ROE: ${engine.ratios.find((r) => r.id === 'roe')?.formattedValue || '0%'}` },
             { label: 'نسبة التداول (السيولة)', val: engine.ratios.find((r) => r.id === 'current-ratio')?.formattedValue || '0x', sub: `الأخطاء الجوهرية: ${engine.diagnostics.criticalErrorsCount} | التنبيهات: ${engine.diagnostics.warningsCount}` },
           ].map((kpi, idx) => (
-            <div key={idx} className="bg-[#1f1f1f] border border-[#303030] rounded-2xl p-3">
-              <div className="text-[11px] text-[#adadad]">{kpi.label}</div>
-              <div className="text-sm md:text-base font-bold font-mono text-[#ffffff] mt-1">{kpi.val}</div>
-              <div className="text-[10px] text-[#adadad] mt-1 truncate">{kpi.sub}</div>
+            <div key={idx} className="bg-[#f3f3f3] border border-[#e0e0e0] rounded-2xl p-3">
+              <div className="text-[11px] font-semibold text-[#707070]">{kpi.label}</div>
+              <div className="text-sm md:text-base font-bold font-mono text-[#141414] mt-1">{kpi.val}</div>
+              <div className="text-[10px] text-[#707070] mt-1 truncate">{kpi.sub}</div>
             </div>
           ))}
         </div>
         )}
 
         {/* Navigation Pill Bar */}
-        <div className="flex items-center gap-1.5 bg-[#1f1f1f] p-1.5 rounded-full border border-[#303030] overflow-x-auto">
+        <div className="flex items-center gap-1.5 bg-[#f3f3f3] p-1.5 rounded-full border border-[#e0e0e0] overflow-x-auto">
           {[
             { id: 'statements', label: 'القوائم المالية الختامية (المركز المالي • الدخل • الملكية • التدفقات)', icon: Landmark },
             { id: 'trial-balance', label: `ميزان المراجعة العام والأرصدة (${entries.length} حساب)`, icon: Scale },
@@ -1893,8 +1893,8 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 onClick={() => setActiveSubTab(tab.id as any)}
                 className={`px-3.5 py-2 rounded-full text-xs flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition-all ${
                   active
-                    ? 'bg-[#ffffff] text-[#141414] font-bold shadow-xs'
-                    : 'text-[#d4d4d8] hover:text-[#ffffff] hover:bg-[#2a2a2a]'
+                    ? 'bg-[#141414] text-[#ffffff] font-bold shadow-xs'
+                    : 'text-[#141414] font-medium hover:bg-[#e0e0e0]'
                 }`}
               >
                 <IconComp className="w-3.5 h-3.5 shrink-0" />
@@ -3048,7 +3048,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalCurrentAssets)}</td>
                       <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalCurrentAssets)}</td>
                     </tr>
-                    <tr className="bg-[#141414] text-[#ffffff] font-bold text-sm">
+                    <tr className="bg-[#f3f3f3] text-[#141414] font-bold text-sm border-y-2 border-[#141414]">
                       <td className="p-3" colSpan={3}>إجمالي الأصول (Total Assets)</td>
                       <td className="p-3 font-mono">{fmt(engine.balanceSheet.current.totalAssets)}</td>
                       <td className="p-3 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalAssets)}</td>
@@ -3323,7 +3323,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       <td className="p-2.5 font-mono">{fmt(engine.balanceSheet.current.totalCurrentLiabilities)}</td>
                       <td className="p-2.5 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalCurrentLiabilities)}</td>
                     </tr>
-                    <tr className="bg-[#141414] text-[#ffffff] font-bold text-sm">
+                    <tr className="bg-[#f3f3f3] text-[#141414] font-bold text-sm border-y-2 border-[#141414]">
                       <td className="p-3" colSpan={3}>إجمالي حقوق الملكية والالتزامات</td>
                       <td className="p-3 font-mono">{fmt(engine.balanceSheet.current.totalEquityAndLiabilities)}</td>
                       <td className="p-3 font-mono" colSpan={2}>{fmt(engine.balanceSheet.comparative.totalEquityAndLiabilities)}</td>
@@ -3419,7 +3419,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                             onClick={() => row.expandable && toggleStatementSection(row.code)}
                             className={
                               row.dark
-                                ? 'bg-[#141414] text-[#ffffff] font-bold text-sm'
+                                ? 'bg-[#f3f3f3] text-[#141414] font-bold text-sm border-y-2 border-[#141414]'
                                 : row.shade
                                 ? 'bg-[#f3f3f3] font-bold text-[#141414]'
                                 : 'hover:bg-[#f3f3f3]/50 cursor-pointer'
@@ -3524,9 +3524,9 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     {engine.incomeStatement.revenues > 0 ? ((engine.incomeStatement.operatingProfit / engine.incomeStatement.revenues) * 100).toFixed(1) : '0.0'}%
                   </strong>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-[#141414] text-[#ffffff]">
-                  <span className="text-[11px] text-[#adadad] block">هامش صافي الربح النهائي (Net Margin)</span>
-                  <strong className="font-mono text-sm text-[#ffffff]">
+                <div className="p-3.5 rounded-2xl bg-[#f3f3f3] text-[#141414] border-2 border-[#141414]">
+                  <span className="text-[11px] text-[#707070] block">هامش صافي الربح النهائي (Net Margin)</span>
+                  <strong className="font-mono text-sm text-[#141414]">
                     {engine.incomeStatement.revenues > 0 ? ((engine.incomeStatement.netProfit / engine.incomeStatement.revenues) * 100).toFixed(1) : '0.0'}%
                   </strong>
                 </div>
@@ -3576,7 +3576,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                         key={idx}
                         className={
                           row.dark
-                            ? 'bg-[#141414] text-[#ffffff] font-bold text-sm'
+                            ? 'bg-[#f3f3f3] text-[#141414] font-bold text-sm border-y-2 border-[#141414]'
                             : row.bold
                             ? 'bg-[#f3f3f3] font-bold text-[#141414]'
                             : 'hover:bg-[#f3f3f3]/40'
@@ -3725,7 +3725,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                       <td className="p-2.5" colSpan={2}>النقد وما في حكمه - أول المدة</td>
                       <td className="p-2.5 font-mono font-bold">{fmt(engine.cashFlow.openingCash)}</td>
                     </tr>
-                    <tr className="bg-[#141414] text-[#ffffff] font-bold text-sm">
+                    <tr className="bg-[#f3f3f3] text-[#141414] font-bold text-sm border-y-2 border-[#141414]">
                       <td className="p-3" colSpan={2}>النقد وما في حكمه - آخر المدة (محسوب ومطابق لميزان المراجعة A-10)</td>
                       <td className="p-3 font-mono">{fmt(engine.cashFlow.calculatedClosingCash)}</td>
                     </tr>
@@ -3951,16 +3951,16 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
 
           {/* Multi-Select Bulk Action Bar */}
           {selectedRowSeqs.length > 0 && (
-            <div className="bg-[#141414] text-[#ffffff] p-3.5 rounded-2xl flex items-center justify-between flex-wrap gap-3">
+            <div className="bg-[#f3f3f3] text-[#141414] border-2 border-[#141414] p-3.5 rounded-2xl flex items-center justify-between flex-wrap gap-3">
               <div className="flex items-center gap-2 text-xs font-bold">
-                <CheckCircle2 className="w-4 h-4 text-[#ffffff]" />
+                <CheckCircle2 className="w-4 h-4 text-[#141414]" />
                 <span>تم تحديد ({selectedRowSeqs.length}) حساب محاسبي</span>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <select
                   value={bulkClassifyCode}
                   onChange={(e) => setBulkClassifyCode(e.target.value)}
-                  className="bg-[#262626] text-[#ffffff] border border-[#404040] rounded-full px-3 py-1 text-xs"
+                  className="bg-white text-[#141414] border border-[#e0e0e0] rounded-full px-3 py-1 text-xs"
                 >
                   {IFRS_MAPPING_CODES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -3971,14 +3971,14 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 <button
                   type="button"
                   onClick={handleBulkClassifySelectedRows}
-                  className="px-3 py-1 rounded-full bg-[#ffffff] text-[#141414] text-xs font-bold cursor-pointer"
+                  className="px-3 py-1 rounded-full bg-[#141414] text-[#ffffff] text-xs font-bold cursor-pointer"
                 >
                   توجيه وتصنيف المحدد
                 </button>
                 <button
                   type="button"
                   onClick={handleBulkHideSelectedRows}
-                  className="px-3 py-1 rounded-full bg-[#262626] hover:bg-[#363636] text-[#ffffff] border border-[#404040] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="px-3 py-1 rounded-full bg-white hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <EyeOff className="w-3.5 h-3.5" />
                   <span>إخفاء المحدد</span>
@@ -3986,7 +3986,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 <button
                   type="button"
                   onClick={handleBulkDeleteSelectedRows}
-                  className="px-3 py-1 rounded-full bg-[#262626] hover:bg-[#363636] text-[#ffffff] border border-[#404040] text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="px-3 py-1 rounded-full bg-white hover:bg-[#e0e0e0] text-[#141414] border border-[#e0e0e0] text-xs font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>حذف المحدد</span>
@@ -3994,7 +3994,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                 <button
                   type="button"
                   onClick={() => setSelectedRowSeqs([])}
-                  className="px-2.5 py-1 rounded-full text-xs text-[#adadad] hover:text-[#ffffff] cursor-pointer"
+                  className="px-2.5 py-1 rounded-full text-xs text-[#707070] hover:text-[#141414] cursor-pointer"
                 >
                   إلغاء التحديد
                 </button>
@@ -4020,13 +4020,13 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
               <span className="text-[#707070] block">حركة السنة - دائن (S):</span>
               <strong className="font-mono text-[#141414]">{fmt(engine.totals.periodCredit)}</strong>
             </div>
-            <div className="bg-[#141414] text-[#ffffff] p-2 rounded-xl">
-              <span className="text-[#adadad] block text-[11px]">الرصيد النهائي - مدين (T):</span>
-              <strong className="font-mono text-[#ffffff] text-sm">{fmt(engine.totals.closingDebit)}</strong>
+            <div className="bg-white text-[#141414] border border-[#141414] p-2 rounded-xl">
+              <span className="text-[#707070] block text-[11px] font-semibold">الرصيد النهائي - مدين (T):</span>
+              <strong className="font-mono text-[#141414] text-sm">{fmt(engine.totals.closingDebit)}</strong>
             </div>
-            <div className="bg-[#141414] text-[#ffffff] p-2 rounded-xl">
-              <span className="text-[#adadad] block text-[11px]">الرصيد النهائي - دائن (U):</span>
-              <strong className="font-mono text-[#ffffff] text-sm">{fmt(engine.totals.closingCredit)}</strong>
+            <div className="bg-white text-[#141414] border border-[#141414] p-2 rounded-xl">
+              <span className="text-[#707070] block text-[11px] font-semibold">الرصيد النهائي - دائن (U):</span>
+              <strong className="font-mono text-[#141414] text-sm">{fmt(engine.totals.closingCredit)}</strong>
             </div>
           </div>
 
@@ -4063,10 +4063,10 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     {showMovementCols && <th className="p-2.5 font-mono">حركة مدين (R)</th>}
                     {showMovementCols && <th className="p-2.5 font-mono">حركة دائن (S)</th>}
                     {showClosingBalanceCols && (
-                      <th className="p-2.5 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين (T)</th>
+                      <th className="p-2.5 font-mono bg-[#f3f3f3] text-[#141414] border-x border-[#e0e0e0]">الرصيد النهائي مدين (T)</th>
                     )}
                     {showClosingBalanceCols && (
-                      <th className="p-2.5 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي دائن (U)</th>
+                      <th className="p-2.5 font-mono bg-[#f3f3f3] text-[#141414] border-x border-[#e0e0e0]">الرصيد النهائي دائن (U)</th>
                     )}
                     {showNetBalanceCol && <th className="p-2.5 font-mono">صافي الرصيد النهائي</th>}
                     <th className="p-2.5">حالة الفحص</th>
@@ -4277,7 +4277,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                     );
                   })}
                 </tbody>
-                <tfoot className="bg-[#141414] text-[#ffffff] font-bold sticky bottom-0">
+                <tfoot className="bg-[#f3f3f3] text-[#141414] font-bold border-t-2 border-[#141414] sticky bottom-0">
                   <tr>
                     <td colSpan={6} className="p-3">
                       إجمالي ميزان المراجعة ({filteredRows.length} حساباً معروضاً من أصل {engine.rows.length})
@@ -4658,7 +4658,7 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                             onClick={() =>
                               setExpandedExcelTreeCodes((prev) => ({ ...prev, [l1.code]: !prev[l1.code] }))
                             }
-                            className="bg-[#141414] text-[#ffffff] font-bold cursor-pointer"
+                            className="bg-[#f3f3f3] text-[#141414] font-bold cursor-pointer border-y border-[#141414]"
                           >
                             <td className="p-3 flex items-center gap-2">
                               {l1Expanded ? <ChevronDown className="w-4 h-4 shrink-0" /> : <ChevronRight className="w-4 h-4 shrink-0" />}
@@ -4668,9 +4668,9 @@ export const IfrsFinancialEngineWorkspace: React.FC<IfrsFinancialEngineWorkspace
                                 value={customTreeNodeNames[l1.code] ?? l1.titleAr}
                                 onClick={(e) => e.stopPropagation()}
                                 onChange={(e) => handleUpdateTreeNodeTitle(l1.code, e.target.value)}
-                                className="bg-transparent hover:bg-[#262626] focus:bg-[#262626] border border-transparent hover:border-[#404040] focus:border-[#ffffff] rounded-lg px-2 py-0.5 text-xs font-bold text-[#ffffff] min-w-[240px]"
+                                className="bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-[#e0e0e0] focus:border-[#141414] rounded-lg px-2 py-0.5 text-xs font-bold text-[#141414] min-w-[240px]"
                               />
-                              <span className="text-[11px] opacity-80 shrink-0">({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي)</span>
+                              <span className="text-[11px] text-[#707070] shrink-0">({l2Nodes.length} بند رئيسي • {l1Rows.length} حساب فعلي)</span>
                             </td>
                             <td className="p-3 font-mono">{l1.code}</td>
                             <td className="p-3">المستوى 1 (باب رئيسي)</td>

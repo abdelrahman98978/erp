@@ -392,16 +392,9 @@ export const FinancePage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header Banner */}
+      {/* Top Gallery-White Header Banner */}
       <div
-        className="card-feature-cinematic"
-        style={{
-          background: '#141414',
-          borderRadius: '16px',
-          padding: '28px',
-          color: '#FFFFFF',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-        }}
+        className="bg-white rounded-3xl p-6 border border-[#e0e0e0]"
       >
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3.5">
@@ -414,13 +407,13 @@ export const FinancePage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="pill-tag-mint" style={{ fontSize: '11px' }}>FINANCIAL & ACCOUNTING SUITE</span>
-                <span className="pill-tag-shade" style={{ fontSize: '11px', background: 'rgba(255,255,255,0.1)', color: '#ffffff' }}>المعايير المحاسبية SOCPA / IFRS</span>
+                <span className="pill-tag-shade" style={{ fontSize: '11px' }}>المعايير المحاسبية SOCPA / IFRS</span>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f3f3f3] border border-[#e0e0e0]">
                   <CorporateAvatar name="إبراهيم الشمري" role="المدير المالي المعتمد" departmentId="finance" size="xs" status="verified" />
                   <span className="text-[10.5px] font-bold text-[#141414]">الاعتماد المالي: إبراهيم الشمري</span>
                 </div>
               </div>
-              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 330, letterSpacing: '-0.02em', color: '#ffffff', margin: 0, fontFamily: 'var(--font-family-display)' }}>
+              <h1 className="display-sm" style={{ fontSize: '24px', fontWeight: 650, letterSpacing: '-0.02em', color: '#141414', margin: 0, fontFamily: 'var(--font-family-display)' }}>
                 الإدارة المالية والقوائم الختامية
               </h1>
               <p className="text-xs text-[#707070] mt-1 font-sans">
@@ -433,8 +426,8 @@ export const FinancePage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-document-extractor'))}
-              className="button-outline-on-dark"
-              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', borderColor: '#e0e0e0', background: '#ffffff', color: '#141414', fontWeight: 700 }}
+              className="button-outline-on-light"
+              style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px', fontWeight: 700 }}
               title="رفع واستخلاص آلي لـ 100+ فاتورة أو مستندات PDF / Word / Excel أو قيود نظام محاسبي منفصل"
             >
               <FileCheck className="w-3.5 h-3.5 ml-1 text-[#141414]" />
@@ -442,15 +435,15 @@ export const FinancePage: React.FC = () => {
             </button>
             <button
               onClick={() => setShowAddJournalModal(true)}
-              className="button-white-pill"
+              className="button-primary-pill"
               style={{ fontSize: '12px', padding: '6px 18px', minHeight: '38px' }}
             >
-              <Plus className="w-4 h-4 ml-1 text-[#141414]" />
+              <Plus className="w-4 h-4 ml-1 text-[#ffffff]" />
               <span>قيد يومية جديد</span>
             </button>
             <button
               onClick={() => setShowAddVoucherModal(true)}
-              className="button-outline-on-dark"
+              className="button-outline-on-light"
               style={{ fontSize: '12px', padding: '6px 16px', minHeight: '38px' }}
             >
               <Receipt className="w-3.5 h-3.5 ml-1 text-[#141414]" />
@@ -459,7 +452,7 @@ export const FinancePage: React.FC = () => {
 
             <button
               onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'excel', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="button-outline-on-dark"
+              className="button-outline-on-light"
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
               <FileSpreadsheet className="w-3.5 h-3.5 ml-1 text-[#141414]" />
@@ -467,7 +460,7 @@ export const FinancePage: React.FC = () => {
             </button>
             <button
               onClick={() => exportData('trial-balance', TRIAL_BALANCE_DATA, 'pdf', `ميزان المراجعة - ${activeCompany.name}`)}
-              className="button-outline-on-dark"
+              className="button-outline-on-light"
               style={{ fontSize: '12px', padding: '6px 14px', minHeight: '38px' }}
             >
               <FileText className="w-3.5 h-3.5 ml-1 text-[#141414]" />
@@ -647,14 +640,14 @@ export const FinancePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#141414', color: '#ffffff' }}>
+            <div className="card-pricing-featured" style={{ padding: '24px', borderRadius: '16px', background: '#f3f3f3', color: '#141414', border: '1px solid #e0e0e0' }}>
               <div className="flex items-center justify-between mb-2">
-                <span style={{ fontSize: '13px', fontWeight: 550, color: '#a1a1aa' }}>صافي الأرباح التشغيلية</span>
-                <div className="w-8 h-8 rounded-full bg-[#f3f3f3] flex items-center justify-center text-[#141414]">
+                <span style={{ fontSize: '13px', fontWeight: 550, color: '#707070' }}>صافي الأرباح التشغيلية</span>
+                <div className="w-8 h-8 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center text-[#141414]">
                   <Coins className="w-4 h-4" />
                 </div>
               </div>
-              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#ffffff', letterSpacing: '-0.02em' }}>304,971.20 ⃁</div>
+              <div className="display-sm" style={{ fontSize: '36px', fontWeight: 330, color: '#141414', letterSpacing: '-0.02em' }}>304,971.20 ⃁</div>
               <div className="flex items-center justify-between mt-3">
                 <span className="pill-tag-mint">هامش ربح 58%</span>
                 <span className="text-[11px] text-[#707070]">أداء مالي قياسي</span>
@@ -751,10 +744,10 @@ export const FinancePage: React.FC = () => {
                     <th className="p-3 font-mono">حركة مدين</th>
                     <th className="p-3 font-mono">حركة دائن</th>
                     {showTbClosingCols && (
-                      <th className="p-3 font-mono font-bold bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين</th>
+                      <th className="p-3 font-mono font-bold bg-[#f3f3f3] text-[#141414] border-x border-[#e0e0e0]">الرصيد النهائي مدين</th>
                     )}
                     {showTbClosingCols && (
-                      <th className="p-3 font-mono font-bold bg-[#141414] text-[#ffffff]">الرصيد النهائي دائن</th>
+                      <th className="p-3 font-mono font-bold bg-[#f3f3f3] text-[#141414] border-x border-[#e0e0e0]">الرصيد النهائي دائن</th>
                     )}
                   </tr>
                 </thead>
@@ -803,7 +796,7 @@ export const FinancePage: React.FC = () => {
                     );
                   })}
                 </tbody>
-                <tfoot className="bg-[#141414] text-[#ffffff] font-bold">
+                <tfoot className="bg-[#f3f3f3] text-[#141414] font-bold border-t-2 border-[#141414]">
                   <tr>
                     <td colSpan={5} className="p-3">الإجمالي الكلي لميزان المراجعة (متزن ✔)</td>
                     <td className="p-3 font-mono">
@@ -1158,9 +1151,9 @@ export const FinancePage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-between py-3.5 bg-[#141414] text-[#ffffff] px-5 rounded-2xl font-bold text-sm">
+                  <div className="flex justify-between py-3.5 bg-[#f3f3f3] text-[#141414] border-2 border-[#141414] px-5 rounded-2xl font-bold text-sm">
                     <span>= صافي ربح السنة والربح التشغيلي (Net Profit / Total Comprehensive Income — هامش {netMargin}%):</span>
-                    <span className="font-mono text-[#ffffff]">{netProfit.toLocaleString()} ⃁</span>
+                    <span className="font-mono text-[#141414]">{netProfit.toLocaleString()} ⃁</span>
                   </div>
                 </div>
               );
@@ -1264,9 +1257,9 @@ export const FinancePage: React.FC = () => {
                 <span>صافي الزيادة في النقدية خلال الفترة:</span>
                 <span className="font-mono">+155,000.00 ⃁</span>
               </div>
-              <div className="flex justify-between bg-[#141414] text-[#ffffff] p-4 rounded-xl font-bold text-sm">
+              <div className="flex justify-between bg-[#f3f3f3] text-[#141414] border-2 border-[#141414] p-4 rounded-xl font-bold text-sm">
                 <span>رصيد النقدية وما في حكمها في نهاية الفترة (البنوك والصناديق — IAS 7.45):</span>
-                <span className="font-mono text-[#ffffff]">905,000.00 ⃁</span>
+                <span className="font-mono text-[#141414]">905,000.00 ⃁</span>
               </div>
             </div>
           </div>
@@ -2250,10 +2243,10 @@ export const FinancePage: React.FC = () => {
                     type: 'success',
                   });
                 }}
-                className="button-white-pill"
-                style={{ padding: '6px 16px', fontSize: '11.5px', background: '#141414', color: '#ffffff' }}
+                className="button-primary-pill"
+                style={{ padding: '6px 16px', fontSize: '11.5px' }}
               >
-                <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+                <CheckCircle2 className="w-3.5 h-3.5 ml-1 text-[#ffffff]" />
                 <span>مطابقة آلية لكافة الحركات (Auto-Match)</span>
               </button>
               <button

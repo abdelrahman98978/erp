@@ -837,16 +837,9 @@ export const SmaccAccountingPage: React.FC = () => {
 
   return (
     <div className="space-y-6 text-right dir-rtl">
-      {/* Cinematic Banner */}
+      {/* Top Gallery-White Header Banner */}
       <div
-        className="card-feature-cinematic"
-        style={{
-          background: '#141414',
-          borderRadius: '16px',
-          padding: '28px',
-          color: '#FFFFFF',
-          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.12)',
-        }}
+        className="bg-white rounded-3xl p-6 border border-[#e0e0e0]"
       >
         <div className="flex flex-row items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3.5">
@@ -859,7 +852,7 @@ export const SmaccAccountingPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="pill-tag-mint text-[11px]">FINANCIAL ERP V2</span>
-                <span className="pill-tag-shade text-[11px]" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>
+                <span className="pill-tag-shade text-[11px]">
                   {activeCompany.name} ({activeCompanyId === 'all' ? 'GROUP' : activeCompanyId})
                 </span>
               </div>
@@ -875,9 +868,10 @@ export const SmaccAccountingPage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowBatchExtractor(true)}
-              className="px-4 py-2 rounded-full bg-[#141414] text-[#ffffff] hover:bg-[#262626] text-[#ffffff] font-bold text-xs flex items-center gap-1.5 shadow-md cursor-pointer"
+              className="button-outline-on-light"
+              style={{ padding: '6px 14px', fontSize: '11px', minHeight: '34px' }}
             >
-              <UploadCloud className="w-4 h-4" />
+              <UploadCloud className="w-4 h-4 ml-1 text-[#141414]" />
               <span>استيراد فواتير / مستندات / نظام محاسبي منفصل (100 صورة / PDF / Word / Excel)</span>
             </button>
             <button
@@ -885,18 +879,18 @@ export const SmaccAccountingPage: React.FC = () => {
                 loadData();
                 addNotification({ title: 'تحديث البيانات', message: 'تمت مزامنة الحسابات والقيود والسندات بنجاح.', type: 'info' });
               }}
-              className="button-outline-on-dark"
+              className="button-outline-on-light"
               style={{ padding: '6px 14px', fontSize: '11px', minHeight: '34px' }}
             >
-              <RefreshCw className="w-3.5 h-3.5 ml-1" />
+              <RefreshCw className="w-3.5 h-3.5 ml-1 text-[#141414]" />
               <span>مزامنة الحسابات</span>
             </button>
             <button
               onClick={() => setIsJournalModalOpen(true)}
-              className="button-white-pill"
+              className="button-primary-pill"
               style={{ padding: '6px 16px', fontSize: '11px', minHeight: '34px' }}
             >
-              <Plus className="w-3.5 h-3.5 ml-1 text-[#141414]" />
+              <Plus className="w-3.5 h-3.5 ml-1 text-[#ffffff]" />
               <span>تسجيل قيد محاسبي</span>
             </button>
           </div>
@@ -925,9 +919,9 @@ export const SmaccAccountingPage: React.FC = () => {
                 style={{
                   padding: '6px 14px',
                   borderRadius: '9999px',
-                  fontWeight: isActive ? 600 : 400,
-                  background: isActive ? '#ffffff' : 'transparent',
-                  color: isActive ? '#141414' : '#d4d4d8',
+                  fontWeight: isActive ? 700 : 500,
+                  background: isActive ? '#141414' : 'transparent',
+                  color: isActive ? '#ffffff' : '#141414',
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -1465,10 +1459,10 @@ export const SmaccAccountingPage: React.FC = () => {
                   <th className="p-3">التصنيف المعتمد (Excel IFRS 34 / 314)</th>
                   <th className="p-3">المعيار والتدفق</th>
                   {showSmaccClosingCols && (
-                    <th className="p-3 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي مدين</th>
+                    <th className="p-3 font-mono font-bold bg-[#f3f3f3] text-[#141414] border-x border-[#e0e0e0]">الرصيد النهائي مدين</th>
                   )}
                   {showSmaccClosingCols && (
-                    <th className="p-3 font-mono bg-[#141414] text-[#ffffff]">الرصيد النهائي دائن</th>
+                    <th className="p-3 font-mono font-bold bg-[#f3f3f3] text-[#141414] border-x border-[#e0e0e0]">الرصيد النهائي دائن</th>
                   )}
                 </tr>
               </thead>
@@ -1507,7 +1501,7 @@ export const SmaccAccountingPage: React.FC = () => {
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-[#141414] text-[#ffffff] font-bold">
+              <tfoot className="bg-[#f3f3f3] text-[#141414] font-bold border-t-2 border-[#141414]">
                 <tr>
                   <td colSpan={5} className="p-3">إجمالي الأرصدة النهائية في الدليل السريع</td>
                   {showSmaccClosingCols && (
@@ -1620,9 +1614,9 @@ export const SmaccAccountingPage: React.FC = () => {
                 ({(totalExpenses - Math.round(totalExpenses * 0.62)).toLocaleString()}) ⃁
               </span>
             </div>
-            <div className="flex justify-between items-center p-4 bg-[#141414] text-[#ffffff] rounded-2xl">
+            <div className="flex justify-between items-center p-4 bg-[#f3f3f3] text-[#141414] border-2 border-[#141414] rounded-2xl">
               <span className="font-bold text-base">= صافي أرباح الفترة التشغيلية والدخل الشامل (Net Profit — IAS 1 / IFRS 18):</span>
-              <span className="font-mono font-bold text-[#ffffff] text-lg">
+              <span className="font-mono font-bold text-[#141414] text-lg">
                 {netProfit.toLocaleString()} ⃁
               </span>
             </div>
